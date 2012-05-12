@@ -29,6 +29,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -49,8 +50,8 @@ public class WorkloadScalabilityPlotsReporter extends HibernateDaoSupport implem
 
 	public static class ScenarioPlotDTO {
         private String scenarioName;
-        private Image throughputPlot;
-		private Image latencyPlot;
+        private JCommonDrawableRenderer throughputPlot;
+		private JCommonDrawableRenderer latencyPlot;
 
         public String getScenarioName() {
             return scenarioName;
@@ -60,19 +61,19 @@ public class WorkloadScalabilityPlotsReporter extends HibernateDaoSupport implem
             this.scenarioName = scenarioName;
         }
 
-        public Image getThroughputPlot() {
+        public JCommonDrawableRenderer getThroughputPlot() {
             return throughputPlot;
         }
 
-        public void setThroughputPlot(Image throughputPlot) {
+        public void setThroughputPlot(JCommonDrawableRenderer throughputPlot) {
             this.throughputPlot = throughputPlot;
         }
 
-        public Image getLatencyPlot() {
+        public JCommonDrawableRenderer getLatencyPlot() {
             return latencyPlot;
         }
 
-        public void setLatencyPlot(Image latencyPlot) {
+        public void setLatencyPlot(JCommonDrawableRenderer latencyPlot) {
             this.latencyPlot = latencyPlot;
         }
     }
@@ -84,7 +85,7 @@ public class WorkloadScalabilityPlotsReporter extends HibernateDaoSupport implem
 		String sessionId = sessionIdProvider.getSessionId();
 		@SuppressWarnings("unchecked")
 		List<String> scenarios = getHibernateTemplate().find(
-				"select distinct d.scenario.name from WorkloadData d where d.sessionId=?", sessionId);
+				"select distinct d.scenario.name from WorkloadData d where d.sessionId=? order by d.number asc, d.scenario.name asc", sessionId);
 		
 		plots.addAll(getScenarioPlots(scenarios));
 
@@ -99,16 +100,14 @@ public class WorkloadScalabilityPlotsReporter extends HibernateDaoSupport implem
 
 			JFreeChart chartThroughput = ChartHelper.createXYChart(null, throughputData, "Thread Count",
 					"Throughput (TPS)", 6, 3, ChartHelper.ColorTheme.LIGHT);
-			BufferedImage imageThroughput = ChartHelper.extractImage(chartThroughput, 1200, 600);
 
             JFreeChart chartLatency = ChartHelper.createXYChart(null, latencyData, "Thread Count",
 					"Latency (sec)", 6, 3, ChartHelper.ColorTheme.LIGHT);
-			BufferedImage imageLatency = ChartHelper.extractImage(chartLatency, 1200, 600);
 
 			ScenarioPlotDTO plotDTO = new ScenarioPlotDTO();
 			plotDTO.setScenarioName(scenarioName);
-            plotDTO.setThroughputPlot(imageThroughput);
-            plotDTO.setLatencyPlot(imageLatency);
+            plotDTO.setThroughputPlot(new JCommonDrawableRenderer(chartThroughput));
+            plotDTO.setLatencyPlot(new JCommonDrawableRenderer(chartLatency));
 
 			throughputPlots.add(plotDTO);
 		}

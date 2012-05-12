@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2011 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ For information about the licensing and copyright of this document please
+  ~ contact Grid Dynamics at info@griddynamics.com.
+  ~
+  ~ $Id: $
+  ~ @Project: Jagger
+  -->
+
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="SessionSummary" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="550"
+              leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <template class="java.io.InputStream">
+        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+
+    <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
+    <field name="name" class="java.lang.String"/>
+    <field name="decision" class="com.griddynamics.jagger.engine.e1.sessioncomparation.Decision"/>
+    <field name="firstStdDev" class="java.lang.Double"/>
+    <field name="secondStdDev" class="java.lang.Double"/>
+
+
+    <title>
+        <band height="70" splitType="Prevent">
+            <rectangle>
+                <reportElement x="0" y="0" width="550" height="20" backcolor="#AAE600"/>
+                <graphicElement>
+                    <pen lineWidth="0.0" lineStyle="Solid"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement style="Header_Bold" positionType="Float" x="0" y="0" width="550" height="20"
+                               forecolor="#336600"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Monitoring Comparison]]></text>
+            </staticText>
+        </band>
+    </title>
+    <columnHeader>
+        <band height="35" splitType="Stretch">
+            <staticText>
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="0" y="0" width="70" height="30"
+                               forecolor="#000000" backcolor="#D7FFB0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Status]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="70" y="0" width="400" height="30"
+                               forecolor="#000000" backcolor="#D7FFB0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Parameter]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="470" y="0" width="40" height="30"
+                               forecolor="#000000" backcolor="#D7FFB0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Current Std Dev]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="510" y="0" width="40" height="30"
+                               forecolor="#000000" backcolor="#D7FFB0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Baseline Std Dev]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="22" splitType="Stretch">
+            <image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+                <reportElement positionType="Float" x="0" y="0" width="70" height="20"/>
+                <imageExpression class="java.awt.Image">
+                    <![CDATA[((com.griddynamics.jagger.engine.e1.reporting.StatusImageProvider)$P{context}.getParameters().get("jagger.workloadsessioncomparator.statusImageProvider")).getImageByDecision($F{decision})]]></imageExpression>
+            </image>
+            <textField isStretchWithOverflow="true">
+                <reportElement style="Compact_Header_Bold" x="70" y="0" width="400" height="20"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" pattern="##0.00">
+                <reportElement style="Compact_Header_Bold" positionType="Float" x="470" y="0" width="40" height="20"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression class="java.lang.Double"><![CDATA[$F{firstStdDev}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" pattern="##0.00">
+                <reportElement style="Compact_Header_Bold" positionType="Float" x="510" y="0" width="40" height="20"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression class="java.lang.Double"><![CDATA[$F{secondStdDev}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

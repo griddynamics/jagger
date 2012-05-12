@@ -22,9 +22,11 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadDetails;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.engine.e1.collector.DiagnosticResult;
 import com.griddynamics.jagger.engine.e1.collector.ValidationResult;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
@@ -81,7 +83,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         Long endTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, END_TIME);
         double duration = (double) (endTime - startTime) / 1000;
         log.debug("start {} end {} duration {}", new Object[]{startTime, endTime, duration});
-
+        
         @SuppressWarnings({"unchecked", "rawtypes"})
         Collection<String> kernels = (Collection) keyValueStorage.fetchAll(taskNamespace, KERNELS);
         log.debug("kernels found {}", kernels);
@@ -90,8 +92,9 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         Integer failed = 0;
         Integer invoked = 0;
         Map<String, Pair<Integer, Integer>> validationResults = Maps.newHashMap();
+        Map<String, Integer> diagnosticResults = Maps.newHashMap();
         for (String kernelId : kernels) {
-            KernelProcessor kernelProcessor = new KernelProcessor(taskNamespace, totalDuration, totalSqrDuration, failed, invoked, validationResults, kernelId).process();
+            KernelProcessor kernelProcessor = new KernelProcessor(taskNamespace, totalDuration, totalSqrDuration, failed, invoked, validationResults, diagnosticResults, kernelId).process();
             invoked = kernelProcessor.getInvoked();
             failed = kernelProcessor.getFailed();
             totalDuration = kernelProcessor.getTotalDuration();
@@ -130,18 +133,19 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         }
         log.debug("Success rate: {}", successRate);
 
-        persistValues(sessionId, taskId, workloadTask, clock, clockValue, termination, startTime, endTime, kernels, totalDuration, failed, invoked, validationResults, avgLatency, stdDevLatency, throughput, successRate);
+        persistValues(sessionId, taskId, workloadTask, clock, clockValue, termination, startTime, endTime, kernels, totalDuration, failed, invoked, validationResults, diagnosticResults, avgLatency, stdDevLatency, throughput, successRate);
     }
 
-    private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination, Long startTime, Long endTime, Collection<String> kernels, double totalDuration, Integer failed, Integer invoked, Map<String, Pair<Integer, Integer>> validationResults, double avgLatency, double stdDevLatency, double throughput, double successRate) {
+    private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination, Long startTime, Long endTime, Collection<String> kernels, double totalDuration, Integer failed, Integer invoked, Map<String, Pair<Integer, Integer>> validationResults, Map<String, Integer> diagnosticResults, double avgLatency, double stdDevLatency, double throughput, double successRate) {
         String parentId = workloadTask.getParentTaskId();
 
-        WorkloadDetails workloadDetails = getScenarioData(workloadTask.getName(), workloadTask.getVersion());
+        WorkloadDetails workloadDetails = getScenarioData(workloadTask);
 
         WorkloadData testData = new WorkloadData();
         testData.setSessionId(sessionId);
         testData.setTaskId(taskId);
         testData.setParentId(parentId);
+        testData.setNumber(workloadTask.getNumber());
         testData.setScenario(workloadDetails);
         testData.setStartTime(new Date(startTime));
         testData.setEndTime(new Date(endTime));
@@ -151,6 +155,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         WorkloadTaskData workloadTaskData = new WorkloadTaskData();
         workloadTaskData.setSessionId(sessionId);
         workloadTaskData.setTaskId(taskId);
+        workloadTaskData.setNumber(workloadTask.getNumber());
         workloadTaskData.setScenario(workloadDetails);
         workloadTaskData.setClock(clock);
         workloadTaskData.setClockValue(clockValue);
@@ -175,22 +180,31 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
 
             getHibernateTemplate().persist(entity);
         }
+
+        for (Map.Entry<String, Integer> entry : diagnosticResults.entrySet()) {
+            DiagnosticResultEntity entity = new DiagnosticResultEntity();
+            entity.setName(entry.getKey());
+            entity.setTotal(entry.getValue());
+            entity.setWorkloadData(testData);
+
+            getHibernateTemplate().persist(entity);
+        }
     }
 
     public void setKeyValueStorage(KeyValueStorage keyValueStorage) {
         this.keyValueStorage = keyValueStorage;
     }
 
-    private WorkloadDetails getScenarioData(String name, String version) {
+    private WorkloadDetails getScenarioData(WorkloadTask workloadTask) {
         @SuppressWarnings("unchecked")
         List<WorkloadDetails> all = getHibernateTemplate().find(
-                "from WorkloadDetails s where s.name=? and s.version=?", name, version);
+                "from WorkloadDetails s where s.name=? and s.version=?", workloadTask.getName(), workloadTask.getVersion());
         if (all.size() == 1) {
             return all.get(0);
         }
         WorkloadDetails workloadDetails = new WorkloadDetails();
-        workloadDetails.setName(name);
-        workloadDetails.setVersion(version);
+        workloadDetails.setName(workloadTask.getName());
+        workloadDetails.setVersion(workloadTask.getVersion());
 
         getHibernateTemplate().persist(workloadDetails);
         return workloadDetails;
@@ -203,15 +217,17 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         private Integer failed;
         private Integer invoked;
         private Map<String, Pair<Integer, Integer>> validationResults;
+        private Map<String, Integer> diagnosticResults;
         private String kernelId;
 
-        public KernelProcessor(Namespace taskNamespace, double totalDuration, double totalSqrDuration, Integer failed, Integer invoked, Map<String, Pair<Integer, Integer>> validationResults, String kernelId) {
+        public KernelProcessor(Namespace taskNamespace, double totalDuration, double totalSqrDuration, Integer failed, Integer invoked, Map<String, Pair<Integer, Integer>> validationResults, Map<String, Integer> diagnosticResults,String kernelId) {
             this.taskNamespace = taskNamespace;
             this.totalDuration = totalDuration;
             this.totalSqrDuration = totalSqrDuration;
             this.failed = failed;
             this.invoked = invoked;
             this.validationResults = validationResults;
+            this.diagnosticResults = diagnosticResults;
             this.kernelId = kernelId;
         }
 
@@ -283,6 +299,18 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
                 } else {
                     validationResults.put(validationResult.getName(), Pair.of(stat.getFirst() + validationResult.getInvoked(),
                             stat.getSecond() + validationResult.getFailed()));
+                }
+            }
+
+            Namespace diagnosticNamespace = taskNamespace.child("DiagnosticCollector", kernelId);
+            @SuppressWarnings("unchecked")
+            Collection<DiagnosticResult> diagnostic = (Collection) keyValueStorage.fetchAll(diagnosticNamespace, "metric");
+            for (DiagnosticResult diagnosticResult : diagnostic) {
+                Integer stat = diagnosticResults.get(diagnosticResult.getName());
+                if (stat == null) {
+                    diagnosticResults.put(diagnosticResult.getName(), diagnosticResult.getTotal());
+                } else {
+                    diagnosticResults.put(diagnosticResult.getName(), stat + diagnosticResult.getTotal());
                 }
             }
             return this;

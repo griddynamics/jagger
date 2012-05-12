@@ -27,17 +27,17 @@
     <template class="java.io.InputStream">
         <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
-    <field name="throughputPlot" class="java.awt.Image"/>
-    <field name="latencyPlot" class="java.awt.Image"/>
+    <field name="throughputPlot" class="net.sf.jasperreports.engine.JRRenderable"/>
+    <field name="latencyPlot" class="net.sf.jasperreports.engine.JRRenderable"/>
     <detail>
         <band height="530" splitType="Stretch">
             <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
                 <reportElement x="0" y="25" width="550" height="250"/>
-                <imageExpression class="java.awt.Image"><![CDATA[$F{throughputPlot}]]></imageExpression>
+                <imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{throughputPlot}]]></imageExpression>
             </image>
             <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
                 <reportElement x="0" y="275" width="550" height="250"/>
-                <imageExpression class="java.awt.Image"><![CDATA[$F{latencyPlot}]]></imageExpression>
+                <imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{latencyPlot}]]></imageExpression>
             </image>
         </band>
     </detail>

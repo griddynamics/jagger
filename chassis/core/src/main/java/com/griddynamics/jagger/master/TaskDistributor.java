@@ -27,7 +27,7 @@ import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.master.configuration.Task;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Distributes tasks across the nodes.
@@ -37,6 +37,6 @@ import java.util.concurrent.Executor;
  */
 public interface TaskDistributor<T extends Task> {
 
-    Service distribute(Executor executor, String sessionId, String taskId, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator, T task, DistributionListener listener);
+    Service distribute(ExecutorService executor, String sessionId, String taskId, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator, T task, DistributionListener listener);
 
 }

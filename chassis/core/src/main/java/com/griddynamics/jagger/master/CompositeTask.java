@@ -33,6 +33,7 @@ import java.util.List;
 public class CompositeTask implements Task {
     private List<CompositableTask> leading;
     private List<CompositableTask> attendant = ImmutableList.of();
+    private int number;
 
     public List<CompositableTask> getLeading() {
         return leading;
@@ -55,4 +56,12 @@ public class CompositeTask implements Task {
         return "Composite task";
     }
 
+    @Override
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
 }

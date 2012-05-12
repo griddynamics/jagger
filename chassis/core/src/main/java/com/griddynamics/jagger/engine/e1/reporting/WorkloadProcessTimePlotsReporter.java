@@ -32,6 +32,7 @@ import com.griddynamics.jagger.util.Pair;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -53,22 +54,22 @@ public class WorkloadProcessTimePlotsReporter extends HibernateDaoSupport implem
     private Map<String, TaskPlotDTO> taskPlots;
 
     public static class TaskPlotDTO {
-        private Image throughputPlot;
-        private Image latencyPlot;
+        private JCommonDrawableRenderer throughputPlot;
+        private JCommonDrawableRenderer latencyPlot;
 
-        public Image getThroughputPlot() {
+        public JCommonDrawableRenderer getThroughputPlot() {
             return throughputPlot;
         }
 
-        public void setThroughputPlot(Image throughputPlot) {
+        public void setThroughputPlot(JCommonDrawableRenderer throughputPlot) {
             this.throughputPlot = throughputPlot;
         }
 
-        public Image getLatencyPlot() {
+        public JCommonDrawableRenderer getLatencyPlot() {
             return latencyPlot;
         }
 
-        public void setLatencyPlot(Image latencyPlot) {
+        public void setLatencyPlot(JCommonDrawableRenderer latencyPlot) {
             this.latencyPlot = latencyPlot;
         }
     }
@@ -144,14 +145,13 @@ public class WorkloadProcessTimePlotsReporter extends HibernateDaoSupport implem
             XYSeriesCollection throughputCollection = new XYSeriesCollection();
             throughputCollection.addSeries(throughput);
 
-            Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(throughputCollection);
+            Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(throughputCollection, null);
 
             throughputCollection = pair.getSecond();
 
             JFreeChart chartThroughput = ChartHelper.createXYChart(null, throughputCollection, "Time (" + pair.getFirst() + ")",
                     "Throughput (TPS)", 2, 2, ChartHelper.ColorTheme.LIGHT);
-            BufferedImage imageThroughput = ChartHelper.extractImage(chartThroughput, 1200, 600);
-            taskPlot.setThroughputPlot(imageThroughput);
+            taskPlot.setThroughputPlot(new JCommonDrawableRenderer(chartThroughput));
 
             XYSeriesCollection latencyCollection = new XYSeriesCollection();
             latencyCollection.addSeries(latency);
@@ -162,8 +162,8 @@ public class WorkloadProcessTimePlotsReporter extends HibernateDaoSupport implem
                 percentilesCollection.addSeries(series);
             }
 
-            Pair<String, XYSeriesCollection> percentilesPair = ChartHelper.adjustTime(percentilesCollection);
-            Pair<String, XYSeriesCollection> latencyPair = ChartHelper.adjustTime(latencyCollection);
+            Pair<String, XYSeriesCollection> percentilesPair = ChartHelper.adjustTime(percentilesCollection, null);
+            Pair<String, XYSeriesCollection> latencyPair = ChartHelper.adjustTime(latencyCollection, null);
 
             if (!latencyPair.getFirst().equals(percentilesPair.getFirst())) {
                 throw new IllegalStateException("Time dimension for percentiles and latency is not equal");
@@ -171,8 +171,7 @@ public class WorkloadProcessTimePlotsReporter extends HibernateDaoSupport implem
 
             JFreeChart chartLatencyPercentiles = ChartHelper.createStackedAreaChart(null, percentilesPair.getSecond(),
                     latencyPair.getSecond(), "Time (" + latencyPair.getFirst() + ")", "Latency (sec)", ChartHelper.ColorTheme.LIGHT);
-            BufferedImage imageLatencyPercentiles = ChartHelper.extractImage(chartLatencyPercentiles, 1200, 600);
-            taskPlot.setLatencyPlot(imageLatencyPercentiles);
+            taskPlot.setLatencyPlot(new JCommonDrawableRenderer(chartLatencyPercentiles));
 
             taskPlots.put(taskId, taskPlot);
         }

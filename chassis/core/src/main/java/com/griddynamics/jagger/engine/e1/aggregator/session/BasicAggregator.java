@@ -115,6 +115,7 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
         taskData.setTaskId(taskId);
         taskData.setSessionId(sessionId);
         taskData.setTaskName(task.getTaskName());
+        taskData.setNumber(task.getNumber());
         taskData.setStatus(ExecutionStatus.SUCCEEDED);
         getHibernateTemplate().persist(taskData);
     }

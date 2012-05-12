@@ -39,7 +39,7 @@ public class UserGroup {
 
     private final int id;
     private final UserWorkload workload;
-    private final ProcessingConfig.Testing.Test.Workload.UserGroup config;
+    private final ProcessingConfig.Test.Task.User config;
     private final int count;
     final ArrayList<User> users;
     int activeUserCount = 0;
@@ -47,7 +47,7 @@ public class UserGroup {
     private final long startInTime;
     private long startByTime = -1;
 
-    public UserGroup(UserWorkload workload, ProcessingConfig.Testing.Test.Workload.UserGroup config, long time) {
+    public UserGroup(UserWorkload workload, ProcessingConfig.Test.Task.User config, long time) {
         this.id = workload.groups.size();
         this.workload = workload;
         this.config = config;
@@ -69,7 +69,7 @@ public class UserGroup {
         return workload;
     }
 
-    public ProcessingConfig.Testing.Test.Workload.UserGroup getConfig() {
+    public ProcessingConfig.Test.Task.User getConfig() {
         return config;
     }
 

@@ -31,7 +31,7 @@
         <![CDATA[ $P{context}.getResource("reporting/styles/default-styles.xml") ]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
 
-    <field name="image" class="java.awt.Image"/>
+    <field name="image" class="net.sf.jasperreports.engine.JRRenderable"/>
 
     <title>
         <band height="80" isSplitAllowed="false">
@@ -62,7 +62,7 @@
         <band height="500">
             <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
                 <reportElement x="0" y="0" width="550" height="500"/>
-                <imageExpression class="java.awt.Image"><![CDATA[$F{image}]]></imageExpression>
+                <imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{image}]]></imageExpression>
             </image>
         </band>
     </detail>

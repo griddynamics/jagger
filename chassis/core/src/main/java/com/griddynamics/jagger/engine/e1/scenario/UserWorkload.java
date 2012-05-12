@@ -39,19 +39,19 @@ public class UserWorkload {
 
     private final boolean main;
     private final UserClock clock;
-    private final ProcessingConfig.Testing.Test.Workload config;
+    private final ProcessingConfig.Test.Task config;
     final ArrayList<UserGroup> groups;
     private final int delay;
 
-    public UserWorkload(boolean main, UserClock clock, ProcessingConfig.Testing.Test.Workload config, long time) {
+    public UserWorkload(boolean main, UserClock clock, ProcessingConfig.Test.Task config, long time) {
         this.main = main;
         this.clock = clock;
         this.config = config;
-        this.groups = new ArrayList<UserGroup>(config.userGroups.size());
+        this.groups = new ArrayList<UserGroup>(config.users.size());
         this.delay = (config.delay == null) ? 0 : (int) Parser.parseTimeMillis(config.delay);
 
-        for (ProcessingConfig.Testing.Test.Workload.UserGroup groupConfig : config.userGroups) {
-            new UserGroup(this, groupConfig, time);
+        for (ProcessingConfig.Test.Task.User userConfig : config.users) {
+            new UserGroup(this, userConfig, time);
         }
     }
 
@@ -63,7 +63,7 @@ public class UserWorkload {
         return clock;
     }
 
-    public ProcessingConfig.Testing.Test.Workload getConfig() {
+    public ProcessingConfig.Test.Task getConfig() {
         return config;
     }
 

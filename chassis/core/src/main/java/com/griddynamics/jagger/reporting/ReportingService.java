@@ -49,8 +49,13 @@ public class ReportingService {
         contextMap.put(ReportingContext.CONTEXT_NAME, context);
 
         try {
+            log.info("BEGIN: Compile report");
             JasperReport jasperReport = JasperCompileManager.compileReport(new ReportInputStream(context.getResource(rootTemplateLocation), removeFrame));
-            return JasperFillManager.fillReport(jasperReport, contextMap, new JRBeanArrayDataSource(new Object[1]));
+            log.info("END: Compile report");
+            log.info("BEGIN: Fill report");
+            JasperPrint result = JasperFillManager.fillReport(jasperReport, contextMap, new JRBeanArrayDataSource(new Object[1]));
+            log.info("END: Fill report");
+            return result;
         } catch (JRException e) {
             log.error("Error during report rendering", e);
             throw new TechnicalException(e);
@@ -61,12 +66,13 @@ public class ReportingService {
         try {
             JasperPrint jasperPrint = generateReport(removeFrame);
 
+            log.info("BEGIN: Export report");
             switch(reportType) {
                 case HTML : JasperExportManager.exportReportToHtmlFile(jasperPrint, outputReportLocation); break;
                 case PDF : JasperExportManager.exportReportToPdfStream(jasperPrint, context.getOutputResource(outputReportLocation)); break;
                 default : throw new ConfigurationException("ReportType is not specified");
             }
-
+            log.info("END: Export report");
         } catch (JRException e) {
             log.error("Error during report rendering", e);
             throw new TechnicalException(e);

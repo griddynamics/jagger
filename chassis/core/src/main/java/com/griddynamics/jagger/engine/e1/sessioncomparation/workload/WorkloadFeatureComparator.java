@@ -114,7 +114,7 @@ public class WorkloadFeatureComparator extends HibernateDaoSupport implements Fe
     private List<WorkloadTaskData> getAllWorkloadTasks(String sessionId) {
         @SuppressWarnings("unchecked")
         List<WorkloadTaskData> scenarioData = getHibernateTemplate().find(
-                "from WorkloadTaskData d where d.sessionId=?",
+                "from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
                 sessionId
         );
 

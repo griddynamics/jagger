@@ -33,6 +33,7 @@ public class TaskData {
     private String taskId;
     private String sessionId;
     private String taskName;
+    private Integer number;
     private ExecutionStatus status;
 
     public TaskData() {
@@ -74,6 +75,14 @@ public class TaskData {
 
     public void setTaskName(String taskName) {
         this.taskName = taskName;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     @Enumerated(EnumType.STRING)

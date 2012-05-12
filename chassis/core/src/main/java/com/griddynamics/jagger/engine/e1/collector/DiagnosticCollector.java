@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
-import com.google.common.collect.Lists;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.invoker.InvocationException;
@@ -28,8 +27,6 @@ import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Collects diagnostic information. The metrics calculation algorithm is
@@ -41,26 +38,22 @@ import java.util.List;
 public class DiagnosticCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
 	private static final Logger log = LoggerFactory.getLogger(DiagnosticCollector.class);
 	private final MetricCalculator<R> metricCalculator;
+    private final String name;
 
-	private List<Integer> metrics = Lists.newLinkedList();
+	private int metric = 0;
 
-    public DiagnosticCollector(String sessionId, String taskId, NodeContext kernelContext, MetricCalculator<R> metricCalculator) {
+    public DiagnosticCollector(String sessionId, String taskId, NodeContext kernelContext, MetricCalculator<R> metricCalculator, String name) {
         super(sessionId, taskId, kernelContext);
         this.metricCalculator = metricCalculator;
+        this.name = name;
     }
 
     @Override
     public void flush() {
-		double totalMetric = 0;
-		for (Integer metric : metrics) {
-			totalMetric += metric;
-		}
-
-		double avgMetric = totalMetric / metrics.size();
 
 		Namespace namespace = Namespace.of(sessionId, taskId, "DiagnosticCollector", kernelContext
 				.getId().toString());
-		kernelContext.getService(KeyValueStorage.class).put(namespace, "avg_metrics", avgMetric);
+		kernelContext.getService(KeyValueStorage.class).put(namespace, "metric", DiagnosticResult.create(name, metric));
     }
 
     @Override
@@ -70,8 +63,7 @@ public class DiagnosticCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
 
     @Override
     public void onSuccess(Q query, E endpoint, R result, long duration) {
-		Integer metric = metricCalculator.calculate(result);
-		metrics.add(metric);
+		metric += metricCalculator.calculate(result);
     }
 
     @Override

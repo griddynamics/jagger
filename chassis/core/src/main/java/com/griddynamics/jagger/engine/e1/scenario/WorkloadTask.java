@@ -32,6 +32,7 @@ import java.util.List;
  * @author Mairbek Khadikov
  */
 public class WorkloadTask implements CompositableTask {
+    private int number;
     private String name;
     private String version;
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
@@ -41,8 +42,18 @@ public class WorkloadTask implements CompositableTask {
     private String parentTaskId;
     private Calibrator calibrator = new OneNodeCalibrator();
 
+    @Override
     public String getTaskName() {
         return name + " " + version;
+    }
+
+    @Override
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public String getName() {
@@ -103,6 +114,7 @@ public class WorkloadTask implements CompositableTask {
 
     public WorkloadTask copy() {
         WorkloadTask task = new WorkloadTask();
+        task.setNumber(number);
         task.setName(name);
         task.setVersion(version);
         task.setCollectors(collectors);
@@ -135,6 +147,7 @@ public class WorkloadTask implements CompositableTask {
     @Override
     public String toString() {
         return "WorkloadTask {\n" +
+                "   number='" + number + "\',\n" +
                 "   name='" + name + "\',\n" +
                 "   version='" + version + "\',\n" +
                 "   scenarioFactory=" + scenarioFactory + ",\n" +

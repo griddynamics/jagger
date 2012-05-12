@@ -38,6 +38,8 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
@@ -63,7 +65,7 @@ public class SimpleKernel extends Kernel implements ApplicationContextAware {
     public SimpleKernel(Coordinator coordinator) {
         super(coordinator);
         lock = new CountDownLatch(1);
-        this.nodeId = NodeId.kernelNode(NodeType.KERNEL.toString() + "-" + new Random().nextInt());
+        this.nodeId = NodeId.kernelNode(NodeType.KERNEL.toString() + "-" + new Random().nextInt() + " [" + getLocalHostAddress() + "]");
     }
 
     @Override
@@ -157,5 +159,13 @@ public class SimpleKernel extends Kernel implements ApplicationContextAware {
 
         log.debug("Invokers found {}", result);
         return result;
+    }
+
+    private static String getLocalHostAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

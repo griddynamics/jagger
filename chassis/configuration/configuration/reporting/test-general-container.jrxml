@@ -22,7 +22,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
-              name="LatencyReport" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="550"
+              name="TestDetailsContainer" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="550"
               leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
     <property name="ireport.zoom" value="1.0"/>
     <property name="ireport.x" value="0"/>
@@ -30,29 +30,31 @@
     <template class="java.io.InputStream">
         <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
-    <field name="scenarioName" class="java.lang.String"/>
-    <field name="throughputPlot" class="net.sf.jasperreports.engine.JRRenderable"/>
-    <field name="latencyPlot" class="net.sf.jasperreports.engine.JRRenderable"/>
+    <field name="testId" class="java.lang.String"/>
+    <field name="testName" class="java.lang.String"/>
+    <group name="test" isStartNewPage="false">
+        <groupExpression><![CDATA[$F{testId}]]></groupExpression>
+    </group>
     <title>
-        <band height="40" splitType="Prevent">
+        <band height="50" splitType="Prevent">
             <rectangle>
-                <reportElement x="0" y="0" width="550" height="20" backcolor="#AAE600"/>
+                <reportElement x="0" y="0" width="550" height="40" backcolor="#AAE600"/>
                 <graphicElement>
                     <pen lineWidth="0.0" lineStyle="Solid"/>
                 </graphicElement>
             </rectangle>
             <staticText>
-                <reportElement style="Header_Bold" positionType="Float" x="0" y="0" width="550" height="20"
+                <reportElement style="Large_Header_Bold" positionType="Float" x="0" y="0" width="550" height="40"
                                forecolor="#336600"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
-                <text><![CDATA[Scalability Plots]]></text>
+                <text><![CDATA[Test General]]></text>
             </staticText>
         </band>
     </title>
     <detail>
-        <band height="530" splitType="Stretch">
+        <band height="70" splitType="Stretch">
             <frame>
-                <reportElement x="0" y="0" width="550" height="530"/>
+                <reportElement x="0" y="0" width="550" height="70"/>
                 <rectangle>
                     <reportElement x="0" y="0" width="550" height="15" backcolor="#D7FFB0"/>
                     <graphicElement>
@@ -62,16 +64,16 @@
                 <textField isStretchWithOverflow="true">
                     <reportElement style="Header_Bold" x="0" y="0" width="550" height="15" forecolor="#000000"/>
                     <textElement textAlignment="Center" verticalAlignment="Middle"/>
-                    <textFieldExpression><![CDATA[$F{scenarioName}]]></textFieldExpression>
+                    <textFieldExpression><![CDATA[$F{testName}]]></textFieldExpression>
                 </textField>
-                <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
-                    <reportElement x="0" y="25" width="550" height="250"/>
-                    <imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{throughputPlot}]]></imageExpression>
-                </image>
-                <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
-                    <reportElement x="0" y="275" width="550" height="250"/>
-                    <imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{latencyPlot}]]></imageExpression>
-                </image>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="50" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("sysUTPlotsGeneral").getDataSource( $F{testId} )]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("sysUTPlotsGeneral").getReport( $F{testId} )]]></subreportExpression>
+                </subreport>
             </frame>
         </band>
     </detail>

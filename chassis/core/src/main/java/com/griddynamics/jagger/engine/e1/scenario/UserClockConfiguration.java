@@ -34,12 +34,12 @@ public class UserClockConfiguration implements WorkloadClockConfiguration {
 
     private final int tickInterval;
     private final InvocationDelayConfiguration delay = FixedDelay.noDelay();
-    private final ProcessingConfig.Testing.Test testConfig;
+    private final ProcessingConfig.Test.Task taskConfig;
     private final AtomicBoolean shutdown;
 
-    public UserClockConfiguration(int tickInterval, ProcessingConfig.Testing.Test testConfig, AtomicBoolean shutdown) {
+    public UserClockConfiguration(int tickInterval, ProcessingConfig.Test.Task taskConfig, AtomicBoolean shutdown) {
         this.tickInterval = tickInterval;
-        this.testConfig = testConfig;
+        this.taskConfig = taskConfig;
         this.shutdown = shutdown;
     }
 
@@ -51,13 +51,13 @@ public class UserClockConfiguration implements WorkloadClockConfiguration {
         return delay;
     }
 
-    public ProcessingConfig.Testing.Test getTestConfig() {
-        return testConfig;
+    public ProcessingConfig.Test.Task getTaskConfig() {
+        return taskConfig;
     }
 
     @Override
     public WorkloadClock getClock() {
-        return new UserClock(testConfig, tickInterval, shutdown);
+        return new UserClock(taskConfig, tickInterval, shutdown);
     }
 
     @Override

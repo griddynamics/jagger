@@ -30,19 +30,13 @@
     <template class="java.io.InputStream">
         <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
-    <field name="title" class="java.lang.String"/>
     <field name="plot" class="net.sf.jasperreports.engine.JRRenderable"/>
     <detail>
         <band height="200" splitType="Stretch">
             <frame>
                 <reportElement x="0" y="0" width="530" height="200"/>
-                <textField>
-                    <reportElement style="Header_Bold" x="0" y="0" width="500" height="20" forecolor="#000000"/>
-                    <textElement textAlignment="Left"/>
-                    <textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
-                </textField>
                 <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
-                    <reportElement x="30" y="20" width="500" height="180"/>
+                    <reportElement x="30" y="0" width="500" height="200"/>
                     <imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{plot}]]></imageExpression>
                 </image>
             </frame>

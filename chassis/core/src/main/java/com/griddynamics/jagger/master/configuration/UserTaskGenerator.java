@@ -35,6 +35,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,6 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UserTaskGenerator implements ApplicationContextAware {
     private ProcessingConfig config = getConfigFromCommandLine();
     private ApplicationContext applicationContext;
+    private boolean monitoringEnable = false;
 
     public UserTaskGenerator() {
     }
@@ -59,27 +62,38 @@ public class UserTaskGenerator implements ApplicationContextAware {
 
     public List<Task> generate() {
         List<Task> result = new LinkedList<Task>();
-        for (ProcessingConfig.Testing.Test testConfig : config.testing.tests) {
-            WorkloadTask prototype = applicationContext.getBean(testConfig.main.task, WorkloadTask.class);
-            WorkloadTask workloadTask = prototype.copy();
-            workloadTask.setName(testConfig.name);
+        int number = 0;
+        HashSet<String> names = new HashSet<String>();
+        for (ProcessingConfig.Test testConfig : config.tests) {
+            ++number;
 
-            AtomicBoolean shutdown = new AtomicBoolean(false);
-            workloadTask.setTerminateStrategyConfiguration(new UserTerminateStrategyConfiguration(testConfig, shutdown));
-            workloadTask.setClockConfiguration(new UserClockConfiguration(1000, testConfig, shutdown));
+            CompositeTask compositeTask = new CompositeTask();
+            compositeTask.setLeading(new ArrayList<CompositableTask>(testConfig.tasks.size()));
 
-            Task task = workloadTask;
-            if (config.monitoring.enabled) {
-                CompositeTask composite = new CompositeTask();
-                composite.setLeading(ImmutableList.<CompositableTask>of(workloadTask));
+            for (ProcessingConfig.Test.Task taskConfig : testConfig.tasks) {
+                String name = String.format("%s [%s]", testConfig.name, taskConfig.name);
+                if (!names.contains(name)) {
+                    names.add(name);
 
-                MonitoringTask attendantMonitoring = new MonitoringTask(testConfig.name + " --- monitoring", composite.getTaskName(), new InfiniteDuration());
-                composite.setAttendant(ImmutableList.<CompositableTask>of(attendantMonitoring));
-
-                task = composite;
+                    AtomicBoolean shutdown = new AtomicBoolean(false);
+                    WorkloadTask prototype = applicationContext.getBean(taskConfig.bean, WorkloadTask.class);
+                    WorkloadTask workloadTask = prototype.copy();
+                    workloadTask.setNumber(number);
+                    workloadTask.setName(name);
+                    workloadTask.setTerminateStrategyConfiguration(new UserTerminateStrategyConfiguration(testConfig, taskConfig, shutdown));
+                    workloadTask.setClockConfiguration(new UserClockConfiguration(1000, taskConfig, shutdown));
+                    compositeTask.getLeading().add(workloadTask);
+                } else {
+                    throw new IllegalArgumentException(String.format("Task with name '%s' already exists", name));
+                }
             }
 
-            result.add(task);
+            if (monitoringEnable) {
+                MonitoringTask attendantMonitoring = new MonitoringTask(number, testConfig.name + " --- monitoring", compositeTask.getTaskName(), new InfiniteDuration());
+                compositeTask.setAttendant(ImmutableList.<CompositableTask>of(attendantMonitoring));
+            }
+
+            result.add(compositeTask);
         }
         return result;
     }
@@ -87,6 +101,14 @@ public class UserTaskGenerator implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    public boolean isMonitoringEnable() {
+        return monitoringEnable;
+    }
+
+    public void setMonitoringEnable(boolean monitoringEnable) {
+        this.monitoringEnable = monitoringEnable;
     }
 
     public static ProcessingConfig getConfigFromFile(String fileName) {

@@ -29,15 +29,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * User: dkotlyarov
  */
 public class UserTerminationStrategy implements TerminationStrategy {
-    private final ProcessingConfig.Testing.Test testConfig;
+    private final ProcessingConfig.Test testConfig;
+    private final ProcessingConfig.Test.Task taskConfig;
     private final long stopTime;
     private final int stopSampleCount;
     private final AtomicBoolean shutdown;
 
-    public UserTerminationStrategy(ProcessingConfig.Testing.Test testConfig, AtomicBoolean shutdown) {
+    public UserTerminationStrategy(ProcessingConfig.Test testConfig, ProcessingConfig.Test.Task taskConfig, AtomicBoolean shutdown) {
         this.testConfig = testConfig;
-        this.stopTime = (testConfig.duration == null) ? -1L : System.currentTimeMillis() + Parser.parseTimeMillis(testConfig.duration);
-        this.stopSampleCount = (testConfig.main.sample == null) ? -1 : Integer.parseInt(testConfig.main.sample);
+        this.taskConfig = taskConfig;
+        this.stopTime = (taskConfig.duration == null) ?
+                            (testConfig.duration == null ? -1L : System.currentTimeMillis() + Parser.parseTimeMillis(testConfig.duration)):
+                            System.currentTimeMillis() + Parser.parseTimeMillis(taskConfig.duration);
+        this.stopSampleCount = (taskConfig.sample == null) ? -1 : Integer.parseInt(taskConfig.sample);
         this.shutdown = shutdown;
     }
 

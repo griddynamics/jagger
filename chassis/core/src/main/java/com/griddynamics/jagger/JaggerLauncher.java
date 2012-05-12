@@ -73,6 +73,23 @@ public final class JaggerLauncher {
     private static final Launches.LaunchManagerBuilder builder = Launches.builder();
 
     public static void main(String[] args) throws Exception {
+        Thread memoryMonitorThread = new Thread("memory-monitor") {
+            @Override
+            public void run() {
+                for (;;) {
+                    try {
+                        log.info("Memory info: totalMemory={}, freeMemory={}", Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory());
+
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        };
+        memoryMonitorThread.setDaemon(true);
+        memoryMonitorThread.start();
+
         String pid = ManagementFactory.getRuntimeMXBean().getName();
         System.out.println(String.format("PID:%s", pid));
 

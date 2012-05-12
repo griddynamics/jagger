@@ -63,7 +63,7 @@ public class TestDetailsReporter extends HibernateDaoSupport implements ReportPr
     @Override
     public JRDataSource getDataSource() {
         @SuppressWarnings("unchecked")
-        List<WorkloadTaskData> tests = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=?",
+        List<WorkloadTaskData> tests = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
 				sessionIdProvider.getSessionId());
 
         List<TestDetailsDTO> result = new ArrayList<TestDetailsDTO>();
@@ -77,8 +77,8 @@ public class TestDetailsReporter extends HibernateDaoSupport implements ReportPr
         return new JRBeanCollectionDataSource(result);
     }
 
-    private static String getTestHumanReadableName(WorkloadTaskData workloadTaskData) {
-        return workloadTaskData.getScenario().getName() + ", " + workloadTaskData.getClock();
+    public static String getTestHumanReadableName(WorkloadTaskData workloadTaskData) {
+        return workloadTaskData.getNumber() + ") " + workloadTaskData.getScenario().getName() + ", " + workloadTaskData.getClock();
     }
 
     @Override

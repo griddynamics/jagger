@@ -25,7 +25,6 @@ import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.FeatureComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
 import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
-import com.griddynamics.jagger.util.Nothing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -71,7 +70,7 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
                     MonitoringSummary baselineSummary = monitoringSummaryRetriever.load(baselineSession, baselineTaskId);
 
                     log.debug("going to compare summaries {} {} ", currentSummary, baselineSummary);
-                    verdicts.addAll(compareSummaries(currentSummary, baselineSummary));
+                    verdicts.addAll(compareSummaries(current.getName(), currentSummary, baselineSummary));
                 }
 
             }
@@ -84,7 +83,7 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
         return verdicts;
     }
 
-    private List<Verdict<MonitoringParameterComparison>> compareSummaries(MonitoringSummary firstSummary, MonitoringSummary secondSummary) {
+    private List<Verdict<MonitoringParameterComparison>> compareSummaries(String taskName, MonitoringSummary firstSummary, MonitoringSummary secondSummary) {
 
         log.debug("Comparing of summaries {} {} requested", firstSummary, secondSummary);
 
@@ -102,7 +101,7 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
                     for (String firstParam : firstSummary.getParams(firstSource)) {
                         boolean paramMatched = false;
 
-                        String description = firstSource + " " + firstParam;
+                        String description = taskName + " " + firstSource + " " + firstParam;
                         for (String secondParam : secondSummary.getParams(secondSource)) {
 
                             if (equal(firstParam, secondParam)) {
@@ -138,14 +137,10 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
     }
 
     private boolean areComparable(PerformedMonitoring current, PerformedMonitoring baseline) {
-
         if (current.getParentId() == null && baseline.getParentId() == null) {
             return true;
         }
-
-        // ignore for now
-        // todo [implement]
-        return false;
+        return current.getName().equals(baseline.getName());
     }
 
     @SuppressWarnings("unchecked")

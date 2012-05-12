@@ -26,18 +26,20 @@ import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.*;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.util.Nothing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 
 public abstract class AbstractDistributor<T extends Task> implements TaskDistributor<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractDistributor.class);
 
     @Override
-    public Service distribute(final Executor executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final T task, final DistributionListener listener) {
+    public Service distribute(final ExecutorService executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final T task, final DistributionListener listener) {
         Set<Qualifier<?>> qualifiers = getQualifiers();
 
         final Map<NodeId, RemoteExecutor> remotes = Maps.newHashMap();
@@ -63,26 +65,27 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
 
             @Override
             public ListenableFuture<State> start() {
-                ListenableFuture<State> start = super.start();
 
-                return Futures.chain(start, new Function<State, ListenableFuture<State>>() {
+                ListenableFuture<Nothing> runListener = Futures.makeListenable(executor.submit(new Callable<Nothing>() {
                     @Override
-                    public ListenableFuture<State> apply(final State input) {
+                    public Nothing call() {
+                        listener.onDistributionStarted(sessionId, taskId, task, remotes.keySet());
+                        return Nothing.INSTANCE;
+                    }
+                }));
 
-                        final SettableFuture<State> result = SettableFuture.create();
-                        executor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    listener.onDistributionStarted(sessionId, taskId, task, remotes.keySet());
-                                } finally {
-                                    result.set(input);
-                                }
-                            }
-                        });
-                        return result;
+
+                return Futures.chain(runListener, new Function<Nothing, ListenableFuture<State>>() {
+                    @Override
+                    public ListenableFuture<State> apply(Nothing input) {
+                        return doStart();
                     }
                 });
+            }
+
+
+            private ListenableFuture<State> doStart() {
+                return super.start();
             }
 
             @Override
@@ -119,5 +122,5 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
 
     protected abstract Set<Qualifier<?>> getQualifiers();
 
-    protected abstract Service performDistribution(Executor executor, String sessionId, String taskId, T task, Map<NodeId, RemoteExecutor> remotes, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator);
+    protected abstract Service performDistribution(ExecutorService executor, String sessionId, String taskId, T task, Map<NodeId, RemoteExecutor> remotes, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator);
 }

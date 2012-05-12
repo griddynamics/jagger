@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTask> {
     private static Logger log = LoggerFactory.getLogger(MonitoringTaskDistributor.class);
@@ -47,7 +47,7 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
     }
 
     @Override
-    protected Service performDistribution(final Executor executor, final String sessionId, final String taskId, final MonitoringTask task,
+    protected Service performDistribution(final ExecutorService executor, final String sessionId, final String taskId, final MonitoringTask task,
                                           final Map<NodeId, RemoteExecutor> remotes, final Multimap<NodeType, NodeId> availableNodes,
                                           final Coordinator coordinator) {
 

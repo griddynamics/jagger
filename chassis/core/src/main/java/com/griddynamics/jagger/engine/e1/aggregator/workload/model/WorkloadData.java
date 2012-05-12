@@ -33,6 +33,7 @@ public class WorkloadData {
 	private String sessionId;
 	private String taskId;
     private String parentId;
+    private Integer number;
 	private WorkloadDetails scenario;
 	private Date startTime;
 	private Date endTime;
@@ -63,7 +64,15 @@ public class WorkloadData {
 		this.sessionId = sessionId;
 	}
 
-	@ManyToOne
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    @ManyToOne
 	public WorkloadDetails getScenario() {
 		return scenario;
 	}

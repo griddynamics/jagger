@@ -50,7 +50,7 @@ public class SessionStatusReporter extends HibernateDaoSupport implements Report
 	@Override
 	public JRDataSource getDataSource() {
 		@SuppressWarnings("unchecked")
-		List<WorkloadTaskData> scenarioData = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=?",
+		List<WorkloadTaskData> scenarioData = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
 				sessionIdProvider.getSessionId());
 
 		SessionStatus result = new SessionStatus();

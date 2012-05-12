@@ -29,29 +29,33 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * User: dkotlyarov
  */
 public class UserTerminateStrategyConfiguration implements TerminateStrategyConfiguration {
-    private final ProcessingConfig.Testing.Test testConfig;
+    private final ProcessingConfig.Test testConfig;
+    private final ProcessingConfig.Test.Task taskConfig;
     private final AtomicBoolean shutdown;
 
-    public UserTerminateStrategyConfiguration(ProcessingConfig.Testing.Test testConfig, AtomicBoolean shutdown) {
+    public UserTerminateStrategyConfiguration(ProcessingConfig.Test testConfig, ProcessingConfig.Test.Task taskConfig, AtomicBoolean shutdown) {
         this.testConfig = testConfig;
+        this.taskConfig = taskConfig;
         this.shutdown = shutdown;
     }
 
     @Override
     public TerminationStrategy getTerminateStrategy() {
-        return new UserTerminationStrategy(testConfig, shutdown);
+        return new UserTerminationStrategy(testConfig, taskConfig, shutdown);
     }
 
     @Override
     public String toString() {
         String result = "";
-        if (testConfig.duration != null) {
-            result += " after " + testConfig.duration + " duration;";
+        if (taskConfig.duration != null) {
+            result += taskConfig.duration;
         }
-        if (testConfig.main.sample != null) {
-            result += " after " + testConfig.main.sample + " samples;";
+        if (taskConfig.sample != null) {
+            if (!result.isEmpty()) {
+                result += "; ";
+            }
+            result += taskConfig.sample + " samples";
         }
-        result += " after all users complete execution";
         return result;
     }
 }

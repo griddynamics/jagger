@@ -81,7 +81,7 @@ public class DefaultMaxTpsCalculator implements MaxTpsCalculator {
         }
 
         if (!isNonIncreasing) {
-            log.debug("Cannot guest max tps. According to stats tps is increasing.");
+            log.debug("Cannot guess max tps. According to stats tps is increasing.");
             return null;
         }
 

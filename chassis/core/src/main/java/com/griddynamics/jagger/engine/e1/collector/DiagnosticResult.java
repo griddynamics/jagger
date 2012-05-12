@@ -20,26 +20,55 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
-import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
-import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
+import java.io.Serializable;
 
-public class DiagnosticCollectorProvider implements KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>> {
-    private MetricCalculator<Object> metricCalculator;
-    
-    private String name;
+public class DiagnosticResult implements Serializable {
+    private final String name;
+    private final int total;
+
+    public static DiagnosticResult create(String name, int total) {
+        return new DiagnosticResult(name, total);
+    }
+
+    private DiagnosticResult(String name, int total) {
+        this.name = name;
+        this.total = total;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getTotal() {
+        return total;
+    }
 
 
     @Override
-    public ScenarioCollector<Object, Object, Object> provide(String sessionId, String taskId, NodeContext kernelContext) {
-        return new DiagnosticCollector<Object, Object, Object>(sessionId, taskId, kernelContext, metricCalculator, name);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DiagnosticResult that = (DiagnosticResult) o;
+
+        if (total != that.total) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+
+        return true;
     }
 
-    public void setMetricCalculator(MetricCalculator<Object> metricCalculator) {
-        this.metricCalculator = metricCalculator;
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + total;
+        return result;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String toString() {
+        return "ValidationResult{" +
+                "name='" + name + '\'' +
+                ", invoked=" + total +
+                '}';
     }
 }

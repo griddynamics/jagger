@@ -18,15 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.griddynamics.jagger.master.configuration;
+package com.griddynamics.jagger.hibernate;
+
+import org.hibernate.dialect.PostgreSQLDialect;
+
+import java.sql.Types;
 
 /**
- * Implementation of this interface presents the task that can be executed by
- * jagger.
- *
- * @author Alexey Kiselyov
+ * User: dkotlyarov
  */
-public interface Task {
-    String getTaskName();
-    int getNumber();
+public class PostgresDialect extends PostgreSQLDialect {
+    public PostgresDialect() {
+        registerColumnType(Types.BLOB, "bytea");
+    }
 }

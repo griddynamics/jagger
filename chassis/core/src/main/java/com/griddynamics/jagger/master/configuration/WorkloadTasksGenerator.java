@@ -44,11 +44,12 @@ public class WorkloadTasksGenerator {
         validate();
 
         List<Task> result = Lists.newLinkedList();
+        int number = 0;
         for (WorkloadClockConfiguration clock : clocks) {
             for (WorkloadTask prototype : prototypes) {
                 for (TerminateStrategyConfiguration termination : terminations) {
-
                     WorkloadTask workloadTask = prototype.copy();
+                    workloadTask.setNumber(++number);
                     workloadTask.setName(workloadTask.getName() + "---" + stringOf(termination));
                     workloadTask.setTerminateStrategyConfiguration(termination);
                     workloadTask.setClockConfiguration(clock);

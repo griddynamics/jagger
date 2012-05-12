@@ -38,27 +38,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UserClock implements WorkloadClock {
     private static final Logger log = LoggerFactory.getLogger(UserClock.class);
 
-    private final ProcessingConfig.Testing.Test config;
+    private final ProcessingConfig.Test.Task config;
     private final Random random;
     private final long startTime = System.currentTimeMillis();
-    private final UserWorkload mainWorkload;
-    private final UserWorkload additionalWorkload;
+    private final UserWorkload workload;
     private final int totalUserCount;
     private final int tickInterval;
     private final AtomicBoolean shutdown;
     private boolean userStarted = false;
 
-    public UserClock(ProcessingConfig.Testing.Test config, int tickInterval, AtomicBoolean shutdown) {
+    public UserClock(ProcessingConfig.Test.Task config, int tickInterval, AtomicBoolean shutdown) {
         this.config = config;
-        this.random = new Random(config.seed);
-        this.mainWorkload = new UserWorkload(true, this, config.main, startTime);
-        this.additionalWorkload = new UserWorkload(false, this, config.additional, startTime);
-        this.totalUserCount = mainWorkload.getTotalUserCount() + additionalWorkload.getTotalUserCount();
+        this.random = new Random(0);
+        this.workload = new UserWorkload(true, this, config, startTime);
+        this.totalUserCount = workload.getTotalUserCount();
         this.tickInterval = tickInterval;
         this.shutdown = shutdown;
     }
 
-    public ProcessingConfig.Testing.Test getConfig() {
+    public ProcessingConfig.Test.Task getConfig() {
         return config;
     }
 
@@ -70,12 +68,8 @@ public class UserClock implements WorkloadClock {
         return startTime;
     }
 
-    public UserWorkload getMainWorkload() {
-        return mainWorkload;
-    }
-
-    public UserWorkload getAdditionalWorkload() {
-        return additionalWorkload;
+    public UserWorkload getWorkload() {
+        return workload;
     }
 
     public int getTotalUserCount() {
@@ -117,8 +111,7 @@ public class UserClock implements WorkloadClock {
 
         long time = System.currentTimeMillis();
 
-        mainWorkload.tick(time, workloadConfigurations);
-        additionalWorkload.tick(time, workloadConfigurations);
+        workload.tick(time, workloadConfigurations);
 
         for (Map.Entry<NodeId, WorkloadConfiguration> workloadConfigurationEntry : workloadConfigurations.entrySet()) {
             NodeId nodeId = workloadConfigurationEntry.getKey();
@@ -129,7 +122,7 @@ public class UserClock implements WorkloadClock {
             }
         }
 
-        if (userStarted && (mainWorkload.getActiveUserCount() == 0)) {
+        if (userStarted && (workload.getActiveUserCount() == 0)) {
             shutdown.set(true);
         }
     }
@@ -146,6 +139,6 @@ public class UserClock implements WorkloadClock {
 
     @Override
     public String toString() {
-        return totalUserCount + " virtual user with " + mainWorkload.getDelay() + " delay";
+        return totalUserCount + " virtual user with " + workload.getDelay() + " delay";
     }
 }

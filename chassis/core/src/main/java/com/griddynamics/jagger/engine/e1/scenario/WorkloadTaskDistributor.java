@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import static com.griddynamics.jagger.util.TimeUtils.sleepMillis;
 
@@ -55,7 +55,7 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
     }
 
     @Override
-    protected Service performDistribution(final Executor executor, final String sessionId, final String taskId, final WorkloadTask task,
+    protected Service performDistribution(final ExecutorService executor, final String sessionId, final String taskId, final WorkloadTask task,
                                           final Map<NodeId, RemoteExecutor> remotes, final Multimap<NodeType, NodeId> availableNodes,
                                           final Coordinator coordinator) {
 

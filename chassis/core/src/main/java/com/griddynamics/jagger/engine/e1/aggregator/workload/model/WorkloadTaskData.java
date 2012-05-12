@@ -29,6 +29,7 @@ public class WorkloadTaskData {
 	private Long id;
 	private String sessionId;
 	private String taskId;
+    private Integer number;
 	private WorkloadDetails scenario;
     private Integer samples;
     private String clock;
@@ -68,7 +69,15 @@ public class WorkloadTaskData {
 		this.sessionId = sessionId;
 	}
 
-	@ManyToOne
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    @ManyToOne
 	public WorkloadDetails getScenario() {
 		return scenario;
 	}

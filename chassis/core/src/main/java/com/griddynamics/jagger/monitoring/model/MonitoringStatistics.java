@@ -23,6 +23,7 @@ package com.griddynamics.jagger.monitoring.model;
 import com.google.common.base.Objects;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.monitoring.MonitoringParameterBean;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.*;
 
@@ -34,18 +35,23 @@ public class MonitoringStatistics {
     private Long id;
 
     @Column(name = "boxIdentifier")
+    @Index(name="boxIdentifier_index")
     private String boxIdentifier;
 
     @Column(name = "systemUnderTestUrl")
+    @Index(name="systemUnderTestUrl_index")
     private String systemUnderTestUrl;
 
     @Column(name = "sessionId")
+    @Index(name="sessionId_index")
     private String sessionId;
 
     @Column(name = "time")
+    @Index(name="time_index")
     private long time;
 
     @Column(name = "averageValue")
+    @Index(name="averageValue_index")
     private Double averageValue;
 
     @ManyToOne

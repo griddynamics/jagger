@@ -24,6 +24,7 @@ import com.griddynamics.jagger.reporting.chart.ChartHelper;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -38,13 +39,13 @@ public class LatencyPlotReportProvider implements ReportProvider {
     private ReportingContext context;
 
     public class PlotDTO {
-        private Image image;
+        private JCommonDrawableRenderer image;
 
-        public Image getImage() {
+        public JCommonDrawableRenderer getImage() {
             return image;
         }
 
-        public void setImage(Image image) {
+        public void setImage(JCommonDrawableRenderer image) {
             this.image = image;
         }
     }
@@ -55,10 +56,9 @@ public class LatencyPlotReportProvider implements ReportProvider {
 
         for (int i = 0; i < 5; i++) {
             JFreeChart chart = createChart("Node [" + i + "]");
-            BufferedImage bi = ChartHelper.extractImage(chart, 1200, 600);
 
             PlotDTO dto = new PlotDTO();
-            dto.setImage(bi);
+            dto.setImage(new JCommonDrawableRenderer(chart));
             plots.add(dto);
         }
 

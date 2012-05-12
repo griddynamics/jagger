@@ -68,8 +68,7 @@
         <property name="autoDiscovery" value="true"/>
         <property name="extensions">
             <map>
-
-                <!--entry key="sessionComparison">
+                <entry key="sessionComparison">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter">
                         <property name="context" ref="reportingContext"/>
                         <property name="sessionFactory" ref="sessionFactory"/>
@@ -80,7 +79,7 @@
                         <property name="statusImageProvider" ref="statusImageProvider"/>
                         <property name="sessionComparator" ref="sessionComparator"/>
                     </bean>
-                </entry-->
+                </entry>
 
                 <entry key="sessionSummary">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionSummaryReporter">
@@ -120,6 +119,15 @@
                         <property name="sessionFactory" ref="sessionFactory"/>
                         <property name="sessionIdProvider" ref="sessionIdProvider"/>
                         <property name="template" value="configuration/reporting/scalability-plots.jrxml"/>
+                    </bean>
+                </entry>
+
+                <entry key="testGeneralContainer">
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.TestGeneralReporter">
+                        <property name="context" ref="reportingContext"/>
+                        <property name="sessionFactory" ref="sessionFactory"/>
+                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                        <property name="template" value="configuration/reporting/test-general-container.jrxml"/>
                     </bean>
                 </entry>
 
@@ -194,6 +202,26 @@
                     </bean>
                 </entry>
 
+                <entry key="sysUTPlotsGeneral">
+                    <bean class="com.griddynamics.jagger.monitoring.reporting.SystemUnderTestPlotsGeneralProvider">
+                        <property name="context" ref="reportingContext"/>
+                        <property name="enable" value="${chassis.conditions.monitoring.enable}"/>
+                        <property name="sessionFactory" ref="sessionFactory"/>
+                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                        <property name="template" value="configuration/reporting/monitoring-general-reporting.jrxml"/>
+
+                        <property name="showPlotsByGlobal"
+                                  value="${chassis.monitoring.reporting.show.plots.for.each.global}"/>
+                        <property name="showPlotsByBox"
+                                  value="${chassis.monitoring.reporting.show.plots.for.each.box}"/>
+                        <property name="showPlotsBySuT"
+                                  value="${chassis.monitoring.reporting.show.plots.for.each.sut}"/>
+                        <property name="showNumbers"
+                                  value="${chassis.monitoring.reporting.show.plots.show.numbers}"/>
+                        <property name="plotGroups" ref="monitoringPlotGroups"/>
+                    </bean>
+                </entry>
+
                 <entry key="sysUTPlots">
                     <bean class="com.griddynamics.jagger.monitoring.reporting.SystemUnderTestPlotsProvider">
                         <property name="context" ref="reportingContext"/>
@@ -202,6 +230,10 @@
                         <property name="sessionIdProvider" ref="sessionIdProvider"/>
                         <property name="template" value="configuration/reporting/monitoring-reporting.jrxml"/>
 
+                        <property name="showPlotsByGlobal"
+                                  value="${chassis.monitoring.reporting.show.plots.for.each.global}"/>
+                        <property name="showPlotsByBox"
+                                  value="${chassis.monitoring.reporting.show.plots.for.each.box}"/>
                         <property name="showPlotsBySuT"
                                   value="${chassis.monitoring.reporting.show.plots.for.each.sut}"/>
                         <property name="plotGroups" ref="monitoringPlotGroups"/>

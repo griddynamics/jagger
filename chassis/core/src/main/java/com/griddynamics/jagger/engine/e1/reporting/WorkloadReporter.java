@@ -53,11 +53,11 @@ public class WorkloadReporter extends HibernateDaoSupport implements ReportProvi
 	@Override
 	public JRDataSource getDataSource() {
 		@SuppressWarnings("unchecked")
-		List<WorkloadData> testData = getHibernateTemplate().find("from WorkloadData d where d.sessionId=?",
+		List<WorkloadData> testData = getHibernateTemplate().find("from WorkloadData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
 				sessionIdProvider.getSessionId());
 
 		@SuppressWarnings("unchecked")
-		List<WorkloadTaskData> allWorkloadTasks = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=?",
+		List<WorkloadTaskData> allWorkloadTasks = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
 				sessionIdProvider.getSessionId());
 
         @SuppressWarnings({"unchecked"}) List<WorkloadProcessDescriptiveStatistics> statistics = getHibernateTemplate().find(
@@ -78,6 +78,7 @@ public class WorkloadReporter extends HibernateDaoSupport implements ReportProvi
 			E1ScenarioReportData reportData = new E1ScenarioReportData();
 			reportData.setSessionId(workloadData.getSessionId());
             reportData.setTestId(workloadData.getTaskId());
+            reportData.setNumber(workloadData.getNumber().toString());
 			reportData.setScenarioName(workloadData.getScenario().getName());
 			reportData.setVersion(workloadData.getScenario().getVersion());
 			BigDecimal duration = new BigDecimal(workloadData.getEndTime().getTime()
@@ -163,6 +164,7 @@ public class WorkloadReporter extends HibernateDaoSupport implements ReportProvi
     public static class E1ScenarioReportData {
 		private String sessionId;
         private String testId;
+        private String number;
 		private String scenarioName;
 		private String version;
 		private String clock;
@@ -193,6 +195,14 @@ public class WorkloadReporter extends HibernateDaoSupport implements ReportProvi
 
         public void setTestId(String testId) {
             this.testId = testId;
+        }
+
+        public String getNumber() {
+            return number;
+        }
+
+        public void setNumber(String number) {
+            this.number = number;
         }
 
         public String getScenarioName() {

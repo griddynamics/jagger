@@ -260,5 +260,7 @@
         </property>
     </bean>
 
-    <bean id="userTaskGenerator" class="com.griddynamics.jagger.master.configuration.UserTaskGenerator"/>
+    <bean id="userTaskGenerator" class="com.griddynamics.jagger.master.configuration.UserTaskGenerator">
+        <property name="monitoringEnable" value="${chassis.conditions.monitoring.enable}"/>
+    </bean>
 </beans>

@@ -32,6 +32,7 @@
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="testId" class="java.lang.String"/>
     <field name="sessionId" class="java.lang.String"/>
+    <field name="number" class="java.lang.String"/>
     <field name="scenarioName" class="java.lang.String"/>
     <field name="version" class="java.lang.String"/>
     <field name="clock" class="java.lang.String"/>
@@ -63,7 +64,13 @@
     <columnHeader>
         <band height="35" splitType="Stretch">
             <staticText>
-                <reportElement style="Compact_Header_Bold" mode="Opaque" x="0" y="0" width="150" height="30"
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="0" y="0" width="30" height="30"
+                               forecolor="#000000" backcolor="#D7FFB0"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Number]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="30" y="0" width="120" height="30"
                                forecolor="#000000" backcolor="#D7FFB0"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <text><![CDATA[Scenario Name]]></text>
@@ -97,8 +104,13 @@
     <detail>
         <band height="96" splitType="Stretch">
             <textField isStretchWithOverflow="true">
-                <reportElement style="Compact_Header_Bold" x="0" y="0" width="150" height="10"/>
-                <textElement textAlignment="Left"/>
+                <reportElement style="Compact_Header_Bold" x="0" y="0" width="30" height="10"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{number}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement style="Compact_Header_Bold" x="30" y="0" width="120" height="10"/>
+                <textElement textAlignment="Center"/>
                 <textFieldExpression><![CDATA[$F{scenarioName}]]></textFieldExpression>
             </textField>
             <image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
@@ -203,6 +215,16 @@
                 <textElement textAlignment="Left"/>
                 <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{successRate}]]></textFieldExpression>
             </textField>
+
+            <subreport>
+                <reportElement positionType="Float" x="340" y="80" width="110" height="10"/>
+                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <dataSourceExpression>
+                    <![CDATA[$P{context}.getMappedProvider("diagnosticResults").getDataSource( $F{testId} )]]></dataSourceExpression>
+                <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                    <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("diagnosticResults").getReport( $F{testId} )]]></subreportExpression>
+            </subreport>
+
             <subreport>
                 <reportElement positionType="Float" x="235" y="0" width="100" height="90"/>
                 <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
@@ -212,7 +234,7 @@
                     <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("workloadProcessDetails").getReport( $F{testId} )]]></subreportExpression>
             </subreport>
             <rectangle>
-                <reportElement x="0" y="92" width="550" height="2" backcolor="#777777"/>
+                <reportElement positionType="Float" x="0" y="92" width="550" height="2" backcolor="#777777"/>
                 <graphicElement>
                     <pen lineWidth="0.0" lineStyle="Solid"/>
                 </graphicElement>

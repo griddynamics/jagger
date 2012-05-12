@@ -34,6 +34,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -69,6 +71,7 @@ public class AgentStarter {
         if (Objects.equal(name, RANDOM_IDENTIFIER)) {
             name = generateAgentName();
         }
+        name += " [" + getLocalHostAddress() + "]";
 
         Agent agent = (Agent) context.getBean("agent");
 
@@ -127,5 +130,13 @@ public class AgentStarter {
         alive.set(true);
         agent.stop();
         agentLatch.countDown();
+    }
+
+    private static String getLocalHostAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

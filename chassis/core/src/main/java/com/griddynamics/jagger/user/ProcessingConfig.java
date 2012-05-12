@@ -36,196 +36,91 @@ import java.util.List;
  */
 @Root(name = "processing")
 public class ProcessingConfig implements Serializable {
-    @Element(name = "monitoring")
-    public final Monitoring monitoring;
+    @ElementList(name = "tests", entry = "test", inline = true)
+    public final List<Test> tests;
 
-    @Element(name = "testing")
-    public final Testing testing;
-
-    @Element(name = "reporting")
-    public final Reporting reporting;
-
-    public ProcessingConfig(@Element(name = "monitoring") Monitoring monitoring,
-                            @Element(name = "testing") Testing testing,
-                            @Element(name = "reporting") Reporting reporting) {
-        this.monitoring = monitoring;
-        this.testing = testing;
-        this.reporting = reporting;
+    public ProcessingConfig(@ElementList(name = "tests", entry = "test", inline = true) List<Test> tests) {
+        this.tests = Collections.unmodifiableList(tests);
     }
 
-    public static class Monitoring implements Serializable {
-        @Attribute(name = "enabled")
-        public final boolean enabled;
+    public static class Test implements Serializable {
+        @Attribute(name = "name")
+        public final String name;
 
-        @Attribute(name = "diskFree")
-        public final long diskFree;
+        @Attribute(name = "duration", required = false)
+        public final String duration;
 
-        public Monitoring(@Attribute(name = "enabled") boolean enabled,
-                          @Attribute(name = "diskFree") long diskFree) {
-            this.enabled = enabled;
-            this.diskFree = diskFree;
-        }
-    }
+        @ElementList(name = "tasks", entry = "task", inline = true, required = false)
+        public final List<Task> tasks;
 
-    public static class Testing implements Serializable {
-        @Attribute(name = "enabled")
-        public final boolean enabled;
-
-        @ElementList(name = "tests", entry = "test", inline = true)
-        public final List<Test> tests;
-
-        public Testing(@Attribute(name = "enabled") boolean enabled,
-                       @ElementList(name = "tests", entry = "test", inline = true) List<Test> tests) {
-            this.enabled = enabled;
-            this.tests = Collections.unmodifiableList(tests);
+        public Test(@Attribute(name = "name") String name,
+                    @Attribute(name = "duration", required = false) String duration,
+                    @ElementList(name = "tasks", entry = "task", inline = true, required = false) List<Task> tasks) {
+            this.name = name;
+            this.duration = duration;
+            this.tasks = Collections.unmodifiableList((tasks != null) ? tasks : new ArrayList<Task>(0));
         }
 
-        public static class Test implements Serializable {
+        public static class Task implements Serializable {
             @Attribute(name = "name")
             public final String name;
 
             @Attribute(name = "duration", required = false)
             public final String duration;
 
-            @Attribute(name = "seed", required = false)
-            public final long seed;
+            @Attribute(name = "sample", required = false)
+            public final String sample;
 
-            @Element(name = "main")
-            public final Workload main;
+            @Attribute(name = "delay")
+            public final String delay;
 
-            @Element(name = "additional")
-            public final Workload additional;
+            @Attribute(name = "bean")
+            public final String bean;
 
-            public Test(@Attribute(name = "name") String name,
+            @ElementList(name = "users", entry = "user", inline = true, required = false)
+            public final List<User> users;
+
+            public Task(@Attribute(name = "name") String name,
                         @Attribute(name = "duration", required = false) String duration,
-                        @Attribute(name = "seed", required = false) long seed,
-                        @Element(name = "main") Workload main,
-                        @Element(name = "additional") Workload additional) {
+                        @Attribute(name = "sample", required = false) String sample,
+                        @Attribute(name = "delay") String delay,
+                        @Attribute(name = "bean") String bean,
+                        @ElementList(name = "users", entry = "user", inline = true, required = false) List<User> users) {
                 this.name = name;
                 this.duration = duration;
-                this.seed = seed;
-                this.main = main;
-                this.additional = additional;
+                this.sample = sample;
+                this.delay = delay;
+                this.bean = bean;
+                this.users = Collections.unmodifiableList((users != null) ? users : new ArrayList<User>(0));
             }
 
-            public static class Workload implements Serializable {
-                @Attribute(name = "sample", required = false)
-                public final String sample;
+            public static class User implements Serializable {
+                @Attribute(name = "count")
+                public final String count;
 
-                @Attribute(name = "delay")
-                public final String delay;
+                @Attribute(name = "startCount")
+                public final String startCount;
 
-                @Attribute(name = "task")
-                public final String task;
+                @Attribute(name = "startIn")
+                public final String startIn;
 
-                @ElementList(name = "userGroups", entry = "userGroup", inline = true, required = false)
-                public final List<UserGroup> userGroups;
+                @Attribute(name = "startBy")
+                public final String startBy;
 
-                public Workload(@Attribute(name = "sample", required = false) String sample,
-                                @Attribute(name = "delay") String delay,
-                                @Attribute(name = "task") String task,
-                                @ElementList(name = "userGroups", entry = "userGroup", inline = true, required = false) List<UserGroup> userGroups) {
-                    this.sample = sample;
-                    this.delay = delay;
-                    this.task = task;
-                    this.userGroups = Collections.unmodifiableList((userGroups != null) ? userGroups : new ArrayList<UserGroup>(0));
+                @Attribute(name = "life")
+                public final String life;
+
+                public User(@Attribute(name = "count") String count,
+                            @Attribute(name = "startCount") String startCount,
+                            @Attribute(name = "startIn") String startIn,
+                            @Attribute(name = "startBy") String startBy,
+                            @Attribute(name = "life") String life) {
+                    this.count = count;
+                    this.startCount = startCount;
+                    this.startIn = startIn;
+                    this.startBy = startBy;
+                    this.life = life;
                 }
-
-                public static class UserGroup implements Serializable {
-                    @Attribute(name = "count")
-                    public final String count;
-
-                    @Attribute(name = "startCount")
-                    public final String startCount;
-
-                    @Attribute(name = "startIn")
-                    public final String startIn;
-
-                    @Attribute(name = "startBy")
-                    public final String startBy;
-
-                    @Attribute(name = "life")
-                    public final String life;
-
-                    public UserGroup(@Attribute(name = "count") String count,
-                                     @Attribute(name = "startCount") String startCount,
-                                     @Attribute(name = "startIn") String startIn,
-                                     @Attribute(name = "startBy") String startBy,
-                                     @Attribute(name = "life") String life) {
-                        this.count = count;
-                        this.startCount = startCount;
-                        this.startIn = startIn;
-                        this.startBy = startBy;
-                        this.life = life;
-                    }
-                }
-            }
-        }
-    }
-
-    public static class Reporting implements Serializable {
-        @Attribute(name = "enabled")
-        public final boolean enabled;
-
-        @Attribute(name = "format")
-        public final ReportingService.ReportType format;
-
-        @Attribute(name = "file")
-        public final String file;
-
-        @Element(name = "task")
-        public final Task task;
-
-        @Element(name = "comparison")
-        public final Comparison comparison;
-
-        public Reporting(@Attribute(name = "enabled") boolean enabled,
-                         @Attribute(name = "format") ReportingService.ReportType format,
-                         @Attribute(name = "file") String file,
-                         @Element(name = "task") Task task,
-                         @Element(name = "comparison") Comparison comparison) {
-            this.enabled = enabled;
-            this.format = format;
-            this.file = file;
-            this.task = task;
-            this.comparison = comparison;
-        }
-
-        public static class Task implements Serializable {
-            @Attribute(name = "point")
-            public final int point;
-
-            @Attribute(name = "monitoringPoint")
-            public final int monitoringPoint;
-
-            public Task(@Attribute(name = "point") int point,
-                        @Attribute(name = "monitoringPoint") int monitoringPoint) {
-                this.point = point;
-                this.monitoringPoint = monitoringPoint;
-            }
-        }
-
-        public static class Comparison implements Serializable {
-            @Attribute(name = "enabled")
-            public final boolean enabled;
-
-            @Attribute(name = "baseline")
-            public final String baseline;
-
-            @Attribute(name = "warningThreshold")
-            public final double warningThreshold;
-
-            @Attribute(name = "fatalThreshold")
-            public final double fatalThreshold;
-
-            public Comparison(@Attribute(name = "enabled") boolean enabled,
-                              @Attribute(name = "baseline") String baseline,
-                              @Attribute(name = "warningThreshold") double warningThreshold,
-                              @Attribute(name = "fatalThreshold") double fatalThreshold) {
-                this.enabled = enabled;
-                this.baseline = baseline;
-                this.warningThreshold = warningThreshold;
-                this.fatalThreshold = fatalThreshold;
             }
         }
     }

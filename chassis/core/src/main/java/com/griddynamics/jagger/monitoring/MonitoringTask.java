@@ -23,6 +23,7 @@ import com.griddynamics.jagger.master.CompositableTask;
 import org.springframework.beans.factory.annotation.Required;
 
 public class MonitoringTask implements CompositableTask {
+    private int number;
     private String name;
     private String parentTaskId;
     private MonitoringTerminationStrategyConfiguration terminationStrategy;
@@ -30,7 +31,8 @@ public class MonitoringTask implements CompositableTask {
     public MonitoringTask() {
     }
 
-    public MonitoringTask(String name, String parentTaskId, MonitoringTerminationStrategyConfiguration terminationStrategy) {
+    public MonitoringTask(int number, String name, String parentTaskId, MonitoringTerminationStrategyConfiguration terminationStrategy) {
+        this.number = number;
         this.name = name;
         this.parentTaskId = parentTaskId;
         this.terminationStrategy = terminationStrategy;
@@ -50,6 +52,15 @@ public class MonitoringTask implements CompositableTask {
     @Override
     public String getTaskName() {
         return name;
+    }
+
+    @Override
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public void setName(String name) {

@@ -59,7 +59,7 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
     }
 
     @Override
-    public Service distribute(final Executor executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final CompositeTask task, final DistributionListener listener) {
+    public Service distribute(final ExecutorService executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final CompositeTask task, final DistributionListener listener) {
         log.debug("Composite task {} with id {} distribute configuration started", task, taskId);
 
         Function<CompositableTask, Service> convertToRunnable = new Function<CompositableTask, Service>() {

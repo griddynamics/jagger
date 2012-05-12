@@ -25,6 +25,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,22 +50,6 @@ import org.jfree.data.xy.*;
 
 public class ChartHelper {
     public enum ColorTheme {LIGHT, DARK}
-
-    public static BufferedImage extractImage(JFreeChart chart, int width, int height) {
-        LegendTitle legend = chart.getLegend();
-        Font legendFont = legend.getItemFont();
-        float legendFontSize = legendFont.getSize();
-        Font newLegendFont = legendFont.deriveFont(legendFontSize * 1.6f);
-        legend.setItemFont(newLegendFont);
-
-        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-        Graphics2D g2 = img.createGraphics();
-        chart.draw(g2, new Rectangle2D.Double(0, 0, width, height));
-
-        g2.dispose();
-        return img;
-    }
 
     public static JFreeChart createTimeSeriesChart(String title, List<TimeSeriesChartSpecification> specifications, String xLabel, String yLabel, ColorTheme theme) {
 
@@ -113,6 +98,30 @@ public class ChartHelper {
             ((XYLineAndShapeRenderer) plot.getRenderer()).setSeriesShapesFilled(i, true);
             plot.getRenderer().setSeriesPaint(i, colors[i]);
         }
+
+        LegendTitle legend = chart.getLegend();
+        Font legendFont = legend.getItemFont();
+        float legendFontSize = legendFont.getSize();
+        Font newLegendFont = legendFont.deriveFont(legendFontSize * 0.6f);
+        legend.setItemFont(newLegendFont);
+
+        ValueAxis domainAxis = ((XYPlot) chart.getPlot()).getDomainAxis();
+        Font domainAxisLabelFont = domainAxis.getLabelFont();
+        float domainAxisLabelFontSize = domainAxisLabelFont.getSize();
+        domainAxis.setLabelFont(domainAxisLabelFont.deriveFont(domainAxisLabelFontSize * 0.6f));
+
+        Font domainAxisTickLabelFont = domainAxis.getTickLabelFont();
+        float domainAxisTickLabelFontSize = domainAxisTickLabelFont.getSize();
+        domainAxis.setTickLabelFont(domainAxisTickLabelFont.deriveFont(domainAxisTickLabelFontSize * 0.6f));
+
+        ValueAxis rangeAxis = ((XYPlot) chart.getPlot()).getRangeAxis();
+        Font rangeAxisLabelFont = rangeAxis.getLabelFont();
+        float rangeAxisLabelFontSize = rangeAxisLabelFont.getSize();
+        rangeAxis.setLabelFont(rangeAxisLabelFont.deriveFont(rangeAxisLabelFontSize * 0.6f));
+
+        Font rangeAxisTickLabelFont = rangeAxis.getTickLabelFont();
+        float rangeAxisTickLabelFontSize = rangeAxisTickLabelFont.getSize();
+        rangeAxis.setTickLabelFont(rangeAxisTickLabelFont.deriveFont(rangeAxisTickLabelFontSize * 0.6f));
 
         return chart;
     }
@@ -203,7 +212,7 @@ public class ChartHelper {
         return chart;
     }
 
-    public static Pair<String, XYSeriesCollection> adjustTime(XYSeriesCollection chartsCollection) {
+    public static Pair<String, XYSeriesCollection> adjustTime(XYSeriesCollection chartsCollection, Collection<IntervalMarker> markers) {
         int maxTime = 0;
         for (int i = 0; i < chartsCollection.getSeriesCount(); i++) {
             XYSeries series = chartsCollection.getSeries(i);
@@ -243,6 +252,12 @@ public class ChartHelper {
             result.addSeries(series);
         }
 
+        if (markers != null) {
+            for (IntervalMarker marker : markers) {
+                marker.setStartValue(marker.getStartValue() / div);
+                marker.setEndValue(marker.getEndValue() / div);
+            }
+        }
 
         return Pair.of(type, result);
     }

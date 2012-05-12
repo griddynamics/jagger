@@ -31,6 +31,7 @@ import com.griddynamics.jagger.util.Pair;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -50,16 +51,17 @@ import java.util.List;
 public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvider implements MappedReportProvider<String> {
     private Logger log = LoggerFactory.getLogger(SystemUnderTestPlotsProvider.class);
 
-    private static final int PLOT_HEIGHT = 400;
-    private static final int PLOT_WIDTH = 1200;
-
     private Map<GroupKey, MonitoringParameter[]> plotGroups;
+    private boolean showPlotsByGlobal;
+    private boolean showPlotsByBox;
     private boolean showPlotsBySuT;
 
     private ReportingContext context;
     private String template;
     private boolean enable;
     private Map<String, List<MonitoringReporterData>> taskPlots;
+
+    private DetailStatistics statistics = null;
 
     @Override
     public void clearCache() {
@@ -100,83 +102,135 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
     }
 
     public Map<String, List<MonitoringReporterData>> createTaskPlots() {
-        Map<String, List<MonitoringReporterData>> taskPlots = Maps.newHashMap();
-        final String sessionId = getSessionIdProvider().getSessionId();
+        log.info("BEGIN: Create task plots");
 
-        Table<String, MonitoringParameter, List<MonitoringStatistics>> aggregatedByTasks = aggregateGlobalTaskStatistics(sessionId);
+        Map<String, List<MonitoringReporterData>> taskPlots = new LinkedHashMap<String, List<MonitoringReporterData>>();
+        DetailStatistics detailStatistics = getStatistics();
 
-        Table<String, String, Map<MonitoringParameter, List<MonitoringStatistics>>> aggregatedBySuT = null;
-        if (showPlotsBySuT) {
-            aggregatedBySuT = aggregateTaskStatisticsBySuT(sessionId);
-        }
+        for (String taskId : detailStatistics.findTaskIds()) {
+            log.info("    Create task plots for task '{}'", taskId);
 
-        for (String taskId : aggregatedByTasks.rowKeySet()) {
-
-            List<MonitoringReporterData> plots = Lists.newLinkedList();
+            List<MonitoringReporterData> plots = new LinkedList<MonitoringReporterData>();
             for (GroupKey groupName : plotGroups.keySet()) {
-                XYSeriesCollection chartsCollection = new XYSeriesCollection();
-                for (MonitoringParameter parameterId : plotGroups.get(groupName)) {
-                    MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
-                    if (aggregatedByTasks.containsColumn(param)) {
-                        XYSeries values = new XYSeries(param.getDescription());
-                        for (MonitoringStatistics monitoringStatistics : aggregatedByTasks.get(taskId, param)) {
-                            values.add(monitoringStatistics.getTime(), monitoringStatistics.getAverageValue());
+                log.info("        Create task plots for group '{}'", groupName);
+
+                if (showPlotsByGlobal) {
+                    log.info("            Create global task plots");
+
+                    XYSeriesCollection chartsCollection = new XYSeriesCollection();
+                    for (MonitoringParameter parameterId : plotGroups.get(groupName)) {
+                        log.info("                Create global task plots for parameter '{}'", parameterId);
+
+                        MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
+                        List<MonitoringStatistics> statistics = detailStatistics.findGlobalStatistics(taskId, param);
+                        if (!statistics.isEmpty()) {
+                            XYSeries values = new XYSeries(param.getDescription());
+                            for (MonitoringStatistics monitoringStatistics : statistics) {
+                                values.add(monitoringStatistics.getTime(), monitoringStatistics.getAverageValue());
+                            }
+                            if (values.isEmpty()) {
+                                values.add(0, 0);
+                            }
+                            chartsCollection.addSeries(values);
                         }
-                        if (values.isEmpty()) values.add(0, 0);
-                        chartsCollection.addSeries(values);
+                    }
+
+                    log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.get(groupName)));
+
+                    Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(chartsCollection, null);
+
+                    chartsCollection = pair.getSecond();
+
+                    if (chartsCollection.getSeriesCount() > 0) {
+                        JFreeChart chart = ChartHelper.createXYChart(null, chartsCollection, "Time (" + pair.getFirst() + ")",
+                                groupName.getLeftName(), 3, 2, ChartHelper.ColorTheme.LIGHT);
+                        MonitoringReporterData monitoringReporterData = new MonitoringReporterData();
+                        monitoringReporterData.setParameterName(groupName.getUpperName());
+                        monitoringReporterData.setTitle(groupName.getUpperName());
+                        monitoringReporterData.setPlot(new JCommonDrawableRenderer(chart));
+                        plots.add(monitoringReporterData);
                     }
                 }
 
-                log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.get(groupName)));
+                if (showPlotsByBox) {
+                    log.info("            Create box task plots");
 
-                Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(chartsCollection);
+                    for (String boxIdentifier : detailStatistics.findBoxIdentifiers(taskId)) {
+                        log.info("                Create box task plots for box '{}'", boxIdentifier);
 
-                chartsCollection = pair.getSecond();
-
-                if (chartsCollection.getSeriesCount() > 0) {
-                    JFreeChart chart = ChartHelper.createXYChart(null, chartsCollection, "Time (" + pair.getFirst() + ")",
-                            groupName.getLeftName(), 3, 2, ChartHelper.ColorTheme.LIGHT);
-                    BufferedImage imageValues = ChartHelper.extractImage(chart, PLOT_WIDTH, PLOT_HEIGHT);
-
-                    MonitoringReporterData monitoringReporterData = new MonitoringReporterData();
-                    monitoringReporterData.setParameterName(groupName.getUpperName());
-                    monitoringReporterData.setTitle(groupName.getUpperName());
-                    monitoringReporterData.setPlot(imageValues);
-                    plots.add(monitoringReporterData);
-                }
-            }
-
-            if (aggregatedBySuT != null) {
-                Map<String, Map<MonitoringParameter, List<MonitoringStatistics>>> task = aggregatedBySuT.row(taskId);
-                for (String sysUnderTestUrl : task.keySet()) {
-                    for (GroupKey groupName : plotGroups.keySet()) {
                         XYSeriesCollection chartsCollection = new XYSeriesCollection();
                         for (MonitoringParameter parameterId : plotGroups.get(groupName)) {
+                            log.info("                    Create box task plots for parameter '{}'", parameterId);
+
                             MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
-                            if (task.get(sysUnderTestUrl).containsKey(param)) {
+                            List<MonitoringStatistics> statistics = detailStatistics.findBoxStatistics(taskId, param, boxIdentifier);
+                            if (!statistics.isEmpty()) {
                                 XYSeries values = new XYSeries(param.getDescription());
-                                for (MonitoringStatistics monitoringStatisticsBySuT : task.get(sysUnderTestUrl).get(param)) {
-                                    values.add(monitoringStatisticsBySuT.getTime(), monitoringStatisticsBySuT.getAverageValue());
+                                for (MonitoringStatistics monitoringStatistics : statistics) {
+                                    values.add(monitoringStatistics.getTime(), monitoringStatistics.getAverageValue());
                                 }
-                                if (values.isEmpty()) values.add(0, 0);
+                                if (values.isEmpty()) {
+                                    values.add(0, 0);
+                                }
                                 chartsCollection.addSeries(values);
                             }
                         }
 
-                        Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(chartsCollection);
+                        log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.get(groupName)));
+
+                        Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(chartsCollection, null);
 
                         chartsCollection = pair.getSecond();
 
-
                         if (chartsCollection.getSeriesCount() > 0) {
-                            JFreeChart chart = ChartHelper.createXYChart(null,
-                                    chartsCollection, "Time (" + pair.getFirst() + ")", groupName.getLeftName(), 3, 2, ChartHelper.ColorTheme.LIGHT);
-                            BufferedImage imageValues = ChartHelper.extractImage(chart, PLOT_WIDTH, PLOT_HEIGHT);
-
+                            JFreeChart chart = ChartHelper.createXYChart(null, chartsCollection, "Time (" + pair.getFirst() + ")",
+                                    groupName.getLeftName(), 3, 2, ChartHelper.ColorTheme.LIGHT);
                             MonitoringReporterData monitoringReporterData = new MonitoringReporterData();
                             monitoringReporterData.setParameterName(groupName.getUpperName());
-                            monitoringReporterData.setTitle(groupName.getUpperName() + " on " + sysUnderTestUrl);
-                            monitoringReporterData.setPlot(imageValues);
+                            monitoringReporterData.setTitle(groupName.getUpperName() + " on " + boxIdentifier);
+                            monitoringReporterData.setPlot(new JCommonDrawableRenderer(chart));
+                            plots.add(monitoringReporterData);
+                        }
+                    }
+                }
+
+                if (showPlotsBySuT) {
+                    log.info("            Create sut task plots");
+
+                    for (String sutUrl : detailStatistics.findSutUrls(taskId)) {
+                        log.info("                Create sut task plots for sut '{}'", sutUrl);
+
+                        XYSeriesCollection chartsCollection = new XYSeriesCollection();
+                        for (MonitoringParameter parameterId : plotGroups.get(groupName)) {
+                            log.info("                    Create sut task plots for parameter '{}'", parameterId);
+
+                            MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
+                            List<MonitoringStatistics> statistics = detailStatistics.findSutStatistics(taskId, param, sutUrl);
+                            if (!statistics.isEmpty()) {
+                                XYSeries values = new XYSeries(param.getDescription());
+                                for (MonitoringStatistics monitoringStatistics : statistics) {
+                                    values.add(monitoringStatistics.getTime(), monitoringStatistics.getAverageValue());
+                                }
+                                if (values.isEmpty()) {
+                                    values.add(0, 0);
+                                }
+                                chartsCollection.addSeries(values);
+                            }
+                        }
+
+                        log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.get(groupName)));
+
+                        Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(chartsCollection, null);
+
+                        chartsCollection = pair.getSecond();
+
+                        if (chartsCollection.getSeriesCount() > 0) {
+                            JFreeChart chart = ChartHelper.createXYChart(null, chartsCollection, "Time (" + pair.getFirst() + ")",
+                                    groupName.getLeftName(), 3, 2, ChartHelper.ColorTheme.LIGHT);
+                            MonitoringReporterData monitoringReporterData = new MonitoringReporterData();
+                            monitoringReporterData.setParameterName(groupName.getUpperName());
+                            monitoringReporterData.setTitle(groupName.getUpperName() + " on " + sutUrl);
+                            monitoringReporterData.setPlot(new JCommonDrawableRenderer(chart));
                             plots.add(monitoringReporterData);
                         }
                     }
@@ -185,75 +239,33 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
 
             taskPlots.put(taskId, plots);
         }
+
+        clearStatistics();
+
+        log.info("END: Create task plots");
+
         return taskPlots;
     }
 
-    private Table<String, MonitoringParameter, List<MonitoringStatistics>> aggregateGlobalTaskStatistics(String sessionId) {
+    public DetailStatistics getStatistics() {
+        if (statistics == null) {
+            String sessionId = getSessionIdProvider().getSessionId();
 
-        Table<String, MonitoringParameter, List<MonitoringStatistics>> aggregatedByTasks = HashBasedTable.create();
+            @SuppressWarnings("unchecked")
+            List<MonitoringStatistics> st = getHibernateTemplate().find(
+                    "select new MonitoringStatistics(" +
+                            "ms.boxIdentifier, ms.systemUnderTestUrl, ms.sessionId, ms.taskData, ms.time, ms.parameterId, ms.averageValue" +
+                            ") " +
+                            "from MonitoringStatistics ms where ms.sessionId=? " +
+                            "order by ms.taskData.number asc, ms.time asc", sessionId);
 
-        @SuppressWarnings("unchecked")
-        List<MonitoringStatistics> resultsByAgent = getHibernateTemplate().find(
-                "select new MonitoringStatistics(" +
-                        "'AVG', 'AVG', ms.sessionId, ms.taskData, ms.time, ms.parameterId, avg(ms.averageValue)" +
-                        ") " +
-                        "from MonitoringStatistics ms where ms.sessionId=? " +
-                        "group by ms.sessionId, ms.time, ms.taskData, ms.parameterId order by ms.time desc", sessionId
-        );
-
-        for (MonitoringStatistics sumMonitoringStatistics : resultsByAgent) {
-            String taskId = sumMonitoringStatistics.getTaskData().getTaskId();
-            MonitoringParameter parameterId = sumMonitoringStatistics.getParameterId();
-            List<MonitoringStatistics> monitoringStatisticByAgents = aggregatedByTasks.get(taskId, parameterId);
-            if (monitoringStatisticByAgents == null) {
-                monitoringStatisticByAgents = Lists.newArrayList();
-                aggregatedByTasks.put(taskId, parameterId, monitoringStatisticByAgents);
-            }
-            monitoringStatisticByAgents.add(sumMonitoringStatistics);
+            statistics = new DetailStatistics(sessionId, st);
         }
-
-        if (log.isDebugEnabled()) {
-            Set<String> params2debug = Sets.newTreeSet();
-
-            for (MonitoringParameter parameter : aggregatedByTasks.columnKeySet()) {
-                params2debug.add(parameter.getDescription());
-            }
-
-            log.debug("params {}", params2debug);
-        }
-
-
-        return aggregatedByTasks;
+        return statistics;
     }
 
-    private Table<String, String, Map<MonitoringParameter, List<MonitoringStatistics>>> aggregateTaskStatisticsBySuT(String sessionId) {
-
-        Table<String, String, Map<MonitoringParameter, List<MonitoringStatistics>>> aggregatedBySuT = HashBasedTable.create();
-
-        @SuppressWarnings("unchecked")
-        List<MonitoringStatistics> resultsBySuT = getHibernateTemplate().find(
-                "from MonitoringStatistics ms where ms.sessionId=?", sessionId
-        );
-        for (MonitoringStatistics monitoringStatistics : resultsBySuT) {
-            if (monitoringStatistics.getParameterId().getLevel() == MonitoringParameterLevel.SUT) {
-                String taskId = monitoringStatistics.getTaskData().getTaskId();
-                String sysUnderTestUrl = monitoringStatistics.getSystemUnderTestUrl();
-                MonitoringParameter parameterId = monitoringStatistics.getParameterId();
-                Map<MonitoringParameter, List<MonitoringStatistics>> parameterForSysUnderTestSetMap = aggregatedBySuT.get(taskId, sysUnderTestUrl);
-                if (parameterForSysUnderTestSetMap == null) {
-                    parameterForSysUnderTestSetMap = Maps.newLinkedHashMap();
-                    aggregatedBySuT.put(taskId, sysUnderTestUrl, parameterForSysUnderTestSetMap);
-                }
-                List<MonitoringStatistics> monitoringStatisticsBySuTs = parameterForSysUnderTestSetMap.get(parameterId);
-                if (monitoringStatisticsBySuTs == null) {
-                    monitoringStatisticsBySuTs = Lists.newArrayList();
-                    parameterForSysUnderTestSetMap.put(parameterId, monitoringStatisticsBySuTs);
-                }
-                monitoringStatisticsBySuTs.add(monitoringStatistics);
-            }
-        }
-
-        return aggregatedBySuT;
+    public void clearStatistics() {
+        statistics = null;
     }
 
     @Override
@@ -275,9 +287,35 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
         this.enable = enable;
     }
 
+    public Map<GroupKey, MonitoringParameter[]> getPlotGroups() {
+        return plotGroups;
+    }
+
     @Required
     public void setPlotGroups(Map<GroupKey, MonitoringParameter[]> plotGroups) {
         this.plotGroups = plotGroups;
+    }
+
+    public boolean isShowPlotsByGlobal() {
+        return showPlotsByGlobal;
+    }
+
+    @Required
+    public void setShowPlotsByGlobal(boolean showPlotsByGlobal) {
+        this.showPlotsByGlobal = showPlotsByGlobal;
+    }
+
+    public boolean isShowPlotsByBox() {
+        return showPlotsByBox;
+    }
+
+    @Required
+    public void setShowPlotsByBox(boolean showPlotsByBox) {
+        this.showPlotsByBox = showPlotsByBox;
+    }
+
+    public boolean isShowPlotsBySuT() {
+        return showPlotsBySuT;
     }
 
     @Required
@@ -288,7 +326,7 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
     public static class MonitoringReporterData {
         private String parameterName;
         private String title;
-        private Image plot;
+        private JCommonDrawableRenderer plot;
 
         public String getParameterName() {
             return this.parameterName;
@@ -306,11 +344,11 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
             this.title = title;
         }
 
-        public Image getPlot() {
+        public JCommonDrawableRenderer getPlot() {
             return this.plot;
         }
 
-        public void setPlot(Image plot) {
+        public void setPlot(JCommonDrawableRenderer plot) {
             this.plot = plot;
         }
     }

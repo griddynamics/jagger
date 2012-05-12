@@ -68,6 +68,7 @@
                 <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics</value>
                 <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile</value>
                 <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity</value>
+                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity</value>
                 <value>com.griddynamics.jagger.monitoring.model.PerformedMonitoring</value>
 			</list>
 		</property>

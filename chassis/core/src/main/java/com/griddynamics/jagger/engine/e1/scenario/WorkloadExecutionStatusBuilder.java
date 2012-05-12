@@ -119,8 +119,8 @@ public class WorkloadExecutionStatusBuilder {
 
         @Override
         public String toString() {
-            String line = "------------------------------------------------------------------------------------------\n";
-            String format = "|%1$-25s|%2$-20s|%3$-20s|%4$-20s|\n";
+            String line = "---------------------------------------------------------------------------------------------------------\n";
+            String format = "|%1$-40s|%2$-20s|%3$-20s|%4$-20s|\n";
             String report = String.format(this.task.getTaskName() + '\n' +
                     line + format + line, "IDENTIFIER", "THREADS", "SAMPLES", "DELAYS");
             Set<NodeId> nodes = Sets.newHashSet(this.threads.keySet());

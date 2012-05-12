@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -55,7 +56,6 @@ public class WorkloadWorker extends ConfigurableWorker {
     private Map<String, WorkloadProcess> processes = Maps.newConcurrentMap();
     private Map<String, Integer> pools = Maps.newConcurrentMap();
 
-    private final Object lock = new Object();
     private LogWriter logWriter;
 
     @Override
@@ -107,7 +107,7 @@ public class WorkloadWorker extends ConfigurableWorker {
                     throw new IllegalStateException("Error! Pool size is less then thread count");
                 }
 
-                WorkloadProcess process = processes.get(command.getProcessId());
+                WorkloadProcess process = getProcess(command.getProcessId());
 
                 process.changeConfiguration(command.getConfiguration());
 
@@ -125,7 +125,7 @@ public class WorkloadWorker extends ConfigurableWorker {
             public Integer execute(PollWorkloadProcessStatus command, NodeContext nodeContext) {
                 Preconditions.checkArgument(command.getProcessId() != null, "Process id cannot be null");
 
-                WorkloadProcess process = processes.get(command.getProcessId());
+                WorkloadProcess process = getProcess(command.getProcessId());
                 return process.getStatus();
             }
         }
@@ -141,7 +141,7 @@ public class WorkloadWorker extends ConfigurableWorker {
 
                 Preconditions.checkArgument(command.getProcessId() != null, "Process id cannot be null");
 
-                WorkloadProcess process = processes.get(command.getProcessId());
+                WorkloadProcess process = getProcess(command.getProcessId());
                 process.stop();
                 processes.remove(command.getProcessId());
                 logWriter.flush();
@@ -197,9 +197,7 @@ public class WorkloadWorker extends ConfigurableWorker {
     }
 
     private String generateId() {
-        synchronized (lock) {
-            return "WorkloadProcess-" + System.currentTimeMillis();
-        }
+        return "WorkloadProcess-" + UUID.randomUUID();
     }
 
     public void setLogWriter(LogWriter logWriter) {
@@ -208,5 +206,21 @@ public class WorkloadWorker extends ConfigurableWorker {
 
     public LogWriter getLogWriter() {
         return logWriter;
+    }
+
+    public WorkloadProcess getProcess(String processId) {
+        WorkloadProcess result = processes.get(processId);
+        for (int i = 0; (result == null) && (i < 1000); ++i) {
+            try {
+                Thread.sleep(60);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            result = processes.get(processId);
+        }
+        if (result == null) {
+            throw new RuntimeException("Problem with process registration");
+        }
+        return result;
     }
 }
