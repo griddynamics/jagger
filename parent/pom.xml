@@ -52,8 +52,8 @@
     </modules>
 
     <scm>
-        <url>https://github.com/griddynamics/jagger</url>
-        <connection>scm:git:git://griddynamics/jagger.git</connection>
+        <url>git://github.com/griddynamics/jagger.git</url>
+        <connection>scm:git:git://github.com/griddynamics/jagger.git</connection>
         <developerConnection>scm:git:git@github.com:griddynamics/jagger.git</developerConnection>
     </scm>
 
@@ -92,6 +92,14 @@
             <url>${releaseDistributionLocation}</url>
         </repository>
     </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+    </dependencies>
 
     <dependencyManagement>
         <dependencies>
@@ -294,7 +302,6 @@
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>1.5.2</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -556,6 +563,12 @@
                             </reportPlugins>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.2.2</version>
+                    </plugin>
+
                 </plugins>
             </build>
         </profile>
