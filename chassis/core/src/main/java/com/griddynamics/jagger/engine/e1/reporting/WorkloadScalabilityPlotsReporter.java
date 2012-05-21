@@ -20,34 +20,24 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.util.List;
 
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import com.griddynamics.jagger.reporting.AbstractReportProvider;
+import com.griddynamics.jagger.reporting.chart.ChartHelper;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import com.google.common.collect.Lists;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.ReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
-import com.griddynamics.jagger.reporting.chart.ChartHelper;
+import java.util.List;
 
-public class WorkloadScalabilityPlotsReporter extends HibernateDaoSupport implements ReportProvider {
-	private SessionIdProvider sessionIdProvider;
-	private ReportingContext context;
-
-	private String template;
-
+public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
 	public static class ScenarioPlotDTO {
         private String scenarioName;
         private JCommonDrawableRenderer throughputPlot;
@@ -78,11 +68,12 @@ public class WorkloadScalabilityPlotsReporter extends HibernateDaoSupport implem
         }
     }
 
+    @Override
 	public JRDataSource getDataSource() {
 
 		List<ScenarioPlotDTO> plots = Lists.newArrayList();
 
-		String sessionId = sessionIdProvider.getSessionId();
+		String sessionId = getSessionIdProvider().getSessionId();
 		@SuppressWarnings("unchecked")
 		List<String> scenarios = getHibernateTemplate().find(
 				"select distinct d.scenario.name from WorkloadData d where d.sessionId=? order by d.number asc, d.scenario.name asc", sessionId);
@@ -114,16 +105,6 @@ public class WorkloadScalabilityPlotsReporter extends HibernateDaoSupport implem
 		return throughputPlots;
 	}
 
-	@Override
-	public JasperReport getReport() {
-		return context.getReport(template);
-	}
-
-	@Override
-	public void setContext(ReportingContext context) {
-		this.context = context;
-	}
-
 	private XYDataset getThroughputData(String scenarioName) {
 		List<WorkloadTaskData> all = getResultData(scenarioName);
 
@@ -153,21 +134,10 @@ public class WorkloadScalabilityPlotsReporter extends HibernateDaoSupport implem
 	}
 
 	private List<WorkloadTaskData> getResultData(String scenarioName) {
-		String sessionId = sessionIdProvider.getSessionId();
+		String sessionId = getSessionIdProvider().getSessionId();
 		@SuppressWarnings("unchecked")
 		List<WorkloadTaskData> all = getHibernateTemplate().find(
 				"from WorkloadTaskData d where d.scenario.name=? and d.sessionId=?", scenarioName, sessionId);
 		return all;
 	}
-
-
-	
-	public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-		this.sessionIdProvider = sessionIdProvider;
-	}
-
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-
 }

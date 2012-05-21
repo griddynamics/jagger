@@ -20,40 +20,22 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
 import com.griddynamics.jagger.agent.model.MonitoringParameter;
-import com.griddynamics.jagger.agent.model.MonitoringParameterLevel;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
-import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.monitoring.MonitoringParameterBean;
-import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
 import com.griddynamics.jagger.monitoring.reporting.GroupKey;
 import com.griddynamics.jagger.monitoring.reporting.SystemUnderTestPlotsGeneralProvider;
-import com.griddynamics.jagger.reporting.ReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * User: dkotlyarov
  */
-public class TestGeneralReporter extends HibernateDaoSupport implements ReportProvider {
-    private SessionIdProvider sessionIdProvider;
-	private ReportingContext context;
-
-    private String template;
-
+public class TestGeneralReporter extends AbstractReportProvider {
     public static class TestDetailsDTO {
         private String testId;
         private String testName;
@@ -77,7 +59,7 @@ public class TestGeneralReporter extends HibernateDaoSupport implements ReportPr
 
     @Override
     public JRDataSource getDataSource() {
-        SystemUnderTestPlotsGeneralProvider plotsGeneralProvider = (SystemUnderTestPlotsGeneralProvider) context.getMappedProvider("sysUTPlotsGeneral");
+        SystemUnderTestPlotsGeneralProvider plotsGeneralProvider = (SystemUnderTestPlotsGeneralProvider) getContext().getMappedProvider("sysUTPlotsGeneral");
 
         List<TestDetailsDTO> result = new ArrayList<TestDetailsDTO>();
         Set<String> boxIdentifiers = plotsGeneralProvider.getStatistics().findBoxIdentifiers();
@@ -142,33 +124,5 @@ public class TestGeneralReporter extends HibernateDaoSupport implements ReportPr
             }
         }
         return false;
-    }
-
-    @Override
-    public JasperReport getReport() {
-        return context.getReport(template);
-    }
-
-    public ReportingContext getContext() {
-        return context;
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    public SessionIdProvider getSessionIdProvider() {
-        return sessionIdProvider;
-    }
-
-    @Required
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 }

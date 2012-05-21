@@ -24,66 +24,38 @@ import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.ReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-public class OverallSessionComparisonReporter extends HibernateDaoSupport implements ReportProvider {
+public class OverallSessionComparisonReporter extends AbstractReportProvider {
 
     private static final Logger log = LoggerFactory.getLogger(OverallSessionComparisonReporter.class);
 
-    private SessionIdProvider sessionIdProvider;
-    private ReportingContext context;
     private SessionComparator sessionComparator;
     private StatusImageProvider statusImageProvider;
     private BaselineSessionProvider baselineSessionProvider;
 
-    private String template;
 
     @Override
     public JRDataSource getDataSource() {
 
         log.debug("Going to build session comparison report");
 
-        String currentSession = sessionIdProvider.getSessionId();
+        String currentSession = getSessionIdProvider().getSessionId();
         String baselineSession = baselineSessionProvider.getBaselineSession();
 
         SessionVerdict verdict = sessionComparator.compare(currentSession, baselineSession);
 
-        context.getParameters().put("jagger.verdict", verdict);
-        context.getParameters().put("jagger.session.baseline", baselineSession);
-        context.getParameters().put("jagger.session.current", currentSession);
-        context.getParameters().put("jagger.statusImageProvider", statusImageProvider);
+        getContext().getParameters().put("jagger.verdict", verdict);
+        getContext().getParameters().put("jagger.session.baseline", baselineSession);
+        getContext().getParameters().put("jagger.session.current", currentSession);
+        getContext().getParameters().put("jagger.statusImageProvider", statusImageProvider);
 
         return new JRBeanCollectionDataSource(Lists.newArrayList(1, 2));
-    }
-
-
-    @Override
-    public JasperReport getReport() {
-        return context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    @Required
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 
     @Required

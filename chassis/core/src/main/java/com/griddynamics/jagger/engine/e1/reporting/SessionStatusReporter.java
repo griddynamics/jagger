@@ -22,59 +22,37 @@ package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.ReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import java.awt.*;
+import java.awt.Image;
 import java.util.Collections;
 import java.util.List;
 
-public class SessionStatusReporter extends HibernateDaoSupport implements ReportProvider {
+public class SessionStatusReporter extends AbstractReportProvider {
     private static final Logger log = LoggerFactory.getLogger(SessionStatusReporter.class);
 
-    private SessionIdProvider sessionIdProvider;
-    private ReportingContext context;
     private SessionStatusDecisionMaker decisionMaker;
     private StatusImageProvider statusImageProvider;
 
-    private String template;
 
-	@Override
-	public JRDataSource getDataSource() {
-		@SuppressWarnings("unchecked")
+    @Override
+    public JRDataSource getDataSource() {
+        @SuppressWarnings("unchecked")
 		List<WorkloadTaskData> scenarioData = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
-				sessionIdProvider.getSessionId());
+				getSessionIdProvider().getSessionId());
 
-		SessionStatus result = new SessionStatus();
+        SessionStatus result = new SessionStatus();
 
-		Decision decision = decisionMaker.decideOnSession(scenarioData);
+        Decision decision = decisionMaker.decideOnSession(scenarioData);
         result.setStatusImage(statusImageProvider.getImageByDecision(decision));
         result.setMessage(decisionMaker.getDescription());
 
-		return new JRBeanCollectionDataSource(Collections.singletonList(result));
-	}
-
-	@Override
-	public JasperReport getReport() {
-		return context.getReport(template);
-	}
-
-	@Override
-	public void setContext(ReportingContext context) {
-		this.context = context;
-	}
-
-    @Required
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
+        return new JRBeanCollectionDataSource(Collections.singletonList(result));
     }
 
     @Required
@@ -85,11 +63,6 @@ public class SessionStatusReporter extends HibernateDaoSupport implements Report
     @Required
     public void setStatusImageProvider(StatusImageProvider statusImageProvider) {
         this.statusImageProvider = statusImageProvider;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 
     public static class SessionStatus {

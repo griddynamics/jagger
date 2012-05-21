@@ -21,24 +21,14 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.ReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestDetailsReporter extends HibernateDaoSupport implements ReportProvider {
-    private SessionIdProvider sessionIdProvider;
-	private ReportingContext context;
-
-    private String template;
-
+public class TestDetailsReporter extends AbstractReportProvider {
     public static class TestDetailsDTO {
         private String testId;
         private String testName;
@@ -64,7 +54,7 @@ public class TestDetailsReporter extends HibernateDaoSupport implements ReportPr
     public JRDataSource getDataSource() {
         @SuppressWarnings("unchecked")
         List<WorkloadTaskData> tests = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
-				sessionIdProvider.getSessionId());
+				getSessionIdProvider().getSessionId());
 
         List<TestDetailsDTO> result = new ArrayList<TestDetailsDTO>();
         for(WorkloadTaskData test : tests) {
@@ -77,27 +67,7 @@ public class TestDetailsReporter extends HibernateDaoSupport implements ReportPr
         return new JRBeanCollectionDataSource(result);
     }
 
-    public static String getTestHumanReadableName(WorkloadTaskData workloadTaskData) {
+    private static String getTestHumanReadableName(WorkloadTaskData workloadTaskData) {
         return workloadTaskData.getNumber() + ") " + workloadTaskData.getScenario().getName() + ", " + workloadTaskData.getClock();
-    }
-
-    @Override
-    public JasperReport getReport() {
-        return context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    @Required
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 }

@@ -20,71 +20,37 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import java.util.List;
-
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
+import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.ReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import java.util.List;
 
 /**
  * Provides data for session summary report.
- * 
+ *
  * @author Mairbek Khadikov
  */
-public class SessionSummaryReporter extends HibernateDaoSupport implements ReportProvider {
-	private SessionIdProvider sessionIdProvider;
-	private ReportingContext context;
-	
-	private String template;
+public class SessionSummaryReporter extends AbstractReportProvider {
+    private static final Logger log = LoggerFactory.getLogger(SessionSummaryReporter.class);
 
-	public SessionIdProvider getSessionIdProvider() {
-		return sessionIdProvider;
-	}
+    @Override
+    public JRDataSource getDataSource() {
+        @SuppressWarnings("unchecked")
+        List<SessionData> all = getHibernateTemplate().find("from SessionData sd where sd.sessionId=?",
+                getSessionIdProvider().getSessionId());
 
-	public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-		this.sessionIdProvider = sessionIdProvider;
-	}
+        if (all.size() > 1) {
+            throw new IllegalStateException("To much session data was stored for the session.");
+        }
+        if (all.isEmpty()) {
+            throw new IllegalStateException("Data was not stored");
+        }
+        all.get(0).setSessionName(getSessionIdProvider().getSessionName());
 
-	public ReportingContext getContext() {
-		return context;
-	}
-
-	@Override
-	public JRDataSource getDataSource() {
-		@SuppressWarnings("unchecked")
-		List<SessionData> all = getHibernateTemplate().find("from SessionData sd where sd.sessionId=?",
-				sessionIdProvider.getSessionId());
-
-		if (all.size() > 1) {
-			throw new IllegalStateException("To much session data was stored for the session.");
-		}
-		if (all.isEmpty()) {
-			throw new IllegalStateException("Data was not stored");
-		}
-        all.get(0).setSessionName(sessionIdProvider.getSessionName());
-
-		return new JRBeanCollectionDataSource(all);
-	}
-
-	@Override
-	public JasperReport getReport() {
-		return context.getReport(template);
-	}
-
-	@Override
-	public void setContext(ReportingContext context) {
-		this.context = context;
-	}
-
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-
+        return new JRBeanCollectionDataSource(all);
+    }
 }

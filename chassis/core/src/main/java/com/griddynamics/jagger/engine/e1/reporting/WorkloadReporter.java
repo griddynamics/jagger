@@ -25,44 +25,36 @@ import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.ReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-public class WorkloadReporter extends HibernateDaoSupport implements ReportProvider {
-	private SessionIdProvider sessionIdProvider;
-	private ReportingContext context;
+public class WorkloadReporter extends AbstractReportProvider {
     private SessionStatusDecisionMaker decisionMaker;
     private StatusImageProvider statusImageProvider;
     private final static Logger log = LoggerFactory.getLogger(WorkloadReporter.class);
-
-	private String template;
 
 	@Override
 	public JRDataSource getDataSource() {
 		@SuppressWarnings("unchecked")
 		List<WorkloadData> testData = getHibernateTemplate().find("from WorkloadData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
-				sessionIdProvider.getSessionId());
+                getSessionIdProvider().getSessionId());
 
 		@SuppressWarnings("unchecked")
 		List<WorkloadTaskData> allWorkloadTasks = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
-				sessionIdProvider.getSessionId());
+                getSessionIdProvider().getSessionId());
 
         @SuppressWarnings({"unchecked"}) List<WorkloadProcessDescriptiveStatistics> statistics = getHibernateTemplate().find(
                 "select s from WorkloadProcessDescriptiveStatistics s where s.taskData.sessionId=?",
-                sessionIdProvider.getSessionId());
+                getSessionIdProvider().getSessionId());
 
         Map<String, WorkloadProcessDescriptiveStatistics> statisticsByTasks = Maps.newHashMap();
         if (statistics != null) {
@@ -109,7 +101,7 @@ public class WorkloadReporter extends HibernateDaoSupport implements ReportProvi
             reportData.setLatency85(getLatency85(statisticsByTasks, workloadData.getTaskId()));
 
             reportData.setStatusImage(statusImageProvider.getImageByDecision(decisionMaker.decideOnTest(resultData)));
-			
+
 			result.add(reportData);
 		}
 
@@ -130,26 +122,6 @@ public class WorkloadReporter extends HibernateDaoSupport implements ReportProvi
             log.warn("Statistics unavailable for task {}", taskId);
         }
         return ret;
-    }
-
-    @Override
-	public JasperReport getReport() {
-		return context.getReport(template);
-	}
-
-	@Override
-	public void setContext(ReportingContext context) {
-		this.context = context;
-	}
-
-    @Required
-	public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-		this.sessionIdProvider = sessionIdProvider;
-	}
-
-    @Required
-	public void setTemplate(String template) {
-		this.template = template;
 	}
 
     @Required
