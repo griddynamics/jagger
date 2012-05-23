@@ -79,10 +79,9 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         log.debug("Clock value {}", clockValue);
         String termination = (String) keyValueStorage.fetchNotNull(taskNamespace, TERMINATION);
         log.debug("Termination strategy {}", termination);
+        // TODO fix start and end time of subtask collection
         Long startTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, START_TIME);
         Long endTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, END_TIME);
-        double duration = (double) (endTime - startTime) / 1000;
-        log.debug("start {} end {} duration {}", new Object[]{startTime, endTime, duration});
         
         @SuppressWarnings({"unchecked", "rawtypes"})
         Collection<String> kernels = (Collection) keyValueStorage.fetchAll(taskNamespace, KERNELS);
@@ -119,9 +118,9 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         double succeeded = (double) (invoked - failed);
         log.debug("Latency: avg {} stdev {}", avgLatency, stdDevLatency);
 
-        double throughput = Math.rint(succeeded / duration * 100) / 100;
+        double throughput = Math.rint(succeeded / totalDuration * 100) / 100;
         if (Double.isNaN(throughput)) {
-            log.error("throughput is NaN (succeeded={},duration={}). Value for throughput will be set zero", succeeded, duration);
+            log.error("throughput is NaN (succeeded={},duration={}). Value for throughput will be set zero", succeeded, totalDuration);
             throughput = 0;
         }
         log.debug("Throughput: {}", throughput);
