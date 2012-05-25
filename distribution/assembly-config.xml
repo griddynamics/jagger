@@ -36,6 +36,7 @@
             <outputDirectory>lib</outputDirectory>
             <excludes>
                 <exclude>*com.griddynamics.jagger*</exclude>
+                <exclude>*:*:zip</exclude>
             </excludes>
         </dependencySet>
 
@@ -47,7 +48,7 @@
                 <include>*com.griddynamics.jagger:chassis.coordinator</include>
                 <include>*com.griddynamics.jagger:chassis.coordinator.zookeeper</include>
                 <include>*com.griddynamics.jagger:chassis.coordinator.http</include>
-                <include>*com.griddynamics.jagger:monitoring.agent</include>
+                <include>*com.griddynamics.jagger:monitoring.agent:jar</include>
                 <include>*com.griddynamics.jagger:chassis.invoker.hessian</include>
                 <include>*com.griddynamics.jagger:chassis.invokers</include>
             </includes>
@@ -59,27 +60,32 @@
                 <include>*com.griddynamics.jagger:diagnostics*</include>
             </includes>
         </dependencySet>
-    </dependencySets>
 
-    <fileSets>
-
-        <fileSet>
-            <directory>${basedir}/../chassis/configuration/configuration</directory>
-            <outputDirectory>configuration</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/../chassis/configuration/profiles</directory>
-            <outputDirectory>profiles</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/../cloudshaper</directory>
-            <outputDirectory>modules/cloudshaper</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/../monitoring/agent/target/lib/native/hyperic-sigar-1.6.0.14/sigar-bin/lib/</directory>
+        <dependencySet>
             <outputDirectory>lib/native</outputDirectory>
-        </fileSet>
-    </fileSets>
+            <unpack>true</unpack>
+            <includes>
+                <include>*com.griddynamics.jagger:monitoring.agent:zip</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>configuration</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>*com.griddynamics.jagger:chassis.configuration:zip:configuration:${version}</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>profiles</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>*com.griddynamics.jagger:chassis.configuration:zip:profiles:${version}</include>
+            </includes>
+        </dependencySet>
+
+    </dependencySets>
 
     <files>
         <file>

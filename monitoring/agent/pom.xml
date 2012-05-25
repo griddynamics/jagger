@@ -114,13 +114,30 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-native-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/native.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.3</version>
                 <executions>
                     <execution>
                         <id>unpack</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -132,10 +149,11 @@
                                     <version>${sigar.version}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${sigar.native.libs.dest}</outputDirectory>
-                                    <excludes>**/*.jar</excludes>
                                 </artifactItem>
                             </artifactItems>
+                            <outputDirectory>${sigar.native.libs.dest}</outputDirectory>
+                            <includes>hyperic-sigar-1.6.0.14/sigar-bin/lib/*.*</includes>
+                            <excludes>hyperic-sigar-1.6.0.14/sigar-bin/lib/*.jar</excludes>
                         </configuration>
                     </execution>
                 </executions>

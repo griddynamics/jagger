@@ -35,9 +35,6 @@
         <targetJdkVersion>1.6</targetJdkVersion>
         <targetJdk>${JAVA_HOME}</targetJdk>
 
-        <snapshotDistributionLocation>http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/snapshots</snapshotDistributionLocation>
-        <releaseDistributionLocation>http://black.calf.lupus.griddynamics.net:8081/nexus/content/repositories/releases</releaseDistributionLocation>
-
         <spring.version>3.0.5.RELEASE</spring.version>
     </properties>
 
@@ -77,18 +74,18 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>nexus-snapshots</id>
+            <id>gd-jagger-nexus-snapshots</id>
+            <name>gd-jagger-nexus-snapshots</name>
+            <url>https://nexus.griddynamics.net/nexus/content/repositories/jagger-snapshots/</url>
             <layout>default</layout>
             <uniqueVersion>false</uniqueVersion>
-            <name>GD Nexus Deploy Repo</name>
-            <url>${snapshotDistributionLocation}</url>
         </snapshotRepository>
 
         <repository>
-            <id>nexus-releases</id>
+            <id>gd-jagger-nexus-releases</id>
+            <name>gd-jagger-nexus-releases</name>
+            <url>https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/</url>
             <layout>default</layout>
-            <name>GD Nexus Deploy Repo</name>
-            <url>${releaseDistributionLocation}</url>
         </repository>
     </distributionManagement>
 
@@ -427,6 +424,16 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-http</artifactId>
+                <version>1.0-beta-6</version>
+            </extension>
+        </extensions>
+    </build>
 
     <profiles>
         <profile>

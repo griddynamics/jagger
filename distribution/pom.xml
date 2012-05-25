@@ -113,6 +113,30 @@
             <artifactId>monitoring.agent</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>monitoring.agent</artifactId>
+            <type>zip</type>
+            <classifier>native</classifier>
+            <version>${version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.configuration</artifactId>
+            <type>zip</type>
+            <classifier>configuration</classifier>
+            <version>${version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.configuration</artifactId>
+            <type>zip</type>
+            <classifier>profiles</classifier>
+            <version>${version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
