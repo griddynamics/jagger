@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static com.griddynamics.jagger.util.TimeUtils.sleepMillis;
 
@@ -125,25 +124,73 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
             ImmutableList<ScenarioCollector<Object, Object, Object>> list = collectors.build();
 
             scenario.setListener(Invokers.composeListeners(list));
-            return new WorkloadService(executor, scenario, list) {
-                @Override
-                protected boolean terminationRequired() {
-                    return false;
-                }
-            };
+            return new InfiniteWorkloadService(list);
         }
 
         public WorkloadService buildServiceWithPredefinedSamples(final int samples) {
             ImmutableList<ScenarioCollector<Object, Object, Object>> list = collectors.build();
 
             scenario.setListener(Invokers.composeListeners(list));
-            return new WorkloadService(executor, scenario, list) {
-                @Override
-                protected boolean terminationRequired() {
-                    return getSamples() >= samples;
+            return new PredefinedSamplesWorkloadService(list, samples);
+        }
+
+        public WorkloadService buildServiceWithSharedSamplesCount(final AtomicInteger samples) {
+            ImmutableList<ScenarioCollector<Object, Object, Object>> list = collectors.build();
+
+            scenario.setListener(Invokers.composeListeners(list));
+            return new SharedSamplesCountWorkloadService(list, samples);
+        }
+
+        private class InfiniteWorkloadService extends WorkloadService {
+            
+            private InfiniteWorkloadService(ImmutableList<ScenarioCollector<Object, Object, Object>> list) {
+                super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
+            }
+
+            @Override
+            protected boolean terminationRequired() {
+                return false;
+            }
+        }
+
+        private class PredefinedSamplesWorkloadService extends WorkloadService {
+
+            private final int samples;
+
+            private PredefinedSamplesWorkloadService(ImmutableList<ScenarioCollector<Object, Object, Object>> list, int samples) {
+                super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
+                this.samples = samples;
+            }
+
+            @Override
+            protected boolean terminationRequired() {
+                return getSamples() >= samples;
+            }
+        }
+
+        private class SharedSamplesCountWorkloadService extends WorkloadService {
+            
+            private final AtomicInteger samplesLeft;
+
+            private SharedSamplesCountWorkloadService(ImmutableList<ScenarioCollector<Object, Object, Object>> list, AtomicInteger samples) {
+                super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
+                this.samplesLeft = samples;
+            }
+
+            @Override
+            protected boolean terminationRequired() {
+                int s;
+                while (true) {
+                    s =  samplesLeft.get();
+                    if (s > 0) {
+                        if (samplesLeft.compareAndSet(s, --s) ) {
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
                 }
-            };
+            }
         }
     }
-
 }

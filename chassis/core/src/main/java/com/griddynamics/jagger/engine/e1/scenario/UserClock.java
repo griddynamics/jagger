@@ -38,7 +38,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UserClock implements WorkloadClock {
     private static final Logger log = LoggerFactory.getLogger(UserClock.class);
 
-    private final ProcessingConfig.Test.Task config;
     private final Random random;
     private final long startTime = System.currentTimeMillis();
     private final UserWorkload workload;
@@ -48,16 +47,11 @@ public class UserClock implements WorkloadClock {
     private boolean userStarted = false;
 
     public UserClock(ProcessingConfig.Test.Task config, int tickInterval, AtomicBoolean shutdown) {
-        this.config = config;
         this.random = new Random(0);
         this.workload = new UserWorkload(true, this, config, startTime);
         this.totalUserCount = workload.getTotalUserCount();
         this.tickInterval = tickInterval;
         this.shutdown = shutdown;
-    }
-
-    public ProcessingConfig.Test.Task getConfig() {
-        return config;
     }
 
     public Random getRandom() {

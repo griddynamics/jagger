@@ -48,7 +48,7 @@ public class UserWorkload {
         this.clock = clock;
         this.config = config;
         this.groups = new ArrayList<UserGroup>(config.users.size());
-        this.delay = (config.delay == null) ? 0 : (int) Parser.parseTimeMillis(config.delay);
+        this.delay = config.delay;
 
         for (ProcessingConfig.Test.Task.User userConfig : config.users) {
             new UserGroup(this, userConfig, time);

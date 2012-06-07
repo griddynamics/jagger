@@ -32,25 +32,27 @@ import java.io.Serializable;
 public class WorkloadConfiguration implements Serializable {
     private final int threads;
     private final int delay;
+    private final int samples;
 
     public static WorkloadConfiguration with(int threads, int delay) {
-        return new WorkloadConfiguration(threads, delay);
+        return with(threads, delay, -1);
     }
 
-    public static WorkloadConfiguration withTreads(int threads) {
-        return new WorkloadConfiguration(threads, 0);
+    public static WorkloadConfiguration with(int threads, int delay, int samples) {
+        return new WorkloadConfiguration(threads, delay, samples);
     }
 
     public static WorkloadConfiguration zero() {
         return with(0, 0);
     }
 
-    private WorkloadConfiguration(int threads, int delay) {
+    private WorkloadConfiguration(int threads, int delay, int samples) {
         Preconditions.checkArgument(threads >= 0);
-        Preconditions.checkArgument(delay >= 0);
+        Preconditions.checkArgument(delay   >= 0);
 
         this.threads = threads;
-        this.delay = delay;
+        this.delay   = delay;
+        this.samples = samples;
     }
 
     public int getThreads() {
@@ -61,6 +63,10 @@ public class WorkloadConfiguration implements Serializable {
         return delay;
     }
 
+    public int getSamples() {
+        return samples;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -69,6 +75,7 @@ public class WorkloadConfiguration implements Serializable {
         WorkloadConfiguration that = (WorkloadConfiguration) o;
 
         if (delay != that.delay) return false;
+        if (samples != that.samples) return false;
         if (threads != that.threads) return false;
 
         return true;
@@ -78,11 +85,16 @@ public class WorkloadConfiguration implements Serializable {
     public int hashCode() {
         int result = threads;
         result = 31 * result + delay;
+        result = 31 * result + samples;
         return result;
     }
 
     @Override
     public String toString() {
-        return "configuration " + threads + " threads " + delay + " delay";
+        return "WorkloadConfiguration{" +
+                "delay=" + delay +
+                ", threads=" + threads +
+                ", samples=" + samples +
+                '}';
     }
 }

@@ -50,11 +50,12 @@ public class UserTerminateStrategyConfiguration implements TerminateStrategyConf
         if (taskConfig.duration != null) {
             result += taskConfig.duration;
         }
-        if (taskConfig.sample != null) {
+        int samples = UserTerminationStrategy.calculateStopSamplesCount(taskConfig);
+        if (samples != -1) {
             if (!result.isEmpty()) {
                 result += "; ";
             }
-            result += taskConfig.sample + " samples";
+            result += samples + " samples";
         }
         return result;
     }

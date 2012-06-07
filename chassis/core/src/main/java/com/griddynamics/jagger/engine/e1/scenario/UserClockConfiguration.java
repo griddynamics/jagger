@@ -57,7 +57,11 @@ public class UserClockConfiguration implements WorkloadClockConfiguration {
 
     @Override
     public WorkloadClock getClock() {
-        return new UserClock(taskConfig, tickInterval, shutdown);
+        if (taskConfig.invocation == null) {
+            return new UserClock(taskConfig, tickInterval, shutdown);
+        } else {
+            return new ExactInvocationsClock(taskConfig.invocation.count, taskConfig.invocation.threads, taskConfig.delay);
+        }
     }
 
     @Override
