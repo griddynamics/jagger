@@ -23,6 +23,8 @@ public class ExactInvocationsClock implements WorkloadClock {
 
     private int delay;
 
+    private int tickCount = 0;
+
     private Map<NodeId, WorkloadConfiguration> submittedConfigurations = new HashMap<NodeId, WorkloadConfiguration>();
 
     public ExactInvocationsClock(int samplesCount, int threadCount, int delay) {
@@ -45,9 +47,9 @@ public class ExactInvocationsClock implements WorkloadClock {
     public void tick(WorkloadExecutionStatus status, WorkloadAdjuster adjuster) {
         log.debug("Going to perform tick with status {}", status);
 
-        int samplesPerTick = status.getTotalSamples() - totalSamples;
-
+        tickCount ++;
         totalSamples = status.getTotalSamples();
+        int avgSamplesPerTick = totalSamples / tickCount;
 
         int samplesLeft = samplesCount - samplesSubmitted;
         if (samplesLeft <= 0) {
@@ -60,7 +62,7 @@ public class ExactInvocationsClock implements WorkloadClock {
 
         Set<NodeId> nodes = status.getNodes();
         int threads =  threadCount / nodes.size();
-        int samplesToAdd = (samplesLeft <= SAMPLES_COUNT_SPLITTING_FACTOR || samplesLeft < samplesPerTick * 1.5) ? samplesLeft : samplesLeft / SAMPLES_COUNT_SPLITTING_FACTOR;
+        int samplesToAdd = (samplesLeft <= SAMPLES_COUNT_SPLITTING_FACTOR || samplesLeft < avgSamplesPerTick * 1.5) ? samplesLeft : samplesLeft / SAMPLES_COUNT_SPLITTING_FACTOR;
         Map<NodeId, Double>  factors = calculateFactors(status, submittedConfigurations);
         int s = 0;
         for (NodeId node : nodes) {
