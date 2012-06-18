@@ -28,6 +28,7 @@ import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 public class ConsistencyValidator<Q, E, R> extends ResponseValidator<Q, E, R> {

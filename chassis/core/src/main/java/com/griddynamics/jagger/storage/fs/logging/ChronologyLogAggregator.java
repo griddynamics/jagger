@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Required;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -42,21 +43,33 @@ public class ChronologyLogAggregator implements LogAggregator {
 
     private FileStorage fileStorage;
 
+    private LogReader logReader;
+
+    private LogWriter logWriter;
+
+    public void setLogReader(LogReader logReader) {
+        this.logReader = logReader;
+    }
+
+    public void setLogWriter(LogWriter logWriter) {
+        this.logWriter = logWriter;
+    }
+
     @Override
     public AggregationInfo chronology(String dir, String targetFile) throws IOException {
         log.info("Try to aggregate {} into file {}", dir, targetFile);
-        Collection<Hessian2Input> inputStreams = new ArrayList<Hessian2Input>();
+        Collection<Iterable<LogEntry>> readers = new ArrayList<Iterable<LogEntry>>();
         Set<String> fileNameList = fileStorage.getFileNameList(dir);
         if (fileNameList.isEmpty()) {
             log.info("Nothing to aggregate. Directory {} is empty.", dir);
-            new Hessian2Output(fileStorage.create(targetFile)).close();
+            fileStorage.create(targetFile);
             return new AggregationInfo(0, 0, 0);
         }
         for (String fileName : fileNameList) {
             try {
-                InputStream in = fileStorage.open(fileName);
-                inputStreams.add(new Hessian2Input(in));
-            } catch (FileNotFoundException e) {
+                readers.add(logReader.read(fileName, LogEntry.class));
+            } catch (Exception e) {
+                // TODO
                 log.warn(e.getMessage(), e);
             }
         }
@@ -64,29 +77,26 @@ public class ChronologyLogAggregator implements LogAggregator {
         int count = 0;
         long minTime = 0;
         long maxTime = 0;
-
-        Hessian2Output out = null;
-        OutputStream os = null;
         try {
             if (fileStorage.delete(targetFile, false)) {
                 log.warn("Target file {} did not deleted!", targetFile);
             }
-            os = fileStorage.create(targetFile);
-            out = new Hessian2Output(os);
+
             MinMaxPriorityQueue<StreamInfo> queue = MinMaxPriorityQueue.create();
-            for (Hessian2Input inputStream : inputStreams) {
+            for (Iterable<LogEntry> inputStream : readers) {
                 LogEntry logEntry;
-                try {
-                    logEntry = (LogEntry) inputStream.readObject();
-                } catch (EOFException e) {
+                Iterator<LogEntry> it = inputStream.iterator();
+                if (it.hasNext()) {
+                    logEntry = it.next();
+                } else {
                     continue;
-                }
-                queue.add(new StreamInfo(inputStream, logEntry));
+                } 
+                queue.add(new StreamInfo(it, logEntry));
             }
 
             while (!queue.isEmpty()) {
                 StreamInfo<LogEntry> streamInfo = queue.removeFirst();
-                out.writeObject(streamInfo.lastLogEntry);
+                logWriter.log(targetFile, streamInfo.lastLogEntry);
 
                 if (count == 0) {
                     minTime = streamInfo.lastLogEntry.getTime();
@@ -97,19 +107,16 @@ public class ChronologyLogAggregator implements LogAggregator {
 
                 count++;
                 LogEntry logEntry;
-                try {
-                    logEntry = (LogEntry) streamInfo.stream.readObject();
-                } catch (EOFException e) {
+                if (streamInfo.stream.hasNext()) {
+                    logEntry = streamInfo.stream.next();
+                } else {
                     continue;
                 }
                 streamInfo.lastLogEntry = logEntry;
                 queue.add(streamInfo);
             }
         } finally {
-            if (out != null) {
-                out.close();
-                os.close();
-            }
+            logWriter.flush();
         }
 
         return new AggregationInfo(minTime, maxTime, count);

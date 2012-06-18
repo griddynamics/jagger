@@ -29,13 +29,14 @@ import com.griddynamics.jagger.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class CalibrationInfoCollector extends ScenarioCollector<Object, Object, Object> {
+public class CalibrationInfoCollector extends ScenarioCollector<Serializable, Serializable, Serializable> {
     private final Logger log = LoggerFactory.getLogger(CalibrationInfoCollector.class);
 
-    private List<CalibrationInfo<Object, Object, Object>> buffer = Lists.newLinkedList();
+    private List<CalibrationInfo<Serializable, Serializable, Serializable>> buffer = Lists.newLinkedList();
     private Map<Pair<Object, Object>, Throwable> errors = Maps.newHashMap();
 
     public CalibrationInfoCollector(String sessionId, String taskId, NodeContext kernelContext) {
@@ -48,31 +49,31 @@ public class CalibrationInfoCollector extends ScenarioCollector<Object, Object, 
         LogWriter logWriter = kernelContext.getService(LogWriter.class);
         String logOwner = taskId + "/" + "Calibration";
 
-        for (CalibrationInfo<Object, Object, Object> info : buffer) {
+        for (CalibrationInfo<Serializable, Serializable, Serializable> info : buffer) {
             logWriter.log(sessionId, logOwner, "kernel", info);
         }
 
     }
 
     @Override
-    public void onStart(Object query, Object endpoint) {
+    public void onStart(Serializable query, Serializable endpoint) {
 
     }
 
     @Override
-    public void onSuccess(Object query, Object endpoint, Object result, long duration) {
-        CalibrationInfo<Object, Object, Object> info = CalibrationInfo.create(query, endpoint, result);
+    public void onSuccess(Serializable query, Serializable endpoint, Serializable result, long duration) {
+        CalibrationInfo<Serializable, Serializable, Serializable> info = CalibrationInfo.create(query, endpoint, result);
         log.debug("Calibration: {}", info);
         buffer.add(info);
     }
 
     @Override
-    public void onFail(Object query, Object endpoint, InvocationException e) {
+    public void onFail(Serializable query, Serializable endpoint, InvocationException e) {
         handleError(query, endpoint, e);
     }
 
     @Override
-    public void onError(Object query, Object endpoint, Throwable error) {
+    public void onError(Serializable query, Serializable endpoint, Throwable error) {
         handleError(query, endpoint, error);
     }
 

@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
-import com.caucho.hessian.io.Hessian2Input;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics;
@@ -31,11 +30,7 @@ import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.master.configuration.Task;
-import com.griddynamics.jagger.storage.FileStorage;
-import com.griddynamics.jagger.storage.fs.logging.AggregationInfo;
-import com.griddynamics.jagger.storage.fs.logging.DurationLogEntry;
-import com.griddynamics.jagger.storage.fs.logging.LogAggregator;
-import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
+import com.griddynamics.jagger.storage.fs.logging.*;
 import com.griddynamics.jagger.util.statistics.StatisticsCalculator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -49,6 +44,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author Alexey Kiselyov
@@ -58,10 +54,15 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
 
     private static final Logger log = LoggerFactory.getLogger(Master.class);
 
-    private FileStorage fileStorage;
     private LogAggregator logAggregator;
+    private LogReader logReader;
     private SessionIdProvider sessionIdProvider;
     private int pointCount;
+
+    @Required
+    public void setLogReader(LogReader logReader) {
+        this.logReader = logReader;
+    }
 
     @Required
     public void setPointCount(int pointCount) {
@@ -78,11 +79,6 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
         this.logAggregator = logAggregator;
     }
 
-    @Required
-    public void setFileStorage(FileStorage fileStorage) {
-        this.fileStorage = fileStorage;
-    }
-
     @Override
     public void onDistributionStarted(String sessionId, String taskId, Task task, Collection<NodeId> capableNodes) {
         // do nothing
@@ -96,7 +92,6 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
     }
 
     private void processLog(String sessionId, String taskId) {
-        Hessian2Input in = null;
         String file = null;
         try {
             String dir = sessionId + "/" + taskId + "/" + DurationCollector.DURATION_MARKER;
@@ -108,15 +103,13 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                 intervalSize = 1;
             }
 
-            in = new Hessian2Input(fileStorage.open(file));
-
             TaskData taskData = getTaskData(taskId, sessionId);
             if (taskData == null) {
                 log.error("TaskData not found by taskId: {}", taskId);
                 return;
             }
 
-            StatisticsGenerator statisticsGenerator = new StatisticsGenerator(in, aggregationInfo, intervalSize, taskData).generate();
+            StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSize, taskData).generate();
             final Collection<TimeInvocationStatistics> statistics = statisticsGenerator.getStatistics();
             final WorkloadProcessDescriptiveStatistics workloadProcessDescriptiveStatistics = statisticsGenerator.getWorkloadProcessDescriptiveStatistics();
 
@@ -134,28 +127,20 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
 
         } catch (Exception e) {
             log.error("Error during log processing", e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-//                    fileStorage.delete(file, true);
-                } catch (Exception e) {
-                    log.warn(e.getMessage(), e);
-                }
-            }
         }
+
     }
 
     private class StatisticsGenerator {
-        private Hessian2Input in;
+        private String path;
         private AggregationInfo aggregationInfo;
         private int intervalSize;
         private TaskData taskData;
         private Collection<TimeInvocationStatistics> statistics;
         private WorkloadProcessDescriptiveStatistics workloadProcessDescriptiveStatistics;
 
-        public StatisticsGenerator(Hessian2Input in, AggregationInfo aggregationInfo, int intervalSize, TaskData taskData) {
-            this.in = in;
+        public StatisticsGenerator(String path, AggregationInfo aggregationInfo, int intervalSize, TaskData taskData) {
+            this.path = path;
             this.aggregationInfo = aggregationInfo;
             this.intervalSize = intervalSize;
             this.taskData = taskData;
@@ -177,9 +162,13 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             int currentCount = 0;
             StatisticsCalculator windowStatisticsCalculator = new StatisticsCalculator();
             StatisticsCalculator globalStatisticsCalculator = new StatisticsCalculator();
-            while (true) {
-                try {
-                    DurationLogEntry logEntry = (DurationLogEntry) in.readObject();
+
+            LogReader.FileReader<DurationLogEntry> fileReader = null;
+            try {
+                fileReader = logReader.read(path, DurationLogEntry.class);
+                Iterator<DurationLogEntry> it = fileReader.iterator();
+                while (it.hasNext()) {
+                    DurationLogEntry logEntry = it.next();
 
                     log.debug("Log entry {} time", logEntry.getTime());
 
@@ -200,8 +189,10 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                     currentCount++;
                     windowStatisticsCalculator.addValue(logEntry.getDuration());
                     globalStatisticsCalculator.addValue(logEntry.getDuration());
-                } catch (EOFException e) {
-                    break;
+                }
+            } finally {
+                if (fileReader != null) {
+                    fileReader.close();
                 }
             }
 

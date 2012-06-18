@@ -155,7 +155,7 @@ public class WorkloadProcess implements NodeProcess<Integer> {
         log.debug("Adding new workload thread");
         Scenario<Object, Object, Object> scenario = command.getScenarioFactory().get(context);
 
-        List<ScenarioCollector<Object, Object, Object>> collectors = Lists.newLinkedList();
+        List<ScenarioCollector<?, ?, ?>> collectors = Lists.newLinkedList();
         for (KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>> provider : command.getCollectors()) {
             collectors.add(provider.provide(sessionId, command.getTaskId(), context));
         }

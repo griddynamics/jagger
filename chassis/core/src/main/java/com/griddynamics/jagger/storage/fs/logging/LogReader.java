@@ -20,10 +20,10 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import java.util.Iterator;
+import java.io.IOException;
 
 /**
- * Common interface for log writers
+ * Common interface for log reader
  *
  * @author Aleksandr Balan
  */
@@ -34,5 +34,7 @@ public interface LogReader {
     }
 
     <T> FileReader<T> read(String sessionId, String logOwner, String kernelId, Class<T> clazz);
+
+    <T> FileReader<T> read(String path, Class<T> clazz);
 
 }

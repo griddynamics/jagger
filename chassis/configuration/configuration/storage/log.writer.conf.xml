@@ -23,10 +23,26 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="chronologyLogAggregator" class="com.griddynamics.jagger.storage.fs.logging.ChronologyLogAggregator">
+    <bean id="HessianBufferedLogWriter" class="com.griddynamics.jagger.storage.fs.logging.HessianBufferedLogWriter">
         <property name="fileStorage" ref="fileStorage"/>
-        <property name="logReader" ref="bufferedLogReader" />
-        <property name="logWriter" ref="bufferedLogWriter" />
+        <property name="flushSize" value="${chassis.log.storage.buffer.flushing.size}"/>
     </bean>
-    
+
+    <bean id="HessianBufferedLogReader" class="com.griddynamics.jagger.storage.fs.logging.HessianBufferedLogReader">
+        <property name="fileStorage" ref="fileStorage"/>
+    </bean>
+
+    <bean id="JBossBufferedLogWriter" class="com.griddynamics.jagger.storage.fs.logging.JBossBufferedLogWriter">
+        <property name="fileStorage" ref="fileStorage"/>
+        <property name="flushSize" value="${chassis.log.storage.buffer.flushing.size}"/>
+    </bean>
+
+    <bean id="JBossBufferedLogReader" class="com.griddynamics.jagger.storage.fs.logging.JBossBufferedLogReader">
+        <property name="fileStorage" ref="fileStorage"/>
+    </bean>
+
+    <alias alias="bufferedLogReader" name="${chassis.log.storage.serialization}BufferedLogReader"/>
+
+    <alias alias="bufferedLogWriter" name="${chassis.log.storage.serialization}BufferedLogWriter"/>
+
 </beans>

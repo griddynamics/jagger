@@ -19,7 +19,6 @@
  */
 package com.griddynamics.jagger.monitoring;
 
-import com.caucho.hessian.io.Hessian2Input;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
@@ -37,10 +36,7 @@ import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
 import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
 import com.griddynamics.jagger.monitoring.model.ProfilingSuT;
 import com.griddynamics.jagger.storage.FileStorage;
-import com.griddynamics.jagger.storage.fs.logging.AggregationInfo;
-import com.griddynamics.jagger.storage.fs.logging.LogAggregator;
-import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
-import com.griddynamics.jagger.storage.fs.logging.MonitoringLogEntry;
+import com.griddynamics.jagger.storage.fs.logging.*;
 import com.griddynamics.jagger.util.SerializationUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -48,14 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
-import java.io.EOFException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Aggregates monitoring information.
@@ -67,7 +58,13 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
 
     private LogAggregator logAggregator;
     private FileStorage fileStorage;
+
+    private LogReader logReader;
     private int pointCount;
+
+    public void setLogReader(LogReader logReader) {
+        this.logReader = logReader;
+    }
 
     @Override
     public void onDistributionStarted(String sessionId, String taskId, Task task, Collection<NodeId> capableNodes) {
@@ -103,7 +100,6 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
     private void aggregateLogs(String sessionId, String taskId) {
         String dir = sessionId + "/" + taskId + "/" + LoggingMonitoringProcessor.MONITORING_MARKER;
         String aggregatedFile = dir + "/aggregated.dat";
-        Hessian2Input in = null;
         try {
             AggregationInfo aggregationInfo = logAggregator.chronology(dir, aggregatedFile);
 
@@ -111,8 +107,6 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
             if (intervalSize < 1) {
                 intervalSize = 1;
             }
-
-            in = new Hessian2Input(fileStorage.open(aggregatedFile));
 
             TaskData taskData = getTaskData(taskId, sessionId);
             if (taskData == null) {
@@ -128,20 +122,22 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
             final ListMultimap<MonitoringStream, MonitoringStatistics> avgStatisticsByAgent = ArrayListMultimap.create();
             final ListMultimap<MonitoringStream, MonitoringStatistics> avgStatisticsBySuT = ArrayListMultimap.create();
 
-            while (true) {
-                try {
+            LogReader.FileReader<MonitoringLogEntry> fileReader = logReader.read(aggregatedFile, MonitoringLogEntry.class);
+            Iterator<MonitoringLogEntry> it = fileReader.iterator();
+            while (it.hasNext()) {
+                MonitoringLogEntry logEntry = it.next();
                     currentInterval = processLogEntry(sessionId, aggregationInfo, intervalSize, taskData, currentInterval,
                             sumByIntervalAgent, countByIntervalAgent, sumByIntervalSuT, countByIntervalSuT, avgStatisticsByAgent,
-                            avgStatisticsBySuT, (MonitoringLogEntry) in.readObject());
-                } catch (EOFException e) {
-                    finalizeIntervalSysInfo(sessionId, taskData, currentInterval - aggregationInfo.getMinTime(),
-                            sumByIntervalAgent, countByIntervalAgent, avgStatisticsByAgent);
-                    finalizeIntervalSysUT(sessionId, taskData, currentInterval - aggregationInfo.getMinTime(),
-                            sumByIntervalSuT, countByIntervalSuT, avgStatisticsBySuT);
-                    break;
-                }
+                            avgStatisticsBySuT, logEntry);
             }
 
+            fileReader.close();
+
+            finalizeIntervalSysInfo(sessionId, taskData, currentInterval - aggregationInfo.getMinTime(),
+                    sumByIntervalAgent, countByIntervalAgent, avgStatisticsByAgent);
+            finalizeIntervalSysUT(sessionId, taskData, currentInterval - aggregationInfo.getMinTime(),
+                    sumByIntervalSuT, countByIntervalSuT, avgStatisticsBySuT);
+            
             differentiateRelativeParameters(avgStatisticsByAgent);
             differentiateRelativeParameters(avgStatisticsBySuT);
 
@@ -163,14 +159,6 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
 
         } catch (Exception e) {
             log.error("Error during log processing", e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (Exception e) {
-                    log.warn(e.getMessage(), e);
-                }
-            }
         }
     }
 
@@ -184,28 +172,29 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
             return;
         }
         for (final String fileName : fileNameList) {
+            LogReader.FileReader reader;
             try {
-                final ProfileDTO profileDTO = SerializationUtils.fromString(new Hessian2Input(fileStorage.open(fileName)).readObject().toString());
-
-                getHibernateTemplate().execute(new HibernateCallback<Void>() {
-                    @Override
-                    public Void doInHibernate(Session session) throws HibernateException, SQLException {
-                        String prefix = "Agent on (" + profileDTO.getHostAddress() + ") : ";
-                        for (Map.Entry<String, RuntimeGraph> runtimeGraphEntry : profileDTO.getRuntimeGraphs().entrySet()) {
-                            String context = SerializationUtils.toString(runtimeGraphEntry.getValue());
-                            session.persist(new ProfilingSuT(prefix + runtimeGraphEntry.getKey(), sessionId,
-                                    getTaskData(taskId, sessionId), context));
-                        }
-                        session.flush();
-                        return null;
-                    }
-                });
-            } catch (FileNotFoundException e) {
+                reader = logReader.read(fileName, Object.class);
+            } catch (IllegalArgumentException e) {
                 log.warn(e.getMessage(), e);
+                return;
             }
+            final ProfileDTO profileDTO = SerializationUtils.fromString(reader.iterator().next().toString());
+
+            getHibernateTemplate().execute(new HibernateCallback<Void>() {
+                @Override
+                public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                    String prefix = "Agent on (" + profileDTO.getHostAddress() + ") : ";
+                    for (Map.Entry<String, RuntimeGraph> runtimeGraphEntry : profileDTO.getRuntimeGraphs().entrySet()) {
+                        String context = SerializationUtils.toString(runtimeGraphEntry.getValue());
+                        session.persist(new ProfilingSuT(prefix + runtimeGraphEntry.getKey(), sessionId,
+                                getTaskData(taskId, sessionId), context));
+                    }
+                    session.flush();
+                    return null;
+                }
+            });
         }
-
-
     }
 
     private long processLogEntry(String sessionId, AggregationInfo aggregationInfo, long intervalSize, TaskData taskData,

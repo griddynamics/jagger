@@ -23,6 +23,7 @@ package com.griddynamics.jagger.storage.fs.logging;
 import com.caucho.hessian.io.Hessian2Input;
 
 import java.io.ObjectInputStream;
+import java.util.Iterator;
 
 /**
  * @author Alexey Kiselyov
@@ -30,11 +31,11 @@ import java.io.ObjectInputStream;
  */
 public class StreamInfo<E extends LogEntry> implements Comparable<StreamInfo> {
 
-    Hessian2Input stream;
+    Iterator<E> stream;
 
     E lastLogEntry;
 
-    public StreamInfo(Hessian2Input stream, E lastLogEntry) {
+    public StreamInfo(Iterator<E> stream, E lastLogEntry) {
         this.stream = stream;
         this.lastLogEntry = lastLogEntry;
     }

@@ -39,8 +39,8 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
     private static final Logger log = LoggerFactory.getLogger(WorkloadService.class);
 
     private final Executor executor;
-    private final Scenario<Object, Object, Object> scenario;
-    private final List<ScenarioCollector<Object, Object, Object>> collectors;
+    private final Scenario<?, ?, ?> scenario;
+    private final List<ScenarioCollector<?, ?, ?>> collectors;
 
     private final AtomicInteger delay = new AtomicInteger(0);
     private final AtomicInteger samples = new AtomicInteger(0);
@@ -49,7 +49,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         return new WorkloadServiceBuilder(scenario);
     }
 
-    private WorkloadService(Executor executor, Scenario<Object, Object, Object> scenario, List<ScenarioCollector<Object, Object, Object>> collectors) {
+    private WorkloadService(Executor executor, Scenario<?, ?, ?> scenario, List<ScenarioCollector<?, ?, ?>> collectors) {
         this.executor = executor;
         this.scenario = scenario;
         this.collectors = collectors;
@@ -99,18 +99,18 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
     public static class WorkloadServiceBuilder {
         private final Scenario<Object, Object, Object> scenario;
         private Executor executor = NewThreadExecutor.INSTANCE;
-        private ImmutableList.Builder<ScenarioCollector<Object, Object, Object>> collectors = ImmutableList.builder();
+        private ImmutableList.Builder<ScenarioCollector<?, ?, ?>> collectors = ImmutableList.builder();
 
         private WorkloadServiceBuilder(Scenario<Object, Object, Object> scenario) {
             this.scenario = scenario;
         }
 
-        public WorkloadServiceBuilder addCollectors(List<ScenarioCollector<Object, Object, Object>> collectors) {
+        public WorkloadServiceBuilder addCollectors(List<ScenarioCollector<?, ?, ?>> collectors) {
             this.collectors.addAll(collectors);
             return this;
         }
 
-        public WorkloadServiceBuilder addCollector(ScenarioCollector<Object, Object, Object> collector) {
+        public WorkloadServiceBuilder addCollector(ScenarioCollector<?, ?, ?> collector) {
             collectors.add(collector);
             return this;
         }
@@ -121,29 +121,29 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         }
 
         public WorkloadService buildInfiniteService() {
-            ImmutableList<ScenarioCollector<Object, Object, Object>> list = collectors.build();
+            ImmutableList<ScenarioCollector<?, ?, ?>> list = collectors.build();
 
-            scenario.setListener(Invokers.composeListeners(list));
+            scenario.setListener(Invokers.composeListeners((Iterable)list));
             return new InfiniteWorkloadService(list);
         }
 
         public WorkloadService buildServiceWithPredefinedSamples(final int samples) {
-            ImmutableList<ScenarioCollector<Object, Object, Object>> list = collectors.build();
+            ImmutableList<ScenarioCollector<?, ?, ?>> list = collectors.build();
 
-            scenario.setListener(Invokers.composeListeners(list));
+            scenario.setListener(Invokers.composeListeners((Iterable)list));
             return new PredefinedSamplesWorkloadService(list, samples);
         }
 
         public WorkloadService buildServiceWithSharedSamplesCount(final AtomicInteger samples) {
-            ImmutableList<ScenarioCollector<Object, Object, Object>> list = collectors.build();
+            ImmutableList<ScenarioCollector<?, ?, ?>> list = collectors.build();
 
-            scenario.setListener(Invokers.composeListeners(list));
+            scenario.setListener(Invokers.composeListeners((Iterable)list));
             return new SharedSamplesCountWorkloadService(list, samples);
         }
 
         private class InfiniteWorkloadService extends WorkloadService {
             
-            private InfiniteWorkloadService(ImmutableList<ScenarioCollector<Object, Object, Object>> list) {
+            private InfiniteWorkloadService(ImmutableList<ScenarioCollector<?, ?, ?>> list) {
                 super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
             }
 
@@ -157,7 +157,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
 
             private final int samples;
 
-            private PredefinedSamplesWorkloadService(ImmutableList<ScenarioCollector<Object, Object, Object>> list, int samples) {
+            private PredefinedSamplesWorkloadService(ImmutableList<ScenarioCollector<?, ?, ?>> list, int samples) {
                 super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
                 this.samples = samples;
             }
@@ -172,7 +172,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
             
             private final AtomicInteger samplesLeft;
 
-            private SharedSamplesCountWorkloadService(ImmutableList<ScenarioCollector<Object, Object, Object>> list, AtomicInteger samples) {
+            private SharedSamplesCountWorkloadService(ImmutableList<ScenarioCollector<?, ?, ?>> list, AtomicInteger samples) {
                 super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
                 this.samplesLeft = samples;
             }

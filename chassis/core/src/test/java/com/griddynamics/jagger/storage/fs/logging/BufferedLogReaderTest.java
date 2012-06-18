@@ -41,7 +41,7 @@ public class BufferedLogReaderTest {
     @Test
     public void shouldReadOneObject() throws Exception {
         byte[] bytes = serialize(1);
-        Hessian2Input input = inputOf(bytes);
+        BufferedLogReader.LogReaderInput input = inputOf(bytes);
         BufferedLogReader.IteratorImpl<Integer> iterator = new BufferedLogReader.IteratorImpl<Integer>(input, Integer.class);
 
         assertThat(iterator.hasNext(), is(true));
@@ -52,7 +52,7 @@ public class BufferedLogReaderTest {
     @Test
     public void shouldReadEmptyStream() throws Exception {
         byte[] bytes = new byte[]{};
-        Hessian2Input input = inputOf(bytes);
+        BufferedLogReader.LogReaderInput input = inputOf(bytes);
         BufferedLogReader.IteratorImpl<Integer> iterator = new BufferedLogReader.IteratorImpl<Integer>(input, Integer.class);
 
         assertThat(iterator.hasNext(), is(false));
@@ -61,7 +61,7 @@ public class BufferedLogReaderTest {
     @Test
     public void shouldReadTwoObjects() throws Exception {
         byte[] bytes = serialize(1, 2);
-        Hessian2Input input = inputOf(bytes);
+        BufferedLogReader.LogReaderInput input = inputOf(bytes);
         BufferedLogReader.IteratorImpl<Integer> iterator = new BufferedLogReader.IteratorImpl<Integer>(input, Integer.class);
 
         assertThat(iterator.hasNext(), is(true));
@@ -78,7 +78,7 @@ public class BufferedLogReaderTest {
         FileStorage fileStorage = mock(FileStorage.class);
         when(fileStorage.exists("1/2/3")).thenReturn(false);
 
-        BufferedLogReader logReader = new BufferedLogReader();
+        BufferedLogReader logReader = new HessianBufferedLogReader();
         logReader.setFileStorage(fileStorage);
 
         IllegalArgumentException expected = null;
@@ -91,9 +91,9 @@ public class BufferedLogReaderTest {
         verify(fileStorage).exists("1/2/3");
     }
 
-    private static Hessian2Input inputOf(byte[] bytes) {
+    private static BufferedLogReader.LogReaderInput inputOf(byte[] bytes) {
         ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-        return new Hessian2Input(input);
+        return new HessianBufferedLogReader().getInput(input);
     }
 
     private static <T> byte[] serialize(T... objects) {

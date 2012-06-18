@@ -23,6 +23,7 @@ package com.griddynamics.jagger.storage.fs.logging;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.io.OutputStream;
 import java.io.Serializable;
 
 /**
@@ -35,11 +36,12 @@ public interface LogWriter {
     /**
      * Writes log entry to specified file. Changes should not be written until flush call.
      */
-    abstract public void log(String sessionId, String logOwner, String kernelId, Serializable logEntry);
+    void log(String sessionId, String logOwner, String kernelId, Serializable logEntry);
 
+    void log(String path, Serializable logEntry);
 
     /**
      * Flushes changes to specified file.
      */
-    abstract public void flush();
+    void flush();
 }
