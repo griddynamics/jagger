@@ -49,11 +49,9 @@ import java.util.List;
  * @author Alexey Kiselyov
  *         Date: 26.07.11
  */
-public class ProfileReporter extends AbstractMonitoringReportProvider implements MappedReportProvider<String> {
+public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
     private Logger log = LoggerFactory.getLogger(ProfileReporter.class);
 
-    private ReportingContext context;
-    private String template;
     private boolean enable;
     private int maxHotSpots;
     private int maxCallersInGraph;
@@ -118,6 +116,7 @@ public class ProfileReporter extends AbstractMonitoringReportProvider implements
         this.callGraphImageHeight = callGraphImageHeight;
     }
 
+    @Override
     public JRDataSource getDataSource(String testId) {
         if (!enable) {
             return new JRBeanCollectionDataSource(Collections.emptySet());
@@ -197,21 +196,6 @@ public class ProfileReporter extends AbstractMonitoringReportProvider implements
             }
         }
         return result;
-    }
-
-    @Override
-    public JasperReport getReport(String key) {
-        return this.context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 
     public void setEnable(boolean enable) {

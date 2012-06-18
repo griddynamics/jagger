@@ -24,10 +24,8 @@ import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringParameterComparison;
-import com.griddynamics.jagger.reporting.MappedReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -35,15 +33,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class MonitoringSessionComparisonReporter implements MappedReportProvider<Collection<Verdict<MonitoringParameterComparison>>> {
+public class MonitoringSessionComparisonReporter extends AbstractMappedReportProvider<Collection<Verdict<MonitoringParameterComparison>>> {
 
-    private ReportingContext context;
-    private String template;
     private StatusImageProvider statusImageProvider;
 
     @Override
     public JRDataSource getDataSource(Collection<Verdict<MonitoringParameterComparison>> key) {
-        context.getParameters().put("jagger.monitoringsessioncomparator.statusImageProvider", statusImageProvider);
+        getContext().getParameters().put("jagger.monitoringsessioncomparator.statusImageProvider", statusImageProvider);
 
         ArrayList<MonitoringComparisonDto> result = Lists.newArrayList();
         for (Verdict<MonitoringParameterComparison> verdict : key) {
@@ -57,21 +53,6 @@ public class MonitoringSessionComparisonReporter implements MappedReportProvider
         Collections.sort(result);
 
         return new JRBeanCollectionDataSource(result);
-    }
-
-    @Override
-    public JasperReport getReport(Collection<Verdict<MonitoringParameterComparison>> key) {
-        return context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 
     @Required
@@ -123,5 +104,4 @@ public class MonitoringSessionComparisonReporter implements MappedReportProvider
             return name.compareTo(dto.name);
         }
     }
-
 }

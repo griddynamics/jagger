@@ -22,6 +22,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+            </props>
+        </property>
+    </bean>
 
     <bean id="exRegistry" class="com.griddynamics.jagger.extension.ExtensionRegistry">
         <constructor-arg value="com.griddynamics.jagger.reporting.ReportProvider"/>
@@ -31,11 +38,15 @@
                 <entry key="monitoring">
                     <bean class="com.griddynamics.jagger.reporting.MonitoringReportProvider">
                         <property name="context" ref="reportingContext"/>
+                        <property name="template" value="reporting/test-report-monitoring.jrxml"/>
+                        <property name="sessionFactory" ref="sessionFactory"/>
                     </bean>
                     </entry>
                 <entry key="latency-plot">
                     <bean class="com.griddynamics.jagger.reporting.LatencyPlotReportProvider">
                         <property name="context" ref="reportingContext"/>
+                        <property name="template" value="reporting/test-report-latency-chart.jrxml"/>
+                        <property name="sessionFactory" ref="sessionFactory"/>
                     </bean>
                 </entry>
             </map>

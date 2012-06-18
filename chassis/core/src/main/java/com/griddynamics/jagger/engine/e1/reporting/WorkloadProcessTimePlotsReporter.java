@@ -24,31 +24,19 @@ import com.google.common.collect.Maps;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.Percentile;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeLatencyPercentile;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.MappedReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
 import com.griddynamics.jagger.util.Pair;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.List;
 
-public class WorkloadProcessTimePlotsReporter extends HibernateDaoSupport implements MappedReportProvider<String> {
-    private SessionIdProvider sessionIdProvider;
-    private ReportingContext context;
-
-    private String template;
+public class WorkloadProcessTimePlotsReporter extends AbstractMappedReportProvider<String> {
 
     // testId -> plots
     private Map<String, TaskPlotDTO> taskPlots;
@@ -74,6 +62,7 @@ public class WorkloadProcessTimePlotsReporter extends HibernateDaoSupport implem
         }
     }
 
+    @Override
     public JRDataSource getDataSource(String testId) {
         if (taskPlots == null) {
             taskPlots = createTaskPlots();
@@ -83,7 +72,7 @@ public class WorkloadProcessTimePlotsReporter extends HibernateDaoSupport implem
     }
 
     public Map<String, TaskPlotDTO> createTaskPlots() {
-        String sessionId = sessionIdProvider.getSessionId();
+        String sessionId = getSessionIdProvider().getSessionId();
 
         @SuppressWarnings("unchecked")
         List<TimeInvocationStatistics> statistics = getHibernateTemplate().find(
@@ -188,25 +177,5 @@ public class WorkloadProcessTimePlotsReporter extends HibernateDaoSupport implem
             percentileSeries.put(roundedKey, series);
         }
         series.add(time, additivePercentileValue);
-    }
-
-    @Override
-    public JasperReport getReport(String testId) {
-        return context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    @Required
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 }

@@ -29,14 +29,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.List;
 
-public class LatencyPlotReportProvider implements ReportProvider {
-    private ReportingContext context;
+public class LatencyPlotReportProvider extends AbstractReportProvider {
 
     public class PlotDTO {
         private JCommonDrawableRenderer image;
@@ -63,14 +58,6 @@ public class LatencyPlotReportProvider implements ReportProvider {
         }
 
         return new JRBeanCollectionDataSource(plots);
-    }
-
-    public JasperReport getReport() {
-        return context.getReport("reporting/test-report-latency-chart.jrxml");
-    }
-
-    public void setContext(ReportingContext context) {
-        this.context = context;
     }
 
     private JFreeChart createChart(String title) {

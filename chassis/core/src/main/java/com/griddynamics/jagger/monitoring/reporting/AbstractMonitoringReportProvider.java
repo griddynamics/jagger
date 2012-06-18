@@ -21,18 +21,14 @@ package com.griddynamics.jagger.monitoring.reporting;
 
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
-import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
+import net.sf.jasperreports.engine.JRDataSource;
 
 import java.util.List;
 import java.util.Map;
 
-// todo mairbek: should we use delegation instead of inheritance??
-public class AbstractMonitoringReportProvider extends HibernateDaoSupport {
-    private SessionIdProvider sessionIdProvider;
-
+public abstract class AbstractMonitoringReportProvider<T> extends AbstractMappedReportProvider<T> {
     private Map<String, String> monitoringMap;
 
     public void clearCache() {
@@ -43,7 +39,6 @@ public class AbstractMonitoringReportProvider extends HibernateDaoSupport {
         if (monitoringMap != null) {
             return;
         }
-
 
         String sessionId = getSessionIdProvider().getSessionId();
         List<PerformedMonitoring> list = getHibernateTemplate().find("select pf from PerformedMonitoring pf where pf.sessionId =? and pf.parentId is not null", sessionId);
@@ -79,13 +74,6 @@ public class AbstractMonitoringReportProvider extends HibernateDaoSupport {
         return null;
     }
 
-
-    @Required
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
-    }
-
-    protected SessionIdProvider getSessionIdProvider() {
-        return sessionIdProvider;
-    }
+    @Override
+    public abstract JRDataSource getDataSource(T key);
 }

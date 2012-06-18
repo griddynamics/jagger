@@ -44,6 +44,7 @@
         <module>chassis/</module>
         <module>distribution</module>
         <module>facade</module>
+        <module>webclient</module>
         <module>test/jagger-test</module>
         <module>test/test-target</module>
     </modules>
@@ -64,6 +65,9 @@
             <id>jboss-third-party</id>
             <layout>default</layout>
             <name>jboss thirdparty repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
             <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
         </repository>
         <repository>
@@ -76,7 +80,18 @@
             <id>snmp4j</id>
             <layout>default</layout>
             <name>snmp4j repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
             <url>https://server.oosnmp.net/dist/release/</url>
+        </repository>
+        <repository>
+            <id>gflot</id>
+            <name>Code Monkey</name>
+            <url>http://codemonkey.dumontierlab.com/maven/repo/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -242,6 +257,18 @@
             </dependency>
 
             <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>3.5.4-Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>dbcp</artifactId>
+                <version>6.0.35</version>
+            </dependency>
+
+            <dependency>
                 <groupId>javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>3.12.1.GA</version>
@@ -321,6 +348,17 @@
                 <artifactId>spring-orm</artifactId>
                 <version>${spring.version}</version>
                 <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
             </dependency>
 
             <dependency>

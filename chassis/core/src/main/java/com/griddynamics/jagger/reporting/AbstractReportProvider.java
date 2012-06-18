@@ -1,9 +1,7 @@
 package com.griddynamics.jagger.reporting;
 
-import com.griddynamics.jagger.master.SessionIdProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperReport;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 //TODO: replace obsoleted HibernateDaoSupport by direct Hibernate session manipulations
 
@@ -14,10 +12,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 5/21/12
  */
-public abstract class AbstractReportProvider extends HibernateDaoSupport implements ReportProvider {
-    private SessionIdProvider sessionIdProvider;
-    private ReportingContext context;
-    private String template;
+public abstract class AbstractReportProvider extends AbstractReportProviderBean implements ReportProvider {
 
     //==========Constructors
 
@@ -26,28 +21,6 @@ public abstract class AbstractReportProvider extends HibernateDaoSupport impleme
 
     //==========Getters & Setters
 
-
-    public SessionIdProvider getSessionIdProvider() {
-        return sessionIdProvider;
-    }
-
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
-    }
-
-    /**
-     * Returns JasperReports report layout name
-     *
-     * @return report layout name
-     */
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
     /**
      * Return compiled JasperReports report
      *
@@ -55,16 +28,7 @@ public abstract class AbstractReportProvider extends HibernateDaoSupport impleme
      */
     @Override
     public JasperReport getReport() {
-        return context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    protected ReportingContext getContext() {
-        return context;
+        return getContext().getReport(getTemplate());
     }
 
     /**

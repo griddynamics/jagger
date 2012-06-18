@@ -22,27 +22,17 @@ package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.MappedReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class WorkloadValidationReporter extends HibernateDaoSupport implements MappedReportProvider<String> {
+public class WorkloadValidationReporter extends AbstractMappedReportProvider<String> {
     private static final Logger log = LoggerFactory.getLogger(WorkloadValidationReporter.class);
-
-    private ReportingContext context;
-    private String template;
-    private SessionIdProvider sessionIdProvider;
-
 
     public static class ValidationResult {
         private String validator;
@@ -85,7 +75,7 @@ public class WorkloadValidationReporter extends HibernateDaoSupport implements M
 
     @Override
     public JRDataSource getDataSource(String key) {
-        String sessionId = sessionIdProvider.getSessionId();
+        String sessionId = getSessionIdProvider().getSessionId();
         @SuppressWarnings("unchecked")
         List<ValidationResultEntity> validationResults = getHibernateTemplate().find(
                 "select v from ValidationResultEntity v where v.workloadData.taskId=? and v.workloadData.sessionId=?",
@@ -95,7 +85,6 @@ public class WorkloadValidationReporter extends HibernateDaoSupport implements M
             log.info("Validation info for task id " + key + "] not found");
             return null;
         }
-
 
         List<ValidationResult> result = Lists.newLinkedList();
         for (ValidationResultEntity entity : validationResults) {
@@ -124,24 +113,5 @@ public class WorkloadValidationReporter extends HibernateDaoSupport implements M
         result.setSuccessPercent(percentage);
 
         return result;
-    }
-
-    @Override
-    public JasperReport getReport(String key) {
-        return context.getReport(template);
-    }
-
-    @Override
-    @Required
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
     }
 }

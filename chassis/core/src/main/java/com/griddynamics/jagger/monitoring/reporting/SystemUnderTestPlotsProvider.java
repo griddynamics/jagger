@@ -48,7 +48,7 @@ import java.util.List;
  * @author Alexey Kiselyov
  *         Date: 26.07.11
  */
-public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvider implements MappedReportProvider<String> {
+public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvider<String> {
     private Logger log = LoggerFactory.getLogger(SystemUnderTestPlotsProvider.class);
 
     private Map<GroupKey, MonitoringParameter[]> plotGroups;
@@ -56,8 +56,6 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
     private boolean showPlotsByBox;
     private boolean showPlotsBySuT;
 
-    private ReportingContext context;
-    private String template;
     private boolean enable;
     private Map<String, List<MonitoringReporterData>> taskPlots;
 
@@ -70,6 +68,7 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
         taskPlots = null;
     }
 
+    @Override
     public JRDataSource getDataSource(String taskId) {
         log.debug("Report for task with id {} requested", taskId);
         if (!this.enable) {
@@ -266,21 +265,6 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
 
     public void clearStatistics() {
         statistics = null;
-    }
-
-    @Override
-    public JasperReport getReport(String key) {
-        return this.context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 
     public void setEnable(boolean enable) {

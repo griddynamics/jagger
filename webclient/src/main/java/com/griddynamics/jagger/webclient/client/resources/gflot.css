@@ -1,0 +1,136 @@
+@def headerBgColor #0D0D0D;
+@def mainBgColor #FFF7FF;
+body {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 13px;
+    background-color: mainBgColor;
+    color: #0D0D0D;
+}
+
+@external gwt-Button;
+.gwt-Button {
+    /*      background-color: #D14836; */
+    /*      background-image: -webkit-linear-gradient(top, #DD4B39, #D14836); */
+    /*      background-image: -moz-linear-gradient(top, #DD4B39, #D14836); */
+    /*      background-image: -ms-linear-gradient(top, #DD4B39, #D14836); */
+    /*      background-image: -o-linear-gradient(top, #DD4B39, #D14836); */
+    /*      background-image: linear-gradient(top, #DD4B39, #D14836); */
+    /*      border: 1px solid transparent; */
+    /*      height: 27px; */
+    /*      line-height: 27px; */
+    /*      padding: 0px 8px; */
+    /*      outline: 0; */
+    /*      font-weight: bold; */
+    /*      -webkit-border-radius: 5px; */
+    /*      -moz-border-radius: 5px; */
+    /*      border-radius: 5px; */
+    /*      cursor: pointer; */
+}
+
+.headerContainer {
+    margin: 8px;
+    padding: 10px;
+    background-color: headerBgColor;
+    color: white;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow: 5px 5px 5px #888;
+    -webkit-box-shadow: 5px 5px 5px #888;
+    box-shadow: 5px 5px 5px #888;
+}
+
+.headerContainer a {
+    color: white;
+}
+
+.headerTitle {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.headerDescription {
+    font-style: italic;
+    margin-left: 10px;
+}
+
+.headerHomePageLink {
+    float: right;
+    margin-top: 3px;
+}
+
+.menuScrollContainer {
+
+}
+
+.menuContainer {
+
+}
+
+.menuCategory {
+    margin: 5px;
+    font-size: 16px;
+}
+
+.menuLink {
+    margin: 0px 10px;
+}
+
+.menuLink a {
+    display: block;
+    padding: 5px 8px;
+    color: black;
+    outline: 0px;
+}
+
+.menuLinkSelected a {
+    background-color: #8C2E0B;
+    color: white;
+    -moz-box-shadow: 5px 5px 5px #888;
+    -webkit-box-shadow: 5px 5px 5px #888;
+    box-shadow: 5px 5px 5px #888;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.menuLink a:hover {
+    background-color: #8C501C;
+    color: white;
+    -moz-box-shadow: 5px 5px 5px #888;
+    -webkit-box-shadow: 5px 5px 5px #888;
+    box-shadow: 5px 5px 5px #888;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.sourceContainer {
+    padding: 10px;
+}
+
+.sourceLink {
+    font-weight: bold;
+    padding: 3px;
+    color: black;
+}
+
+.sourceLink:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.sourceLinkSelected {
+    color: grey;
+}
+
+.sourceLinkSelected:hover {
+    cursor: auto;
+    text-decoration: none;
+}
+
+.mainScrollContainer {
+    margin: 5px;
+}
+
+.mainContainer {
+    margin: 5px;
+}

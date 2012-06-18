@@ -1,0 +1,60 @@
+body {
+    background-color: white;
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    margin: 8px;
+}
+
+.x-axis-label {
+    text-align: center;
+    color: #545454;
+}
+
+.task-details-tree div div div div div {
+    padding: 0;
+}
+
+.task-details-tree div div div div div table td {
+    padding: 0;
+}
+
+.task-details-tree div div div div div table td input {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.plot-header, .plot-legend {
+    text-align: center;
+}
+
+.plot-header {
+    font-weight: bold;
+}
+
+.plot-legend {
+    border: 1px solid #575757;
+    margin-bottom: .3em;
+}
+
+.centered {
+    text-align: center;
+}
+
+.gwt-DateBox, .gwt-TextBox {
+    padding: 0;
+    margin: 0;
+}
+
+.zoom-label {
+    font-size: smaller;
+    color: #999;
+    background-color: #eee;
+    padding: .1em .5em;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.zoom-panel {
+    text-align: right;
+}

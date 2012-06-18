@@ -24,25 +24,23 @@ import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadComparisonResult;
+import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
+import com.griddynamics.jagger.reporting.AbstractReportProviderBean;
 import com.griddynamics.jagger.reporting.MappedReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.Collection;
 import java.util.List;
 
-public class WorkloadSessionComparisonReporter implements MappedReportProvider<Collection<Verdict<WorkloadComparisonResult>>> {
+public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvider<Collection<Verdict<WorkloadComparisonResult>>> {
 
-    private ReportingContext context;
-    private String template;
     private StatusImageProvider statusImageProvider;
 
     @Override
     public JRDataSource getDataSource(Collection<Verdict<WorkloadComparisonResult>> key) {
-        context.getParameters().put("jagger.workloadsessioncomparator.statusImageProvider", statusImageProvider);
+        getContext().getParameters().put("jagger.workloadsessioncomparator.statusImageProvider", statusImageProvider);
 
 
         List<WorkloadSessionComparisonDto> result = Lists.newLinkedList();
@@ -65,21 +63,6 @@ public class WorkloadSessionComparisonReporter implements MappedReportProvider<C
         }
 
         return new JRBeanCollectionDataSource(result);
-    }
-
-    @Override
-    public JasperReport getReport(Collection<Verdict<WorkloadComparisonResult>> key) {
-        return context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 
     @Required

@@ -62,6 +62,12 @@
                   value="Status is based on success rate. Session status is a status of the worst test."/>
     </bean>
 
+    <bean id="abstractReportProviderBean" class="com.griddynamics.jagger.reporting.AbstractReportProviderBean" abstract="true">
+        <property name="context" ref="reportingContext"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+    </bean>
+
     <bean id="reporterExtensionRegistry" class="com.griddynamics.jagger.extension.ExtensionRegistry">
         <constructor-arg index="0" value="com.griddynamics.jagger.reporting.ReportProvider"/>
 
@@ -69,10 +75,7 @@
         <property name="extensions">
             <map>
                 <entry key="sessionComparison">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/session-comparison-report.jrxml"/>
                         <property name="baselineSessionProvider"
                                   ref="baselineSessionProvider"/>
@@ -82,19 +85,13 @@
                 </entry>
 
                 <entry key="sessionSummary">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionSummaryReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionSummaryReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/session-summary-reporting.jrxml"/>
                     </bean>
                 </entry>
 
                 <entry key="sessionStatus">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionStatusReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionStatusReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/session-status-report.jrxml"/>
                         <property name="statusImageProvider" ref="statusImageProvider"/>
                         <property name="decisionMaker" ref="sessionStatusDecisionMaker"/>
@@ -102,10 +99,7 @@
                 </entry>
 
                 <entry key="e1Scenario">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/workload-reporting.jrxml"/>
 
                         <property name="decisionMaker" ref="sessionStatusDecisionMaker"/>
@@ -114,38 +108,26 @@
                 </entry>
 
                 <entry key="scalabilityPlots">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadScalabilityPlotsReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadScalabilityPlotsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/scalability-plots.jrxml"/>
                     </bean>
                 </entry>
 
                 <entry key="testGeneralContainer">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.TestGeneralReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.TestGeneralReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/test-general-container.jrxml"/>
                     </bean>
                 </entry>
 
                 <entry key="testDetailsContainer">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.TestDetailsReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.TestDetailsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/test-details-container.jrxml"/>
                     </bean>
                 </entry>
 
                 <entry key="monitoringReporter">
-                    <bean class="com.griddynamics.jagger.monitoring.reporting.MonitoringReporter">
+                    <bean class="com.griddynamics.jagger.monitoring.reporting.MonitoringReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/monitoring-overview.jrxml"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
-                        <property name="context" ref="reportingContext"/>
                     </bean>
                 </entry>
 
@@ -161,53 +143,39 @@
             <map>
 
                 <entry key="workloadSessionComparison">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadSessionComparisonReporter">
-                        <property name="context" ref="reportingContext"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadSessionComparisonReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/workload-session-comparison-report.jrxml"/>
                         <property name="statusImageProvider" ref="statusImageProvider"/>
                     </bean>
                 </entry>
 
                 <entry key="monitoringSessionComparison">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.MonitoringSessionComparisonReporter">
-                        <property name="context" ref="reportingContext"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.MonitoringSessionComparisonReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/monitoring-session-comparison-report.jrxml"/>
                         <property name="statusImageProvider" ref="statusImageProvider"/>
                     </bean>
                 </entry>
 
                 <entry key="workloadProcessDetails">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadProcessDetailsReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadProcessDetailsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/workload-process-details.jrxml"/>
                     </bean>
                 </entry>
                 <entry key="validationResults">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadValidationReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadValidationReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/workload-validation-results.jrxml"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
                     </bean>
                 </entry>
 
                 <entry key="testTimePlots">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadProcessTimePlotsReporter">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadProcessTimePlotsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/test-timeplot.jrxml"/>
                     </bean>
                 </entry>
 
                 <entry key="sysUTPlotsGeneral">
-                    <bean class="com.griddynamics.jagger.monitoring.reporting.SystemUnderTestPlotsGeneralProvider">
-                        <property name="context" ref="reportingContext"/>
+                    <bean class="com.griddynamics.jagger.monitoring.reporting.SystemUnderTestPlotsGeneralProvider" parent="abstractReportProviderBean">
                         <property name="enable" value="${chassis.conditions.monitoring.enable}"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
                         <property name="template" value="configuration/reporting/monitoring-general-reporting.jrxml"/>
 
                         <property name="showPlotsByGlobal"
@@ -223,11 +191,8 @@
                 </entry>
 
                 <entry key="sysUTPlots">
-                    <bean class="com.griddynamics.jagger.monitoring.reporting.SystemUnderTestPlotsProvider">
-                        <property name="context" ref="reportingContext"/>
+                    <bean class="com.griddynamics.jagger.monitoring.reporting.SystemUnderTestPlotsProvider" parent="abstractReportProviderBean">
                         <property name="enable" value="${chassis.conditions.monitoring.enable}"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
                         <property name="template" value="configuration/reporting/monitoring-reporting.jrxml"/>
 
                         <property name="showPlotsByGlobal"
@@ -241,11 +206,8 @@
                 </entry>
 
                 <entry key="profiler">
-                    <bean class="com.griddynamics.jagger.diagnostics.reporting.ProfileReporter">
-                        <property name="context" ref="reportingContext"/>
+                    <bean class="com.griddynamics.jagger.diagnostics.reporting.ProfileReporter" parent="abstractReportProviderBean">
                         <property name="enable" value="${chassis.conditions.monitoring.enable}"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                        <property name="sessionIdProvider" ref="sessionIdProvider"/>
                         <property name="template" value="configuration/reporting/profile-reporting.jrxml"/>
 
                         <property name="maxHotSpots" value="5"/>

@@ -38,7 +38,7 @@
             <rectangle>
                 <reportElement x="0" y="0" width="550" height="20" backcolor="#000000"/>
                 <graphicElement>
-                    <pen>None</pen>
+                    <pen/>
                 </graphicElement>
             </rectangle>
             <staticText>

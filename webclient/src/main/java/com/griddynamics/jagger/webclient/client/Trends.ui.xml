@@ -1,0 +1,92 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:c="urn:import:com.google.gwt.user.cellview.client"
+             xmlns:datepicker="urn:import:com.google.gwt.user.datepicker.client">
+
+    <ui:style>
+        .container {
+            margin: 60px 10px 10px 10px;
+        }
+
+        .plotPanel {
+            margin: 5px;
+        }
+    </ui:style>
+
+    <ui:with field='res' type='com.griddynamics.jagger.webclient.client.resources.Resources' />
+
+    <g:TabLayoutPanel barHeight="2.5" barUnit="EM" addStyleNames="{style.container}">
+        <g:tab>
+            <g:header>Trends</g:header>
+            <g:SplitLayoutPanel>
+                <g:center>
+                    <g:ScrollPanel ui:field="scrollPanel">
+                        <g:HTMLPanel addStyleNames="{style.plotPanel}" ui:field="plotPanel"/>
+                    </g:ScrollPanel>
+                </g:center>
+                <g:south size="250">
+                    <g:SplitLayoutPanel>
+                        <g:west size="600">
+                            <g:DockLayoutPanel>
+                                <g:center>
+                                    <c:DataGrid ui:field="sessionsDataGrid" width="100%" title="Sessions"/>
+                                </g:center>
+                                <g:south size="100">
+                                    <g:HTMLPanel>
+                                        <table width="100%">
+                                            <tr>
+                                                <td align="center"><c:SimplePager ui:field="sessionsPager"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <table width="100%">
+                                                        <tr>
+                                                            <td width="45%">Select by Session Number:</td>
+                                                            <td width="25%"><g:TextBox ui:field="sessionNumberTextBox" width="100%"/></td>
+                                                            <td width="5%"/>
+                                                            <td width="25%"/>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Select by Date Range</td>
+                                                            <td><datepicker:DateBox ui:field="sessionsFrom" width="100%"/></td>
+                                                            <td style="text-align: center;">-</td>
+                                                            <td><datepicker:DateBox ui:field="sessionsTo" width="100%"/></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </g:HTMLPanel>
+                                </g:south>
+                            </g:DockLayoutPanel>
+                        </g:west>
+                        <g:center>
+                            <g:ScrollPanel>
+                                <g:HTMLPanel>
+                                    <table width="100%">
+                                        <tr>
+                                            <th>Session Tasks</th>
+                                        </tr>
+                                        <tr>
+                                            <td><g:VerticalPanel ui:field="sessionScopePlotList"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td><c:CellTree title="Task Details" ui:field="taskDetailsTree"/></td>
+                                        </tr>
+                                    </table>
+                                </g:HTMLPanel>
+                            </g:ScrollPanel>
+                        </g:center>
+                    </g:SplitLayoutPanel>
+                </g:south>
+            </g:SplitLayoutPanel>
+        </g:tab>
+
+        <g:tab>
+            <g:header>View Results</g:header>
+            <g:HTMLPanel>
+                <g:Label>View Results are coming soon</g:Label>
+            </g:HTMLPanel>
+        </g:tab>
+    </g:TabLayoutPanel>
+</ui:UiBinder>

@@ -22,28 +22,16 @@ package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.reporting.MappedReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-public class DiagnosticReporter extends HibernateDaoSupport implements MappedReportProvider<String> {
+public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
     private static final Logger log = LoggerFactory.getLogger(DiagnosticReporter.class);
-
-    private ReportingContext context;
-    private String template;
-    private SessionIdProvider sessionIdProvider;
-
 
     public static class DiagnosticResult {
         private int total;
@@ -69,7 +57,7 @@ public class DiagnosticReporter extends HibernateDaoSupport implements MappedRep
 
     @Override
     public JRDataSource getDataSource(String key) {
-        String sessionId = sessionIdProvider.getSessionId();
+        String sessionId = getSessionIdProvider().getSessionId();
         @SuppressWarnings("unchecked")
         List<DiagnosticResultEntity> diagnosticResults = getHibernateTemplate().find(
                 "select v from DiagnosticResultEntity v where v.workloadData.taskId=? and v.workloadData.sessionId=?",
@@ -97,24 +85,5 @@ public class DiagnosticReporter extends HibernateDaoSupport implements MappedRep
         result.setName(name);
 
         return result;
-    }
-
-    @Override
-    public JasperReport getReport(String key) {
-        return context.getReport(template);
-    }
-
-    @Override
-    @Required
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
     }
 }

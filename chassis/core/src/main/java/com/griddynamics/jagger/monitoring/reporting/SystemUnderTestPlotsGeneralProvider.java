@@ -20,21 +20,13 @@
 
 package com.griddynamics.jagger.monitoring.reporting;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
 import com.griddynamics.jagger.agent.model.MonitoringParameter;
-import com.griddynamics.jagger.agent.model.MonitoringParameterLevel;
 import com.griddynamics.jagger.monitoring.MonitoringParameterBean;
 import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
-import com.griddynamics.jagger.reporting.MappedReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
 import com.griddynamics.jagger.util.Pair;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
@@ -48,12 +40,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +50,7 @@ import java.util.Set;
 /**
  * User: dkotlyarov
  */
-public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringReportProvider implements MappedReportProvider<String> {
+public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringReportProvider<String> {
     private static final Logger log = LoggerFactory.getLogger(SystemUnderTestPlotsGeneralProvider.class);
 
     private Map<GroupKey, MonitoringParameter[]> plotGroups;
@@ -71,8 +59,6 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
     private boolean showPlotsBySuT;
     private boolean showNumbers;
 
-    private ReportingContext context;
-    private String template;
     private boolean enable;
     private Map<String, List<MonitoringReporterData>> taskPlots;
 
@@ -85,6 +71,7 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
         taskPlots = null;
     }
 
+    @Override
     public JRDataSource getDataSource(String groupName) {
         log.debug("Report for param group with name {} requested", groupName);
         if (!this.enable) {
@@ -445,21 +432,6 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
 
     public void clearStatistics() {
         statistics = null;
-    }
-
-    @Override
-    public JasperReport getReport(String key) {
-        return this.context.getReport(template);
-    }
-
-    @Override
-    public void setContext(ReportingContext context) {
-        this.context = context;
-    }
-
-    @Required
-    public void setTemplate(String template) {
-        this.template = template;
     }
 
     public void setEnable(boolean enable) {
