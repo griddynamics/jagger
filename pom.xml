@@ -491,94 +491,89 @@
                 <version>1.0-beta-6</version>
             </extension>
         </extensions>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <target>${targetJdkVersion}</target>
+                    <source>${targetJdkVersion}</source>
+                    <fork>true</fork>
+                    <debug>true</debug>
+                    <executable>${targetJdk}/bin/javac</executable>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1</version>
+                <configuration>
+                    <docfilessubdirs>true</docfilessubdirs>
+                    <stylesheetfile>jagger-javadoc.css</stylesheetfile>
+                    <detectOfflineLinks>false</detectOfflineLinks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2.2</version>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>downloads-maven-plugin</artifactId>
+                <version>0.5</version>
+                <configuration>
+                    <description>${project.name} build of the ${project.version} release</description>
+                    <server>github</server>
+                    <override>true</override>
+                    <includeAttached>true</includeAttached>
+                </configuration>
+            </plugin>
+            <!--
+                                <plugin>
+                                    <groupId>com.github.github</groupId>
+                                    <artifactId>site-maven-plugin</artifactId>
+                                    <version>0.6</version>
+                                    <configuration>
+                                        <message>Building site for ${project.version}</message>
+                                        <server>github</server>
+                                    </configuration>
+                                </plugin>
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.2</version>
+            </plugin>
+
+        </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>2.0.2</version>
-                        <configuration>
-                            <target>${targetJdkVersion}</target>
-                            <source>${targetJdkVersion}</source>
-                            <fork>true</fork>
-                            <debug>true</debug>
-                            <executable>${targetJdk}/bin/javac</executable>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.8.1</version>
-                        <configuration>
-                            <docfilessubdirs>true</docfilessubdirs>
-                            <stylesheetfile>jagger-javadoc.css</stylesheetfile>
-                            <detectOfflineLinks>false</detectOfflineLinks>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jxr-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.github</groupId>
-                        <artifactId>downloads-maven-plugin</artifactId>
-                        <version>0.5</version>
-                        <configuration>
-                            <description>${project.name} build of the ${project.version} release</description>
-                            <server>github</server>
-                            <override>true</override>
-                            <includeAttached>true</includeAttached>
-                        </configuration>
-                    </plugin>
-<!--
-                    <plugin>
-                        <groupId>com.github.github</groupId>
-                        <artifactId>site-maven-plugin</artifactId>
-                        <version>0.6</version>
-                        <configuration>
-                            <message>Building site for ${project.version}</message>
-                            <server>github</server>
-                        </configuration>
-                    </plugin>
--->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <version>2.2.2</version>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <!--
          These plugins are run when mvn site:site is invoked. Html reports get
