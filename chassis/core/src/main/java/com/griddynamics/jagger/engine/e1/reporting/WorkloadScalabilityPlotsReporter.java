@@ -21,27 +21,28 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 
+import com.google.common.collect.Lists;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
-
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import com.google.common.collect.Lists;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
-	public static class ScenarioPlotDTO {
+    public static class ScenarioPlotDTO {
         private String scenarioName;
         private JCommonDrawableRenderer throughputPlot;
-		private JCommonDrawableRenderer latencyPlot;
+        private JCommonDrawableRenderer latencyPlot;
 
         public String getScenarioName() {
             return scenarioName;
@@ -69,75 +70,77 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
     }
 
     @Override
-	public JRDataSource getDataSource() {
+    public JRDataSource getDataSource() {
 
-		List<ScenarioPlotDTO> plots = Lists.newArrayList();
+        List<ScenarioPlotDTO> plots = Lists.newArrayList();
 
-		String sessionId = getSessionIdProvider().getSessionId();
-		@SuppressWarnings("unchecked")
-		List<String> scenarios = getHibernateTemplate().find(
-				"select distinct d.scenario.name from WorkloadData d where d.sessionId=? order by d.number asc, d.scenario.name asc", sessionId);
-		
-		plots.addAll(getScenarioPlots(scenarios));
+        String sessionId = getSessionIdProvider().getSessionId();
+        @SuppressWarnings("unchecked")
+        List<WorkloadData> scenarios = getHibernateTemplate().find("from WorkloadData d where d.sessionId=? order by d.number asc, d.scenario.name asc", sessionId);
 
-		return new JRBeanCollectionDataSource(plots);
-	}
+        plots.addAll(getScenarioPlots(scenarios));
 
-	private List<ScenarioPlotDTO> getScenarioPlots(List<String> scenarios) {
-		List<ScenarioPlotDTO> throughputPlots = Lists.newArrayList();
-		for (String scenarioName : scenarios) {
-			XYDataset latencyData = getLatencyData(scenarioName);
-            XYDataset throughputData = getThroughputData(scenarioName);
+        return new JRBeanCollectionDataSource(plots);
+    }
 
-			JFreeChart chartThroughput = ChartHelper.createXYChart(null, throughputData, "Thread Count",
-					"Throughput (TPS)", 6, 3, ChartHelper.ColorTheme.LIGHT);
+    private Collection<ScenarioPlotDTO> getScenarioPlots(List<WorkloadData> scenarios) {
+        HashMap<String, ScenarioPlotDTO> throughputPlots = new HashMap<String, ScenarioPlotDTO>();
+        for (WorkloadData scenario : scenarios) {
+            String scenarioName = scenario.getScenario().getName();
 
-            JFreeChart chartLatency = ChartHelper.createXYChart(null, latencyData, "Thread Count",
-					"Latency (sec)", 6, 3, ChartHelper.ColorTheme.LIGHT);
+            if (!throughputPlots.containsKey(scenarioName)) {
+                XYDataset latencyData = getLatencyData(scenarioName);
+                XYDataset throughputData = getThroughputData(scenarioName);
 
-			ScenarioPlotDTO plotDTO = new ScenarioPlotDTO();
-			plotDTO.setScenarioName(scenarioName);
-            plotDTO.setThroughputPlot(new JCommonDrawableRenderer(chartThroughput));
-            plotDTO.setLatencyPlot(new JCommonDrawableRenderer(chartLatency));
+                JFreeChart chartThroughput = ChartHelper.createXYChart(null, throughputData, "Thread Count",
+                        "Throughput (TPS)", 6, 3, ChartHelper.ColorTheme.LIGHT);
 
-			throughputPlots.add(plotDTO);
-		}
-		return throughputPlots;
-	}
+                JFreeChart chartLatency = ChartHelper.createXYChart(null, latencyData, "Thread Count",
+                        "Latency (sec)", 6, 3, ChartHelper.ColorTheme.LIGHT);
 
-	private XYDataset getThroughputData(String scenarioName) {
-		List<WorkloadTaskData> all = getResultData(scenarioName);
+                ScenarioPlotDTO plotDTO = new ScenarioPlotDTO();
+                plotDTO.setScenarioName(scenarioName);
+                plotDTO.setThroughputPlot(new JCommonDrawableRenderer(chartThroughput));
+                plotDTO.setLatencyPlot(new JCommonDrawableRenderer(chartLatency));
 
-		XYSeries throughput = new XYSeries("Througput");
-		throughput.add(0, 0);
-		for (WorkloadTaskData workloadTaskData : all) {
-			throughput.add(workloadTaskData.getClockValue(), workloadTaskData.getThroughput());
-		}
-		return new XYSeriesCollection(throughput);
-	}
+                throughputPlots.put(scenarioName, plotDTO);
+            }
+        }
+        return throughputPlots.values();
+    }
 
-	private XYDataset getLatencyData(String scenarioName) {
-		List<WorkloadTaskData> all = getResultData(scenarioName);
+    private XYDataset getThroughputData(String scenarioName) {
+        List<WorkloadTaskData> all = getResultData(scenarioName);
 
-		XYSeries meanLatency = new XYSeries("Mean");
-		XYSeries stdDevLatency = new XYSeries("StdDev");
-		meanLatency.add(0, 0);
-		stdDevLatency.add(0, 0);
-		for (WorkloadTaskData workloadTaskData : all) {
-			meanLatency.add(workloadTaskData.getClockValue(), workloadTaskData.getAvgLatency());
-			stdDevLatency.add(workloadTaskData.getClockValue(), workloadTaskData.getStdDevLatency());
-		}
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(meanLatency);
-		dataset.addSeries(stdDevLatency);
-		return dataset;
-	}
+        XYSeries throughput = new XYSeries("Througput");
+        throughput.add(0, 0);
+        for (WorkloadTaskData workloadTaskData : all) {
+            throughput.add(workloadTaskData.getClockValue(), workloadTaskData.getThroughput());
+        }
+        return new XYSeriesCollection(throughput);
+    }
 
-	private List<WorkloadTaskData> getResultData(String scenarioName) {
-		String sessionId = getSessionIdProvider().getSessionId();
-		@SuppressWarnings("unchecked")
-		List<WorkloadTaskData> all = getHibernateTemplate().find(
-				"from WorkloadTaskData d where d.scenario.name=? and d.sessionId=?", scenarioName, sessionId);
-		return all;
-	}
+    private XYDataset getLatencyData(String scenarioName) {
+        List<WorkloadTaskData> all = getResultData(scenarioName);
+
+        XYSeries meanLatency = new XYSeries("Mean");
+        XYSeries stdDevLatency = new XYSeries("StdDev");
+        meanLatency.add(0, 0);
+        stdDevLatency.add(0, 0);
+        for (WorkloadTaskData workloadTaskData : all) {
+            meanLatency.add(workloadTaskData.getClockValue(), workloadTaskData.getAvgLatency());
+            stdDevLatency.add(workloadTaskData.getClockValue(), workloadTaskData.getStdDevLatency());
+        }
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(meanLatency);
+        dataset.addSeries(stdDevLatency);
+        return dataset;
+    }
+
+    private List<WorkloadTaskData> getResultData(String scenarioName) {
+        String sessionId = getSessionIdProvider().getSessionId();
+        @SuppressWarnings("unchecked")
+        List<WorkloadTaskData> all = getHibernateTemplate().find("from WorkloadTaskData d where d.scenario.name=? and d.sessionId=?", scenarioName, sessionId);
+        return all;
+    }
 }

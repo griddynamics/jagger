@@ -1,0 +1,2 @@
+Run jagger with -Dtest.service.endpoints="<comma-separated list of tested machines>"
+e.g. -Dtest.service.endpoints="http://macys-jagger4.vm.griddynamics.net:8080, http://macys-jagger4.vm.griddynamics.net:8090, http://macys-jagger5.vm.griddynamics.net:8080, http://macys-jagger5.vm.griddynamics.net:8090"

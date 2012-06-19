@@ -30,7 +30,8 @@ do
 	do_on_vm $i "unzip $JAGGER_HOME/$PACKAGE -d $JAGGER_HOME"
 
     echo KILLING PREVIOUS PROCESS jagger-ci@macys-jagger$i.vm.griddynamics.net
-	do_on_vm $i "$JAGGER_HOME/$DISTRIB/j4g_killer.sh JaggerLauncher"
+	do_on_vm $i "$JAGGER_HOME/$DISTRIB/stop.sh"
+    do_on_vm $i "rm -rf /home/jagger-ci/jaggerdb"
 done
 
 echo sleep 3 sec

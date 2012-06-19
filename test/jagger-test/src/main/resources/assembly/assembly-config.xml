@@ -3,22 +3,12 @@
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 
     <id>full</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
 
     <formats>
         <format>zip</format>
         <format>dir</format>
     </formats>
-
-    <fileSets>
-        <fileSet>
-            <directory>${basedir}/src/main/resources/configuration</directory>
-            <outputDirectory>configuration</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/src/main/resources/profiles</directory>
-            <outputDirectory>profiles</outputDirectory>
-        </fileSet>
-    </fileSets>
 
     <dependencySets>
         <dependencySet>
@@ -38,4 +28,15 @@
             </excludes>
         </dependencySet>
     </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}/src/main/resources/configuration</directory>
+            <outputDirectory>configuration</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/src/main/resources/profiles</directory>
+            <outputDirectory>profiles</outputDirectory>
+        </fileSet>
+    </fileSets>
 </assembly>

@@ -1,3 +1,3 @@
 #!/bin/bash
-echo $JAVA_HOME/bin/java $2 $3 $4 $5 $6 $7 $8 -Xmx2550m -Xms2550m -classpath "./modules/chassis/*:./modules/diagnostics/*:./lib/*:./configuration/boot/" -Dlog4j.configuration=jagger.log4j.properties com.griddynamics.jagger.JaggerLauncher $1
-$JAVA_HOME/bin/java $2 $3 $4 $5 $6 $7 $8 -Xmx2550m -Xms2550m -classpath "./modules/chassis/*:./modules/diagnostics/*:./lib/*:./configuration/boot/" -Dlog4j.configuration=jagger.log4j.properties com.griddynamics.jagger.JaggerLauncher $1
+echo $JAVA_HOME/bin/java $2 $3 $4 $5 $6 $7 $8 $9 -Xmx2550m -Xms2550m -classpath "./modules/chassis/*:./modules/diagnostics/*:./lib/*:./configuration/boot/" -Dlog4j.configuration=jagger.log4j.properties com.griddynamics.jagger.JaggerLauncher $1
+$JAVA_HOME/bin/java $2 $3 $4 $5 $6 $7 $8 $9 -Xmx2550m -Xms2550m -classpath "./modules/chassis/*:./modules/diagnostics/*:./lib/*:./configuration/boot/" -Dlog4j.configuration=jagger.log4j.properties com.griddynamics.jagger.JaggerLauncher $1

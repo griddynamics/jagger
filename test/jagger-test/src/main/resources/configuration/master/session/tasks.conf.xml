@@ -23,15 +23,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean class="com.griddynamics.jagger.util.PropertiesResolver">
-        <property name="registry" ref="propertiesResolverRegistry"/>
-        <property name="resources">
-            <list>
-                <value>configuration/master/session/tests.properties</value>
-            </list>
-        </property>
-    </bean>
-
     <bean id="endpointConfigurator" class="com.griddynamics.jagger.invoker.EndpointConfigurator">
         <property name="urls" value="${test.service.endpoints}"/>
     </bean>

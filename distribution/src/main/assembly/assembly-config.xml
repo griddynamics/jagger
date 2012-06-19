@@ -87,53 +87,21 @@
 
     </dependencySets>
 
-    <files>
-        <file>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/resources/</directory>
+            <includes>
+                <include>*.sh</include>
+            </includes>
             <fileMode>0744</fileMode>
-            <source>src/main/resources/j4g_killer.sh</source>
             <outputDirectory>.</outputDirectory>
-        </file>
-
-        <file>
-            <fileMode>0744</fileMode>
-            <source>src/main/resources/start.sh</source>
-            <outputDirectory>.</outputDirectory>
-        </file>
-
-        <file>
-            <fileMode>0744</fileMode>
-            <source>src/main/resources/start_agent.sh</source>
-            <outputDirectory>.</outputDirectory>
-        </file>
-
-        <file>
-            <fileMode>0744</fileMode>
-            <source>deploy.sh</source>
-            <outputDirectory>.</outputDirectory>
-        </file>
-
-        <file>
-            <fileMode>0744</fileMode>
-            <source>deploy_local_mode.sh</source>
-            <outputDirectory>.</outputDirectory>
-        </file>
-
-        <file>
-            <fileMode>0744</fileMode>
-            <source>deploy_local_mode_ReportOnly.sh</source>
-            <outputDirectory>.</outputDirectory>
-        </file>
-
-        <file>
-            <fileMode>0744</fileMode>
-            <source>deploy_multiple_kernels.sh</source>
-            <outputDirectory>.</outputDirectory>
-        </file>
-
-        <file>
-            <fileMode>0600</fileMode>
-            <source>ssh/jagger.vm.ssh.key</source>
-            <outputDirectory>./ssh</outputDirectory>
-        </file>
-    </files>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources/mysql</directory>
+            <includes>
+                <include>*.sql</include>
+            </includes>
+            <outputDirectory>mysql-patches</outputDirectory>
+        </fileSet>
+    </fileSets>
 </assembly>
