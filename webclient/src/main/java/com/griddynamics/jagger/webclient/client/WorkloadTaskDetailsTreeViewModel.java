@@ -3,10 +3,7 @@ package com.griddynamics.jagger.webclient.client;
 import com.google.gwt.cell.client.*;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.TreeViewModel;
+import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
@@ -24,7 +21,7 @@ public class WorkloadTaskDetailsTreeViewModel implements TreeViewModel {
     private ListDataProvider<TaskDataDto> taskDataProvider = new ListDataProvider<TaskDataDto>();
     private final MultiSelectionModel<PlotNameDto> selectionModel;
     private final Cell<PlotNameDto> plotNameCell;
-    private final Map<TaskDataDto, ListDataProvider<PlotNameDto>> plotNameDataProviders = new HashMap<TaskDataDto, ListDataProvider<PlotNameDto>>();
+    private final Map<TaskDataDto, AbstractDataProvider<PlotNameDto>> plotNameDataProviders = new HashMap<TaskDataDto, AbstractDataProvider<PlotNameDto>>();
     private final DefaultSelectionEventManager<PlotNameDto> selectionManager =
             DefaultSelectionEventManager.createCheckboxManager();
 
@@ -134,19 +131,15 @@ public class WorkloadTaskDetailsTreeViewModel implements TreeViewModel {
         return taskDataProvider;
     }
 
-    public ListDataProvider<PlotNameDto> getPlotNameDataProvider(TaskDataDto taskDataDto) {
+    public AbstractDataProvider<PlotNameDto> getPlotNameDataProvider(TaskDataDto taskDataDto) {
         if (taskDataDto == null) {
             return null;
-        }
-
-        if (plotNameDataProviders.get(taskDataDto) == null) {
-            plotNameDataProviders.put(taskDataDto, new ListDataProvider<PlotNameDto>());
         }
 
         return plotNameDataProviders.get(taskDataDto);
     }
 
-    public Map<TaskDataDto, ListDataProvider<PlotNameDto>> getPlotNameDataProviders() {
+    public Map<TaskDataDto, AbstractDataProvider<PlotNameDto>> getPlotNameDataProviders() {
         return plotNameDataProviders;
     }
 

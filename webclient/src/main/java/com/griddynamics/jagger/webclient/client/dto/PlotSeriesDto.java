@@ -10,6 +10,7 @@ import java.util.Collections;
  */
 public class PlotSeriesDto implements Serializable {
     private Collection<PlotDatasetDto> plotSeries = Collections.emptyList();
+    private Collection<MarkingDto> markingSeries = Collections.emptyList();
     private String xAxisLabel;
     private String yAxisLabel;
     private String plotHeader;
@@ -22,6 +23,14 @@ public class PlotSeriesDto implements Serializable {
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
         this.plotHeader = plotHeader;
+    }
+
+    public PlotSeriesDto(Collection<PlotDatasetDto> plotSeries, String xAxisLabel, String yAxisLabel, String plotHeader, Collection<MarkingDto> markingSeries) {
+        this.plotSeries = plotSeries;
+        this.xAxisLabel = xAxisLabel;
+        this.yAxisLabel = yAxisLabel;
+        this.plotHeader = plotHeader;
+        this.markingSeries = markingSeries;
     }
 
     public Collection<PlotDatasetDto> getPlotSeries() {
@@ -40,10 +49,15 @@ public class PlotSeriesDto implements Serializable {
         return plotHeader;
     }
 
+    public Collection<MarkingDto> getMarkingSeries() {
+        return markingSeries;
+    }
+
     @Override
     public String toString() {
         return "PlotSeriesDto{" +
                 "plotSeries=" + plotSeries +
+                ", markingSeries=" + markingSeries +
                 ", xAxisLabel='" + xAxisLabel + '\'' +
                 ", yAxisLabel='" + yAxisLabel + '\'' +
                 ", plotHeader='" + plotHeader + '\'' +

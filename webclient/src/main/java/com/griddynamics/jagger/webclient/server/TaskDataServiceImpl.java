@@ -79,10 +79,10 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                 String taskId = (String) obj[1];
                 commonsTaskMap.put(taskId, taskName);
             }
-            log.debug("Task frequency: {}", commonsTaskMap);
+            log.debug("For sessions {} commons tasks are: {}", sessionIds, commonsTaskMap);
 
             List<TaskData> taskDataList = (List<TaskData>) entityManager.createQuery(
-                    "select td from TaskData as td where td.sessionId in (:sessionIds) and td.taskId in (:workloadTaskIdList)")
+                    "select td from TaskData as td where td.sessionId in (:sessionIds) and td.taskId in (:workloadTaskIdList) order by td.number asc")
                     .setParameter("sessionIds", sessionIds)
                     .setParameter("workloadTaskIdList", workloadTaskIdList)
                     .getResultList();
@@ -91,7 +91,7 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                 return Collections.emptyList();
             }
 
-            Map<String, TaskDataDto> added = new HashMap<String, TaskDataDto>();
+            Map<String, TaskDataDto> added = new LinkedHashMap<String, TaskDataDto>();
             for (TaskData taskData : taskDataList) {
                 String taskName = taskData.getTaskName();
                 String taskId = taskData.getTaskId();

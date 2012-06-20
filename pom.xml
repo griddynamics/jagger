@@ -75,6 +75,9 @@
             <layout>default</layout>
             <name>jboss java.net repo</name>
             <url>	https://repository.jboss.org/nexus/content/repositories/java.net-m2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>snmp4j</id>

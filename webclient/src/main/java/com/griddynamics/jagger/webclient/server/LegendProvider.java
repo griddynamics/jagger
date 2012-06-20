@@ -22,20 +22,16 @@ public class LegendProvider {
         this.entityManager = entityManager;
     }
 
-    public String getPlotHeader(long taskId, String plotName) {
-        Object[] legendData;
-        legendData = (Object[]) entityManager.createQuery("select td.sessionId, td.taskName from TaskData as td where td.id=:taskId").
-                setParameter("taskId", taskId).getSingleResult();
-
-        return generatePlotHeader(legendData[0].toString(), legendData[1].toString(), plotName);
-    }
-
     public String getPlotHeader(Set<Long> taskIds, String plotName) {
         @SuppressWarnings("unchecked")
-        List<TaskData> taskDataList = (List<TaskData>) entityManager.createQuery("select td from TaskData as td where td.id in (:taskIds)").
+        List<String> sessionList = (List<String>) entityManager.createQuery("select distinct td.sessionId from TaskData as td where td.id in (:taskIds)").
                 setParameter("taskIds", taskIds).getResultList();
 
-        return generatePlotHeader(taskDataList, plotName);
+        String taskName = (String) entityManager.createQuery("select td.taskName from TaskData as td where td.id=(:taskId)")
+                .setParameter("taskId", taskIds.iterator().next())
+                .getSingleResult();
+
+        return generatePlotHeader(sessionList, taskName, plotName);
     }
 
     public String generatePlotLegend(String sessionId, String description, boolean addSessionPrefix) {
@@ -53,6 +49,11 @@ public class LegendProvider {
         return generatePlotHeader(taskData.getSessionId(), taskData.getTaskName(), plotName);
     }
 
+
+    //============================
+    //===========Auxiliary Methods
+    //============================
+
     private String generatePlotHeader(String sessionId, String taskName, String plotName) {
         StringBuilder builder = new StringBuilder();
         builder
@@ -66,19 +67,19 @@ public class LegendProvider {
         return builder.toString();
     }
 
-    private String generatePlotHeader(List<TaskData> taskDataList, String plotName) {
-        if (taskDataList == null || taskDataList.isEmpty()) {
+    private String generatePlotHeader(List<String> sessionIds, String taskName, String plotName) {
+        if (sessionIds == null || sessionIds.isEmpty()) {
             return plotName;
         }
 
         StringBuilder builder = new StringBuilder();
         builder.append("Session ");
-        for (TaskData taskData : taskDataList) {
-            builder.append("#").append(taskData.getSessionId()).append(", ");
+        for (String sessionId : sessionIds) {
+            builder.append("#").append(sessionId).append(", ");
         }
 
         builder
-                .append(taskDataList.iterator().next().getTaskName())
+                .append(taskName)
                 .append(", ")
                 .append(plotName);
 

@@ -12,10 +12,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -101,7 +98,7 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
         long totalSize;
         List<SessionDataDto> sessionDataDtoList;
         try {
-            totalSize = (Long) entityManager.createQuery("select count(sd.id) from SessionData as sd where sd.startTime >= :from and sd.endTime <= :to")
+            totalSize = (Long) entityManager.createQuery("select count(sd.id) from SessionData as sd where sd.startTime between :from and :to")
                     .setParameter("from", from)
                     .setParameter("to", to)
                     .getSingleResult();
@@ -135,6 +132,52 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
             log.info("There was loaded {} sessions data from {} for {} ms", new Object[]{sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp});
         } catch (Exception e) {
             log.error("Error was occurred during session data between " + from + " to " + to + "; start " + start + ", length " + length, e);
+            throw new RuntimeException(e);
+        }
+
+        return new PagedSessionDataDto(sessionDataDtoList, (int) totalSize);
+    }
+
+    @Override
+    public PagedSessionDataDto getBySessionIds(int start, int length, Set<String> sessionIds) {
+        long timestamp = System.currentTimeMillis();
+
+        long totalSize;
+        List<SessionDataDto> sessionDataDtoList;
+
+        try {
+            totalSize = (Long) entityManager.createQuery("select count(sd.id) from SessionData as sd where sd.sessionId in (:sessionIds)")
+                    .setParameter("sessionIds", new ArrayList<String>(sessionIds))
+                    .getSingleResult();
+
+            @SuppressWarnings("unchecked")
+            List<SessionData> sessionDataList = (List<SessionData>)
+                    entityManager.createQuery("select sd from SessionData as sd where sd.sessionId in (:sessionIds) order by sd.startTime asc")
+                            .setParameter("sessionIds", new ArrayList<String>(sessionIds))
+                            .setFirstResult(start)
+                            .setMaxResults(length)
+                            .getResultList();
+
+            if (sessionDataList == null) {
+                return new PagedSessionDataDto(Collections.<SessionDataDto>emptyList(), 0);
+            }
+
+            sessionDataDtoList = new ArrayList<SessionDataDto>(sessionDataList.size());
+            DateFormat dateFormatter = new SimpleDateFormat(dateFormat);
+            for (SessionData sessionData : sessionDataList) {
+                sessionDataDtoList.add(new SessionDataDto(
+                        sessionData.getSessionId(),
+                        dateFormatter.format(sessionData.getStartTime()),
+                        dateFormatter.format(sessionData.getEndTime()),
+                        sessionData.getActiveKernels(),
+                        sessionData.getTaskExecuted(),
+                        sessionData.getTaskFailed())
+                );
+            }
+
+            log.info("There was loaded {} sessions data from {} for {} ms", new Object[]{sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp});
+        } catch (Exception e) {
+            log.error("Error was occurred during session data fetching for session Ids " + sessionIds + "; start " + start + ", length " + length, e);
             throw new RuntimeException(e);
         }
 

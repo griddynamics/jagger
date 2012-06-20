@@ -1,0 +1,82 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+
+    <ui:with type="com.griddynamics.jagger.webclient.client.resources.JaggerResources" field="res"/>
+
+    <g:SplitLayoutPanel ui:field="widget">
+        <g:center>
+            <g:ScrollPanel ui:field="scrollPanel">
+                <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotPanel"/>
+            </g:ScrollPanel>
+        </g:center>
+        <g:south size="250">
+            <g:SplitLayoutPanel>
+                <g:west size="600">
+                    <g:DockLayoutPanel>
+                        <g:center>
+                            <c:DataGrid ui:field="sessionsDataGrid" width="100%" title="Sessions"/>
+                        </g:center>
+                        <g:south size="70">
+                            <g:HTMLPanel>
+                                <table width="100%">
+                                    <tr>
+                                        <td align="center">
+                                            <c:SimplePager ui:field="sessionsPager"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table width="100%">
+                                                <tr>
+                                                    <td width="45%">Select by Session Number:</td>
+                                                    <td width="25%">
+                                                        <g:TextBox ui:field="sessionNumberTextBox" width="100%"/>
+                                                    </td>
+                                                    <td width="5%"/>
+                                                    <td width="25%"/>
+                                                </tr>
+                                                <!--TODO fix it. When you reset time settings dysplay doesn't reset-->
+                                                <!--<tr>-->
+                                                    <!--<td>Select by Date Range</td>-->
+                                                    <!--<td>-->
+                                                        <!--<datepicker:DateBox ui:field="sessionsFrom" width="100%"/>-->
+                                                    <!--</td>-->
+                                                    <!--<td style="text-align: center;">-</td>-->
+                                                    <!--<td>-->
+                                                        <!--<datepicker:DateBox ui:field="sessionsTo" width="100%"/>-->
+                                                    <!--</td>-->
+                                                <!--</tr>-->
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </g:HTMLPanel>
+                        </g:south>
+                    </g:DockLayoutPanel>
+                </g:west>
+                <g:center>
+                    <g:ScrollPanel>
+                        <g:HTMLPanel>
+                            <table width="100%">
+                                <tr>
+                                    <th>Session Tasks</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <g:VerticalPanel ui:field="sessionScopePlotList"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <c:CellTree title="Task Details" ui:field="taskDetailsTree"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </g:HTMLPanel>
+                    </g:ScrollPanel>
+                </g:center>
+            </g:SplitLayoutPanel>
+        </g:south>
+    </g:SplitLayoutPanel>
+</ui:UiBinder>

@@ -1,0 +1,162 @@
+body {
+    background-color: white;
+    color: #555555;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    margin: 8px;
+}
+
+.mainPanel {
+    margin: 60px 10px 10px 10px;
+}
+
+.navPanel {
+    text-decoration: none;
+    font-weight: bold;
+    width: 100%;
+}
+
+.navPanel ul {
+    margin: 0;
+    padding: 0;
+}
+
+.navPanel ul li {
+    display: inline;
+    float: left;
+    list-style: none;
+    margin: 0 0 0 2px;
+    padding: 3px;
+}
+
+.navPanel ul li a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #888;
+    background-color: #e4e4e4;
+    display: block;
+    padding: 3px;
+    font-size: smaller;
+
+    border: 1px solid #888;
+    -moz-border-radius: 3px 3px 0 0;
+    -webkit-border-radius: 3px 3px 0 0;
+    -o-border-radius: 3px 3px 0 0;
+    border-radius: 3px 3px 0 0;
+}
+
+.navPanel a:visited {
+    color: #888;
+}
+
+.navPanel ul li .currentItem a {
+    color: #555555;
+    background-color: #fff;
+    -moz-border-radius: 3px 3px 0 0;
+    -webkit-border-radius: 3px 3px 0 0;
+    -o-border-radius: 3px 3px 0 0;
+    border-radius: 3px 3px 0 0;
+}
+
+.contentPanel {
+    border: 1px solid #888888;
+    margin: 0;
+}
+
+.plotPanel {
+    margin: 5px;
+}
+
+.xAxisLabel {
+    text-align: center;
+    color: #545454;
+}
+
+.taskDetailsTree div div div div div {
+    padding: 0;
+}
+
+.taskDetailsTree div div div div div table td {
+    padding: 0;
+}
+
+.taskDetailsTree div div div div div table td input {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+input[type="text"] {
+    border: 1px solid #555555;
+    padding: .2em;
+
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.plotHeader, .plotLegend {
+    text-align: center;
+}
+
+.plotHeader {
+    font-weight: bold;
+}
+
+.plotLegend {
+    border: 1px solid #575757;
+    margin-bottom: .3em;
+}
+
+.centered {
+    text-align: center;
+}
+
+.gwt-DateBox, .gwt-TextBox {
+    padding: 0;
+    margin: 0;
+}
+
+.zoomLabel {
+    font-size: smaller;
+    color: #999;
+    background-color: #eee;
+    padding: .1em .5em;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.zoomPanel {
+    text-align: right;
+}
+
+.gwt-PopupPanel {
+    border: none;
+    padding: 0;
+    color: #999;
+    background-color: #eee;
+}
+
+.infoPanel table {
+    border: 1px solid #999;
+    color: #999;
+    background-color: #eee;
+    border-collapse: collapse;
+    overflow: auto;
+}
+
+.infoPanel table tr {
+    border: 1px solid #999;
+}
+
+.infoPanel table tr td {
+    border: 1px solid #999;
+    padding: .3em;
+    text-align: justify;
+    word-wrap: break-word;
+    vertical-align: top;
+}
+
+.infoPanel table tr td:first-child {
+    white-space: nowrap;
+}

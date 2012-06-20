@@ -66,6 +66,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     //===========Contract Methods
     //===========================
 
+    //TODO Remove it. It isn't used now
     @Override
     public Set<PlotNameDto> getTaskScopePlotList(String sessionId, long taskId) {
         Set<PlotNameDto> plotNameDtoSet = null;
@@ -193,13 +194,14 @@ public class PlotProviderServiceImpl implements PlotProviderService {
                 }
             }
 
-            /*for (String sessionId : sessionIds) {
+            for (String sessionId : sessionIds) {
                 if (isMonitoringStatisticsAvailable(sessionId)) {
                     for (Map.Entry<GroupKey, DefaultMonitoringParameters[]> monitoringPlot : monitoringPlotGroups.entrySet()) {
                         plotNameDtoSet.add(new PlotNameDto(taskDataDto.getIds(), monitoringPlot.getKey().getUpperName()));
                     }
                 }
-            }*/
+            }
+            log.debug("For sessions {} are available these plots: {}", sessionIds, plotNameDtoSet);
         } catch (Exception e) {
             log.error("Error was occurred during task scope plots data getting for session IDs " + sessionIds + ", task name " + taskDataDto.getTaskName(), e);
             throw new RuntimeException(e);

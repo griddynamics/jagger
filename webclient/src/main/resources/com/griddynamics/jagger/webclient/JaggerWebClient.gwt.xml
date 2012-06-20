@@ -7,6 +7,9 @@
     <inherits name="ca.nanometrics.gflot.GFlot"/>
     <inherits name="com.google.gwt.resources.Resources" />
 
+    <inherits name="com.google.gwt.activity.Activity" />
+    <inherits name="com.google.gwt.place.Place" />
+
     <set-property name="gflot.load.flot.text" value="ENABLED" />
     <set-property name="gflot.load.canvas2image" value="ENABLED" />
 
