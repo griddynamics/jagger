@@ -41,7 +41,9 @@
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
+<!--
     <listener>
         <listener-class>com.griddynamics.jagger.test.target.TcpService</listener-class>
     </listener>
+-->
 </web-app>
