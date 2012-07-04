@@ -14,6 +14,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.google.common.base.Preconditions.*;
+
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 5/29/12
@@ -31,6 +33,9 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
     @Override
     public PagedSessionDataDto getAll(int start, int length) {
+        checkArgument(start >= 0, "start is negative");
+        checkArgument(length >= 0, "length is negative");
+
         long timestamp = System.currentTimeMillis();
         long totalSize;
         List<SessionDataDto> sessionDataDtoList;
@@ -64,6 +69,8 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
     @Override
     public SessionDataDto getBySessionId(String sessionId) {
+        checkNotNull(sessionId, "sessionId is null");
+
         long timestamp = System.currentTimeMillis();
 
         SessionDataDto sessionDataDto = null;
@@ -93,6 +100,11 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
     @Override
     public PagedSessionDataDto getByDatePeriod(int start, int length, Date from, Date to) {
+        checkArgument(start >= 0, "start is negative");
+        checkArgument(length >= 0, "length is negative");
+        checkNotNull(from, "from is null");
+        checkNotNull(to, "to is null");
+
         long timestamp = System.currentTimeMillis();
 
         long totalSize;
@@ -140,6 +152,10 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
     @Override
     public PagedSessionDataDto getBySessionIds(int start, int length, Set<String> sessionIds) {
+        checkArgument(start >= 0, "start is negative");
+        checkArgument(length >= 0, "length is negative");
+        checkNotNull(sessionIds, "sessionIds is null");
+
         long timestamp = System.currentTimeMillis();
 
         long totalSize;

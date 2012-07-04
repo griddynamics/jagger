@@ -14,7 +14,7 @@ import com.griddynamics.jagger.webclient.client.trends.TrendsPlace;
 public class JaggerActivityMapper implements ActivityMapper {
     JaggerResources resources;
 
-    Activity trendsActivity;
+    Trends trendsActivity;
 
     public JaggerActivityMapper(JaggerResources resources) {
         this.resources = resources;
@@ -26,6 +26,7 @@ public class JaggerActivityMapper implements ActivityMapper {
             if (trendsActivity == null) {
                 trendsActivity = new Trends(resources);
             }
+            trendsActivity.setSessionIds(((TrendsPlace) place).getSessionIds());
             return trendsActivity;
         }
 

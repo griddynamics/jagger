@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.webclient.client.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -16,6 +15,10 @@ public class SessionDataDto implements Serializable {
     private int tasksFailed;
 
     public SessionDataDto() {
+    }
+
+    public SessionDataDto(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public SessionDataDto(String sessionId, String startDate, String endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed) {

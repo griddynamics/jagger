@@ -17,7 +17,7 @@ import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 6/9/12
  */
-public class SessionDataAsyncDataProvider extends AsyncDataProvider<SessionDataDto> {
+public class SessionDataAsyncDataProvider extends ExtendedAsyncDataProvider<SessionDataDto> {
 
     public SessionDataAsyncDataProvider() {
     }

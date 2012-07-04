@@ -2,7 +2,6 @@ package com.griddynamics.jagger.webclient.client.data;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
@@ -16,9 +15,16 @@ import java.util.Date;
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 6/9/12
  */
-public class SessionDataForDatePeriodAsyncProvider extends AsyncDataProvider<SessionDataDto> {
+public class SessionDataForDatePeriodAsyncProvider extends ExtendedAsyncDataProvider<SessionDataDto> {
     private Date from;
     private Date to;
+
+    public SessionDataForDatePeriodAsyncProvider() {
+    }
+
+    public SessionDataForDatePeriodAsyncProvider(ProvidesKey<SessionDataDto> keyProvider) {
+        super(keyProvider);
+    }
 
     public SessionDataForDatePeriodAsyncProvider(Date from, Date to) {
         this.from = from;
@@ -29,6 +35,12 @@ public class SessionDataForDatePeriodAsyncProvider extends AsyncDataProvider<Ses
         super(keyProvider);
         this.from = from;
         this.to = to;
+    }
+
+    public void setDateRange(Date from, Date to) {
+        this.from = from;
+        this.to = to;
+        update();
     }
 
     @Override

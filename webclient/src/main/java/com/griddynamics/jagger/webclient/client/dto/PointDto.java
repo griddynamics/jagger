@@ -41,8 +41,7 @@ public class PointDto implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = new Double(x).hashCode() >> 13 ^ new Double(y).hashCode();
-        return result;
+        return new Double(x).hashCode() >> 13 ^ new Double(y).hashCode();
     }
 
     @Override

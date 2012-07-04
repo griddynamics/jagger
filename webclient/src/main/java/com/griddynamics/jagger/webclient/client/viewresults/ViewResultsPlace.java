@@ -4,6 +4,7 @@ import com.griddynamics.jagger.webclient.client.mvp.PlaceWithParameters;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -12,11 +13,11 @@ import java.util.Map;
 public class ViewResultsPlace extends PlaceWithParameters {
 
     @Override
-    public Map<String, String> getParameters() {
+    public Map<String, Set<String>> getParameters() {
         return Collections.emptyMap();
     }
 
     @Override
-    public void setParameters(Map<String, String> parameters) {
+    public void setParameters(Map<String, Set<String>> parameters) {
     }
 }

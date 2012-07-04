@@ -1,0 +1,19 @@
+body {
+    background: url(bg-body.jpg);
+    color: #555555;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    margin: 8px;
+}
+
+#header {
+    background: url(header_gradient.jpeg) repeat-x;
+    vertical-align: middle;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#header img {
+    margin: 5px 0 5px 25px;
+}

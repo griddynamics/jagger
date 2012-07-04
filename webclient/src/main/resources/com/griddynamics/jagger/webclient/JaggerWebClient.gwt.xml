@@ -15,4 +15,5 @@
 
     <entry-point class='com.griddynamics.jagger.webclient.client.JaggerWebClient'/>
 
+    <stylesheet src="/hosting.css"/>
 </module>

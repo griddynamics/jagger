@@ -17,8 +17,6 @@ import java.util.Set;
 @RemoteServiceRelativePath("rpc/PlotProviderService")
 public interface PlotProviderService extends RemoteService {
 
-    Set<PlotNameDto> getTaskScopePlotList(String sessionId, long taskId);
-
     Set<PlotNameDto> getTaskScopePlotList(Set<String> sessionIds, TaskDataDto taskDataDto);
 
     Set<String> getSessionScopePlotList(String sessionId);

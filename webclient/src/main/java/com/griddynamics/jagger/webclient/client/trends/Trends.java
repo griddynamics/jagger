@@ -1,32 +1,31 @@
 package com.griddynamics.jagger.webclient.client.trends;
 
-import ca.nanometrics.gflot.client.DataPoint;
-import ca.nanometrics.gflot.client.PlotModel;
-import ca.nanometrics.gflot.client.SeriesHandler;
-import ca.nanometrics.gflot.client.SimplePlot;
+import ca.nanometrics.gflot.client.*;
 import ca.nanometrics.gflot.client.options.*;
 import ca.nanometrics.gflot.client.options.Range;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.*;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.*;
-import com.griddynamics.jagger.webclient.client.data.SessionDataAsyncDataProvider;
-import com.griddynamics.jagger.webclient.client.data.SessionDataForSessionIdsAsyncProvider;
-import com.griddynamics.jagger.webclient.client.data.TaskPlotNamesAsyncDataProvider;
+import com.griddynamics.jagger.webclient.client.callback.SessionScopePlotListQueryCallback;
+import com.griddynamics.jagger.webclient.client.callback.TaskDataDtoListQueryAsyncCallback;
+import com.griddynamics.jagger.webclient.client.data.*;
 import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.client.handler.ShowCurrentValueHoverListener;
 import com.griddynamics.jagger.webclient.client.handler.ShowTaskDetailsListener;
@@ -65,31 +64,92 @@ public class Trends extends DefaultActivity {
     VerticalPanel sessionScopePlotList;
 
     @UiField
-    TextBox sessionNumberTextBox;
+    TextBox sessionIdsTextBox;
 
-//    @UiField
-//    DateBox sessionsFrom;
+    private Timer stopTypingSessionIdsTimer;
 
-//    @UiField
-//    DateBox sessionsTo;
+    @UiField
+    DateBox sessionsFrom;
+
+    @UiField
+    DateBox sessionsTo;
+
+    @UiHandler("uncheckSessionsButton")
+    void handleUncheckSessionsButtonClick(ClickEvent e) {
+        ((MultiSelectionModel<?>) sessionsDataGrid.getSelectionModel()).clear();
+    }
+
+    @UiHandler("showCheckedSessionsButton")
+    void handleShowCheckedSessionsButtonClick(ClickEvent e) {
+        Set<SessionDataDto> sessionDataDtoSet = ((MultiSelectionModel<SessionDataDto>) sessionsDataGrid.getSelectionModel()).getSelectedSet();
+        filterSessions(sessionDataDtoSet);
+    }
+
+    @UiHandler("clearSessionFiltersButton")
+    void handleClearSessionFiltersButtonClick(ClickEvent e) {
+        sessionsTo.setValue(null, true);
+        sessionsFrom.setValue(null, true);
+        sessionIdsTextBox.setText(null);
+        stopTypingSessionIdsTimer.schedule(10);
+    }
 
     private final Map<String, Set<MarkingDto>> markingsMap = new HashMap<String, Set<MarkingDto>>();
 
     private FlowPanel loadIndicator;
 
-    private SessionDataAsyncDataProvider sessionDataProvider = new SessionDataAsyncDataProvider();
+    private final SessionDataAsyncDataProvider sessionDataProvider = new SessionDataAsyncDataProvider();
+    private final SessionDataForSessionIdsAsyncProvider sessionDataForSessionIdsAsyncProvider = new SessionDataForSessionIdsAsyncProvider();
+    private final SessionDataForDatePeriodAsyncProvider sessionDataForDatePeriodAsyncProvider = new SessionDataForDatePeriodAsyncProvider();
 
     @UiField
     Widget widget;
 
     public Trends(JaggerResources resources) {
         super(resources);
+
+        createWidget();
+    }
+
+    public void setSessionIds(Set<String> sessionIds) {
+        MultiSelectionModel<SessionDataDto> selectionModel = (MultiSelectionModel<SessionDataDto>) sessionsDataGrid.getSelectionModel();
+        selectionModel.clear();
+
+        if (sessionIds == null || sessionsDataGrid == null) {
+            return;
+        }
+
+        Set<SessionDataDto> sessionDataDtoSet = new HashSet<SessionDataDto>();
+        for (String sessionId : sessionIds) {
+            SessionDataDto sessionDataDto = new SessionDataDto(sessionId);
+            sessionDataDtoSet.add(sessionDataDto);
+            selectionModel.setSelected(sessionDataDto, true);
+        }
+        filterSessions(sessionDataDtoSet);
+    }
+
+    private void filterSessions(Set<SessionDataDto> sessionDataDtoSet) {
+        if (sessionDataDtoSet == null || sessionDataDtoSet.isEmpty()) {
+            sessionIdsTextBox.setText(null);
+            stopTypingSessionIdsTimer.schedule(10);
+
+            return;
+        }
+
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (SessionDataDto sessionDataDto : sessionDataDtoSet) {
+            if (!first) {
+                builder.append("/");
+            }
+            builder.append(sessionDataDto.getSessionId());
+            first = false;
+        }
+        sessionIdsTextBox.setText(builder.toString());
+        stopTypingSessionIdsTimer.schedule(10);
     }
 
     @Override
     protected Widget initializeWidget() {
-        createWidget();
-
         return widget;
     }
 
@@ -102,7 +162,7 @@ public class Trends extends DefaultActivity {
         uiBinder.createAndBindUi(this);
 
         setupSessionNumberTextBox();
-//        setupSessionsDateRange();
+        setupSessionsDateRange();
     }
 
     private SimplePlot createPlot(final String id, Markings markings) {
@@ -122,6 +182,7 @@ public class Trends extends DefaultActivity {
             // Make the grid hoverable
             plotOptions.setGridOptions(new GridOptions().setHoverable(true));
         } else {
+            // Make the grid hoverable and add  markings
             plotOptions.setGridOptions(new GridOptions().setHoverable(true).setMarkings(markings).setClickable(true));
         }
 
@@ -139,7 +200,7 @@ public class Trends extends DefaultActivity {
         // add hover listener
         plot.addHoverListener(new ShowCurrentValueHoverListener(popup, 50, popupPanelContent), false);
 
-        if (markings != null) {
+        if (markings != null && markingsMap != null && !markingsMap.isEmpty()) {
             final PopupPanel taskInfoPanel = new PopupPanel();
             taskInfoPanel.setWidth("200px");
             taskInfoPanel.addStyleName(getResources().css().infoPanel());
@@ -215,7 +276,7 @@ public class Trends extends DefaultActivity {
     private void setupTaskDetailsTree() {
         CellTree.Resources res = GWT.create(CellTree.BasicResources.class);
         final MultiSelectionModel<PlotNameDto> selectionModel = new MultiSelectionModel<PlotNameDto>();
-        taskDetailsTree = new CellTree(new WorkloadTaskDetailsTreeViewModel(selectionModel), null, res);
+        taskDetailsTree = new CellTree(new TaskDataTreeViewModel(selectionModel, getResources()), null, res);
         taskDetailsTree.addStyleName(getResources().css().taskDetailsTree());
 
         selectionModel.addSelectionChangeHandler(new TaskPlotSelectionChangedHandler());
@@ -230,23 +291,16 @@ public class Trends extends DefaultActivity {
     }
 
     private void setupSessionNumberTextBox() {
-
-        final Timer stopTypingTimer = new Timer() {
-            private AsyncDataProvider<SessionDataDto> sessionIdsAsyncProvider;
+        stopTypingSessionIdsTimer = new Timer() {
 
             @Override
             public void run() {
-                final String currentContent = sessionNumberTextBox.getText().trim();
-
-                if (sessionIdsAsyncProvider != null && sessionIdsAsyncProvider.getDataDisplays().contains(sessionsDataGrid)) {
-                    sessionIdsAsyncProvider.removeDataDisplay(sessionsDataGrid);
-                }
+                final String currentContent = sessionIdsTextBox.getText().trim();
 
                 // If session ID text box is empty then load all sessions
                 if (currentContent == null || currentContent.isEmpty()) {
-                    if (!sessionDataProvider.getDataDisplays().contains(sessionsDataGrid)) {
-                        sessionDataProvider.addDataDisplay(sessionsDataGrid);
-                    }
+                    sessionDataProvider.addDataDisplayIfNotExists(sessionsDataGrid);
+                    sessionDataForSessionIdsAsyncProvider.removeDataDisplayIfNotExists(sessionsDataGrid);
 
                     return;
                 }
@@ -258,24 +312,25 @@ public class Trends extends DefaultActivity {
                     sessionIds.add(currentContent);
                 }
 
-                if (sessionDataProvider.getDataDisplays().contains(sessionsDataGrid)) {
-                    sessionDataProvider.removeDataDisplay(sessionsDataGrid);
-                }
+                sessionDataForSessionIdsAsyncProvider.setSessionIds(sessionIds);
 
-                sessionIdsAsyncProvider = new SessionDataForSessionIdsAsyncProvider(sessionIds);
-                sessionIdsAsyncProvider.addDataDisplay(sessionsDataGrid);
+                sessionDataProvider.removeDataDisplayIfNotExists(sessionsDataGrid);
+                sessionDataForDatePeriodAsyncProvider.removeDataDisplayIfNotExists(sessionsDataGrid);
+                sessionDataForSessionIdsAsyncProvider.addDataDisplayIfNotExists(sessionsDataGrid);
             }
         };
 
-        sessionNumberTextBox.addKeyUpHandler(new KeyUpHandler() {
+        sessionIdsTextBox.addKeyUpHandler(new KeyUpHandler() {
             @Override
             public void onKeyUp(KeyUpEvent event) {
-                stopTypingTimer.schedule(500);
+                sessionsFrom.setValue(null);
+                sessionsTo.setValue(null);
+                stopTypingSessionIdsTimer.schedule(500);
             }
         });
     }
 
-    /*private void setupSessionsDateRange() {
+    private void setupSessionsDateRange() {
         DateTimeFormat format = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.YEAR_MONTH_NUM_DAY);
 
         sessionsFrom.setFormat(new DateBox.DefaultFormat(format));
@@ -285,36 +340,31 @@ public class Trends extends DefaultActivity {
         sessionsTo.getTextBox().addValueChangeHandler(new EmptyDateBoxValueChangePropagator(sessionsTo));
 
         final ValueChangeHandler<Date> valueChangeHandler = new ValueChangeHandler<Date>() {
-            private AsyncDataProvider<SessionDataDto> asyncDataForDatePeriodProvider;
 
             @Override
             public void onValueChange(ValueChangeEvent<Date> dateValueChangeEvent) {
-//                sessionNumberTextBox.setValue(null);
+                sessionIdsTextBox.setValue(null);
                 Date fromDate = sessionsFrom.getValue();
                 Date toDate = sessionsTo.getValue();
 
                 if (fromDate == null || toDate == null) {
-                    if (!sessionDataProvider.getDataDisplays().contains(sessionsDataGrid)) {
-                        sessionDataProvider.addDataDisplay(sessionsDataGrid);
-                    }
-                    if (asyncDataForDatePeriodProvider != null && asyncDataForDatePeriodProvider.getDataDisplays().contains(sessionsDataGrid)) {
-                        asyncDataForDatePeriodProvider.getDataDisplays().clear();
-                    }
+                    sessionDataProvider.addDataDisplayIfNotExists(sessionsDataGrid);
+                    sessionDataForDatePeriodAsyncProvider.removeDataDisplayIfNotExists(sessionsDataGrid);
+
                     return;
                 }
 
-                if (sessionDataProvider.getDataDisplays().contains(sessionsDataGrid)) {
-                    sessionDataProvider.removeDataDisplay(sessionsDataGrid);
-                }
+                sessionDataForDatePeriodAsyncProvider.setDateRange(fromDate, toDate);
 
-                asyncDataForDatePeriodProvider = new SessionDataForDatePeriodAsyncProvider(fromDate, toDate);
-                asyncDataForDatePeriodProvider.addDataDisplay(sessionsDataGrid);
+                sessionDataProvider.removeDataDisplayIfNotExists(sessionsDataGrid);
+                sessionDataForSessionIdsAsyncProvider.removeDataDisplayIfNotExists(sessionsDataGrid);
+                sessionDataForDatePeriodAsyncProvider.addDataDisplayIfNotExists(sessionsDataGrid);
             }
         };
 
         sessionsTo.addValueChangeHandler(valueChangeHandler);
         sessionsFrom.addValueChangeHandler(valueChangeHandler);
-    }*/
+    }
 
     private boolean isMaxPlotCountReached() {
         return plotPanel.getWidgetCount() >= MAX_PLOT_COUNT;
@@ -365,6 +415,26 @@ public class Trends extends DefaultActivity {
             VerticalPanel vp = new VerticalPanel();
             vp.setWidth("100%");
 
+            Label panLeftLabel = new Label();
+            panLeftLabel.addStyleName(getResources().css().panLabel());
+            panLeftLabel.getElement().appendChild(new Image(getResources().getArrowLeft()).getElement());
+            panLeftLabel.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    plot.pan(new Pan().setLeft(-100));
+                }
+            });
+
+            Label panRightLabel = new Label();
+            panRightLabel.addStyleName(getResources().css().panLabel());
+            panRightLabel.getElement().appendChild(new Image(getResources().getArrowRight()).getElement());
+            panRightLabel.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    plot.pan(new Pan().setLeft(100));
+                }
+            });
+
             Label zoomInLabel = new Label("Zoom In");
             zoomInLabel.addStyleName(getResources().css().zoomLabel());
             zoomInLabel.addClickHandler(new ClickHandler() {
@@ -385,6 +455,8 @@ public class Trends extends DefaultActivity {
 
             FlowPanel zoomPanel = new FlowPanel();
             zoomPanel.addStyleName(getResources().css().zoomPanel());
+            zoomPanel.add(panLeftLabel);
+            zoomPanel.add(panRightLabel);
             zoomPanel.add(zoomInLabel);
             zoomPanel.add(zoomOutLabel);
 
@@ -414,7 +486,7 @@ public class Trends extends DefaultActivity {
     /**
      * Handles select session event
      */
-    private class SessionSelectChangeHandler extends PlotsServingBase implements SelectionChangeEvent.Handler {
+    private class SessionSelectChangeHandler implements SelectionChangeEvent.Handler {
         private final ClickHandler sessionScopePlotCheckBoxClickHandler;
 
         private SessionSelectChangeHandler(ClickHandler sessionScopePlotCheckBoxClickHandler) {
@@ -426,118 +498,43 @@ public class Trends extends DefaultActivity {
             // Currently selection model for sessions is a single selection model
             final Set<SessionDataDto> selected = ((MultiSelectionModel<SessionDataDto>) event.getSource()).getSelectedSet();
 
-            final WorkloadTaskDetailsTreeViewModel workloadTaskDetailsTreeViewModel = (WorkloadTaskDetailsTreeViewModel) taskDetailsTree.getTreeViewModel();
-            final ListDataProvider<TaskDataDto> taskDataProvider = workloadTaskDetailsTreeViewModel.getTaskDataProvider();
-            final MultiSelectionModel<PlotNameDto> plotNameSelectionModel = workloadTaskDetailsTreeViewModel.getSelectionModel();
+            final TaskDataTreeViewModel taskDataTreeViewModel = (TaskDataTreeViewModel) taskDetailsTree.getTreeViewModel();
+            final MultiSelectionModel<PlotNameDto> plotNameSelectionModel = taskDataTreeViewModel.getSelectionModel();
 
-            if (selected.isEmpty()) {
-                // If no sessions are selected, clear plot display, clear task tree, clear plot selection model
-                plotPanel.clear();
-                taskDataProvider.getList().clear();
-                taskDataProvider.getList().add(WorkloadTaskDetailsTreeViewModel.getNoTasksDummyNode());
+            // Clear plots display
+            plotPanel.clear();
+            // Clear task scope plot selection model
+            plotNameSelectionModel.clear();
+            // Clear session scope plot list
+            sessionScopePlotList.clear();
+            // Clear markings dto map
+            markingsMap.clear();
+            taskDataTreeViewModel.clear();
 
-                plotNameSelectionModel.clear();
-
-                // Clear session scope plot list
-                sessionScopePlotList.clear();
-            } else if (selected.size() == 1) {
+            if (selected.size() == 1) {
                 // If selected single session clear plot display, clear plot selection and fetch all data for given session
-
-                plotPanel.clear();
-                plotNameSelectionModel.clear();
 
                 final String sessionId = selected.iterator().next().getSessionId();
 
                 // Populate session scope plot list
-                PlotProviderService.Async.getInstance().getSessionScopePlotList(sessionId, new AsyncCallback<Set<String>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Error is occurred during server request processing (Session scope plot names for task fetching)");
-                    }
+                PlotProviderService.Async.getInstance().getSessionScopePlotList(sessionId,
+                        new SessionScopePlotListQueryCallback(sessionId, sessionScopePlotList, plotPanel, sessionScopePlotCheckBoxClickHandler, getResources()));
 
-                    @Override
-                    public void onSuccess(Set<String> result) {
-                        // Populate session scope available plots
-                        sessionScopePlotList.clear();
-                        for (String plotName : result) {
-                            CheckBox checkBox = new CheckBox(plotName);
-
-                            // If plot for this one is already rendered we check it
-                            if (plotPanel.getElementById(generateSessionScopePlotId(sessionId, plotName)) != null) {
-                                checkBox.setValue(true, false);
-                            }
-                            checkBox.getElement().setId(generateSessionScopePlotId(sessionId, plotName) + "_checkbox");
-                            checkBox.addClickHandler(sessionScopePlotCheckBoxClickHandler);
-                            sessionScopePlotList.add(checkBox);
-                        }
-                    }
-                });
+                final Set<String> sessionIds = new HashSet<String>(Arrays.asList(sessionId));
 
                 // Populate task scope session list
-                TaskDataService.Async.getInstance().getTaskDataForSession(sessionId, new AsyncCallback<List<TaskDataDto>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Error is occurred during server request processing (Task data fetching)");
-                    }
-
-                    @Override
-                    public void onSuccess(List<TaskDataDto> result) {
-                        // Populate task first level tree with server data
-                        taskDataProvider.getList().clear();
-                        if (result.isEmpty()) {
-                            taskDataProvider.getList().add(WorkloadTaskDetailsTreeViewModel.getNoTasksDummyNode());
-                            return;
-                        } else {
-                            taskDataProvider.getList().addAll(result);
-                        }
-                        // Populate available plots tree level for each task for selected session
-                        Set<String> sessionIds = new HashSet<String>();
-                        sessionIds.add(sessionId);
-
-                        for (TaskDataDto taskDataDto : result) {
-                            ((WorkloadTaskDetailsTreeViewModel)
-                                    taskDetailsTree.getTreeViewModel()).getPlotNameDataProviders().put
-                                    (taskDataDto, new TaskPlotNamesAsyncDataProvider(taskDataDto, sessionIds));
-                        }
-                    }
-                });
-            } else {
+                TaskDataService.Async.getInstance().getTaskDataForSession(sessionId,
+                        new TaskDataDtoListQueryAsyncCallback(sessionIds, taskDataTreeViewModel));
+            } else if (selected.size() > 1) {
                 // If selected several sessions
-
-                plotPanel.clear();
-                plotNameSelectionModel.clear();
-                sessionScopePlotList.clear();
 
                 final Set<String> sessionIds = new HashSet<String>();
                 for (SessionDataDto sessionDataDto : selected) {
                     sessionIds.add(sessionDataDto.getSessionId());
                 }
 
-                TaskDataService.Async.getInstance().getTaskDataForSessions(sessionIds, new AsyncCallback<List<TaskDataDto>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Error is occurred during server request processing (Task data fetching)");
-                    }
-
-                    @Override
-                    public void onSuccess(List<TaskDataDto> result) {
-                        // Populate task first level tree with server data
-                        taskDataProvider.getList().clear();
-                        if (result.isEmpty()) {
-                            taskDataProvider.getList().add(WorkloadTaskDetailsTreeViewModel.getNoTasksDummyNode());
-                            return;
-                        } else {
-                            taskDataProvider.getList().addAll(result);
-                        }
-
-                        // Populate available plots tree level for each task for selected session
-                        for (TaskDataDto taskDataDto : result) {
-                            ((WorkloadTaskDetailsTreeViewModel)
-                                    taskDetailsTree.getTreeViewModel()).getPlotNameDataProviders().put
-                                    (taskDataDto, new TaskPlotNamesAsyncDataProvider(taskDataDto, sessionIds));
-                        }
-                    }
-                });
+                TaskDataService.Async.getInstance().getTaskDataForSessions(sessionIds,
+                        new TaskDataDtoListQueryAsyncCallback(sessionIds, taskDataTreeViewModel));
             }
         }
     }
@@ -552,9 +549,15 @@ public class Trends extends DefaultActivity {
             final Set<SessionDataDto> selectedSessions = ((MultiSelectionModel<SessionDataDto>) sessionsDataGrid.getSelectionModel()).getSelectedSet();
 
             if (selected.isEmpty()) {
-                // Clear display because of no checked plots
                 // Remove plots from display which were unchecked
-                plotPanel.clear();
+                for (int i = 0; i < plotPanel.getWidgetCount(); i++) {
+                    Widget widget = plotPanel.getWidget(i);
+                    String widgetId = widget.getElement().getId();
+                    if (isTaskScopePlotId(widgetId) || isCrossSessionsTaskScopePlotId(widgetId)) {
+                        plotPanel.remove(i);
+                        break;
+                    }
+                }
             } else if (selectedSessions.size() == 1) {
                 // Generate all id of plots which should be displayed
                 Set<String> selectedTaskIds = new HashSet<String>();

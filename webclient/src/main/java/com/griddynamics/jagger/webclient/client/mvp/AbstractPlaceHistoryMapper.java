@@ -5,7 +5,9 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -38,10 +40,13 @@ public abstract class AbstractPlaceHistoryMapper implements PlaceHistoryMapper {
             int index = token.indexOf(SEPARATOR_TOKEN_PARAMETERS);
             if (index != -1) {
                 String[] parameters = token.substring(index + 1).split(SEPARATOR_PARAMETERS);
-                Map<String, String> mapParameters = new HashMap<String, String>(parameters.length);
+                Map<String, Set<String>> mapParameters = new HashMap<String, Set<String>>();
                 for (String parameter : parameters) {
                     String[] paramIdValue = parameter.split(SEPARATOR_PARAMETER_ID_VALUE);
-                    mapParameters.put(paramIdValue[0], paramIdValue[1]);
+                    if (!mapParameters.containsKey(paramIdValue[0])) {
+                        mapParameters.put(paramIdValue[0], new HashSet<String>());
+                    }
+                    mapParameters.get(paramIdValue[0]).add(paramIdValue[1]);
                 }
                 ((PlaceWithParameters) place).setParameters(mapParameters);
             }
@@ -55,19 +60,22 @@ public abstract class AbstractPlaceHistoryMapper implements PlaceHistoryMapper {
         String token = getTokenFromPlace(place);
 
         if (place instanceof PlaceWithParameters) {
-            Map<String, String> parameters = ((PlaceWithParameters) place).getParameters();
+            Map<String, Set<String>> parameters = ((PlaceWithParameters) place).getParameters();
             if (null != parameters && !parameters.isEmpty()) {
                 StringBuilder tokenBuilder = new StringBuilder(token);
                 tokenBuilder.append(SEPARATOR_TOKEN_PARAMETERS);
                 boolean first = true;
-                for (Map.Entry<String, String> parameter : parameters.entrySet()) {
-                    if (!first) {
-                        tokenBuilder.append(SEPARATOR_PARAMETERS);
+                for (Map.Entry<String, Set<String>> parameter : parameters.entrySet()) {
+
+                    for (String paramValue : parameter.getValue()) {
+                        if (!first) {
+                            tokenBuilder.append(SEPARATOR_PARAMETERS);
+                        }
+                        tokenBuilder.append(parameter.getKey());
+                        tokenBuilder.append(SEPARATOR_PARAMETER_ID_VALUE);
+                        tokenBuilder.append(paramValue);
+                        first = false;
                     }
-                    tokenBuilder.append(parameter.getKey());
-                    tokenBuilder.append(SEPARATOR_PARAMETER_ID_VALUE);
-                    tokenBuilder.append(parameter.getValue());
-                    first = false;
                 }
                 token = tokenBuilder.toString();
             }

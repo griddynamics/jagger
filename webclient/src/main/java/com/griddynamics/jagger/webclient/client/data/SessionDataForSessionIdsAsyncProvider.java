@@ -2,10 +2,7 @@ package com.griddynamics.jagger.webclient.client.data;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.AsyncDataProvider;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.SessionDataService;
 import com.griddynamics.jagger.webclient.client.dto.PagedSessionDataDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
@@ -16,7 +13,7 @@ import java.util.Set;
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 6/20/12
  */
-public class SessionDataForSessionIdsAsyncProvider extends AsyncDataProvider<SessionDataDto> {
+public class SessionDataForSessionIdsAsyncProvider extends ExtendedAsyncDataProvider<SessionDataDto> {
 
     private Set<String> sessionIds;
 
@@ -34,6 +31,7 @@ public class SessionDataForSessionIdsAsyncProvider extends AsyncDataProvider<Ses
 
     public void setSessionIds(Set<String> sessionIds) {
         this.sessionIds = sessionIds;
+        update();
     }
 
     @Override

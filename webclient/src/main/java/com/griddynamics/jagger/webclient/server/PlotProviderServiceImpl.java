@@ -66,26 +66,26 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     //===========Contract Methods
     //===========================
 
-    //TODO Remove it. It isn't used now
     @Override
-    public Set<PlotNameDto> getTaskScopePlotList(String sessionId, long taskId) {
-        Set<PlotNameDto> plotNameDtoSet = null;
+    public Set<PlotNameDto> getTaskScopePlotList(Set<String> sessionIds, TaskDataDto taskDataDto) {
+        Set<PlotNameDto> plotNameDtoSet = new LinkedHashSet<PlotNameDto>();
         try {
-            plotNameDtoSet = new LinkedHashSet<PlotNameDto>();
-
-            if (isWorkloadStatisticsAvailable(taskId)) {
+            if (isWorkloadStatisticsAvailable(sessionIds, taskDataDto.getTaskName())) {
                 for (Map.Entry<GroupKey, DefaultWorkloadParameters[]> monitoringPlot : workloadPlotGroups.entrySet()) {
-                    plotNameDtoSet.add(new PlotNameDto(taskId, monitoringPlot.getKey().getUpperName()));
+                    plotNameDtoSet.add(new PlotNameDto(taskDataDto.getIds(), monitoringPlot.getKey().getUpperName()));
                 }
             }
 
-            if (isMonitoringStatisticsAvailable(sessionId)) {
-                for (Map.Entry<GroupKey, DefaultMonitoringParameters[]> monitoringPlot : monitoringPlotGroups.entrySet()) {
-                    plotNameDtoSet.add(new PlotNameDto(taskId, monitoringPlot.getKey().getUpperName()));
+            for (String sessionId : sessionIds) {
+                if (isMonitoringStatisticsAvailable(sessionId)) {
+                    for (Map.Entry<GroupKey, DefaultMonitoringParameters[]> monitoringPlot : monitoringPlotGroups.entrySet()) {
+                        plotNameDtoSet.add(new PlotNameDto(taskDataDto.getIds(), monitoringPlot.getKey().getUpperName()));
+                    }
                 }
             }
+            log.debug("For sessions {} are available these plots: {}", sessionIds, plotNameDtoSet);
         } catch (Exception e) {
-            log.error("Error was occurred during task scope plots data getting for session ID " + sessionId + ", task ID " + taskId, e);
+            log.error("Error was occurred during task scope plots data getting for session IDs " + sessionIds + ", task name " + taskDataDto.getTaskName(), e);
             throw new RuntimeException(e);
         }
 
@@ -113,7 +113,6 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         return plotNameDtoSet;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<PlotSeriesDto> getPlotData(long taskId, String plotName) {
         long timestamp = System.currentTimeMillis();
@@ -133,7 +132,6 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         return plotSeriesDto;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, String plotName) {
         long timestamp = System.currentTimeMillis();
@@ -182,32 +180,6 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         }
 
         return plotSeriesDtoList;
-    }
-
-    @Override
-    public Set<PlotNameDto> getTaskScopePlotList(Set<String> sessionIds, TaskDataDto taskDataDto) {
-        Set<PlotNameDto> plotNameDtoSet = new LinkedHashSet<PlotNameDto>();
-        try {
-            if (isWorkloadStatisticsAvailable(sessionIds, taskDataDto.getTaskName())) {
-                for (Map.Entry<GroupKey, DefaultWorkloadParameters[]> monitoringPlot : workloadPlotGroups.entrySet()) {
-                    plotNameDtoSet.add(new PlotNameDto(taskDataDto.getIds(), monitoringPlot.getKey().getUpperName()));
-                }
-            }
-
-            for (String sessionId : sessionIds) {
-                if (isMonitoringStatisticsAvailable(sessionId)) {
-                    for (Map.Entry<GroupKey, DefaultMonitoringParameters[]> monitoringPlot : monitoringPlotGroups.entrySet()) {
-                        plotNameDtoSet.add(new PlotNameDto(taskDataDto.getIds(), monitoringPlot.getKey().getUpperName()));
-                    }
-                }
-            }
-            log.debug("For sessions {} are available these plots: {}", sessionIds, plotNameDtoSet);
-        } catch (Exception e) {
-            log.error("Error was occurred during task scope plots data getting for session IDs " + sessionIds + ", task name " + taskDataDto.getTaskName(), e);
-            throw new RuntimeException(e);
-        }
-
-        return plotNameDtoSet;
     }
 
     //===========================

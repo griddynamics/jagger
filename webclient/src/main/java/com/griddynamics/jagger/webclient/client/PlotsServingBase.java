@@ -13,7 +13,8 @@ public abstract class PlotsServingBase {
     }
 
     protected String generateCrossSessionsTaskScopePlotId(PlotNameDto plotNameDto) {
-        return "" + plotNameDto.getTaskIds() + "#cross-sessions-task-scope-plot-" + plotNameDto.getPlotName().toLowerCase().replaceAll("\\s+", "-");
+        String ids = plotNameDto.getTaskIds().toString().replaceAll("\\s+", "");
+        return "" + ids + "#cross-sessions-task-scope-plot-" + plotNameDto.getPlotName().toLowerCase().replaceAll("\\s+", "-");
     }
 
     protected boolean isTaskScopePlotId(String domId) {
