@@ -319,7 +319,7 @@
             <dependency>
                 <groupId>com.caucho</groupId>
                 <artifactId>hessian</artifactId>
-                <version>3.2.0</version>
+                <version>4.0.7</version>
             </dependency>
 
             <dependency>
@@ -437,7 +437,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>r09</version>
+                <version>13.0.1</version>
             </dependency>
 
             <dependency>

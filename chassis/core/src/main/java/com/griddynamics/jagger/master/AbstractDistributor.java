@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.*;
@@ -66,7 +65,7 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
             @Override
             public ListenableFuture<State> start() {
 
-                ListenableFuture<Nothing> runListener = Futures.makeListenable(executor.submit(new Callable<Nothing>() {
+                ListenableFuture<Nothing> runListener = JdkFutureAdapters.listenInPoolThread(executor.submit(new Callable<Nothing>() {
                     @Override
                     public Nothing call() {
                         listener.onDistributionStarted(sessionId, taskId, task, remotes.keySet());
@@ -74,15 +73,13 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
                     }
                 }));
 
-
-                return Futures.chain(runListener, new Function<Nothing, ListenableFuture<State>>() {
+                return Futures.transform(runListener, new AsyncFunction<Nothing, State>() {
                     @Override
-                    public ListenableFuture<State> apply(Nothing input) {
+                    public ListenableFuture<State> apply(Nothing input) throws Exception {
                         return doStart();
                     }
                 });
             }
-
 
             private ListenableFuture<State> doStart() {
                 return super.start();
@@ -97,9 +94,9 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
             public ListenableFuture<State> stop() {
                 ListenableFuture<State> stop = super.stop();
 
-                return Futures.chain(stop, new Function<State, ListenableFuture<State>>() {
+                return Futures.transform(stop, new AsyncFunction<State, State>() {
                     @Override
-                    public ListenableFuture<State> apply(final State input) {
+                    public ListenableFuture<State> apply(final State input) throws Exception {
 
                         final SettableFuture<State> result = SettableFuture.create();
                         executor.execute(new Runnable() {

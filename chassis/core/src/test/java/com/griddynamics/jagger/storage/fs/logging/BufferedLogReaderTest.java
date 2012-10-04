@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
 import com.google.common.base.Throwables;
 import com.griddynamics.jagger.storage.FileStorage;
@@ -32,9 +31,7 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class BufferedLogReaderTest {
 
