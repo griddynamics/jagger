@@ -20,22 +20,20 @@
 
 package com.griddynamics.jagger.storage.fs.timelog;
 
+import com.griddynamics.jagger.exception.TechnicalException;
+import org.apache.log4j.Logger;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.griddynamics.jagger.exception.TechnicalException;
-import org.apache.log4j.Logger;
 
 /**
  * This class in intended for writing logs in format (timestamp | value1 | value2 | ...)
  * where values are floating point numbers.
- *
  */
 public class NumericalTimeLogWriter {
 
@@ -51,6 +49,7 @@ public class NumericalTimeLogWriter {
 
     /**
      * Creates log writer for multiple output stream
+     *
      * @param streams list of output streams. Data output will be randomly distributed among streams
      */
     public NumericalTimeLogWriter(List<DataOutputStream> streams) {
@@ -75,11 +74,11 @@ public class NumericalTimeLogWriter {
     private void writeEntry(Entry entry, DataOutputStream stream) {
         try {
             String line = entry.timestamp + delimiter;
-            for(Object value : entry.values) {
+            for (Object value : entry.values) {
                 line += value + delimiter;
             }
             stream.writeUTF(line + '\n');
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new TechnicalException(e);
         }
     }
@@ -91,11 +90,11 @@ public class NumericalTimeLogWriter {
     public void startFlushing() {
         flushActive.set(true);
 
-        for(int  i = 0; i < streams.size(); i++) {
+        for (int i = 0; i < streams.size(); i++) {
             final int streamId = i;
             new Thread() {
                 public void run() {
-                    while(flushActive.get()) {
+                    while (flushActive.get()) {
                         try {
                             Entry entry = buffer.take();
                             writeEntry(entry, streams.get(streamId));
@@ -119,7 +118,7 @@ public class NumericalTimeLogWriter {
         terminateFlush();
 
         try {
-            while(!buffer.isEmpty()) {
+            while (!buffer.isEmpty()) {
                 Entry entry = buffer.take();
                 writeEntry(entry, streams.get(0));
             }
@@ -127,7 +126,7 @@ public class NumericalTimeLogWriter {
             log.error("Final flushing was interrupted. About [" + buffer.size() + "] entries can be lost.", e);
         }
 
-        for(DataOutputStream stream : streams) {
+        for (DataOutputStream stream : streams) {
             try {
                 stream.close();
             } catch (Exception e) {

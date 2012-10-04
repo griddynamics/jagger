@@ -28,42 +28,43 @@ import com.google.common.base.Equivalence;
  * @author Mairbek Khadikov
  */
 public class Eq {
-    private Eq() {
 
+    private static final Equivalence ALWAYS_TRUE = new AlwaysTrue();
+    private static final Equivalence ALWAYS_FALSE = new AlwaysFalse();
+
+    private Eq() {
     }
 
     public static Equivalence<Object> alwaysTrue() {
-        return AlwaysTrue.INSTANCE;
+        return ALWAYS_TRUE;
     }
 
     public static Equivalence<Object> alwaysFalse() {
-        return AlwaysFalse.INSTANCE;
+        return ALWAYS_FALSE;
     }
 
-    private static enum AlwaysTrue implements Equivalence<Object> {
-        INSTANCE;
+    private static final class AlwaysTrue extends Equivalence {
 
         @Override
-        public boolean equivalent(Object a, Object b) {
+        protected boolean doEquivalent(Object a, Object b) {
             return true;
         }
 
         @Override
-        public int hash(Object o) {
+        protected int doHash(Object o) {
             return 0;
         }
     }
 
-    private static enum AlwaysFalse implements Equivalence<Object> {
-        INSTANCE;
+    private static final class AlwaysFalse extends Equivalence<Object> {
 
         @Override
-        public boolean equivalent(Object a, Object b) {
+        protected boolean doEquivalent(Object a, Object b) {
             return false;
         }
 
         @Override
-        public int hash(Object o) {
+        protected int doHash(Object o) {
             return 0;
         }
     }

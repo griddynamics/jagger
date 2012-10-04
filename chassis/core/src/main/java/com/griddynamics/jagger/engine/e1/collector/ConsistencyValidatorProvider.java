@@ -21,15 +21,14 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
 import com.google.common.base.Equivalence;
-import com.google.common.base.Equivalences;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.util.Eq;
 
 public class ConsistencyValidatorProvider<Q, E, R> implements KernelSideObjectProvider<ConsistencyValidator<Q, E, R>> {
-    private Equivalence<Q> queryEq = (Equivalence<Q>)Equivalences.equals();
+    private Equivalence<Q> queryEq = (Equivalence<Q>) Equivalence.equals();
     private Equivalence<E> endpointEq = (Equivalence<E>) Eq.alwaysTrue(); // ignore endpoints by default
-    private Equivalence<R> resultEq = (Equivalence<R>)Equivalences.equals();
+    private Equivalence<R> resultEq = (Equivalence<R>) Equivalence.equals();
 
     @Override
     public ConsistencyValidator<Q, E, R> provide(String sessionId, String taskId, NodeContext kernelContext) {

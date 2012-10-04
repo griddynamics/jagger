@@ -23,8 +23,6 @@ package com.griddynamics.jagger.storage.fs.logging;
 import com.google.common.base.Throwables;
 import com.griddynamics.jagger.storage.FileStorage;
 import com.griddynamics.jagger.storage.Namespace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
@@ -35,8 +33,8 @@ import java.util.Queue;
 
 import static com.google.common.collect.Lists.newLinkedList;
 
-public abstract  class BufferedLogReader implements LogReader {
-    private static final Logger log = LoggerFactory.getLogger(BufferedLogReader.class);
+public abstract class BufferedLogReader implements LogReader {
+
     private FileStorage fileStorage;
 
     @Override
@@ -45,13 +43,13 @@ public abstract  class BufferedLogReader implements LogReader {
         return read(path.toString(), clazz);
     }
 
-    public  <T> FileReader<T> read(String path, Class<T> clazz) {
+    public <T> FileReader<T> read(String path, Class<T> clazz) {
         InputStream in;
         try {
-            if (!fileStorage.exists(path.toString())) {
+            if (!fileStorage.exists(path)) {
                 throw new IllegalArgumentException("Path " + path + " doesn't exist");
             }
-            in = new BufferedInputStream(fileStorage.open(path.toString()));
+            in = new BufferedInputStream(fileStorage.open(path));
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }

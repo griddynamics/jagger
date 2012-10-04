@@ -23,7 +23,6 @@ package com.griddynamics.jagger.storage.fs.logging;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.griddynamics.jagger.storage.FileStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import org.slf4j.Logger;
@@ -41,17 +40,13 @@ import java.util.Collection;
  *         Date: 20.07.11
  */
 public abstract class BufferedLogWriter implements LogWriter {
+
     private final Logger log = LoggerFactory.getLogger(BufferedLogWriter.class);
-    private final Multimap<String, Serializable> queue;
+
+    private final Multimap<String, Serializable> queue = LinkedHashMultimap.create();
     private FileStorage fileStorage;
     private int flushSize;
     private volatile boolean isFlushInProgress;
-    private final Object semaphore = new Object();
-
-    {
-        Multimap<String, Serializable> tmp = LinkedHashMultimap.create();
-        queue = Multimaps.synchronizedMultimap(tmp);
-    }
 
     @Override
     public void log(String sessionId, String dir, String kernelId, Serializable logEntry) {
@@ -59,10 +54,11 @@ public abstract class BufferedLogWriter implements LogWriter {
         log(path, logEntry);
     }
 
+    @Override
     public void log(String path, Serializable logEntry) {
         Preconditions.checkNotNull(logEntry, "Null is not supported");
         
-        synchronized (semaphore) {
+        synchronized (queue) {
             queue.put(path, logEntry);
         }
 
@@ -77,7 +73,7 @@ public abstract class BufferedLogWriter implements LogWriter {
         try {
             isFlushInProgress = true;
             Multimap<String, Serializable> forFlush;
-            synchronized (semaphore) {
+            synchronized (queue) {
                 forFlush = LinkedHashMultimap.create(queue);
                 queue.clear();
             }
@@ -126,5 +122,4 @@ public abstract class BufferedLogWriter implements LogWriter {
     public void setFlushSize(int flushSize) {
         this.flushSize = flushSize;
     }
-
 }

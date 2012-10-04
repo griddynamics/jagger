@@ -20,10 +20,10 @@
 
 package com.griddynamics.jagger.storage;
 
-import com.griddynamics.jagger.AttendantServer;
-
-import java.io.*;
-import java.util.Collection;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Set;
 
 /**
@@ -31,8 +31,6 @@ import java.util.Set;
  *         Date: 19.07.11
  */
 public interface FileStorage {
-
-    Collection<AttendantServer> getAttendantServers();
 
     /**
      * Check if exists.
