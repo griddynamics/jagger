@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
-import com.google.common.base.Equivalence;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
@@ -39,9 +38,9 @@ public class ConsistencyValidatorTest {
     private String taskId;
     private NodeId nodeId;
     private LogReader logReader;
-    private Equivalence<Integer> queryEquivalence;
-    private Equivalence<Integer> endpointEquivalence;
-    private Equivalence<Integer> resultEquivalence;
+    private EquivalenceAdapter<Integer> queryEquivalence;
+    private EquivalenceAdapter<Integer> endpointEquivalence;
+    private EquivalenceAdapter<Integer> resultEquivalence;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -49,9 +48,9 @@ public class ConsistencyValidatorTest {
         taskId = "task";
         nodeId = NodeId.kernelNode("1");
         logReader = mock(LogReader.class);
-        queryEquivalence = mock(Equivalence.class);
-        endpointEquivalence = mock(Equivalence.class);
-        resultEquivalence = mock(Equivalence.class);
+        queryEquivalence = mock(EquivalenceAdapter.class);
+        endpointEquivalence = mock(EquivalenceAdapter.class);
+        resultEquivalence = mock(EquivalenceAdapter.class);
 
         NodeContext kernelContext = mock(NodeContext.class);
         consistencyValidator = new ConsistencyValidator<Integer, Integer, Integer>(taskId, kernelContext, sessionId, queryEquivalence, endpointEquivalence, resultEquivalence);
@@ -62,57 +61,57 @@ public class ConsistencyValidatorTest {
 
     @Test
     public void shouldValidateCorrectly() throws Exception {
-        currentCalibrationInfo(CalibrationInfo.create(1, 2, 3));
-        when(queryEquivalence.equivalent(1, 1)).thenReturn(true);
-        when(endpointEquivalence.equivalent(2, 2)).thenReturn(true);
-        when(resultEquivalence.equivalent(3, 3)).thenReturn(true);
+        currentCalibrationInfo(CalibrationInfo.create(1111, 2222, 3333));
+        when(queryEquivalence.doEquivalent(1111, 1111)).thenReturn(true);
+        when(endpointEquivalence.doEquivalent(2222, 2222)).thenReturn(true);
+        when(resultEquivalence.doEquivalent(3333, 3333)).thenReturn(true);
 
-        boolean validate = consistencyValidator.validate(1, 2, 3, 10L);
+        boolean validate = consistencyValidator.validate(1111, 2222, 3333, 10L);
 
         assertThat(validate, is(true));
-        verify(queryEquivalence).equivalent(1, 1);
-        verify(endpointEquivalence).equivalent(2, 2);
-        verify(resultEquivalence).equivalent(3, 3);
+        verify(queryEquivalence).doEquivalent(1111, 1111);
+        verify(endpointEquivalence).doEquivalent(2222, 2222);
+        verify(resultEquivalence).doEquivalent(3333, 3333);
     }
 
     @Test
     public void shouldFailBecauseResultDoesNotMatch() throws Exception {
-        currentCalibrationInfo(CalibrationInfo.create(1, 2, 3));
-        when(queryEquivalence.equivalent(1, 1)).thenReturn(true);
-        when(endpointEquivalence.equivalent(2, 2)).thenReturn(true);
-        when(resultEquivalence.equivalent(3, 3)).thenReturn(false);
+        currentCalibrationInfo(CalibrationInfo.create(1111, 2222, 3333));
+        when(queryEquivalence.equivalent(1111, 1111)).thenReturn(true);
+        when(endpointEquivalence.equivalent(2222, 2222)).thenReturn(true);
+        when(resultEquivalence.equivalent(3333, 3333)).thenReturn(false);
 
-        boolean validate = consistencyValidator.validate(1, 2, 3, 10L);
+        boolean validate = consistencyValidator.validate(1111, 2222, 3333, 10L);
 
         assertThat(validate, is(false));
-        verify(queryEquivalence).equivalent(1, 1);
-        verify(endpointEquivalence).equivalent(2, 2);
-        verify(resultEquivalence).equivalent(3, 3);
+        verify(queryEquivalence).equivalent(1111, 1111);
+        verify(endpointEquivalence).equivalent(2222, 2222);
+        verify(resultEquivalence).equivalent(3333, 3333);
     }
 
     @Test
     public void shouldFailBecauseQueryDoesNotMatch() throws Exception {
-        currentCalibrationInfo(CalibrationInfo.create(1, 2, 3));
-        when(queryEquivalence.equivalent(1, 1)).thenReturn(false);
-        when(endpointEquivalence.equivalent(2, 2)).thenReturn(true);
+        currentCalibrationInfo(CalibrationInfo.create(1111, 2222, 3333));
+        when(queryEquivalence.equivalent(1111, 1111)).thenReturn(false);
+        when(endpointEquivalence.equivalent(2222, 2222)).thenReturn(true);
 
-        boolean validate = consistencyValidator.validate(1, 2, 3, 10L);
+        boolean validate = consistencyValidator.validate(1111, 2222, 3333, 10L);
 
         assertThat(validate, is(false));
-        verify(queryEquivalence).equivalent(1, 1);
+        verify(queryEquivalence).equivalent(1111, 1111);
         verify(resultEquivalence, never()).equivalent(anyInt(), anyInt());
     }
 
     @Test
     public void shouldFailBecauseEndpointDoesNotMatch() throws Exception {
-        currentCalibrationInfo(CalibrationInfo.create(1, 2, 3));
-        when(queryEquivalence.equivalent(1, 1)).thenReturn(true);
-        when(endpointEquivalence.equivalent(2, 2)).thenReturn(false);
+        currentCalibrationInfo(CalibrationInfo.create(1111, 2222, 3333));
+        when(queryEquivalence.equivalent(1111, 1111)).thenReturn(true);
+        when(endpointEquivalence.equivalent(2222, 2222)).thenReturn(false);
 
-        boolean validate = consistencyValidator.validate(1, 2, 3, 10L);
+        boolean validate = consistencyValidator.validate(1111, 2222, 3333, 10L);
 
         assertThat(validate, is(false));
-        verify(endpointEquivalence).equivalent(2, 2);
+        verify(endpointEquivalence).equivalent(2222, 2222);
         verify(resultEquivalence, never()).equivalent(anyInt(), anyInt());
     }
 

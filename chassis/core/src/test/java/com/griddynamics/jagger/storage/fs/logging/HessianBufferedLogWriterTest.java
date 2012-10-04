@@ -2,7 +2,6 @@ package com.griddynamics.jagger.storage.fs.logging;
 
 import com.google.common.io.Files;
 import com.griddynamics.jagger.storage.fs.LocalFileStorage;
-import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.concurrent.Future;
  */
 public class HessianBufferedLogWriterTest {
 
-    @Test
+    //    @Test
     public void testConcurrent() throws Exception {
         final ConcurrentLogWriter logWriter = new ConcurrentLogWriter();
         final ExecutorService executorService = Executors.newFixedThreadPool(100);
@@ -49,7 +48,7 @@ public class HessianBufferedLogWriterTest {
 
     }
 
-    @Test
+    //    @Test
     public void testBuffered() throws Exception {
         final HessianBufferedLogWriter logWriter = new HessianBufferedLogWriter();
         logWriter.setFlushSize(1000);
