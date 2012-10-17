@@ -21,16 +21,13 @@
 package com.griddynamics.jagger.agent.impl;
 
 import com.griddynamics.jagger.agent.model.SystemInfoCollector;
-import org.hyperic.sigar.Mem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.smi.OID;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -188,5 +185,15 @@ public class SNMPSystemInfoCollector implements SystemInfoCollector {
             logger.warn("Exception during load average polling", e);
             return new double[] {0, 0, 0};
         }
+    }
+
+    @Override
+    public long getDisksReadBytesTotal() {
+        return 0;
+    }
+
+    @Override
+    public long getDisksWriteBytesTotal() {
+        return 0;
     }
 }
