@@ -22,7 +22,6 @@ package com.griddynamics.jagger.monitoring;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
 import com.griddynamics.jagger.agent.model.MonitoringParameter;
 import com.griddynamics.jagger.agent.model.MonitoringParameterLevel;
 import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
@@ -36,7 +35,11 @@ import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
 import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
 import com.griddynamics.jagger.monitoring.model.ProfilingSuT;
 import com.griddynamics.jagger.storage.FileStorage;
-import com.griddynamics.jagger.storage.fs.logging.*;
+import com.griddynamics.jagger.storage.fs.logging.AggregationInfo;
+import com.griddynamics.jagger.storage.fs.logging.LogAggregator;
+import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
+import com.griddynamics.jagger.storage.fs.logging.LogReader;
+import com.griddynamics.jagger.storage.fs.logging.MonitoringLogEntry;
 import com.griddynamics.jagger.util.SerializationUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -46,7 +49,11 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Aggregates monitoring information.
@@ -164,7 +171,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
 
     private void saveProfilers(final String sessionId, final String taskId) throws IOException {
         String dir;
-        dir = sessionId + "/" + taskId + "/" + MonitorProcess.PROFILER_MARKER;
+        dir = sessionId + "/" + taskId + "/" + AgentMonitorProcess.PROFILER_MARKER;
 
         Set<String> fileNameList = fileStorage.getFileNameList(dir);
         if (fileNameList.isEmpty()) {
@@ -300,8 +307,9 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                                                 Map<NodeId, Map<MonitoringParameter, Double>> sumByInterval,
                                                 Map<NodeId, Map<MonitoringParameter, Long>> countByInterval,
                                                 ListMultimap<MonitoringStream, MonitoringStatistics> aggregatedData) {
-        for (NodeId nodeId : countByInterval.keySet()) {
-            for (DefaultMonitoringParameters parameterId : DefaultMonitoringParameters.values()) {
+        for (Map.Entry<NodeId, Map<MonitoringParameter, Double>> intervalEntry : sumByInterval.entrySet()) {
+            NodeId nodeId = intervalEntry.getKey();
+            for (MonitoringParameter parameterId : intervalEntry.getValue().keySet()) {
                 MonitoringParameterBean parameter = MonitoringParameterBean.copyOf(parameterId);
                 if (parameterId.getLevel() == MonitoringParameterLevel.BOX) {
                     if (!countByInterval.get(nodeId).containsKey(parameterId)) break;
@@ -321,8 +329,9 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                                               Map<String, Map<MonitoringParameter, Double>> sumByInterval,
                                               Map<String, Map<MonitoringParameter, Long>> countByInterval,
                                               ListMultimap<MonitoringStream, MonitoringStatistics> aggregatedData) {
-        for (String url : countByInterval.keySet()) {
-            for (DefaultMonitoringParameters parameterId : DefaultMonitoringParameters.values()) {
+        for (Map.Entry<String, Map<MonitoringParameter, Double>> intervalEntry : sumByInterval.entrySet()) {
+            String url = intervalEntry.getKey();
+            for (MonitoringParameter parameterId : intervalEntry.getValue().keySet()) {
                 if (parameterId.getLevel() == MonitoringParameterLevel.SUT) {
                     MonitoringParameterBean parameter = MonitoringParameterBean.copyOf(parameterId);
                     if (!countByInterval.get(url).containsKey(parameterId)) break;
@@ -353,7 +362,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
         private String sourceId;
         private MonitoringParameter monitoringParameter;
 
-        public MonitoringStream(String sourceId, DefaultMonitoringParameters parameter) {
+        public MonitoringStream(String sourceId, MonitoringParameter parameter) {
             this.sourceId = sourceId;
             this.monitoringParameter = parameter;
         }

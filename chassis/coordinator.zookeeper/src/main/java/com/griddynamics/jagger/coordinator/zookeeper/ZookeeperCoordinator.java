@@ -140,12 +140,14 @@ public class ZookeeperCoordinator implements Coordinator {
     }
 
     @Override
-    public Set<NodeId> getAvailableNodes(NodeType type) {
+    public Set<NodeId> getAvailableNodes(NodeType... type) {
         Set<NodeId> result = Sets.newHashSet();
-        ZNode typeNode = rootNode.child(CoordinationUtil.nodeNameOf(type));
-        for (ZNode node : typeNode.children()) {
-            if (node.hasChild(CoordinationUtil.AVAILABLE_NODE_NAME)) {
-                result.add(NodeId.of(type, node.getShortPath()));
+        for (NodeType t : type) {
+            ZNode typeNode = rootNode.child(CoordinationUtil.nodeNameOf(t));
+            for (ZNode node : typeNode.children()) {
+                if (node.hasChild(CoordinationUtil.AVAILABLE_NODE_NAME)) {
+                    result.add(NodeId.of(t, node.getShortPath()));
+                }
             }
         }
         return result;

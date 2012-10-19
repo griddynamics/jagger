@@ -86,6 +86,7 @@
     </bean>
 
     <bean id="conditions" class="com.griddynamics.jagger.master.Conditions">
+        <property name="clusterWideMonitoringEnabled" value="${monitoring.kernel.agent.enabled}"/>
         <property name="monitoringEnable" value="${chassis.conditions.monitoring.enable}"/>
         <property name="minAgentsCount" value="${chassis.conditions.min.agents.count}"/>
         <property name="minKernelsCount" value="${chassis.conditions.min.kernels.count}"/>

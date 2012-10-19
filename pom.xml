@@ -41,6 +41,7 @@
 
     <modules>
         <module>monitoring/agent</module>
+        <module>monitoring/kernel.agent</module>
         <module>diagnostics</module>
         <module>chassis/</module>
         <module>distribution</module>
@@ -181,6 +182,12 @@
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>monitoring.agent</artifactId>
+                <version>${version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.griddynamics.jagger</groupId>
+                <artifactId>monitoring.kernel.agent</artifactId>
                 <version>${version}</version>
             </dependency>
 

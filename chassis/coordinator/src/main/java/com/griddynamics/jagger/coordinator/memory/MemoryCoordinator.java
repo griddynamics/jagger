@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -133,11 +134,14 @@ public class MemoryCoordinator implements Coordinator {
     }
 
     @Override
-    public Set<NodeId> getAvailableNodes(final NodeType type) throws CoordinatorException {
+    public Set<NodeId> getAvailableNodes(final NodeType... type) throws CoordinatorException {
         return Sets.filter(nodes.keySet(), new Predicate<NodeId>() {
             @Override
             public boolean apply(NodeId input) {
-                return input.getType().equals(type);
+                for (NodeType t : type) {
+                    if (input.getType().equals(t)) return true;
+                }
+                return false;
             }
         });
     }

@@ -35,6 +35,13 @@ public class Conditions {
     private int minKernelsCount;
     private int maxKernelsCount;
 
+    private boolean clusterWideMonitoringEnabled;
+
+    @Required
+    public void setClusterWideMonitoringEnabled(boolean clusterWideMonitoringEnabled) {
+        this.clusterWideMonitoringEnabled = clusterWideMonitoringEnabled;
+    }
+
     @Required
     public void setMonitoringEnable(boolean monitoringEnable) {
         this.monitoringEnable = monitoringEnable;
@@ -43,6 +50,10 @@ public class Conditions {
     @Required
     public void setMinKernelsCount(int minKernelsCount) {
         this.minKernelsCount = minKernelsCount;
+    }
+
+    public boolean isClusterWideMonitoringEnabled() {
+        return clusterWideMonitoringEnabled;
     }
 
     public boolean isMonitoringEnable() {

@@ -36,7 +36,7 @@ public interface Coordinator {
 
     boolean canExecuteCommands(NodeId nodeId, Set<Qualifier<?>> qualifiers) throws CoordinatorException;
 
-    Set<NodeId> getAvailableNodes(NodeType type) throws CoordinatorException;
+    Set<NodeId> getAvailableNodes(NodeType... type) throws CoordinatorException;
 
     void waitForReady();
 

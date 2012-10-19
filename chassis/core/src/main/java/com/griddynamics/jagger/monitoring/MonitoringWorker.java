@@ -47,7 +47,7 @@ public class MonitoringWorker extends ConfigurableWorker {
     private MonitoringProcessor monitoringProcessor;
 
     private LogWriter logWriter;
-    private Map<String, MonitorProcess> processes = Maps.newConcurrentMap();
+    private Map<String, NodeProcess<MonitoringStatus>> processes = Maps.newConcurrentMap();
     private SessionFactory sessionFactory;
     private long ttl;
 
@@ -61,7 +61,7 @@ public class MonitoringWorker extends ConfigurableWorker {
 
             @Override
             public String execute(StartMonitoring command, NodeContext nodeContext) {
-                MonitorProcess process = Monitoring.createProcess(command.getSessionId(), command.getAgentNode(),
+                NodeProcess<MonitoringStatus> process = Monitoring.createProcess(command.getSessionId(), command.getAgentNode(),
                         nodeContext, coordinator, executor, pollingInterval, profilerPollingInterval, monitoringProcessor, command.getTaskId(),
                         logWriter, sessionFactory, ttl);
 
@@ -82,7 +82,7 @@ public class MonitoringWorker extends ConfigurableWorker {
             public MonitoringStatus execute(PollMonitoringStatus command, NodeContext nodeContext) {
                 String processId = command.getProcessId();
 
-                MonitorProcess process = processes.get(processId);
+                NodeProcess<MonitoringStatus> process = processes.get(processId);
 
                 return process.getStatus();
             }
@@ -98,7 +98,7 @@ public class MonitoringWorker extends ConfigurableWorker {
             public Nothing execute(StopMonitoring command, NodeContext nodeContext) {
                 log.debug("StopMonitoring command received on node {}", nodeContext.getId());
                 String processId = command.getProcessId();
-                MonitorProcess process = processes.get(processId);
+                NodeProcess process = processes.get(processId);
 
                 log.debug("Going to stop MonitorProcess with id {}", processId);
                 process.stop();

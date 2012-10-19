@@ -94,6 +94,13 @@ public enum DefaultMonitoringParameters implements MonitoringParameter {
     }
 
     @Override
+    public String getReportingGroupKey() {
+        // Default monitoring parameters don't have reporting group key.
+        // Groups are configured statically.
+        return null;
+    }
+
+    @Override
     public String toString() {
         return getDescription();
     }
