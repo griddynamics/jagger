@@ -54,7 +54,10 @@ public class MonitoringController {
         log.debug("Start of monitoring requested. Task id {}", taskId);
 
         // todo use nodes on start
-        Collection<NodeId> agents = availableNodes.get(NodeType.AGENT);
+        Collection<NodeId> agents = new ArrayList<NodeId>();
+        agents.addAll(availableNodes.get(NodeType.AGENT));
+        agents.addAll(availableNodes.get(NodeType.KERNEL_AGENT));
+
         log.debug("Available agents {}", agents);
 
 

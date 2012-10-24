@@ -39,12 +39,11 @@ import java.util.Set;
  *         Date: 20.07.11
  */
 public class ChronologyLogAggregator implements LogAggregator {
+
     private Logger log = LoggerFactory.getLogger(ChronologyLogAggregator.class);
 
     private FileStorage fileStorage;
-
     private LogReader logReader;
-
     private LogWriter logWriter;
 
     public void setLogReader(LogReader logReader) {

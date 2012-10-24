@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or any later version.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+
+    <bean id="coherenceMonitoringProvider" class="com.griddynamics.jagger.agent.model.coherence.CoherenceMonitoringParametersProvider">
+        <property name="domainCaches">
+            <util:list>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="Catalog"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>CategoryDistributedCache</value>
+                            <value>ProductDistributedCache</value>
+                            <value>memberProductsDistributedCache</value>
+                            <value>UpcDistributedCache</value>
+                        </util:list>
+                    </property>
+                </bean>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="Media"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>mediaDistributedCache</value>
+                            <value>mediaGroupDistributedCache</value>
+                            <value>pageLayoutBRCacheDistributedCache</value>
+                            <value>pageLayoutCacheDistributedCache</value>
+                            <value>pageRegionDistributedCache</value>
+                            <value>pageRegionLookupBRDistributedCache</value>
+                            <value>pageRegionLookupDistributedCache</value>
+                            <value>pageRowRegionLookupDistributedCache</value>
+                            <value>pageTemplateDistributedCache</value>
+                            <value>pageZonesCacheDistributedCache</value>
+                            <value>poolMediaKeyCacheDistributedCache</value>
+                            <value>splashTemplatesDistributedCache</value>
+                        </util:list>
+                    </property>
+                </bean>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="Promotions"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>productPromotionDistributedCache</value>
+                            <value>promoCodeDistributedCache</value>
+                            <value>promoCodePromotionsDistributedCache</value>
+                            <value>promotionDistributedCache</value>
+                        </util:list>
+                    </property>
+                </bean>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="Review"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>ReviewIndexesDistributedCache</value>
+                            <value>ReviewReviewsDistributedCache</value>
+                            <value>ReviewStatisticsDistributedCache</value>
+                            <value>ReviewTopRatedProductsDistributedCache</value>
+                        </util:list>
+                    </property>
+                </bean>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="Store"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>StoreEventsDistributedCache</value>
+                            <value>StoresDistributedCache</value>
+                        </util:list>
+                    </property>
+                </bean>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="Store"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>StoreEventsDistributedCache</value>
+                            <value>StoresDistributedCache</value>
+                        </util:list>
+                    </property>
+                </bean>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="CustomDate"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>customdateDistributedCache</value>
+                        </util:list>
+                    </property>
+                </bean>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="TransactionManager"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>distributedTransactionalNamedCacheManager</value>
+                        </util:list>
+                    </property>
+                </bean>
+                <bean class="com.griddynamics.jagger.agent.model.coherence.CoherenceDomainCaches">
+                    <property name="domainName" value="IShip"/>
+                    <property name="cacheNames">
+                        <util:list>
+                            <value>ishipDistributedCountryCache</value>
+                            <value>ishipDistributedCountryPricingCache</value>
+                            <value>ishipDistributedCurrencyCache</value>
+                        </util:list>
+                    </property>
+                </bean>
+            </util:list>
+        </property>
+        <property name="cumulativeCacheMetricNames">
+            <util:list>
+                <value>CacheHits</value>
+                <value>CacheHitsMillis</value>
+                <value>CacheMisses</value>
+                <value>CacheMissesMillis</value>
+                <value>TotalGets</value>
+                <value>TotalGetsMillis</value>
+                <value>TotalPuts</value>
+                <value>TotalPutsMillis</value>
+                <value>StoreReads</value>
+                <value>StoreReadMillis</value>
+            </util:list>
+        </property>
+        <property name="nonCumulativeCacheMetricNames">
+            <util:list>
+                <value>Size</value>
+            </util:list>
+        </property>
+        <property name="nonCumulativeNodeMetricNames">
+            <util:list>
+                <value>PublisherSuccessRate</value>
+                <value>ReceiverSuccessRate</value>
+            </util:list>
+        </property>
+        <property name="cumulativeServiceMetricNames">
+            <util:list>
+                <value>RequestTotalCount</value>
+                <value>TaskCount</value>
+            </util:list>
+        </property>
+        <property name="averageServiceMetricNames">
+            <util:list>
+                <value>RequestAverageDuration</value>
+                <value>TaskAverageDuration</value>
+            </util:list>
+        </property>
+    </bean>
+
+</beans>

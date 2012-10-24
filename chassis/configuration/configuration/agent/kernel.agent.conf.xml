@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or any later version.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <import resource="http.transport.xml"/>
+
+    <bean id="propertiesResolverRegistry" class="com.griddynamics.jagger.util.PropertiesResolverRegistry"/>
+
+    <bean id="agentExecutor" class="com.griddynamics.jagger.util.ConfigurableExecutor">
+        <property name="corePoolSize" value="${chassis.executor.pool.core}"/>
+        <property name="maximumPoolSize" value="${chassis.executor.pool.max}"/>
+        <property name="nameFormat" value="jagger-core-pool-%d"/>
+    </bean>
+
+    <bean class="com.griddynamics.jagger.util.PropertiesResolver">
+        <property name="registry" ref="propertiesResolverRegistry"/>
+        <property name="resources">
+            <list>
+                <value>configuration/agent/kernel.agent.properties</value>
+                <value>#{systemProperties['jagger.default.environment.properties']}</value>
+                <value>#{systemProperties['jagger.environment.properties']}</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="kernelAgent" class="com.griddynamics.jagger.kernel.agent.KernelAgent">
+        <property name="worker" ref="kernelAgentWorker"/>
+        <property name="executor" ref="agentExecutor"/>
+        <property name="pollRate" value="${agent.exchange.polling.rate}"/>
+        <property name="urlExchangePack" value="${chassis.coordination.http.exchange}"/>
+        <property name="httpClient" ref="apacheHttpClient"/>
+        <property name="urlRegistration" value="${chassis.coordination.http.registration}"/>
+        <property name="urlBase" value="http://localhost:${chassis.coordination.http.port}"/>
+        <property name="kernelAgentLauncher" ref="kernelAgentLauncher"/>
+    </bean>
+
+    <bean id="kernelAgentWorker" class="com.griddynamics.jagger.kernel.agent.worker.KernelAgentWorker">
+        <constructor-arg ref="kernelAgent"/>
+        <property name="monitoringInfoService" ref="monitoringService"/>
+        <property name="kernelAgentLauncher" ref="kernelAgentLauncher"/>
+    </bean>
+
+    <bean id="coherenceJmxAgentImpl" class="com.griddynamics.jagger.kernel.agent.impl.CoherenceSystemUnderTestServiceImpl" lazy-init="true">
+        <property name="jmxServices" value="${coherence.jmx.services}"/>
+        <property name="monitoringParametersProvider">
+            <bean class="com.griddynamics.jagger.kernel.agent.config.OptionalMonitoringParametersProvider">
+                <property name="optionalBeanName" value="coherenceMonitoringProvider"/>
+                <property name="optionalBeanClassName" value="com.griddynamics.jagger.agent.model.coherence.CoherenceMonitoringParametersProvider"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="jmxAgentStub" class="com.griddynamics.jagger.kernel.agent.impl.SystemUnderTestStub"/>
+
+    <!-- TODO: factory? -->
+    <alias name="coherenceJmxAgentImpl" alias="trueCoherenceJmxAgent"/>
+    <alias name="jmxAgentStub" alias="falseCoherenceJmxAgent"/>
+    <alias name="${coherence.jmx.enabled}CoherenceJmxAgent" alias="coherenceJmxAgent"/>
+
+    <bean id="monitoringService" class="com.griddynamics.jagger.kernel.agent.impl.MonitoringInfoServiceImpl">
+        <property name="systemUnderTestServices">
+            <util:list>
+                <ref bean="coherenceJmxAgent"/>
+            </util:list>
+        </property>
+    </bean>
+
+    <bean id="defaultExchanger" class="com.griddynamics.jagger.coordinator.http.DefaultPackExchanger">
+        <constructor-arg index="0" ref="agentExecutor"/>
+        <constructor-arg index="1" ref="incomingCommandRunner"/>
+    </bean>
+
+    <bean id="incomingCommandRunner" class="com.griddynamics.jagger.coordinator.async.QueueRunner">
+        <constructor-arg ref="kernelAgentRunner"/>
+    </bean>
+
+    <bean id="kernelAgentRunner" class="com.griddynamics.jagger.kernel.agent.KernelAgentRunner"/>
+
+    <bean id="kernelAgentConfig" class="com.griddynamics.jagger.kernel.agent.KernelAgentConfig">
+        <property name="name" value="${agent.name}"/>
+    </bean>
+
+    <bean id="kernelAgentLauncher" class="com.griddynamics.jagger.kernel.agent.KernelAgentLauncher"/>
+
+</beans>

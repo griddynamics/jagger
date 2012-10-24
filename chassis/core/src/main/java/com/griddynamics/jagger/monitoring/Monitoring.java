@@ -24,6 +24,7 @@ import com.griddynamics.jagger.agent.model.SystemInfo;
 import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.NodeProcess;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import org.hibernate.SessionFactory;
 
@@ -39,12 +40,23 @@ public class Monitoring {
     private Monitoring() {
     }
 
-    public static MonitorProcess createProcess(String sessionId, NodeId agentId, NodeContext nodeContext,
+    public static NodeProcess<MonitoringStatus> createProcess(String sessionId, NodeId agentId, NodeContext nodeContext,
                                                Coordinator coordinator, ExecutorService executor, long pollingInterval,
                                                long profilerPollingInterval, MonitoringProcessor monitoringProcessor,
                                                String taskId, LogWriter logWriter, SessionFactory sessionFactory, long ttl) {
-        return new MonitorProcess(sessionId, agentId, nodeContext, coordinator, executor,
-                pollingInterval, profilerPollingInterval, monitoringProcessor, taskId, logWriter, sessionFactory, ttl);
+        switch (agentId.getType()) {
+            case AGENT:
+                return new AgentMonitorProcess(sessionId, agentId, nodeContext, coordinator, executor,
+                        pollingInterval, monitoringProcessor, profilerPollingInterval,
+                        taskId, logWriter, sessionFactory, ttl);
+            case KERNEL_AGENT:
+                return new KernelAgentMonitorProcess(sessionId, agentId, nodeContext, coordinator, executor,
+                        pollingInterval, monitoringProcessor,
+                        taskId, logWriter, sessionFactory, ttl);
+            default:
+                throw new IllegalArgumentException(agentId.getType() + " not allowed for monitoring.");
+
+        }
     }
 
     public static MonitoringProcessor compose(Iterable<MonitoringProcessor> processes) {

@@ -60,5 +60,9 @@ public interface SystemInfoCollector {
 
     long getTCPOutboundTotal();
 
+    long getDisksReadBytesTotal();
+
+    long getDisksWriteBytesTotal();
+
     double[] getLoadAverage();
 }

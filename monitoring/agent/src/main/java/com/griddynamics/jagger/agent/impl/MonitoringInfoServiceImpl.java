@@ -22,8 +22,8 @@ package com.griddynamics.jagger.agent.impl;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.griddynamics.jagger.agent.model.*;
 import com.griddynamics.jagger.util.TimeUtils;
 import org.slf4j.Logger;
@@ -36,11 +36,9 @@ import static com.griddynamics.jagger.util.Units.bytesToKiB;
 import static com.griddynamics.jagger.util.Units.bytesToMiB;
 
 /**
- * User: vshulga
- * Date: 7/5/11
- * Time: 5:35 PM
- * <p/>
  * Service aggregates logic for general system monitoring and specific JVM monitoring.
+ *
+ * @author vshulga
  */
 public class MonitoringInfoServiceImpl implements MonitoringInfoService {
     private static final Logger log = LoggerFactory.getLogger(MonitoringInfoServiceImpl.class);
@@ -80,10 +78,14 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
         sysInfoStringMap.put(DefaultMonitoringParameters.TCP_INBOUND_TOTAL, bytesToKiB(systemInfoService.getTCPInboundTotal()));
         sysInfoStringMap.put(DefaultMonitoringParameters.TCP_OUTBOUND_TOTAL, bytesToKiB(systemInfoService.getTCPOutboundTotal()));
 
+        sysInfoStringMap.put(DefaultMonitoringParameters.DISKS_READ_BYTES_TOTAL, bytesToKiB(systemInfoService.getDisksReadBytesTotal()));
+        sysInfoStringMap.put(DefaultMonitoringParameters.DISKS_WRITE_BYTES_TOTAL, bytesToKiB(systemInfoService.getDisksWriteBytesTotal()));
+
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_STATE_USER_PERC, systemInfoService.getCPUStateUser() * 100);
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_STATE_SYSTEM_PERC, systemInfoService.getCPUStateSys() * 100);
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_STATE_IDLE_PERC, systemInfoService.getCPUStateIdle() * 100);
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_STATE_IDLE_WAIT, systemInfoService.getCPUStateWait() * 100);
+
         log.debug("finish collecting box info through sigar on agent: time {} ms", System.currentTimeMillis() - startTimeLog);
         startTimeLog = System.currentTimeMillis();
         log.debug("start collecting LoadAverage info on agent");
@@ -107,7 +109,7 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
             });
             Map<String, SystemUnderTestInfo> jmxInfo;
             try {
-                jmxInfo = Futures.makeUninterruptible(future).get(JMX_TIMEOUT, TimeUnit.MILLISECONDS);
+                jmxInfo = Uninterruptibles.getUninterruptibly(future, JMX_TIMEOUT, TimeUnit.MILLISECONDS);
                 systemInfo.setSysUnderTest(jmxInfo);
             } catch (ExecutionException e) {
                 log.error("Execution failed {}", e);

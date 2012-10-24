@@ -20,10 +20,6 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import com.griddynamics.jagger.master.SessionIdProvider;
-import org.springframework.beans.factory.annotation.Required;
-
-import java.io.OutputStream;
 import java.io.Serializable;
 
 /**

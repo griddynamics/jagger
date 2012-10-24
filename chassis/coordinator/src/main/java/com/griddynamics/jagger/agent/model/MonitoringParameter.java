@@ -26,4 +26,6 @@ public interface MonitoringParameter {
     MonitoringParameterLevel getLevel();
 
     String getDescription();
+
+    String getReportingGroupKey();
 }

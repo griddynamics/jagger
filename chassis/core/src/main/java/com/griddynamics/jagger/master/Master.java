@@ -113,9 +113,13 @@ public class Master implements Runnable {
                         conditions.getMinAgentsCount() :
                         0
         );
+        CountDownLatch kernelAgentCountDownLatch = new CountDownLatch(
+                conditions.isClusterWideMonitoringEnabled() ? 1 : 0
+        );
         CountDownLatch kernelCountDownLatch = new CountDownLatch(conditions.getMinKernelsCount());
         countDownLatchMap.put(NodeType.AGENT, agentCountDownLatch);
         countDownLatchMap.put(NodeType.KERNEL, kernelCountDownLatch);
+        countDownLatchMap.put(NodeType.KERNEL_AGENT, kernelAgentCountDownLatch);
 
         new StartWorkConditions(allNodes, countDownLatchMap);
 
@@ -166,7 +170,7 @@ public class Master implements Runnable {
     }
 
     private void finishAgentManagement(String sessionId) {
-        for (NodeId agent : coordinator.getAvailableNodes(NodeType.AGENT)) {
+        for (NodeId agent : coordinator.getAvailableNodes(NodeType.AGENT, NodeType.KERNEL_AGENT)) {
             // async run
             coordinator.getExecutor(agent).run(new ManageAgent(sessionId, agentManagementProps),
                     Coordination.<ManageAgent>doNothing());

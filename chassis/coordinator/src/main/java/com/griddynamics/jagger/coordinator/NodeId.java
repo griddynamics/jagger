@@ -45,6 +45,10 @@ public class NodeId implements Serializable {
         return NodeId.of(NodeType.AGENT, identifier);
     }
 
+    public static NodeId kernelAgentNode(String identifier) {
+        return NodeId.of(NodeType.KERNEL_AGENT, identifier);
+    }
+
     public static NodeId of(NodeType type, String identifier) {
         Preconditions.checkNotNull(type);
         Preconditions.checkNotNull(identifier);

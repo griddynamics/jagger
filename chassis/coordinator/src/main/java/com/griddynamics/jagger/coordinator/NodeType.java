@@ -26,5 +26,5 @@ package com.griddynamics.jagger.coordinator;
  * @author Mairbek Khadikov
  */
 public enum NodeType {
-    MASTER, KERNEL, AGENT
+    MASTER, KERNEL, AGENT, KERNEL_AGENT
 }

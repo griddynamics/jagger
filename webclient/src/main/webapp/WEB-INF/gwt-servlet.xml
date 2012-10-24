@@ -52,6 +52,7 @@
         <property name="workloadPlotGroups" ref="workloadPlotGroups"/>
         <property name="monitoringPlotDataProviders" ref="monitoringPlotDataProviders"/>
         <property name="workloadPlotDataProviders" ref="workloadPlotDataProviders"/>
+        <property name="defaultPlotDataProvider" ref="monitoringPlotDataProvider"/>
     </bean>
 
     <bean id="sessionDataService" class="com.griddynamics.jagger.webclient.server.SessionDataServiceImpl"/>
@@ -85,9 +86,9 @@
 
     <!--===========Monitoring Plot Data Providers===========-->
     <bean id="monitoringPlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.MonitoringPlotDataProvider">
-        <constructor-arg index="0" ref="monitoringPlotGroups"/>
         <property name="legendProvider" ref="legendProvider"/>
         <property name="renderTaskBoundaries" value="${plot.rendering.taskBoundariesEnabled}"/>
+        <property name="reportingParametersProvider" ref="plotProviderService"/>
     </bean>
 
     <bean id="monitoringPlotDataProviders" class="java.util.LinkedHashMap">
@@ -105,6 +106,7 @@
                 <entry key="GC minor time" value-ref="monitoringPlotDataProvider"/>
                 <entry key="Heap Memory" value-ref="monitoringPlotDataProvider"/>
                 <entry key="Non Heap Memory" value-ref="monitoringPlotDataProvider"/>
+                <entry key="Disks IO" value-ref="monitoringPlotDataProvider"/>
             </map>
         </constructor-arg>
     </bean>

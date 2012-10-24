@@ -53,7 +53,6 @@ public class HdfsStorage implements FileStorage {
         this.attendantServers = attendantServers;
     }
 
-    @Override
     public Collection<AttendantServer> getAttendantServers() {
         return this.attendantServers;
     }

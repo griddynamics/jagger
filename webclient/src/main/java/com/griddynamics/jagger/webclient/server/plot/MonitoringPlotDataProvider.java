@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.webclient.server.plot;
 
-import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
+import com.griddynamics.jagger.agent.model.MonitoringParameter;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
 import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
@@ -13,12 +13,20 @@ import com.griddynamics.jagger.webclient.client.dto.PointDto;
 import com.griddynamics.jagger.webclient.server.ColorCodeGenerator;
 import com.griddynamics.jagger.webclient.server.DataProcessingUtil;
 import com.griddynamics.jagger.webclient.server.LegendProvider;
+import com.griddynamics.jagger.webclient.server.ReportingParametersProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -31,18 +39,17 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
     private static final Logger log = LoggerFactory.getLogger(MonitoringPlotDataProvider.class);
     private static final String IP_ADDRESS_REG_EXP = ".*[\\[\\(](?:\\d{1,3}\\.){3}\\d{1,3}[\\]\\)]";
 
-    private Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups;
     private LegendProvider legendProvider;
     private EntityManager entityManager;
     private boolean renderTaskBoundaries;
-
-    //==========Constructors
-
-    public MonitoringPlotDataProvider(Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups) {
-        this.monitoringPlotGroups = monitoringPlotGroups;
-    }
+    private ReportingParametersProvider reportingParametersProvider;
 
     //==========Getters & Setters
+
+    @Required
+    public void setReportingParametersProvider(ReportingParametersProvider reportingParametersProvider) {
+        this.reportingParametersProvider = reportingParametersProvider;
+    }
 
     public void setLegendProvider(LegendProvider legendProvider) {
         this.legendProvider = legendProvider;
@@ -71,7 +78,8 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
      */
     @Override
     public List<PlotSeriesDto> getPlotData(long taskId, String plotName) {
-        DefaultMonitoringParameters[] defaultMonitoringParametersGroup = findDefaultMonitoringParameters(monitoringPlotGroups, plotName);
+        Map<GroupKey, MonitoringParameter[]> monitoringPlotGroups = reportingParametersProvider.getMergedMonitoringParameters(taskId);
+        MonitoringParameter[] defaultMonitoringParametersGroup = findDefaultMonitoringParameters(monitoringPlotGroups, plotName);
         List<String> monitoringParametersList = assembleDefaultMonitoringParametersDescriptions(defaultMonitoringParametersGroup);
         log.debug("For plot {} there are exist {} monitoring parameters", plotName, defaultMonitoringParametersGroup);
 
@@ -103,7 +111,8 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
 
         Map<String, PerformedMonitoring> performedMonitoringMap = createIndexMonitoringId2PerformedMonitoring(findAllPerformedMonitoringBySessionId(sessionId));
 
-        DefaultMonitoringParameters[] defaultMonitoringParametersGroup = findDefaultMonitoringParameters(monitoringPlotGroups, plotName);
+        Map<GroupKey, MonitoringParameter[]> monitoringPlotGroups = reportingParametersProvider.getMergedMonitoringParameters(sessionId);
+        MonitoringParameter[] defaultMonitoringParametersGroup = findDefaultMonitoringParameters(monitoringPlotGroups, plotName);
         List<String> monitoringParametersList = assembleDefaultMonitoringParametersDescriptions(defaultMonitoringParametersGroup);
         log.debug("For plot {} there are exist {} monitoring parameters", plotName, defaultMonitoringParametersGroup);
 
@@ -166,7 +175,8 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
         checkArgument(!taskIds.isEmpty(), "taskIds is empty");
         checkNotNull(plotName, "plotName is null");
 
-        DefaultMonitoringParameters[] defaultMonitoringParametersGroup = findDefaultMonitoringParameters(monitoringPlotGroups, plotName);
+        Map<GroupKey, MonitoringParameter[]> monitoringPlotGroups = reportingParametersProvider.getMergedMonitoringParameters(taskIds);
+        MonitoringParameter[] defaultMonitoringParametersGroup = findDefaultMonitoringParameters(monitoringPlotGroups, plotName);
         List<String> monitoringParametersList = assembleDefaultMonitoringParametersDescriptions(defaultMonitoringParametersGroup);
         log.debug("For plot {} there are exist {} monitoring parameters", plotName, defaultMonitoringParametersGroup);
 
@@ -271,8 +281,8 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
         return boxIdentifier.replace(toCut, "");
     }
 
-    private DefaultMonitoringParameters[] findDefaultMonitoringParameters(Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups, String plotName) {
-        for (Map.Entry<GroupKey, DefaultMonitoringParameters[]> entry : monitoringPlotGroups.entrySet()) {
+    private MonitoringParameter[] findDefaultMonitoringParameters(Map<GroupKey, MonitoringParameter[]> monitoringPlotGroups, String plotName) {
+        for (Map.Entry<GroupKey, MonitoringParameter[]> entry : monitoringPlotGroups.entrySet()) {
             if (entry.getKey().getUpperName().equalsIgnoreCase(plotName)) {
                 return entry.getValue();
             }
@@ -354,9 +364,9 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
                 .getSingleResult();
     }
 
-    private List<String> assembleDefaultMonitoringParametersDescriptions(DefaultMonitoringParameters[] defaultMonitoringParametersGroup) {
+    private List<String> assembleDefaultMonitoringParametersDescriptions(MonitoringParameter[] defaultMonitoringParametersGroup) {
         List<String> monitoringParametersList = new ArrayList<String>();
-        for (DefaultMonitoringParameters defaultMonitoringParameter : defaultMonitoringParametersGroup) {
+        for (MonitoringParameter defaultMonitoringParameter : defaultMonitoringParametersGroup) {
             monitoringParametersList.add(defaultMonitoringParameter.getDescription());
         }
 

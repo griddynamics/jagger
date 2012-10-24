@@ -24,18 +24,16 @@ import com.google.common.collect.Sets;
 import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.kernel.Kernel;
+import com.griddynamics.jagger.kernel.agent.KernelAgentLauncher;
 import com.griddynamics.jagger.launch.LaunchManager;
 import com.griddynamics.jagger.launch.LaunchTask;
 import com.griddynamics.jagger.launch.Launches;
 import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
-import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Server;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -45,11 +43,15 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 public final class JaggerLauncher {
@@ -62,8 +64,12 @@ public final class JaggerLauncher {
     public static final String COORDINATION_CONFIGURATION = "chassis.coordination.configuration";
     public static final String COORDINATION_HTTP_CONFIGURATION = "chassis.coordination.http.configuration";
     public static final String RDB_CONFIGURATION = "chassis.rdb.configuration";
+    public static final String KERNEL_AGENT_CONFIGURATION = "monitoring.kernel.agent.configuration";
+
     public static final String INCLUDE_SUFFIX = ".include";
     public static final String EXCLUDE_SUFFIX = ".exclude";
+
+    public static final String KERNEL_AGENT_ENABLED = "monitoring.kernel.agent.enabled";
 
     public static final String DEFAULT_ENVIRONMENT_PROPERTIES = "jagger.default.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
@@ -128,6 +134,12 @@ public final class JaggerLauncher {
 
         if (rolesSet.contains(Role.REPORTER.toString())) {
             launchReporter(directory);
+        }
+
+        boolean kernelAgentEnabled = "true".equals(environmentProperties.get(KERNEL_AGENT_ENABLED));
+        log.info("Kernel agent enabled = {}.", kernelAgentEnabled);
+        if (kernelAgentEnabled) {
+            launchKernelAgent(directory);
         }
 
         LaunchManager launchManager = builder.build();
@@ -271,6 +283,25 @@ public final class JaggerLauncher {
         };
 
         builder.addMainTask(jettyRunner);
+    }
+
+    private static void launchKernelAgent(final URL directory) {
+        Thread kernelAgentThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ApplicationContext context = loadContext(directory, KERNEL_AGENT_CONFIGURATION, environmentProperties);
+
+                    KernelAgentLauncher kernelAgentLauncher = KernelAgentLauncher.create(context);
+                    kernelAgentLauncher.launchKernelAgent();
+                } catch (Exception e) {
+                    log.error("Failed to start kernel agent.", e);
+                }
+            }
+        });
+        kernelAgentThread.setDaemon(true);
+        kernelAgentThread.setName("KernelAgent-Thread");
+        kernelAgentThread.start();
     }
 
     public static ApplicationContext loadContext(URL directory, String role, Properties environmentProperties) {

@@ -38,11 +38,15 @@ public class MonitoringParameterBean implements MonitoringParameter {
     @Index(name="cumulativeCounter_index")
     private boolean cumulativeCounter;
 
+    @Index(name = "reportingGroupKey_index")
+    private String reportingGroupKey;
+
     public static MonitoringParameterBean copyOf(MonitoringParameter parameter) {
         MonitoringParameterBean result = new MonitoringParameterBean();
         result.setDescription(parameter.getDescription());
         result.setCumulativeCounter(parameter.isCumulativeCounter());
         result.setLevel(parameter.getLevel());
+        result.setReportingGroupKey(parameter.getReportingGroupKey());
         return result;
     }
 
@@ -74,6 +78,15 @@ public class MonitoringParameterBean implements MonitoringParameter {
     }
 
     @Override
+    public String getReportingGroupKey() {
+        return reportingGroupKey;
+    }
+
+    public void setReportingGroupKey(String reportingGroupKey) {
+        this.reportingGroupKey = reportingGroupKey;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -96,6 +109,7 @@ public class MonitoringParameterBean implements MonitoringParameter {
                 .add("description", description)
                 .add("level", level)
                 .add("cumulativeCounter", cumulativeCounter)
+                .add("reportingGroupKey", reportingGroupKey)
                 .toString();
     }
 }

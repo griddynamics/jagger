@@ -41,6 +41,7 @@
 
     <modules>
         <module>monitoring/agent</module>
+        <module>monitoring/kernel.agent</module>
         <module>diagnostics</module>
         <module>chassis/</module>
         <module>distribution</module>
@@ -184,6 +185,12 @@
                 <version>${version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.griddynamics.jagger</groupId>
+                <artifactId>monitoring.kernel.agent</artifactId>
+                <version>${version}</version>
+            </dependency>
+
             <!-- Third-party dependencies -->
 
             <dependency>
@@ -319,7 +326,7 @@
             <dependency>
                 <groupId>com.caucho</groupId>
                 <artifactId>hessian</artifactId>
-                <version>3.2.0</version>
+                <version>4.0.7</version>
             </dependency>
 
             <dependency>
@@ -437,7 +444,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>r09</version>
+                <version>13.0.1</version>
             </dependency>
 
             <dependency>

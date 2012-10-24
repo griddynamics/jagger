@@ -293,6 +293,44 @@ public class SigarSystemInfoCollector implements SystemInfoCollector {
     }
 
     @Override
+    public long getDisksReadBytesTotal() {
+        try {
+            long readBytes = 0;
+            FileSystem[] devices = sigar.getFileSystemList();
+            for (FileSystem dev : devices) {
+                if(FileSystem.TYPE_LOCAL_DISK == dev.getType()) {
+                    DiskUsage disk = sigar.getDiskUsage(dev.getDirName());
+                    readBytes += disk.getReadBytes();
+                }
+            }
+            logger.trace("getDisksReadBytesTotal : {}", readBytes);
+            return readBytes;
+        } catch (SigarException e) {
+            logger.warn("Exception during getting disks information", e);
+        }
+        return -1;
+    }
+
+    @Override
+    public long getDisksWriteBytesTotal() {
+        try {
+            long writeBytes = 0;
+            FileSystem[] devices = sigar.getFileSystemList();
+            for (FileSystem dev : devices) {
+                if(FileSystem.TYPE_LOCAL_DISK == dev.getType()) {
+                    DiskUsage disk = sigar.getDiskUsage(dev.getDirName());
+                    writeBytes += disk.getWriteBytes();
+                }
+            }
+            logger.trace("getDisksWriteBytesTotal: {}", writeBytes);
+            return writeBytes;
+        } catch (SigarException e) {
+            logger.warn("Exception during getting disks information", e);
+        }
+        return -1;
+    }
+
+    @Override
     public double[] getLoadAverage() {
         try {
             return sigar.getLoadAverage();

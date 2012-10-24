@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.util;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +31,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class Futures {
+
     private final static Logger log = LoggerFactory.getLogger(Futures.class);
 
     public static <V> V get(Future<V> future, long millis) {
         try {
-            return com.google.common.util.concurrent.Futures.makeUninterruptible(future).get(millis, TimeUnit.MILLISECONDS);
+            return Uninterruptibles.getUninterruptibly(future, millis, TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             log.error("Execution failed {}", e);
             throw Throwables.propagate(e);
@@ -42,7 +44,5 @@ public class Futures {
             log.error("Timeout of {} millis failed {}", millis, e);
             throw Throwables.propagate(e);
         }
-
     }
-
 }

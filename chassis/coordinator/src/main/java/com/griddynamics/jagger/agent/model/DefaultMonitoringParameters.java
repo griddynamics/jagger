@@ -37,6 +37,9 @@ public enum DefaultMonitoringParameters implements MonitoringParameter {
     TCP_INBOUND_TOTAL("TCP inbound total, KiB/sec", true, BOX),
     TCP_OUTBOUND_TOTAL("TCP outbound total, KiB/sec", true, BOX),
 
+    DISKS_READ_BYTES_TOTAL("Disks read bytes total, KiB/sec", true, BOX),
+    DISKS_WRITE_BYTES_TOTAL("Disks write bytes total, KiB/sec", true, BOX),
+
     CPU_STATE_USER_PERC("CPU user, %", false, BOX),
     CPU_STATE_SYSTEM_PERC("CPU system, %", false, BOX),
     CPU_STATE_IDLE_PERC("CPU idle, %", false, BOX),
@@ -88,6 +91,13 @@ public enum DefaultMonitoringParameters implements MonitoringParameter {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getReportingGroupKey() {
+        // Default monitoring parameters don't have reporting group key.
+        // Groups are configured statically.
+        return null;
     }
 
     @Override
