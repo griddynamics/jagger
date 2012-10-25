@@ -60,6 +60,7 @@
         <property name="collectors">
             <list>
                 <ref bean="durationCollector"/>
+                <ref bean="multiDurationCollector"/>
                 <ref bean="informationCollector"/>
                 <ref bean="diagnosticCollector"/>
                 <bean class="com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider">
