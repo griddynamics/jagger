@@ -216,6 +216,19 @@
                     </list>
                 </entry>
 
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                            <constructor-arg index="0" value="Disks IO"/>
+                            <constructor-arg index="1" value="Disks IO, KiB/sec"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                        <value>DISKS_READ_BYTES_TOTAL</value>
+                        <value>DISKS_WRITE_BYTES_TOTAL</value>
+                    </array>
+                </entry>
+
             </map>
         </constructor-arg>
     </bean>

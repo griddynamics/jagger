@@ -80,10 +80,14 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
         sysInfoStringMap.put(DefaultMonitoringParameters.TCP_INBOUND_TOTAL, bytesToKiB(systemInfoService.getTCPInboundTotal()));
         sysInfoStringMap.put(DefaultMonitoringParameters.TCP_OUTBOUND_TOTAL, bytesToKiB(systemInfoService.getTCPOutboundTotal()));
 
+        sysInfoStringMap.put(DefaultMonitoringParameters.DISKS_READ_BYTES_TOTAL, bytesToKiB(systemInfoService.getDisksReadBytesTotal()));
+        sysInfoStringMap.put(DefaultMonitoringParameters.DISKS_WRITE_BYTES_TOTAL, bytesToKiB(systemInfoService.getDisksWriteBytesTotal()));
+
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_STATE_USER_PERC, systemInfoService.getCPUStateUser() * 100);
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_STATE_SYSTEM_PERC, systemInfoService.getCPUStateSys() * 100);
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_STATE_IDLE_PERC, systemInfoService.getCPUStateIdle() * 100);
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_STATE_IDLE_WAIT, systemInfoService.getCPUStateWait() * 100);
+
         log.debug("finish collecting box info through sigar on agent: time {} ms", System.currentTimeMillis() - startTimeLog);
         startTimeLog = System.currentTimeMillis();
         log.debug("start collecting LoadAverage info on agent");
