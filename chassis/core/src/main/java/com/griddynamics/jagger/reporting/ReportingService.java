@@ -20,6 +20,8 @@
 
 package com.griddynamics.jagger.reporting;
 
+import com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict;
 import com.griddynamics.jagger.exception.ConfigurationException;
 import com.griddynamics.jagger.exception.TechnicalException;
 import net.sf.jasperreports.engine.*;
@@ -27,12 +29,28 @@ import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
 import java.util.*;
 
 public class ReportingService {
 
     private final static Logger log = LoggerFactory.getLogger(ReportingService.class);
+    public static final String COMPARISON_REPORT_FILE_NAME = "result.xml";
+    public static final String REPORT_TAG_NAME = "report";
+    public static final String DECISION_TAG_NAME = "decision";
+    public static final String BASELINE_TAG_NAME = "baseline";
+    public static final String CURRENT_TAG_NAME = "current";
 
     public enum ReportType {PDF, HTML}
 
@@ -72,12 +90,55 @@ public class ReportingService {
                 case PDF : JasperExportManager.exportReportToPdfStream(jasperPrint, context.getOutputResource(outputReportLocation)); break;
                 default : throw new ConfigurationException("ReportType is not specified");
             }
+
+            generateComparisonReport();
+
             log.info("END: Export report");
         } catch (JRException e) {
             log.error("Error during report rendering", e);
             throw new TechnicalException(e);
         }
     }
+
+    protected void generateComparisonReport(){
+        if(context.getParameters().containsKey(OverallSessionComparisonReporter.JAGGER_VERDICT)){
+            //OverallSessionComparisonReporter included in reporter configuration
+            try{
+                log.info("BEGIN: Export comparison report");
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                Document doc = docBuilder.newDocument();
+                Element rootElement = doc.createElement(REPORT_TAG_NAME);
+                doc.appendChild(rootElement);
+
+                Element decisionElement = doc.createElement(DECISION_TAG_NAME);
+                SessionVerdict sessionVerdict=(SessionVerdict)context.getParameters().get(OverallSessionComparisonReporter.JAGGER_VERDICT);
+                decisionElement.setTextContent(sessionVerdict.getDecision().toString());
+                rootElement.appendChild(decisionElement);
+
+                Element baselineElement = doc.createElement(BASELINE_TAG_NAME);
+                String baseline=(String)context.getParameters().get(OverallSessionComparisonReporter.JAGGER_SESSION_BASELINE);
+                baselineElement.setTextContent(baseline);
+                rootElement.appendChild(baselineElement);
+
+                Element currentElement = doc.createElement(CURRENT_TAG_NAME);
+                String current=(String)context.getParameters().get(OverallSessionComparisonReporter.JAGGER_SESSION_CURRENT);
+                currentElement.setTextContent(current);
+                rootElement.appendChild(currentElement);
+
+                Source source = new DOMSource(doc);
+                Result result = new StreamResult(new File(COMPARISON_REPORT_FILE_NAME));
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.transform(source, result);
+                log.info("END: Export comparison report");
+            } catch (Exception  e){
+                log.error("Error during comparison report generation", e);
+                throw new TechnicalException(e);
+            }
+        }
+
+    }
+
 
     //------------------------------------------------------------------------------------------------------------------
 

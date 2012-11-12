@@ -34,6 +34,10 @@ import org.springframework.beans.factory.annotation.Required;
 public class OverallSessionComparisonReporter extends AbstractReportProvider {
 
     private static final Logger log = LoggerFactory.getLogger(OverallSessionComparisonReporter.class);
+    public static final String JAGGER_SESSION_CURRENT = "jagger.session.current";
+    public static final String JAGGER_VERDICT = "jagger.verdict";
+    public static final String JAGGER_SESSION_BASELINE = "jagger.session.baseline";
+    public static final String JAGGER_STATUS_IMAGE_PROVIDER = "jagger.statusImageProvider";
 
     private SessionComparator sessionComparator;
     private StatusImageProvider statusImageProvider;
@@ -50,10 +54,10 @@ public class OverallSessionComparisonReporter extends AbstractReportProvider {
 
         SessionVerdict verdict = sessionComparator.compare(currentSession, baselineSession);
 
-        getContext().getParameters().put("jagger.verdict", verdict);
-        getContext().getParameters().put("jagger.session.baseline", baselineSession);
-        getContext().getParameters().put("jagger.session.current", currentSession);
-        getContext().getParameters().put("jagger.statusImageProvider", statusImageProvider);
+        getContext().getParameters().put(JAGGER_VERDICT, verdict);
+        getContext().getParameters().put(JAGGER_SESSION_BASELINE, baselineSession);
+        getContext().getParameters().put(JAGGER_SESSION_CURRENT, currentSession);
+        getContext().getParameters().put(JAGGER_STATUS_IMAGE_PROVIDER, statusImageProvider);
 
         return new JRBeanCollectionDataSource(Lists.newArrayList(1, 2));
     }
