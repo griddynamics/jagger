@@ -60,10 +60,10 @@
                 </constructor-arg>
                 <constructor-arg>
                     <list>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8080/sleep/5</value>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8090/sleep/5</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8080/sleep/5</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8090/sleep/5</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/5</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/5</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/5</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/5</value>
                     </list>
                 </constructor-arg>
             </bean>
@@ -81,10 +81,10 @@
                 </constructor-arg>
                 <constructor-arg>
                     <list>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8080/sleep/10</value>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8090/sleep/10</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8080/sleep/10</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8090/sleep/10</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/10</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/10</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/10</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/10</value>
                     </list>
                 </constructor-arg>
             </bean>
@@ -102,10 +102,10 @@
                 </constructor-arg>
                 <constructor-arg>
                     <list>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8080/sleep/pulse/30000/500</value>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8090/sleep/pulse/30000/500</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8080/sleep/pulse/30000/500</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8090/sleep/pulse/30000/500</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/pulse/30000/500</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/pulse/30000/500</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/pulse/30000/500</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/pulse/30000/500</value>
                     </list>
                 </constructor-arg>
             </bean>
@@ -123,10 +123,10 @@
                 </constructor-arg>
                 <constructor-arg>
                     <list>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8080/sleep/50</value>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8090/sleep/50</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8080/sleep/50</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8090/sleep/50</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/50</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/50</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/50</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/50</value>
                     </list>
                 </constructor-arg>
             </bean>
@@ -144,10 +144,10 @@
                 </constructor-arg>
                 <constructor-arg>
                     <list>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8080/sleep/50-150</value>
-                        <value>http://macys-jagger4.vm.griddynamics.net:8090/sleep/50-150</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8080/sleep/50-150</value>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8090/sleep/50-150</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/50-150</value>
+                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/50-150</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/50-150</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/50-150</value>
                     </list>
                 </constructor-arg>
             </bean>
@@ -165,7 +165,7 @@
                 </constructor-arg>
                 <constructor-arg>
                     <list>
-                        <value>http://macys-jagger5.vm.griddynamics.net:8080/sleep/5</value>
+                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/5</value>
                     </list>
                 </constructor-arg>
             </bean>

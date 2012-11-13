@@ -22,9 +22,9 @@
 
 <!--config content_directory="/home/dkotlyarov/.IntelliJIdea10/system/gwt/parent.parent2b189ff7/facade.ee0fd194/run/www/"-->
 <!--config content_directory="/home/dkotlyarov/Development/jagger/trunk/facade/target/facade-1.1.0-SNAPSHOT/"-->
-<!--<config content_directory="/home/jagger-ci/facade/apache-tomcat-7.0.21/webapps/facade-1.1.0-mru-SNAPSHOT/">-->
-    <!--<location name="Collector" directory="file:/home/jagger-ci/jagger_mru/jagger-distribution-1.1.0-mru-SNAPSHOT/">-->
-        <!--<start_session cmd="/home/jagger-ci/jagger_mru/jagger-distribution-1.1.0-mru-SNAPSHOT/start.sh profiles/mru/environment.properties"/>-->
+<!--<config content_directory="/home/jagger-jenkins/facade/apache-tomcat-7.0.21/webapps/facade-1.1.0-mru-SNAPSHOT/">-->
+    <!--<location name="Collector" directory="file:/home/jagger-jenkins/jagger_mru/jagger-distribution-1.1.0-mru-SNAPSHOT/">-->
+        <!--<start_session cmd="/home/jagger-jenkins/jagger_mru/jagger-distribution-1.1.0-mru-SNAPSHOT/start.sh profiles/mru/environment.properties"/>-->
     <!--</location>-->
 <!--</config>-->
 <config content_directory="/home/akirillov/dev_kit/apache-tomcat-7.0.27/webapps/facade">
