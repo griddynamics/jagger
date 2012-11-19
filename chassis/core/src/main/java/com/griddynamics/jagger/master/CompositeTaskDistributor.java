@@ -45,7 +45,7 @@ import java.util.concurrent.*;
 public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> {
     private static Logger log = LoggerFactory.getLogger(CompositeTaskDistributor.class);
     private static final int START_TIMEOUT = 300000;
-    private static final int TERMINATION_TIMEOUT = 300000;
+    private static final int TERMINATION_TIMEOUT = 1800000;
 
     private DistributorRegistry distributorRegistry;
     private TaskIdProvider taskIdProvider;
