@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.griddynamics.com/schema/jagger"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            targetNamespace="http://www.griddynamics.com/schema/jagger"
+            elementFormDefault="qualified">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans"
+                schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"/>
+
+
+    <xsd:element name="processing" type="processingType">
+    </xsd:element>
+
+    <xsd:element name="test-plan" type="processingType">
+    </xsd:element>
+
+    <xsd:element name="test" type="testType">
+    </xsd:element>
+
+    <xsd:element name="task" type="taskType">
+    </xsd:element>
+
+    <xsd:element name="user" type="userType">
+    </xsd:element>
+
+    <xsd:element name="invocation" type="invocationType">
+    </xsd:element>
+
+    <xsd:complexType name="processingType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element ref="test"/>
+                    <xsd:element ref="beans:bean"/>
+                    <xsd:element ref="beans:ref"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="testType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element ref="task"/>
+                    <xsd:element ref="beans:bean"/>
+                    <xsd:element ref="beans:ref"/>
+                </xsd:choice>
+                <xsd:attribute name="name" type="xsd:string"/>
+                <xsd:attribute name="duration" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="taskType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:choice minOccurs="0">
+                    <xsd:element name="user" type="userType" maxOccurs="unbounded"/>
+                    <xsd:element name="invocation" type="invocationType" maxOccurs="1"/>
+                </xsd:choice>
+                <xsd:attribute name="name" type="xsd:string" ></xsd:attribute>
+                <xsd:attribute name="duration" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="sample" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="delay" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="bean" type="xsd:string"></xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="userType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attributeGroup ref="userAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="invocationType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attributeGroup ref="invocationAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="userAttributes">
+        <xsd:attribute name="count" type="xsd:string" ></xsd:attribute>
+        <xsd:attribute name="startCount" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="startIn" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="startBy" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="life" type="xsd:string"></xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="invocationAttributes">
+        <xsd:attribute name="exactcount" type="xsd:integer" ></xsd:attribute>
+        <xsd:attribute name="threads" type="xsd:integer"></xsd:attribute>
+    </xsd:attributeGroup>
+
+</xsd:schema>

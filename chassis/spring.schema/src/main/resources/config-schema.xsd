@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.griddynamics.com/schema/jagger" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            targetNamespace="http://www.griddynamics.com/schema/jagger"
+            elementFormDefault="qualified">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans" />
+
+    <xsd:element name="session" type="sessionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                TODO
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="performance_profile" type="performance_profile_type">
+        <xsd:annotation>
+            <xsd:documentation>
+                TODO
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="test" type="test"/>
+
+    <xsd:element name="task" type="task"/>
+
+    <xsd:element name="termination" type="termination"/>
+
+    <xsd:element name="tps" type="tps"/>
+
+    <xsd:attributeGroup name="performance_profile_attributes">
+        <xsd:attribute name="class" type="xsd:string" use="optional"/>
+        <xsd:attribute name="ref" type="xsd:IDREF" use="optional" />
+    </xsd:attributeGroup>
+
+     <xsd:complexType name="performance_profile_type">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence minOccurs="0">
+                    <xsd:element name="test" type="test"/>
+                </xsd:sequence>
+                <xsd:attributeGroup ref="performance_profile_attributes" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="sessionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                TODO
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:all>
+                    <xsd:element ref="performance_profile"/>
+                    <xsd:element name="listeners">
+                           <xsd:complexType>
+                               <xsd:complexContent>
+                                   <xsd:extension base="beans:identifiedType">
+                                   <xsd:choice maxOccurs="unbounded">
+                                       <xsd:element ref="beans:ref"/>
+                                       <xsd:element ref="beans:bean"/>
+                                   </xsd:choice>
+                                   </xsd:extension>
+                               </xsd:complexContent>
+                           </xsd:complexType>
+
+                    </xsd:element>
+                </xsd:all>
+                <xsd:attribute name="monitoring">
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:token">
+                            <xsd:enumeration value="enabled"/>
+                            <xsd:enumeration value="disabled"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="test">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence minOccurs="1">
+                    <xsd:element name="task" type="task"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="task">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="tps" type="tps" />
+                    <xsd:element name="termination" type="termination" />
+                </xsd:sequence>
+                <xsd:attribute name="workload" type="xsd:IDREF" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="termination">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="samples" type="xsd:integer" />
+                <xsd:attribute name="duration" type="xsd:string" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="tps">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="value" type="xsd:integer" />
+                <xsd:attribute name="tickInterval" type="xsd:integer" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+</xsd:schema> 
