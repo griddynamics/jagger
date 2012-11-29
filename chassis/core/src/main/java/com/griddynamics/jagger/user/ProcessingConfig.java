@@ -38,21 +38,32 @@ import java.util.List;
 @Root(name = "processing")
 public class ProcessingConfig implements Serializable {
     @ElementList(name = "tests", entry = "test", inline = true)
-    public final List<Test> tests;
+    public List<Test> tests;
 
     public ProcessingConfig(@ElementList(name = "tests", entry = "test", inline = true) List<Test> tests) {
         this.tests = Collections.unmodifiableList(tests);
     }
 
+    public ProcessingConfig() {
+    }
+
+    public List<Test> getTests() {
+        return tests;
+    }
+
+    public void setTests(List<Test> tests) {
+        this.tests = tests;
+    }
+
     public static class Test implements Serializable {
         @Attribute(name = "name")
-        public final String name;
+        public String name;
 
         @Attribute(name = "duration", required = false)
-        public final String duration;
+        public String duration;
 
         @ElementList(name = "tasks", entry = "task", inline = true, required = false)
-        public final List<Task> tasks;
+        public List<Task> tasks;
 
         public Test(@Attribute(name = "name") String name,
                     @Attribute(name = "duration", required = false) String duration,
@@ -62,27 +73,54 @@ public class ProcessingConfig implements Serializable {
             this.tasks = Collections.unmodifiableList((tasks != null) ? tasks : new ArrayList<Task>(0));
         }
 
+        public Test() {
+        }
+
+        public String getDuration() {
+            return duration;
+        }
+
+        public void setDuration(String duration) {
+            this.duration = duration;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<Task> getTasks() {
+            return tasks;
+        }
+
+        public void setTasks(List<Task> tasks) {
+            this.tasks = tasks;
+        }
+
         public static class Task implements Serializable {
             @Attribute(name = "name")
-            public final String name;
+            public String name;
 
             @Attribute(name = "duration", required = false)
-            public final String duration;
+            public String duration;
 
             @Attribute(name = "sample", required = false)
-            public final Integer sample;
+            public Integer sample;
 
             @Attribute(name = "delay", required = false)
-            public final Integer delay;
+            public Integer delay;
 
             @Attribute(name = "bean")
-            public final String bean;
+            public String bean;
 
             @ElementList(name = "users", entry = "user", inline = true, required = false)
-            public final List<User> users;
+            public List<User> users;
 
             @Element(name = "invocation", required = false)
-            public final Invocation invocation;
+            public Invocation invocation;
 
             public Task(@Attribute(name = "name") String name,
                         @Attribute(name = "duration", required = false) String duration,
@@ -102,35 +140,113 @@ public class ProcessingConfig implements Serializable {
                 this.invocation = invocation;
             }
 
+            public Task() {
+            }
+
+            public String getBean() {
+                return bean;
+            }
+
+            public void setBean(String bean) {
+                this.bean = bean;
+            }
+
+            public Integer getDelay() {
+                return delay;
+            }
+
+            public void setDelay(Integer delay) {
+                this.delay = delay;
+            }
+
+            public String getDuration() {
+                return duration;
+            }
+
+            public void setDuration(String duration) {
+                this.duration = duration;
+            }
+
+            public Invocation getInvocation() {
+                return invocation;
+            }
+
+            public void setInvocation(Invocation invocation) {
+                this.invocation = invocation;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public Integer getSample() {
+                return sample;
+            }
+
+            public void setSample(Integer sample) {
+                this.sample = sample;
+            }
+
+            public List<User> getUsers() {
+                return users;
+            }
+
+            public void setUsers(List<User> users) {
+                this.users = users;
+            }
+
             public static class Invocation implements Serializable {
                 @Attribute(name = "exactcount")
-                public final Integer count;
+                public Integer count;
 
                 @Attribute(name = "threads", required = false)
-                public final Integer threads;
+                public Integer threads;
 
                 public Invocation(@Attribute(name = "exactcount") Integer count,
                                   @Attribute(name = "threads", required = false) Integer threads) {
                     this.count = count;
                     this.threads = threads != null ? threads : 1;
                 }
+
+                public Invocation() {
+                }
+
+                public void setExactcount(Integer count) {
+                    this.count = count;
+                }
+
+                public void setThreads(Integer threads) {
+                    this.threads = threads;
+                }
+
+                public Integer getExactcount() {
+                    return count;
+                }
+
+                public Integer getThreads() {
+                    return threads;
+                }
             }
 
             public static class User implements Serializable {
                 @Attribute(name = "count")
-                public final String count;
+                public String count;
 
                 @Attribute(name = "startCount")
-                public final String startCount;
+                public String startCount;
 
                 @Attribute(name = "startIn")
-                public final String startIn;
+                public String startIn;
 
                 @Attribute(name = "startBy")
-                public final String startBy;
+                public String startBy;
 
                 @Attribute(name = "life")
-                public final String life;
+                public String life;
 
                 public User(@Attribute(name = "count") String count,
                             @Attribute(name = "startCount") String startCount,
@@ -142,6 +258,49 @@ public class ProcessingConfig implements Serializable {
                     this.startIn = startIn;
                     this.startBy = startBy;
                     this.life = life;
+                }
+
+                public User() {
+                }
+
+                public String getCount() {
+                    return count;
+                }
+
+                public void setCount(String count) {
+                    this.count = count;
+                }
+
+                public String getLife() {
+                    return life;
+                }
+
+                public void setLife(String life) {
+                    this.life = life;
+                }
+
+                public String getStartBy() {
+                    return startBy;
+                }
+
+                public void setStartBy(String startBy) {
+                    this.startBy = startBy;
+                }
+
+                public String getStartCount() {
+                    return startCount;
+                }
+
+                public void setStartCount(String startCount) {
+                    this.startCount = startCount;
+                }
+
+                public String getStartIn() {
+                    return startIn;
+                }
+
+                public void setStartIn(String startIn) {
+                    this.startIn = startIn;
                 }
             }
         }

@@ -39,19 +39,17 @@ public class UserWorkload {
 
     private final boolean main;
     private final UserClock clock;
-    private final ProcessingConfig.Test.Task config;
-    final ArrayList<UserGroup> groups;
+    ArrayList<UserGroup> groups;
     private final int delay;
 
     public UserWorkload(boolean main, UserClock clock, ProcessingConfig.Test.Task config, long time) {
         this.main = main;
         this.clock = clock;
-        this.config = config;
         this.groups = new ArrayList<UserGroup>(config.users.size());
         this.delay = config.delay;
 
         for (ProcessingConfig.Test.Task.User userConfig : config.users) {
-            new UserGroup(this, userConfig, time);
+            groups.add(new UserGroup(this.getClock(), groups.size(), userConfig, time));
         }
     }
 
@@ -61,10 +59,6 @@ public class UserWorkload {
 
     public UserClock getClock() {
         return clock;
-    }
-
-    public ProcessingConfig.Test.Task getConfig() {
-        return config;
     }
 
     public int getDelay() {

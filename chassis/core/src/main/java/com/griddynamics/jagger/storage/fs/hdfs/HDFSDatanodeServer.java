@@ -82,11 +82,11 @@ public class HDFSDatanodeServer implements BlockingBean, AttendantServer {
                     }
                 }
 
-                new Thread() {
+                /*new Thread() {
                     public void run() {
                         dataNode.run();
                     }
-                }.start();
+                }.start();*/
 
                 log.info("DataNode started");
             }

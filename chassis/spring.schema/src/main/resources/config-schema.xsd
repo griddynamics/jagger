@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.griddynamics.com/schema/jagger" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            targetNamespace="http://www.griddynamics.com/schema/jagger"
+            elementFormDefault="qualified">
+
+    <import id=""
+</xsd:schema> 

@@ -38,43 +38,51 @@ public class UserGroup {
     private static final Logger log = LoggerFactory.getLogger(UserGroup.class);
 
     private final int id;
-    private final UserWorkload workload;
-    private final ProcessingConfig.Test.Task.User config;
+    private final long life;
     private final int count;
+    private final long startBy;
+    private final UserClock clock;
     final ArrayList<User> users;
     int activeUserCount = 0;
     private final int startCount;
     private final long startInTime;
     private long startByTime = -1;
 
-    public UserGroup(UserWorkload workload, ProcessingConfig.Test.Task.User config, long time) {
-        this.id = workload.groups.size();
-        this.workload = workload;
-        this.config = config;
-        this.count = Parser.parseInt(config.count, workload.getClock().getRandom());
-        this.users = new ArrayList<User>(count);
-        this.startCount = Parser.parseInt(config.startCount, workload.getClock().getRandom());
-        this.startInTime = time + Parser.parseTime(config.startIn, workload.getClock().getRandom());
+    public UserGroup(UserClock clock, int id, ProcessingConfig.Test.Task.User config, long time) {
+        this(   clock,
+                id,
+                Parser.parseInt(config.count, clock.getRandom()),
+                Parser.parseInt(config.startCount, clock.getRandom()),
+                time + Parser.parseTime(config.startIn, clock.getRandom()),
+                Parser.parseTime(config.startBy, clock.getRandom()),
+                Parser.parseTime(config.life, clock.getRandom())
+        );
+    }
 
-        workload.groups.add(this);
+    public UserGroup(UserClock clock, int id, int count, int startCount, long startInTime, long startBy, long life) {
+        this.clock = clock;
+        this.id = id;
+        this.count = count;
+        this.users = new ArrayList<User>(count);
+        this.startCount = startCount;
+        this.life = life;
+        this.startInTime = startInTime;
+        this.startBy = startBy;
 
         log.info(String.format("User group %d is created", id));
+
     }
 
     public int getId() {
         return id;
     }
 
-    public UserWorkload getWorkload() {
-        return workload;
-    }
-
-    public ProcessingConfig.Test.Task.User getConfig() {
-        return config;
-    }
-
     public int getCount() {
         return count;
+    }
+
+    public long getLife() {
+        return life;
     }
 
     public int getActiveUserCount() {
@@ -114,11 +122,11 @@ public class UserGroup {
     public void spawnUsers(int userCount, long time, LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
         for (int i = 0; i < userCount; ++i) {
             if (users.size() < count) {
-                new User(this, time, findNodeWithMinThreadCount(workloadConfigurations), workloadConfigurations);
+                new User(clock, this, time, findNodeWithMinThreadCount(workloadConfigurations), workloadConfigurations);
             }
         }
 
-        startByTime = time + Parser.parseTime(config.startBy, workload.getClock().getRandom());
+        startByTime = time + startBy;
     }
 
     public static NodeId findNodeWithMinThreadCount(LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {

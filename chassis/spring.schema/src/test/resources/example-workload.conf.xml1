@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
   ~ http://www.griddynamics.com
@@ -17,35 +18,27 @@
   ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
+<beans
+        xmlns:jgr="http://www.griddynamics.com/schema/jagger"
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.griddynamics.com/schema/jagger
+        http://www.griddynamics.com/schema/jagger-workload.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"
+        >
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+   <jgr:workload id="workload">
+       <jgr:queryProvider/>
+       <jgr:invoker/>
+       <jgr:loadBalancer type="roundRobin">
+           <endpoints></endpoints>
+       </jgr:loadBalancer>
+       <jgr:listeners>
+           <jgr:metric type="duration"/>
+           <jgr:metric type="custom" calculator=""/>
+           <jgr:validator type="NotNull"/>
+       </jgr:listeners>
+   </jgr:workload>
 
-    <groupId>com.griddynamics.jagger</groupId>
-    <artifactId>chassis.parent</artifactId>
-    <version>1.1.4-SNAPSHOT</version>
-    <packaging>pom</packaging>
-
-    <name>${groupId}.${artifactId}</name>
-    <url>http://maven.apache.org</url>
-
-    <parent>
-        <groupId>com.griddynamics.jagger</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.1.4-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-
-    <modules>
-        <module>core</module>
-        <module>util</module>
-        <module>configuration</module>
-        <module>coordinator</module>
-        <module>coordinator.zookeeper</module>
-        <module>coordinator.http</module>
-        <module>invokers</module>
-        <module>invoker.hessian</module>
-        <module>spring.schema</module>
-    </modules>
-
-</project>
+</beans>
