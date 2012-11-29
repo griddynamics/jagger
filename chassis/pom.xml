@@ -45,6 +45,7 @@
         <module>coordinator.http</module>
         <module>invokers</module>
         <module>invoker.hessian</module>
+        <module>spring.schema</module>
     </modules>
 
 </project>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or any later version.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jagger="http://www.griddynamics.com/schema/jagger"
+       xsi:schemaLocation="http://www.griddynamics.com/schema/jagger http://www.griddynamics.com/schema/jagger.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       >
+
+    <jagger:session id="session" monitoring="enabled">
+        <jagger:performance_profile ref="pr1"/>
+        <jagger:listeners>
+            <ref bean="googlePageNew"/>
+            <bean class="as"/>
+        </jagger:listeners>
+    </jagger:session>
+
+    <jagger:performance_profile id="pr1">
+            <jagger:test>
+                <jagger:task workload="loadGooglePageNew">
+                    <jagger:tps value="10" tickInterval="500"/>
+                    <jagger:termination samples="200" duration="30s"/>
+                </jagger:task>
+            </jagger:test>
+     </jagger:performance_profile>
+
+    <bean id="loadGooglePageNew" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask" parent="externalResourcesAbstractWorkload">
+        <property name="name" value="load-google-page-new"/>
+        <property name="version" value="1" />
+        <property name="scenarioFactory" ref="googlePageNew" />
+    </bean>
+
+
+    <bean id="googlePageNew"
+          class="com.griddynamics.jagger.invoker.http.HttpVisitorInvokerConfiguration">
+        <property name="url" value="http://google.com"/>
+    </bean>
+
+    <bean id="externalResourcesAbstractWorkload" abstract="true"
+          class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask">
+        <property name="collectors">
+            <list>
+            </list>
+        </property>
+        <property name="calibrator">
+            <bean class="com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator"/>
+        </property>
+    </bean>
+
+ <!--   <workload id="workload1" name="google-page-with-query-pool">
+        <analitics>
+            <metric type="duration"/>
+            <metric type="invocationStatistics"/>
+            <validation type="notNull"/>
+            <validation type="consistency"/>
+        </analitics>
+        <scenario id="googlePageWithQueryPool"/>
+    </workload>
+
+    <scenario id="googlePageWithQueryPool">
+        <loadBalancing type="roundRobin"/>
+        <queries>
+            <list>
+                <query parent="parentHttpQuery">
+                    <methodParams>
+                        <entry key="q" value="wonder"/>
+                    </methodParams>
+                </query>
+                <query parent="parentHttpQuery">
+                    <methodParams>
+                        <entry key="q" value="miracle"/>
+                    </methodParams>
+                </query>
+                <query parent="parentHttpQuery">
+                    <methodParams>
+                        <entry key="q" value="prodigy"/>
+                    </methodParams>
+                </query>
+            </list>
+        </queries>
+        <invoker type="http"/>
+        <endpoints>
+            <list>
+                <value>http://www.google.com/search</value>
+            </list>
+        </endpoints>
+    </scenario>
+
+    <query type="http" id="parentHttpQuery" method="GET">
+        <clientParams>
+                <entry key="http.protocol.allow-circular-redirects" value="false" type="Boolean"/>
+                <entry key="http.protocol.max-redirects" value="2" type ="Integer"/>
+                <entry key="http.connection-manager.timeout" value="5000" type="Long"/>
+                <entry key="http.protocol.max-redirects" value="0" type="Integer"/>
+        </clientParams>
+    </query>-->
+</beans>
