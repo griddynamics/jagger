@@ -125,4 +125,8 @@ public class WorkloadFeatureComparator extends HibernateDaoSupport implements Fe
     public void setWorkloadDecisionMaker(WorkloadDecisionMaker workloadDecisionMaker) {
         this.workloadDecisionMaker = workloadDecisionMaker;
     }
+
+    public WorkloadDecisionMaker getWorkloadDecisionMaker() {
+        return workloadDecisionMaker;
+    }
 }

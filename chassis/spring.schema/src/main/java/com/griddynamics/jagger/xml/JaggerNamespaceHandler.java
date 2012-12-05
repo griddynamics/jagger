@@ -2,7 +2,6 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.xml.beanParsers.*;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
-import org.springframework.context.config.ContextNamespaceHandler;
 
 public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
@@ -12,5 +11,10 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("user", new UserDefinitionParser());
         registerBeanDefinitionParser("test-plan", new TestPlanDefinitionParser());
         registerBeanDefinitionParser("processing", new TestPlanDefinitionParser());
+        registerBeanDefinitionParser("extension", new ExtensionDefinitionParser());
+        registerBeanDefinitionParser("extensions", new ExtensionsDefinitionParser());
+        registerBeanDefinitionParser("comparator", new ComparatorDefinitionParser());
+        registerBeanDefinitionParser("sessionComparators", new SessionComparatorsDefinitionParser());
+        registerBeanDefinitionParser("report", new ReportDefinitionParser());
     }
 }

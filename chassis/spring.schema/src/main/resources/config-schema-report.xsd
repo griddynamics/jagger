@@ -6,7 +6,7 @@
             elementFormDefault="qualified">
 
     <xsd:import namespace="http://www.springframework.org/schema/beans"
-                schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"/> 
+                schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"/>
 
     <xsd:element name="report" type="reportType">
     </xsd:element>
@@ -51,7 +51,7 @@
     </xsd:complexType>
 
     <xsd:attributeGroup name="extensionAttribute">
-        <xsd:attribute name="ref" type="xsd:string" use="optional"/>
+        <xsd:attribute name="ref" type="xsd:IDREF" use="optional"/>
     </xsd:attributeGroup>
 
     <xsd:complexType name="sessionComparatorsType">
@@ -78,15 +78,25 @@
     </xsd:complexType>
 
     <xsd:attributeGroup name="comparatorAttribute">
-        <xsd:attribute name="ref" type="xsd:string" use="optional"/>
-        <xsd:attribute name="decisionMaker" type="decisionMakerType"/>
+        <xsd:attribute name="ref" type="xsd:IDREF" />
+        <xsd:attribute name="decisionMakerType" type="decisionMakerTypeType" />
+        <xsd:attribute name="comparatorType" type="comparatorTypeType" use="required"/>
+        <xsd:attribute name="decisionMakerRef" type="xsd:IDREF"/>
         <xsd:attribute name="fatalDeviationThreshold" type="xsd:float"/>
         <xsd:attribute name="warningDeviationThreshold" type="xsd:float"/>
     </xsd:attributeGroup>
 
-    <xsd:simpleType name="decisionMakerType">
+    <xsd:simpleType name="decisionMakerTypeType">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="monitoringParametersDecisionMaker"/>
+            <xsd:enumeration value="monitoringParameterDecisionMaker"/>
+            <xsd:enumeration value="workloadDecisionMaker"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="comparatorTypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="monitoring"/>
+            <xsd:enumeration value="workload"/>
         </xsd:restriction>
     </xsd:simpleType>
 

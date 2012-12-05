@@ -47,6 +47,7 @@
         <module>webclient</module>
         <module>test/jagger-test</module>
         <module>test/test-target</module>
+        <module></module>
     </modules>
 
     <scm>
@@ -180,6 +181,12 @@
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>monitoring.agent</artifactId>
+                <version>${version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.griddynamics.jagger</groupId>
+                <artifactId>chassis.spring.schema</artifactId>
                 <version>${version}</version>
             </dependency>
 

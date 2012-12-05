@@ -157,4 +157,20 @@ public class ReportingService {
     public void setOutputReportLocation(String outputReportLocation) {
         this.outputReportLocation = outputReportLocation;
     }
+
+    public ReportingContext getContext() {
+        return context;
+    }
+
+    public String getRootTemplateLocation() {
+        return rootTemplateLocation;
+    }
+
+    public ReportType getReportType() {
+        return reportType;
+    }
+
+    public String getOutputReportLocation() {
+        return outputReportLocation;
+    }
 }

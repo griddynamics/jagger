@@ -1,2 +1,3 @@
 http\://www.griddynamics.com/schema/jagger.xsd=config-schema-user.xsd
 http\://www.griddynamics.com/schema/jagger-workload.xsd=workload-schema.xsd
+http\://www.griddynamics.com/schema/jagger-report.xsd=config-schema-report.xsd

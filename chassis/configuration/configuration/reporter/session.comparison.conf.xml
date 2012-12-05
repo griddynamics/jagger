@@ -24,7 +24,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-    <bean id="sessionComparator"
+
+    <alias name="defaultSessionComparator" alias="sessionComparator"/>
+
+    <bean id="defaultSessionComparator"
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator">
 
         <property name="comparatorChain">
@@ -53,7 +56,9 @@
     <bean id="worstCaseDecisionMaker"
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.WorstCaseDecisionMaker"/>
 
-    <bean id="baselineSessionProvider" class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
+    <alias name="DefaultBaselineSessionProvider" alias="baselineSessionProvider"/>
+
+    <bean id="DefaultBaselineSessionProvider" class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
 
         <property name="sessionId" value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
         <property name="sessionIdProvider" ref="sessionIdProvider"/>

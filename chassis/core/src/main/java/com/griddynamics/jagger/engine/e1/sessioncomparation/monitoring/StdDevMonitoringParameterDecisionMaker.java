@@ -72,4 +72,12 @@ public class StdDevMonitoringParameterDecisionMaker implements MonitoringParamet
     public void setFatalDeviationThreshold(double fatalDeviationThreshold) {
         this.fatalDeviationThreshold = fatalDeviationThreshold;
     }
+
+    public double getWarningDeviationThreshold() {
+        return warningDeviationThreshold;
+    }
+
+    public double getFatalDeviationThreshold() {
+        return fatalDeviationThreshold;
+    }
 }

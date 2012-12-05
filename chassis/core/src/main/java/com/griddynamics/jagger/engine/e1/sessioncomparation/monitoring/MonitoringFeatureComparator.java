@@ -162,4 +162,12 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
     public void setMonitoringParameterDecisionMaker(MonitoringParameterDecisionMaker monitoringParameterDecisionMaker) {
         this.monitoringParameterDecisionMaker = monitoringParameterDecisionMaker;
     }
+
+    public MonitoringSummaryRetriever getMonitoringSummaryRetriever() {
+        return monitoringSummaryRetriever;
+    }
+
+    public MonitoringParameterDecisionMaker getMonitoringParameterDecisionMaker() {
+        return monitoringParameterDecisionMaker;
+    }
 }
