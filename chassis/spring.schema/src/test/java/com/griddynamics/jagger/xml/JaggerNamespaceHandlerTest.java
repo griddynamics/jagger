@@ -10,14 +10,14 @@ public class JaggerNamespaceHandlerTest {
 
     @Test
     public void beanTest() {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-target-session1_new_user.conf.xml1");
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-plan.conf.xml1");
         Object bean = ctx.getBean("bean1");
         Assert.assertNotNull(bean);
     }
 
     @Test
     public void testPlanTest() {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-target-session1_new_user.conf.xml1");
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-plan.conf.xml1");
         ProcessingConfig processingConfig = (ProcessingConfig) ctx.getBean("tp1");
         checkTest(processingConfig.getTests().get(0), null, 2);
         checkTestTst1(processingConfig.getTests().get(1));
@@ -25,7 +25,7 @@ public class JaggerNamespaceHandlerTest {
 
     @Test
     public void processingTest() {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-target-session1_new_user.conf.xml1");
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-plan.conf.xml1");
         ProcessingConfig processingConfig = (ProcessingConfig) ctx.getBean("tp2");
         checkTest(processingConfig.getTests().get(0), null, 2);
         checkTestTst1(processingConfig.getTests().get(1));
@@ -33,35 +33,35 @@ public class JaggerNamespaceHandlerTest {
 
     @Test
     public void invocationTest() {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-target-session1_new_user.conf.xml1");
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-plan.conf.xml1");
         ProcessingConfig.Test.Task.Invocation invocation = (ProcessingConfig.Test.Task.Invocation)ctx.getBean("i1");
         checkInvocationI1(invocation);
     }
 
     @Test
     public void taskTest() {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-target-session1_new_user.conf.xml1");
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-plan.conf.xml1");
         ProcessingConfig.Test.Task task = (ProcessingConfig.Test.Task)ctx.getBean("t1");
         checkTaskT1(task);
     }
 
     @Test
     public void testTest() {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-target-session1_new_user.conf.xml1");
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-plan.conf.xml1");
         ProcessingConfig.Test test = (ProcessingConfig.Test)ctx.getBean("tst1");
         checkTestTst1(test);
     }
 
     @Test
     public void taskInvocationTest() {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-target-session1_new_user.conf.xml1");
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-plan.conf.xml1");
         ProcessingConfig.Test.Task task = (ProcessingConfig.Test.Task)ctx.getBean("t2");
         checkTaskT2(task);
     }
 
     @Test
     public void userTest() {
-        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-target-session1_new_user.conf.xml1");
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("/example-test-plan.conf.xml1");
         ProcessingConfig.Test.Task.User user = (ProcessingConfig.Test.Task.User)ctx.getBean("u1");
         checkUserU1(user);
     }
