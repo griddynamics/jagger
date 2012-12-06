@@ -99,4 +99,9 @@
     <bean id="monitoringTaskDistributor" class="com.griddynamics.jagger.monitoring.MonitoringTaskDistributor">
         <property name="ttl" value="${chassis.monitoring.command.execution.ttl}"/>
     </bean>
+
 </beans>
+
+
+
+
