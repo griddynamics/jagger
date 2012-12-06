@@ -10,123 +10,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
-    <bean id="reportingContext" class="com.griddynamics.jagger.reporting.ReportingContext">
-            <property name="providerRegistry" ref="exRegistry"/>
-    </bean>
-
-    <bean id="monitoringFeatureComparator" class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringFeatureComparator">
-        <property name="monitoringParameterDecisionMaker" ref="stdDevMonitoringParameterDecisionMaker"/>
-        <property name="monitoringSummaryRetriever" ref="monitoringSummaryRetriever"/>
-        <property name="sessionFactory"  ref="sessionFactory"/>
-    </bean>
-
-    <alias name="defaultSessionComparator" alias="sessionComparator"/>
-
-    <bean id="defaultSessionComparator"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator">
-
-        <property name="comparatorChain">
-            <list>
-                <ref bean="workloadFeatureComparator"/>
-                <ref bean="monitoringFeatureComparator"/>
-            </list>
-        </property>
-        <property name="decisionMaker" ref="worstCaseDecisionMaker"/>
-
-    </bean>
-
-
-    <alias name="DefaultBaselineSessionProvider" alias="baselineSessionProvider"/>
-
-    <bean id="DefaultBaselineSessionProvider" class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
-        <property name="sessionId" value="1331"/>
-        <property name="sessionIdProvider" ref="sessionIdProvider"/>
-    </bean>
-
-    <alias name="sessionIdProviderReadOnly_true" alias="sessionIdProvider"/>
-
-    <alias name="sessionIdProviderBean" alias="sessionIdProviderReadOnly_true"/>
-
-    <bean id="sessionIdProviderBean" class="com.griddynamics.jagger.master.SessionIdProviderBean">
-        <property name="sessionId" value="1"/>
-        <property name="sessionName" value="werfwer"/>
-        <property name="sessionComment" value="ffdfergdfgdg"/>
-    </bean>
-
-    <alias name="defaulReportingService" alias="reportingService"/>
-
-    <bean id="defaulReportingService" class="com.griddynamics.jagger.reporting.ReportingService">
-        <property name="context" ref="reportingContext"/>
-        <property name="reportType" value="PDF"/>
-        <property name="rootTemplateLocation" value="reporting/test-report-container.jrxml"/>
-        <property name="outputReportLocation" value="test-report.pdf"/>
-    </bean>
-
-    <bean id="monitoringSummaryRetriever"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.DefaultMonitoringSummaryRetriever">
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
-    <bean id="exRegistry" class="com.griddynamics.jagger.extension.ExtensionRegistry">
-        <constructor-arg value="com.griddynamics.jagger.reporting.ReportProvider"/>
-        <property name="autoDiscovery" value="false"/>
-        <property name="extensions">
-            <map>
-                <entry key="monitoring">
-                    <bean class="com.griddynamics.jagger.reporting.MonitoringReportProvider">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="template" value="reporting/test-report-monitoring.jrxml"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                    </bean>
-                    </entry>
-                <entry key="latency-plot">
-                    <bean class="com.griddynamics.jagger.reporting.LatencyPlotReportProvider">
-                        <property name="context" ref="reportingContext"/>
-                        <property name="template" value="reporting/test-report-latency-chart.jrxml"/>
-                        <property name="sessionFactory" ref="sessionFactory"/>
-                    </bean>
-                </entry>
-            </map>
-        </property>
-    </bean>
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
-            </props>
-        </property>
-    </bean>
-
-    <bean id="defaultReportingService" class="com.griddynamics.jagger.reporting.ReportingService">
-        <property name="context" ref="reportingContext"/>
-        <property name="reportType" value="HTML"/>
-        <property name="rootTemplateLocation" value="sssss"/>
-        <property name="outputReportLocation" value="wqeq2"/>
-    </bean>
-
-    <bean id="stdDevMonitoringParameterDecisionMaker"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.StdDevMonitoringParameterDecisionMaker">
-        <property name="fatalDeviationThreshold" value="11"/>
-        <property name="warningDeviationThreshold" value="22"/>
-    </bean>
-
-    <bean id="worstCaseDecisionMaker"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.WorstCaseDecisionMaker"/>
-
-    <bean id="workloadFeatureComparator"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadFeatureComparator">
-        <property name="workloadDecisionMaker">
-            <bean class="com.griddynamics.jagger.engine.e1.sessioncomparation.workload.ThroughputWorkloadDecisionMaker">
-                <property name="fatalDeviationThreshold"
-                          value="111"/>
-                <property name="warningDeviationThreshold"
-                          value="222"/>
-            </bean>
-        </property>
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
-
-
     <bean id="stringBean" class="java.lang.String">
         <constructor-arg index="0" value="stringValue"/>
     </bean>
@@ -139,9 +22,6 @@
         <property name="fatalDeviationThreshold" value="0.5"/>
         <property name="warningDeviationThreshold" value="0.9"/>
     </bean>
-
-
-
 
     <jgr:report rootTemplateLocation="custom-root-template.jrxml"
 				outputReportLocation="custom-report.pdf" reportType="PDF">

@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.xml;
 
+import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringFeatureComparator;
@@ -10,9 +11,11 @@ import com.griddynamics.jagger.extension.ExtensionExporter;
 import com.griddynamics.jagger.reporting.ReportingContext;
 import com.griddynamics.jagger.reporting.ReportingService;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.net.URL;
+import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
 
@@ -28,8 +31,12 @@ public class JaggerReportTest {
     ApplicationContext context=null;
 
     @BeforeClass
-    public void testInit(){
-        context = new ClassPathXmlApplicationContext("example-report.xml");
+    public void testInit() throws Exception{
+        URL directory = new URL("file:" + System.getProperty("user.dir") + "/chassis/configuration/");
+        Properties environmentProperties = new Properties();
+        JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
+        environmentProperties.put("chassis.reporter.configuration.include",environmentProperties.get("chassis.reporter.configuration.include")+", ../spring.schema/src/test/resources/example-report.xml");
+        context = JaggerLauncher.loadContext(directory,"chassis.reporter.configuration",environmentProperties);
     }
 
     @Test

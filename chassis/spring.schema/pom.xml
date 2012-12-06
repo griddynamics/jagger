@@ -16,6 +16,10 @@
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.configuration</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.testng</groupId>
