@@ -32,7 +32,7 @@ public class JaggerReportTest {
 
     @BeforeClass
     public void testInit() throws Exception{
-        URL directory = new URL("file:" + System.getProperty("user.dir") + "/chassis/configuration/");
+        URL directory = new URL("file:" + "../configuration/");
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.reporter.configuration.include",environmentProperties.get("chassis.reporter.configuration.include")+", ../spring.schema/src/test/resources/example-report.xml");
@@ -91,6 +91,7 @@ public class JaggerReportTest {
         assertEquals(service.getContext(),defaultContext);
     }
 
+    @Test
     private void checkWorkloadComparator(WorkloadFeatureComparator comparator, double warning, double fatal){
         assertEquals(comparator.getSessionFactory(), context.getBean("sessionFactory"));
         ThroughputWorkloadDecisionMaker decisionMaker=(ThroughputWorkloadDecisionMaker)comparator.getWorkloadDecisionMaker();
@@ -98,7 +99,7 @@ public class JaggerReportTest {
         assertEquals(decisionMaker.getWarningDeviationThreshold(),warning);
     }
 
-
+    @Test
     private void checkMonitoringComparator(MonitoringFeatureComparator comparator, double warning, double fatal){
         assertEquals(comparator.getSessionFactory(), context.getBean("sessionFactory"));
         assertEquals(comparator.getMonitoringSummaryRetriever(), context.getBean("monitoringSummaryRetriever"));
