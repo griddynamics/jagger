@@ -57,7 +57,6 @@ public class UserTaskGenerator implements ApplicationContextAware {
         return config;
     }
 
-    @Required
     public void setConfig(ProcessingConfig config) {
         this.config = config;
     }
