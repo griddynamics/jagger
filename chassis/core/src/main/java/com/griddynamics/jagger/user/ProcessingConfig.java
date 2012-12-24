@@ -21,7 +21,6 @@
 package com.griddynamics.jagger.user;
 
 import com.google.common.base.Preconditions;
-import com.griddynamics.jagger.reporting.ReportingService;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -114,7 +113,7 @@ public class ProcessingConfig implements Serializable {
             public Integer delay;
 
             @Attribute(name = "bean")
-            public String bean;
+            public String   bean;
 
             @ElementList(name = "users", entry = "user", inline = true, required = false)
             public List<User> users;
@@ -122,14 +121,25 @@ public class ProcessingConfig implements Serializable {
             @Element(name = "invocation", required = false)
             public Invocation invocation;
 
+            @Element(name="tps", required =false)
+            public Tps tps;
+
+            @Element(name="virtualUser", required = false)
+            public VirtualUser virtualUser;
+
             public Task(@Attribute(name = "name") String name,
                         @Attribute(name = "duration", required = false) String duration,
                         @Attribute(name = "sample", required = false) Integer sample,
                         @Attribute(name = "delay", required = false) Integer delay,
                         @Attribute(name = "bean") String bean,
                         @ElementList(name = "users", entry = "user", inline = true, required = false) List<User> users,
-                        @Element(name = "invocation", required = false) Invocation invocation) {
-                Preconditions.checkArgument((invocation == null || users == null), "Malformed configuration! <invocation> and <user> elements are mutually exclusive.");
+                        @Element(name = "invocation", required = false) Invocation invocation,
+                        @Element(name = "tps", required = false) Tps tps,
+                        @Element(name = "virtualUser", required = false) VirtualUser virtualUser) {
+                Preconditions.checkArgument((invocation == null ||
+                                             users      == null ||
+                                            virtualUser == null ||
+                                             tps        == null), "Malformed configuration! <invocation> and <user> elements are mutually exclusive.");
                 
                 this.name = name;
                 this.duration = duration;
@@ -137,7 +147,9 @@ public class ProcessingConfig implements Serializable {
                 this.delay = (delay != null) ? delay : 0;
                 this.bean = bean;
                 this.users = Collections.unmodifiableList((users != null) ? users : new ArrayList<User>(0));
+                this.tps = tps;
                 this.invocation = invocation;
+                this.setVirtualUser(virtualUser);
             }
 
             public Task() {
@@ -199,24 +211,40 @@ public class ProcessingConfig implements Serializable {
                 this.users = users;
             }
 
+            public void setTps(Tps tps){
+                this.tps = tps;
+            }
+
+            public Tps getTps(){
+                return this.tps;
+            }
+
+            public VirtualUser getVirtualUser() {
+                return virtualUser;
+            }
+
+            public void setVirtualUser(VirtualUser virtualUser) {
+                this.virtualUser = virtualUser;
+            }
+
             public static class Invocation implements Serializable {
                 @Attribute(name = "exactcount")
-                public Integer count;
+                public Integer exactcount;
 
                 @Attribute(name = "threads", required = false)
                 public Integer threads;
 
-                public Invocation(@Attribute(name = "exactcount") Integer count,
+                public Invocation(@Attribute(name = "exactcount") Integer exactcount,
                                   @Attribute(name = "threads", required = false) Integer threads) {
-                    this.count = count;
+                    this.exactcount = exactcount;
                     this.threads = threads != null ? threads : 1;
                 }
 
                 public Invocation() {
                 }
 
-                public void setExactcount(Integer count) {
-                    this.count = count;
+                public void setExactcount(Integer exactcount) {
+                    this.exactcount = exactcount;
                 }
 
                 public void setThreads(Integer threads) {
@@ -224,7 +252,7 @@ public class ProcessingConfig implements Serializable {
                 }
 
                 public Integer getExactcount() {
-                    return count;
+                    return exactcount;
                 }
 
                 public Integer getThreads() {
@@ -301,6 +329,59 @@ public class ProcessingConfig implements Serializable {
 
                 public void setStartIn(String startIn) {
                     this.startIn = startIn;
+                }
+            }
+            public static class Tps implements Serializable{
+                @Attribute(name = "value")
+                public Integer value;
+
+                public Tps(){
+                }
+
+                public Tps(@Attribute(name = "value") Integer value){
+                    this.value = value;
+                }
+
+                public Integer getValue(){
+                    return value;
+                }
+
+                public void setValue(Integer value){
+                    this.value = value;
+                }
+            }
+
+            public static class VirtualUser implements Serializable{
+                @Attribute(name="count")
+                public Integer count;
+
+                @Attribute(name="tickInterval")
+                public Integer tickInterval;
+
+                public VirtualUser(){
+                }
+
+                public VirtualUser(@Attribute(name="count") Integer count,
+                                   @Attribute(name="tickInterval") Integer tickInterval){
+                    this.setCount(count);
+                    this.setTickInterval(tickInterval);
+                }
+
+
+                public Integer getCount() {
+                    return count;
+                }
+
+                public void setCount(Integer count) {
+                    this.count = count;
+                }
+
+                public Integer getTickInterval() {
+                    return tickInterval;
+                }
+
+                public void setTickInterval(Integer tickInterval) {
+                    this.tickInterval = tickInterval;
                 }
             }
         }

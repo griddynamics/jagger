@@ -38,7 +38,6 @@ public class Configuration {
 	private List<SessionExecutionListener> sessionExecutionListeners = Lists.newLinkedList();
 	private List<DistributionListener> distributionListeners = Lists.newLinkedList();
 
-	@Required
 	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;
 	}

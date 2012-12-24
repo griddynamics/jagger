@@ -44,7 +44,7 @@ public class UserTerminationStrategy implements TerminationStrategy {
 
     public static int calculateStopSamplesCount(ProcessingConfig.Test.Task taskConfig) {
         if (taskConfig.invocation != null) {
-            return taskConfig.invocation.count;
+            return taskConfig.invocation.exactcount;
         } else {
             return taskConfig.sample;
         }

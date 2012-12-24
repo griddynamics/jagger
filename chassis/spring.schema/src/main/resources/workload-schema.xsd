@@ -2,7 +2,6 @@
 <xsd:schema xmlns="http://www.griddynamics.com/schema/jagger"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:beans="http://www.springframework.org/schema/beans"
-            xmlns:util="http://www.springframework.org/schema/util"
             targetNamespace="http://www.griddynamics.com/schema/jagger"
             elementFormDefault="qualified">
 

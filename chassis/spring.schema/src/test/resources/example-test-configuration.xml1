@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or any later version.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<beans
+        xmlns:jgr="http://www.griddynamics.com/schema/jagger"
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation=
+       "http://www.griddynamics.com/schema/jagger
+        http://www.griddynamics.com/schema/jagger.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"
+        >
+
+    <jgr:configuration id="config1">
+
+        <jgr:session-executionListeners id="sel2">
+            <ref local="basicSessionCollector"/>
+            <ref bean="basicSessionCollector"/>
+        </jgr:session-executionListeners>
+
+        <jgr:test-plan ref="test-plan-1"/>
+
+        <jgr:task-executionListeners id="tel2">
+            <jgr:task-listener ref="basicAggregator"/>
+            <jgr:task-listener ref="basicSessionCollector"/>
+        </jgr:task-executionListeners>
+
+    </jgr:configuration>
+
+    <jgr:configuration id="config2">
+
+        <jgr:test-plan id="test-plan-2">
+            <ref bean="test1"/>
+            <ref local="test2"/>
+        </jgr:test-plan>
+
+        <jgr:session-executionListeners>
+            <jgr:session-listener ref="basicSessionCollector"/>
+            <jgr:session-listener ref="basicAggregator"/>
+        </jgr:session-executionListeners>
+
+        <jgr:task-executionListeners>
+            <ref bean="basicSessionCollector"/>
+        </jgr:task-executionListeners>
+
+    </jgr:configuration>
+
+    <jgr:test-plan id="test-plan-1">
+        <jgr:test ref="test1"/>
+        <ref local="test2"/>
+    </jgr:test-plan>
+
+    <jgr:test id="test1" name="user-test" duration="200">
+        <jgr:task id="t3" name="3-groups-50-50-50" sample="1000" delay="0" bean="sleep5msServiceScenario" >
+            <jgr:user id="u2" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
+            <jgr:user id="u3" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
+            <jgr:user id="u4" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
+        </jgr:task>
+        <jgr:task id="t4" name="virtual-user-10" sample="1000" delay="0" bean="sleep5msServiceScenario">
+            <jgr:virtual-user ref="vu1"/>
+        </jgr:task>
+    </jgr:test>
+
+    <jgr:test id="test2" name="tps-test" duration="200">
+        <jgr:task id="t5" name="tps-test" sample="1000" delay="0" bean="sleep50msServiceScenario">
+            <jgr:tps id="tps1" value="10"/>
+        </jgr:task>
+    </jgr:test>
+
+    <jgr:test id="test3" name="invocation-test" duration="200" >
+        <jgr:task ref="t6"/>
+    </jgr:test>
+
+    <jgr:task id="t6" name="invocation-task" sample="1000" delay="0" bean="sleep50msServiceScenario">
+        <jgr:invocation id="invocation1" exactcount ="1" threads="10"/>
+    </jgr:task>
+
+    <jgr:virtual-user id="vu1" count="10" tickInterval="10"/>
+
+    <!--This beans will be in different files-->
+
+            <bean id="basicSessionCollector" class="com.griddynamics.jagger.xml.ExampleTestListener">
+            </bean>
+
+            <bean id="basicAggregator" class="com.griddynamics.jagger.xml.ExampleTestListener">
+            </bean>
+
+            <bean id="e1MasterCollector" class="com.griddynamics.jagger.xml.ExampleTestListener">
+            </bean>
+
+            <bean id="e1ScenarioAggregator" class="com.griddynamics.jagger.xml.ExampleTestListener">
+            </bean>
+
+            <bean id="monitoringAggregator" class="com.griddynamics.jagger.xml.ExampleTestListener">
+            </bean>
+
+            <bean id="durationLogProcessor" class="com.griddynamics.jagger.xml.ExampleTestListener">
+            </bean>
+
+            <bean id="sleep5msServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask">
+            </bean>
+
+            <bean id="sleep50msServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask">
+            </bean>
+
+</beans>

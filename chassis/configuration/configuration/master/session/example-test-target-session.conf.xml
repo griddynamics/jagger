@@ -86,11 +86,11 @@
         <property name="scenarioFactory" ref="sleep5msInvoker"/>
     </bean>
 
-<!--<bean id="unreliableInvokerServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"-->
-          <!--parent="testTargetAbstractWorkload">-->
-        <!--<property name="name" value="unreliableInvoker-rate-0.001"/>-->
-        <!--<property name="version" value="1"/>-->
-        <!--<property name="scenarioFactory" ref="unreliableInvoker"/>-->
+    <!--<bean id="unreliableInvokerServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"-->
+    <!--parent="testTargetAbstractWorkload">-->
+    <!--<property name="name" value="unreliableInvoker-rate-0.001"/>-->
+    <!--<property name="version" value="1"/>-->
+    <!--<property name="scenarioFactory" ref="unreliableInvoker"/>-->
     <!--</bean>-->
 
     <bean id="sleep10msServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
@@ -150,16 +150,16 @@
             <list>
                 <!--&lt;!&ndash; &ndash;&gt;-->
                 <!--<bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">-->
-                    <!--<property name="tickInterval" value="1000"/>-->
-                    <!--<property name="users" value="1"/>-->
+                <!--<property name="tickInterval" value="1000"/>-->
+                <!--<property name="users" value="1"/>-->
                 <!--</bean>-->
                 <!--<bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">-->
-                    <!--<property name="tickInterval" value="1000"/>-->
-                    <!--<property name="users" value="3"/>-->
+                <!--<property name="tickInterval" value="1000"/>-->
+                <!--<property name="users" value="3"/>-->
                 <!--</bean>-->
                 <!--<bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">-->
-                    <!--<property name="tickInterval" value="1000"/>-->
-                    <!--<property name="users" value="7"/>-->
+                <!--<property name="tickInterval" value="1000"/>-->
+                <!--<property name="users" value="7"/>-->
                 <!--</bean>-->
                 <bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">
                     <property name="tickInterval" value="1000"/>
