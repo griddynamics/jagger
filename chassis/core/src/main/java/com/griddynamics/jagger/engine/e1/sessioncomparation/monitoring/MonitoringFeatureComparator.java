@@ -65,7 +65,7 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
 
                     MonitoringSummary currentSummary = monitoringSummaryRetriever.load(currentSession, currentTaskId);
 
-                    String baselineTaskId = current.getMonitoringId();
+                    String baselineTaskId = baseline.getMonitoringId();
 
                     MonitoringSummary baselineSummary = monitoringSummaryRetriever.load(baselineSession, baselineTaskId);
 

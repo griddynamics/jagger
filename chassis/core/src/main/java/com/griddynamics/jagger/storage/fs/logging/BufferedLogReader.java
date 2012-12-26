@@ -119,7 +119,11 @@ public abstract  class BufferedLogReader implements LogReader {
             for (int i = 0; i < BUF_SIZE; i++) {
                 try {
                     Object entry = input.readObject();
-                    if (entry == null) continue; // TODO some bug with JBoss reader
+                    if (entry == null) {
+                        if(input instanceof JBossBufferedLogReader.JBossLogReaderInput){
+                            continue; // TODO some bug with JBoss reader
+                        }
+                    }
                     if (!clazz.isInstance(entry)) {
                         throw new IllegalStateException("entry " + entry + " is not instance of class " + clazz);
                     }
