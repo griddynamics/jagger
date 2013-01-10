@@ -80,10 +80,6 @@ public class ExchangeClient {
     public PackResponse exchange() throws Throwable {
         log.debug("Exchange requested from agent {}", nodeContext.getId());
         Pack out = packExchanger.retrieve();
-        if (out.getCommands().isEmpty() && out.getResults().isEmpty()){
-            //Nothing to send
-            return null;
-        }
         log.debug("Going to send pack {} from agent {}", out, nodeContext.getId());
         PackRequest request = PackRequest.create(nodeContext.getId(), out);
         PackResponse packResponse = null;
