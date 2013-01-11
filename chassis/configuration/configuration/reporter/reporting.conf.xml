@@ -228,6 +228,8 @@
         <property name="mappedProviderRegistry" ref="mappedReporterExtensionRegistry"/>
     </bean>
 
+    <alias name="defaultReportingService" alias="reportingService"/>
+
     <bean id="defaultReportingService" class="com.griddynamics.jagger.reporting.ReportingService">
         <property name="context" ref="reportingContext"/>
         <property name="reportType" value="${chassis.master.reporting.report.format}"/>

@@ -71,9 +71,6 @@
     </xsd:attributeGroup>
     
     <xsd:complexType name="comparatorType">
-        <xsd:sequence minOccurs="0" maxOccurs="1">
-            <xsd:element ref="beans:ref"/>
-        </xsd:sequence>
         <xsd:attributeGroup ref="comparatorAttribute"/>
     </xsd:complexType>
 

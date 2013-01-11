@@ -33,7 +33,6 @@
         </property>
     </bean>
 
-    <alias name="defaultReportingService" alias="reportingService"/>
 
     <bean id="master" class="com.griddynamics.jagger.master.Master">
         <property name="configuration" ref="${chassis.master.session.configuration.bean.name}"/>
