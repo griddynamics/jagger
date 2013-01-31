@@ -51,9 +51,9 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
     }
 
     public String getProperty(String name) {
-        String value = rootProperties.getProperty(name);
+        String value = properties.getProperty(name);
         if(value == null) {
-            value = resolveProperty(properties.getProperty(name));
+            value = resolveProperty(rootProperties.getProperty(name));
         }
 
         return value;

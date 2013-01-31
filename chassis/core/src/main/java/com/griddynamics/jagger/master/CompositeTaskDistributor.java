@@ -78,6 +78,8 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
         return new AbstractDistributionService(executor) {
 
+            final List<Future<State>> leadingTerminateFutures = Lists.newLinkedList();
+
             @Override
             protected void run() throws Exception {
 
@@ -100,7 +102,6 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
                     TimeUtils.sleepMillis(500);
                 }
-
             }
 
             private int activeLeadingTasks() {
@@ -111,7 +112,7 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
                     Service service = it.next();
                     if (service.state() == State.TERMINATED || service.state() == State.FAILED) {
                         log.debug("State {}", service.state());
-                        stopAll(Collections.singleton(service), true);
+                        leadingTerminateFutures.addAll(requestTermination(Collections.singleton(service), true));
                         it.remove();
                     } else {
                         result++;
@@ -125,11 +126,6 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
             protected void shutDown() throws Exception {
                 stopAll();
                 super.shutDown();
-            }
-
-            private void stopAll(Iterable<Service> services, boolean leading) {
-                List<Future<State>> leadingFutures = requestTermination(services, leading);
-                await(leadingFutures, leading);
             }
 
             private void awaitLeading(List<Future<State>> leadingFutures) {
@@ -156,16 +152,12 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
             }
 
             private void stopAll() {
-                stopAll(leading, true);
-                stopAll(attendant, false);
-            }
+                List<Future<State>> leadingFutures = requestTermination(leading, true);
+                List<Future<State>> attendantFutures = requestTermination(attendant, false);
+                leadingFutures.addAll(leadingTerminateFutures);
 
-            private void await(List<Future<State>> futures, boolean leading) {
-                if (leading) {
-                    awaitLeading(futures);
-                } else {
-                    awaitAttendant(futures);
-                }
+                awaitLeading(leadingFutures);
+                awaitAttendant(attendantFutures);
             }
 
             private void awaitAttendant(List<Future<State>> attendantFutures) {

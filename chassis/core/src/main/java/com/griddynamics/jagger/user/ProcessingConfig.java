@@ -84,10 +84,14 @@ public class ProcessingConfig implements Serializable {
             @Element(name = "invocation", required = false)
             public final Invocation invocation;
 
+            @Attribute(name = "attendant", required = false)
+            public final Boolean attendant;
+
             public Task(@Attribute(name = "name") String name,
                         @Attribute(name = "duration", required = false) String duration,
                         @Attribute(name = "sample", required = false) Integer sample,
                         @Attribute(name = "delay", required = false) Integer delay,
+                        @Attribute(name = "attendant", required = false) Boolean attendant,
                         @Attribute(name = "bean") String bean,
                         @ElementList(name = "users", entry = "user", inline = true, required = false) List<User> users,
                         @Element(name = "invocation", required = false) Invocation invocation) {
@@ -100,6 +104,7 @@ public class ProcessingConfig implements Serializable {
                 this.bean = bean;
                 this.users = Collections.unmodifiableList((users != null) ? users : new ArrayList<User>(0));
                 this.invocation = invocation;
+                this.attendant = (attendant != null) ? attendant : false;
             }
 
             public static class Invocation implements Serializable {

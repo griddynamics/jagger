@@ -21,9 +21,7 @@
 package com.griddynamics.jagger.master.configuration;
 
 import com.google.common.collect.ImmutableList;
-import com.griddynamics.jagger.engine.e1.scenario.UserClockConfiguration;
-import com.griddynamics.jagger.engine.e1.scenario.UserTerminateStrategyConfiguration;
-import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
+import com.griddynamics.jagger.engine.e1.scenario.*;
 import com.griddynamics.jagger.master.CompositableTask;
 import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.monitoring.InfiniteDuration;
@@ -68,21 +66,24 @@ public class UserTaskGenerator implements ApplicationContextAware {
             ++number;
 
             CompositeTask compositeTask = new CompositeTask();
-            compositeTask.setLeading(new ArrayList<CompositableTask>(testConfig.tasks.size()));
+            compositeTask.setLeading(new ArrayList<CompositableTask>());
+            compositeTask.setAttendant(new ArrayList<CompositableTask>());
 
             for (ProcessingConfig.Test.Task taskConfig : testConfig.tasks) {
                 String name = String.format("%s [%s]", testConfig.name, taskConfig.name);
                 if (!names.contains(name)) {
                     names.add(name);
-
                     AtomicBoolean shutdown = new AtomicBoolean(false);
-                    WorkloadTask prototype = applicationContext.getBean(taskConfig.bean, WorkloadTask.class);
-                    WorkloadTask workloadTask = prototype.copy();
-                    workloadTask.setNumber(number);
-                    workloadTask.setName(name);
-                    workloadTask.setTerminateStrategyConfiguration(new UserTerminateStrategyConfiguration(testConfig, taskConfig, shutdown));
-                    workloadTask.setClockConfiguration(new UserClockConfiguration(1000, taskConfig, shutdown));
-                    compositeTask.getLeading().add(workloadTask);
+                    TerminateStrategyConfiguration terminationStrategy;
+                    if (taskConfig.attendant) {
+                        terminationStrategy = new InfiniteTerminationStrategyConfiguration();
+                        WorkloadTask workloadTask = createWorklod(number, name, shutdown, taskConfig, terminationStrategy);
+                        compositeTask.getAttendant().add(workloadTask);
+                    } else {
+                        terminationStrategy = new UserTerminateStrategyConfiguration(testConfig, taskConfig, shutdown);
+                        WorkloadTask workloadTask = createWorklod(number, name, shutdown, taskConfig, terminationStrategy);
+                        compositeTask.getLeading().add(workloadTask);
+                    }
                 } else {
                     throw new IllegalArgumentException(String.format("Task with name '%s' already exists", name));
                 }
@@ -90,12 +91,22 @@ public class UserTaskGenerator implements ApplicationContextAware {
 
             if (monitoringEnable) {
                 MonitoringTask attendantMonitoring = new MonitoringTask(number, testConfig.name + " --- monitoring", compositeTask.getTaskName(), new InfiniteDuration());
-                compositeTask.setAttendant(ImmutableList.<CompositableTask>of(attendantMonitoring));
+                compositeTask.getAttendant().add(attendantMonitoring);
             }
 
             result.add(compositeTask);
         }
         return result;
+    }
+
+    private WorkloadTask createWorklod(int number, String name, AtomicBoolean shutdown, ProcessingConfig.Test.Task taskConfig, TerminateStrategyConfiguration terminationStrategy) {
+        WorkloadTask prototype = applicationContext.getBean(taskConfig.bean, WorkloadTask.class);
+        WorkloadTask workloadTask = prototype.copy();
+        workloadTask.setNumber(number);
+        workloadTask.setName(name);
+        workloadTask.setTerminateStrategyConfiguration(terminationStrategy);
+        workloadTask.setClockConfiguration(new UserClockConfiguration(1000, taskConfig, shutdown));
+        return workloadTask;
     }
 
     @Override
