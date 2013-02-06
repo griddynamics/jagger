@@ -48,8 +48,8 @@ public class SessionStatusReporter extends AbstractReportProvider {
 
         SessionStatus result = new SessionStatus();
 
-        Decision decision = decisionMaker.decideOnSession(scenarioData);
-        result.setStatusImage(statusImageProvider.getImageByDecision(decision));
+        result.setDecision(decisionMaker.decideOnSession(scenarioData));
+        result.setStatusImage(statusImageProvider.getImageByDecision(result.getDecision()));
         result.setMessage(decisionMaker.getDescription());
 
         return new JRBeanCollectionDataSource(Collections.singletonList(result));
@@ -68,6 +68,7 @@ public class SessionStatusReporter extends AbstractReportProvider {
     public static class SessionStatus {
         private Image statusImage;
         private String message;
+        private Decision decision;
 
         public Image getStatusImage() {
             return statusImage;
@@ -83,6 +84,14 @@ public class SessionStatusReporter extends AbstractReportProvider {
 
         public void setMessage(String message) {
             this.message = message;
+        }
+
+        public Decision getDecision() {
+            return decision;
+        }
+
+        public void setDecision(Decision decision) {
+            this.decision = decision;
         }
     }
 }

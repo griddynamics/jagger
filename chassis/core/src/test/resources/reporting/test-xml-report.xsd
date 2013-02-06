@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="report" >
-    <xs:complexType>
-      <xs:all>
-        <xs:element name="decision" type="xs:string" />
-        <xs:element name="current" type="xs:string" />
-        <xs:element name="baseline" type="xs:string" />
-      </xs:all>
+    <xs:import namespace="http://www.w3.org/2001/XMLSchema"/>
+    <xs:element name="jagger" type="jaggerType"/>
+
+    <xs:complexType name="jaggerType">
+        <xs:all>
+            <xs:element name="comparison" type="comparisonType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="summary" type="summaryType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
     </xs:complexType>
-  </xs:element>
+
+    <xs:complexType name="comparisonType">
+        <xs:all>
+            <xs:element name="decision" type="xs:string"/>
+            <xs:element name="current" type="xs:string"/>
+            <xs:element name="baseline" type="xs:string"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="summaryType">
+        <xs:all>
+            <xs:element name="sessionStatus" type="xs:string"/>
+            <xs:element name="executedTasks" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="failedTasks" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
 </xs:schema>

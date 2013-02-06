@@ -126,7 +126,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         }
         log.debug("Throughput: {}", throughput);
 
-        double successRate = Math.rint(succeeded / invoked.doubleValue() * 100) / 100;
+        double successRate = Math.rint(succeeded / invoked.doubleValue() * 10000) / 10000;
         if (Double.isNaN(successRate)) {
             log.error("successRate is NaN (succeeded={},invoked={}). Value for successRate will be set zero", succeeded, invoked);
             successRate = 0;
