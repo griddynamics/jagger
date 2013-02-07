@@ -155,12 +155,20 @@ public class ProcessingConfig implements Serializable {
             public Task() {
             }
 
-            public String getBean() {
+            public String getWorkload() {
                 return bean;
             }
 
-            public void setBean(String bean) {
+            public void setWorkload(String workload) {
+                this.bean = workload;
+            }
+
+            public void setBean(String bean){
                 this.bean = bean;
+            }
+
+            public String getBean(){
+                return this.bean;
             }
 
             public Integer getDelay() {

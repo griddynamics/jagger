@@ -36,15 +36,18 @@ import java.util.List;
  */
 public class OneByOneLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
+    public OneByOneLoadBalancer(){
+        super();
+    }
 
-    public OneByOneLoadBalancer(List<Q> querySupplier, List<E> endpointSupplier) {
-        super(querySupplier, endpointSupplier);
+    public OneByOneLoadBalancer(Iterable<Q> queryProvider, Iterable<E> endpointProvider){
+        super(queryProvider, endpointProvider);
     }
 
     @Override
     public Iterator<Pair<Q, E>> provide() {
-        final CircularSupplier<Q> querySupplier = CircularSupplier.create(queries);
-        final CircularSupplier<E> endpointSupplier = CircularSupplier.create(endpoints);
+        final CircularSupplier<Q> querySupplier = CircularSupplier.create(queryProvider);
+        final CircularSupplier<E> endpointSupplier = CircularSupplier.create(endpointProvider);
 
         return new Iterator<Pair<Q, E>>() {
             @Override
@@ -78,10 +81,6 @@ public class OneByOneLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
     @Override
     public String toString() {
-        return "OneByOneLoadBalancer" +
-                "\n {" +
-                "\n queries " + queries +
-                "\n endpoints " + endpoints +
-                "\n }";
+        return "OneByOneLoadBalancer";
     }
 }

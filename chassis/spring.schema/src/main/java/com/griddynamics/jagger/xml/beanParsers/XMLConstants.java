@@ -1,5 +1,8 @@
 package com.griddynamics.jagger.xml.beanParsers;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: nmusienko
@@ -63,4 +66,48 @@ public class XMLConstants {
     public static final String GENERATOR = "generator";
     public static final String GENERATOR_GENERATE = "#{generator.generate()}";
     public static final String LOCAL = "local";
+    public static final String MONITORING_ENABLE = "monitoringEnable";
+    //listeners beans. must be in scope(locations - default-collectors.conf.xml , default-aggregators.conf.xml)
+    public static final String BASIC_COLLECTOR = "basicSessionCollector";
+    public static final String WORKLOAD_COLLECTOR = "e1MasterCollector";
+    public static final String BASIC_AGGREGATOR = "basicAggregator";
+    public static final String WORKLOAD_AGGREGATOR = "e1ScenarioAggregator";
+    public static final String MONITORING_AGGREGATOR = "monitoringAggregator";
+    public static final String DURATION_LOG_PROCESSOR = "durationLogProcessor";
+    //don't change the order!!! will not works
+    public static final List<String> STANDARD_SESSION_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, BASIC_AGGREGATOR);
+    public static final List<String> STANDARD_TASK_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, WORKLOAD_COLLECTOR, BASIC_AGGREGATOR, WORKLOAD_AGGREGATOR, MONITORING_AGGREGATOR);
+
+    public static final String WORKLOAD_LISTENERS_ELEMENT = "listeners";
+    public static final String DURATION_COLLECTOR = "durationCollector";
+    public static final String INFORMATION_COLLECTOR = "informationCollector";
+
+    //don't change the order!!! will not works
+    public static final List<String> STANDARD_WORKLOAD_LISTENERS = Arrays.asList(DURATION_COLLECTOR, INFORMATION_COLLECTOR);
+
+    public static final String WORKLOAD_LISTENERS_CLASS   = "collectors";
+    public static final String VALIDATOR = "validator";
+    public static final String METRIC_CALCULATOR = "metricCalculator";
+    public static final String LIST = "list";
+    public static final String CLIENT_PARAMS = "clientParams";
+    public static final String METHOD_PARAMS = "methodParams";
+    public static final String METHOD = "method";
+    public static final String INVOKER = "invoker";
+    public static final String INVOKER_CLAZZ = "invokerClazz";
+    public static final String ENDPOINT_PROVIDER = "endpointProvider";
+    public static final String QUERY_PROVIDER = "queryProvider";
+    public static final String LOAD_BALANCER = "loadBalancer";
+    public static final String SCENARIO = "scenario";
+    public static final String SCENARIO_FACTORY = "scenarioFactory";
+    public static final String PARENT = "parent";
+    public static final String XSI_TYPE = "xsi:type";
+    public static final String PERCENTILES = "percentiles";
+    public static final String PERCENTILES_TIME = "percentiles-time";
+    public static final String PERCENTILES_GLOBAL = "percentiles-global";
+    public static final String TIME_WINDOW_PERCENTILES_KEYS = "timeWindowPercentilesKeys";
+    public static final String GLOBAL_PERCENTILES_KEYS = "globalPercentilesKeys";
+    public static final String REPORT = "report";
+    public static final String CALIBRATOR = "calibrator";
+
+    public static final String DEFAULT_NAMESPACE = "http://www.griddynamics.com/schema/jagger";
 }

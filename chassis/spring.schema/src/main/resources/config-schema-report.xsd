@@ -24,9 +24,9 @@
     </xsd:complexType>
 
     <xsd:attributeGroup name="reportTypeAttribute">
-       <xsd:attribute name="rootTemplateLocation" type="xsd:string" use="required"/>
-       <xsd:attribute name="outputReportLocation" type="xsd:string" use="required"/>
-       <xsd:attribute name="reportType" type="xsd:string" use="required"/>
+        <xsd:attribute name="rootTemplateLocation" type="xsd:string"/>
+        <xsd:attribute name="outputReportLocation" type="xsd:string"/>
+        <xsd:attribute name="reportType" type="xsd:string"/>
     </xsd:attributeGroup>
 
     <xsd:complexType name="extensionsType">

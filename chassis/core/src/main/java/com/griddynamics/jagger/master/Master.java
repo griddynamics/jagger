@@ -30,12 +30,14 @@ import com.griddynamics.jagger.engine.e1.process.Services;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.master.configuration.SessionExecutionListener;
 import com.griddynamics.jagger.master.configuration.Task;
-import com.griddynamics.jagger.reporting.ReportingService;
+import com.griddynamics.jagger.reporting.ReportingServiceProvider;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.util.Futures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationContext;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -51,12 +53,15 @@ import java.util.concurrent.*;
 public class Master implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(Master.class);
 
+    @Autowired
+    private ApplicationContext context;
+
     private Configuration configuration;
     private Coordinator coordinator;
     private DistributorRegistry distributorRegistry;
     private SessionIdProvider sessionIdProvider;
     private KeyValueStorage keyValueStorage;
-    private ReportingService reportingService;
+    private ReportingServiceProvider reportingServiceProvider;
     private long reconnectPeriod;
     private Conditions conditions;
     private ExecutorService executor;
@@ -150,7 +155,7 @@ public class Master implements Runnable {
             }
 
             log.info("Going to generate report");
-            reportingService.renderReport(true);
+            reportingServiceProvider.getReportingService(context).renderReport(true);
             log.info("Report generated");
 
             log.info("Going to stop all agents");
@@ -256,8 +261,8 @@ public class Master implements Runnable {
         this.keyValueStorage = keyValueStorage;
     }
 
-    public void setReportingService(ReportingService reportingService) {
-        this.reportingService = reportingService;
+    public void setReportingServiceProvider(ReportingServiceProvider reportingServiceProvider) {
+        this.reportingServiceProvider = reportingServiceProvider;
     }
 
     public void setExecutor(ExecutorService executor) {

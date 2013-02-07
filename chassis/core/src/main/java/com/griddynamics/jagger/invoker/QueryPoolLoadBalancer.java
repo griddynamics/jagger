@@ -23,16 +23,29 @@ package com.griddynamics.jagger.invoker;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.Pair;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> {
-    protected final List<Q> queries;
-    protected final List<E> endpoints;
 
-    public QueryPoolLoadBalancer(List<Q> querySupplier, List<E> endpointSupplier) {
-        this.queries = ImmutableList.copyOf(querySupplier);
-        this.endpoints = ImmutableList.copyOf(endpointSupplier);
+    protected Iterable<Q> queryProvider;
+    protected Iterable<E> endpointProvider;
+
+    public QueryPoolLoadBalancer(){
+    }
+
+    public QueryPoolLoadBalancer(Iterable<Q> queryProvider, Iterable<E> endpointProvider){
+        this.queryProvider = queryProvider;
+        this.endpointProvider = endpointProvider;
+    }
+
+    public void setQueryProvider(Iterable<Q> queryProvider){
+        this.queryProvider = queryProvider;
+    }
+
+    public void setEndpointProvider(Iterable<E> endpointProvider){
+        this.endpointProvider = endpointProvider;
     }
 
     @Override
@@ -41,12 +54,22 @@ public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> 
     }
 
     @Override
-    public int querySize() {
-        return queries.size();
+    public int endpointSize() {
+        return getIterableSize(endpointProvider);
     }
 
     @Override
-    public int endpointSize() {
-        return endpoints.size();
+    public int querySize() {
+        return getIterableSize(queryProvider);
+    }
+
+    public int getIterableSize(Iterable iterable){
+        Iterator<Q> iterator = iterable.iterator();
+        int size = 0;
+        while (iterator.hasNext()){
+            iterator.next();
+            size++;
+        }
+        return size;
     }
 }

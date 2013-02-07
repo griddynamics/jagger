@@ -40,7 +40,7 @@ public class WorkloadTask implements CompositableTask {
     private WorkloadClockConfiguration clockConfiguration;
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
     private String parentTaskId;
-    private Calibrator calibrator = new OneNodeCalibrator();
+    private Calibrator calibrator = new SkipCalibration();
 
     @Override
     public String getTaskName() {

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
   ~ http://www.griddynamics.com
@@ -19,107 +20,110 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<beans
-        xmlns:jgr="http://www.griddynamics.com/schema/jagger"
-        xmlns="http://www.springframework.org/schema/beans"
+<beans:beans
+        xmlns="http://www.griddynamics.com/schema/jagger"
+        xmlns:beans="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation=
-       "http://www.griddynamics.com/schema/jagger
+       "
+        http://www.griddynamics.com/schema/jagger
         http://www.griddynamics.com/schema/jagger.xsd
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
-    <jgr:configuration id="config1">
+    <configuration id="config1" monitoringEnable="true">
+        <test-plan ref="test-plan-1"/>
 
-        <jgr:session-executionListeners id="sel2">
-            <ref local="basicSessionCollector"/>
-            <ref bean="basicSessionCollector"/>
-        </jgr:session-executionListeners>
+        <report rootTemplateLocation="custom-root-template.jrxml"
+                    outputReportLocation="custom-report.pdf" reportType="HTML">
+        </report>
 
-        <jgr:test-plan ref="test-plan-1"/>
+        <percentiles>
+            <percentiles-global>
+                <percentile>70</percentile>
+            </percentiles-global>
+        </percentiles>
 
-        <jgr:task-executionListeners id="tel2">
-            <jgr:task-listener ref="basicAggregator"/>
-            <jgr:task-listener ref="basicSessionCollector"/>
-        </jgr:task-executionListeners>
+    </configuration>
 
-    </jgr:configuration>
+    <test-plan id="test-plan-1">
+        <test ref="test1"/>
+    </test-plan>
 
-    <jgr:configuration id="config2">
+    <test id="test1" name="user-test" duration="200">
+        <task id="t3" name="3-groups-50-50-50" sample="1000" delay="0" workload="w1">
+            <user id="u2" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
+            <user id="u3" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
+            <user id="u4" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
+        </task>
+        <task id="t4" name="virtual-user-10" sample="1000" delay="0" workload="w1">
+            <virtual-user ref="vu1"/>
+        </task>
+    </test>
 
-        <jgr:test-plan id="test-plan-2">
-            <ref bean="test1"/>
-            <ref local="test2"/>
-        </jgr:test-plan>
+    <test id="test2" name="tps-test" duration="200">
+        <task id="t5" name="tps-test" sample="1000" delay="0" workload="w1">
+            <tps id="tps1" value="10"/>
+        </task>
+    </test>
 
-        <jgr:session-executionListeners>
-            <jgr:session-listener ref="basicSessionCollector"/>
-            <jgr:session-listener ref="basicAggregator"/>
-        </jgr:session-executionListeners>
+    <virtual-user id="vu1" count="10" tickInterval="10"/>
 
-        <jgr:task-executionListeners>
-            <ref bean="basicSessionCollector"/>
-        </jgr:task-executionListeners>
+    <!--workload-->
 
-    </jgr:configuration>
+    <metric id="metric1" xsi:type="simpleMetric"/>
 
-    <jgr:test-plan id="test-plan-1">
-        <jgr:test ref="test1"/>
-        <ref local="test2"/>
-    </jgr:test-plan>
+    <endpointProvider id="endpointProvider1" xsi:type="simpleEndpointProvider">
+        <endpoint>http://localhost:8090/sleep/5</endpoint>
+        <endpoint>http://localhost:8090/sleep/25</endpoint>
+        <endpoint>http://localhost:8090/sleep/50</endpoint>
+    </endpointProvider>
 
-    <jgr:test id="test1" name="user-test" duration="200">
-        <jgr:task id="t3" name="3-groups-50-50-50" sample="1000" delay="0" bean="sleep5msServiceScenario" >
-            <jgr:user id="u2" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
-            <jgr:user id="u3" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
-            <jgr:user id="u4" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
-        </jgr:task>
-        <jgr:task id="t4" name="virtual-user-10" sample="1000" delay="0" bean="sleep5msServiceScenario">
-            <jgr:virtual-user ref="vu1"/>
-        </jgr:task>
-    </jgr:test>
+    <query id="httpQ1" xsi:type="httpQuery" method="GET">
+        <clientParams>
+            <param key="http.protocol.allow-circular-redirects">
+                <value xsi:type="boolean" >true</value>
+            </param>
+            <param key="http.protocol.max-redirects">
+                <value xsi:type="integer">2</value>
+            </param>
+            <param key="http.connection-manager.timeout">
+                <value xsi:type="long">5000</value>
+            </param>
+            <param key="http.protocol.max-redirects">
+                <value xsi:type="integer">0</value>
+            </param>
+        </clientParams>
+    </query>
 
-    <jgr:test id="test2" name="tps-test" duration="200">
-        <jgr:task id="t5" name="tps-test" sample="1000" delay="0" bean="sleep50msServiceScenario">
-            <jgr:tps id="tps1" value="10"/>
-        </jgr:task>
-    </jgr:test>
+    <queryProvider id="qProvider1" xsi:type="simpleQueryProvider">
+        <query xsi:type="queryRef" ref="httpQ1"/>
+    </queryProvider>
 
-    <jgr:test id="test3" name="invocation-test" duration="200" >
-        <jgr:task ref="t6"/>
-    </jgr:test>
+    <workload id="w1">
 
-    <jgr:task id="t6" name="invocation-task" sample="1000" delay="0" bean="sleep50msServiceScenario">
-        <jgr:invocation id="invocation1" exactcount ="1" threads="10"/>
-    </jgr:task>
+        <listeners>
+            <validator xsi:type="notNullResponse"/>
+            <metric xsi:type="metricRef" ref="metric1"/>
+        </listeners>
 
-    <jgr:virtual-user id="vu1" count="10" tickInterval="10"/>
+        <scenario xsi:type="scenarioRef" ref="sc1"/>
 
-    <!--This beans will be in different files-->
+        <calibrator xsi:type="calibratorRef" ref="dc"/>
+    </workload>
 
-            <bean id="basicSessionCollector" class="com.griddynamics.jagger.xml.ExampleTestListener">
-            </bean>
+    <calibrator id="dc" xsi:type="defaultCalibrator"/>
 
-            <bean id="basicAggregator" class="com.griddynamics.jagger.xml.ExampleTestListener">
-            </bean>
+    <scenario id="sc1" xsi:type="queryPoolScenario">
 
-            <bean id="e1MasterCollector" class="com.griddynamics.jagger.xml.ExampleTestListener">
-            </bean>
+        <loadBalancer xsi:type="roundRobinLoadBalancer"/>
 
-            <bean id="e1ScenarioAggregator" class="com.griddynamics.jagger.xml.ExampleTestListener">
-            </bean>
+        <invoker xsi:type="httpInvoker"/>
 
-            <bean id="monitoringAggregator" class="com.griddynamics.jagger.xml.ExampleTestListener">
-            </bean>
+        <endpointProvider xsi:type="endpointProviderRef" ref="endpointProvider1"/>
 
-            <bean id="durationLogProcessor" class="com.griddynamics.jagger.xml.ExampleTestListener">
-            </bean>
+        <queryProvider xsi:type="queryProviderRef" ref="qProvider1" />
+    </scenario>
 
-            <bean id="sleep5msServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask">
-            </bean>
-
-            <bean id="sleep50msServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask">
-            </bean>
-
-</beans>
+</beans:beans>

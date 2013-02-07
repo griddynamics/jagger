@@ -31,10 +31,10 @@
 
     <jgr:test-plan id="tp1">
         <jgr:test>
-            <jgr:task sample="34250" delay="0" bean="getTopLevelCategoryTreeCatalogService">
+            <jgr:task sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService">
                 <jgr:user count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
             </jgr:task>
-            <jgr:task sample="34250" delay="0" bean="getTopLevelCategoryTreeCatalogService">
+            <jgr:task sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService">
                 <jgr:invocation exactcount="10" threads="2"/>
             </jgr:task>
         </jgr:test>
@@ -43,30 +43,30 @@
 
     <jgr:test-plan id="tp2">
         <jgr:test>
-            <jgr:task sample="34250" delay="0" bean="getTopLevelCategoryTreeCatalogService">
+            <jgr:task sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService">
                 <jgr:user count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
             </jgr:task>
-            <jgr:task sample="34250" delay="0" bean="getTopLevelCategoryTreeCatalogService">
+            <jgr:task sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService">
                 <jgr:invocation exactcount="10" threads="2"/>
             </jgr:task>
         </jgr:test>
         <ref local="tst1"/>
     </jgr:test-plan>
 
-    <jgr:task id="t1" name="task1" sample="34250" delay="0" bean="bean1" duration="200">
+    <jgr:task id="t1" name="task1" sample="34250" delay="0" workload="bean1" duration="200">
         <jgr:user id="u2" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
         <jgr:user id="u3" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
         <jgr:user id="u4" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
     </jgr:task>
 
     <jgr:test id="tst1" duration="2h" name="[catalog-service]-getCategoryTree-[top-level]-hessian">
-        <jgr:task sample="34250" delay="0" bean="getTopLevelCategoryTreeCatalogService">
+        <jgr:task sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService">
             <jgr:invocation exactcount="5" threads="2"/>
         </jgr:task>
         <ref local="t1"/>
     </jgr:test>
 
-    <jgr:task id="t2" name="task2" sample="24250" delay="10" bean="bean2" duration="300">
+    <jgr:task id="t2" name="task2" sample="24250" delay="10" workload="bean2" duration="300">
         <jgr:invocation exactcount="5" threads="2"/>
     </jgr:task>
 
@@ -74,5 +74,7 @@
 
     <jgr:invocation id="i1" exactcount="5" threads="2"/>
 
-    <bean name="bean1" class="com.griddynamics.jagger.user.ProcessingConfig$Test" lazy-init="false"/>
+    <bean id="bean1" class="com.griddynamics.jagger.user.ProcessingConfig$Test" lazy-init="false"/>
+    <bean id="bean2" class="com.griddynamics.jagger.user.ProcessingConfig$Test" lazy-init="false"/>
+    <bean id="getTopLevelCategoryTreeCatalogService" class="com.griddynamics.jagger.user.ProcessingConfig$Test" lazy-init="false"/>
 </beans>

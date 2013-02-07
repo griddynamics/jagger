@@ -1,7 +1,8 @@
-package com.griddynamics.jagger.xml.beanParsers;
+package com.griddynamics.jagger.xml.beanParsers.report;
 
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator;
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import gnu.kawa.slib.XML;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

@@ -1,5 +1,6 @@
-package com.griddynamics.jagger.xml.beanParsers;
+package com.griddynamics.jagger.xml.beanParsers.report;
 
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;

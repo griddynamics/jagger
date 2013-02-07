@@ -24,7 +24,7 @@
     </bean>
 
     <jgr:report rootTemplateLocation="custom-root-template.jrxml"
-				outputReportLocation="custom-report.pdf" reportType="PDF">
+				outputReportLocation="custom-report.pdf" reportType="HTML">
 
         <jgr:extensions>
 

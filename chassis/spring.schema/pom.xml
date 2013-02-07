@@ -18,6 +18,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.invokers</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>

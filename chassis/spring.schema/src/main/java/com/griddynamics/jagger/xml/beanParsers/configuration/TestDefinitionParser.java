@@ -1,6 +1,8 @@
-package com.griddynamics.jagger.xml.beanParsers;
+package com.griddynamics.jagger.xml.beanParsers.configuration;
 
 import com.griddynamics.jagger.user.ProcessingConfig;
+import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.config.RuntimeBeanNameReference;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -14,7 +16,7 @@ import org.w3c.dom.Element;
 import java.util.List;
 
 
-public class TestDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class TestDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {
@@ -22,21 +24,8 @@ public class TestDefinitionParser extends AbstractSimpleBeanDefinitionParser {
     }
 
     @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
+    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         element.setAttribute(BeanDefinitionParserDelegate.VALUE_TYPE_ATTRIBUTE, ProcessingConfig.Test.Task.class.getCanonicalName());
-
-        List<Element> list = DomUtils.getChildElements(element);
-        ManagedList tasks = new ManagedList(list.size());
-
-        for (Element el : list){
-            if (!el.getAttribute(XMLConstants.ATTRIBUTE_REF).isEmpty()){
-                tasks.add(new RuntimeBeanReference(el.getAttribute(XMLConstants.ATTRIBUTE_REF)));
-            }else{
-                tasks.add(parserContext.getDelegate().parsePropertySubElement(el, builder.getBeanDefinition()));
-            }
-        }
-
-        builder.addPropertyValue(XMLConstants.TASKS,tasks);
+        setBeanListProperty(XMLConstants.TASKS, false, element, parserContext, builder.getBeanDefinition());
     }
 }

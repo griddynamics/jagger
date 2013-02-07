@@ -28,17 +28,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
-   <jgr:workload id="workload">
-       <jgr:queryProvider/>
-       <jgr:invoker/>
-       <jgr:loadBalancer type="roundRobin">
-           <endpoints></endpoints>
-       </jgr:loadBalancer>
-       <jgr:listeners>
-           <jgr:metric type="duration"/>
-           <jgr:metric type="custom" calculator=""/>
-           <jgr:validator type="NotNull"/>
-       </jgr:listeners>
-   </jgr:workload>
+    <!--not actual -->
 
 </beans>

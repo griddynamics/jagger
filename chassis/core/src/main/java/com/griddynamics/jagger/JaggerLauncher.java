@@ -30,12 +30,9 @@ import com.griddynamics.jagger.launch.Launches;
 import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
-import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Server;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -45,7 +42,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
@@ -144,7 +140,6 @@ public final class JaggerLauncher {
             public void run() {
                 log.info("Starting Master");
                 ApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
-
                 final Coordinator coordinator = (Coordinator) context.getBean("coordinator");
                 coordinator.waitForReady();
                 coordinator.initialize();
@@ -163,7 +158,6 @@ public final class JaggerLauncher {
             public void run() {
                 ApplicationContext context = loadContext(directory, REPORTER_CONFIGURATION, environmentProperties);
                 final ReportingService reportingService = (ReportingService) context.getBean("reportingService");
-
                 reportingService.renderReport(true);
             }
         };
