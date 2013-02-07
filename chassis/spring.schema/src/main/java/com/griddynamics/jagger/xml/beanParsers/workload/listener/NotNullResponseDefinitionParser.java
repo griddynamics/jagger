@@ -16,12 +16,7 @@ import org.w3c.dom.Element;
  * Time: 5:31 PM
  * To change this template use File | Settings | File Templates.
  */
-public class NotNullResponseDefinitionParser extends AbstractSimpleBeanDefinitionParser {
-
-    @Override
-    protected Class getBeanClass(Element element) {
-        return ValidationCollectorProvider.class;
-    }
+public class NotNullResponseDefinitionParser extends AbstractValidatorDefinitionParser {
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

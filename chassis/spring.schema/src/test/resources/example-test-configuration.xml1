@@ -72,7 +72,6 @@
     <!--workload-->
 
     <metric id="metric1" xsi:type="simpleMetric"/>
-
     <endpointProvider id="endpointProvider1" xsi:type="simpleEndpointProvider">
         <endpoint>http://localhost:8090/sleep/5</endpoint>
         <endpoint>http://localhost:8090/sleep/25</endpoint>
@@ -100,19 +99,15 @@
         <query xsi:type="queryRef" ref="httpQ1"/>
     </queryProvider>
 
-    <workload id="w1">
+    <workload id="w1" calibration="true">
 
         <listeners>
             <validator xsi:type="notNullResponse"/>
-            <metric xsi:type="metricRef" ref="metric1"/>
+            <validator xsi:type="consistency"/>
         </listeners>
 
         <scenario xsi:type="scenarioRef" ref="sc1"/>
-
-        <calibrator xsi:type="calibratorRef" ref="dc"/>
     </workload>
-
-    <calibrator id="dc" xsi:type="defaultCalibrator"/>
 
     <scenario id="sc1" xsi:type="queryPoolScenario">
 

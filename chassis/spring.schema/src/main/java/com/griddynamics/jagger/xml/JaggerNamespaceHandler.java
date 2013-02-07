@@ -13,6 +13,7 @@ import com.griddynamics.jagger.xml.beanParsers.workload.balancer.RoundRobinBalan
 import com.griddynamics.jagger.xml.beanParsers.workload.calibration.DefaultCalibratorDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.ConsistencyDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.NotNullResponseDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.SimpleMetricDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryDefinitionParser;
@@ -63,6 +64,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
 
         //validators listeners
         registerBeanDefinitionParser("notNullResponse", new NotNullResponseDefinitionParser());
+        registerBeanDefinitionParser("consistency", new ConsistencyDefinitionParser());
 
         //metric
         registerBeanDefinitionParser("metric", findTypeParser);

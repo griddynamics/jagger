@@ -23,6 +23,8 @@ import org.w3c.dom.Element;
  */
 public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
 
+    private boolean monitoringEnable = false;
+
     @Override
     protected Class getBeanClass(Element element) {
         return Configuration.class;
@@ -48,16 +50,17 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
         BeanDefinitionBuilder generator = BeanDefinitionBuilder.genericBeanDefinition(UserTaskGenerator.class);
         parserContext.getRegistry().registerBeanDefinition(XMLConstants.GENERATOR, generator.getBeanDefinition());
 
-        if (!element.getAttribute(XMLConstants.MONITORING_ENABLE).isEmpty()){
-            generator.addPropertyValue(XMLConstants.MONITORING_ENABLE, element.getAttribute(XMLConstants.MONITORING_ENABLE));
-        }
+        generator.addPropertyValue(XMLConstants.MONITORING_ENABLE, monitoringEnable);
+
         generator.addPropertyValue(XMLConstants.CONFIG, parseCustomElement(testPlan, parserContext, generator.getBeanDefinition()));
         builder.addPropertyValue(XMLConstants.TASKS, XMLConstants.GENERATOR_GENERATE);
     }
 
     @Override
-    protected void parseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        //do nothing
+    protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        if (!element.getAttribute(XMLConstants.MONITORING_ENABLE).isEmpty())
+            monitoringEnable = Boolean.parseBoolean(element.getAttribute(XMLConstants.MONITORING_ENABLE));
+        element.removeAttribute(XMLConstants.MONITORING_ENABLE);
     }
 
     protected void initListeners(Element element, ParserContext parserContext, BeanDefinitionBuilder builder){

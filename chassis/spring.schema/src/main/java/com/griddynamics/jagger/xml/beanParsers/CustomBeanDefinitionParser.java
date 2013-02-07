@@ -29,12 +29,13 @@ public abstract class CustomBeanDefinitionParser extends AbstractSimpleBeanDefin
             element.removeAttribute(XMLConstants.PARENT);
         }
         if (element.hasAttribute(XMLConstants.XSI_TYPE)) element.removeAttribute(XMLConstants.XSI_TYPE);
-        parseAttributes(element, parserContext, builder);
+        preParseAttributes(element, parserContext, builder);
+        super.doParse(element, parserContext, builder);
         parse(element, parserContext, builder);
     }
 
-    protected void parseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder){
-        super.doParse(element, parserContext, builder);
+    protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder){
+        //override
     }
 
     protected abstract void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);

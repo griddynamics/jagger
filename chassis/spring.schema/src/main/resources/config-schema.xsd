@@ -387,10 +387,10 @@
                 <xsd:all>
                     <xsd:element name="listeners" type="workloadListenersType" minOccurs="0" maxOccurs="1"/>
                     <xsd:element ref="scenario" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element ref="calibrator" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
                 <xsd:attribute name="name" type="xsd:string"/>
                 <xsd:attribute name="version" type="xsd:integer"/>
+                <xsd:attribute name="calibration" type="xsd:boolean" default="false"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -465,9 +465,9 @@
     <xsd:complexType name="consistency">
         <xsd:complexContent>
             <xsd:extension base="validatorType">
-                <xsd:attribute name="queryEquivalence" type="xsd:IDREF"/>
-                <xsd:attribute name="endpointEquivalence" type="xsd:IDREF"/>
-                <xsd:attribute name="resultEquivalence" type="xsd:IDREF"/>
+                <xsd:attribute name="queryEq" type="xsd:IDREF"/>
+                <xsd:attribute name="endpointEq" type="xsd:IDREF"/>
+                <xsd:attribute name="resultEq" type="xsd:IDREF"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -706,29 +706,6 @@
     <xsd:complexType name="oneByOneLoadBalancer">
         <xsd:complexContent>
             <xsd:extension base="loadBalancerType">
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
-    <xsd:element name="calibrator" type="calibratorType"/>
-
-    <xsd:complexType name="calibratorType" abstract="true">
-        <xsd:complexContent>
-            <xsd:extension base="basicType"/>
-        </xsd:complexContent>
-    </xsd:complexType>
-
-    <xsd:complexType name="calibratorRef">
-        <xsd:complexContent >
-            <xsd:extension base="calibratorType">
-                <xsd:attribute name="ref" type="xsd:IDREF" use="required"/>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
-    <xsd:complexType name="defaultCalibrator">
-        <xsd:complexContent>
-            <xsd:extension base="calibratorType">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
