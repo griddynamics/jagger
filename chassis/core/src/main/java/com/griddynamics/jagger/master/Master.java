@@ -190,7 +190,7 @@ public class Master implements Runnable {
             }
             log.info("Execution done");
         } catch (Exception e) {
-            log.info("Execution terminated");
+            log.error("Exception while running configuration: {}",e);
         }
     }
 
