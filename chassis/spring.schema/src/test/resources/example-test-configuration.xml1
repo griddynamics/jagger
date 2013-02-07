@@ -35,8 +35,7 @@
     <configuration id="config1" monitoringEnable="true">
         <test-plan ref="test-plan-1"/>
 
-        <report rootTemplateLocation="custom-root-template.jrxml"
-                    outputReportLocation="custom-report.pdf" reportType="HTML">
+        <report outputReportLocation="new-report.pdf">
         </report>
 
         <percentiles>
