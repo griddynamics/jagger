@@ -27,7 +27,7 @@
         <property name="registry" ref="propertiesResolverRegistry"/>
     </bean>
 
-    <bean id="timeoutConstants" class="com.griddynamics.jagger.util.TimeoutsConfiguration">
+    <bean id="timeoutsConfiguration" class="com.griddynamics.jagger.util.TimeoutsConfiguration">
         <constructor-arg value="${workload.start.timeout}"/>
         <constructor-arg value="${workload.stop.timeout}"/>
         <constructor-arg value="${workload.polling.timeout}"/>
