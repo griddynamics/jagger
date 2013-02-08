@@ -28,6 +28,6 @@ import java.util.Map;
 
 public interface Calibrator {
 
-    void calibrate(String sessionId, String taskId, ScenarioFactory<Object, Object, Object> scenarioFactory, Map<NodeId, RemoteExecutor> remotes);
+    void calibrate(String sessionId, String taskId, ScenarioFactory<Object, Object, Object> scenarioFactory, Map<NodeId, RemoteExecutor> remotes, int timeout);
 
 }

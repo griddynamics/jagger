@@ -31,6 +31,7 @@ import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadConfiguration;
 import com.griddynamics.jagger.invoker.Scenario;
 import com.griddynamics.jagger.util.Futures;
+import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +47,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WorkloadProcess implements NodeProcess<Integer> {
 
     private static final Logger log = LoggerFactory.getLogger(WorkloadProcess.class);
-    private static final int START_TIMEOUT = 30000;
-    private static final int STOP_TIMEOUT = 3600000;
+    private final TimeoutsConfiguration timeoutsConfiguration;
+
 
     private final String sessionId;
     private final StartWorkloadProcess command;
@@ -64,11 +65,12 @@ public class WorkloadProcess implements NodeProcess<Integer> {
 
     private final AtomicInteger leftSamplesCount = new AtomicInteger(-1);
 
-    public WorkloadProcess(String sessionId, StartWorkloadProcess command, NodeContext context, ExecutorService executor) {
+    public WorkloadProcess(String sessionId, StartWorkloadProcess command, NodeContext context, ExecutorService executor, TimeoutsConfiguration timeoutsConfiguration) {
         this.sessionId = sessionId;
         this.command = command;
         this.context = context;
         this.executor = executor;
+        this.timeoutsConfiguration = timeoutsConfiguration;
     }
 
     public void start() {
@@ -96,7 +98,7 @@ public class WorkloadProcess implements NodeProcess<Integer> {
         }
 
         for (ListenableFuture<Service.State> future : futures) {
-            Service.State state = Futures.get(future, STOP_TIMEOUT);
+            Service.State state = Futures.get(future, timeoutsConfiguration.getWorkloadStopTimeout());
             log.debug("stopped workload thread with status {}", state);
         }
         log.debug("All threads were terminated");
@@ -167,7 +169,7 @@ public class WorkloadProcess implements NodeProcess<Integer> {
         WorkloadService thread = ( predefinedSamplesCount()) ? builder.buildServiceWithSharedSamplesCount(leftSamplesCount) : builder.buildInfiniteService();
         log.debug("Starting workload");
         Future<Service.State> future = thread.start();
-        Service.State state = Futures.get(future, START_TIMEOUT);
+        Service.State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
         log.debug("Workload thread with is started with state {}", state);
         threads.add(thread);
     }
@@ -188,7 +190,7 @@ public class WorkloadProcess implements NodeProcess<Integer> {
 
         WorkloadService thread = iterator.next();
         Future<Service.State> stop = thread.stop();
-        Futures.get(stop, STOP_TIMEOUT);
+        Futures.get(stop, timeoutsConfiguration.getWorkloadStopTimeout());
         iterator.remove();
     }
 }

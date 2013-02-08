@@ -23,6 +23,7 @@ package com.griddynamics.jagger.engine.e1.scenario;
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
+import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -41,7 +42,7 @@ public class DefaultWorkloadCollectorTest {
         taskId = "testWorkload";
         task = new WorkloadTask();
         remotes = Maps.newHashMap();
-        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes);
+        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, TimeoutsConfiguration.getDefaultTimeouts());
     }
 
     @Test(expectedExceptions = IllegalStateException.class)

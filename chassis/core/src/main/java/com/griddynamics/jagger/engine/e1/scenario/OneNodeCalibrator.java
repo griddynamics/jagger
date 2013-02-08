@@ -25,6 +25,7 @@ import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.engine.e1.process.PerformCalibration;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
+import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +40,9 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class OneNodeCalibrator implements Calibrator {
     private final static Logger log = LoggerFactory.getLogger(OneNodeCalibrator.class);
-    private static final int CALIBRATION_TIMEOUT = 300000;
 
     @Override
-    public void calibrate(String sessionId, String taskId, ScenarioFactory<Object, Object, Object> scenarioFactory, Map<NodeId, RemoteExecutor> remotes) {
+    public void calibrate(String sessionId, String taskId, ScenarioFactory<Object, Object, Object> scenarioFactory, Map<NodeId, RemoteExecutor> remotes, int timeout) {
         checkArgument(!remotes.isEmpty());
 
         log.debug("Going to perform calibration sessionId {} taskId {}", sessionId, taskId);
@@ -53,7 +53,7 @@ public class OneNodeCalibrator implements Calibrator {
         RemoteExecutor remote = entry.getValue();
 
 
-        Boolean result = remote.runSyncWithTimeout(PerformCalibration.create(sessionId, taskId, scenarioFactory), Coordination.<PerformCalibration>doNothing(), CALIBRATION_TIMEOUT);
+        Boolean result = remote.runSyncWithTimeout(PerformCalibration.create(sessionId, taskId, scenarioFactory), Coordination.<PerformCalibration>doNothing(), timeout);
 
         if (result) {
             log.info("Calibration info collected");

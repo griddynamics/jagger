@@ -36,8 +36,10 @@ import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.ExceptionLogger;
 import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.Pair;
+import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.util.Collection;
 import java.util.Map;
@@ -50,8 +52,7 @@ import java.util.concurrent.Executors;
  */
 public class WorkloadWorker extends ConfigurableWorker {
     private static final Logger log = LoggerFactory.getLogger(WorkloadWorker.class);
-    private static final int CALIBRATION_TIMEOUT = 300000;
-    private static final int CALIBRATION_START_TIMEOUT = 10000;
+    private TimeoutsConfiguration timeoutsConfiguration;
 
     private Map<String, WorkloadProcess> processes = Maps.newConcurrentMap();
     private Map<String, Integer> pools = Maps.newConcurrentMap();
@@ -61,6 +62,11 @@ public class WorkloadWorker extends ConfigurableWorker {
     @Override
     public Collection<CommandExecutor<?, ?>> getExecutors() {
         return super.getExecutors();
+    }
+
+    @Required
+    public void setTimeoutsConfiguration(TimeoutsConfiguration timeoutsConfiguration) {
+        this.timeoutsConfiguration = timeoutsConfiguration;
     }
 
     @Override
@@ -84,7 +90,7 @@ public class WorkloadWorker extends ConfigurableWorker {
                                         .setNameFormat("workload-thread %d")
                                         .setUncaughtExceptionHandler(ExceptionLogger.INSTANCE)
                                         .build()
-                        ));
+                        ), timeoutsConfiguration);
                 String processId = generateId();
                 processes.put(processId, process);
                 pools.put(processId, poolSize);
@@ -178,9 +184,9 @@ public class WorkloadWorker extends ConfigurableWorker {
 
                 ListenableFuture<Service.State> start = calibrationThread.start();
 
-                Futures.get(start, CALIBRATION_START_TIMEOUT);
+                Futures.get(start, timeoutsConfiguration.getCalibrationStartTimeout());
 
-                Services.awaitTermination(calibrationThread, CALIBRATION_TIMEOUT);
+                Services.awaitTermination(calibrationThread, timeoutsConfiguration.getCalibrationTimeout());
 
                 final Map<Pair<Object, Object>, Throwable> errors = calibrationInfoCollector.getErrors();
                 if (!errors.isEmpty()) {

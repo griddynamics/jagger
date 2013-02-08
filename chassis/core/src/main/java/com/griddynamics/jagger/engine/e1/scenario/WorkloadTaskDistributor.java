@@ -29,8 +29,10 @@ import com.griddynamics.jagger.engine.e1.process.StartWorkloadProcess;
 import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
 import com.griddynamics.jagger.master.AbstractDistributionService;
 import com.griddynamics.jagger.master.AbstractDistributor;
+import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +42,8 @@ import static com.griddynamics.jagger.util.TimeUtils.sleepMillis;
 
 public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
     private static Logger log = LoggerFactory.getLogger(WorkloadTaskDistributor.class);
+
+    private TimeoutsConfiguration timeoutsConfiguration;
 
     private long logInterval;
 
@@ -54,6 +58,11 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
         return result;
     }
 
+    @Required
+    public void setTimeoutsConfiguration(TimeoutsConfiguration timeoutsConfiguration) {
+        this.timeoutsConfiguration = timeoutsConfiguration;
+    }
+
     @Override
     protected Service performDistribution(final ExecutorService executor, final String sessionId, final String taskId, final WorkloadTask task,
                                           final Map<NodeId, RemoteExecutor> remotes, final Multimap<NodeType, NodeId> availableNodes,
@@ -66,10 +75,10 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
 
                 log.debug("Going to do calibration");
                 Calibrator calibrator = task.getCalibrator();
-                calibrator.calibrate(sessionId, taskId, task.getScenarioFactory(), remotes);
+                calibrator.calibrate(sessionId, taskId, task.getScenarioFactory(), remotes, timeoutsConfiguration.getCalibrationTimeout());
                 log.debug("Calibrator completed");
 
-                DefaultWorkloadController controller = new DefaultWorkloadController(sessionId, taskId, task, remotes);
+                DefaultWorkloadController controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration);
 
                 WorkloadClock clock = task.getClock();
                 TerminationStrategy terminationStrategy = task.getTerminationStrategy();
