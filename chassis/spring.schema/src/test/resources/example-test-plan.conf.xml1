@@ -53,20 +53,20 @@
         <ref local="tst1"/>
     </jgr:test-plan>
 
-    <jgr:task id="t1" name="task1" sample="34250" delay="0" workload="bean1" duration="200">
+    <jgr:task id="t1" sample="34250" delay="0" workload="bean1" duration="200">
         <jgr:user id="u2" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
         <jgr:user id="u3" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
         <jgr:user id="u4" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
     </jgr:task>
 
-    <jgr:test id="tst1" duration="2h" name="[catalog-service]-getCategoryTree-[top-level]-hessian">
-        <jgr:task sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService">
+    <jgr:test id="tst1" duration="2h">
+        <jgr:task id="tst1-task1" sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService">
             <jgr:invocation exactcount="5" threads="2"/>
         </jgr:task>
         <ref local="t1"/>
     </jgr:test>
 
-    <jgr:task id="t2" name="task2" sample="24250" delay="10" workload="bean2" duration="300">
+    <jgr:task id="t2" sample="24250" delay="10" workload="bean2" duration="300">
         <jgr:invocation exactcount="5" threads="2"/>
     </jgr:task>
 

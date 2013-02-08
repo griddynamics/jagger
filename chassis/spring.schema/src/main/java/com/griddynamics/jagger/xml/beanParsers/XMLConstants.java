@@ -113,6 +113,7 @@ public class XMLConstants {
     public static final String REPORT = "report";
     public static final String CALIBRATOR = "calibrator";
     public static final String CALIBRATION = "calibration";
+    public static final String NAME = "name";
 
     public static final String DEFAULT_NAMESPACE = "http://www.griddynamics.com/schema/jagger";
 }

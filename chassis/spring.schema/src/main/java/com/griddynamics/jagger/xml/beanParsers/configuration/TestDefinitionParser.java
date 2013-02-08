@@ -28,4 +28,10 @@ public class TestDefinitionParser extends CustomBeanDefinitionParser {
         element.setAttribute(BeanDefinitionParserDelegate.VALUE_TYPE_ATTRIBUTE, ProcessingConfig.Test.Task.class.getCanonicalName());
         setBeanListProperty(XMLConstants.TASKS, false, element, parserContext, builder.getBeanDefinition());
     }
+
+    @Override
+    protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        String id = element.getAttribute(XMLConstants.ID);
+        builder.addPropertyValue(XMLConstants.NAME, id);
+    }
 }

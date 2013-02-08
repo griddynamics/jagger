@@ -33,4 +33,10 @@ public class TaskDefinitionParser extends CustomBeanDefinitionParser {
             }
         }
     }
+
+    @Override
+    protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        String id = element.getAttribute(XMLConstants.ID);
+        builder.addPropertyValue(XMLConstants.NAME, id);
+    }
 }

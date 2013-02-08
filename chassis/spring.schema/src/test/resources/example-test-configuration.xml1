@@ -50,19 +50,19 @@
         <test ref="test1"/>
     </test-plan>
 
-    <test id="test1" name="user-test" duration="200">
-        <task id="t3" name="3-groups-50-50-50" sample="1000" delay="0" workload="w1">
+    <test id="test1" duration="200">
+        <task id="t3" sample="1000" delay="0" workload="w1">
             <user id="u2" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
             <user id="u3" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
             <user id="u4" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
         </task>
-        <task id="t4" name="virtual-user-10" sample="1000" delay="0" workload="w1">
+        <task id="t4" sample="1000" delay="0" workload="w1">
             <virtual-user ref="vu1"/>
         </task>
     </test>
 
-    <test id="test2" name="tps-test" duration="200">
-        <task id="t5" name="tps-test" sample="1000" delay="0" workload="w1">
+    <test id="test2" duration="200">
+        <task id="t5" sample="1000" delay="0" workload="w1">
             <tps id="tps1" value="10"/>
         </task>
     </test>

@@ -71,7 +71,7 @@ public class JaggerNamespaceHandlerTest {
     }
 
     private void checkTaskT2(ProcessingConfig.Test.Task task) {
-        Assert.assertEquals("task2",    task.getName());
+        Assert.assertEquals("t2",    task.getName());
         Assert.assertEquals(24250, (int)task.getSample());
         Assert.assertEquals(10,    (int)task.getDelay());
         Assert.assertEquals("bean2",    task.getWorkload());
@@ -82,7 +82,7 @@ public class JaggerNamespaceHandlerTest {
 
     private void checkTestTst1(ProcessingConfig.Test test) {
         checkTest(test, "2h", 2);
-        checkTask(test.getTasks().get(0), null, 34250, 0, "getTopLevelCategoryTreeCatalogService", null);
+        checkTask(test.getTasks().get(0), "tst1-task1", 34250, 0, "getTopLevelCategoryTreeCatalogService", null);
         checkTaskT1(test.getTasks().get(1));
     }
 
@@ -92,7 +92,7 @@ public class JaggerNamespaceHandlerTest {
     }
 
     private void checkTaskT1(ProcessingConfig.Test.Task task) {
-        checkTask(task, "task1", 34250, 0, "bean1", "200");
+        checkTask(task, "t1", 34250, 0, "bean1", "200");
     }
 
     private void checkInvocationI1(ProcessingConfig.Test.Task.Invocation invocation) {

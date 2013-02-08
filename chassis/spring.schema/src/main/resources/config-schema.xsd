@@ -247,11 +247,10 @@
         <xsd:complexContent>
             <xsd:extension base="basicType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element name="task" type="taskTypeIn"/>
+                    <xsd:element name="task" type="taskType" maxOccurs="unbounded"/>
                     <xsd:element ref="beans:bean"/>
                     <xsd:element ref="beans:ref"/>
                 </xsd:choice>
-                <xsd:attribute name="name" type="xsd:string"/>
                 <xsd:attribute name="duration" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
@@ -274,7 +273,6 @@
                     <xsd:element name="tps" type="tpsTypeIn" maxOccurs="1"/>
                     <xsd:element name="virtual-user" type="virtualUserTypeIn" maxOccurs="1"/>
                 </xsd:choice>
-                <xsd:attribute name="name" type="xsd:string" ></xsd:attribute>
                 <xsd:attribute name="duration" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="sample" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="delay" type="xsd:string"></xsd:attribute>

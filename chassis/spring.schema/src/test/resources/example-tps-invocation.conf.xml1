@@ -57,14 +57,14 @@
         <ref local="tst1"/>
     </jgr:test-plan>
 
-    <jgr:task id="t1" name="task1" sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService" duration="200">
+    <jgr:task id="t1" sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService" duration="200">
         <jgr:user id="u2" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
         <jgr:user id="u3" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
         <jgr:user id="u4" count="50" startCount="50" startIn="0" startBy="0" life="2h"/>
         <jgr:user ref="u1"/>
     </jgr:task>
 
-    <jgr:test id="tst1" duration="2h" name="[catalog-service]-getCategoryTree-[top-level]-hessian">
+    <jgr:test id="tst1" duration="2h">
         <jgr:task sample="34250" delay="0" workload="getTopLevelCategoryTreeCatalogService">
             <jgr:invocation exactcount="5" threads="2"/>
         </jgr:task>
@@ -73,19 +73,19 @@
         <ref local="t5"/>
     </jgr:test>
 
-    <jgr:task id="t2" name="task2" sample="24250" delay="10" workload="getTopLevelCategoryTreeCatalogService" duration="300">
+    <jgr:task id="t2" sample="24250" delay="10" workload="getTopLevelCategoryTreeCatalogService" duration="300">
         <jgr:invocation exactcount="5" threads="2"/>
     </jgr:task>
 
-    <jgr:task id="t3" name="task3" sample="100" delay="10" workload="getTopLevelCategoryTreeCatalogService" duration="300">
+    <jgr:task id="t3" sample="100" delay="10" workload="getTopLevelCategoryTreeCatalogService" duration="300">
         <jgr:tps id="tps2" value="100"/>
     </jgr:task>
 
-    <jgr:task id="t4" name="task4" sample="1000" delay="100" workload="getTopLevelCategoryTreeCatalogService" duration="300">
+    <jgr:task id="t4" sample="1000" delay="100" workload="getTopLevelCategoryTreeCatalogService" duration="300">
         <jgr:tps ref="tps1"/>
     </jgr:task>
 
-    <jgr:task id="t5" name="task5" sample="1000" delay="100" workload="getTopLevelCategoryTreeCatalogService" duration="300">
+    <jgr:task id="t5" sample="1000" delay="100" workload="getTopLevelCategoryTreeCatalogService" duration="300">
         <jgr:invocation ref="i1"/>
     </jgr:task>
 
