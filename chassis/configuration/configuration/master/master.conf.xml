@@ -84,6 +84,7 @@
     <bean id="compositeTaskDistributor" class="com.griddynamics.jagger.master.CompositeTaskDistributor">
         <property name="distributorRegistry" ref="distributorRegistry"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
+        <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
     </bean>
 
     <bean id="conditions" class="com.griddynamics.jagger.master.Conditions">
