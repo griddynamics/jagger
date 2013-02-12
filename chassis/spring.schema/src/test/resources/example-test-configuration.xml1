@@ -72,6 +72,7 @@
     <!--workload-->
 
     <metric id="metric1" xsi:type="simpleMetric"/>
+
     <endpointProvider id="endpointProvider1" xsi:type="simpleEndpointProvider">
         <endpoint>http://localhost:8090/sleep/5</endpoint>
         <endpoint>http://localhost:8090/sleep/25</endpoint>
@@ -113,7 +114,7 @@
 
         <loadBalancer xsi:type="roundRobinLoadBalancer"/>
 
-        <invoker xsi:type="httpInvoker"/>
+        <invoker xsi:type="invokerClass" class="com.griddynamics.jagger.invoker.http.HttpInvoker"/>
 
         <endpointProvider xsi:type="endpointProviderRef" ref="endpointProvider1"/>
 

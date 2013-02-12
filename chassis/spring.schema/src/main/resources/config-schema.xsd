@@ -555,10 +555,10 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="invokerRef">
+    <xsd:complexType name="invokerClass">
         <xsd:complexContent>
             <xsd:extension base="invokerType">
-                <xsd:attribute name="ref" type="xsd:IDREF" use="required"/>
+                <xsd:attribute name="class" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
