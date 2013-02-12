@@ -35,6 +35,7 @@ public class JaggerConfigurationTest {
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-test-configuration.xml1");
+        environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-test-configuration-import.xml1");
         ctx = JaggerLauncher.loadContext(directory,"chassis.master.configuration",environmentProperties);
     }
 
@@ -42,6 +43,13 @@ public class JaggerConfigurationTest {
     public void conf1Test(){
         Configuration config1 = (Configuration) ctx.getBean("config1");
         Assert.assertNotNull(config1);
+    }
+
+    @Test
+    public void conf2Test(){
+        Configuration config2 = (Configuration) ctx.getBean("config2");
+        Assert.assertNotNull(config2);
+        Assert.assertEquals(config2.getTasks().size(), 1);
     }
 
 
