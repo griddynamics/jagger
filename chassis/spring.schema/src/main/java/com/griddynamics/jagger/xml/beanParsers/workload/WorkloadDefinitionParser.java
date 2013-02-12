@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.xml.beanParsers.workload;
 
 import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
+import com.griddynamics.jagger.engine.e1.scenario.SkipCalibration;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
@@ -51,8 +52,10 @@ public class WorkloadDefinitionParser extends CustomBeanDefinitionParser{
         if (!element.getAttribute(XMLConstants.CALIBRATION).isEmpty())
             calibration = Boolean.parseBoolean(element.getAttribute(XMLConstants.CALIBRATION));
         element.removeAttribute(XMLConstants.CALIBRATION);
-        if (calibration){
+
+        if (calibration)
             builder.addPropertyValue(XMLConstants.CALIBRATOR, new OneNodeCalibrator());
-        }
+        else
+            builder.addPropertyValue(XMLConstants.CALIBRATOR, new SkipCalibration());
     }
 }
