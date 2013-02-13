@@ -27,7 +27,8 @@ import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData.ExecutionStatus;
 import com.griddynamics.jagger.master.DistributionListener;
-import com.griddynamics.jagger.master.configuration.SessionExecutionListener;
+import com.griddynamics.jagger.master.configuration.SessionListener;
+import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
@@ -48,7 +49,7 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
  *
  * @author Mairbek Khadikov
  */
-public class BasicAggregator extends HibernateDaoSupport implements DistributionListener, SessionExecutionListener {
+public class BasicAggregator extends HibernateDaoSupport implements DistributionListener, SessionListener {
     private static final Logger log = LoggerFactory.getLogger(BasicAggregator.class);
 
     private KeyValueStorage keyValueStorage;
@@ -60,6 +61,11 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
     @Override
     public void onSessionExecuted(String sessionId, String sessionComment) {
+        onSessionExecuted(sessionId, sessionComment, null);
+    }
+
+    @Override
+    public void onSessionExecuted(String sessionId, String sessionComment, SessionExecutionStatus status) {
         log.debug("onSessionExecuted invoked");
 
         Namespace namespace = Namespace.of(SESSION, sessionId);
@@ -83,7 +89,9 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
         Integer activeKernels = (Integer) getFirst(all, KERNELS_COUNT);
         sessionData.setActiveKernels(activeKernels);
-
+        if(status!=null){
+            sessionData.setErrorMessage(status.getStatus().getMessage());
+        }
         getHibernateTemplate().persist(sessionData);
     }
 

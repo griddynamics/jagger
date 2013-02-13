@@ -37,6 +37,7 @@ public class SessionData {
 	private Integer activeKernels;
 	private String comment;
     private transient String sessionName;
+    private String errorMessage;
 
 	@Id
 	@GeneratedValue
@@ -110,5 +111,13 @@ public class SessionData {
 
     public void setSessionName(String sessionName) {
         this.sessionName = sessionName;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }
