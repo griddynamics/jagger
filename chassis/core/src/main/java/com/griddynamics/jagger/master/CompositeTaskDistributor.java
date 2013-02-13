@@ -31,9 +31,12 @@ import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.TimeUtils;
+import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -44,8 +47,7 @@ import java.util.concurrent.*;
  */
 public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> {
     private static Logger log = LoggerFactory.getLogger(CompositeTaskDistributor.class);
-    private static final int START_TIMEOUT = 300000;
-    private static final int TERMINATION_TIMEOUT = 1800000;
+    private TimeoutsConfiguration timeoutsConfiguration;
 
     private DistributorRegistry distributorRegistry;
     private TaskIdProvider taskIdProvider;
@@ -56,6 +58,11 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
     public void setTaskIdProvider(TaskIdProvider taskIdProvider) {
         this.taskIdProvider = taskIdProvider;
+    }
+
+    @Required
+    public void setTimeoutsConfiguration(TimeoutsConfiguration timeoutsConfiguration) {
+        this.timeoutsConfiguration = timeoutsConfiguration;
     }
 
     @Override
@@ -78,6 +85,8 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
         return new AbstractDistributionService(executor) {
 
+            final List<Future<State>> leadingTerminateFutures = Lists.newLinkedList();
+
             @Override
             protected void run() throws Exception {
 
@@ -89,7 +98,7 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
                 }
 
                 for (Future<State> future : futures) {
-                    State state = Futures.get(future, START_TIMEOUT);
+                    State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
                     log.debug("Service started with state {}", state);
                 }
 
@@ -100,7 +109,6 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
                     TimeUtils.sleepMillis(500);
                 }
-
             }
 
             private int activeLeadingTasks() {
@@ -111,7 +119,7 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
                     Service service = it.next();
                     if (service.state() == State.TERMINATED || service.state() == State.FAILED) {
                         log.debug("State {}", service.state());
-                        stopAll(Collections.singleton(service), true);
+                        leadingTerminateFutures.addAll(requestTermination(Collections.singleton(service), true));
                         it.remove();
                     } else {
                         result++;
@@ -127,14 +135,9 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
                 super.shutDown();
             }
 
-            private void stopAll(Iterable<Service> services, boolean leading) {
-                List<Future<State>> leadingFutures = requestTermination(services, leading);
-                await(leadingFutures, leading);
-            }
-
             private void awaitLeading(List<Future<State>> leadingFutures) {
                 for (Future<State> future : leadingFutures) {
-                    Futures.get(future, TERMINATION_TIMEOUT);
+                    Futures.get(future, timeoutsConfiguration.getWorkloadStopTimeout());
                 }
             }
 
@@ -156,22 +159,18 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
             }
 
             private void stopAll() {
-                stopAll(leading, true);
-                stopAll(attendant, false);
-            }
+                List<Future<State>> leadingFutures = requestTermination(leading, true);
+                List<Future<State>> attendantFutures = requestTermination(attendant, false);
+                leadingFutures.addAll(leadingTerminateFutures);
 
-            private void await(List<Future<State>> futures, boolean leading) {
-                if (leading) {
-                    awaitLeading(futures);
-                } else {
-                    awaitAttendant(futures);
-                }
+                awaitLeading(leadingFutures);
+                awaitAttendant(attendantFutures);
             }
 
             private void awaitAttendant(List<Future<State>> attendantFutures) {
                 for (Future<State> future : attendantFutures) {
                     try {
-                        future.get(TERMINATION_TIMEOUT, TimeUnit.SECONDS);
+                        future.get(timeoutsConfiguration.getWorkloadStopTimeout(), TimeUnit.MILLISECONDS);
                     } catch (TimeoutException e) {
                         log.warn("Attendant task timeout", e);
                     } catch (InterruptedException e) {

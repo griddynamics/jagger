@@ -28,6 +28,7 @@ import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.engine.e1.process.*;
+import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +36,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class DefaultWorkloadController implements WorkloadController {
-    private static final int TIMEOUT = 3600000;
     private static final Logger log = LoggerFactory.getLogger(DefaultWorkloadController.class);
     private final String sessionId;
     private final String taskId;
     private final Map<NodeId, RemoteExecutor> remotes;
 
+    private final TimeoutsConfiguration timeoutsConfiguration;
     private final WorkloadTask task;
     private Progress progress;
     private Map<NodeId, String> processes;
@@ -48,11 +49,12 @@ public class DefaultWorkloadController implements WorkloadController {
     private Map<NodeId, Integer> delays;
     private Map<NodeId, Integer> poolSize;
 
-    public DefaultWorkloadController(String sessionId, String taskId, WorkloadTask task, Map<NodeId, RemoteExecutor> remotes) {
+    public DefaultWorkloadController(String sessionId, String taskId, WorkloadTask task, Map<NodeId, RemoteExecutor> remotes, TimeoutsConfiguration timeoutsConfiguration) {
         this.sessionId = Preconditions.checkNotNull(sessionId);
         this.taskId = Preconditions.checkNotNull(taskId);
         this.task = Preconditions.checkNotNull(task);
         this.remotes = ImmutableMap.copyOf(remotes);
+        this.timeoutsConfiguration = timeoutsConfiguration;
 
         progress = Progress.IDLE;
         processes = Maps.newHashMap();
@@ -81,7 +83,7 @@ public class DefaultWorkloadController implements WorkloadController {
             Integer samples = 0;
             String processId = processes.get(id);
             if (processId != null) {
-                samples = remote.runSyncWithTimeout(PollWorkloadProcessStatus.create(sessionId, processId), Coordination.<Command<Integer>>doNothing(), TIMEOUT);
+                samples = remote.runSyncWithTimeout(PollWorkloadProcessStatus.create(sessionId, processId), Coordination.<Command<Integer>>doNothing(), timeoutsConfiguration.getWorkloadPollingTimeout());
             }
 
             Integer threadsOnNode = threads.get(id);
@@ -142,7 +144,7 @@ public class DefaultWorkloadController implements WorkloadController {
             StopWorkloadProcess stop = StopWorkloadProcess.create(sessionId, processId);
 
             log.debug("Going to stop process {} on node {}", processId, id);
-            executor.runSyncWithTimeout(stop, Coordination.<Command>doNothing(), TIMEOUT);
+            executor.runSyncWithTimeout(stop, Coordination.<Command>doNothing(), timeoutsConfiguration.getWorkloadStopTimeout());
             log.debug("Process {} is stopped on node {}", processId, id);
         }
 
@@ -153,7 +155,7 @@ public class DefaultWorkloadController implements WorkloadController {
     private void changeWorkload(NodeId node, WorkloadConfiguration newConfiguration) {
         String processId = processes.get(node);
         RemoteExecutor remote = remotes.get(node);
-        remote.runSyncWithTimeout(ChangeWorkloadConfiguration.create(sessionId, processId, newConfiguration), Coordination.<Command>doNothing(), TIMEOUT);
+        remote.runSyncWithTimeout(ChangeWorkloadConfiguration.create(sessionId, processId, newConfiguration), Coordination.<Command>doNothing(), timeoutsConfiguration.getWorkloadPollingTimeout());
         threads.put(node, newConfiguration.getThreads());
         delays.put(node, newConfiguration.getDelay());
     }
@@ -171,7 +173,7 @@ public class DefaultWorkloadController implements WorkloadController {
         log.debug("Going to start process {} on node {}", start, node);
 
         RemoteExecutor remote = remotes.get(node);
-        String processId = remote.runSyncWithTimeout(start, Coordination.<StartWorkloadProcess>doNothing(), TIMEOUT);
+        String processId = remote.runSyncWithTimeout(start, Coordination.<StartWorkloadProcess>doNothing(), timeoutsConfiguration.getWorkloadStartTimeout());
 
         log.debug("Process with id {} is started on node {}", processId, node);
         processes.put(node, processId);

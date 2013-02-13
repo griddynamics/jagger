@@ -32,7 +32,7 @@
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="${chassis.storage.rdb.client.driver}" />
 		<property name="url" value="${chassis.storage.rdb.client.url}" />
 		<property name="username" value="${chassis.storage.rdb.username}" />

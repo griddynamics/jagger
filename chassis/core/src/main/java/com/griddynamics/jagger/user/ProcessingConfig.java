@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.user;
 
 import com.google.common.base.Preconditions;
+import com.griddynamics.jagger.reporting.ReportingService;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -127,10 +128,14 @@ public class ProcessingConfig implements Serializable {
             @Element(name="virtualUser", required = false)
             public VirtualUser virtualUser;
 
+            @Attribute(name = "attendant", required = false)
+            public final Boolean attendant;
+
             public Task(@Attribute(name = "name") String name,
                         @Attribute(name = "duration", required = false) String duration,
                         @Attribute(name = "sample", required = false) Integer sample,
                         @Attribute(name = "delay", required = false) Integer delay,
+                        @Attribute(name = "attendant", required = false) Boolean attendant,
                         @Attribute(name = "bean") String bean,
                         @ElementList(name = "users", entry = "user", inline = true, required = false) List<User> users,
                         @Element(name = "invocation", required = false) Invocation invocation,
@@ -149,6 +154,7 @@ public class ProcessingConfig implements Serializable {
                 this.users = Collections.unmodifiableList((users != null) ? users : new ArrayList<User>(0));
                 this.tps = tps;
                 this.invocation = invocation;
+			    this.attendant = (attendant != null) ? attendant : false;
                 this.setVirtualUser(virtualUser);
             }
 

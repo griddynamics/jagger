@@ -60,6 +60,11 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>jboss</groupId>
             <artifactId>jboss-serialization</artifactId>
         </dependency>
@@ -226,6 +231,11 @@
         <dependency>
             <groupId>org.simpleframework</groupId>
             <artifactId>simple-xml</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-core</artifactId>
         </dependency>
     </dependencies>
 </project>

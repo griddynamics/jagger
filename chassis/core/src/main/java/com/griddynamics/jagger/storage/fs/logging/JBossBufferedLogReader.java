@@ -2,16 +2,13 @@ package com.griddynamics.jagger.storage.fs.logging;
 
 import com.google.common.base.Throwables;
 import org.jboss.serial.io.JBossObjectInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class JBossBufferedLogReader extends BufferedLogReader {
-
-    private static class JBossLogReaderInput implements LogReaderInput {
+    //todo: changed to package local for hotfix in BufferedLogReader
+    static class JBossLogReaderInput implements LogReaderInput {
 
         private JBossObjectInputStream in;
 

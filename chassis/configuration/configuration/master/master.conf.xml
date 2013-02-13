@@ -84,11 +84,13 @@
     <bean id="workloadTaskDistributor"
           class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTaskDistributor">
         <property name="logInterval" value="${chassis.logging.period}"/>
+        <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
     </bean>
 
     <bean id="compositeTaskDistributor" class="com.griddynamics.jagger.master.CompositeTaskDistributor">
         <property name="distributorRegistry" ref="distributorRegistry"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
+        <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
     </bean>
 
     <bean id="conditions" class="com.griddynamics.jagger.master.Conditions">

@@ -42,6 +42,7 @@
 
     <bean id="workloadWorker" class="com.griddynamics.jagger.engine.e1.process.WorkloadWorker">
         <property name="logWriter" ref="bufferedLogWriter"/>
+        <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
     </bean>
 
     <bean id="monitoringWorker" class="com.griddynamics.jagger.monitoring.MonitoringWorker">

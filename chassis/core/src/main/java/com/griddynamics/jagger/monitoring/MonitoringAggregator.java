@@ -126,9 +126,14 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
             Iterator<MonitoringLogEntry> it = fileReader.iterator();
             while (it.hasNext()) {
                 MonitoringLogEntry logEntry = it.next();
-                    currentInterval = processLogEntry(sessionId, aggregationInfo, intervalSize, taskData, currentInterval,
-                            sumByIntervalAgent, countByIntervalAgent, sumByIntervalSuT, countByIntervalSuT, avgStatisticsByAgent,
-                            avgStatisticsBySuT, logEntry);
+                    try{
+                        currentInterval = processLogEntry(sessionId, aggregationInfo, intervalSize, taskData, currentInterval,
+                                sumByIntervalAgent, countByIntervalAgent, sumByIntervalSuT, countByIntervalSuT, avgStatisticsByAgent,
+                                avgStatisticsBySuT, logEntry);
+                    } catch (ClassCastException e){
+                        //HotFix for hessian de/serialization problem
+                        log.error("Deserialization problem: {}",e);
+                    }
             }
 
             fileReader.close();
