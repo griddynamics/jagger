@@ -500,6 +500,12 @@
                 <artifactId>jersey-core</artifactId>
                 <version>1.8</version>
             </dependency>
+
+            <dependency>
+                <groupId>trove</groupId>
+                <artifactId>trove</artifactId>
+                <version>1.0.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

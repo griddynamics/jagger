@@ -54,6 +54,11 @@
         </dependency>
 
         <dependency>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-serialization</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>biz.source_code</groupId>
             <artifactId>base64coder</artifactId>
         </dependency>
@@ -65,6 +70,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>trove</groupId>
+            <artifactId>trove</artifactId>
         </dependency>
     </dependencies>
 </project>

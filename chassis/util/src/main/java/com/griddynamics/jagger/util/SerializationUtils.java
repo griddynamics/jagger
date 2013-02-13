@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import biz.source_code.base64Coder.Base64Coder;
 import com.griddynamics.jagger.exception.TechnicalException;
+import org.jboss.serial.io.JBossObjectInputStream;
+import org.jboss.serial.io.JBossObjectOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +45,7 @@ public class SerializationUtils {
         }
         try {
             byte[] data = Base64Coder.decode(s);
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+            ObjectInputStream ois = new JBossObjectInputStream(new ByteArrayInputStream(data));
             T obj = (T) ois.readObject();
             ois.close();
             return obj;
@@ -60,7 +62,7 @@ public class SerializationUtils {
     public static String toString(Serializable o) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            ObjectOutputStream oos = new JBossObjectOutputStream(baos);
             oos.writeObject(o);
             oos.close();
         } catch (IOException e) {
@@ -78,7 +80,7 @@ public class SerializationUtils {
     public static byte[] serialize(Object obj) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream ous = new ObjectOutputStream(baos);
+            ObjectOutputStream ous = new JBossObjectOutputStream(baos);
             ous.writeObject(obj);
             ous.close();
 
@@ -91,7 +93,7 @@ public class SerializationUtils {
     public static Object deserialize(byte[] data) {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(data);
-            ObjectInputStream ois = new ObjectInputStream(bais);
+            ObjectInputStream ois = new JBossObjectInputStream(bais);
             Object payload = ois.readObject();
             ois.close();
 
