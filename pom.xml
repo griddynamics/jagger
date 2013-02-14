@@ -24,7 +24,7 @@
 
     <groupId>com.griddynamics.jagger</groupId>
     <artifactId>parent</artifactId>
-    <version>1.1.4-SNAPSHOT</version>
+    <version>1.1.4-springConfig-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${groupId}.${artifactId}</name>
@@ -47,7 +47,6 @@
         <module>webclient</module>
         <module>test/jagger-test</module>
         <module>test/test-target</module>
-        <module></module>
     </modules>
 
     <scm>
