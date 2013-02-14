@@ -129,7 +129,7 @@ public class ProcessingConfig implements Serializable {
             public VirtualUser virtualUser;
 
             @Attribute(name = "attendant", required = false)
-            public final Boolean attendant;
+            public Boolean attendant;
 
             public Task(@Attribute(name = "name") String name,
                         @Attribute(name = "duration", required = false) String duration,
