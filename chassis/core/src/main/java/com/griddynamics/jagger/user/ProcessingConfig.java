@@ -129,7 +129,7 @@ public class ProcessingConfig implements Serializable {
             public VirtualUser virtualUser;
 
             @Attribute(name = "attendant", required = false)
-            public Boolean attendant;
+            public boolean attendant;
 
             public Task(@Attribute(name = "name") String name,
                         @Attribute(name = "duration", required = false) String duration,
@@ -159,6 +159,14 @@ public class ProcessingConfig implements Serializable {
             }
 
             public Task() {
+            }
+
+            public boolean isAttendant() {
+                return attendant;
+            }
+
+            public void setAttendant(boolean attendant) {
+                this.attendant = attendant;
             }
 
             public String getWorkload() {
