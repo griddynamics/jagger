@@ -80,7 +80,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     }
 
     public void init() {
-        String[] jmxServicePorts = this.jmxServices.split(";");
+        String[] jmxServicePorts = this.jmxServices.split(",");
         JMXConnector connector;
         for (String service : jmxServicePorts) {
             try {

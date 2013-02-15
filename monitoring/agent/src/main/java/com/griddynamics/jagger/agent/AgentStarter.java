@@ -117,7 +117,7 @@ public class AgentStarter {
     }
 
     private static String generateAgentName() {
-        return "AGENT-";
+        return "AGENT-" + new Random().nextInt();
     }
 
     private static String getAgentNameFromContext(ApplicationContext context) {
