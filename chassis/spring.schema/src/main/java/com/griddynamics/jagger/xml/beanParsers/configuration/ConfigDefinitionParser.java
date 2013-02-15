@@ -3,6 +3,7 @@ package com.griddynamics.jagger.xml.beanParsers.configuration;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.master.configuration.UserTaskGenerator;
+import com.griddynamics.jagger.xml.TaskGeneratorBean;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.xml.DomUtils;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 /**
@@ -32,14 +32,14 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-
+        builder.setLazyInit(true);
         Element report = DomUtils.getChildElementByTagName(element, XMLConstants.REPORT);
         String reportName = element.getAttribute(XMLConstants.ID)+"-report";
         if (report!=null) {
             BeanDefinition bean = parserContext.getDelegate().parseCustomElement(report, builder.getBeanDefinition());
             parserContext.getRegistry().registerBeanDefinition(reportName,bean);
         }else{
-            parserContext.getRegistry().registerAlias(reportName, XMLConstants.DEFAULT_REPORTING_SERVICE);
+            parserContext.getRegistry().registerAlias(XMLConstants.DEFAULT_REPORTING_SERVICE, reportName);
         }
 
         initListeners(element,parserContext, builder);
@@ -47,13 +47,13 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
         //parse test-plan
         Element testPlan = DomUtils.getChildElementByTagName(element, XMLConstants.TEST_PLAN);
 
-        BeanDefinitionBuilder generator = BeanDefinitionBuilder.genericBeanDefinition(UserTaskGenerator.class);
-        parserContext.getRegistry().registerBeanDefinition(XMLConstants.GENERATOR, generator.getBeanDefinition());
+        TaskGeneratorBean generator = new TaskGeneratorBean();
+        parserContext.getRegistry().registerBeanDefinition(generator.getName(), generator.getBean());
 
-        generator.addPropertyValue(XMLConstants.MONITORING_ENABLE, monitoringEnable);
+        generator.getBean().getPropertyValues().addPropertyValue(XMLConstants.MONITORING_ENABLE, monitoringEnable);
 
-        generator.addPropertyValue(XMLConstants.CONFIG, parseCustomElement(testPlan, parserContext, generator.getBeanDefinition()));
-        builder.addPropertyValue(XMLConstants.TASKS, XMLConstants.GENERATOR_GENERATE);
+        generator.getBean().getPropertyValues().addPropertyValue(XMLConstants.CONFIG, parseCustomElement(testPlan, parserContext, generator.getBean()));
+        builder.addPropertyValue(XMLConstants.TASKS, generator.generateTasks());
     }
 
     @Override

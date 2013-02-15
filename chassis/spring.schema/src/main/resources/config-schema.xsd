@@ -273,6 +273,7 @@
                     <xsd:element name="tps" type="tpsTypeIn" maxOccurs="1"/>
                     <xsd:element name="virtual-user" type="virtualUserTypeIn" maxOccurs="1"/>
                 </xsd:choice>
+                <xsd:attribute name="attendant" type="xsd:boolean" default="false"/>
                 <xsd:attribute name="duration" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="sample" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="delay" type="xsd:string"></xsd:attribute>
@@ -521,10 +522,10 @@
         <xsd:complexContent>
             <xsd:extension base="scenarioType">
                 <xsd:all>
-                    <xsd:element ref="invoker" minOccurs="1" maxOccurs="1"/>
-                    <xsd:element ref="queryProvider" minOccurs="1" maxOccurs="1"/>
-                    <xsd:element ref="endpointProvider" minOccurs="1" maxOccurs="1"/>
-                    <xsd:element ref="loadBalancer" minOccurs="1" maxOccurs="1"/>
+                    <xsd:element ref="invoker" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element ref="queryProvider" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element ref="endpointProvider" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element ref="loadBalancer" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
             </xsd:extension>
         </xsd:complexContent>
