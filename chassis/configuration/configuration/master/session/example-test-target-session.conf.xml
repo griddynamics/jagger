@@ -37,6 +37,7 @@
                 <ref bean="e1MasterCollector"/>
                 <ref bean="basicAggregator"/>
                 <ref bean="e1ScenarioAggregator"/>
+                <ref bean="monitoringAggregator"/>
                 <ref bean="durationLogProcessor"/>
             </list>
         </property>
