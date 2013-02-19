@@ -56,7 +56,7 @@ public class RemoteMultiThreadInfoProvider implements ThreadInfoProvider {
 
     @Override
     public Set<String> getIdentifiersSuT() {
-        return Sets.newHashSet(this.jmxServices.split(";"));
+        return Sets.newHashSet(this.jmxServices.split(","));
     }
 
     @Override
@@ -110,7 +110,7 @@ public class RemoteMultiThreadInfoProvider implements ThreadInfoProvider {
             }
             this.jmxServices = jmxServices;
 
-            Set<String> jmxServicesSet = Sets.newHashSet(this.jmxServices.split(";"));
+            Set<String> jmxServicesSet = getIdentifiersSuT();
             for (String service : jmxServicesSet) {
 
                 JMXConnector connect = JMXConnectorFactory.connect(
