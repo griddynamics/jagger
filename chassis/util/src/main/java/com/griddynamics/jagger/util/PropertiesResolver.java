@@ -44,6 +44,7 @@ public class PropertiesResolver extends PropertyPlaceholderConfigurer {
 
     public void setRegistry(PropertiesResolverRegistry registry) {
         this.registry = registry;
+        loadSystemProperties();
     }
 
     public void setResources(List<Resource> resources) {
@@ -55,13 +56,17 @@ public class PropertiesResolver extends PropertyPlaceholderConfigurer {
                     registry.addProperty(name, properties.getProperty(name));
                 }
             }
-            Properties propertiesSys = System.getProperties();
-            for (Enumeration<String> enumeration = (Enumeration<String>) propertiesSys.propertyNames(); enumeration.hasMoreElements(); ) {
-                String key = enumeration.nextElement();
-                registry.addProperty(key, (String) propertiesSys.get(key));
-            }
+            loadSystemProperties();
         } catch (IOException e) {
             throw new TechnicalException(e);
+        }
+    }
+
+    private void loadSystemProperties(){
+        Properties propertiesSys = System.getProperties();
+        for (Enumeration<String> enumeration = (Enumeration<String>) propertiesSys.propertyNames(); enumeration.hasMoreElements(); ) {
+            String key = enumeration.nextElement();
+            registry.addProperty(key, (String) propertiesSys.get(key));
         }
     }
 }

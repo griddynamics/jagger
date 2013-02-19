@@ -88,7 +88,11 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
         }
 
         for(String rootPropertyName : rootProperties.stringPropertyNames()) {
-            property = property.replaceAll("\\$\\{" + rootPropertyName + "\\}", rootProperties.getProperty(rootPropertyName));
+            String resolvedProperty=properties.getProperty(rootPropertyName);
+            if(resolvedProperty==null){
+                resolvedProperty=rootProperties.getProperty(rootPropertyName);
+            }
+            property = property.replaceAll("\\$\\{" + rootPropertyName + "\\}", resolvedProperty);
         }
 
         return property;
