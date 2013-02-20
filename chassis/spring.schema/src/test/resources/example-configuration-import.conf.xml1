@@ -44,7 +44,7 @@
 
     </configuration>
 
-    <test-suite id="test-plan-1">
+    <test-suite id="test-plan-2">
         <test-group id="group1">
             <test id="tst1" testDescription="w1">
                 <load xsi:type="load-tps" value="100"/>
@@ -52,7 +52,7 @@
             </test>
 
             <test id="tst2" testDescription="w1">
-                <load xsi:type="load-user-group" count="100" life="2h"/>
+                <load xsi:type="load-user-group" count="100" life="2h" startCount="100" startIn="0" startBy="0"/>
                 <termination xsi:type="termination-background" />
             </test>
         </test-group>

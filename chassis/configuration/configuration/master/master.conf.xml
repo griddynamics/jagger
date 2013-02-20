@@ -35,10 +35,6 @@
         </property>
     </bean>
 
-    <bean id="configNameReportProvider" class="com.griddynamics.jagger.reporting.CurrentConfigurationReportProvider">
-        <property name="configurationName" value="${chassis.master.session.configuration.bean.name}"/>
-    </bean>
-
     <bean id="master" class="com.griddynamics.jagger.master.Master">
         <property name="configuration" ref="${chassis.master.session.configuration.bean.name}"/>
         <property name="coordinator" ref="coordinator"/>
@@ -47,7 +43,7 @@
         <property name="reconnectPeriod" value="${chassis.coordinator.reconnect.period}"/>
         <property name="distributorRegistry" ref="distributorRegistry"/>
         <property name="keyValueStorage" ref="h2KeyValueStorage"/>
-        <property name="reportingServiceProvider" ref="configNameReportProvider"/>
+        <property name="reportingService" ref="reportingService"/>
         <property name="conditions" ref="conditions"/>
         <property name="executor" ref="coreExecutor"/>
         <property name="agentManagementProps">

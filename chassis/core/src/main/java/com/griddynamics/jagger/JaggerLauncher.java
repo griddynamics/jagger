@@ -64,6 +64,9 @@ public final class JaggerLauncher {
     public static final String DEFAULT_ENVIRONMENT_PROPERTIES = "jagger.default.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
 
+
+    private static final String DEFAULT_ENVIRONMENT_PROPERTIES_LOCATION = "./configuration/basic/default.environment.properties";
+
     private static final Properties environmentProperties = new Properties();
 
     private static final Launches.LaunchManagerBuilder builder = Launches.builder();
@@ -314,14 +317,15 @@ public final class JaggerLauncher {
         environmentProperties.load(bootPropertiesFile.openStream());
 
         String defaultBootPropertiesLocation = environmentProperties.getProperty(DEFAULT_ENVIRONMENT_PROPERTIES);
-        if (defaultBootPropertiesLocation != null) {
-            URL defaultBootPropertiesFile = new URL(directory, defaultBootPropertiesLocation);
-            Properties defaultBootProperties = new Properties();
-            defaultBootProperties.load(defaultBootPropertiesFile.openStream());
-            for (String name : defaultBootProperties.stringPropertyNames()) {
-                if (!environmentProperties.containsKey(name)) {
-                    environmentProperties.setProperty(name, defaultBootProperties.getProperty(name));
-                }
+        if(defaultBootPropertiesLocation==null){
+            defaultBootPropertiesLocation=DEFAULT_ENVIRONMENT_PROPERTIES_LOCATION;
+        }
+        URL defaultBootPropertiesFile = new URL(directory, defaultBootPropertiesLocation);
+        Properties defaultBootProperties = new Properties();
+        defaultBootProperties.load(defaultBootPropertiesFile.openStream());
+        for (String name : defaultBootProperties.stringPropertyNames()) {
+            if (!environmentProperties.containsKey(name)) {
+                environmentProperties.setProperty(name, defaultBootProperties.getProperty(name));
             }
         }
 

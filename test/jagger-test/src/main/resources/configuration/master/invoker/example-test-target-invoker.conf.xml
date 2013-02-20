@@ -22,8 +22,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:lang="http://www.springframework.org/schema/lang"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-						http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd">
+						http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean id="emptyQuery" class="com.griddynamics.jagger.invoker.http.HttpQuery">
         <property name="method" value="GET" />
@@ -58,13 +59,7 @@
                         <ref bean="emptyQuery"/>
                     </list>
                 </constructor-arg>
-                <constructor-arg>
-                    <list>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/5</value>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/5</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/5</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/5</value>
-                    </list>
+                <constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/5')}">
                 </constructor-arg>
             </bean>
         </property>
@@ -79,13 +74,7 @@
                         <ref bean="emptyQuery"/>
                     </list>
                 </constructor-arg>
-                <constructor-arg>
-                    <list>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/10</value>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/10</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/10</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/10</value>
-                    </list>
+                <constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/10')}">
                 </constructor-arg>
             </bean>
         </property>
@@ -100,13 +89,7 @@
                         <ref bean="emptyQuery"/>
                     </list>
                 </constructor-arg>
-                <constructor-arg>
-                    <list>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/pulse/30000/500</value>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/pulse/30000/500</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/pulse/30000/500</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/pulse/30000/500</value>
-                    </list>
+                <constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/pulse/30000/500')}">
                 </constructor-arg>
             </bean>
         </property>
@@ -121,13 +104,7 @@
                         <ref bean="emptyQuery"/>
                     </list>
                 </constructor-arg>
-                <constructor-arg>
-                    <list>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/50</value>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/50</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/50</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/50</value>
-                    </list>
+                <constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/50')}">
                 </constructor-arg>
             </bean>
         </property>
@@ -142,13 +119,7 @@
                         <ref bean="emptyQuery"/>
                     </list>
                 </constructor-arg>
-                <constructor-arg>
-                    <list>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8080/sleep/50-150</value>
-                        <value>http://jagger-ci4.vm.griddynamics.net:8090/sleep/50-150</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/50-150</value>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8090/sleep/50-150</value>
-                    </list>
+                <constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/50-150')}">
                 </constructor-arg>
             </bean>
         </property>
@@ -163,10 +134,7 @@
                         <value type="com.griddynamics.jagger.util.Nothing">INSTANCE</value>
                     </list>
                 </constructor-arg>
-                <constructor-arg>
-                    <list>
-                        <value>http://jagger-ci5.vm.griddynamics.net:8080/sleep/5</value>
-                    </list>
+                <constructor-arg value="#{endpointConfigurator.getEndpoint('/sleep/5')}">
                 </constructor-arg>
             </bean>
         </property>

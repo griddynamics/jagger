@@ -23,7 +23,7 @@
         <property name="warningDeviationThreshold" value="0.9"/>
     </bean>
 
-    <jgr:report rootTemplateLocation="custom-root-template.jrxml"
+    <jgr:report id="report1" rootTemplateLocation="custom-root-template.jrxml"
 				outputReportLocation="custom-report.pdf">
 
         <jgr:extensions>

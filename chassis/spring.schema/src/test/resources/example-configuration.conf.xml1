@@ -63,7 +63,7 @@
         <test-group id="group2">
             <test id="tst3" testDescription="w1">
                 <load xsi:type="load-user-groups">
-                    <user count="23" life="2h"/>
+                    <user count="22" life="2h" startIn="0" startBy="0" startCount="2"/>
                 </load>
                 <termination xsi:type="termination-iterations" iterations="100"/>
             </test>

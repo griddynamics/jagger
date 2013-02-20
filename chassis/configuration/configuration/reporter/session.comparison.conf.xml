@@ -31,14 +31,21 @@
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator">
 
         <property name="comparatorChain">
-            <list>
-                <ref bean="workloadFeatureComparator"/>
-                <ref bean="monitoringFeatureComparator"/>
-            </list>
+            <ref bean="comparators_${chassis.engine.e1.reporting.session.comparison.monitoring.active}"/>
         </property>
         <property name="decisionMaker" ref="worstCaseDecisionMaker"/>
 
     </bean>
+
+    <util:list id="comparators_true">
+        <ref bean="workloadFeatureComparator"/>
+        <ref bean="monitoringFeatureComparator"/>
+    </util:list>
+
+    <util:list id="comparators_false">
+        <ref bean="workloadFeatureComparator"/>
+    </util:list>
+
 
     <bean id="workloadFeatureComparator"
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadFeatureComparator">

@@ -43,16 +43,9 @@
         </property>
     </bean>
 
-    <bean id="testTargetConfiguration" parent="abstractTestTargetConfiguration">
-        <property name="tasks" value="#{taskUtilInternal.generate()}"/>
-    </bean>
 
     <bean id="testHttpTargetConfiguration" parent="abstractTestTargetConfiguration">
         <property name="tasks" value="#{taskUtilHttpDemo.generate()}"/>
-    </bean>
-
-    <bean id="testTcpTrafficTargetConfiguration" parent="abstractTestTargetConfiguration">
-        <property name="tasks" value="#{taskUtilTcpTraffic.generate()}"/>
     </bean>
 
     <bean id="testTargetAbstractWorkload" abstract="true"
@@ -79,48 +72,7 @@
         </property>
     </bean>
 
-    <bean id="sleep5msServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
-          parent="testTargetAbstractWorkload">
-        <property name="name" value="sleep-service-5ms"/>
-        <property name="version" value="1"/>
-        <property name="scenarioFactory" ref="sleep5msInvoker"/>
-    </bean>
 
-    <!--<bean id="unreliableInvokerServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"-->
-    <!--parent="testTargetAbstractWorkload">-->
-    <!--<property name="name" value="unreliableInvoker-rate-0.001"/>-->
-    <!--<property name="version" value="1"/>-->
-    <!--<property name="scenarioFactory" ref="unreliableInvoker"/>-->
-    <!--</bean>-->
-
-    <bean id="sleep10msServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
-          parent="testTargetAbstractWorkload">
-        <property name="name" value="sleep-service-10ms"/>
-        <property name="version" value="1"/>
-        <property name="scenarioFactory" ref="sleep10msInvoker"/>
-    </bean>
-
-    <bean id="sleep50msServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
-          parent="testTargetAbstractWorkload">
-        <property name="name" value="sleep-service-50ms"/>
-        <property name="version" value="1"/>
-        <property name="scenarioFactory" ref="sleep50msInvoker"/>
-
-    </bean>
-
-    <bean id="sleepRandomServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
-          parent="testTargetAbstractWorkload">
-        <property name="name" value="sleep-random-service-50-150ms"/>
-        <property name="version" value="1"/>
-        <property name="scenarioFactory" ref="sleepRandomServiceInvoker"/>
-    </bean>
-
-    <bean id="pulseServiceScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
-          parent="testTargetAbstractWorkload">
-        <property name="name" value="pulse-invoker"/>
-        <property name="version" value="1"/>
-        <property name="scenarioFactory" ref="pulseInvoker"/>
-    </bean>
 
     <bean id="googlePageWithQueryPoolScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
           parent="testTargetAbstractWorkload">
@@ -129,79 +81,7 @@
         <property name="scenarioFactory" ref="googlePageWithQueryPool"/>
     </bean>
 
-    <bean id="tcpTrafficScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
-          parent="testTargetAbstractWorkload">
-        <property name="name" value="tcp-traffic-scenario"/>
-        <property name="version" value="1"/>
-        <property name="scenarioFactory" ref="tcpTrafficScenarioFactory"/>
-    </bean>
 
-    <bean id="taskUtilInternal" class="com.griddynamics.jagger.master.configuration.WorkloadTasksGenerator">
-        <property name="prototypes">
-            <list>
-                <ref bean="sleep5msServiceScenario"/>
-                <!--<ref bean="unreliableInvokerServiceScenario"/>-->
-                <ref bean="sleep10msServiceScenario"/>
-                <ref bean="pulseServiceScenario"/>
-                <ref bean="sleepRandomServiceScenario"/>
-            </list>
-        </property>
-        <property name="clocks">
-            <list>
-                <!--&lt;!&ndash; &ndash;&gt;-->
-                <!--<bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">-->
-                <!--<property name="tickInterval" value="1000"/>-->
-                <!--<property name="users" value="1"/>-->
-                <!--</bean>-->
-                <!--<bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">-->
-                <!--<property name="tickInterval" value="1000"/>-->
-                <!--<property name="users" value="3"/>-->
-                <!--</bean>-->
-                <!--<bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">-->
-                <!--<property name="tickInterval" value="1000"/>-->
-                <!--<property name="users" value="7"/>-->
-                <!--</bean>-->
-                <bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">
-                    <property name="tickInterval" value="1000"/>
-                    <property name="users" value="14"/>
-                </bean>
-                <!--
-                            <bean class="com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration">
-                                <property name="tps" value="10"/>
-                                <property name="tickInterval" value="500"/>
-                            </bean>
-
-                            <bean class="com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration">
-                                <property name="tps" value="15"/>
-                                <property name="tickInterval" value="500"/>
-                            </bean>
-                            <bean class="com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration">
-                                <property name="tps" value="25"/>
-                                <property name="tickInterval" value="500"/>
-                            </bean>
-                            <bean class="com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration">
-                                <property name="tps" value="50"/>
-                                <property name="tickInterval" value="500"/>
-                            </bean>
-                             -->
-            </list>
-        </property>
-        <property name="terminations">
-            <list>
-                <bean class="com.griddynamics.jagger.engine.e1.scenario.TerminateByDuration">
-                    <property name="seconds" value="10"/>
-                </bean>
-            </list>
-        </property>
-        <property name="attendantMonitoring">
-            <bean class="com.griddynamics.jagger.monitoring.MonitoringTask">
-                <property name="name" value="Monitoring"/>
-                <property name="terminationStrategy">
-                    <bean class="com.griddynamics.jagger.monitoring.InfiniteDuration"/>
-                </property>
-            </bean>
-        </property>
-    </bean>
 
     <bean id="taskUtilHttpDemo" class="com.griddynamics.jagger.master.configuration.WorkloadTasksGenerator">
         <property name="prototypes">
@@ -229,36 +109,6 @@
         </property>
     </bean>
 
-    <bean id="taskUtilTcpTraffic" class="com.griddynamics.jagger.master.configuration.WorkloadTasksGenerator">
-        <property name="prototypes">
-            <list>
-                <ref bean="tcpTrafficScenario"/>
-            </list>
-        </property>
-        <property name="clocks">
-            <list>
-                <bean class="com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration">
-                    <property name="tickInterval" value="1000"/>
-                    <property name="users" value="1"/>
-                </bean>
-            </list>
-        </property>
-        <property name="terminations">
-            <list>
-                <bean class="com.griddynamics.jagger.engine.e1.scenario.TerminateByDuration">
-                    <property name="seconds" value="2"/>
-                </bean>
-            </list>
-        </property>
-        <property name="attendantMonitoring">
-            <bean class="com.griddynamics.jagger.monitoring.MonitoringTask">
-                <property name="name" value="Monitoring"/>
-                <property name="terminationStrategy">
-                    <bean class="com.griddynamics.jagger.monitoring.InfiniteDuration"/>
-                </property>
-            </bean>
-        </property>
-    </bean>
 
     <bean id="userTaskGenerator" class="com.griddynamics.jagger.master.configuration.UserTaskGenerator">
         <property name="monitoringEnable" value="${chassis.conditions.monitoring.enable}"/>

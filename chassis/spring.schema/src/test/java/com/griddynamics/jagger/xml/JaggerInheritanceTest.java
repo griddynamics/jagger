@@ -8,7 +8,6 @@ import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Configuration;
-import com.griddynamics.jagger.reporting.CurrentConfigurationReportProvider;
 import com.griddynamics.jagger.reporting.ReportingService;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
@@ -42,10 +41,8 @@ public class JaggerInheritanceTest {
     @Test
     public void testReportInheritance(){
         Configuration config1 = (Configuration) ctx.getBean("config1");
-        CurrentConfigurationReportProvider reportProvider = new CurrentConfigurationReportProvider();
 
-        reportProvider.setConfigurationName("config1");
-        ReportingService report = (ReportingService) reportProvider.getReportingService(config1, ctx);
+        ReportingService report = config1.getReport();
 
         Assert.assertNotNull(report);
         Assert.assertEquals(report.getOutputReportLocation(), "config2-report.pdf");

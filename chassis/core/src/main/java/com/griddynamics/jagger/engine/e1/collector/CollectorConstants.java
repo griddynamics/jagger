@@ -42,6 +42,7 @@ public class CollectorConstants {
     public static final String INVOKED = "invoked";
     public static final String FAILED = "failed";
     public static final String RESULT = "result";
+    public static final String ERROR_MESSAGE = "error_message";
 
 
 }

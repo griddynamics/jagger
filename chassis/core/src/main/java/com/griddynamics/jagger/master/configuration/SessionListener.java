@@ -18,26 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.griddynamics.jagger.util;
+package com.griddynamics.jagger.master.configuration;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+/**
+ * Listens to session execution on master side.
+ * 
+ * @author Mairbek Khadikov
+ * 
+ */
+public interface SessionListener extends SessionExecutionListener {
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-public class PropertiesResolverTest {
-
-    @Test
-    public void testPropertiesResolver() throws MalformedURLException {
-        ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"spring/test-properties-resolver.xml"});
-        // test
-        Assert.assertEquals(context.getBean("stringA"), "x-override");
-        Assert.assertEquals(context.getBean("stringB"), "x-override/ex");
-        Assert.assertEquals(context.getBean("stringC"), "x-override/y-default/ex");
-        Assert.assertEquals(context.getBean("stringD"), "x-override+y-default");
-        Assert.assertEquals(context.getBean("stringE"), "z-priority+x-override+y-default");
-    }
+	/**
+	 * Invoked when session execution is completed.
+	 * 
+	 * @param sessionId
+	 *            session identifier
+     * @param errorStatus
+     *            session error status
+	 */
+	void onSessionExecuted(String sessionId, String sessionComment, SessionExecutionStatus errorStatus);
 }

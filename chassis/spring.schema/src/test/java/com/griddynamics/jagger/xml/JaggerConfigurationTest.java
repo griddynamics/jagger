@@ -5,9 +5,7 @@ import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcesso
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Configuration;
-import com.griddynamics.jagger.reporting.CurrentConfigurationReportProvider;
 import com.griddynamics.jagger.reporting.ReportingService;
-import com.griddynamics.jagger.reporting.ReportingServiceProvider;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -36,11 +34,10 @@ public class JaggerConfigurationTest {
 
     @BeforeClass
     public void testInit() throws Exception{
-        URL directory = new URL("file:" + "../configuration/");
+        URL directory = new URL("file:" + "/home/kgribov/JAGGER_HOME/jagger/chassis/configuration/");
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-configuration.conf.xml1");
-        //environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-configuration-import.conf.xml1");
         ctx = JaggerLauncher.loadContext(directory,"chassis.master.configuration",environmentProperties);
     }
 
@@ -99,10 +96,7 @@ public class JaggerConfigurationTest {
     public void conf1ReportTest(){
         Configuration config1 = (Configuration) ctx.getBean("config1");
 
-        CurrentConfigurationReportProvider provider = new CurrentConfigurationReportProvider();
-        provider.setConfigurationName("config1");
-
-        ReportingService reportingService = provider.getReportingService(config1, ctx);
+        ReportingService reportingService = config1.getReport();
         Assert.assertNotNull(reportingService);
     }
 

@@ -22,6 +22,7 @@ package com.griddynamics.jagger.master.configuration;
 
 import java.util.List;
 
+import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.reporting.ReportingService;
 import org.springframework.beans.factory.annotation.Required;

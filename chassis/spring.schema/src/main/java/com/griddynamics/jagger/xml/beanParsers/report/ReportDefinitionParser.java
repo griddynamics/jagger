@@ -28,15 +28,10 @@ public class ReportDefinitionParser extends AbstractSimpleBeanDefinitionParser {
     public void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element,parserContext,builder);
         builder.setParentName(XMLConstants.DEFAULT_REPORTING_SERVICE);
-        element.setAttribute(XMLConstants.ID, XMLConstants.CUSTOM_REPORTING_SERVICE);
 
         List<Element> elements = DomUtils.getChildElements(element);
         for(Element el : elements){
             parserContext.getDelegate().parseCustomElement(el);
         }
-        if(parserContext.getRegistry().getAliases(XMLConstants.REPORTING_SERVICE).length>0){
-            parserContext.getRegistry().removeAlias(XMLConstants.REPORTING_SERVICE);
-        }
-        parserContext.getRegistry().registerAlias(XMLConstants.CUSTOM_REPORTING_SERVICE, XMLConstants.REPORTING_SERVICE);
     }
 }

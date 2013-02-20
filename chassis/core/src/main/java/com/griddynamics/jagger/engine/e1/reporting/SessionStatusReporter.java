@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
+import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
@@ -46,11 +47,25 @@ public class SessionStatusReporter extends AbstractReportProvider {
 		List<WorkloadTaskData> scenarioData = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
 				getSessionIdProvider().getSessionId());
 
+
+        List<SessionData> sessionData = getHibernateTemplate().find("from SessionData d where d.sessionId=?",
+                getSessionIdProvider().getSessionId());
+
         SessionStatus result = new SessionStatus();
+        result.setMessage(decisionMaker.getDescription());
 
         result.setDecision(decisionMaker.decideOnSession(scenarioData));
+        if(sessionData.size()==1){
+            String errorMessage=sessionData.get(0).getErrorMessage();
+            if(errorMessage!=null){
+                log.info("Session status changed to fatal cause error message is {}", errorMessage);
+                result.setDecision(Decision.FATAL);
+                result.setMessage("Session error: "+errorMessage);
+            }
+        } else{
+            log.warn("Session data has unexpected size: {}",sessionData.size());
+        }
         result.setStatusImage(statusImageProvider.getImageByDecision(result.getDecision()));
-        result.setMessage(decisionMaker.getDescription());
 
         return new JRBeanCollectionDataSource(Collections.singletonList(result));
     }

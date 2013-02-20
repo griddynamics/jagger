@@ -84,7 +84,7 @@ public class JaggerReportTest {
 
     @Test
     public void checkReportingService(){
-        ReportingService service=(ReportingService) context.getBean("reportingService");
+        ReportingService service=(ReportingService) context.getBean("report1");
         assertEquals(service.getReportType().toString(),"PDF");
         assertEquals(service.getRootTemplateLocation(), "custom-root-template.jrxml");
         assertEquals(service.getOutputReportLocation(),"custom-report.pdf");

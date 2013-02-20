@@ -34,7 +34,6 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         builder.setLazyInit(true);
         Element report = DomUtils.getChildElementByTagName(element, XMLConstants.REPORT);
-        String reportName = element.getAttribute(XMLConstants.ID)+"-"+XMLConstants.REPORT;
         if (report!=null) {
             BeanDefinition bean = parserContext.getDelegate().parseCustomElement(report, builder.getBeanDefinition());
             builder.addPropertyValue(XMLConstants.REPORT,bean);

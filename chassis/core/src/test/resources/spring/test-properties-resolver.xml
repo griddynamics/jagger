@@ -30,6 +30,11 @@
                 <value>spring/root.properties</value>
             </list>
         </property>
+        <property name="priorityResources">
+            <list>
+                <value>spring/priority.properties</value>
+            </list>
+        </property>
     </bean>
 
     <bean class="com.griddynamics.jagger.util.PropertiesResolver">
@@ -64,6 +69,10 @@
 
     <bean id="stringD" class="java.lang.String">
         <constructor-arg value="${spec-3}"/>
+    </bean>
+
+    <bean id="stringE" class="java.lang.String">
+        <constructor-arg value="${spec-4}"/>
     </bean>
 
 </beans>
