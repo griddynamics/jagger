@@ -34,7 +34,7 @@ public class JaggerConfigurationTest {
 
     @BeforeClass
     public void testInit() throws Exception{
-        URL directory = new URL("file:" + "/home/kgribov/JAGGER_HOME/jagger/chassis/configuration/");
+        URL directory = new URL("file:" + "../configuration/");
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-configuration.conf.xml1");

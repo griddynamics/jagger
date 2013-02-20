@@ -93,6 +93,7 @@ public class XMLConstants {
     public static final String ENDPOINT_EQ = "endpointEq";
     public static final String RESULT_EQ = "resultEq";
     public static final String METRIC_CALCULATOR = "metricCalculator";
+    public static final String CALCULATOR = "calculator";
     public static final String LIST = "list";
     public static final String CLIENT_PARAMS = "clientParams";
     public static final String METHOD_PARAMS = "methodParams";

@@ -70,7 +70,7 @@
         </test-group>
     </test-suite>
 
-    <metric id="metric1" xsi:type="simple-metric"/>
+    <metric id="metric1" xsi:type="metric-not-null-response"/>
 
     <endpoint-provider id="endpointProvider1" xsi:type="endpoint-provider-list">
         <endpoint>http://localhost:8090/sleep/5</endpoint>
@@ -104,6 +104,7 @@
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
             <validator xsi:type="validator-consistency"/>
+            <metric xsi:type="metric-not-null-response"/>
         </info-collectors>
 
         <scenario xsi:type="scenario-ref" ref="sc1"/>

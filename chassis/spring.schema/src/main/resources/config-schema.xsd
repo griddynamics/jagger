@@ -512,17 +512,18 @@
     </xsd:complexType>
 
 
-    <xsd:complexType name="simple-metric" >
+
+    <xsd:complexType name="metric-not-null-response" >
         <xsd:complexContent>
             <xsd:extension base="metricType">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="metric-ref">
+    <xsd:complexType name="metric-custom">
         <xsd:complexContent>
             <xsd:extension base="metricType">
-                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+                <xsd:attribute name="calculator" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

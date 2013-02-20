@@ -12,6 +12,7 @@ import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefi
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.ConsistencyDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.CustomMetricDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.NotNullResponseDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.SimpleMetricDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryDefinitionParser;
@@ -71,7 +72,8 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("metric", findTypeParser);
 
         //metric calculators
-        registerBeanDefinitionParser("simple-metric", new SimpleMetricDefinitionParser());
+        registerBeanDefinitionParser("metric-not-null-response", new SimpleMetricDefinitionParser());
+        registerBeanDefinitionParser("metric-custom", new CustomMetricDefinitionParser());
 
         //scenario
         registerBeanDefinitionParser("scenario",  findTypeParser);
