@@ -52,9 +52,7 @@ public class PropertiesResolver extends PropertyPlaceholderConfigurer {
             for (Resource resource : resources) {
                 Properties properties = new Properties();
                 properties.load(resource.getInputStream());
-                for (String name : properties.stringPropertyNames()) {
-                    registry.addProperty(name, properties.getProperty(name));
-                }
+                registry.addProperties(properties);
             }
             loadSystemProperties();
         } catch (IOException e) {

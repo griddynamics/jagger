@@ -38,5 +38,6 @@ public class PropertiesResolverTest {
         Assert.assertEquals(context.getBean("stringB"), "x-override/ex");
         Assert.assertEquals(context.getBean("stringC"), "x-override/y-default/ex");
         Assert.assertEquals(context.getBean("stringD"), "x-override+y-default");
+        Assert.assertEquals(context.getBean("stringE"), "z-priority+x-override+y-default");
     }
 }

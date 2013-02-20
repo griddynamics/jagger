@@ -26,11 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -43,24 +41,24 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
     private static final Logger log = LoggerFactory.getLogger(PropertiesResolverRegistry.class);
 
     private ApplicationContext context;
-    private Properties rootProperties = new Properties();
     private Properties properties = new Properties();
+    private Properties priorityProperties = new Properties();
 
     public void addProperty(String name, String value) {
-        properties.setProperty(name, value);
+        priorityProperties.setProperty(name, value);
     }
 
     public String getProperty(String name) {
-        String value = properties.getProperty(name);
+        String value = priorityProperties.getProperty(name);
         if(value == null) {
-            value = resolveProperty(rootProperties.getProperty(name));
+            value = resolveProperty(properties.getProperty(name));
         }
 
         return value;
     }
 
     public Set<String> getPropertyNames() {
-        return properties.stringPropertyNames();
+        return priorityProperties.stringPropertyNames();
     }
 
     public Properties resolve(String propertiesResourceLocation) {
@@ -87,10 +85,10 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
             return null;
         }
 
-        for(String rootPropertyName : rootProperties.stringPropertyNames()) {
-            String resolvedProperty=properties.getProperty(rootPropertyName);
+        for(String rootPropertyName : properties.stringPropertyNames()) {
+            String resolvedProperty= priorityProperties.getProperty(rootPropertyName);
             if(resolvedProperty==null){
-                resolvedProperty=rootProperties.getProperty(rootPropertyName);
+                resolvedProperty= properties.getProperty(rootPropertyName);
             }
             property = property.replaceAll("\\$\\{" + rootPropertyName + "\\}", resolvedProperty);
         }
@@ -104,12 +102,29 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
     }
 
     public void setResources(List<Resource> resources) {
+         setResources(resources, false);
+    }
+
+    public void setPriorityResources(List<Resource> resources) {
+             setResources(resources, true);
+        }
+
+    public void addResources(List<Resource> resources) {
+         setResources(resources, false);
+    }
+
+    public void addProperties(Properties properties) {
+         mergeProperties(this.properties, properties);
+    }
+
+    public void setResources(List<Resource> resources, boolean priority) {
+        Properties base = priority ? priorityProperties : properties;
         try {
             for(Resource resource : resources) {
                 if(resource != null) {
                     Properties properties = new Properties();
                     properties.load(resource.getInputStream());
-                    mergeProperties(rootProperties, properties);
+                    mergeProperties(base, properties);
                 }
             }
         } catch (IOException e) {

@@ -27,6 +27,10 @@
         <property name="resources">
             <list>
                 <value>#{systemProperties['jagger.default.environment.properties']}</value>
+            </list>
+        </property>
+        <property name="priorityResources">
+            <list>
                 <value>#{systemProperties['jagger.environment.properties']}</value>
             </list>
         </property>
