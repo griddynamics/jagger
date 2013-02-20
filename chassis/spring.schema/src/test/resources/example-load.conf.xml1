@@ -23,11 +23,39 @@
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.griddynamics.com/schema/jagger
-        http://www.griddynamics.com/schema/jagger-workload.xsd
+        http://www.griddynamics.com/schema/jagger.xsd
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
-    <!--not actual -->
+
+    <jgr:load-tps id="tps1" value="200"/>
+
+    <jgr:load-tps id="tps2" value="100" tickInterval="500"/>
+
+    <jgr:load-invocation id="inv1" exactcount="100" threads="1" delay="100"/>
+
+    <jgr:load-invocation id="inv2" exactcount="50" threads="2" tickInterval="500"/>
+
+    <jgr:termination-duration id="ts1" duration="2h"/>
+
+    <jgr:termination-iterations id="ts2" iterations="5"/>
+
+    <jgr:termination-background id="ts3"/>
+
+
+    <jgr:test id="test1" testDescription="descr">
+        <jgr:load xsi:type="jgr:load-tps" value="100"/>
+        <jgr:termination xsi:type="jgr:termination-iterations" iterations="255" maxDuration="2h"/>
+    </jgr:test>
+
+    <jgr:test-description id="descr" calibration="false" />
+
+    <jgr:test-group id="gr1">
+         <jgr:test id="innerTest1" testDescription="descr">
+             <jgr:load xsi:type="jgr:load-user-group" count="5"/>
+             <jgr:termination xsi:type="jgr:termination-background"/>
+         </jgr:test>
+    </jgr:test-group>
 
 </beans>

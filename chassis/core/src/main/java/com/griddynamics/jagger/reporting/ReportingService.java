@@ -38,7 +38,7 @@ public class ReportingService {
     private ReportingContext context;
 
     private String rootTemplateLocation;
-    private ReportType reportType;
+    private ReportType reportType = ReportType.PDF;
     private String outputReportLocation;
 
     public JasperPrint generateReport(boolean removeFrame) {

@@ -24,8 +24,8 @@ public class HttpQueryDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        Element clientParamsElement = DomUtils.getChildElementByTagName(element, XMLConstants.CLIENT_PARAMS);
-        Element methodParamsElement = DomUtils.getChildElementByTagName(element, XMLConstants.METHOD_PARAMS);
+        Element clientParamsElement = DomUtils.getChildElementByTagName(element, XMLConstants.CLIENT_PARAMS_ELEMENT);
+        Element methodParamsElement = DomUtils.getChildElementByTagName(element, XMLConstants.METHOD_PARAMS_ELEMENT);
         String method = element.getAttribute(XMLConstants.METHOD);
 
         builder.addPropertyValue(XMLConstants.METHOD, method);

@@ -23,6 +23,7 @@ package com.griddynamics.jagger.master.configuration;
 import java.util.List;
 
 import com.griddynamics.jagger.master.DistributionListener;
+import com.griddynamics.jagger.reporting.ReportingService;
 import org.springframework.beans.factory.annotation.Required;
 
 import com.google.common.collect.Lists;
@@ -37,6 +38,16 @@ public class Configuration {
 	private List<Task> tasks;
 	private List<SessionExecutionListener> sessionExecutionListeners = Lists.newLinkedList();
 	private List<DistributionListener> distributionListeners = Lists.newLinkedList();
+
+    private ReportingService report;
+
+    public void setReport(ReportingService report){
+        this.report = report;
+    }
+
+    public ReportingService getReport(){
+        return report;
+    }
 
 	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;

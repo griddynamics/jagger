@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.reporting;
 
+import com.griddynamics.jagger.master.configuration.Configuration;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -10,5 +11,5 @@ import org.springframework.context.ApplicationContext;
  * To change this template use File | Settings | File Templates.
  */
 public interface ReportingServiceProvider {
-    public ReportingService getReportingService(ApplicationContext context);
+    public ReportingService getReportingService(Configuration configuration, ApplicationContext context);
 }

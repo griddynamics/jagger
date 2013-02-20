@@ -1,6 +1,8 @@
 package com.griddynamics.jagger.xml.beanParsers.configuration;
 
 import com.griddynamics.jagger.user.ProcessingConfig;
+import com.griddynamics.jagger.user.TestConfiguration;
+import com.griddynamics.jagger.user.TestGroupConfiguration;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.config.RuntimeBeanNameReference;
@@ -15,18 +17,18 @@ import org.w3c.dom.Element;
 
 import java.util.List;
 
-
+//Test-Group
 public class TestDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {
-        return ProcessingConfig.Test.class;
+        return TestGroupConfiguration.class;
     }
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        element.setAttribute(BeanDefinitionParserDelegate.VALUE_TYPE_ATTRIBUTE, ProcessingConfig.Test.Task.class.getCanonicalName());
-        setBeanListProperty(XMLConstants.TASKS, false, element, parserContext, builder.getBeanDefinition());
+        element.setAttribute(BeanDefinitionParserDelegate.VALUE_TYPE_ATTRIBUTE, TestConfiguration.class.getCanonicalName());
+        setBeanListProperty(XMLConstants.TESTS, false, element, parserContext, builder.getBeanDefinition());
     }
 
     @Override

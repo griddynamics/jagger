@@ -27,10 +27,13 @@ public class ExactInvocationsClock implements WorkloadClock {
 
     private Map<NodeId, WorkloadConfiguration> submittedConfigurations = new HashMap<NodeId, WorkloadConfiguration>();
 
-    public ExactInvocationsClock(int samplesCount, int threadCount, int delay) {
+    private int tickInterval;
+
+    public ExactInvocationsClock(int samplesCount, int threadCount, int delay, int tickInterval) {
         this.samplesCount = samplesCount;
         this.threadCount  = threadCount;
         this.delay        = delay;
+        this.tickInterval = tickInterval;
     }
 
     @Override
@@ -101,7 +104,7 @@ public class ExactInvocationsClock implements WorkloadClock {
 
     @Override
     public int getTickInterval() {
-        return 1000;
+        return tickInterval;
     }
 
     @Override

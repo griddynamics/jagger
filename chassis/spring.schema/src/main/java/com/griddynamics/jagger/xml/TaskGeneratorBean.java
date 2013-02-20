@@ -1,7 +1,9 @@
 package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.master.configuration.UserTaskGenerator;
+import com.griddynamics.jagger.user.TestSuitConfiguration;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 /**
@@ -20,7 +22,7 @@ public class TaskGeneratorBean {
 
     public TaskGeneratorBean(){
         name = "generator"+Integer.toString(id++);
-        bean = BeanDefinitionBuilder.genericBeanDefinition(UserTaskGenerator.class).getBeanDefinition();
+        bean = BeanDefinitionBuilder.genericBeanDefinition(TestSuitConfiguration.class).getBeanDefinition();
         bean.setLazyInit(true);
     }
 

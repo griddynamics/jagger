@@ -1,26 +1,22 @@
 package com.griddynamics.jagger.xml.beanParsers.task;
 
-import com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.UserClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.UserGroupsClockConfiguration;
 import com.griddynamics.jagger.user.ProcessingConfig;
+import com.griddynamics.jagger.user.TestConfiguration;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kgribov
- * Date: 12/10/12
- * Time: 4:26 PM
- * To change this template use File | Settings | File Templates.
- */
-public class VirtualUserDefinitionParser extends CustomBeanDefinitionParser {
+
+public class UserGroupsDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {
-        return VirtualUsersClockConfiguration.class;
+        return UserGroupsClockConfiguration.class;
     }
 
     @Override
@@ -32,6 +28,7 @@ public class VirtualUserDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-
+        element.setAttribute(BeanDefinitionParserDelegate.VALUE_TYPE_ATTRIBUTE, ProcessingConfig.Test.Task.User.class.getCanonicalName());
+        setBeanListProperty(XMLConstants.USERS, false, element, parserContext, builder.getBeanDefinition());
     }
 }

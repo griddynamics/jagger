@@ -1,6 +1,8 @@
 package com.griddynamics.jagger.xml.beanParsers.configuration;
 
 import com.griddynamics.jagger.user.ProcessingConfig;
+import com.griddynamics.jagger.user.TestGroupConfiguration;
+import com.griddynamics.jagger.user.TestSuitConfiguration;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.config.RuntimeBeanNameReference;

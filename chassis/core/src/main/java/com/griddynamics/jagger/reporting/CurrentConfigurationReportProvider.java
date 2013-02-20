@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.reporting;
 
+import com.griddynamics.jagger.master.configuration.Configuration;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import java.util.Properties;
@@ -21,12 +22,13 @@ public class CurrentConfigurationReportProvider implements ReportingServiceProvi
     }
 
     @Override
-    public ReportingService getReportingService(ApplicationContext context) {
+    public ReportingService getReportingService(Configuration configuration, ApplicationContext context) {
         String defaultService = "reportingService";
-        if (context.containsBean(getReportBeanName())){
+        if (configuration.getReport() != null){
+            return configuration.getReport();
+        }else{
             return (ReportingService)context.getBean(getReportBeanName());
         }
-        return (ReportingService)context.getBean(defaultService);
     }
 
     protected String getReportBeanName(){

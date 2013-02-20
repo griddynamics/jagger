@@ -2,7 +2,7 @@ package com.griddynamics.jagger.xml.beanParsers.configuration;
 
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.master.configuration.Configuration;
-import com.griddynamics.jagger.master.configuration.UserTaskGenerator;
+import com.griddynamics.jagger.user.TestSuitConfiguration;
 import com.griddynamics.jagger.xml.TaskGeneratorBean;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
@@ -34,33 +34,22 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         builder.setLazyInit(true);
         Element report = DomUtils.getChildElementByTagName(element, XMLConstants.REPORT);
-        String reportName = element.getAttribute(XMLConstants.ID)+"-report";
+        String reportName = element.getAttribute(XMLConstants.ID)+"-"+XMLConstants.REPORT;
         if (report!=null) {
             BeanDefinition bean = parserContext.getDelegate().parseCustomElement(report, builder.getBeanDefinition());
-            parserContext.getRegistry().registerBeanDefinition(reportName,bean);
-        }else{
-            parserContext.getRegistry().registerAlias(XMLConstants.DEFAULT_REPORTING_SERVICE, reportName);
+            builder.addPropertyValue(XMLConstants.REPORT,bean);
         }
 
         initListeners(element,parserContext, builder);
 
         //parse test-plan
-        Element testPlan = DomUtils.getChildElementByTagName(element, XMLConstants.TEST_PLAN);
+        Element testPlan = DomUtils.getChildElementByTagName(element, XMLConstants.TEST_SUITE);
 
         TaskGeneratorBean generator = new TaskGeneratorBean();
+        generator.getBean().getPropertyValues().addPropertyValue(XMLConstants.TEST_GROUPS, parseCustomElement(testPlan, parserContext, builder.getBeanDefinition()));
         parserContext.getRegistry().registerBeanDefinition(generator.getName(), generator.getBean());
 
-        generator.getBean().getPropertyValues().addPropertyValue(XMLConstants.MONITORING_ENABLE, monitoringEnable);
-
-        generator.getBean().getPropertyValues().addPropertyValue(XMLConstants.CONFIG, parseCustomElement(testPlan, parserContext, generator.getBean()));
         builder.addPropertyValue(XMLConstants.TASKS, generator.generateTasks());
-    }
-
-    @Override
-    protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        if (!element.getAttribute(XMLConstants.MONITORING_ENABLE).isEmpty())
-            monitoringEnable = Boolean.parseBoolean(element.getAttribute(XMLConstants.MONITORING_ENABLE));
-        element.removeAttribute(XMLConstants.MONITORING_ENABLE);
     }
 
     protected void initListeners(Element element, ParserContext parserContext, BeanDefinitionBuilder builder){
@@ -70,17 +59,13 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
         ManagedList tlList = new ManagedList();
 
         //override durationLogProcessor if needed
-        Element percentilesElement = DomUtils.getChildElementByTagName(element, XMLConstants.PERCENTILES);
+        Element percentilesElement = DomUtils.getChildElementByTagName(element, XMLConstants.LATENCY);
         if (percentilesElement != null){
-            Element percentilesTimeElement = DomUtils.getChildElementByTagName(percentilesElement, XMLConstants.PERCENTILES_TIME);
-            Element percentilesGlobalElement = DomUtils.getChildElementByTagName(percentilesElement, XMLConstants.PERCENTILES_GLOBAL);
 
             BeanDefinitionBuilder durationLogProcessorBean = BeanDefinitionBuilder.genericBeanDefinition(DurationLogProcessor.class);
             durationLogProcessorBean.setParentName(XMLConstants.DURATION_LOG_PROCESSOR);
 
-            setBeanProperty(XMLConstants.TIME_WINDOW_PERCENTILES_KEYS, percentilesTimeElement, parserContext, durationLogProcessorBean.getBeanDefinition());
-
-            setBeanProperty(XMLConstants.GLOBAL_PERCENTILES_KEYS, percentilesGlobalElement, parserContext, durationLogProcessorBean.getBeanDefinition());
+            setBeanProperty(XMLConstants.GLOBAL_PERCENTILES_KEYS, percentilesElement, parserContext, durationLogProcessorBean.getBeanDefinition());
 
             initStandardListeners(tlList, slList);
 

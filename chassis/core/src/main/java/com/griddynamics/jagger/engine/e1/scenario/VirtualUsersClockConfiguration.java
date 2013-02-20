@@ -40,6 +40,10 @@ public class VirtualUsersClockConfiguration implements WorkloadClockConfiguratio
         this.users = users;
     }
 
+    public void setCount(int users) {
+        this.users = users;
+    }
+
     public void setTickInterval(int tickInterval) {
         this.tickInterval = tickInterval;
     }

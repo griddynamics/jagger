@@ -26,10 +26,7 @@ import com.griddynamics.jagger.user.ProcessingConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -46,9 +43,9 @@ public class UserClock implements WorkloadClock {
     private final AtomicBoolean shutdown;
     private boolean userStarted = false;
 
-    public UserClock(ProcessingConfig.Test.Task config, int tickInterval, AtomicBoolean shutdown) {
+    public UserClock(List<ProcessingConfig.Test.Task.User> users, int delay, int tickInterval, AtomicBoolean shutdown) {
         this.random = new Random(0);
-        this.workload = new UserWorkload(true, this, config, startTime);
+        this.workload = new UserWorkload(true, this, users, delay, startTime);
         this.totalUserCount = workload.getTotalUserCount();
         this.tickInterval = tickInterval;
         this.shutdown = shutdown;

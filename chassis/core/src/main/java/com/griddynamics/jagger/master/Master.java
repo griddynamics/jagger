@@ -155,7 +155,7 @@ public class Master implements Runnable {
             }
 
             log.info("Going to generate report");
-            reportingServiceProvider.getReportingService(context).renderReport(true);
+            reportingServiceProvider.getReportingService(configuration, context).renderReport(true);
             log.info("Report generated");
 
             log.info("Going to stop all agents");

@@ -18,8 +18,12 @@ public class FindParserByTypeDefinitionParser implements BeanDefinitionParser {
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
         String type = element.getSchemaTypeInfo().getTypeName();
-        Document parent = element.getParentNode().getOwnerDocument();
-        parent.renameNode(element, null, type);
-        return parserContext.getReaderContext().getNamespaceHandlerResolver().resolve(XMLConstants.DEFAULT_NAMESPACE).parse(element, parserContext);
+        if (type.equals(element.getTagName()+"Type")){
+            return new PrimitiveDefinitionParser().parse(element, parserContext);
+        }else{
+            Document parent = element.getParentNode().getOwnerDocument();
+            parent.renameNode(element, null, type);
+            return parserContext.getReaderContext().getNamespaceHandlerResolver().resolve(XMLConstants.DEFAULT_NAMESPACE).parse(element, parserContext);
+        }
     }
 }

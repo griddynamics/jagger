@@ -74,7 +74,7 @@ public class LogProcessor extends HibernateDaoSupport {
         );
 
         List<TimeLatencyPercentile> percentiles = new ArrayList<TimeLatencyPercentile>();
-        for (double percentileKey : timeWindowPercentilesKeys) {
+        for (double percentileKey : getTimeWindowPercentilesKeys()) {
             double percentileValue = calculator.getPercentile(percentileKey);
             TimeLatencyPercentile percentile = new TimeLatencyPercentile(percentileKey, percentileValue);
             percentile.setTimeInvocationStatistics(statistics);
@@ -92,7 +92,7 @@ public class LogProcessor extends HibernateDaoSupport {
         statistics.setTaskData(taskData);
 
         List<WorkloadProcessLatencyPercentile> percentiles = Lists.newArrayList();
-        for (double percentileKey : globalPercentilesKeys) {
+        for (double percentileKey : getGlobalPercentilesKeys()) {
             double percentileValue = calculator.getPercentile(percentileKey);
             WorkloadProcessLatencyPercentile percentile = new WorkloadProcessLatencyPercentile(percentileKey, percentileValue);
             percentile.setWorkloadProcessDescriptiveStatistics(statistics);
@@ -116,4 +116,12 @@ public class LogProcessor extends HibernateDaoSupport {
         this.globalPercentilesKeys = globalPercentilesKeys;
     }
 
+
+    public List<Double> getTimeWindowPercentilesKeys() {
+        return timeWindowPercentilesKeys;
+    }
+
+    public List<Double> getGlobalPercentilesKeys() {
+        return globalPercentilesKeys;
+    }
 }

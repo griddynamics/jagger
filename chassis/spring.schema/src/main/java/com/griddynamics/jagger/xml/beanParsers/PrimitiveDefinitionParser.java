@@ -26,9 +26,6 @@ public class PrimitiveDefinitionParser implements BeanDefinitionParser {
     }
 
     protected static Class getClassByType(String type){
-        if (type.equals("string")){
-            return String.class;
-        }else
         if (type.equals("integer")){
             return Integer.class;
         }else
@@ -44,6 +41,6 @@ public class PrimitiveDefinitionParser implements BeanDefinitionParser {
         if (type.equals("float")){
             return Float.class;
         }else
-            throw new RuntimeException("Unsupported type - "+type);
+            return String.class;
     }
 }

@@ -28,18 +28,21 @@ public class WorkloadDefinitionParser extends CustomBeanDefinitionParser{
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        //parse listeners
-        ManagedList listeners = new ManagedList();
-
-        //add standard listeners
-        for (String listenerBeanName : XMLConstants.STANDARD_WORKLOAD_LISTENERS){
-            listeners.add(new RuntimeBeanReference(listenerBeanName));
-        }
-        builder.addPropertyValue(XMLConstants.WORKLOAD_LISTENERS_CLASS, listeners);
 
         //add user's listeners
         Element listenersGroup = DomUtils.getChildElementByTagName(element, XMLConstants.WORKLOAD_LISTENERS_ELEMENT);
-        setBeanListProperty(XMLConstants.WORKLOAD_LISTENERS_CLASS, true, listenersGroup, parserContext, builder.getBeanDefinition());
+        if (listenersGroup != null){
+            ManagedList listeners = new ManagedList();
+
+            //add standard listeners
+            for (String listenerBeanName : XMLConstants.STANDARD_WORKLOAD_LISTENERS){
+                listeners.add(new RuntimeBeanReference(listenerBeanName));
+            }
+            builder.addPropertyValue(XMLConstants.WORKLOAD_LISTENERS_CLASS, listeners);
+
+            setBeanListProperty(XMLConstants.WORKLOAD_LISTENERS_CLASS, true, listenersGroup, parserContext, builder.getBeanDefinition());
+        }
+
 
         //add scenario
         Element scenarioElement = DomUtils.getChildElementByTagName(element, XMLConstants.SCENARIO);

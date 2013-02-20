@@ -34,17 +34,28 @@
 
     <configuration id="config2">
 
-        <test-plan ref="test-plan-1"/>
-
         <report outputReportLocation="new-report.pdf">
         </report>
 
-        <percentiles>
-            <percentiles-global>
-                <percentile>70</percentile>
-            </percentiles-global>
-        </percentiles>
+        <latency>
+            <percentile>50</percentile>
+            <percentile>70</percentile>
+        </latency>
 
     </configuration>
+
+    <test-suite id="test-plan-1">
+        <test-group id="group1">
+            <test id="tst1" testDescription="w1">
+                <load xsi:type="load-tps" value="100"/>
+                <termination xsi:type="termination-iterations" iterations="100"/>
+            </test>
+
+            <test id="tst2" testDescription="w1">
+                <load xsi:type="load-user-group" count="100" life="2h"/>
+                <termination xsi:type="termination-background" />
+            </test>
+        </test-group>
+    </test-suite>
 
 </beans:beans>

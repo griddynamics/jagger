@@ -35,8 +35,8 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
     @Override
     public Scenario<Q, R, E> get(NodeContext nodeContext) {
         Invoker<Q, R, E> invoker = invoker = nodeContext.getService(invokerClazz);
-        loadBalancer.setEndpointProvider(getEndpointProvider());
-        loadBalancer.setQueryProvider(getQueryProvider());
+        if (endpointProvider!=null) loadBalancer.setEndpointProvider(getEndpointProvider());
+        if (queryProvider!=null)    loadBalancer.setQueryProvider(getQueryProvider());
         return new QueryPoolScenario<Q, R, E>(invoker, loadBalancer.provide(), systemClock);
     }
 

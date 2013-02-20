@@ -24,22 +24,42 @@ import com.griddynamics.jagger.user.ProcessingConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * UserGroup: dkotlyarov
  */
-public class UserClockConfiguration implements WorkloadClockConfiguration {
-    private static final Logger log = LoggerFactory.getLogger(UserClockConfiguration.class);
+public class UserGroupsClockConfiguration implements WorkloadClockConfiguration {
+    private static final Logger log = LoggerFactory.getLogger(UserGroupsClockConfiguration.class);
 
-    private final int tickInterval;
+    private int tickInterval;
     private final InvocationDelayConfiguration delay = FixedDelay.noDelay();
-    private final ProcessingConfig.Test.Task taskConfig;
-    private final AtomicBoolean shutdown;
+    private AtomicBoolean shutdown;
+    private List<ProcessingConfig.Test.Task.User> users;
 
-    public UserClockConfiguration(int tickInterval, ProcessingConfig.Test.Task taskConfig, AtomicBoolean shutdown) {
+    public UserGroupsClockConfiguration() {
+    }
+
+    public void setShutdown(AtomicBoolean shutdown) {
+        this.shutdown = shutdown;
+    }
+
+    public void setTickInterval(int tickInterval) {
         this.tickInterval = tickInterval;
-        this.taskConfig = taskConfig;
+    }
+
+    public void setUsers(List<ProcessingConfig.Test.Task.User> users) {
+        this.users = users;
+    }
+
+    public List<ProcessingConfig.Test.Task.User> getUsers(){
+        return users;
+    }
+
+    public UserGroupsClockConfiguration(int tickInterval, List<ProcessingConfig.Test.Task.User> users, AtomicBoolean shutdown) {
+        this.tickInterval = tickInterval;
+        this.users = users;
         this.shutdown = shutdown;
     }
 
@@ -51,35 +71,10 @@ public class UserClockConfiguration implements WorkloadClockConfiguration {
         return delay;
     }
 
-    public ProcessingConfig.Test.Task getTaskConfig() {
-        return taskConfig;
-    }
-
     @Override
     public WorkloadClock getClock() {
-        if (taskConfig.users != null) {
-            return new UserClock(taskConfig.users, taskConfig.delay, tickInterval, shutdown);
-        }else
-        if (taskConfig.tps != null){
-            TpsClockConfiguration tpsClockConfiguration = new TpsClockConfiguration();
-            tpsClockConfiguration.setTickInterval(tickInterval);
-            tpsClockConfiguration.setTps(taskConfig.tps.value);
-            return tpsClockConfiguration.getClock();
-        }else
-        if (taskConfig.virtualUser != null){
-            VirtualUsersClockConfiguration conf = new VirtualUsersClockConfiguration();
-            conf.setTickInterval(taskConfig.virtualUser.tickInterval);
-            conf.setUsers(taskConfig.virtualUser.count);
-            return conf.getClock();
-        }else
-        if (taskConfig.invocation != null){
-            ExactInvocationsClockConfiguration conf = new ExactInvocationsClockConfiguration();
-            conf.setExactcount(taskConfig.invocation.exactcount);
-            conf.setThreads(taskConfig.invocation.threads);
-            conf.setThreads(taskConfig.delay);
-            return conf.getClock();
-        }else
-            return null;
+        // TODO add delay to User configuration
+        return new UserClock(users, 0, tickInterval, shutdown);
     }
 
     @Override

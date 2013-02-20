@@ -31,15 +31,15 @@ public class QueryPoolScenarioDefinitionParser extends CustomBeanDefinitionParse
         setBeanProperty(XMLConstants.INVOKER_CLAZZ, invokerElement, parserContext, builder.getBeanDefinition());
 
         //parse balancer
-        Element balancerElement = DomUtils.getChildElementByTagName(element, XMLConstants.LOAD_BALANCER);
+        Element balancerElement = DomUtils.getChildElementByTagName(element, XMLConstants.QUERY_DISTRIBUTOR);
         setBeanProperty(XMLConstants.LOAD_BALANCER, balancerElement, parserContext, builder.getBeanDefinition());
 
         //parse endpointProvider
-        Element endpointProviderElement = DomUtils.getChildElementByTagName(element, XMLConstants.ENDPOINT_PROVIDER);
+        Element endpointProviderElement = DomUtils.getChildElementByTagName(element, XMLConstants.ENDPOINT_PROVIDER_ELEMENT);
         setBeanProperty(XMLConstants.ENDPOINT_PROVIDER, endpointProviderElement, parserContext, builder.getBeanDefinition());
 
         //parse queryProvider
-        Element queryProviderElement = DomUtils.getChildElementByTagName(element, XMLConstants.QUERY_PROVIDER);
+        Element queryProviderElement = DomUtils.getChildElementByTagName(element, XMLConstants.QUERY_PROVIDER_ELEMENT);
         setBeanProperty(XMLConstants.QUERY_PROVIDER, queryProviderElement, parserContext, builder.getBeanDefinition());
     }
 

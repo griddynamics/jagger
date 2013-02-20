@@ -22,13 +22,12 @@ package com.griddynamics.jagger.engine.e1.scenario;
 
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.user.ProcessingConfig;
-import com.griddynamics.jagger.util.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,13 +41,13 @@ public class UserWorkload {
     ArrayList<UserGroup> groups;
     private final int delay;
 
-    public UserWorkload(boolean main, UserClock clock, ProcessingConfig.Test.Task config, long time) {
+    public UserWorkload(boolean main, UserClock clock, List<ProcessingConfig.Test.Task.User> users, int delay, long time) {
         this.main = main;
         this.clock = clock;
-        this.groups = new ArrayList<UserGroup>(config.users.size());
-        this.delay = config.delay;
+        this.groups = new ArrayList<UserGroup>(users.size());
+        this.delay = delay;
 
-        for (ProcessingConfig.Test.Task.User userConfig : config.users) {
+        for (ProcessingConfig.Test.Task.User userConfig : users) {
             groups.add(new UserGroup(this.getClock(), groups.size(), userConfig, time));
         }
     }
