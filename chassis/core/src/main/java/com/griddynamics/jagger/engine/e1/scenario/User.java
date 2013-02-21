@@ -21,7 +21,6 @@
 package com.griddynamics.jagger.engine.e1.scenario;
 
 import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.util.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,26 +34,28 @@ public class User {
 
     private final int id;
     private final UserGroup group;
+    private final UserClock clock;
     private final long startTime;
     private final long finishTime;
     private final NodeId nodeId;
     private boolean deleted = false;
 
-    public User(UserGroup group, long time, NodeId nodeId, LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
+    public User(UserClock clock, UserGroup group, long time, NodeId nodeId, LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
         this.id = group.users.size();
         this.group = group;
         this.startTime = time;
-        this.finishTime = startTime + Parser.parseTime(group.getConfig().life, group.getWorkload().getClock().getRandom());
+        this.finishTime = startTime + group.getLife();
         this.nodeId = nodeId;
+        this.clock = clock;
 
         group.users.add(this);
         group.activeUserCount++;
-        group.getWorkload().getClock().setUserStarted(true);
+        this.clock.setUserStarted(true);
 
         WorkloadConfiguration workloadConfiguration = workloadConfigurations.get(nodeId);
         workloadConfigurations.put(nodeId, WorkloadConfiguration.with(workloadConfiguration.getThreads() + 1, workloadConfiguration.getDelay()));
 
-        log.info(String.format("User %d from group %d is created at %dms of test on node %s", id, group.getId(), startTime - group.getWorkload().getClock().getStartTime(), nodeId));
+        log.info(String.format("User %d from group %d is created at %dms of test on node %s", id, group.getId(), startTime - clock.getStartTime(), nodeId));
     }
 
     public void delete(long time) {
@@ -62,7 +63,7 @@ public class User {
             deleted = true;
             group.activeUserCount--;
 
-            log.info(String.format("User %d from group %d is deleted at %dms of test on node %s", id, group.getId(), time - group.getWorkload().getClock().getStartTime(), nodeId));
+            log.info(String.format("User %d from group %d is deleted at %dms of test on node %s", id, group.getId(), time - clock.getStartTime(), nodeId));
         } else {
             throw new IllegalStateException();
         }

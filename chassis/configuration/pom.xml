@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.griddynamics.jagger</groupId>
         <artifactId>chassis.parent</artifactId>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>1.1.4-springConfig-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -60,6 +60,12 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.spring.schema</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

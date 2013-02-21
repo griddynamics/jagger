@@ -49,6 +49,7 @@ import java.util.concurrent.*;
 public class Master implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(Master.class);
 
+
     private Configuration configuration;
     private Coordinator coordinator;
     private DistributorRegistry distributorRegistry;
@@ -152,7 +153,12 @@ public class Master implements Runnable {
             }
 
             log.info("Going to generate report");
-            reportingService.renderReport(true);
+            if (configuration.getReport()!=null){
+                configuration.getReport().renderReport(true);
+            }else{
+                reportingService.renderReport(true);
+            }
+
             log.info("Report generated");
 
             log.info("Going to stop all agents");

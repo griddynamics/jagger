@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+        xmlns:jgr="http://www.griddynamics.com/schema/jagger"
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.griddynamics.com/schema/jagger
+        http://www.griddynamics.com/schema/jagger.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"
+        >
+
+    <bean id="stringBean" class="java.lang.String">
+        <constructor-arg index="0" value="stringValue"/>
+    </bean>
+
+    <bean id="integerBean" class="java.lang.Integer">
+        <constructor-arg index="0" value="1101"/>
+    </bean>
+
+    <bean id="refDecisionMaker" class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.StdDevMonitoringParameterDecisionMaker">
+        <property name="fatalDeviationThreshold" value="0.5"/>
+        <property name="warningDeviationThreshold" value="0.9"/>
+    </bean>
+
+    <jgr:report id="report1" rootTemplateLocation="custom-root-template.jrxml"
+				outputReportLocation="custom-report.pdf">
+
+        <jgr:extensions>
+
+            <jgr:extension>
+                <ref bean="integerBean"/>
+            </jgr:extension>
+
+            <jgr:extension ref="stringBean"/>
+
+        </jgr:extensions>
+
+        <jgr:sessionComparators baselineId="4444" strategy="worstCase">
+
+            <jgr:comparator comparatorType="monitoring" decisionMakerType="monitoringParameterDecisionMaker"
+				fatalDeviationThreshold="0.7" warningDeviationThreshold="0.5"/>
+
+            <jgr:comparator comparatorType="workload" decisionMakerType="workloadDecisionMaker"
+				fatalDeviationThreshold="0.7" warningDeviationThreshold="0.2"/>
+
+            <jgr:comparator comparatorType="monitoring" decisionMakerRef="refDecisionMaker" />
+
+        </jgr:sessionComparators>
+    </jgr:report>
+
+
+</beans>

@@ -67,4 +67,12 @@ public class ConfigurableSessionComparator implements SessionComparator {
     public void setDecisionMaker(DecisionMaker decisionMaker) {
         this.decisionMaker = decisionMaker;
     }
+
+    public List<FeatureComparator<?>> getComparatorChain() {
+        return comparatorChain;
+    }
+
+    public DecisionMaker getDecisionMaker() {
+        return decisionMaker;
+    }
 }

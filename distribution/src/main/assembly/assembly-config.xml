@@ -51,6 +51,7 @@
                 <include>*com.griddynamics.jagger:monitoring.agent:jar</include>
                 <include>*com.griddynamics.jagger:chassis.invoker.hessian</include>
                 <include>*com.griddynamics.jagger:chassis.invokers</include>
+                <include>*com.griddynamics.jagger:chassis.spring.schema</include>
             </includes>
         </dependencySet>
 

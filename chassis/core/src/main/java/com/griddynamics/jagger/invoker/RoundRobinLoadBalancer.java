@@ -23,7 +23,6 @@ package com.griddynamics.jagger.invoker;
 import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Encapsulates round robin algorithm. For input: endpoints [e1, e2] and
@@ -36,15 +35,18 @@ import java.util.List;
  */
 public class RoundRobinLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
+    public RoundRobinLoadBalancer(){
+        super();
+    }
 
-    public RoundRobinLoadBalancer(List<Q> querySupplier, List<E> endpointSupplier) {
-        super(querySupplier, endpointSupplier);
+    public RoundRobinLoadBalancer(Iterable<Q> queryProvider, Iterable<E> endpointProvider){
+        super(queryProvider, endpointProvider);
     }
 
     @Override
     public Iterator<Pair<Q, E>> provide() {
-        final CircularSupplier<Q> querySupplier = CircularSupplier.create(queries);
-        final CircularSupplier<E> endpointSupplier = CircularSupplier.create(endpoints);
+        final CircularSupplier<Q> querySupplier = CircularSupplier.create(queryProvider);
+        final CircularSupplier<E> endpointSupplier = CircularSupplier.create(endpointProvider);
 
         return new Iterator<Pair<Q, E>>() {
             @Override
@@ -73,11 +75,7 @@ public class RoundRobinLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
     @Override
     public String toString() {
-        return "RoundRobinLoadBalancer" +
-                "\n {" +
-                "\n queries " + queries +
-                "\n endpoints " + endpoints +
-                "\n }";
+        return "RoundRobinLoadBalancer";
     }
 
 

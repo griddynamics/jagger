@@ -29,6 +29,7 @@ import com.griddynamics.jagger.monitoring.MonitoringTask;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import org.simpleframework.xml.core.Persister;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -43,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * User: dkotlyarov
  */
 public class UserTaskGenerator implements ApplicationContextAware {
-    private ProcessingConfig config = getConfigFromCommandLine();
+    private ProcessingConfig config;
     private ApplicationContext applicationContext;
     private boolean monitoringEnable = false;
 
@@ -62,6 +63,7 @@ public class UserTaskGenerator implements ApplicationContextAware {
         List<Task> result = new LinkedList<Task>();
         int number = 0;
         HashSet<String> names = new HashSet<String>();
+        if (config == null) initConfig();
         for (ProcessingConfig.Test testConfig : config.tests) {
             ++number;
 
@@ -93,7 +95,6 @@ public class UserTaskGenerator implements ApplicationContextAware {
                 MonitoringTask attendantMonitoring = new MonitoringTask(number, testConfig.name + " --- monitoring", compositeTask.getTaskName(), new InfiniteDuration());
                 compositeTask.getAttendant().add(attendantMonitoring);
             }
-
             result.add(compositeTask);
         }
         return result;
@@ -130,7 +131,7 @@ public class UserTaskGenerator implements ApplicationContextAware {
         }
     }
 
-    public static ProcessingConfig getConfigFromCommandLine() {
+    public ProcessingConfig initConfig() {
         String processingConfigFileName = System.getProperty("jagger.user.processing.config");
         if (processingConfigFileName != null) {
             return getConfigFromFile(processingConfigFileName);

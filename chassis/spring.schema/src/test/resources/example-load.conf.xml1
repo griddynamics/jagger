@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or any later version.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+<beans
+        xmlns:jgr="http://www.griddynamics.com/schema/jagger"
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.griddynamics.com/schema/jagger
+        http://www.griddynamics.com/schema/jagger.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"
+        >
+
+
+    <jgr:load-tps id="tps1" value="200"/>
+
+    <jgr:load-tps id="tps2" value="100" tickInterval="500"/>
+
+    <jgr:load-invocation id="inv1" exactcount="100" threads="1" delay="100"/>
+
+    <jgr:load-invocation id="inv2" exactcount="50" threads="2" tickInterval="500"/>
+
+    <jgr:termination-duration id="ts1" duration="2h"/>
+
+    <jgr:termination-iterations id="ts2" iterations="5"/>
+
+    <jgr:termination-background id="ts3"/>
+
+
+    <jgr:test id="test1" testDescription="descr">
+        <jgr:load xsi:type="jgr:load-tps" value="100"/>
+        <jgr:termination xsi:type="jgr:termination-iterations" iterations="255" maxDuration="2h"/>
+    </jgr:test>
+
+    <jgr:test-description id="descr" calibration="false" />
+
+    <jgr:test-group id="gr1">
+         <jgr:test id="innerTest1" testDescription="descr">
+             <jgr:load xsi:type="jgr:load-user-group" count="5" startCount="5" startBy="0" startIn="0" life="2h"/>
+             <jgr:termination xsi:type="jgr:termination-background"/>
+         </jgr:test>
+    </jgr:test-group>
+
+</beans>

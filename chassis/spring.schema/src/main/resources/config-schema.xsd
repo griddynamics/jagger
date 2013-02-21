@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.griddynamics.com/schema/jagger"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.griddynamics.com/schema/jagger"
+            elementFormDefault="qualified">
+    <xsd:import namespace="http://www.springframework.org/schema/beans"
+                schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"/>
+
+    <!---->
+    <!--<xsd:redefine schemaLocation="http://www.griddynamics.com/schema/jagger-configuration.xsd"/>-->
+
+    <!--BASIC TYPES-->
+    <xsd:complexType name="basicType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="parent" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="primitiveOrObjectType" abstract="true" mixed="true">
+        <xsd:attribute name="parent" type="xsd:string"/>
+        <xsd:attribute name="id" type="xsd:ID"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="customValueType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="boolean">
+        <xsd:simpleContent xml:base="xsd:boolean">
+            <xsd:extension base="customValueType">
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="integer">
+        <xsd:simpleContent xml:base="xsd:integer">
+            <xsd:extension base="customValueType">
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="long">
+        <xsd:simpleContent xml:base="xsd:long">
+            <xsd:extension base="customValueType">
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="float">
+        <xsd:simpleContent xml:base="xsd:float">
+            <xsd:extension base="customValueType">
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="double">
+        <xsd:simpleContent xml:base="xsd:double">
+            <xsd:extension base="customValueType">
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="string">
+        <xsd:simpleContent xml:base="xsd:string">
+            <xsd:extension base="customValueType">
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:element name="value" type="customValueType"/>
+
+    <xsd:complexType name="customEntryType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:all>
+                    <xsd:element ref="value"/>
+                </xsd:all>
+                <xsd:attribute name="key" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="customMapType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element name="param" type="customEntryType"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--CONFIGURATION-->
+
+    <!--configuration-->
+    <xsd:element name="configuration" type="configurationType"/>
+
+    <xsd:complexType name="configurationType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:all>
+                    <xsd:element name="test-suite" type="processingTypeIn" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="session-execution-listeners" type="slistenersTypeIn" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="task-execution-listeners" type="tlistenersTypeIn" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="latency" type="percentilesTypeIn" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="report" type="reportType" minOccurs="0" maxOccurs="1"/>
+                </xsd:all>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--listeners-->
+
+    <xsd:element name="session-execution-listeners" type="slistenersType"/>
+
+    <xsd:element name="task-execution-listeners" type="tlistenersType"/>
+
+    <xsd:element name="latency" type="percentilesType"/>
+
+    <xsd:complexType name="slistenersType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="session-listener" type="slistenersTypeIn"/>
+                    <xsd:element ref="beans:bean"/>
+                    <xsd:element ref="beans:ref"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="tlistenersType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="task-listener" type="tlistenersTypeIn"/>
+                    <xsd:element ref="beans:bean"/>
+                    <xsd:element ref="beans:ref"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="slistenersTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="slistenersType">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="tlistenersTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="tlistenersType">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="percentilesType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice>
+                    <xsd:element name="percentile" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="percentilesTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="percentilesType">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="percentilesListType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element name="percentile" type="xsd:double"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="percentilesListTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="percentilesListType">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--TASKS-->
+    <xsd:element name="processing" type="processingType">
+    </xsd:element>
+
+    <xsd:element name="test-suite" type="processingType">
+    </xsd:element>
+
+    <xsd:element name="test-group" type="newTestGroupType">
+    </xsd:element>
+<!--
+    <xsd:element name="test" type="taskType">
+    </xsd:element>-->
+
+    <xsd:element name="load" type="loadType"/>
+
+    <xsd:element name="termination" type="terminationAbstract"/>
+<!--
+
+    <xsd:element name="task" type="taskType">
+    </xsd:element>
+-->
+
+    <xsd:element name="test" type="newTestType">
+    </xsd:element>
+
+    <xsd:element name="testGroup" type="newTestGroupType">
+    </xsd:element>
+
+    <xsd:element name="termination-duration" type="termination-duration" substitutionGroup="termination">
+    </xsd:element>
+
+    <xsd:element name="termination-iterations" type="termination-iterations" substitutionGroup="termination">
+    </xsd:element>
+
+    <xsd:element name="termination-background" type="termination-background" substitutionGroup="termination">
+    </xsd:element>
+
+    <xsd:element name="load-user" type="load-user-group" substitutionGroup="load">
+    </xsd:element>
+
+    <xsd:element name="load-user-group" type="load-user-group" substitutionGroup="load">
+    </xsd:element>
+
+    <xsd:element name="load-threads" type="load-threads" substitutionGroup="load">
+    </xsd:element>
+
+    <xsd:element name="load-invocation" type="load-invocation" substitutionGroup="load">
+    </xsd:element>
+
+    <xsd:element name="load-tps" type="load-tps" substitutionGroup="load">
+    </xsd:element>
+
+    <xsd:complexType name="newTestType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:all>
+                    <xsd:element name="load" type="loadType" maxOccurs="1"/>
+                    <xsd:element name="termination" type="terminationAbstract" maxOccurs="1"/>
+                </xsd:all>
+                <xsd:attribute name="testDescription" type="xsd:string"></xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="loadType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:attribute name="tickInterval" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="terminationAbstract" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="termination-iterations">
+        <xsd:complexContent>
+            <xsd:extension base="terminationAbstract">
+                <xsd:attributeGroup ref="iterationsAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="termination-duration">
+        <xsd:complexContent>
+            <xsd:extension base="terminationAbstract">
+                <xsd:attributeGroup ref="durationAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="termination-background">
+        <xsd:complexContent>
+            <xsd:extension base="terminationAbstract">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="newTestGroupType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="test" type="newTestTypeIn" maxOccurs="unbounded"/>
+                    <xsd:element ref="beans:bean"/>
+                    <xsd:element ref="beans:ref"/>
+                </xsd:choice>
+                <xsd:attribute name="monitoringEnabled" type="xsd:string" default="${chassis.conditions.monitoring.enable}" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="newTestTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="newTestType">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="processingType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="test-group" type="newTestGroupType" maxOccurs="unbounded"/>
+                    <xsd:element ref="beans:bean"/>
+                    <xsd:element ref="beans:ref"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="processingTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="processingType">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="load-user-groups">
+        <xsd:complexContent>
+            <xsd:extension base="loadType">
+                <xsd:choice>
+                    <xsd:element name="user" type="userGroupIn" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:choice>
+                <xsd:attributeGroup ref="userGroupsAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="userGroupIn">
+        <xsd:complexContent>
+            <xsd:extension base="loadType">
+                <xsd:attributeGroup ref="userAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="load-user-group">
+        <xsd:complexContent>
+            <xsd:extension base="loadType">
+                <xsd:attributeGroup ref="userAttributes"/>
+                <xsd:attributeGroup ref="userGroupsAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="userTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="load-user-group">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="load-threads">
+        <xsd:complexContent>
+            <xsd:extension base="loadType">
+                <xsd:attributeGroup ref="virtualUserAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="virtualUserTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="load-threads">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="load-invocation">
+        <xsd:complexContent>
+            <xsd:extension base="loadType">
+                <xsd:attributeGroup ref="invocationAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="invocationTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="load-invocation">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="load-tps">
+        <xsd:complexContent>
+            <xsd:extension base="loadType">
+                <xsd:attributeGroup ref="tpsAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="tpsTypeIn">
+        <xsd:complexContent>
+            <xsd:extension base="load-tps">
+                <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="userAttributes">
+        <xsd:attribute name="count" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="startCount" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="startIn" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="startBy" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="life" type="xsd:string" use="required"></xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="virtualUserAttributes">
+        <xsd:attribute name="count" type="xsd:integer" use="required"></xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="invocationAttributes">
+        <xsd:attribute name="exactcount" type="xsd:integer" use="required"></xsd:attribute>
+        <xsd:attribute name="threads" type="xsd:integer" use="required"></xsd:attribute>
+        <xsd:attribute name="delay" type="xsd:integer" default="0"></xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="tpsAttributes">
+        <xsd:attribute name="value" type="xsd:integer" use="required"></xsd:attribute>
+        <xsd:attribute name="maxThreadNumber" type="xsd:integer"/>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="userGroupsAttributes">
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="iterationsAttributes">
+        <xsd:attribute name="maxDuration" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="iterations" type="xsd:string" use="required"></xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="durationAttributes">
+        <xsd:attribute name="duration" type="xsd:string" use="required"></xsd:attribute>
+    </xsd:attributeGroup>
+
+    <!--WORKLOAD-->
+
+    <xsd:element name="test-description" type="workloadType"/>
+
+    <xsd:complexType name="workloadType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:all>
+                    <xsd:element name="info-collectors" type="workloadListenersType" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element ref="scenario" minOccurs="0" maxOccurs="1"/>
+                </xsd:all>
+                <xsd:attribute name="name" type="xsd:string"/>
+                <xsd:attribute name="version" type="xsd:integer"/>
+                <xsd:attribute name="calibration" type="xsd:boolean" default="false"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--listeners -->
+
+    <xsd:element name="workloadListener" type="workloadListenerType"/>
+
+    <xsd:element name="metric" type="metricType"  substitutionGroup="workloadListener"/>
+
+    <xsd:element name="validator" type="validatorType" substitutionGroup="workloadListener"/>
+
+    <xsd:complexType name="workloadListenersType">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element ref="workloadListener"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="workloadListenerType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--metrics-->
+    <xsd:complexType name="metricType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="workloadListenerType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+
+    <xsd:complexType name="metric-not-null-response" >
+        <xsd:complexContent>
+            <xsd:extension base="metricType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="metric-custom">
+        <xsd:complexContent>
+            <xsd:extension base="metricType">
+                <xsd:attribute name="calculator" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--validators-->
+    <xsd:complexType name="validatorType">
+        <xsd:complexContent>
+            <xsd:extension base="workloadListenerType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="composite">
+        <xsd:complexContent>
+            <xsd:extension base="validatorType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="validator" type="validatorType"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="validator-consistency">
+        <xsd:complexContent>
+            <xsd:extension base="validatorType">
+                <xsd:attribute name="queryEq" type="xsd:string"/>
+                <xsd:attribute name="endpointEq" type="xsd:string"/>
+                <xsd:attribute name="resultEq" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="validator-not-null-response">
+        <xsd:complexContent>
+            <xsd:extension base="validatorType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="validator-ref">
+        <xsd:complexContent>
+            <xsd:extension base="validatorType">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--possible scenarios-->
+
+    <xsd:element name="scenario" type="scenarioType"/>
+
+    <xsd:element name="httpScenario" type="scenario-http" substitutionGroup="scenario"/>
+
+    <xsd:complexType name="scenarioType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="scenario-ref">
+        <xsd:complexContent>
+            <xsd:extension base="scenarioType">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="scenario-http">
+        <xsd:complexContent>
+            <xsd:extension base="scenarioType">
+                <xsd:all>
+                    <xsd:element name="endpoint" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    <xsd:element name="http-query" type="query-http" minOccurs="1" maxOccurs="1"/>
+                </xsd:all>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="scenario-query-pool">
+        <xsd:complexContent>
+            <xsd:extension base="scenarioType">
+                <xsd:all>
+                    <xsd:element ref="invoker" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element ref="query-provider" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element ref="endpoint-provider" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element ref="query-distributor" minOccurs="0" maxOccurs="1"/>
+                </xsd:all>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--possible invokers-->
+
+    <xsd:element name="invoker" type="invokerType"/>
+
+    <xsd:complexType name="invokerType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="invoker-http">
+        <xsd:complexContent>
+            <xsd:extension base="invokerType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="invoker-soap">
+        <xsd:complexContent>
+            <xsd:extension base="invokerType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="invoker-class">
+        <xsd:complexContent>
+            <xsd:extension base="invokerType">
+                <xsd:attribute name="class" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--queries-->
+
+    <xsd:element name="query-provider" type="queryProviderType"/>
+
+    <xsd:element name="query" type="queryType"/>
+
+    <xsd:complexType name="queryProviderType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-provider-ref">
+        <xsd:complexContent>
+            <xsd:extension base="queryProviderType">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-provider-list">
+        <xsd:complexContent>
+            <xsd:extension base="queryProviderType">
+                <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element ref="query"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="queryType" mixed="true">
+        <xsd:complexContent>
+            <xsd:extension base="primitiveOrObjectType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-ref" mixed="true">
+        <xsd:complexContent>
+            <xsd:extension base="queryType">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-http" mixed="true">
+        <xsd:complexContent>
+            <xsd:extension base="queryType">
+                <xsd:choice>
+                    <xsd:sequence>
+                        <xsd:element name="method-params" type="customMapType" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="client-params" type="customMapType" minOccurs="0" maxOccurs="1"/>
+                    </xsd:sequence>
+                    <xsd:sequence>
+                        <xsd:element name="client-params" type="customMapType" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="method-params" type="customMapType" minOccurs="0" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:choice>
+                <xsd:attribute name="method" type="httpMethodsEnum" default="GET"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="httpMethodsEnum">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="GET"/>
+            <xsd:enumeration value="POST"/>
+            <xsd:enumeration value="PUT"/>
+            <xsd:enumeration value="DELETE"/>
+            <xsd:enumeration value="TRACE"/>
+            <xsd:enumeration value="HEAD"/>
+            <xsd:enumeration value="OPTIONS"/>
+            <xsd:enumeration value="CONNECT"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="mapType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:mapType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--endpoints-->
+
+    <xsd:element name="endpoint-provider" type="endpointProviderType"/>
+
+    <xsd:element name="endpoint" type="endpointType"/>
+
+    <xsd:complexType name="endpointProviderType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="endpoint-provider-ref">
+        <xsd:complexContent>
+            <xsd:extension base="endpointProviderType">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="endpoint-provider-list">
+        <xsd:complexContent>
+            <xsd:extension base="endpointProviderType">
+                <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element ref="endpoint"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="endpointType" mixed="true">
+        <xsd:complexContent>
+            <xsd:extension base="primitiveOrObjectType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="endpoint-ref" mixed="true">
+        <xsd:complexContent>
+            <xsd:extension base="endpointType">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--balancer-->
+
+    <xsd:element name="query-distributor" type="loadBalancerType"/>
+
+    <xsd:complexType name="loadBalancerType" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="loadBalancerCustomType">
+        <xsd:complexContent>
+            <xsd:extension base="loadBalancerType">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-distributor-round-robin">
+        <xsd:complexContent>
+            <xsd:extension base="loadBalancerType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-distributor-one-by-one">
+        <xsd:complexContent>
+            <xsd:extension base="loadBalancerType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--REPORTING-->
+
+    <xsd:element name="report" type="reportType">
+    </xsd:element>
+
+    <xsd:complexType name="reportType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:all>
+                    <xsd:element name="extensions" type="extensionsType" minOccurs="0"/>
+                    <xsd:element name="sessionComparators" type="sessionComparatorsType" minOccurs="0"/>
+                </xsd:all>
+                <xsd:attributeGroup ref="reportTypeAttribute"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="reportTypeAttribute">
+        <xsd:attribute name="rootTemplateLocation" type="xsd:string"/>
+        <xsd:attribute name="outputReportLocation" type="xsd:string"/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="extensionsType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="extension" type="extensionType"></xsd:element>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="extensionType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:choice minOccurs="0" maxOccurs="1">
+                    <xsd:element ref="beans:ref"/>
+                </xsd:choice>
+                <xsd:attributeGroup ref="extensionAttribute"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="extensionAttribute">
+        <xsd:attribute name="ref" type="xsd:string" use="optional"/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="sessionComparatorsType">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="comparator" type="comparatorType"/>
+                </xsd:choice>
+                <xsd:attributeGroup ref="sessionComparatorsAttribute"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="sessionComparatorsAttribute">
+        <xsd:attribute name="baselineId" type="xsd:integer" use="optional"/>
+        <xsd:attribute name="strategy" type="strategyType" use="optional"/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="comparatorType">
+        <xsd:attributeGroup ref="comparatorAttribute"/>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="comparatorAttribute">
+        <xsd:attribute name="ref" type="xsd:string" />
+        <xsd:attribute name="decisionMakerType" type="decisionMakerTypeType" />
+        <xsd:attribute name="comparatorType" type="comparatorTypeType" use="required"/>
+        <xsd:attribute name="decisionMakerRef" type="xsd:string"/>
+        <xsd:attribute name="fatalDeviationThreshold" type="xsd:float"/>
+        <xsd:attribute name="warningDeviationThreshold" type="xsd:float"/>
+    </xsd:attributeGroup>
+
+    <xsd:simpleType name="decisionMakerTypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="monitoringParameterDecisionMaker"/>
+            <xsd:enumeration value="workloadDecisionMaker"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="comparatorTypeType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="monitoring"/>
+            <xsd:enumeration value="workload"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="strategyType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="worstCase"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

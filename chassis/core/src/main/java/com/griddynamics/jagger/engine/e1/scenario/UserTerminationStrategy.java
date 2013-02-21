@@ -42,9 +42,16 @@ public class UserTerminationStrategy implements TerminationStrategy {
         this.shutdown = shutdown;
     }
 
+    public UserTerminationStrategy(String duration, Integer samples, AtomicBoolean shutdown) {
+        this.stopTime = duration == null ? -1
+                : (System.currentTimeMillis() + Parser.parseTimeMillis(duration));
+        this.stopSampleCount = samples;
+        this.shutdown = shutdown;
+    }
+
     public static int calculateStopSamplesCount(ProcessingConfig.Test.Task taskConfig) {
         if (taskConfig.invocation != null) {
-            return taskConfig.invocation.count;
+            return taskConfig.invocation.exactcount;
         } else {
             return taskConfig.sample;
         }

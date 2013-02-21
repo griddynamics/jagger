@@ -23,26 +23,30 @@ package com.griddynamics.jagger.invoker;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.util.JavaSystemClock;
 import com.griddynamics.jagger.util.SystemClock;
-import org.springframework.beans.factory.annotation.Required;
 
 public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, E> {
     private Class<Invoker<Q, R, E>> invokerClazz;
-    private LoadBalancer<Q, E> loadBalancer;
+    private QueryPoolLoadBalancer<Q, E> loadBalancer;
     private SystemClock systemClock = new JavaSystemClock();
+
+    private Iterable<Q> queryProvider;
+    private Iterable<E> endpointProvider;
 
     @Override
     public Scenario<Q, R, E> get(NodeContext nodeContext) {
         Invoker<Q, R, E> invoker = nodeContext.getService(invokerClazz);
+        if (endpointProvider!=null) loadBalancer.setEndpointProvider(getEndpointProvider());
+        if (queryProvider!=null)    loadBalancer.setQueryProvider(getQueryProvider());
         return new QueryPoolScenario<Q, R, E>(invoker, loadBalancer.provide(), systemClock);
     }
 
-    @Required
+    //@Required
     public void setInvokerClazz(Class<Invoker<Q, R, E>> invokerClazz) {
         this.invokerClazz = invokerClazz;
     }
 
-    @Required
-    public void setLoadBalancer(LoadBalancer<Q, E> loadBalancer) {
+    //@Required
+    public void setLoadBalancer(QueryPoolLoadBalancer<Q, E> loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
@@ -53,5 +57,21 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
     @Override
     public int getCalibrationSamplesCount() {
         return loadBalancer.querySize();
+    }
+
+    public Iterable<Q> getQueryProvider() {
+        return queryProvider;
+    }
+
+    public void setQueryProvider(Iterable<Q> queryProvider) {
+        this.queryProvider = queryProvider;
+    }
+
+    public Iterable<E> getEndpointProvider() {
+        return endpointProvider;
+    }
+
+    public void setEndpointProvider(Iterable<E> endpointProvider) {
+        this.endpointProvider = endpointProvider;
     }
 }

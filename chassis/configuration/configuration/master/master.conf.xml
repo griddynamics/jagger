@@ -24,6 +24,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
     <bean class="com.griddynamics.jagger.util.PropertiesResolver">
         <property name="registry" ref="propertiesResolverRegistry"/>
         <property name="resources">
@@ -99,4 +101,9 @@
     <bean id="monitoringTaskDistributor" class="com.griddynamics.jagger.monitoring.MonitoringTaskDistributor">
         <property name="ttl" value="${chassis.monitoring.command.execution.ttl}"/>
     </bean>
+
 </beans>
+
+
+
+
