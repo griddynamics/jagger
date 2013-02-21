@@ -32,7 +32,7 @@
     <parent>
         <groupId>com.griddynamics.jagger</groupId>
         <artifactId>chassis.parent</artifactId>
-        <version>1.1.4-springConfig-SNAPSHOT</version>
+        <version>1.1.3-rc1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
