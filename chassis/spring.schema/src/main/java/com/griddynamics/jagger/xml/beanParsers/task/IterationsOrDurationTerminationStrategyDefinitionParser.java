@@ -25,7 +25,7 @@ public class IterationsOrDurationTerminationStrategyDefinitionParser extends Abs
             if (element.hasAttribute(XMLConstants.MAX_DURATION)){
                 builder.addPropertyValue(XMLConstants.DURATION, element.getAttribute(XMLConstants.MAX_DURATION));
             }else{
-                builder.addPropertyValue(XMLConstants.DURATION, XMLConstants.DEFAULT_MAX_DURATION);
+                builder.addPropertyValue(XMLConstants.DURATION, null);
             }
             builder.addPropertyValue(XMLConstants.ITERATIONS, element.getAttribute(XMLConstants.ITERATIONS));
         }

@@ -43,7 +43,8 @@ public class UserTerminationStrategy implements TerminationStrategy {
     }
 
     public UserTerminationStrategy(String duration, Integer samples, AtomicBoolean shutdown) {
-        this.stopTime = System.currentTimeMillis() + Parser.parseTimeMillis(duration);
+        this.stopTime = duration == null ? -1
+                : (System.currentTimeMillis() + Parser.parseTimeMillis(duration));
         this.stopSampleCount = samples;
         this.shutdown = shutdown;
     }

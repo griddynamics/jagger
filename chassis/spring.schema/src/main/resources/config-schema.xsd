@@ -245,7 +245,7 @@
     <xsd:element name="load-threads" type="load-threads" substitutionGroup="load">
     </xsd:element>
 
-    <xsd:element name="load-invocation" type="invocationType" substitutionGroup="load">
+    <xsd:element name="load-invocation" type="load-invocation" substitutionGroup="load">
     </xsd:element>
 
     <xsd:element name="load-tps" type="load-tps" substitutionGroup="load">
@@ -394,7 +394,7 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="invocationType">
+    <xsd:complexType name="load-invocation">
         <xsd:complexContent>
             <xsd:extension base="loadType">
                 <xsd:attributeGroup ref="invocationAttributes"/>
@@ -404,7 +404,7 @@
 
     <xsd:complexType name="invocationTypeIn">
         <xsd:complexContent>
-            <xsd:extension base="invocationType">
+            <xsd:extension base="load-invocation">
                 <xsd:attribute name="ref" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
@@ -446,6 +446,7 @@
 
     <xsd:attributeGroup name="tpsAttributes">
         <xsd:attribute name="value" type="xsd:integer" use="required"></xsd:attribute>
+        <xsd:attribute name="maxThreadNumber" type="xsd:integer"/>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="userGroupsAttributes">

@@ -130,10 +130,12 @@ public class XMLConstants {
     public static final String TICK_INTERVAL = "tickInterval";
     public static final String DURATION = "duration";
     public static final String MAX_DURATION = "maxDuration";
+    public static final String MAX_THREAD_NUMBER = "maxThreadNumber";
     public static final String ITERATIONS = "iterations";
+    public static final String DELAY = "delay";
 
     public static final String DEFAULT_TICK_INTERVAL = "${workload.tickinterval.default}";
-    public static final String DEFAULT_MAX_DURATION = "${termination.iterations.maxduration}";
+    public static final String DEFAULT_MAX_THREAD_COUNT = "${workload.threads.maxcount}";
 
     public static final String DEFAULT_NAMESPACE = "http://www.griddynamics.com/schema/jagger";
 }

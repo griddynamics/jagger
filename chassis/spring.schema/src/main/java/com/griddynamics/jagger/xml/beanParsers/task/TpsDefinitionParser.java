@@ -30,10 +30,15 @@ public class TpsDefinitionParser extends CustomBeanDefinitionParser {
         if (element.getAttribute(XMLConstants.TICK_INTERVAL).isEmpty()){
             builder.addPropertyValue(XMLConstants.TICK_INTERVAL, XMLConstants.DEFAULT_TICK_INTERVAL);
         }
+        if (!element.getAttribute(XMLConstants.MAX_THREAD_NUMBER).isEmpty()){
+            builder.addPropertyValue(XMLConstants.MAX_THREAD_NUMBER, element.getAttribute(XMLConstants.MAX_THREAD_NUMBER));
+        }else{
+            builder.addPropertyValue(XMLConstants.MAX_THREAD_NUMBER, XMLConstants.DEFAULT_MAX_THREAD_COUNT);
+        }
     }
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 }
