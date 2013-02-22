@@ -64,6 +64,14 @@ public class IterationsOrDurationStrategyConfiguration implements TerminateStrat
 
     @Override
     public String toString() {
-        return iterations + " samples";
+        if (duration == null){
+            return iterations + " samples";
+        }else{
+            if (iterations != -1){
+                return duration+"; "+iterations+" samples";
+            }else{
+                return duration;
+            }
+        }
     }
 }
