@@ -33,10 +33,10 @@
         >
 
     <configuration id="config3">
-        <latency>
+        <latency-percentiles>
             <percentile>80</percentile>
             <percentile>60</percentile>
-        </latency>
+        </latency-percentiles>
     </configuration>
 
     <configuration id="config2" parent="config3">

@@ -68,7 +68,7 @@ public class IterationsOrDurationStrategyConfiguration implements TerminateStrat
             return iterations + " samples";
         }else{
             if (iterations != -1){
-                return duration+"; "+iterations+" samples";
+                return iterations+" samples; "+duration;
             }else{
                 return duration;
             }

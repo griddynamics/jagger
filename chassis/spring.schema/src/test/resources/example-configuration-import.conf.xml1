@@ -37,10 +37,10 @@
         <report outputReportLocation="new-report.pdf">
         </report>
 
-        <latency>
+        <latency-percentiles>
             <percentile>50</percentile>
             <percentile>70</percentile>
-        </latency>
+        </latency-percentiles>
 
     </configuration>
 

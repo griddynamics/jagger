@@ -32,7 +32,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("configuration", new ConfigDefinitionParser());
         registerBeanDefinitionParser("test-suite", listCustomDefinitionParser);
         registerBeanDefinitionParser("test-group", new TestDefinitionParser());
-        registerBeanDefinitionParser("latency", listCustomDefinitionParser);
+        registerBeanDefinitionParser("latency-percentiles", listCustomDefinitionParser);
         registerBeanDefinitionParser("percentile", primitiveParser);
 
         //REPORT

@@ -108,7 +108,7 @@
                     <xsd:element name="test-suite" type="processingTypeIn" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="session-execution-listeners" type="slistenersTypeIn" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="task-execution-listeners" type="tlistenersTypeIn" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="latency" type="percentilesTypeIn" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="latency-percentiles" type="percentilesTypeIn" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="report" type="reportType" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
             </xsd:extension>
@@ -121,7 +121,7 @@
 
     <xsd:element name="task-execution-listeners" type="tlistenersType"/>
 
-    <xsd:element name="latency" type="percentilesType"/>
+    <xsd:element name="latency-percentiles" type="percentilesType"/>
 
     <xsd:complexType name="slistenersType">
         <xsd:complexContent>
