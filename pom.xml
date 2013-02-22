@@ -45,6 +45,7 @@
         <module>distribution</module>
         <module>facade</module>
         <module>webclient</module>
+        <module>archetype</module>
         <module>test/jagger-test</module>
         <module>test/test-target</module>
     </modules>

@@ -1,0 +1,21 @@
+<archetype xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0 http://maven.apache.org/xsd/archetype-1.0.0.xsd">
+
+    <id>jagger-suite-archetype</id>
+
+    <sources>
+        <source>src/main/java/PageVisitorInvoker.java</source>
+        <source>src/main/java/ResponseSize.java</source>
+    </sources>
+    <resources>
+        <resource>src/main/resources/profiles/basic/environment.properties</resource>
+        <resource>src/main/resources/suite/invokers/invokers.conf.xml</resource>
+        <resource>src/main/resources/suite/collectors.conf.xml</resource>
+        <resource>src/main/resources/suite/defaults.config.xml</resource>
+        <resource>src/main/resources/suite/test.suite.conf.xml</resource>
+        <resource>src/main/resources/suite/test.suite.scenario.config.xml</resource>
+        <resource>assembly-config.xml</resource>
+    </resources>
+
+
+</archetype>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or any later version.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="Report" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="550" leftMargin="20"
+              rightMargin="20" topMargin="20" bottomMargin="20">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <template class="java.io.InputStream">
+        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+    <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
+    <title>
+        <band height="50" splitType="Prevent">
+            <rectangle>
+                <reportElement x="0" y="0" width="550" height="40" backcolor="#AAE600"/>
+                <graphicElement>
+                    <pen lineWidth="0.0" lineStyle="Solid"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement style="Large_Header_Bold" positionType="Float" x="0" y="0" width="550" height="40"
+                               forecolor="#336600"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Jagger Report]]></text>
+            </staticText>
+        </band>
+    </title>
+    <detail>
+        <band height="200" splitType="Stretch">
+            <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="20" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("sessionSummary").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("sessionSummary").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+
+            <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="40" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("sessionStatus").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("sessionStatus").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+
+            <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="60" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("sessionComparison").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("sessionComparison").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+
+            <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="80" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("e1Scenario").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("e1Scenario").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+
+            <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="100" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("scalabilityPlots").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("scalabilityPlots").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+
+            <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="120" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("testGeneralContainer").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("testGeneralContainer").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+
+        <!--    <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="140" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("testDetailsContainer").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("testDetailsContainer").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+
+            <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="160" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("monitoringReporter").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("monitoringReporter").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+
+            <frame>
+                <reportElement x="0" y="0" width="550" height="200"/>
+                <subreport>
+                    <reportElement positionType="Float" x="0" y="180" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getProvider("diagnosticsSamplingProfilerReporter").getDataSource()]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("diagnosticsSamplingProfilerReporter").getReport()]]></subreportExpression>
+                </subreport>
+            </frame>
+            -->
+        </band>
+    </detail>
+</jasperReport>
