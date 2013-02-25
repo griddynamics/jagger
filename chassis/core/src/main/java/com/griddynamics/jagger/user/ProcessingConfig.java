@@ -136,7 +136,7 @@ public class ProcessingConfig implements Serializable {
                         @Attribute(name = "sample", required = false) Integer sample,
                         @Attribute(name = "iterations", required = false) Integer iterations,
                         @Attribute(name = "delay", required = false) Integer delay,
-                        @Attribute(name = "attendant", required = false) Boolean attendant,
+                        @Attribute(name = "attendant", required = false) boolean attendant,
                         @Attribute(name = "bean") String bean,
                         @ElementList(name = "users", entry = "user", inline = true, required = false) List<User> users,
                         @Element(name = "invocation", required = false) Invocation invocation,
@@ -156,7 +156,7 @@ public class ProcessingConfig implements Serializable {
                 this.users = Collections.unmodifiableList((users != null) ? users : new ArrayList<User>(0));
                 this.tps = tps;
                 this.invocation = invocation;
-			    this.attendant = (attendant != null) ? attendant : false;
+			    this.attendant = attendant;
                 this.setVirtualUser(virtualUser);
             }
 
