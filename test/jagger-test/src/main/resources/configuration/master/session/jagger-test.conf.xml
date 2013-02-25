@@ -79,25 +79,23 @@
     </property>
 </bean>
 
-<!--    <bean id="tcpTrafficScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
+    <bean id="tcpTrafficScenario" class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTask"
           parent="testAbstractWorkload">
         <property name="name" value="tcp-traffic-scenario"/>
         <property name="version" value="1"/>
         <property name="scenarioFactory" ref="tcpTrafficScenarioFactory"/>
-    </bean>-->
+    </bean>
 
     <bean id="testTargetConfiguration" parent="abstractTestConfiguration">
         <property name="tasks" value="#{taskUtilInternal.generate()}"/>
     </bean>
 
 
-<!--
     <bean id="testTcpTrafficTargetConfiguration" parent="abstractTestConfiguration">
         <property name="tasks" value="#{taskUtilTcpTraffic.generate()}"/>
     </bean>
--->
 
-   <!-- <bean id="taskUtilTcpTraffic" class="com.griddynamics.jagger.master.configuration.WorkloadTasksGenerator">
+    <bean id="taskUtilTcpTraffic" class="com.griddynamics.jagger.master.configuration.WorkloadTasksGenerator">
         <property name="prototypes">
             <list>
                 <ref bean="tcpTrafficScenario"/>
@@ -126,7 +124,7 @@
                 </property>
             </bean>
         </property>
-    </bean>-->
+    </bean>
 
     <bean id="taskUtilInternal" class="com.griddynamics.jagger.master.configuration.WorkloadTasksGenerator">
         <property name="prototypes">
