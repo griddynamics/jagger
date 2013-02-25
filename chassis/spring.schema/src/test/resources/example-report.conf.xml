@@ -36,7 +36,7 @@
 
         </jgr:extensions>
 
-        <jgr:sessionComparators baselineId="4444" strategy="worstCase">
+        <jgr:session-comparators baselineId="4444" strategy="worstCase">
 
             <jgr:comparator comparatorType="monitoring" decisionMakerType="monitoringParameterDecisionMaker"
 				fatalDeviationThreshold="0.7" warningDeviationThreshold="0.5"/>
@@ -46,7 +46,7 @@
 
             <jgr:comparator comparatorType="monitoring" decisionMakerRef="refDecisionMaker" />
 
-        </jgr:sessionComparators>
+        </jgr:session-comparators>
     </jgr:report>
 
 
