@@ -125,19 +125,22 @@
         </property>
         <property name="invokerClazz" value="com.griddynamics.jagger.invoker.http.HttpInvoker"/>
     </bean>
-<!--
+
     <bean id="tcpTrafficScenarioFactory" class="com.griddynamics.jagger.invoker.QueryPoolScenarioFactory">
         <property name="loadBalancer">
             <bean class="com.griddynamics.jagger.invoker.RoundRobinLoadBalancer">
-                <constructor-arg type="java.lang.Iterable">
+                <constructor-arg>
                     <list>
                         <value type="com.griddynamics.jagger.util.Nothing">INSTANCE</value>
                     </list>
                 </constructor-arg>
-                <constructor-arg type="java.lang.Iterable" value="#{endpointConfigurator.getEndpoint('/sleep/5')}">
+                <constructor-arg>
+                    <list>
+                        <value>"#{endpointConfigurator.getEndpoint('/sleep/5')}"</value>
+                    </list>
                 </constructor-arg>
             </bean>
         </property>
         <property name="invokerClazz" value="com.griddynamics.jagger.invoker.http.TcpTrafficInvoker"/>
-    </bean>-->
+    </bean>
 </beans>
