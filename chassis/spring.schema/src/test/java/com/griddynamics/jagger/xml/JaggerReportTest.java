@@ -1,16 +1,20 @@
 package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
+import com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.WorstCaseDecisionMaker;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringFeatureComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.StdDevMonitoringParameterDecisionMaker;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.ThroughputWorkloadDecisionMaker;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadFeatureComparator;
 import com.griddynamics.jagger.extension.ExtensionExporter;
+import com.griddynamics.jagger.reporting.ReportProvider;
 import com.griddynamics.jagger.reporting.ReportingContext;
 import com.griddynamics.jagger.reporting.ReportingService;
 import org.springframework.context.ApplicationContext;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -40,6 +44,7 @@ public class JaggerReportTest {
         context = JaggerLauncher.loadContext(directory,"chassis.reporter.configuration",environmentProperties);
     }
 
+    //TODO
     @Test
     public void checkExtensionRef(){
         String s=((ExtensionExporter)context.getBean("ext_stringBean")).getExtension().toString();
@@ -54,66 +59,48 @@ public class JaggerReportTest {
 
     @Test
     public void checkBaseline(){
-        BaselineSessionProvider provider=(BaselineSessionProvider) context.getBean("baselineSessionProvider");
-        assertEquals(provider.getBaselineSession(),"4444");
+        ReportingService service = (ReportingService) context.getBean("report1");
+        ReportProvider provider = service.getContext().getProvider("sessionComparison");
+        Assert.assertNotNull(provider);
+
+        OverallSessionComparisonReporter comparators = (OverallSessionComparisonReporter) provider;
+        Assert.assertEquals(comparators.getBaselineSessionProvider().getBaselineSession(), "4444");
     }
 
     @Test
-    public void checkStrategy(){
-        ConfigurableSessionComparator comparator=(ConfigurableSessionComparator) context.getBean("sessionComparator");
-        assertEquals(comparator.getDecisionMaker(), context.getBean("worstCaseDecisionMaker"));
+    public void checkComparators(){
+        ReportingService service = (ReportingService) context.getBean("report1");
+        ReportProvider provider = service.getContext().getProvider("sessionComparison");
+        Assert.assertNotNull(provider);
+
+        OverallSessionComparisonReporter comparators = (OverallSessionComparisonReporter) provider;
+        ConfigurableSessionComparator comparatorChain = (ConfigurableSessionComparator)comparators.getSessionComparator();
+
+        WorstCaseDecisionMaker worstMaker = (WorstCaseDecisionMaker)comparatorChain.getDecisionMaker();
+        Assert.assertNotNull(worstMaker);
+
+        MonitoringFeatureComparator monitoringComparator = (MonitoringFeatureComparator)comparatorChain.getComparatorChain().get(0);
+        Assert.assertNotNull(monitoringComparator);
+
+        StdDevMonitoringParameterDecisionMaker monitoringMaker = (StdDevMonitoringParameterDecisionMaker)monitoringComparator.getMonitoringParameterDecisionMaker();
+        Assert.assertNotNull(monitoringMaker);
+        Assert.assertEquals(monitoringMaker.getFatalDeviationThreshold(), 0.7);
+        Assert.assertEquals(monitoringMaker.getWarningDeviationThreshold(), 0.5);
+
+        WorkloadFeatureComparator workloadComparator = (WorkloadFeatureComparator)comparatorChain.getComparatorChain().get(1);
+        Assert.assertNotNull(workloadComparator);
+
+        ThroughputWorkloadDecisionMaker workloadMaker = (ThroughputWorkloadDecisionMaker) workloadComparator.getWorkloadDecisionMaker();
+        Assert.assertNotNull(workloadMaker);
+        Assert.assertEquals(workloadMaker.getFatalDeviationThreshold(), 0.7);
+        Assert.assertEquals(workloadMaker.getWarningDeviationThreshold(), 0.2);
+
+        MonitoringFeatureComparator monitoringComparatorRef = (MonitoringFeatureComparator)comparatorChain.getComparatorChain().get(2);
+        Assert.assertNotNull(monitoringComparatorRef);
+
+        StdDevMonitoringParameterDecisionMaker monitoringMakerRef = (StdDevMonitoringParameterDecisionMaker)monitoringComparatorRef.getMonitoringParameterDecisionMaker();
+        Assert.assertNotNull(monitoringMakerRef);
+        Assert.assertEquals(monitoringMakerRef.getFatalDeviationThreshold(), 0.5);
+        Assert.assertEquals(monitoringMakerRef.getWarningDeviationThreshold(), 0.9);
     }
-
-    @Test
-    public void checkMonitoringComparator(){
-        ConfigurableSessionComparator comparator=(ConfigurableSessionComparator) context.getBean("sessionComparator");
-        checkMonitoringComparator((MonitoringFeatureComparator) comparator.getComparatorChain().get(0),0.5,0.7);
-    }
-
-    @Test
-    public void checkWorkloadComparator(){
-        ConfigurableSessionComparator comparator=(ConfigurableSessionComparator) context.getBean("sessionComparator");
-        checkWorkloadComparator((WorkloadFeatureComparator) comparator.getComparatorChain().get(1), 0.2, 0.7);
-    }
-
-    @Test
-    public void checkMonitoringComparatorRef(){
-        ConfigurableSessionComparator comparator=(ConfigurableSessionComparator) context.getBean("sessionComparator");
-        checkMonitoringComparator((MonitoringFeatureComparator) comparator.getComparatorChain().get(2),0.9, 0.5);
-    }
-
-    @Test
-    public void checkReportingService(){
-        ReportingService service=(ReportingService) context.getBean("report1");
-        assertEquals(service.getReportType().toString(),"PDF");
-        assertEquals(service.getRootTemplateLocation(), "custom-root-template.jrxml");
-        assertEquals(service.getOutputReportLocation(),"custom-report.pdf");
-        ReportingContext defaultContext=(ReportingContext) context.getBean("reportingContext");
-        assertEquals(service.getContext(),defaultContext);
-    }
-
-    @Test
-    public void checkExtensions(){
-        Map<String,ExtensionExporter> extensions=context.getBeansOfType(ExtensionExporter.class);
-        assertEquals(extensions.get("ext_integerBean").getExtension(),Integer.valueOf(1101));
-        assertEquals(extensions.get("ext_stringBean").getExtension(),"stringValue");
-    }
-
-
-    private void checkWorkloadComparator(WorkloadFeatureComparator comparator, double warning, double fatal){
-        assertEquals(comparator.getSessionFactory(), context.getBean("sessionFactory"));
-        ThroughputWorkloadDecisionMaker decisionMaker=(ThroughputWorkloadDecisionMaker)comparator.getWorkloadDecisionMaker();
-        assertEquals(decisionMaker.getFatalDeviationThreshold(),fatal);
-        assertEquals(decisionMaker.getWarningDeviationThreshold(),warning);
-    }
-
-
-    private void checkMonitoringComparator(MonitoringFeatureComparator comparator, double warning, double fatal){
-        assertEquals(comparator.getSessionFactory(), context.getBean("sessionFactory"));
-        assertEquals(comparator.getMonitoringSummaryRetriever(), context.getBean("monitoringSummaryRetriever"));
-        StdDevMonitoringParameterDecisionMaker decisionMaker=(StdDevMonitoringParameterDecisionMaker)comparator.getMonitoringParameterDecisionMaker();
-        assertEquals(decisionMaker.getFatalDeviationThreshold(),fatal);
-        assertEquals(decisionMaker.getWarningDeviationThreshold(),warning);
-    }
-
 }

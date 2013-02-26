@@ -76,5 +76,13 @@ public class OverallSessionComparisonReporter extends AbstractReportProvider {
     public void setBaselineSessionProvider(BaselineSessionProvider baselineSessionProvider) {
         this.baselineSessionProvider = baselineSessionProvider;
     }
+
+    public BaselineSessionProvider getBaselineSessionProvider(){
+        return baselineSessionProvider;
+    }
+
+    public SessionComparator getSessionComparator(){
+        return sessionComparator;
+    }
 }
 

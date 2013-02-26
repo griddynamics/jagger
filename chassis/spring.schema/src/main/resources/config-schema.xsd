@@ -811,9 +811,89 @@
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element name="comparator" type="comparatorType"/>
+                    <xsd:element ref="comparator"/>
                 </xsd:choice>
                 <xsd:attributeGroup ref="sessionComparatorsAttribute"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="comparator" type="comparatorAbstract"/>
+
+    <xsd:element name="comparator-monitoring" type="comparator-monitoring" substitutionGroup="comparator"/>
+
+    <xsd:element name="comparator-workload" type="comparator-workload" substitutionGroup="comparator"/>
+
+    <xsd:element name="comparator-ref" type="comparator-ref" substitutionGroup="comparator"/>
+
+    <xsd:element name="decision-maker" type="decisionMakerAbstract"/>
+
+    <xsd:element name="decision-maker-throughput" type="decision-maker-throughput" substitutionGroup="decision-maker"/>
+
+    <xsd:element name="decision-maker-stddev" type="decision-maker-stddev" substitutionGroup="decision-maker"/>
+
+    <xsd:element name="decision-maker-ref" type="decision-maker-ref" substitutionGroup="decision-maker"/>
+
+    <xsd:complexType name="comparatorAbstract" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice minOccurs="1" maxOccurs="1">
+                    <xsd:element ref="decision-maker"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="decisionMakerAbstract" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="basicType"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="comparator-monitoring">
+        <xsd:complexContent>
+            <xsd:extension base="comparatorAbstract">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="comparator-workload">
+        <xsd:complexContent>
+            <xsd:extension base="comparatorAbstract">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="comparator-ref">
+        <xsd:complexContent>
+            <xsd:extension base="comparatorAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="decision-maker-throughput">
+        <xsd:complexContent>
+            <xsd:extension base="decisionMakerAbstract">
+                <xsd:attribute name="fatalDeviationThreshold" type="xsd:float" use="required"/>
+                <xsd:attribute name="warningDeviationThreshold" type="xsd:float" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="decision-maker-stddev">
+        <xsd:complexContent>
+            <xsd:extension base="decisionMakerAbstract">
+                <xsd:attribute name="fatalDeviationThreshold" type="xsd:float" use="required"/>
+                <xsd:attribute name="warningDeviationThreshold" type="xsd:float" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="decision-maker-ref">
+        <xsd:complexContent>
+            <xsd:extension base="decisionMakerAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -822,33 +902,6 @@
         <xsd:attribute name="baselineId" type="xsd:integer" use="optional"/>
         <xsd:attribute name="strategy" type="strategyType" use="optional"/>
     </xsd:attributeGroup>
-
-    <xsd:complexType name="comparatorType">
-        <xsd:attributeGroup ref="comparatorAttribute"/>
-    </xsd:complexType>
-
-    <xsd:attributeGroup name="comparatorAttribute">
-        <xsd:attribute name="ref" type="xsd:string" />
-        <xsd:attribute name="decisionMakerType" type="decisionMakerTypeType" />
-        <xsd:attribute name="comparatorType" type="comparatorTypeType" use="required"/>
-        <xsd:attribute name="decisionMakerRef" type="xsd:string"/>
-        <xsd:attribute name="fatalDeviationThreshold" type="xsd:float"/>
-        <xsd:attribute name="warningDeviationThreshold" type="xsd:float"/>
-    </xsd:attributeGroup>
-
-    <xsd:simpleType name="decisionMakerTypeType">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="monitoringParameterDecisionMaker"/>
-            <xsd:enumeration value="workloadDecisionMaker"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-
-    <xsd:simpleType name="comparatorTypeType">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="monitoring"/>
-            <xsd:enumeration value="workload"/>
-        </xsd:restriction>
-    </xsd:simpleType>
 
     <xsd:simpleType name="strategyType">
         <xsd:restriction base="xsd:string">

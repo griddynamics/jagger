@@ -25,7 +25,7 @@ import com.griddynamics.jagger.master.SessionIdProvider;
 import org.springframework.beans.factory.annotation.Required;
 
 public class BaselineSessionProvider {
-    private static final String IDENTITY_SESSION = "#IDENTITY";
+    public static final String IDENTITY_SESSION = "#IDENTITY";
 
     private String sessionId;
     private SessionIdProvider sessionIdProvider;

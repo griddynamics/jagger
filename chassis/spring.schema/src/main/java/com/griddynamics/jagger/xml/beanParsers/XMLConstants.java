@@ -41,6 +41,8 @@ public class XMLConstants {
     public static final String BASELINE_ID = "baselineId";
     public static final String CUSTOM_SESSION_COMPARATOR = "customSessionComparator";
     public static final String SESSION_COMPARATOR = "sessionComparator";
+    public static final String SESSION_COMPARATORS_ELEMENT = "session-comparators";
+    public static final String SESSION_COMPARISON = "sessionComparison";
     public static final String WORST_CASE_DECISION_MAKER = "worstCaseDecisionMaker";
     public static final String WORST_CASE = "worstCase";
     public static final String SESSION_ID = "sessionId";
@@ -133,6 +135,16 @@ public class XMLConstants {
     public static final String MAX_THREAD_NUMBER = "maxThreadNumber";
     public static final String ITERATIONS = "iterations";
     public static final String DELAY = "delay";
+
+    //default reporting names
+    public static final String REPORTER_REGISTRY = "reporterExtensionRegistry";
+    public static final String REPORTER_COMPARISON = "defaultOverallSessionComparisonReporter";
+    public static final String REPORTER_BASELINE_PROVIDER = "DefaultBaselineSessionProvider";
+    public static final String REPORTING_CONTEXT = "reportingContext";
+
+    public static final String PROVIDER_REGISTRY = "providerRegistry";
+    public static final String CONTEXT = "context";
+    public static final String EXTENSIONS = "extensions";
 
     public static final String DEFAULT_TICK_INTERVAL = "${workload.tickinterval.default}";
     public static final String DEFAULT_MAX_THREAD_COUNT = "${workload.threads.maxcount}";

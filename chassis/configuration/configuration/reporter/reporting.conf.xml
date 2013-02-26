@@ -68,20 +68,22 @@
         <property name="sessionIdProvider" ref="sessionIdProvider"/>
     </bean>
 
+    <bean id="defaultOverallSessionComparisonReporter" class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter" parent="abstractReportProviderBean">
+        <property name="template" value="configuration/reporting/session-comparison-report.jrxml"/>
+        <property name="baselineSessionProvider"
+                  ref="baselineSessionProvider"/>
+        <property name="statusImageProvider" ref="statusImageProvider"/>
+        <property name="sessionComparator" ref="sessionComparator"/>
+    </bean>
+
     <bean id="reporterExtensionRegistry" class="com.griddynamics.jagger.extension.ExtensionRegistry">
         <constructor-arg index="0" value="com.griddynamics.jagger.reporting.ReportProvider"/>
 
         <property name="autoDiscovery" value="true"/>
         <property name="extensions">
-            <map>
+            <map merge="true">
                 <entry key="sessionComparison">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/session-comparison-report.jrxml"/>
-                        <property name="baselineSessionProvider"
-                                  ref="baselineSessionProvider"/>
-                        <property name="statusImageProvider" ref="statusImageProvider"/>
-                        <property name="sessionComparator" ref="sessionComparator"/>
-                    </bean>
+                    <ref local="defaultOverallSessionComparisonReporter"/>
                 </entry>
 
                 <entry key="sessionSummary">
