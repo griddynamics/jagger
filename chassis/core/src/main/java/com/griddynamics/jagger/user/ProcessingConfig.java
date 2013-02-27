@@ -134,30 +134,21 @@ public class ProcessingConfig implements Serializable {
             public Task(@Attribute(name = "name") String name,
                         @Attribute(name = "duration", required = false) String duration,
                         @Attribute(name = "sample", required = false) Integer sample,
-                        @Attribute(name = "iterations", required = false) Integer iterations,
                         @Attribute(name = "delay", required = false) Integer delay,
                         @Attribute(name = "attendant", required = false) boolean attendant,
                         @Attribute(name = "bean") String bean,
                         @ElementList(name = "users", entry = "user", inline = true, required = false) List<User> users,
-                        @Element(name = "invocation", required = false) Invocation invocation,
-                        @Element(name = "tps", required = false) Tps tps,
-                        @Element(name = "virtualUser", required = false) VirtualUser virtualUser) {
-                Preconditions.checkArgument((invocation == null ||
-                                             users      == null ||
-                                            virtualUser == null ||
-                                             tps        == null), "Malformed configuration! <invocation> and <user> elements are mutually exclusive.");
-                
+                        @Element(name = "invocation", required = false) Invocation invocation) {
+                Preconditions.checkArgument((invocation == null || users == null), "Malformed configuration! <invocation> and <user> elements are mutually exclusive.");
+
                 this.name = name;
                 this.duration = duration;
                 this.sample = (sample != null) ? sample : -1;
-                this.sample = (iterations != null) ? iterations : -1;
                 this.delay = (delay != null) ? delay : 0;
                 this.bean = bean;
                 this.users = Collections.unmodifiableList((users != null) ? users : new ArrayList<User>(0));
-                this.tps = tps;
                 this.invocation = invocation;
-			    this.attendant = attendant;
-                this.setVirtualUser(virtualUser);
+                this.attendant = attendant;
             }
 
             public Task() {

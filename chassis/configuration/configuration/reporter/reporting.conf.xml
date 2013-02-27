@@ -28,6 +28,7 @@
         <property name="registry" ref="propertiesResolverRegistry"/>
         <property name="resources">
             <list>
+                <value>configuration/reporter/default.reporting.properties</value>
                 <value>configuration/reporter/reporting.properties</value>
             </list>
         </property>
@@ -143,6 +144,12 @@
         <property name="autoDiscovery" value="true"/>
         <property name="extensions">
             <map>
+
+                <entry key="diagnosticResults">
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.DiagnosticReporter" parent="abstractReportProviderBean">
+                        <property name="template" value="configuration/reporting/diagnostics-report.jrxml"/>
+                    </bean>
+                </entry>
 
                 <entry key="workloadSessionComparison">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadSessionComparisonReporter" parent="abstractReportProviderBean">

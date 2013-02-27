@@ -63,7 +63,9 @@ public class UserTaskGenerator implements ApplicationContextAware {
         List<Task> result = new LinkedList<Task>();
         int number = 0;
         HashSet<String> names = new HashSet<String>();
-        if (config == null) initConfig();
+        if (config == null) {
+            config=initConfig();
+        }
         for (ProcessingConfig.Test testConfig : config.tests) {
             ++number;
 
