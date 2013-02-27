@@ -36,7 +36,7 @@
     <beans:import resource="test.suite.scenario.config.xml"/>
 
     <configuration id="exampleConfiguration">
-        <latency>
+        <latency-percentiles>
             <percentile>99</percentile>
             <percentile>98</percentile>
             <percentile>97</percentile>
@@ -44,7 +44,7 @@
             <percentile>90</percentile>
             <percentile>95</percentile>
             <percentile>60</percentile>
-        </latency>
+        </latency-percentiles>
 
         <test-suite id="JaggerTestSuit">
                <test-group id="myFirstSearchTest">
