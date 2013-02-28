@@ -102,6 +102,12 @@
             <name>smartclient.com</name>
             <url>http://www.smartclient.com/maven2</url>
         </repository>
+        <repository>
+	    <id>openr66</id>
+            <name>openr66</name>
+            <url>http://openr66.free.fr/maven2</url>
+            <layout>default</layout>
+    </repository>
     </repositories>
 
     <distributionManagement>
@@ -331,7 +337,7 @@
             <dependency>
                 <groupId>com.caucho</groupId>
                 <artifactId>hessian</artifactId>
-                <version>3.2.0</version>
+                <version>4.0.7</version>
             </dependency>
 
             <dependency>
