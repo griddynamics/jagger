@@ -32,6 +32,12 @@
             <url>https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/</url>
             <layout>default</layout>
         </repository>
+        <repository>
+            <id>gd-public</id>
+            <name>gd-public</name>
+            <url>https://nexus.griddynamics.net/nexus/content/repositories/public/</url>
+            <layout>default</layout>
+        </repository>
     </repositories>
 
     <dependencies>
