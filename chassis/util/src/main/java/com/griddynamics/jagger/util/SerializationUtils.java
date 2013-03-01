@@ -29,12 +29,14 @@ import org.jboss.serial.io.JBossObjectInputStream;
 import org.jboss.serial.io.JBossObjectOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.google.common.io.Closeables;
 
 // TODO Avoid static code. Extract interface and make this one default implementation.
 public class SerializationUtils {
     private static final Logger log = LoggerFactory.getLogger(SerializationUtils.class);
     private static final AtomicLong fromStringCount = new AtomicLong(0);
     private static final AtomicLong toStringCount = new AtomicLong(0);
+    private static boolean useJBoss=true;//if false - using default java serialization
 
     private SerializationUtils() {
     }
@@ -43,11 +45,20 @@ public class SerializationUtils {
         if (s.isEmpty()) {
             log.info("fromString({}, '{}')", fromStringCount.getAndIncrement(), s);
         }
+        ObjectInputStream ois = null;
+        InputStream in=null;
         try {
             byte[] data = Base64Coder.decode(s);
-            ObjectInputStream ois = new JBossObjectInputStream(new ByteArrayInputStream(data));
+
+            in=new ByteArrayInputStream(data);
+            try{
+                //TODO fixes for support old reports
+                ois=new JBossObjectInputStream(in);
+            } catch (IOException e) {
+                // /data stored not with JBoss
+                ois=new ObjectInputStream(in);
+            }
             T obj = (T) ois.readObject();
-            ois.close();
             return obj;
         } catch (IOException e) {
             log.error("Deserialization exception ", e);
@@ -56,50 +67,91 @@ public class SerializationUtils {
         } catch (ClassNotFoundException e) {
             log.error("Deserialization exception ", e);
             throw new TechnicalException(e);
+        } finally {
+            Closeables.closeQuietly(ois);
+            Closeables.closeQuietly(in);
         }
     }
 
     public static String toString(Serializable o) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = null;
         try {
-            ObjectOutputStream oos = new JBossObjectOutputStream(baos);
+            if(useJBoss){
+                oos=new JBossObjectOutputStream(baos);
+            } else{
+                oos=new ObjectOutputStream(baos);
+            }
             oos.writeObject(o);
-            oos.close();
         } catch (IOException e) {
             log.error("Serialization exception ", e);
             throw new TechnicalException(e);
+        } finally {
+            String s = new String(Base64Coder.encode(baos.toByteArray()));
+            if (s.isEmpty()) {
+                log.info("toString({}, '{}', '{}')", new Object[] {toStringCount.getAndIncrement(), s, o});
+            }
+            Closeables.closeQuietly(oos);
+            return s;
         }
-
-        String s = new String(Base64Coder.encode(baos.toByteArray()));
-        if (s.isEmpty()) {
-            log.info("toString({}, '{}', '{}')", new Object[] {toStringCount.getAndIncrement(), s, o});
-        }
-        return s;
     }
 
     public static byte[] serialize(Object obj) {
+        ObjectOutputStream ous = null;
+        ByteArrayOutputStream baos=null;
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream ous = new JBossObjectOutputStream(baos);
+            baos = new ByteArrayOutputStream();
+            if(useJBoss){
+                ous=new JBossObjectOutputStream(baos);
+            } else {
+                ous=new ObjectOutputStream(baos);
+            }
             ous.writeObject(obj);
-            ous.close();
 
             return baos.toByteArray();
         } catch (Exception e) {
             throw new RuntimeException("Error during " + obj + " serialization", e);
+        }  finally {
+            Closeables.closeQuietly(ous);
+            Closeables.closeQuietly(baos);
         }
     }
 
     public static Object deserialize(byte[] data) {
+        ObjectInputStream ois = null;
+        ByteArrayInputStream bais = null;
         try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(data);
-            ObjectInputStream ois = new JBossObjectInputStream(bais);
+            bais = new ByteArrayInputStream(data);
+            try{
+                //TODO fixes for support old reports
+                ois= new JBossObjectInputStream(bais);
+            } catch (IOException e){
+                //data stored not with JBoss
+                ois=new ObjectInputStream(bais);
+            }
             Object payload = ois.readObject();
-            ois.close();
 
             return payload;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            Closeables.closeQuietly(ois);
+            Closeables.closeQuietly(bais);
+        }
+    }
+
+    public static Configurator getConfigurator() {
+        return Configurator.configuratorInstance;
+    }
+
+    public static class Configurator {
+        private static final Configurator configuratorInstance = new Configurator();
+
+        private Configurator() {}
+
+        public void setUseJBoss(boolean useJBoss) {
+            log.info("setting useJBoss= {}",useJBoss);
+            SerializationUtils.useJBoss = useJBoss;
         }
     }
 }
