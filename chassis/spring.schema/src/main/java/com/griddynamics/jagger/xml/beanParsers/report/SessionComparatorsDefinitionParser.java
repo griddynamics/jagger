@@ -31,7 +31,7 @@ public class SessionComparatorsDefinitionParser extends AbstractSimpleBeanDefini
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-
+        builder.setParentName(XMLConstants.REPORTER_SESSION_COMPARATOR);
         String decisionMaker=element.getAttribute(XMLConstants.STRATEGY);
         if(StringUtils.hasText(decisionMaker)){
             builder.addPropertyReference(XMLConstants.DECISION_MAKER, getDecisionMaker(decisionMaker));

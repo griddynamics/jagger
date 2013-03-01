@@ -196,10 +196,10 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
     }
 
     private WorkloadDetails getScenarioData(WorkloadTask workloadTask) {
-        @SuppressWarnings("unchecked")
         List<WorkloadDetails> all = getHibernateTemplate().find(
-                "from WorkloadDetails s where s.name=? and s.version=?", workloadTask.getName(), workloadTask.getVersion());
-        if (all.size() == 1) {
+                                        "from WorkloadDetails s where s.name=? and s.version=?", workloadTask.getName(), workloadTask.getVersion());
+
+        if (all.size() > 0) {
             return all.get(0);
         }
         WorkloadDetails workloadDetails = new WorkloadDetails();

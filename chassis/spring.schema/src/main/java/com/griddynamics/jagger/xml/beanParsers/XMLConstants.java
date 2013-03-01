@@ -140,6 +140,7 @@ public class XMLConstants {
     public static final String REPORTER_REGISTRY = "reporterExtensionRegistry";
     public static final String REPORTER_COMPARISON = "defaultOverallSessionComparisonReporter";
     public static final String REPORTER_BASELINE_PROVIDER = "DefaultBaselineSessionProvider";
+    public static final String REPORTER_SESSION_COMPARATOR = "defaultSessionComparator";
     public static final String REPORTING_CONTEXT = "reportingContext";
 
     public static final String PROVIDER_REGISTRY = "providerRegistry";

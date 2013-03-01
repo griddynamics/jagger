@@ -81,6 +81,7 @@ public class TestConfiguration {
         WorkloadTask task = prototype.copy();
         task.setName(getName());
         task.setNumber(number);
+        if (task.getVersion()==null) task.setVersion("0");
         task.setParentTaskId(testGroupName);
         //TODO refactor
         if (clockConfiguration instanceof UserGroupsClockConfiguration) {

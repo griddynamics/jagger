@@ -92,7 +92,7 @@ public abstract class CustomBeanDefinitionParser extends AbstractSimpleBeanDefin
         }
         List<Element> list = DomUtils.getChildElements(listParentElement);
         ManagedList result = new ManagedList();
-        if (list != null){
+        if (list != null && !list.isEmpty()){
             for (Element el : list){
                 if (el.hasAttribute(XMLConstants.ATTRIBUTE_REF)){
                     String ref = el.getAttribute(XMLConstants.ATTRIBUTE_REF);
@@ -105,6 +105,8 @@ public abstract class CustomBeanDefinitionParser extends AbstractSimpleBeanDefin
                     result.add(parserContext.getDelegate().parsePropertySubElement(el, bean));
                 }
             }
+        }else{
+            return null;
         }
         return result;
     }

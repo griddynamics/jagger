@@ -5,8 +5,8 @@ import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvi
 import com.griddynamics.jagger.extension.ExtensionRegistry;
 import com.griddynamics.jagger.reporting.ReportingContext;
 import com.griddynamics.jagger.reporting.ReportingService;
+import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
@@ -34,47 +34,56 @@ public class ReportDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
         builder.setParentName(XMLConstants.DEFAULT_REPORTING_SERVICE);
 
-        //TODO
+        //parse extensions
         Element extensionsElement = DomUtils.getChildElementByTagName(element, XMLConstants.EXTENSIONS);
         if (extensionsElement != null)
             parserContext.getDelegate().parseCustomElement(extensionsElement);
 
-        //parse comparators
-        BeanDefinitionBuilder registry = BeanDefinitionBuilder.genericBeanDefinition(ExtensionRegistry.class);
-        registry.setParentName(XMLConstants.REPORTER_REGISTRY);
-
-        BeanDefinitionBuilder comparisonReporter = BeanDefinitionBuilder.genericBeanDefinition(OverallSessionComparisonReporter.class);
-        comparisonReporter.setParentName(XMLConstants.REPORTER_COMPARISON);
-
-        //parse baselineProvider
-        BeanDefinitionBuilder baseLineSessionProvider = BeanDefinitionBuilder.genericBeanDefinition(BaselineSessionProvider.class);
-        baseLineSessionProvider.setParentName(XMLConstants.REPORTER_BASELINE_PROVIDER);
-
         Element sessionComparatorsElement = DomUtils.getChildElementByTagName(element, XMLConstants.SESSION_COMPARATORS_ELEMENT);
 
         if (sessionComparatorsElement != null){
+
+            //context
+            BeanDefinitionBuilder reportContext = BeanDefinitionBuilder.genericBeanDefinition(ReportingContext.class);
+            reportContext.setParentName(XMLConstants.REPORTING_CONTEXT);
+            String reportContextName = parserContext.getReaderContext().generateBeanName(reportContext.getBeanDefinition());
+            parserContext.getRegistry().registerBeanDefinition(reportContextName, reportContext.getBeanDefinition());
+
+            //parse comparators
+            BeanDefinitionBuilder registry = BeanDefinitionBuilder.genericBeanDefinition(ExtensionRegistry.class);
+            registry.setParentName(XMLConstants.REPORTER_REGISTRY);
+
+            BeanDefinitionBuilder comparisonReporter = BeanDefinitionBuilder.genericBeanDefinition(OverallSessionComparisonReporter.class);
+            comparisonReporter.setParentName(XMLConstants.REPORTER_COMPARISON);
+
+            //parse baselineProvider
+            BeanDefinitionBuilder baseLineSessionProvider = BeanDefinitionBuilder.genericBeanDefinition(BaselineSessionProvider.class);
+            baseLineSessionProvider.setParentName(XMLConstants.REPORTER_BASELINE_PROVIDER);
+
             String baseLineId = sessionComparatorsElement.getAttribute(XMLConstants.BASELINE_ID);
             if (!baseLineId.isEmpty()){
                 baseLineSessionProvider.addPropertyValue(XMLConstants.SESSION_ID, baseLineId);
             }else{
                 baseLineSessionProvider.addPropertyValue(XMLConstants.SESSION_ID, BaselineSessionProvider.IDENTITY_SESSION);
             }
+            comparisonReporter.addPropertyValue(XMLConstants.BASELINE_SESSION_PROVIDER, baseLineSessionProvider.getBeanDefinition());
 
-            BeanDefinition comparators = parserContext.getDelegate().parseCustomElement(sessionComparatorsElement, builder.getBeanDefinition());
-            comparisonReporter.addPropertyValue(XMLConstants.SESSION_COMPARATOR, comparators);
+            //parse comparators chain
+            CustomBeanDefinitionParser.setBeanProperty(XMLConstants.SESSION_COMPARATOR, sessionComparatorsElement, parserContext, comparisonReporter.getBeanDefinition());
+
+            //set all parameters
+            ManagedMap registryMap = new ManagedMap();
+            registryMap.setMergeEnabled(true);
+            registryMap.put(XMLConstants.SESSION_COMPARISON, comparisonReporter.getBeanDefinition());
+
+            registry.addPropertyValue(XMLConstants.EXTENSIONS, registryMap);
+
+            reportContext.addPropertyValue(XMLConstants.PROVIDER_REGISTRY, registry.getBeanDefinition());
+
+            //set context
+            comparisonReporter.addPropertyReference(XMLConstants.CONTEXT, reportContextName);
+
+            builder.addPropertyReference(XMLConstants.CONTEXT, reportContextName);
         }
-
-        comparisonReporter.addPropertyValue(XMLConstants.BASELINE_SESSION_PROVIDER, baseLineSessionProvider.getBeanDefinition());
-
-        ManagedMap registryMap = new ManagedMap();
-        registryMap.put(XMLConstants.SESSION_COMPARISON, comparisonReporter.getBeanDefinition());
-
-        registry.addPropertyValue(XMLConstants.EXTENSIONS, registryMap);
-
-        BeanDefinitionBuilder reportContext = BeanDefinitionBuilder.genericBeanDefinition(ReportingContext.class);
-        reportContext.setParentName(XMLConstants.REPORTING_CONTEXT);
-        reportContext.addPropertyValue(XMLConstants.PROVIDER_REGISTRY, registry.getBeanDefinition());
-
-        builder.addPropertyValue(XMLConstants.CONTEXT, reportContext.getBeanDefinition());
     }
 }
