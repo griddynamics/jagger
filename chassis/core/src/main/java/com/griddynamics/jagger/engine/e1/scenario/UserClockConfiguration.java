@@ -57,9 +57,6 @@ public class UserClockConfiguration implements WorkloadClockConfiguration {
 
     @Override
     public WorkloadClock getClock() {
-        if (taskConfig.users != null) {
-            return new UserClock(taskConfig.users, taskConfig.delay, tickInterval, shutdown);
-        }else
         if (taskConfig.tps != null){
             TpsClockConfiguration tpsClockConfiguration = new TpsClockConfiguration();
             tpsClockConfiguration.setTickInterval(tickInterval);
@@ -76,10 +73,12 @@ public class UserClockConfiguration implements WorkloadClockConfiguration {
             ExactInvocationsClockConfiguration conf = new ExactInvocationsClockConfiguration();
             conf.setExactcount(taskConfig.invocation.exactcount);
             conf.setThreads(taskConfig.invocation.threads);
-            conf.setThreads(taskConfig.delay);
+            conf.setDelay(taskConfig.delay);
             return conf.getClock();
         }else
-            return null;
+        if (taskConfig.users != null && taskConfig.users.size()>0) {
+                return new UserClock(taskConfig.users, taskConfig.delay, tickInterval, shutdown);
+        }else return null;
     }
 
     @Override
