@@ -32,7 +32,8 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
-        <configuration id="newTagsConfiguration">
+        <!--unsupported yet-->
+        <!--<configuration id="newTagsConfiguration">
 
             <latency-percentiles>
                 <percentile>60</percentile>
@@ -78,6 +79,6 @@
 
             </scenario-query-pool>
 
-        </test-description>
+        </test-description>-->
 
 </beans:beans>

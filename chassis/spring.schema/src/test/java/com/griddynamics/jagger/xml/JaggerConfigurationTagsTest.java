@@ -29,9 +29,9 @@ public class JaggerConfigurationTagsTest {
         ctx = JaggerLauncher.loadContext(directory,"chassis.master.configuration",environmentProperties);
     }
 
-    @Test
-    public void testConfig(){
-        Configuration conf = (Configuration) ctx.getBean("newTagsConfiguration");
-        Assert.assertEquals(conf.getTasks().size(), 1);
-    }
+//    @Test
+//    public void testConfig(){
+//        Configuration conf = (Configuration) ctx.getBean("newTagsConfiguration");
+//        Assert.assertEquals(conf.getTasks().size(), 1);
+//    }
 }

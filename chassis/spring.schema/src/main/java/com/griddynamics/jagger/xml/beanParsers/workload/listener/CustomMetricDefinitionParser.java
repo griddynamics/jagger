@@ -25,6 +25,11 @@ public class CustomMetricDefinitionParser extends AbstractSimpleBeanDefinitionPa
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    if (element.getAttribute(XMLConstants.ID)!=null && !element.getAttribute(XMLConstants.ID).isEmpty()){
+        builder.addPropertyValue(XMLConstants.NAME, element.getAttribute(XMLConstants.ID));
+    }else{
+        builder.addPropertyValue(XMLConstants.NAME, "No name metric");
+    }
         builder.addPropertyValue(XMLConstants.METRIC_CALCULATOR, new RuntimeBeanReference(element.getAttribute(XMLConstants.CALCULATOR)));
     }
 }

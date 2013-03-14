@@ -11,10 +11,7 @@ import com.griddynamics.jagger.xml.beanParsers.workload.calibration.DefaultCalib
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.ConsistencyDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.CustomMetricDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.NotNullResponseDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.SimpleMetricDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.*;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.scenario.QueryPoolScenarioDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
@@ -46,8 +43,8 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("comparator-monitoring", new MonitoringComparatorDefinitionParser());
 
         registerBeanDefinitionParser("decision-maker", findTypeParser);
-        registerBeanDefinitionParser("decision-maker-throughput", new ThroughputDMDefinitionParser());
-        registerBeanDefinitionParser("decision-maker-stddev", new StdDevDefinitionParser());
+        registerBeanDefinitionParser("decision-maker-workload-throughput", new ThroughputDMDefinitionParser());
+        registerBeanDefinitionParser("decision-maker-monitoring-stddev", new StdDevDefinitionParser());
 
         //TASKS
         registerBeanDefinitionParser("test", new TaskDefinitionParser());
@@ -73,6 +70,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         //validators listeners
         registerBeanDefinitionParser("validator-not-null-response", new NotNullResponseDefinitionParser());
         registerBeanDefinitionParser("validator-consistency", new ConsistencyDefinitionParser());
+        registerBeanDefinitionParser("validator-custom", new CustomValidatorDefinitionParser());
 
         //metric
         registerBeanDefinitionParser("metric", findTypeParser);

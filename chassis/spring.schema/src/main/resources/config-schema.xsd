@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
 <xsd:schema xmlns="http://www.griddynamics.com/schema/jagger"
             xmlns:beans="http://www.springframework.org/schema/beans"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -8,20 +9,45 @@
                 schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"/>
 
     <!--BASIC TYPES-->
+
+    <xsd:complexType name="identifiedType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Basic type which contains id attribute to identify elements.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="id" type="xsd:ID"/>
+    </xsd:complexType>
+
     <xsd:complexType name="basicType" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Basic type which help you to realize inheritance.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="beans:identifiedType">
+            <xsd:extension base="identifiedType">
                 <xsd:attribute name="parent" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="primitiveOrObjectAbstract" abstract="true" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                A special type of object, which can configure with inner elements and with inner content.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:attribute name="parent" type="xsd:string"/>
         <xsd:attribute name="id" type="xsd:ID"/>
     </xsd:complexType>
 
     <xsd:complexType name="primitiveAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                A basic type for primitive objects.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:simpleContent>
             <xsd:extension base="xsd:string">
             </xsd:extension>
@@ -81,7 +107,7 @@
 
     <xsd:complexType name="primitiveEntry">
         <xsd:complexContent>
-            <xsd:extension base="beans:identifiedType">
+            <xsd:extension base="identifiedType">
                 <xsd:choice>
                     <xsd:element ref="primitive"/>
                     <xsd:element name="value" type="primitiveAbstract"/>
@@ -105,10 +131,27 @@
 
     <!--configuration-->
     <xsd:element name="configuration" type="configurationType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configuration is a main element in Jagger. It say Jagger what to do.
+                Configuration can be configure by three elements - test-suite, latency-percentiles, report.
+                Element test-suite describes what load you would like to execute.
+                With element report you can configure how your report will look like.
+                Latency-percentiles is an element, which
+            </xsd:documentation>
+        </xsd:annotation>
     </xsd:element>
 
     <xsd:complexType name="configurationType">
-
+        <xsd:annotation>
+            <xsd:documentation>
+                Configuration is a main element in Jagger. It say Jagger what to do.
+                Configuration can configure by three elements - test-suite, latency-percentiles, report.
+                Element test-suite describes what load you would like to execute.
+                With element report you can configure how you report will look like.
+                Latency-percentiles is an element, which
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="basicType">
                 <xsd:all>
@@ -191,15 +234,53 @@
     <!--TASKS-->
     <xsd:element name="processing" type="testSuiteType"/>
 
-    <xsd:element name="test-suite" type="testSuiteType"/>
+    <xsd:element name="test-suite" type="testSuiteType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test-suite is a list of test-groups. Test-groups will runs in the order that you have.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="test-group" type="testGroupType"/>
+    <xsd:element name="test-group" type="testGroupType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test-group is a list of tests. All tests will run in parallel mode.
+                You can turn on monitoring, if you would like to see monitoring results for this test-group.
+                Note : don't forget to set id for this element. Id will be written in report.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="test" type="testType"/>
+    <xsd:element name="test" type="testType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test have attribute testDescription and includes two child elements : load, termination.
+                TestDescription describes what targets will be tested and what tool use to test it. Set id of test-description, which you would like to use.
+                Element load say how often you would like to load targets.
+                With element termination you can configure how long targets will be tested.
+                Note : don't forget to set id for this element. Id will be written in report.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="load" type="loadAbstract"/>
+    <xsd:element name="load" type="loadAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Load is an element, which describes how often you would like to make load.
+                You can choose one of load types - load-tps, load-user-groups, load-user-group, load-invocation.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="termination" type="terminationAbstract"/>
+    <xsd:element name="termination" type="terminationAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Termination describes how long load will be executed.
+                You can choose one of termination types - termination-duration, termination-iterations, termination-background.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:element name="termination-duration" type="termination-duration" substitutionGroup="termination"/>
 
@@ -218,11 +299,20 @@
     <xsd:element name="load-tps" type="load-tps" substitutionGroup="load"/>
 
     <xsd:complexType name="testType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test have attribute testDescription and includes two child elements : load, termination.
+                TestDescription describes what targets will be tested and what tool use to test it. Set id of test-description, which you would like to use.
+                Element load say how often you would like to load targets.
+                With element termination you can configure how long targets will be tested.
+                Note : don't forget to set id for this element. Id will be written in report.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="basicType">
+            <xsd:extension base="identifiedType">
                 <xsd:all>
-                    <xsd:element ref="load" maxOccurs="1"/>
-                    <xsd:element ref="termination" maxOccurs="1"/>
+                    <xsd:element name="load" type="loadAbstract" maxOccurs="1"/>
+                    <xsd:element name="termination" type="terminationAbstract" maxOccurs="1"/>
                 </xsd:all>
                 <xsd:attribute name="testDescription" type="xsd:string" use="required"/>
             </xsd:extension>
@@ -230,21 +320,40 @@
     </xsd:complexType>
 
     <xsd:complexType name="loadAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Load is an element, which describes how often you would like to make load.
+                You can choose one of load types - load-tps, load-user-groups, load-user-group, load-invocation.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="basicType">
+            <xsd:extension base="identifiedType">
                 <xsd:attribute name="tickInterval" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="terminationAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Termination describes how long load will be executed.
+                You can choose one of termination types - termination-duration, termination-iterations, termination-background.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="basicType">
+            <xsd:extension base="identifiedType">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="termination-iterations">
+        <xsd:annotation>
+            <xsd:documentation>
+                This termination strategy is helpful, when you would like to execute an exact number of iterations.
+                Attribute 'iterations' say how much iterations you would like to execute.
+                With attribute 'maxDuration' you can configure maximum execution time of test. By default it equals 2 hours.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="terminationAbstract">
                 <xsd:attributeGroup ref="iterationsAttributes"/>
@@ -253,6 +362,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="termination-duration">
+        <xsd:annotation>
+            <xsd:documentation>
+                Use this termination, when you would like to execute your load within a certain time.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="terminationAbstract">
                 <xsd:attributeGroup ref="durationAttributes"/>
@@ -261,6 +375,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="termination-background">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test with such termination strategy will wait another tests in test-group to be stopped.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="terminationAbstract">
             </xsd:extension>
@@ -268,10 +387,17 @@
     </xsd:complexType>
 
     <xsd:complexType name="testGroupType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test-group is a list of tests. All tests will run in parallel mode.
+                You can turn on monitoring, if you would like to see monitoring results for this test-group.
+                Note : don't forget to set id for this element. Id will be written in report.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="basicType">
+            <xsd:extension base="identifiedType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element name="test" type="testTypeIn" maxOccurs="unbounded"/>
+                    <xsd:element ref="test" maxOccurs="unbounded"/>
                     <xsd:element ref="beans:bean"/>
                     <xsd:element ref="beans:ref"/>
                 </xsd:choice>
@@ -280,19 +406,32 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="testTypeIn">
+    <xsd:complexType name="testGroupTypeIn">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test-group is a list of tests. All tests will run in parallel mode.
+                You can turn on monitoring, if you would like to see monitoring results for this test-group.
+                Note : don't forget to set id for this element. Id will be written in report.
+                You can set a reference to existing test-group with attribute 'ref'.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="testType">
+            <xsd:extension base="testGroupType">
                 <xsd:attribute name="ref" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="testSuiteType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test-suite is a list of test-groups. Test-groups will runs in the order that you have.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="basicType">
+            <xsd:extension base="identifiedType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element name="test-group" type="testGroupType" maxOccurs="unbounded"/>
+                    <xsd:element name="test-group" type="testGroupTypeIn" maxOccurs="unbounded"/>
                     <xsd:element ref="beans:bean"/>
                     <xsd:element ref="beans:ref"/>
                 </xsd:choice>
@@ -301,6 +440,12 @@
     </xsd:complexType>
 
     <xsd:complexType name="testSuiteTypeIn">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test-suite is a list of test-groups. Test-groups will runs in the order that you have.
+                You can set a reference to existing test-suite with attribute 'ref'.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="testSuiteType">
                 <xsd:attribute name="ref" type="xsd:string"/>
@@ -309,6 +454,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="load-user-groups">
+        <xsd:annotation>
+            <xsd:documentation>
+                This load is a list of elements user. Every such element imitates a group of threads.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="loadAbstract">
                 <xsd:choice>
@@ -319,6 +469,16 @@
     </xsd:complexType>
 
     <xsd:complexType name="userGroupIn">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element imitates a group of threads. You can configure a number of threads by attributes.
+                count is a max number of threads, that you can use.
+                startCount is a start number of threads.
+                startIn is a time duration between increase of threads.
+                startBy is a number on how much to increase number of threads.
+                life describes how long threads will be alive.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="loadAbstract">
                 <xsd:attributeGroup ref="userAttributes"/>
@@ -327,6 +487,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="load-user-group">
+        <xsd:annotation>
+            <xsd:documentation>
+                This load imitates one user group. See type load-user-groups.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="loadAbstract">
                 <xsd:attributeGroup ref="userAttributes"/>
@@ -335,6 +500,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="load-threads">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type of load provides an exact count of threads, which will load your targets.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="loadAbstract">
                 <xsd:attributeGroup ref="virtualUserAttributes"/>
@@ -343,6 +513,12 @@
     </xsd:complexType>
 
     <xsd:complexType name="load-invocation">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type of load provides an exact number of invocations.
+                Attribute exactcount says - how much invocations jagger have to execute, attribute threads - how much threads jagger can use. delay is a time(milliseconds) between invocations. By default it equals 0.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="loadAbstract">
                 <xsd:attributeGroup ref="invocationAttributes"/>
@@ -350,18 +526,30 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="invocationTypeIn">
+    <xsd:complexType name="load-tps">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type of load imitates an exact number of transactions per second.
+                By using attribute 'value', you can configure a number of transactions.
+                Attribute 'maxThreadNumber' say how much threads you would like to use, to create such tps load. By default it equals 4000.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="load-invocation">
-                <xsd:attribute name="ref" type="xsd:string"/>
+            <xsd:extension base="loadAbstract">
+                <xsd:attributeGroup ref="tpsAttributes"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="load-tps">
+    <xsd:complexType name="load-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set bean of load, which you would like to use.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="loadAbstract">
-                <xsd:attributeGroup ref="tpsAttributes"/>
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -400,14 +588,35 @@
 
     <!--WORKLOAD-->
 
-    <xsd:element name="test-description" type="workloadType"/>
+    <xsd:element name="test-description" type="testDescriptionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test description contains two elements - info-collectors and scenario.
+                Info-collectors is a list of collectors. Collector can be as metric element or as validator element.
+                In scenario you can describe what targets will be loaded and what tool use to make load.
+                You can turn on calibration by adding attribute calibration="true".
+                Calibration is a process, when Jagger in a simple(one thread) mode load every target only one time.
+                The results, that were calculated in this process, will be a benchmark for comparison with the new iterations.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:complexType name="workloadType">
+    <xsd:complexType name="testDescriptionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test description contains two elements - info-collectors and scenario.
+                Info-collectors is a list of collectors. Collector can be as metric element or as validator element.
+                In scenario you can describe what targets will be loaded and what tool use to make load.
+                You can turn on calibration by adding attribute calibration="true".
+                Calibration is a process, when Jagger in a simple(one thread) mode load every target only one time.
+                The results, that were calculated in this process, will be a benchmark for comparison with the new iterations.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="basicType">
                 <xsd:all>
                     <xsd:element name="info-collectors" type="workloadListenersType" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element ref="scenario" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="scenario" type="scenarioAbstract" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
                 <xsd:attribute name="name" type="xsd:string"/>
                 <xsd:attribute name="version" type="xsd:integer"/>
@@ -418,75 +627,166 @@
 
     <!--listeners -->
 
-    <xsd:element name="workload-listener" type="workloadListenerType" abstract="true"/>
+    <xsd:element name="collector" type="workloadCollectorAbstract"/>
 
     <!--metrics-->
 
-    <xsd:element name="metric" type="metricType"  substitutionGroup="workload-listener"/>
-    
-    <xsd:element name="metric-not-null-response" type="metric-not-null-response" substitutionGroup="metric"/>
+    <xsd:element name="metric" type="metricAbstract" substitutionGroup="collector">
+        <xsd:annotation>
+            <xsd:documentation>
+                Metric is a kind of collector, which calculate some information from responses. The result is a sum of all calculations.
+                Possible types of metric : metric-not-null-response, metric-custom, metric-ref.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="metric-custom" type="metric-custom" substitutionGroup="metric"/>
+    <xsd:element name="metric-not-null-response" type="metric-not-null-response" substitutionGroup="metric">
+        <xsd:annotation>
+            <xsd:documentation>
+                This metric calculate not null responses.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="metric-custom" type="metric-custom" substitutionGroup="metric">
+        <xsd:annotation>
+            <xsd:documentation>
+                You can create your custom metric. Create bean with your own class, which implements interface MetricCalculator.
+                Now you can set id of this bean as attribute 'calculator'.
+                Set name of metric to see correct it in your report.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <!--validators-->
 
-    <xsd:element name="validator" type="validatorType" substitutionGroup="workload-listener"/>
+    <xsd:element name="validator" type="validatorAbstract" substitutionGroup="collector">
+        <xsd:annotation>
+            <xsd:documentation>
+                Validator is a kind of collector, which validate responses. The result is a percent number of valid responses.
+                Choose one of validator types - validator-not-null-response, validator-consistency, validator-custom, validator-ref.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="validator-not-null-response" type="validator-not-null-response" substitutionGroup="validator"/>
+    <xsd:element name="validator-not-null-response" type="validator-not-null-response" substitutionGroup="validator">
+        <xsd:annotation>
+            <xsd:documentation>
+                This validator validates that response doesn't equals null.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="validator-consistency" type="validator-consistency" substitutionGroup="validator"/>
+    <xsd:element name="validator-consistency" type="validator-consistency" substitutionGroup="validator">
+        <xsd:annotation>
+            <xsd:documentation>
+                Need to add info
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="validator-ref" type="validator-ref" substitutionGroup="validator"/>
+    <xsd:element name="validator-custom" type="validator-custom" substitutionGroup="validator">
+        <xsd:annotation>
+            <xsd:documentation>
+                If you would like to use you custom validator - create your own class, which extends class ResponseValidator.
+                Now set attribute 'validator' full name of your class.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:complexType name="workloadListenersType">
         <xsd:complexContent>
             <xsd:extension base="basicType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element ref="workload-listener"/>
+                    <xsd:element name="metric" type="metricAbstract" maxOccurs="unbounded"/>
+                    <xsd:element name="validator" type="validatorAbstract" maxOccurs="unbounded"/>
                 </xsd:choice>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="workloadListenerType" abstract="true">
+    <xsd:complexType name="workloadCollectorAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="metricType" abstract="true">
+    <xsd:complexType name="metricAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Metric is a kind of collector, which calculate some information from responses. The result is a sum of all calculations.
+                Possible types of metric : metric-not-null-response, metric-custom, metric-ref.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="workloadListenerType">
+            <xsd:extension base="workloadCollectorAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="metric-not-null-response" >
+    <xsd:complexType name="metric-not-null-response">
+        <xsd:annotation>
+            <xsd:documentation>
+                This metric check, that response is not null.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="metricType">
+            <xsd:extension base="metricAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="metric-custom">
+        <xsd:annotation>
+            <xsd:documentation>
+                You can create your custom metric. Create bean with your own class, which implements interface MetricCalculator.
+                Now you can set id of this bean as attribute 'calculator'.
+                Set name of metric to see correct report.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="metricType">
+            <xsd:extension base="metricAbstract">
                 <xsd:attribute name="calculator" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="validatorType">
+    <xsd:complexType name="metric-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set metric element, that you would like to use.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="workloadListenerType">
+            <xsd:extension base="metricAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="validatorAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Validator is a kind of collector, which validate responses. The result is a percent number of valid responses.
+                Choose one of validator types - validator-not-null-response, validator-consistency, validator-custom, validator-ref.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="workloadCollectorAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="validator-consistency">
+        <xsd:annotation>
+            <xsd:documentation>
+                Need to add info
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="validatorType">
+            <xsd:extension base="validatorAbstract">
                 <xsd:attribute name="queryEq" type="xsd:string"/>
                 <xsd:attribute name="endpointEq" type="xsd:string"/>
                 <xsd:attribute name="resultEq" type="xsd:string"/>
@@ -495,31 +795,75 @@
     </xsd:complexType>
 
     <xsd:complexType name="validator-not-null-response">
+        <xsd:annotation>
+            <xsd:documentation>
+                This validator validates that response doesn't equals null.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="validatorType">
+            <xsd:extension base="validatorAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="validator-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set validator element, that you would like to use.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="validatorType">
+            <xsd:extension base="validatorAbstract">
                 <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="validator-custom">
+        <xsd:annotation>
+            <xsd:documentation>
+                If you would like to use you custom validator - create your own class, which extends class ResponseValidator.
+                Now set attribute 'validator' full name of your class.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="validatorAbstract">
+                <xsd:attribute name="validator" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <!--possible scenarios-->
 
-    <xsd:element name="scenario" type="scenarioType"/>
+    <xsd:element name="scenario" type="scenarioAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Scenario describes what targets will be loaded and what tool use to make load.
+                Possible type of scenarios : scenario-query-pool.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="scenario-http" type="scenario-http" substitutionGroup="scenario"/>
+    <!--<xsd:element name="scenario-http" type="scenario-http" substitutionGroup="scenario"/>-->
 
-    <xsd:element name="scenario-query-pool" type="scenario-query-pool" substitutionGroup="scenario"/>
+    <xsd:element name="scenario-query-pool" type="scenario-query-pool" substitutionGroup="scenario">
+        <xsd:annotation>
+            <xsd:documentation>
+                This scenario contains such elements - invoker, query-provider, endpoint-provider, query-distributor.
+                Query-provider generate list of queries. Endpoint-provider generate list of endpoints.
+                Query-distributor describes how to distribute queries by endpoints.
+                Invoker invokes a query to load endpoint.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="scenario-ref" type="scenario-ref" substitutionGroup="scenario"/>
-
-    <xsd:complexType name="scenarioType" abstract="true">
+    <xsd:complexType name="scenarioAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Scenario describes what targets will be loaded and what tool use to make load.
+                Possible type of scenarios : scenario-query-pool.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="basicType">
             </xsd:extension>
@@ -527,32 +871,46 @@
     </xsd:complexType>
 
     <xsd:complexType name="scenario-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set scenario element, that you would like to use.
+                If you would like to create you own scenario, set id of bean, which class implements interface ScenarioFactory.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="scenarioType">
+            <xsd:extension base="scenarioAbstract">
                 <xsd:attribute name="ref" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="scenario-http">
-        <xsd:complexContent>
-            <xsd:extension base="scenarioType">
-                <xsd:all>
-                    <xsd:element name="endpoint" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-                    <xsd:element name="http-query" type="query-http" minOccurs="1" maxOccurs="1"/>
-                </xsd:all>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
+    <!--<xsd:complexType name="scenario-http">-->
+        <!--<xsd:complexContent>-->
+            <!--<xsd:extension base="scenarioAbstract">-->
+                <!--<xsd:all>-->
+                    <!--<xsd:element name="endpoint" type="xsd:string" minOccurs="1" maxOccurs="1"/>-->
+                    <!--<xsd:element name="http-query" type="query-http" minOccurs="1" maxOccurs="1"/>-->
+                <!--</xsd:all>-->
+            <!--</xsd:extension>-->
+        <!--</xsd:complexContent>-->
+    <!--</xsd:complexType>-->
 
     <xsd:complexType name="scenario-query-pool">
+        <xsd:annotation>
+            <xsd:documentation>
+                This scenario contains such elements - invoker, query-provider, endpoint-provider, query-distributor.
+                Query-provider generate list of queries. Endpoint-provider generate list of endpoints.
+                Query-distributor describes how to distribute queries by endpoints.
+                Invoker invoke a query to load endpoint.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="scenarioType">
+            <xsd:extension base="scenarioAbstract">
                 <xsd:all>
-                    <xsd:element ref="invoker" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element ref="query-provider" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element ref="endpoint-provider" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element ref="query-distributor" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="invoker" type="invokerAbstract" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="query-provider" type="queryProviderAbstract" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="endpoint-provider" type="endpointProviderAbstract" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="query-distributor" type="queryDistributorAbstract" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
             </xsd:extension>
         </xsd:complexContent>
@@ -560,15 +918,40 @@
 
     <!--possible invokers-->
 
-    <xsd:element name="invoker" type="invokerType"/>
+    <xsd:element name="invoker" type="invokerAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Invoker invokes a query to load endpoint.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="invoker-http" type="invoker-http" substitutionGroup="invoker"/>
+    <xsd:element name="invoker-http" type="invoker-http" substitutionGroup="invoker">
+        <xsd:annotation>
+            <xsd:documentation>
+                An invoker, that creates HTTP query.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="invoker-soap" type="invoker-soap" substitutionGroup="invoker"/>
+    <xsd:element name="invoker-soap" type="invoker-soap" substitutionGroup="invoker">
+        <xsd:annotation>
+            <xsd:documentation>
+                An invoker, that creates SOAP query.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="invoker-class" type="invoker-class" substitutionGroup="invoker"/>
+    <xsd:element name="invoker-class" type="invoker-class" substitutionGroup="invoker">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set class name of invoker, that you would like to use.
+                Note - add an object of this class in context - create bean with this class.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:complexType name="invokerType" abstract="true">
+    <xsd:complexType name="invokerAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
             </xsd:extension>
@@ -576,22 +959,38 @@
     </xsd:complexType>
 
     <xsd:complexType name="invoker-http">
+        <xsd:annotation>
+            <xsd:documentation>
+                An invoker, that creates HTTP query.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="invokerType">
+            <xsd:extension base="invokerAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="invoker-soap">
+        <xsd:annotation>
+            <xsd:documentation>
+                An invoker, that creates SOAP query.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="invokerType">
+            <xsd:extension base="invokerAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="invoker-class">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set class name of invoker, that you would like to use.
+                Note - add an object of this class in context - create bean with this class.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="invokerType">
+            <xsd:extension base="invokerAbstract">
                 <xsd:attribute name="class" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
@@ -599,19 +998,48 @@
 
     <!--queries-->
 
-    <xsd:element name="query-provider" type="queryProviderAbstract"/>
+    <xsd:element name="query-provider" type="queryProviderAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Query provider is a source, where jagger can take queries.
+                Possible types of query-provider : query-provider-list, query-provider-ref.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="query-provider-list" type="query-provider-list" substitutionGroup="query-provider"/>
+    <xsd:element name="query-provider-list" type="query-provider-list" substitutionGroup="query-provider">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a list of elements - query.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="query-provider-ref" type="query-provider-ref" substitutionGroup="query-provider"/>
+    <xsd:element name="query" type="queryType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Possible type of query : query-http, query-ref.
+                If you don't choose any of type, query will be represented as a string.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="query" type="queryType"/>
-
-    <xsd:element name="query-http" type="query-http" substitutionGroup="query"/>
-
-    <xsd:element name="query-ref" type="query-ref" substitutionGroup="query"/>
+    <xsd:element name="query-http" type="query-http" substitutionGroup="query">
+        <xsd:annotation>
+            <xsd:documentation>
+                This query implements http query. You can configure it with elements - method-params and client-params.
+                Set attribute 'method', it describes what http method you would like to use(for example - GET).
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:complexType name="queryProviderAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Query provider is a source, where jagger can take queries.
+                Possible types of query-provider : query-provider-list, query-provider-ref.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="basicType">
             </xsd:extension>
@@ -619,6 +1047,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="query-provider-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set reference to your query-provider bean. This bean must implements interface Iterable.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="queryProviderAbstract">
                 <xsd:attribute name="ref" type="xsd:string" use="required"/>
@@ -627,6 +1060,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="query-provider-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a list of elements - query.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="queryProviderAbstract">
                 <xsd:choice minOccurs="1" maxOccurs="unbounded">
@@ -637,6 +1075,12 @@
     </xsd:complexType>
 
     <xsd:complexType name="queryType" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Possible type of query : query-http, query-ref.
+                If you don't choose any of type, query will be represented as a string.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="primitiveOrObjectAbstract">
             </xsd:extension>
@@ -644,6 +1088,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="query-ref" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set reference to query bean.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="queryType">
                 <xsd:attribute name="ref" type="xsd:string" use="required"/>
@@ -652,6 +1101,12 @@
     </xsd:complexType>
 
     <xsd:complexType name="query-http" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                This query implements http query. You can configure it with elements - method-params and client-params.
+                Set attribute 'method', it describes what http method you would like to use(for example - GET).
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="queryType">
                 <xsd:choice>
@@ -684,15 +1139,39 @@
 
     <!--endpoints-->
 
-    <xsd:element name="endpoint-provider" type="endpointProviderAbstract"/>
+    <xsd:element name="endpoint-provider" type="endpointProviderAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Endpoint provider is a source, where jagger can take endpoints.
+                Possible types of endpoint-provider : endpoint-provider-list, endpoint-provider-ref.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="endpoint-provider-list" type="endpoint-provider-list" substitutionGroup="endpoint-provider"/>
+    <xsd:element name="endpoint-provider-list" type="endpoint-provider-list" substitutionGroup="endpoint-provider">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a list of elements - endpoint.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="endpoint-provider-ref" type="endpoint-provider-ref" substitutionGroup="endpoint-provider"/>
-
-    <xsd:element name="endpoint" type="endpointType"/>
+    <xsd:element name="endpoint" type="endpointType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Possible type of query : endpoint-ref.
+                If you don't choose any of type, endpoint will be represented as a string.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:complexType name="endpointProviderAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Endpoint provider is a source, where jagger can take endpoints.
+                Possible types of endpoint-provider : endpoint-provider-list, endpoint-provider-ref.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="basicType">
             </xsd:extension>
@@ -700,6 +1179,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="endpoint-provider-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set reference to endpoint-provider element or bean. This bean must implements interface Iterable.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="endpointProviderAbstract">
                 <xsd:attribute name="ref" type="xsd:string" use="required"/>
@@ -708,6 +1192,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="endpoint-provider-list">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a list of elements - endpoint.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="endpointProviderAbstract">
                 <xsd:choice minOccurs="1" maxOccurs="unbounded">
@@ -718,6 +1207,12 @@
     </xsd:complexType>
 
     <xsd:complexType name="endpointType" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Possible type of query : endpoint-ref.
+                If you don't choose any of type, endpoint will be represented as a string.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="primitiveOrObjectAbstract">
             </xsd:extension>
@@ -725,6 +1220,11 @@
     </xsd:complexType>
 
     <xsd:complexType name="endpoint-ref" mixed="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set reference to endpoint bean.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="endpointType">
                 <xsd:attribute name="ref" type="xsd:string" use="required"/>
@@ -734,13 +1234,40 @@
 
     <!--distributors-->
 
-    <xsd:element name="query-distributor" type="queryDistributorAbstract"/>
+    <xsd:element name="query-distributor" type="queryDistributorAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Query distributor is an object, that provides an algorithm how to distribute queries by endpoints.
+                Possible types of query-distributor : query-distributor-round-robin, query-distributor-one-by-one, query-distributor-ref.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="query-distributor-round-robin" type="query-distributor-round-robin" substitutionGroup="query-distributor"/>
+    <xsd:element name="query-distributor-round-robin" type="query-distributor-round-robin" substitutionGroup="query-distributor">
+        <xsd:annotation>
+            <xsd:documentation>
+                Encapsulates round robin algorithm.
+                For input: endpoints [e1, e2] and queries [q1, q2, q3] returns (invoker, query) pairs in following order: (e1, q1), (e2, q2), (e1, q3), (e2, q1), (e1, q2), (e2, q3).
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
-    <xsd:element name="query-distributor-one-by-one" type="query-distributor-one-by-one" substitutionGroup="query-distributor"/>
+    <xsd:element name="query-distributor-one-by-one" type="query-distributor-one-by-one" substitutionGroup="query-distributor">
+        <xsd:annotation>
+            <xsd:documentation>
+                Schedules queries across endpoints one by one.
+                For input: endpoints [e1, e2] and queries [q1, q2, q3] executes actions in following order: (e1, q1), (e2, q1), (e1, q2), (e2, q2), (e1, q3), (e2, q3).
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:complexType name="queryDistributorAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Query distributor is an object, that provides an algorithm how to distribute queries by endpoints.
+                Possible types of query-distributor : query-distributor-round-robin, query-distributor-one-by-one, query-distributor-ref.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="basicType">
             </xsd:extension>
@@ -748,6 +1275,12 @@
     </xsd:complexType>
 
     <xsd:complexType name="query-distributor-round-robin">
+        <xsd:annotation>
+            <xsd:documentation>
+                Encapsulates round robin algorithm.
+                For input: endpoints [e1, e2] and queries [q1, q2, q3] returns (invoker, query) pairs in following order: (e1, q1), (e2, q2), (e1, q3), (e2, q1), (e1, q2), (e2, q3).
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="queryDistributorAbstract">
             </xsd:extension>
@@ -755,19 +1288,55 @@
     </xsd:complexType>
 
     <xsd:complexType name="query-distributor-one-by-one">
+        <xsd:annotation>
+            <xsd:documentation>
+                Schedules queries across endpoints one by one.
+                For input: endpoints [e1, e2] and queries [q1, q2, q3] executes actions in following order: (e1, q1), (e2, q1), (e1, q2), (e2, q2), (e1, q3), (e2, q3).
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="queryDistributorAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:complexType name="query-distributor-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                Set reference to query-distributor bean. Class of this bean must inheritance class QueryPoolLoadBalancer.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="queryDistributorAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <!--REPORTING-->
 
-    <xsd:element name="report" type="reportType"/>
+    <xsd:element name="report" type="reportType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element can configure your report.
+                outputReportLocation say where and how you would like to save your report.
+                rootTemplateLocation is a name of jrxml file. Jrxml file is stylesheet file for your report.
+                With element session-comparators you can configure session comparison.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
 
     <xsd:complexType name="reportType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element can configure your report.
+                outputReportLocation say where and how you would like to save your report.
+                rootTemplateLocation is a name of jrxml file. Jrxml file is stylesheet file for your report.
+                With element session-comparators you can configure session comparison.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="beans:identifiedType">
+            <xsd:extension base="identifiedType">
                 <xsd:all>
                     <xsd:element name="extensions" type="extensionsType" minOccurs="0"/>
                     <xsd:element name="session-comparators" type="sessionComparatorsType" minOccurs="0"/>
@@ -784,7 +1353,7 @@
 
     <xsd:complexType name="extensionsType">
         <xsd:complexContent>
-            <xsd:extension base="beans:identifiedType">
+            <xsd:extension base="identifiedType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
                     <xsd:element name="extension" type="extensionType"></xsd:element>
                 </xsd:choice>
@@ -794,7 +1363,7 @@
 
     <xsd:complexType name="extensionType">
         <xsd:complexContent>
-            <xsd:extension base="beans:identifiedType">
+            <xsd:extension base="identifiedType">
                 <xsd:choice minOccurs="0" maxOccurs="1">
                     <xsd:element ref="beans:ref"/>
                 </xsd:choice>
@@ -808,10 +1377,17 @@
     </xsd:attributeGroup>
 
     <xsd:complexType name="sessionComparatorsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a list of monitoring and workload comparators.
+                By adding attribute 'baselineId' you can add a comparison between your current session and baseline session.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="beans:identifiedType">
+            <xsd:extension base="identifiedType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element ref="comparator"/>
+                    <xsd:element name="comparator-monitoring" type="comparator-monitoring"/>
+                    <xsd:element name="comparator-workload" type="comparator-workload"/>
                 </xsd:choice>
                 <xsd:attributeGroup ref="sessionComparatorsAttribute"/>
             </xsd:extension>
@@ -828,18 +1404,16 @@
 
     <xsd:element name="decision-maker" type="decisionMakerAbstract"/>
 
-    <xsd:element name="decision-maker-throughput" type="decision-maker-throughput" substitutionGroup="decision-maker"/>
+    <!--unsupported yet-->
+    <!--<xsd:element name="decision-maker-throughput" type="decision-maker-throughput" substitutionGroup="decision-maker"/>-->
 
-    <xsd:element name="decision-maker-stddev" type="decision-maker-stddev" substitutionGroup="decision-maker"/>
+    <!--<xsd:element name="decision-maker-stddev" type="decision-maker-stddev" substitutionGroup="decision-maker"/>-->
 
-    <xsd:element name="decision-maker-ref" type="decision-maker-ref" substitutionGroup="decision-maker"/>
+    <!--<xsd:element name="decision-maker-ref" type="decision-maker-ref" substitutionGroup="decision-maker"/>-->
 
     <xsd:complexType name="comparatorAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
-                <xsd:choice minOccurs="1" maxOccurs="1">
-                    <xsd:element ref="decision-maker"/>
-                </xsd:choice>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -850,9 +1424,24 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:complexType name="decisionMakerMonitoringAbstract" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="decisionMakerAbstract"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="decisionMakerWorkloadAbstract" abstract="true">
+        <xsd:complexContent>
+            <xsd:extension base="decisionMakerAbstract"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <xsd:complexType name="comparator-monitoring">
         <xsd:complexContent>
             <xsd:extension base="comparatorAbstract">
+                <xsd:choice minOccurs="1" maxOccurs="1">
+                    <xsd:element name="decision-maker" type="decisionMakerMonitoringAbstract"/>
+                </xsd:choice>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -860,6 +1449,9 @@
     <xsd:complexType name="comparator-workload">
         <xsd:complexContent>
             <xsd:extension base="comparatorAbstract">
+                <xsd:choice minOccurs="1" maxOccurs="1">
+                    <xsd:element name="decision-maker" type="decisionMakerWorkloadAbstract"/>
+                </xsd:choice>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -872,27 +1464,35 @@
         </xsd:complexContent>
     </xsd:complexType>
     
-    <xsd:complexType name="decision-maker-throughput">
+    <xsd:complexType name="decision-maker-workload-throughput">
         <xsd:complexContent>
-            <xsd:extension base="decisionMakerAbstract">
+            <xsd:extension base="decisionMakerWorkloadAbstract">
                 <xsd:attribute name="fatalDeviationThreshold" type="xsd:float" use="required"/>
                 <xsd:attribute name="warningDeviationThreshold" type="xsd:float" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="decision-maker-stddev">
+    <xsd:complexType name="decision-maker-monitoring-stddev">
         <xsd:complexContent>
-            <xsd:extension base="decisionMakerAbstract">
+            <xsd:extension base="decisionMakerMonitoringAbstract">
                 <xsd:attribute name="fatalDeviationThreshold" type="xsd:float" use="required"/>
                 <xsd:attribute name="warningDeviationThreshold" type="xsd:float" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="decision-maker-ref">
+    <xsd:complexType name="decision-maker-monitoring-ref">
         <xsd:complexContent>
-            <xsd:extension base="decisionMakerAbstract">
+            <xsd:extension base="decisionMakerMonitoringAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="decision-maker-workload-ref">
+        <xsd:complexContent>
+            <xsd:extension base="decisionMakerWorkloadAbstract">
                 <xsd:attribute name="ref" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
