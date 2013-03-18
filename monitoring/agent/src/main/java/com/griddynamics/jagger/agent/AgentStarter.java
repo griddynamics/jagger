@@ -47,7 +47,6 @@ public class AgentStarter {
     public static CountDownLatch agentLatch;
     public static AtomicBoolean alive = new AtomicBoolean(false);
     public static final int REGISTRATION_PERIOD = 10000;
-    private static final String RANDOM_IDENTIFIER = "#RANDOM";
 
     public static void main(String[] args) {
         log.info("Going to start agent");
@@ -67,17 +66,12 @@ public class AgentStarter {
         }
 
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/agent.config.xml");
-        String name = getAgentNameFromContext(context);
-        if (Objects.equal(name, RANDOM_IDENTIFIER)) {
-            name = generateAgentName();
-        }
-        name += " [" + getLocalHostAddress() + "]";
-
+        String name = ((AgentConfig) context.getBean("agentConfig")).getName();
         Agent agent = (Agent) context.getBean("agent");
-
-        AgentWorker agentWorker = (AgentWorker) context.getBean("agentWorker");
         agent.setNodeContext(Coordination.emptyContext(NodeId.agentNode(name)));
         agent.init();
+
+        AgentWorker agentWorker = (AgentWorker) context.getBean("agentWorker");
 
         log.info("Agent {} initialized", agent.getNodeContext().getId());
 
@@ -116,27 +110,11 @@ public class AgentStarter {
         log.info("Agent finish work");
     }
 
-    private static String generateAgentName() {
-        return "AGENT-" + new Random().nextInt();
-    }
 
-    private static String getAgentNameFromContext(ApplicationContext context) {
-        AgentConfig agentConfig = (AgentConfig) context.getBean("agentConfig");
-
-        return agentConfig.getName();
-    }
 
     public static void resetAgent(Agent agent) {
         alive.set(true);
         agent.stop();
         agentLatch.countDown();
-    }
-
-    private static String getLocalHostAddress() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

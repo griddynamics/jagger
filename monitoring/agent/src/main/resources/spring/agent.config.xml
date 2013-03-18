@@ -81,6 +81,7 @@
     <bean id="jmxAgentImpl" class="com.griddynamics.jagger.agent.impl.JMXSystemUnderTestImpl" init-method="init"
           lazy-init="true">
         <property name="jmxServices" value="${jmx.services}"/>
+        <property name="name" value="#{agentConfig.getName()}"/>
     </bean>
 
     <!--bean id="jvmSnmpCollector" class="com.griddynamics.jagger.agent.impl.SNMPProvider">

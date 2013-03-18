@@ -46,17 +46,14 @@ public class SerializationUtils {
             log.info("fromString({}, '{}')", fromStringCount.getAndIncrement(), s);
         }
         ObjectInputStream ois = null;
-        InputStream in=null;
         try {
             byte[] data = Base64Coder.decode(s);
-
-            in=new ByteArrayInputStream(data);
             try{
                 //TODO fixes for support old reports
-                ois=new JBossObjectInputStream(in);
+                ois=new JBossObjectInputStream(new ByteArrayInputStream(data));
             } catch (IOException e) {
                 // /data stored not with JBoss
-                ois=new ObjectInputStream(in);
+                ois=new ObjectInputStream(new ByteArrayInputStream(data));
             }
             T obj = (T) ois.readObject();
             return obj;
@@ -69,7 +66,6 @@ public class SerializationUtils {
             throw new TechnicalException(e);
         } finally {
             Closeables.closeQuietly(ois);
-            Closeables.closeQuietly(in);
         }
     }
 
@@ -80,6 +76,7 @@ public class SerializationUtils {
             if(useJBoss){
                 oos=new JBossObjectOutputStream(baos);
             } else{
+                baos = new ByteArrayOutputStream();
                 oos=new ObjectOutputStream(baos);
             }
             oos.writeObject(o);
@@ -98,12 +95,12 @@ public class SerializationUtils {
 
     public static byte[] serialize(Object obj) {
         ObjectOutputStream ous = null;
-        ByteArrayOutputStream baos=null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            baos = new ByteArrayOutputStream();
             if(useJBoss){
                 ous=new JBossObjectOutputStream(baos);
             } else {
+                baos = new ByteArrayOutputStream();
                 ous=new ObjectOutputStream(baos);
             }
             ous.writeObject(obj);
@@ -119,15 +116,13 @@ public class SerializationUtils {
 
     public static Object deserialize(byte[] data) {
         ObjectInputStream ois = null;
-        ByteArrayInputStream bais = null;
         try {
-            bais = new ByteArrayInputStream(data);
             try{
                 //TODO fixes for support old reports
-                ois= new JBossObjectInputStream(bais);
+                ois= new JBossObjectInputStream(new ByteArrayInputStream(data));
             } catch (IOException e){
                 //data stored not with JBoss
-                ois=new ObjectInputStream(bais);
+                ois=new ObjectInputStream(new ByteArrayInputStream(data));
             }
             Object payload = ois.readObject();
 
@@ -136,7 +131,6 @@ public class SerializationUtils {
             throw new RuntimeException(e);
         } finally {
             Closeables.closeQuietly(ois);
-            Closeables.closeQuietly(bais);
         }
     }
 

@@ -63,10 +63,19 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     private static final Collection<String> GENS = Sets.newHashSet("PS Old Gen", "PS Perm Gen");
 
     private String jmxServices;
+    private String name;
     private Map<String, MBeanServerConnection> connections = Maps.newHashMap();
 
     public void setJmxServices(String jmxServices) {
         this.jmxServices = jmxServices;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -85,7 +94,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
         for (String service : jmxServicePorts) {
             try {
                 connector = JMXConnectorFactory.connect(new JMXServiceURL(String.format(JMX_URL_TEMPLATE, service)));
-                connections.put("Agent (" + InetAddress.getLocalHost().getHostAddress() + ") collect from jmx port " +
+                connections.put(name + " collect from jmx port " +
                         service, connector.getMBeanServerConnection());
             } catch (IOException e) {
                 log.error("Error during JMX initializing", e);

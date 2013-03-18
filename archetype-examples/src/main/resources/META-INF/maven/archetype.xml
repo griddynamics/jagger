@@ -1,0 +1,35 @@
+<archetype xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0 http://maven.apache.org/xsd/archetype-1.0.0.xsd">
+
+    <id>jagger-suite-archetype-examples</id>
+
+    <sources>
+        <source>src/main/java/calculator/ResponseSize.java</source>
+        <source>src/main/java/distributor/RandomQueryDistributor.java</source>
+        <source>src/main/java/groovy/GroovyInvokerDelegate.java</source>
+        <source>src/main/java/groovy/GroovyScenarioSupplier.java</source>
+        <source>src/main/java/invoker/PageVisitorInvoker.java</source>
+        <source>src/main/java/provider/FileReaderIterable.java</source>
+        <source>src/main/java/validator/ResponseFromFileValidator.java</source>
+    </sources>
+    <resources>
+        <resource>src/main/resources/profiles/basic/environment.properties</resource>
+        <resource>src/main/resources/suite/distributor/distributor.conf.xml</resource>
+        <resource>src/main/resources/suite/groovy/sources/GroovyExampleScenarioFactory.groovy</resource>
+        <resource>src/main/resources/suite/groovy/sources/GroovyPageVisitorInvoker.groovy</resource>
+        <resource>src/main/resources/suite/groovy/groovyscenario.conf.xml</resource>
+        <resource>src/main/resources/suite/invokers/groovyinvoker.conf.xml</resource>
+        <resource>src/main/resources/suite/invokers/invokers.conf.xml</resource>
+        <resource>src/main/resources/suite/provider/resources/endpoints.txt</resource>
+        <resource>src/main/resources/suite/provider/resources/queries.txt</resource>
+        <resource>src/main/resources/suite/provider/fileprovider.conf.xml</resource>
+        <resource>src/main/resources/suite/validator/resources/response.txt</resource>
+        <resource>src/main/resources/suite/collectors.conf.xml</resource>
+        <resource>src/main/resources/suite/defaults.config.xml</resource>
+        <resource>src/main/resources/suite/test.suite.conf.xml</resource>
+        <resource>src/main/resources/suite/test.suite.scenario.config.xml</resource>
+        <resource>assembly-config.xml</resource>
+    </resources>
+
+
+</archetype>

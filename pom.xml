@@ -48,6 +48,7 @@
         <module>archetype</module>
         <module>test/jagger-test</module>
         <module>test/test-target</module>
+        <module>archetype-examples</module>
     </modules>
 
     <scm>

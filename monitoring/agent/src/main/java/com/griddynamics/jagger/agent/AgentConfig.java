@@ -20,10 +20,17 @@
 
 package com.griddynamics.jagger.agent;
 
+import com.google.common.base.Objects;
 import org.springframework.beans.factory.annotation.Required;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Random;
 
 public class AgentConfig {
     private String name;
+
+    private static final String RANDOM_IDENTIFIER = "#RANDOM";
 
     public String getName() {
         return name;
@@ -31,6 +38,23 @@ public class AgentConfig {
 
     @Required
     public void setName(String name) {
+        if (Objects.equal(name, RANDOM_IDENTIFIER)) {
+            name = generateAgentName();
+        }
+        name += " [" + getLocalHostAddress() + "]";
+
         this.name = name;
+    }
+
+    private static String generateAgentName() {
+        return "AGENT-" + new Random().nextInt();
+    }
+
+    private static String getLocalHostAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
