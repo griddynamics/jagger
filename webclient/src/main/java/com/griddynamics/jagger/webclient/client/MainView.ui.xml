@@ -8,8 +8,7 @@
         <g:north size="1.6">
             <g:HTMLPanel styleName="{res.css.navPanel}">
                 <ul>
-                    <li><g:Hyperlink text="Trends" targetHistoryToken="{tokens.trends}" ui:field="trendsLink"/></li>
-                    <li><g:Hyperlink text="View Results" targetHistoryToken="{tokens.viewResults}" ui:field="viewResultsLink"/></li>
+                    <li><g:Hyperlink text="Main" targetHistoryToken="{tokens.trends}" ui:field="trendsLink"/></li>
                 </ul>
             </g:HTMLPanel>
         </g:north>

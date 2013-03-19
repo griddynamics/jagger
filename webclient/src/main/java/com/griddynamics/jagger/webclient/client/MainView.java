@@ -59,9 +59,6 @@ public class MainView extends ResizeComposite implements IsWidget, Handler {
     @UiField
     Hyperlink trendsLink;
 
-    @UiField
-    Hyperlink viewResultsLink;
-
     public MainView(EventBus eventBus, JaggerResources resources) {
         this.resources = resources;
 
@@ -72,12 +69,6 @@ public class MainView extends ResizeComposite implements IsWidget, Handler {
             @Override
             public boolean apply(Place place) {
                 return place instanceof TrendsPlace;
-            }
-        }));
-        links.add(new Link(viewResultsLink, new Predicate() {
-            @Override
-            public boolean apply(Place place) {
-                return place instanceof ViewResultsPlace;
             }
         }));
 

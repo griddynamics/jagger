@@ -7,9 +7,20 @@
 
     <g:SplitLayoutPanel ui:field="widget">
         <g:center>
-            <g:ScrollPanel ui:field="scrollPanel">
-                <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotPanel"/>
-            </g:ScrollPanel>
+            <g:TabLayoutPanel barHeight="20">
+                <g:tab>
+                    <g:header> <b>Summary</b> </g:header>
+                    <g:ScrollPanel ui:field="scrollPanelSummary" >
+                        <g:VerticalPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
+                    </g:ScrollPanel>
+                </g:tab>
+                <g:tab>
+                    <g:header> <b>Trends</b> </g:header>
+                    <g:ScrollPanel ui:field="scrollPanelTrends">
+                        <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotPanel"/>
+                    </g:ScrollPanel>
+                </g:tab>
+            </g:TabLayoutPanel>
         </g:center>
         <g:south size="250">
             <g:SplitLayoutPanel>

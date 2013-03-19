@@ -37,6 +37,29 @@
     border-radius: 3px 3px 0 0;
 }
 
+.summaryPanel{
+    text-align: center;
+    margin:  auto;
+}
+
+.testHeader{
+    background-color: #B0C4DE;
+    text-align: center;
+}
+
+.sessionNameHeader{
+    font-size: 32px;
+    color: #FFFAFA;
+    background-color: #4169E1;
+}
+
+.testNameHeader{
+    font-size: 24px;
+    color: #87CEFA;
+    background-color: #4169E1;
+    margin-left: 20px;
+}
+
 .navPanel a:visited {
     color: #888;
 }

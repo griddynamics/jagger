@@ -10,6 +10,7 @@
         <class>com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData</class>
 
         <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData</class>
+        <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData</class>
         <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadDetails</class>
         <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics</class>
         <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeLatencyPercentile</class>

@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.HasDirection;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -25,6 +26,7 @@ import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.*;
 import com.griddynamics.jagger.webclient.client.callback.SessionScopePlotListQueryCallback;
 import com.griddynamics.jagger.webclient.client.callback.TaskDataDtoListQueryAsyncCallback;
+import com.griddynamics.jagger.webclient.client.components.SessionPanel;
 import com.griddynamics.jagger.webclient.client.data.*;
 import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.client.handler.ShowCurrentValueHoverListener;
@@ -58,7 +60,13 @@ public class Trends extends DefaultActivity {
     CellTree taskDetailsTree;
 
     @UiField
-    ScrollPanel scrollPanel;
+    ScrollPanel scrollPanelTrends;
+
+    @UiField
+    ScrollPanel scrollPanelSummary;
+
+    @UiField
+    VerticalPanel summaryPanel;
 
     @UiField
     VerticalPanel sessionScopePlotList;
@@ -106,7 +114,6 @@ public class Trends extends DefaultActivity {
 
     public Trends(JaggerResources resources) {
         super(resources);
-
         createWidget();
     }
 
@@ -501,6 +508,12 @@ public class Trends extends DefaultActivity {
             final TaskDataTreeViewModel taskDataTreeViewModel = (TaskDataTreeViewModel) taskDetailsTree.getTreeViewModel();
             final MultiSelectionModel<PlotNameDto> plotNameSelectionModel = taskDataTreeViewModel.getSelectionModel();
 
+            //Refresh summary
+            summaryPanel.clear();
+            for (SessionDataDto sessionData : selected){
+                summaryPanel.add(new SessionPanel(sessionData));
+            }
+
             // Clear plots display
             plotPanel.clear();
             // Clear task scope plot selection model
@@ -592,7 +605,7 @@ public class Trends extends DefaultActivity {
                     }
 
                     plotPanel.add(loadIndicator);
-                    scrollPanel.scrollToBottom();
+                    scrollPanelTrends.scrollToBottom();
                     final int loadingId = plotPanel.getWidgetCount() - 1;
                     // Invoke remote service for plot data retrieving
                     PlotProviderService.Async.getInstance().getPlotData(plotNameDto.getTaskId(), plotNameDto.getPlotName(), new AsyncCallback<List<PlotSeriesDto>>() {
@@ -649,7 +662,7 @@ public class Trends extends DefaultActivity {
                     }
 
                     plotPanel.add(loadIndicator);
-                    scrollPanel.scrollToBottom();
+                    scrollPanelTrends.scrollToBottom();
                     final int loadingId = plotPanel.getWidgetCount() - 1;
 
                     // Invoke remote service for plot data retrieving
@@ -690,7 +703,7 @@ public class Trends extends DefaultActivity {
             // If checkbox is checked
             if (source.getValue()) {
                 plotPanel.add(loadIndicator);
-                scrollPanel.scrollToBottom();
+                scrollPanelTrends.scrollToBottom();
                 final int loadingId = plotPanel.getWidgetCount() - 1;
                 PlotProviderService.Async.getInstance().getSessionScopePlotData(sessionId, plotName, new AsyncCallback<List<PlotSeriesDto>>() {
                     @Override

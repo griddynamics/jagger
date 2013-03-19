@@ -37,6 +37,7 @@
                 <entry key="/SessionDataService" value-ref="sessionDataService"/>
                 <entry key="/TaskDataService" value-ref="taskDataService"/>
                 <entry key="/WorkloadService" value-ref="workloadDataService"/>
+                <entry key="/WorkloadTaskDataService" value-ref="workloadTaskDataService"/>
             </map>
         </property>
     </bean>
@@ -58,6 +59,7 @@
     <bean id="taskDataService" class="com.griddynamics.jagger.webclient.server.TaskDataServiceImpl"/>
 
     <bean id="workloadDataService" class="com.griddynamics.jagger.webclient.server.WorkloadServiceImpl"/>
+    <bean id="workloadTaskDataService" class="com.griddynamics.jagger.webclient.server.WorkloadTaskDataServiceImpl"/>
 
     <!--==========Legend Provider==========-->
     <bean id="legendProvider" class="com.griddynamics.jagger.webclient.server.LegendProvider"/>
