@@ -37,7 +37,7 @@
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
             <validator xsi:type="validator-consistency"/>
-            <metric  xsi:type="metric-custom" calculator="responseSize"/>
+            <metric id="responseSize" xsi:type="metric-custom" calculator="responseSize"/>
         </info-collectors>
     </test-description>
 
