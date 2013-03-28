@@ -88,4 +88,17 @@
         <property name="globalPercentilesKeys" ref="standardPercentilesGlobal"/>
     </bean>
 
+    <bean id="multiDurationLogProcessor" class="com.griddynamics.jagger.engine.e1.aggregator.workload.MultiDurationLogProcessor">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="logAggregator" ref="chronologyLogAggregator"/>
+        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+        <property name="pointCount" value="${chassis.engine.e1.reporting.task.point.count}"/>
+        <property name="fileStorage" ref="fileStorage"/>
+
+        <property name="logReader"  ref="bufferedLogReader"/>
+
+        <property name="timeWindowPercentilesKeys" ref="standardPercentilesTimeSeries"/>
+        <property name="globalPercentilesKeys" ref="standardPercentilesGlobal"/>
+    </bean>
+
 </beans>

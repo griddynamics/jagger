@@ -45,4 +45,8 @@
 
 	<bean id="simpleMetricCalculator" class="com.griddynamics.jagger.engine.e1.collector.SimpleMetricCalculator"/>
 
+    <bean id="multiDurationCollector" class="com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider">
+        <property name="clazz" value="com.griddynamics.jagger.engine.e1.collector.MultiDurationCollector"/>
+    </bean>
+
 </beans>

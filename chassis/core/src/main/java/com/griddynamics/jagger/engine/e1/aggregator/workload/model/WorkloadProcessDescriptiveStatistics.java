@@ -40,12 +40,32 @@ public class WorkloadProcessDescriptiveStatistics {
     @ManyToOne
     private TaskData taskData;
 
+    @Column
+    private String name;
+
+    @Column
+    private int count;
+
+    @Column
+    private long maxTime;
+
+    @Column
+    private long minTime;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<WorkloadProcessLatencyPercentile> getPercentiles() {
@@ -62,5 +82,29 @@ public class WorkloadProcessDescriptiveStatistics {
 
     public void setTaskData(TaskData taskData) {
         this.taskData = taskData;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public void setMaxTime(long maxTime) {
+        this.maxTime = maxTime;
+    }
+
+    public void setMinTime(long minTime) {
+        this.minTime = minTime;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public long getMaxTime() {
+        return maxTime;
+    }
+
+    public long getMinTime() {
+        return minTime;
     }
 }

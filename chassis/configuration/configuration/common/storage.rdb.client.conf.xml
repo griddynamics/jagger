@@ -50,26 +50,18 @@
                 <prop key="hibernate.jdbc.batch_size">${chassis.storage.hibernate.batch_size}</prop>
 			</props>
 		</property>
+        <property name="packagesToScan">
+            <list>
+                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model</value>
+                <value>com.griddynamics.jagger.engine.e1.aggregator.session.model</value>
+                <value>com.griddynamics.jagger.monitoring.model</value>
+            </list>
+        </property>
 		<property name="annotatedClasses">
 			<list>
 				<!--TODO not extensible solution -->
 				<value>com.griddynamics.jagger.master.Session</value>
 				<value>com.griddynamics.jagger.storage.rdb.KeyValue</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadDetails</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData</value>
-                <value>com.griddynamics.jagger.monitoring.model.MonitoringStatistics</value>
-				<value>com.griddynamics.jagger.monitoring.model.ProfilingSuT</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.Percentile</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeLatencyPercentile</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity</value>
-                <value>com.griddynamics.jagger.monitoring.model.PerformedMonitoring</value>
 			</list>
 		</property>
 	</bean>
