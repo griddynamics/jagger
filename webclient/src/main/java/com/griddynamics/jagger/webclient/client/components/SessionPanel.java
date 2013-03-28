@@ -1,15 +1,10 @@
 package com.griddynamics.jagger.webclient.client.components;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.i18n.client.HasDirection;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
-import com.griddynamics.jagger.webclient.client.TaskDataService;
-import com.griddynamics.jagger.webclient.client.TaskDataServiceAsync;
 import com.griddynamics.jagger.webclient.client.WorkloadTaskDataService;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
-import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.dto.WorkloadTaskDataDto;
 
 import java.util.List;

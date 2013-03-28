@@ -46,7 +46,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
 
             //TODO - rebuild to join query
             List<WorkloadProcessDescriptiveStatistics> latency = entityManager.createQuery(
-                    "select s from WorkloadProcessDescriptiveStatistics s where s.taskData.taskId=:taskId and s.taskData.sessionId=:sessionId")
+                    "select s from WorkloadProcessDescriptiveStatistics as s where s.taskData.taskId=:taskId and s.taskData.sessionId=:sessionId")
                                                             .setParameter("taskId", data.getTaskId()).setParameter("sessionId", sessionId).getResultList();
 
             List<String> latencyValues = new ArrayList<String>(latency.size());

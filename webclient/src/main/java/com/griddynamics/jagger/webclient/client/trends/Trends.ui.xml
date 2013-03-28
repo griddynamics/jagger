@@ -1,17 +1,18 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:c="urn:import:com.google.gwt.user.cellview.client"
-             xmlns:datepicker="urn:import:com.google.gwt.user.datepicker.client">
+             xmlns:datepicker="urn:import:com.google.gwt.user.datepicker.client"
+             xmlns:custom="urn:import:com.griddynamics.jagger.webclient.client.components">
 
     <ui:with type="com.griddynamics.jagger.webclient.client.resources.JaggerResources" field="res"/>
 
     <g:SplitLayoutPanel ui:field="widget">
         <g:center>
-            <g:TabLayoutPanel barHeight="20">
+            <g:TabLayoutPanel barHeight="20" ui:field="mainTabPanel">
                 <g:tab>
                     <g:header> <b>Summary</b> </g:header>
                     <g:ScrollPanel ui:field="scrollPanelSummary" >
-                        <g:VerticalPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
+                        <custom:SummaryPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
                     </g:ScrollPanel>
                 </g:tab>
                 <g:tab>
@@ -80,9 +81,14 @@
                         </g:north>
                         <g:center>
                             <g:ScrollPanel>
-                                <g:VerticalPanel width="100%">
-                                    <g:VerticalPanel ui:field="sessionScopePlotList"/>
-                                    <c:CellTree title="Task Details" ui:field="taskDetailsTree"/>
+                                <g:VerticalPanel>
+                                    <g:VerticalPanel width="100%" ui:field="trendsDetails" visible="false">
+                                        <g:VerticalPanel ui:field="sessionScopePlotList"/>
+                                        <c:CellTree title="Task Details" ui:field="taskDetailsTree"/>
+                                    </g:VerticalPanel>
+                                    <g:VerticalPanel width="100%" ui:field="summaryDetails">
+                                        <c:CellTable ui:field="testDataGrid" width="100%" title="Tests"/>
+                                    </g:VerticalPanel>
                                 </g:VerticalPanel>
                             </g:ScrollPanel>
                         </g:center>
