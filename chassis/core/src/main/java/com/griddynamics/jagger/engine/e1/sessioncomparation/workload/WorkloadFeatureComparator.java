@@ -101,7 +101,10 @@ public class WorkloadFeatureComparator extends HibernateDaoSupport implements Fe
 
     private static boolean areComparable(WorkloadTaskData first, WorkloadTaskData second) {
 
-        return first.getScenario().equals(second.getScenario()) && first.getClock().equals(second.getClock());
+        return first.getScenario().equals(second.getScenario())     &&
+               first.getClock().equals(second.getClock())           &&
+               first.getClockValue().equals(second.getClockValue()) &&
+               first.getTermination().equals(second.getTermination());
 
     }
 

@@ -35,6 +35,7 @@ public class WorkloadTask implements CompositableTask {
     private int number;
     private String name;
     private String version;
+    private String description = "";
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors = Lists.newLinkedList();
     private WorkloadClockConfiguration clockConfiguration;
@@ -122,6 +123,7 @@ public class WorkloadTask implements CompositableTask {
         task.setClockConfiguration(clockConfiguration);
         task.setTerminateStrategyConfiguration(terminateStrategyConfiguration);
         task.setCalibrator(calibrator);
+        task.setDescription(description);
         return task;
     }
 
@@ -156,5 +158,13 @@ public class WorkloadTask implements CompositableTask {
                 "   terminateStrategyConfiguration=" + terminateStrategyConfiguration + ",\n" +
                 "   parentTaskId='" + parentTaskId +
                 '}';
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

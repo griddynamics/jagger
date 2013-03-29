@@ -135,6 +135,7 @@ public class XMLConstants {
     public static final String MAX_THREAD_NUMBER = "maxThreadNumber";
     public static final String ITERATIONS = "iterations";
     public static final String DELAY = "delay";
+    public static final String DESCRIPTION = "description";
 
     //default reporting names
     public static final String REPORTER_REGISTRY = "reporterExtensionRegistry";

@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.engine.e1.aggregator.workload.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,6 +30,7 @@ public class WorkloadDetails {
 	private Long id;
 	private String name;
 	private String version;
+    private String description;
 	private String comment;
 
 	@Id
@@ -72,11 +74,10 @@ public class WorkloadDetails {
 
         WorkloadDetails that = (WorkloadDetails) o;
 
-        if (comment != null ? !comment.equals(that.comment) : that.comment != null) return false;
         if (!id.equals(that.id)) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (version != null ? !version.equals(that.version) : that.version != null) return false;
-
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
         return true;
     }
 
@@ -87,5 +88,15 @@ public class WorkloadDetails {
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (comment != null ? comment.hashCode() : 0);
         return result;
+    }
+
+
+    @Column(name="description", columnDefinition="Varchar(300) default ''")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
