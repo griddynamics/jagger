@@ -708,6 +708,7 @@
     <xsd:complexType name="workloadCollectorAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
+                <xsd:attribute name="plotData" type="xsd:boolean" default="false"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

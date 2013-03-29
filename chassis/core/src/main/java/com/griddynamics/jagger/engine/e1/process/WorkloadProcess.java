@@ -191,6 +191,7 @@ public class WorkloadProcess implements NodeProcess<Integer> {
         WorkloadService thread = iterator.next();
         Future<Service.State> stop = thread.stop();
         Futures.get(stop, timeoutsConfiguration.getWorkloadStopTimeout());
+        samplesCountDoneFromTerminatedThreads += thread.getSamples();
         iterator.remove();
     }
 }

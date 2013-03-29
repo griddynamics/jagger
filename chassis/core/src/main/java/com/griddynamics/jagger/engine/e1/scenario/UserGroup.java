@@ -47,15 +47,16 @@ public class UserGroup {
     private final int startCount;
     private final long startInTime;
     private long startByTime = -1;
+    int startedUserCount = 0;
 
     public UserGroup(UserClock clock, int id, ProcessingConfig.Test.Task.User config, long time) {
         this(   clock,
                 id,
-                Parser.parseInt(config.count, clock.getRandom()),
-                Parser.parseInt(config.startCount, clock.getRandom()),
-                time + Parser.parseTime(config.startIn, clock.getRandom()),
-                Parser.parseTime(config.startBy, clock.getRandom()),
-                Parser.parseTime(config.life, clock.getRandom())
+                Parser.parseInt(config.getCount(), clock.getRandom()),
+                Parser.parseInt(config.getStartCount(), clock.getRandom()),
+                time + Parser.parseTime(config.getStartIn(), clock.getRandom()),
+                Parser.parseTime(config.getStartBy(), clock.getRandom()),
+                Parser.parseTime(config.getLife(), clock.getRandom())
         );
     }
 
@@ -139,5 +140,9 @@ public class UserGroup {
             }
         }
         return minNode.getKey();
+    }
+
+    public int getStartedUserCount() {
+        return startedUserCount;
     }
 }

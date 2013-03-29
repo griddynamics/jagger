@@ -77,9 +77,10 @@ public class XMLConstants {
     public static final String WORKLOAD_AGGREGATOR = "e1ScenarioAggregator";
     public static final String MONITORING_AGGREGATOR = "monitoringAggregator";
     public static final String DURATION_LOG_PROCESSOR = "durationLogProcessor";
+    public static final String METRIC_LOG_PROCESSOR = "metricLogProcessor";
     //don't change the order!!! will not works
     public static final List<String> STANDARD_SESSION_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, BASIC_AGGREGATOR);
-    public static final List<String> STANDARD_TASK_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, WORKLOAD_COLLECTOR, BASIC_AGGREGATOR, WORKLOAD_AGGREGATOR, MONITORING_AGGREGATOR);
+    public static final List<String> STANDARD_TASK_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, WORKLOAD_COLLECTOR, BASIC_AGGREGATOR, WORKLOAD_AGGREGATOR, MONITORING_AGGREGATOR, METRIC_LOG_PROCESSOR);
 
     public static final String WORKLOAD_LISTENERS_ELEMENT = "info-collectors";
     public static final String DURATION_COLLECTOR = "durationCollector";
@@ -137,6 +138,9 @@ public class XMLConstants {
     public static final String DELAY = "delay";
     public static final String DESCRIPTION = "description";
 
+    public static final String PLOT_DATA = "plotData";
+    public static final String SIMPLE_COLLECTOR = "simpleCollector";
+
     //default reporting names
     public static final String REPORTER_REGISTRY = "reporterExtensionRegistry";
     public static final String REPORTER_COMPARISON = "defaultOverallSessionComparisonReporter";
@@ -152,4 +156,6 @@ public class XMLConstants {
     public static final String DEFAULT_MAX_THREAD_COUNT = "${workload.threads.maxcount}";
 
     public static final String DEFAULT_NAMESPACE = "http://www.griddynamics.com/schema/jagger";
+
+    public static final String  DEFAULT_METRIC_NAME = "No name metric";
 }

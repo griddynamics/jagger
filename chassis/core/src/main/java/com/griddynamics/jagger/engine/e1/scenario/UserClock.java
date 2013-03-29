@@ -113,7 +113,8 @@ public class UserClock implements WorkloadClock {
             }
         }
 
-        if (userStarted && (workload.getActiveUserCount() == 0)) {
+        if (userStarted && (workload.getStartedUserCount()==workload.getTotalUserCount())
+                && (workload.getActiveUserCount() == 0)) {
             shutdown.set(true);
         }
     }

@@ -22,10 +22,7 @@ package com.griddynamics.jagger.storage.fs.logging;
 
 import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeLatencyPercentile;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.*;
 import com.griddynamics.jagger.util.statistics.StatisticsCalculator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

@@ -57,27 +57,27 @@ public class UserClockConfiguration implements WorkloadClockConfiguration {
 
     @Override
     public WorkloadClock getClock() {
-        if (taskConfig.tps != null){
+        if (taskConfig.getTps() != null){
             TpsClockConfiguration tpsClockConfiguration = new TpsClockConfiguration();
             tpsClockConfiguration.setTickInterval(tickInterval);
-            tpsClockConfiguration.setTps(taskConfig.tps.value);
+            tpsClockConfiguration.setTps(taskConfig.getTps().getValue());
             return tpsClockConfiguration.getClock();
         }else
-        if (taskConfig.virtualUser != null){
+        if (taskConfig.getVirtualUser() != null){
             VirtualUsersClockConfiguration conf = new VirtualUsersClockConfiguration();
-            conf.setTickInterval(taskConfig.virtualUser.tickInterval);
-            conf.setUsers(taskConfig.virtualUser.count);
+            conf.setTickInterval(taskConfig.getVirtualUser().getTickInterval());
+            conf.setUsers(taskConfig.getVirtualUser().getCount());
             return conf.getClock();
         }else
-        if (taskConfig.invocation != null){
+        if (taskConfig.getInvocation() != null){
             ExactInvocationsClockConfiguration conf = new ExactInvocationsClockConfiguration();
-            conf.setExactcount(taskConfig.invocation.exactcount);
-            conf.setThreads(taskConfig.invocation.threads);
-            conf.setDelay(taskConfig.delay);
+            conf.setExactcount(taskConfig.getInvocation().getExactcount());
+            conf.setThreads(taskConfig.getInvocation().getThreads());
+            conf.setDelay(taskConfig.getDelay());
             return conf.getClock();
         }else
-        if (taskConfig.users != null && taskConfig.users.size()>0) {
-                return new UserClock(taskConfig.users, taskConfig.delay, tickInterval, shutdown);
+        if (taskConfig.getUsers() != null && taskConfig.getUsers().size()>0) {
+                return new UserClock(taskConfig.getUsers(), taskConfig.getDelay(), tickInterval, shutdown);
         }else return null;
     }
 

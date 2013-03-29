@@ -21,7 +21,6 @@
 package com.griddynamics.jagger.engine.e1.scenario;
 
 import com.griddynamics.jagger.user.ProcessingConfig;
-import com.griddynamics.jagger.util.Parser;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -47,8 +46,8 @@ public class UserTerminateStrategyConfiguration implements TerminateStrategyConf
     @Override
     public String toString() {
         String result = "";
-        if (taskConfig.duration != null) {
-            result += taskConfig.duration;
+        if (taskConfig.getDuration() != null) {
+            result += taskConfig.getDuration();
         }
         int samples = UserTerminationStrategy.calculateStopSamplesCount(taskConfig);
         if (samples != -1) {

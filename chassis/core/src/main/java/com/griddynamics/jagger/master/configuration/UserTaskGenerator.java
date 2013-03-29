@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.master.configuration;
 
-import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.engine.e1.scenario.*;
 import com.griddynamics.jagger.master.CompositableTask;
 import com.griddynamics.jagger.master.CompositeTask;
@@ -29,7 +28,6 @@ import com.griddynamics.jagger.monitoring.MonitoringTask;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import org.simpleframework.xml.core.Persister;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -66,20 +64,20 @@ public class UserTaskGenerator implements ApplicationContextAware {
         if (config == null) {
             config=initConfig();
         }
-        for (ProcessingConfig.Test testConfig : config.tests) {
+        for (ProcessingConfig.Test testConfig : config.getTests()) {
             ++number;
 
             CompositeTask compositeTask = new CompositeTask();
             compositeTask.setLeading(new ArrayList<CompositableTask>());
             compositeTask.setAttendant(new ArrayList<CompositableTask>());
 
-            for (ProcessingConfig.Test.Task taskConfig : testConfig.tasks) {
-                String name = String.format("%s [%s]", testConfig.name, taskConfig.name);
+            for (ProcessingConfig.Test.Task taskConfig : testConfig.getTasks()) {
+                String name = String.format("%s [%s]", testConfig.getName(), taskConfig.getName());
                 if (!names.contains(name)) {
                     names.add(name);
                     AtomicBoolean shutdown = new AtomicBoolean(false);
                     TerminateStrategyConfiguration terminationStrategy;
-                    if (taskConfig.attendant) {
+                    if (taskConfig.isAttendant()) {
                         terminationStrategy = new InfiniteTerminationStrategyConfiguration();
                         WorkloadTask workloadTask = createWorklod(number, name, shutdown, taskConfig, terminationStrategy);
                         compositeTask.getAttendant().add(workloadTask);
@@ -94,7 +92,7 @@ public class UserTaskGenerator implements ApplicationContextAware {
             }
 
             if (monitoringEnable) {
-                MonitoringTask attendantMonitoring = new MonitoringTask(number, testConfig.name + " --- monitoring", compositeTask.getTaskName(), new InfiniteDuration());
+                MonitoringTask attendantMonitoring = new MonitoringTask(number, testConfig.getName() + " --- monitoring", compositeTask.getTaskName(), new InfiniteDuration());
                 compositeTask.getAttendant().add(attendantMonitoring);
             }
             result.add(compositeTask);
@@ -103,7 +101,7 @@ public class UserTaskGenerator implements ApplicationContextAware {
     }
 
     private WorkloadTask createWorklod(int number, String name, AtomicBoolean shutdown, ProcessingConfig.Test.Task taskConfig, TerminateStrategyConfiguration terminationStrategy) {
-        WorkloadTask prototype = applicationContext.getBean(taskConfig.bean, WorkloadTask.class);
+        WorkloadTask prototype = applicationContext.getBean(taskConfig.getBean(), WorkloadTask.class);
         WorkloadTask workloadTask = prototype.copy();
         workloadTask.setNumber(number);
         workloadTask.setName(name);

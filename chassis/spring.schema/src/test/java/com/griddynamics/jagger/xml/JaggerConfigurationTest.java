@@ -2,15 +2,11 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
-import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
-import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.reporting.ReportingService;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.net.URL;
@@ -69,7 +65,7 @@ public class JaggerConfigurationTest {
         Assert.assertEquals(config1.getSessionExecutionListeners().size(), 2);
         checkListOnNull(config1.getSessionExecutionListeners());
 
-        Assert.assertEquals(config1.getDistributionListeners().size(), 6);
+        Assert.assertEquals(7, config1.getDistributionListeners().size());
         checkListOnNull(config1.getDistributionListeners());
     }
 
@@ -81,7 +77,7 @@ public class JaggerConfigurationTest {
         Assert.assertEquals(config2.getSessionExecutionListeners().size(), 2);
         checkListOnNull(config2.getSessionExecutionListeners());
 
-        Assert.assertEquals(config2.getDistributionListeners().size(), 6);
+        Assert.assertEquals(7, config2.getDistributionListeners().size());
         checkListOnNull(config2.getDistributionListeners());
     }
 

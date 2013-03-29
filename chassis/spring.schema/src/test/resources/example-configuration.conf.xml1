@@ -104,7 +104,7 @@
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
             <validator xsi:type="validator-consistency"/>
-            <metric xsi:type="metric-not-null-response"/>
+            <metric id="sampleMetric" xsi:type="metric-not-null-response" plotData="true"/>
         </info-collectors>
 
         <scenario xsi:type="scenario-ref" ref="sc1"/>

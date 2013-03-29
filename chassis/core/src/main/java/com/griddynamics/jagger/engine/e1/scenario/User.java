@@ -50,6 +50,8 @@ public class User {
 
         group.users.add(this);
         group.activeUserCount++;
+        group.startedUserCount++;
+
         this.clock.setUserStarted(true);
 
         WorkloadConfiguration workloadConfiguration = workloadConfigurations.get(nodeId);

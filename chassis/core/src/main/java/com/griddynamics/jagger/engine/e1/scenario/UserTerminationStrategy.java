@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.util.Parser;
 
@@ -35,9 +34,9 @@ public class UserTerminationStrategy implements TerminationStrategy {
     private final AtomicBoolean shutdown;
 
     public UserTerminationStrategy(ProcessingConfig.Test testConfig, ProcessingConfig.Test.Task taskConfig, AtomicBoolean shutdown) {
-        this.stopTime = (taskConfig.duration == null) ?
-                            (testConfig.duration == null ? -1L : System.currentTimeMillis() + Parser.parseTimeMillis(testConfig.duration)):
-                            System.currentTimeMillis() + Parser.parseTimeMillis(taskConfig.duration);
+        this.stopTime = (taskConfig.getDuration() == null) ?
+                            (testConfig.getDuration() == null ? -1L : System.currentTimeMillis() + Parser.parseTimeMillis(testConfig.getDuration())):
+                            System.currentTimeMillis() + Parser.parseTimeMillis(taskConfig.getDuration());
         this.stopSampleCount = calculateStopSamplesCount(taskConfig);
         this.shutdown = shutdown;
     }
@@ -50,10 +49,10 @@ public class UserTerminationStrategy implements TerminationStrategy {
     }
 
     public static int calculateStopSamplesCount(ProcessingConfig.Test.Task taskConfig) {
-        if (taskConfig.invocation != null) {
-            return taskConfig.invocation.exactcount;
+        if (taskConfig.getInvocation() != null) {
+            return taskConfig.getInvocation().getExactcount();
         } else {
-            return taskConfig.sample;
+            return taskConfig.getSample();
         }
     }
 

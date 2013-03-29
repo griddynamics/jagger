@@ -72,6 +72,14 @@ public class UserWorkload {
         return totalUserCount;
     }
 
+    public int getStartedUserCount() {
+        int totalStartedCount = 0;
+        for (UserGroup group : groups) {
+            totalStartedCount += group.getStartedUserCount();
+        }
+        return totalStartedCount;
+    }
+
     public int getActiveUserCount() {
         int activeUserCount = 0;
         for (UserGroup group : groups) {
