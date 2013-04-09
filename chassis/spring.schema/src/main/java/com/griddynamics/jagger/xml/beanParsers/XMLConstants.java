@@ -62,9 +62,9 @@ public class XMLConstants {
     public static final String INVOCATION = "invocation";
     public static final String VIRTUAL_USER = "virtual-user";
     public static final String VIRTUAL_USER_CLASS_FIELD = "virtualUser";
-    public static final String SESSION_EXECUTION_LISTENERS = "session-executionListeners";
+    public static final String SESSION_EXECUTION_LISTENERS = "session-execution-listeners";
     public static final String SESSION_EXECUTION_LISTENERS_CLASS_FIELD = "sessionExecutionListeners";
-    public static final String TASK_EXECUTION_LISTENERS = "task-executionListeners";
+    public static final String TASK_EXECUTION_LISTENERS = "task-execution-listeners";
     public static final String TASK_EXECUTION_LISTENERS_CLASS_FIELD = "taskExecutionListeners";
     public static final String GENERATOR = "generator";
     public static final String GENERATOR_GENERATE = "#{generator.generate()}";

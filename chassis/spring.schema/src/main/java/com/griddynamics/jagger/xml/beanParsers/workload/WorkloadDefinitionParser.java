@@ -43,7 +43,7 @@ public class WorkloadDefinitionParser extends CustomBeanDefinitionParser{
 
             if (listenersGroup != null){
 
-                setBeanListProperty(XMLConstants.WORKLOAD_LISTENERS_CLASS, true, listenersGroup, parserContext, builder.getBeanDefinition());
+                setBeanListProperty(XMLConstants.WORKLOAD_LISTENERS_CLASS, false, true, listenersGroup, parserContext, builder.getBeanDefinition());
             }
         }else{
             if (listenersGroup != null){
@@ -57,7 +57,7 @@ public class WorkloadDefinitionParser extends CustomBeanDefinitionParser{
 
                 builder.addPropertyValue(XMLConstants.WORKLOAD_LISTENERS_CLASS, listeners);
 
-                setBeanListProperty(XMLConstants.WORKLOAD_LISTENERS_CLASS, true, listenersGroup, parserContext, builder.getBeanDefinition());
+                setBeanListProperty(XMLConstants.WORKLOAD_LISTENERS_CLASS, false, true, listenersGroup, parserContext, builder.getBeanDefinition());
             }
         }
 

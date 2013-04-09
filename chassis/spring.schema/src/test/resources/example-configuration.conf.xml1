@@ -37,10 +37,21 @@
     <configuration id="config1" parent="config2">
         <test-suite ref="test-plan-1"/>
 
+        <session-execution-listeners>
+            <session-listener ref="sessionListener1"/>
+        </session-execution-listeners>
+
+        <task-execution-listeners>
+            <task-listener ref="testListener1"/>
+        </task-execution-listeners>
+
         <report outputReportLocation="new-report.pdf">
         </report>
 
     </configuration>
+
+    <beans:bean name="sessionListener1" class="com.griddynamics.jagger.xml.ExampleSessionListener"/>
+    <beans:bean name="testListener1" class="com.griddynamics.jagger.xml.ExampleTestListener"/>
 
     <test-suite id="test-plan-1">
         <test-group id="group1">

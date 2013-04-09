@@ -40,16 +40,18 @@ public abstract class CustomBeanDefinitionParser extends AbstractSimpleBeanDefin
 
     protected abstract void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
 
-    public static void setBeanListProperty(String propertyName, boolean mergeOriginal, Element listParentElement, ParserContext parserContext, BeanDefinition bean){
+    public static void setBeanListProperty(String propertyName, boolean mergeParent, boolean mergeOriginal, Element listParentElement, ParserContext parserContext, BeanDefinition bean){
         ManagedList result = parseCustomListElement(listParentElement, parserContext, bean);
         if (result != null){
             if (mergeOriginal){
                 PropertyValue prop = bean.getPropertyValues().getPropertyValue(propertyName);
                 if (prop != null){
                     ManagedList origin = (ManagedList)prop.getValue();
-                    result.addAll(origin);
+                    origin.addAll(result);
+                    result = origin;
                 }
             }
+            result.setMergeEnabled(mergeParent);
             bean.getPropertyValues().addPropertyValue(propertyName, result);
         }
     }

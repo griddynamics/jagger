@@ -62,10 +62,10 @@ public class JaggerConfigurationTest {
     public void conf1ListTest(){
         Configuration config1 = (Configuration) ctx.getBean("config1");
 
-        Assert.assertEquals(config1.getSessionExecutionListeners().size(), 2);
+        Assert.assertEquals(config1.getSessionExecutionListeners().size(), 3);
         checkListOnNull(config1.getSessionExecutionListeners());
 
-        Assert.assertEquals(7, config1.getDistributionListeners().size());
+        Assert.assertEquals(config1.getDistributionListeners().size(), 8);
         checkListOnNull(config1.getDistributionListeners());
     }
 
@@ -84,8 +84,8 @@ public class JaggerConfigurationTest {
     @Test
     public void conf1LatencyTest(){
         Configuration config1 = (Configuration) ctx.getBean("config1");
-        DurationLogProcessor logProcessor = (DurationLogProcessor)config1.getDistributionListeners().get(config1.getDistributionListeners().size()-1);
-        Assert.assertNotNull(logProcessor);
+        ExampleTestListener exampleTestListener = (ExampleTestListener)config1.getDistributionListeners().get(config1.getDistributionListeners().size()-1);
+        Assert.assertNotNull(exampleTestListener);
     }
 
     @Test

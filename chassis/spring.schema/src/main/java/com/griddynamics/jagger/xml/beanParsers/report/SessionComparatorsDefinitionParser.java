@@ -1,17 +1,12 @@
 package com.griddynamics.jagger.xml.beanParsers.report;
 
-import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
-import gnu.kawa.slib.XML;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
-import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
@@ -37,7 +32,7 @@ public class SessionComparatorsDefinitionParser extends AbstractSimpleBeanDefini
             builder.addPropertyReference(XMLConstants.DECISION_MAKER, getDecisionMaker(decisionMaker));
         }
 
-        CustomBeanDefinitionParser.setBeanListProperty(XMLConstants.COMPARATOR_CHAIN, false, element, parserContext, builder.getBeanDefinition());
+        CustomBeanDefinitionParser.setBeanListProperty(XMLConstants.COMPARATOR_CHAIN, false, false, element, parserContext, builder.getBeanDefinition());
     }
 
     private String getDecisionMaker(String decisionMaker) {
