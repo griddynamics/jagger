@@ -27,6 +27,7 @@ import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.*;
 import com.griddynamics.jagger.webclient.client.callback.SessionScopePlotListQueryCallback;
 import com.griddynamics.jagger.webclient.client.callback.TaskDataDtoListQueryAsyncCallback;
+import com.griddynamics.jagger.webclient.client.components.MetricPanel;
 import com.griddynamics.jagger.webclient.client.components.SummaryPanel;
 import com.griddynamics.jagger.webclient.client.data.*;
 import com.griddynamics.jagger.webclient.client.dto.*;
@@ -67,6 +68,9 @@ public class Trends extends DefaultActivity {
     CellTree taskDetailsTree;
 
     @UiField
+    MetricPanel metricPanel;
+
+    @UiField
     ScrollPanel scrollPanelTrends;
 
     @UiField
@@ -93,7 +97,7 @@ public class Trends extends DefaultActivity {
     VerticalPanel trendsDetails;
 
     @UiField
-    VerticalPanel summaryDetails;
+    HorizontalPanel summaryDetails;
 
     @UiHandler("uncheckSessionsButton")
     void handleUncheckSessionsButtonClick(ClickEvent e) {
@@ -315,7 +319,7 @@ public class Trends extends DefaultActivity {
         final SelectionModel<TaskDataDto> selectionModel = new MultiSelectionModel<TaskDataDto>(new ProvidesKey<TaskDataDto>() {
             @Override
             public Object getKey(TaskDataDto item) {
-                return item.getTaskName();
+                return item.getTaskName()+item.getVersion();
             }
         });
         testDataGrid.setSelectionModel(selectionModel, DefaultSelectionEventManager.<TaskDataDto>createCheckboxManager());
@@ -599,6 +603,9 @@ public class Trends extends DefaultActivity {
                 taskDataTreeViewModel.getPlotNameDataProviders().put
                         (taskDataDto, new TaskPlotNamesAsyncDataProvider(taskDataDto, summaryPanel.getSessionIds()));
             }
+
+            summaryPanel.updateTests(selected);
+            metricPanel.updateTests(selected);
         }
     }
 
@@ -612,13 +619,14 @@ public class Trends extends DefaultActivity {
         @Override
         public void onSelectionChange(SelectionChangeEvent event) {
             // Currently selection model for sessions is a single selection model
+            mainTabPanel.selectTab(0);
             Set<SessionDataDto> selected = ((MultiSelectionModel<SessionDataDto>) event.getSource()).getSelectedSet();
-//
+
             TaskDataTreeViewModel taskDataTreeViewModel = (TaskDataTreeViewModel) taskDetailsTree.getTreeViewModel();
             MultiSelectionModel<PlotNameDto> plotNameSelectionModel = taskDataTreeViewModel.getSelectionModel();
 
             //Refresh summary
-            summaryPanel.update(selected);
+            summaryPanel.updateSessions(selected);
             // Clear plots display
             plotPanel.clear();
             // Clear task scope plot selection model
@@ -628,6 +636,7 @@ public class Trends extends DefaultActivity {
             // Clear markings dto map
             markingsMap.clear();
             taskDataTreeViewModel.clear();
+            testDataGrid.setRowData(Collections.EMPTY_LIST);
 
             if (selected.size() == 1) {
                 // If selected single session clear plot display, clear plot selection and fetch all data for given session

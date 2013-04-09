@@ -86,9 +86,13 @@
                                         <g:VerticalPanel ui:field="sessionScopePlotList"/>
                                         <c:CellTree title="Task Details" ui:field="taskDetailsTree"/>
                                     </g:VerticalPanel>
-                                    <g:VerticalPanel width="100%" ui:field="summaryDetails">
+                                    <g:HorizontalPanel width="100%" ui:field="summaryDetails">
                                         <c:CellTable ui:field="testDataGrid" width="100%" title="Tests"/>
-                                    </g:VerticalPanel>
+                                        <g:VerticalPanel>
+                                            <g:Label text="Available metrics"/>
+                                            <custom:MetricPanel ui:field="metricPanel"/>
+                                        </g:VerticalPanel>
+                                    </g:HorizontalPanel>
                                 </g:VerticalPanel>
                             </g:ScrollPanel>
                         </g:center>
