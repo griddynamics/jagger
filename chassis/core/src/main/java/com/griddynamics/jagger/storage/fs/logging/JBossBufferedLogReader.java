@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class JBossBufferedLogReader extends BufferedLogReader {
-    //todo: changed to package local for hotfix in BufferedLogReader
-    static class JBossLogReaderInput implements LogReaderInput {
+    private static class JBossLogReaderInput implements LogReaderInput {
 
         private JBossObjectInputStream in;
 

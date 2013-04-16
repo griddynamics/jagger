@@ -104,6 +104,10 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             String file = dir + File.separatorChar + "aggregated.dat";
             AggregationInfo aggregationInfo = logAggregator.chronology(dir, file);
 
+            if(aggregationInfo.getCount()==0){
+                //metrics not collected
+                return;
+            }
             int intervalSize = (int) ((aggregationInfo.getMaxTime() - aggregationInfo.getMinTime()) / pointCount);
             if (intervalSize < 1) {
                 intervalSize = 1;
