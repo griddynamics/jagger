@@ -34,6 +34,7 @@ import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.client.handler.ShowCurrentValueHoverListener;
 import com.griddynamics.jagger.webclient.client.handler.ShowTaskDetailsListener;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
+import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 
 import java.util.*;
 
@@ -189,6 +190,7 @@ public class Trends extends DefaultActivity {
         setupTabPanel();
         setupSessionNumberTextBox();
         setupSessionsDateRange();
+        setupMetricPanel();
     }
 
     private SimplePlot createPlot(final String id, Markings markings) {
@@ -319,7 +321,7 @@ public class Trends extends DefaultActivity {
         final SelectionModel<TaskDataDto> selectionModel = new MultiSelectionModel<TaskDataDto>(new ProvidesKey<TaskDataDto>() {
             @Override
             public Object getKey(TaskDataDto item) {
-                return item.getTaskName()+item.getVersion();
+                return item.getTaskName()+item.getDescription();
             }
         });
         testDataGrid.setSelectionModel(selectionModel, DefaultSelectionEventManager.<TaskDataDto>createCheckboxManager());
@@ -450,6 +452,16 @@ public class Trends extends DefaultActivity {
 
         sessionsTo.addValueChangeHandler(valueChangeHandler);
         sessionsFrom.addValueChangeHandler(valueChangeHandler);
+    }
+
+    private void setupMetricPanel(){
+        metricPanel.addSelectionListener(new SelectionChangedHandler() {
+            @Override
+            public void onSelectionChanged(com.smartgwt.client.widgets.grid.events.SelectionEvent selectionEvent) {
+                Set<MetricNameDto> metrics = metricPanel.getSelected();
+                summaryPanel.updataMetrics(metrics);
+            }
+        });
     }
 
     private boolean isMaxPlotCountReached() {
@@ -604,7 +616,7 @@ public class Trends extends DefaultActivity {
                         (taskDataDto, new TaskPlotNamesAsyncDataProvider(taskDataDto, summaryPanel.getSessionIds()));
             }
 
-            summaryPanel.updateTests(selected);
+            summaryPanel.update(selected);
             metricPanel.updateTests(selected);
         }
     }

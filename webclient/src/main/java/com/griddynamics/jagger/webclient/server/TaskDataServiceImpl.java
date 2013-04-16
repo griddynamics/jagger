@@ -125,47 +125,27 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                 .setParameter("sessionCount", (long) sessionIds.size()).getResultList();
 
         //group tests by description
-        HashMap<String, HashMap<String, TaskDataDto>> map = new HashMap<String, HashMap<String, TaskDataDto>>();
-        for (Object[] testFields : list){
-            BigInteger id = (BigInteger)testFields[0];
-            String name = (String) testFields[1];
-            String description = (String) testFields[2];
-            String version = (String) testFields[3];
-            if (map.containsKey(name)){
-                HashMap<String, TaskDataDto> descriptionMap = map.get(name);
-                if (description.equals("")){
-                    for (String descriptionKey : descriptionMap.keySet()){
-                        if (!descriptionKey.equals("")){
-                            descriptionMap.get(descriptionKey).getIds().add(id.longValue());
-                        }
-                    }
-                    if (descriptionMap.containsKey("")){
-                        descriptionMap.get("").getIds().add(id.longValue());
-                    }else{
-                        descriptionMap.put("", new TaskDataDto(id.longValue(), name, version));
-                    }
-                }else{
-                    if (descriptionMap.containsKey(description)){
-                        TaskDataDto test = descriptionMap.get(description);
-                        test.getIds().add(id.longValue());
-                    }else{
-                        TaskDataDto test = new TaskDataDto(id.longValue(), name, version);
-                        descriptionMap.put(description, test);
-                    }
-                }
+        HashMap<String, TaskDataDto> map = new HashMap<String, TaskDataDto>(list.size());
+        for (Object[] testData : list){
+            BigInteger id = (BigInteger)testData[0];
+            String name = (String) testData[1];
+            String description = (String) testData[2];
+            String key = description+name;
+            if (map.containsKey(key)){
+                map.get(key).getIds().add(id.longValue());
             }else{
-                HashMap<String, TaskDataDto> descriptionMap = new HashMap<String, TaskDataDto>();
-                descriptionMap.put(description, new TaskDataDto(id.longValue(), name, version));
-                map.put(name, descriptionMap);
+                TaskDataDto taskDataDto = new TaskDataDto(id.longValue(), name, description);
+                //merge
+                if (map.containsKey(name)){
+                    taskDataDto.getIds().addAll(map.get(name).getIds());
+                }
+                map.put(key, taskDataDto);
             }
         }
-        for (String testName : map.keySet()){
-            HashMap<String, TaskDataDto> allDescriptions = map.get(testName);
-            for (String description : allDescriptions.keySet()){
-                TaskDataDto test = allDescriptions.get(description);
-                if (test.getIds().size() >= sessionIds.size()){
-                    taskDataDtoList.add(test);
-                }
+        for (String key : map.keySet()){
+            TaskDataDto taskDataDto = map.get(key);
+            if (taskDataDto.getIds().size() == sessionIds.size()){
+                taskDataDtoList.add(taskDataDto);
             }
         }
         return taskDataDtoList;

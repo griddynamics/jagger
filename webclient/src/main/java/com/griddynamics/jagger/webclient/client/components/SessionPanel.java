@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.webclient.client.components;
 
+import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
 import java.util.List;
@@ -19,12 +20,4 @@ public interface SessionPanel {
     public void addTest(TaskDataDto test);
 
     public void removeTest(TaskDataDto test);
-
-    public void showMetric(TaskDataDto test, String metricName);
-
-    public void hideMetric(TaskDataDto test, String metricName);
-
-    public void showMetric(String metricName);
-
-    public void hideMetric(String metricName);
 }

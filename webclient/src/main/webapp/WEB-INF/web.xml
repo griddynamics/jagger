@@ -26,17 +26,9 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-        <servlet-name>com.griddynamics.jagger.webclient.JaggerWebClient MetricDataService</servlet-name>
-        <servlet-class>com.griddynamics.jagger.webclient.server.MetricDataServiceImpl</servlet-class>
-    </servlet>
 
     <servlet-mapping>
         <servlet-name>gwt</servlet-name>
         <url-pattern>/com.griddynamics.jagger.webclient.JaggerWebClient/rpc/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>com.griddynamics.jagger.webclient.JaggerWebClient MetricDataService</servlet-name>
-        <url-pattern>/com.griddynamics.jagger.webclient.JaggerWebClient/MetricDataService</url-pattern>
     </servlet-mapping>
 </web-app>

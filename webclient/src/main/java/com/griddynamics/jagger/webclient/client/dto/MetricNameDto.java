@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public class MetricNameDto implements Serializable {
 
-    private String taskName;
+    private TaskDataDto tests;
     private String name;
 
     public String getName() {
@@ -22,11 +22,31 @@ public class MetricNameDto implements Serializable {
         this.name = name;
     }
 
-    public String getTaskName() {
-        return taskName;
+    public TaskDataDto getTests() {
+        return tests;
     }
 
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
+    public void setTests(TaskDataDto tests) {
+        this.tests = tests;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MetricNameDto that = (MetricNameDto) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (tests != null ? !tests.equals(that.tests) : that.tests != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = tests != null ? tests.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 }

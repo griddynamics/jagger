@@ -153,24 +153,4 @@ public class SessionSummaryPanel extends VerticalPanel implements SessionPanel{
             }
         }
     }
-
-    @Override
-    public void showMetric(TaskDataDto test, String metricName) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void hideMetric(TaskDataDto test, String metricName) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void showMetric(String metricName) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void hideMetric(String metricName) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

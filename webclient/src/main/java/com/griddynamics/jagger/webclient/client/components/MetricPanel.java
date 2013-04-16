@@ -14,6 +14,7 @@ import com.smartgwt.client.types.SelectionAppearance;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.events.DrawEvent;
 import com.smartgwt.client.widgets.events.DrawHandler;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGrid;
@@ -67,6 +68,8 @@ public class MetricPanel extends Composite {
 
     public void updateTests(Set<TaskDataDto> tests){
         final Set<TaskDataDto> temp = tests;
+        final ArrayList<MetricTreeNode> nodes = new ArrayList<MetricTreeNode>();
+
         MetricDataService.Async.getInstance().getMetricsNames(tests, new AsyncCallback<Set<MetricNameDto>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -75,28 +78,42 @@ public class MetricPanel extends Composite {
 
             @Override
             public void onSuccess(Set<MetricNameDto> result) {
-                ArrayList<MetricTreeNode> nodes = new ArrayList<MetricTreeNode>(result.size());
-
                 //init tests nodes
                 for (TaskDataDto test : temp){
-                    nodes.add(new MetricTreeNode(test.getTaskName(), null));
+                    MetricNameDto emptyMetric = new MetricNameDto();
+                    emptyMetric.setTests(test);
+                    nodes.add(new MetricTreeNode(emptyMetric));
                 }
 
                 //init metrics nodes
-                for (MetricNameDto metricName : result)
-                    nodes.add(new MetricTreeNode(metricName.getTaskName(), metricName.getName()));
-                MetricTreeModel model = new MetricTreeModel(nodes);
+                for (MetricNameDto metricName : result){
+                    nodes.add(new MetricTreeNode(metricName));
+                }
+                final MetricTreeModel model = new MetricTreeModel(nodes);
                 metricTreeGrid.setData(model);
             }
         });
+        metricTreeGrid.redraw();
+    }
+
+    public Set<MetricNameDto> getSelected(){
+        ListGridRecord[] selected = metricTreeGrid.getSelectedRecords();
+        HashSet<MetricNameDto> set = new HashSet<MetricNameDto>();
+        for (ListGridRecord record : selected){
+            if (record.getAttribute(metricNameAttribute) == null){
+                continue;
+            }
+            MetricTreeNode metricTreeNode = (MetricTreeNode)record;
+            set.add(metricTreeNode.getMetricName());
+        }
+        return set;
     }
 
     public void addSelectionListener(SelectionChangedHandler listener){
         metricTreeGrid.addSelectionChangedHandler(listener);
     }
 
-    public TreeNode[] defaultData = new TreeNode[] {
-        new MetricTreeNode("Select tests", null),
+    private TreeNode[] defaultData = new TreeNode[] {
     };
 
 
@@ -111,7 +128,12 @@ public class MetricPanel extends Composite {
 
         public MetricTreeModel(Collection<? extends TreeNode> data){
             init();
-            TreeNode[] mas = data.toArray(new TreeNode[]{});
+            int index = 0;
+            TreeNode[] mas = new TreeNode[data.size()];
+            for (TreeNode temp : data){
+                mas[index] = temp;
+                index++;
+            }
             setData(mas);
         }
 
@@ -132,17 +154,29 @@ public class MetricPanel extends Composite {
     }
 
     private class MetricTreeNode extends TreeNode {
-        public MetricTreeNode(String testName, String metricName) {
-            setAttribute(nodeId, testName+(metricName == null ? "" : metricName));
-            setAttribute(testNameAttribute, testName);
-            setAttribute(metricNameAttribute, metricName);
-            if (metricName == null){
-                setAttribute(valueAttribute, testName);
+
+        private MetricNameDto metricName;
+
+        public MetricTreeNode(MetricNameDto metricName) {
+            this.setMetricName(metricName);
+            setAttribute(nodeId, metricName.getTests().getTaskName()+(metricName.getName() == null ? "" : metricName.getName()));
+            setAttribute(testNameAttribute, metricName.getTests().getTaskName());
+            setAttribute(metricNameAttribute, metricName.getName());
+            if (metricName.getName() == null){
+                setAttribute(valueAttribute, metricName.getTests().getTaskName());
                 setAttribute(nodeParentId, root);
             }else{
-                setAttribute(valueAttribute, metricName);
-                setAttribute(nodeParentId, testName);
+                setAttribute(valueAttribute, metricName.getName());
+                setAttribute(nodeParentId, metricName.getTests().getTaskName());
             }
+        }
+
+        public MetricNameDto getMetricName() {
+            return metricName;
+        }
+
+        public void setMetricName(MetricNameDto metricName) {
+            this.metricName = metricName;
         }
     }
 
