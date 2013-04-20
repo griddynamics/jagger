@@ -24,6 +24,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.io.Closeables;
 import com.griddynamics.jagger.storage.FileStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import org.slf4j.Logger;
@@ -89,6 +90,7 @@ public abstract class BufferedLogWriter implements LogWriter {
                     continue;
                 }
                 OutputStream os = null;
+                LogWriterOutput objectOutput = null;
                 try {
                     if (this.fileStorage.exists(logFilePath)) {
                         os = this.fileStorage.append(logFilePath);
@@ -96,16 +98,19 @@ public abstract class BufferedLogWriter implements LogWriter {
                         os = this.fileStorage.create(logFilePath);
                     }
                     os = new BufferedOutputStream(os);
-                    log(fileQueue, os);
+                    objectOutput = getOutput(os);
+                    for(Serializable serializable: fileQueue){
+                        objectOutput.writeObject(serializable);
+                    }
+
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                 } finally {
-                    if (os != null) {
-                        try {
-                            os.close();
-                        } catch (Exception e) {
-                            log.error(e.getMessage(), e);
-                        }
+                    try {
+                        Closeables.closeQuietly(objectOutput);
+                        Closeables.close(os, true);
+                    } catch (IOException e) {
+                        log.error(e.getMessage(), e);
                     }
                 }
             }
@@ -114,8 +119,6 @@ public abstract class BufferedLogWriter implements LogWriter {
             isFlushInProgress = false;
         }
     }
-
-    protected abstract void log(Collection<Serializable> fileQueue, OutputStream os) throws IOException;
 
     @Required
     public void setFileStorage(FileStorage fileStorage) {

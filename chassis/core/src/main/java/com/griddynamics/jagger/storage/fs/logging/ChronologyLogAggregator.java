@@ -20,9 +20,8 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import com.caucho.hessian.io.Hessian2Input;
-import com.caucho.hessian.io.Hessian2Output;
 import com.google.common.collect.MinMaxPriorityQueue;
+import com.google.common.io.Closeables;
 import com.griddynamics.jagger.storage.FileStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,10 +76,12 @@ public class ChronologyLogAggregator implements LogAggregator {
         int count = 0;
         long minTime = 0;
         long maxTime = 0;
+        BufferedLogWriter.LogWriterOutput objectOutput=null;
         try {
             if (fileStorage.delete(targetFile, false)) {
                 log.warn("Target file {} did not deleted!", targetFile);
             }
+            objectOutput= logWriter.getOutput(fileStorage.create(targetFile));
 
             MinMaxPriorityQueue<StreamInfo> queue = MinMaxPriorityQueue.create();
             for (Iterable<LogEntry> inputStream : readers) {
@@ -96,7 +97,7 @@ public class ChronologyLogAggregator implements LogAggregator {
 
             while (!queue.isEmpty()) {
                 StreamInfo<LogEntry> streamInfo = queue.removeFirst();
-                logWriter.log(targetFile, streamInfo.lastLogEntry);
+                objectOutput.writeObject(streamInfo.lastLogEntry);
 
                 if (count == 0) {
                     minTime = streamInfo.lastLogEntry.getTime();
@@ -116,7 +117,7 @@ public class ChronologyLogAggregator implements LogAggregator {
                 queue.add(streamInfo);
             }
         } finally {
-            logWriter.flush();
+            Closeables.closeQuietly(objectOutput);
         }
 
         return new AggregationInfo(minTime, maxTime, count);

@@ -23,6 +23,8 @@ package com.griddynamics.jagger.storage.fs.logging;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 
@@ -44,4 +46,10 @@ public interface LogWriter {
      * Flushes changes to specified file.
      */
     void flush();
+
+    interface LogWriterOutput extends Closeable {
+        void writeObject(Object object) throws IOException;
+    }
+
+     abstract LogWriterOutput getOutput(OutputStream in) throws IOException;
 }
