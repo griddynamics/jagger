@@ -75,6 +75,14 @@
                         <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("validationResults").getReport( $F{testId} )]]></subreportExpression>
                 </subreport>
                 <subreport>
+                    <reportElement positionType="Float" x="0" y="30" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("metricsResults").getDataSource( $F{testId} )]]></dataSourceExpression>
+                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("metricsResults").getReport( $F{testId} )]]></subreportExpression>
+                </subreport>
+                <subreport>
                     <reportElement positionType="Float" x="0" y="40" width="550" height="10"/>
                     <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
                     <dataSourceExpression>

@@ -176,6 +176,12 @@
                     </bean>
                 </entry>
 
+                <entry key="metricsResults">
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.MetricPlotsReporter" parent="abstractReportProviderBean">
+                        <property name="template" value="configuration/reporting/metrics-report.jrxml"/>
+                    </bean>
+                </entry>
+
                 <entry key="testTimePlots">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadProcessTimePlotsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/test-timeplot.jrxml"/>

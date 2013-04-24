@@ -20,21 +20,12 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
 import com.griddynamics.jagger.engine.e1.collector.*;
-import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
-import groovy.util.Eval;
-import org.dom4j.DocumentHelper;
-import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.core.CollectionFactory;
 import org.w3c.dom.Element;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * @author Nikolay Musienko
  *         Date: 22.03.13
@@ -62,17 +53,20 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
     }
 
     private void parseCompositeBean(Element element, ParserContext parserContext, BeanDefinitionBuilder builder){
-        BeanDefinitionBuilder diagnosticCollectorBuilder = BeanDefinitionBuilder.genericBeanDefinition(DiagnosticCollectorProvider.class);
+        BeanDefinitionBuilder diagnosticCollectorBuilder =
+                BeanDefinitionBuilder.rootBeanDefinition(DiagnosticCollectorProvider.class);
         parse(element, parserContext, diagnosticCollectorBuilder);
+        String diagnosticName="diagnostic-" + getID(element,XMLConstants.DEFAULT_METRIC_NAME);
+        parserContext.getRegistry().registerBeanDefinition(diagnosticName,diagnosticCollectorBuilder.getBeanDefinition());
 
-        BeanDefinitionBuilder metricCollectorBuilder = BeanDefinitionBuilder.genericBeanDefinition(DiagnosticCollectorProvider.class);
+        BeanDefinitionBuilder metricCollectorBuilder =
+                BeanDefinitionBuilder.rootBeanDefinition (MetricCollectorProvider.class);
         parse(element, parserContext, metricCollectorBuilder);
+        String metricName="metric-" + getID(element,XMLConstants.DEFAULT_METRIC_NAME);
+        parserContext.getRegistry().registerBeanDefinition(metricName, metricCollectorBuilder.getBeanDefinition());
 
-        List providers = new ArrayList(2);
-        providers.add(diagnosticCollectorBuilder.getBeanDefinition().getSource());
-        providers.add(metricCollectorBuilder.getBeanDefinition().getSource());
-
-        builder.addPropertyValue("collectorProviders",providers);
+        builder.addPropertyValue("diagnosticCollectorProvider", new RuntimeBeanReference(diagnosticName));
+        builder.addPropertyValue("metricCollectorProvider", new RuntimeBeanReference(metricName));
     }
 
     private boolean isComposite(Element element){

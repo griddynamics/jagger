@@ -30,13 +30,18 @@
     <field name="throughputPlot" class="net.sf.jasperreports.engine.JRRenderable"/>
     <field name="latencyPlot" class="net.sf.jasperreports.engine.JRRenderable"/>
     <detail>
-        <band height="530" splitType="Stretch">
+        <band height="560" splitType="Stretch">
+            <staticText>
+                <reportElement style="Header_Bold" x="0" y="20" width="500" height="20" forecolor="#000000"/>
+                <textElement textAlignment="Left"/>
+                <text><![CDATA[Workload Details]]></text>
+            </staticText>
             <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
-                <reportElement x="0" y="25" width="550" height="250"/>
+                <reportElement x="0" y="45" width="550" height="250"/>
                 <imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{throughputPlot}]]></imageExpression>
             </image>
             <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
-                <reportElement x="0" y="275" width="550" height="250"/>
+                <reportElement x="0" y="300" width="550" height="250"/>
                 <imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$F{latencyPlot}]]></imageExpression>
             </image>
         </band>

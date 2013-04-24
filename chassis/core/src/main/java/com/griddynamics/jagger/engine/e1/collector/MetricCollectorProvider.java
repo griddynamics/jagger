@@ -24,24 +24,20 @@ import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 
 /**
- * Created with IntelliJ IDEA.
- * User: nmusienko
- * Date: 18.03.13
- * Time: 19:25
- * To change this template use File | Settings | File Templates.
+ * @author Nikolay Musienko
+ *         Date: 18.03.13
  */
-public class MetricCollectorProvider<Q, R, E> implements KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>> {
-    private MetricCalculator<Object> metricCalculator;
 
+public class MetricCollectorProvider<Q, R, E> implements KernelSideObjectProvider<ScenarioCollector<Q, R, E>> {
+    private MetricCalculator<R> metricCalculator;
     private String name;
 
-
     @Override
-    public ScenarioCollector<Object, Object, Object> provide(String sessionId, String taskId, NodeContext kernelContext) {
-        return new MetricCollector<Object, Object, Object>(sessionId, taskId, kernelContext, metricCalculator, name);
+    public ScenarioCollector<Q, R, E> provide(String sessionId, String taskId, NodeContext kernelContext) {
+        return new MetricCollector<Q, R, E>(sessionId, taskId, kernelContext, metricCalculator, name);
     }
 
-    public void setMetricCalculator(MetricCalculator<Object> metricCalculator) {
+    public void setMetricCalculator(MetricCalculator<R> metricCalculator) {
         this.metricCalculator = metricCalculator;
     }
 

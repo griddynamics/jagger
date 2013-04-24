@@ -24,18 +24,16 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 
-public class DiagnosticCollectorProvider implements KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>> {
-    private MetricCalculator<Object> metricCalculator;
-    
+public class DiagnosticCollectorProvider<Q, R, E> implements KernelSideObjectProvider<ScenarioCollector<Q, R, E>> {
+    private MetricCalculator<R> metricCalculator;
     private String name;
 
-
     @Override
-    public ScenarioCollector<Object, Object, Object> provide(String sessionId, String taskId, NodeContext kernelContext) {
-        return new DiagnosticCollector<Object, Object, Object>(sessionId, taskId, kernelContext, metricCalculator, name);
+    public ScenarioCollector<Q, R, E> provide(String sessionId, String taskId, NodeContext kernelContext) {
+        return new DiagnosticCollector<Q, R, E>(sessionId, taskId, kernelContext, metricCalculator, name);
     }
 
-    public void setMetricCalculator(MetricCalculator<Object> metricCalculator) {
+    public void setMetricCalculator(MetricCalculator<R> metricCalculator) {
         this.metricCalculator = metricCalculator;
     }
 
