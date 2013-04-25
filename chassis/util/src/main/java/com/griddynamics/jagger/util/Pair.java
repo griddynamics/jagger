@@ -20,7 +20,9 @@
 
 package com.griddynamics.jagger.util;
 
-public final class Pair<F, S> {
+import java.io.Serializable;
+
+public final class Pair<F, S> implements Serializable {
 	private final F first;
 	private final S second;
 

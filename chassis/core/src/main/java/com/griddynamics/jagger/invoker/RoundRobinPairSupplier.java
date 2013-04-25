@@ -23,13 +23,14 @@ package com.griddynamics.jagger.invoker;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.Pair;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
  * Structure that RoundRobinLoadBalancerShared uses
  */
-public class RoundRobinPairSupplier<Q, E> implements PairSupplier<Q, E> {
+public class RoundRobinPairSupplier<Q, E> implements PairSupplier<Q, E>, Serializable {
 
     private final ImmutableList<Pair<Q, E>> list;
 
