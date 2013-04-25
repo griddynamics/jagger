@@ -11,13 +11,11 @@ import java.util.Set;
 public class TaskDataDto implements Serializable {
     private Set<Long> ids;
     private String taskName;
-    private String version;
 
     public TaskDataDto() {
     }
 
-    public TaskDataDto(long id, String taskName, String version) {
-        this.version = version;
+    public TaskDataDto(long id, String taskName) {
         this.ids = new HashSet<Long>();
         ids.add(id);
 
@@ -70,13 +68,5 @@ public class TaskDataDto implements Serializable {
                 "ids=" + ids +
                 ", taskName='" + taskName + '\'' +
                 '}';
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
     }
 }

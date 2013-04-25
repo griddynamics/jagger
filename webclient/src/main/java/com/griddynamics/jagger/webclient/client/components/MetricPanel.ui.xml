@@ -1,5 +1,0 @@
-<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
-    <ui:with type="com.griddynamics.jagger.webclient.client.resources.JaggerResources" field="res"/>
-    <g:VerticalPanel ui:field="pane"/>
-</ui:UiBinder>

@@ -70,7 +70,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     public Set<PlotNameDto> getTaskScopePlotList(Set<String> sessionIds, TaskDataDto taskDataDto) {
         Set<PlotNameDto> plotNameDtoSet = new LinkedHashSet<PlotNameDto>();
         try {
-            if (isWorkloadStatisticsAvailable(sessionIds, taskDataDto)) {
+            if (isWorkloadStatisticsAvailable(sessionIds, taskDataDto.getTaskName())) {
                 for (Map.Entry<GroupKey, DefaultWorkloadParameters[]> monitoringPlot : workloadPlotGroups.entrySet()) {
                     plotNameDtoSet.add(new PlotNameDto(taskDataDto.getIds(), monitoringPlot.getKey().getUpperName()));
                 }
@@ -242,16 +242,15 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         return true;
     }
 
-    private boolean isWorkloadStatisticsAvailable(Set<String> sessionIds, TaskDataDto tests) {
+    private boolean isWorkloadStatisticsAvailable(Set<String> sessionIds, String taskName) {
         long timestamp = System.currentTimeMillis();
-        String testDataName = tests.getTaskName()+" "+tests.getVersion();
-        long workloadStatisticsCount = (Long) entityManager.createQuery("select count(tis.id) from TimeInvocationStatistics as tis where tis.taskData.sessionId in (:sessionIds) and tis.taskData.id in (:tests)")
-                .setParameter("tests", tests.getIds())
+        long workloadStatisticsCount = (Long) entityManager.createQuery("select count(tis.id) from TimeInvocationStatistics as tis where tis.taskData.sessionId in (:sessionIds) and tis.taskData.taskName=:taskName")
+                .setParameter("taskName", taskName)
                 .setParameter("sessionIds", sessionIds)
                 .getSingleResult();
 
-        if (workloadStatisticsCount < tests.getIds().size()) {
-            log.info("For task ID {} workload statistics were not found in DB for {} ms", tests.getTaskName(), System.currentTimeMillis() - timestamp);
+        if (workloadStatisticsCount == 0) {
+            log.info("For task ID {} workload statistics were not found in DB for {} ms", taskName, System.currentTimeMillis() - timestamp);
             return false;
         }
 

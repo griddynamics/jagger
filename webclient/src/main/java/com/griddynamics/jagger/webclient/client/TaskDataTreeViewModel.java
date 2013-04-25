@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 5/29/12
  */
 public class TaskDataTreeViewModel implements TreeViewModel {
-    private static final TaskDataDto NO_TASKS_DUMMY_NODE = new TaskDataDto(-1, "Select tests", "");
+    private static final TaskDataDto NO_TASKS_DUMMY_NODE = new TaskDataDto(-1, "No Tasks");
 
     private final ListDataProvider<TaskDataDto> taskDataProvider = new ListDataProvider<TaskDataDto>();
     private final MultiSelectionModel<PlotNameDto> selectionModel;

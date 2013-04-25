@@ -9,7 +9,6 @@
 
     <inherits name="com.google.gwt.activity.Activity" />
     <inherits name="com.google.gwt.place.Place" />
-    <inherits name="com.smartgwt.SmartGwt"/>
 
     <set-property name="gflot.load.flot.text" value="ENABLED" />
     <set-property name="gflot.load.canvas2image" value="ENABLED" />

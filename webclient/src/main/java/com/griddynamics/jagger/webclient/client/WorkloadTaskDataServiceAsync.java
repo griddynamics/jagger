@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.webclient.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.griddynamics.jagger.webclient.client.dto.WorkloadDetailsDto;
 import com.griddynamics.jagger.webclient.client.dto.WorkloadTaskDataDto;
 
 import java.util.List;
@@ -14,5 +15,4 @@ import java.util.List;
  */
 public interface WorkloadTaskDataServiceAsync {
     void getWorkloadTaskData(String sessionId, AsyncCallback<List<WorkloadTaskDataDto>> async);
-    void getWorkloadTaskData(String sessionId, long taskId, AsyncCallback<WorkloadTaskDataDto> async);
 }

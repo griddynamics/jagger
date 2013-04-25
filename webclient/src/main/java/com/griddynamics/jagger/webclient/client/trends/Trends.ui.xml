@@ -8,7 +8,7 @@
 
     <g:SplitLayoutPanel ui:field="widget">
         <g:center>
-            <g:TabLayoutPanel barHeight="20" ui:field="mainTabPanel">
+            <g:TabLayoutPanel barHeight="20">
                 <g:tab>
                     <g:header> <b>Summary</b> </g:header>
                     <g:ScrollPanel ui:field="scrollPanelSummary" >
@@ -81,18 +81,9 @@
                         </g:north>
                         <g:center>
                             <g:ScrollPanel>
-                                <g:VerticalPanel>
-                                    <g:VerticalPanel width="100%" ui:field="trendsDetails" visible="false">
-                                        <g:VerticalPanel ui:field="sessionScopePlotList"/>
-                                        <c:CellTree title="Task Details" ui:field="taskDetailsTree"/>
-                                    </g:VerticalPanel>
-                                    <g:HorizontalPanel width="100%" ui:field="summaryDetails">
-                                        <c:CellTable ui:field="testDataGrid" width="100%" title="Tests"/>
-                                        <g:VerticalPanel>
-                                            <g:Label text="Available metrics"/>
-                                            <custom:MetricPanel ui:field="metricPanel"/>
-                                        </g:VerticalPanel>
-                                    </g:HorizontalPanel>
+                                <g:VerticalPanel width="100%">
+                                    <g:VerticalPanel ui:field="sessionScopePlotList"/>
+                                    <c:CellTree title="Task Details" ui:field="taskDetailsTree"/>
                                 </g:VerticalPanel>
                             </g:ScrollPanel>
                         </g:center>

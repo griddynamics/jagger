@@ -7,11 +7,10 @@ import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.*;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.HasDirection;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,7 +26,7 @@ import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.*;
 import com.griddynamics.jagger.webclient.client.callback.SessionScopePlotListQueryCallback;
 import com.griddynamics.jagger.webclient.client.callback.TaskDataDtoListQueryAsyncCallback;
-import com.griddynamics.jagger.webclient.client.components.MetricPanel;
+import com.griddynamics.jagger.webclient.client.components.SessionPanel;
 import com.griddynamics.jagger.webclient.client.components.SummaryPanel;
 import com.griddynamics.jagger.webclient.client.data.*;
 import com.griddynamics.jagger.webclient.client.dto.*;
@@ -50,25 +49,16 @@ public class Trends extends DefaultActivity {
     private static final int MAX_PLOT_COUNT = 30;
 
     @UiField
-    TabLayoutPanel mainTabPanel;
-
-    @UiField
     HTMLPanel plotPanel;
 
     @UiField(provided = true)
     DataGrid<SessionDataDto> sessionsDataGrid;
 
     @UiField(provided = true)
-    CellTable<TaskDataDto> testDataGrid;
-
-    @UiField(provided = true)
     SimplePager sessionsPager;
 
     @UiField(provided = true)
     CellTree taskDetailsTree;
-
-    @UiField
-    MetricPanel metricPanel;
 
     @UiField
     ScrollPanel scrollPanelTrends;
@@ -92,12 +82,6 @@ public class Trends extends DefaultActivity {
 
     @UiField
     DateBox sessionsTo;
-
-    @UiField
-    VerticalPanel trendsDetails;
-
-    @UiField
-    HorizontalPanel summaryDetails;
 
     @UiHandler("uncheckSessionsButton")
     void handleUncheckSessionsButtonClick(ClickEvent e) {
@@ -178,15 +162,13 @@ public class Trends extends DefaultActivity {
     }
 
     private void createWidget() {
-        setupTestDataGrid();
-        setupSessionDataGrid();
-        setupTestDetailsTree();
+        setupTaskDetailsTree();
+        setupDataGrid();
         setupPager();
         setupLoadIndicator();
 
         uiBinder.createAndBindUi(this);
 
-        setupTabPanel();
         setupSessionNumberTextBox();
         setupSessionsDateRange();
     }
@@ -240,24 +222,7 @@ public class Trends extends DefaultActivity {
         return plot;
     }
 
-    private void setupTabPanel(){
-        mainTabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
-            @Override
-            public void onSelection(SelectionEvent<Integer> event) {
-                int selected = event.getSelectedItem();
-                if (selected == 0){
-                    summaryDetails.setVisible(true);
-                    trendsDetails.setVisible(false);
-                }else
-                if (selected == 1){
-                    summaryDetails.setVisible(false);
-                    trendsDetails.setVisible(true);
-                }
-            }
-        });
-    }
-
-    private void setupSessionDataGrid() {
+    private void setupDataGrid() {
         sessionsDataGrid = new DataGrid<SessionDataDto>();
         sessionsDataGrid.setPageSize(15);
         sessionsDataGrid.setEmptyTableWidget(new Label("No Sessions"));
@@ -310,56 +275,13 @@ public class Trends extends DefaultActivity {
         sessionDataProvider.addDataDisplay(sessionsDataGrid);
     }
 
-    private void setupTestDataGrid(){
-        testDataGrid = new CellTable<TaskDataDto>();
-        testDataGrid.setPageSize(15);
-        testDataGrid.setEmptyTableWidget(new Label("No Tests"));
-
-        // Add a selection model so we can select cells.
-        final SelectionModel<TaskDataDto> selectionModel = new MultiSelectionModel<TaskDataDto>(new ProvidesKey<TaskDataDto>() {
-            @Override
-            public Object getKey(TaskDataDto item) {
-                return item.getTaskName()+item.getVersion();
-            }
-        });
-        testDataGrid.setSelectionModel(selectionModel, DefaultSelectionEventManager.<TaskDataDto>createCheckboxManager());
-
-        selectionModel.addSelectionChangeHandler(new TestSelectChangeHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-
-            }
-        }));
-
-        // Checkbox column. This table will uses a checkbox column for selection.
-        // Alternatively, you can call dataGrid.setSelectionEnabled(true) to enable mouse selection.
-        Column<TaskDataDto, Boolean> checkColumn =
-                new Column<TaskDataDto, Boolean>(new CheckboxCell(true, false)) {
-                    @Override
-                    public Boolean getValue(TaskDataDto object) {
-                        // Get the value from the selection model.
-                        return selectionModel.isSelected(object);
-                    }
-                };
-        testDataGrid.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-        testDataGrid.setColumnWidth(checkColumn, 40, Style.Unit.PX);
-
-        testDataGrid.addColumn(new TextColumn<TaskDataDto>() {
-            @Override
-            public String getValue(TaskDataDto object) {
-                return object.getTaskName();
-            }
-        }, "Tests");
-        testDataGrid.setRowData(Collections.EMPTY_LIST);
-    }
-
     private void setupPager() {
         SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
         sessionsPager = new SimplePager(SimplePager.TextLocation.CENTER, pagerResources, false, 0, true);
         sessionsPager.setDisplay(sessionsDataGrid);
     }
 
-    private void setupTestDetailsTree() {
+    private void setupTaskDetailsTree() {
         CellTree.Resources res = GWT.create(CellTree.BasicResources.class);
         final MultiSelectionModel<PlotNameDto> selectionModel = new MultiSelectionModel<PlotNameDto>();
         taskDetailsTree = new CellTree(new TaskDataTreeViewModel(selectionModel, getResources()), null, res);
@@ -572,43 +494,6 @@ public class Trends extends DefaultActivity {
     /**
      * Handles select session event
      */
-    private class TestSelectChangeHandler implements SelectionChangeEvent.Handler{
-        private final ClickHandler clickHandler;
-
-        private TestSelectChangeHandler(ClickHandler clickHandler){
-            this.clickHandler = clickHandler;
-        }
-
-        @Override
-        public void onSelectionChange(SelectionChangeEvent event) {
-            Set<TaskDataDto> selected = ((MultiSelectionModel<TaskDataDto>) event.getSource()).getSelectedSet();
-            List<TaskDataDto> result = new ArrayList<TaskDataDto>(selected.size());
-            result.addAll(selected);
-            TaskDataTreeViewModel taskDataTreeViewModel = (TaskDataTreeViewModel) taskDetailsTree.getTreeViewModel();
-            MultiSelectionModel<PlotNameDto> plotNameSelectionModel = taskDataTreeViewModel.getSelectionModel();
-
-            // Clear plots display
-            plotPanel.clear();
-            // Clear task scope plot selection model
-            plotNameSelectionModel.clear();
-            // Clear session scope plot list
-            sessionScopePlotList.clear();
-            // Clear markings dto map
-            markingsMap.clear();
-            taskDataTreeViewModel.clear();
-
-            taskDataTreeViewModel.populateTaskList(result);
-            // Populate available plots tree level for each task for selected session
-            for (TaskDataDto taskDataDto : result) {
-                taskDataTreeViewModel.getPlotNameDataProviders().put
-                        (taskDataDto, new TaskPlotNamesAsyncDataProvider(taskDataDto, summaryPanel.getSessionIds()));
-            }
-
-            summaryPanel.updateTests(selected);
-            metricPanel.updateTests(selected);
-        }
-    }
-
     private class SessionSelectChangeHandler implements SelectionChangeEvent.Handler {
         private final ClickHandler sessionScopePlotCheckBoxClickHandler;
 
@@ -619,14 +504,14 @@ public class Trends extends DefaultActivity {
         @Override
         public void onSelectionChange(SelectionChangeEvent event) {
             // Currently selection model for sessions is a single selection model
-            mainTabPanel.selectTab(0);
-            Set<SessionDataDto> selected = ((MultiSelectionModel<SessionDataDto>) event.getSource()).getSelectedSet();
+            final Set<SessionDataDto> selected = ((MultiSelectionModel<SessionDataDto>) event.getSource()).getSelectedSet();
 
-            TaskDataTreeViewModel taskDataTreeViewModel = (TaskDataTreeViewModel) taskDetailsTree.getTreeViewModel();
-            MultiSelectionModel<PlotNameDto> plotNameSelectionModel = taskDataTreeViewModel.getSelectionModel();
+            final TaskDataTreeViewModel taskDataTreeViewModel = (TaskDataTreeViewModel) taskDetailsTree.getTreeViewModel();
+            final MultiSelectionModel<PlotNameDto> plotNameSelectionModel = taskDataTreeViewModel.getSelectionModel();
 
             //Refresh summary
-            summaryPanel.updateSessions(selected);
+            summaryPanel.update(selected);
+
             // Clear plots display
             plotPanel.clear();
             // Clear task scope plot selection model
@@ -636,7 +521,6 @@ public class Trends extends DefaultActivity {
             // Clear markings dto map
             markingsMap.clear();
             taskDataTreeViewModel.clear();
-            testDataGrid.setRowData(Collections.EMPTY_LIST);
 
             if (selected.size() == 1) {
                 // If selected single session clear plot display, clear plot selection and fetch all data for given session
@@ -651,7 +535,7 @@ public class Trends extends DefaultActivity {
 
                 // Populate task scope session list
                 TaskDataService.Async.getInstance().getTaskDataForSession(sessionId,
-                        new TaskDataDtoListQueryAsyncCallback(sessionIds, testDataGrid));
+                        new TaskDataDtoListQueryAsyncCallback(sessionIds, taskDataTreeViewModel));
             } else if (selected.size() > 1) {
                 // If selected several sessions
 
@@ -661,7 +545,7 @@ public class Trends extends DefaultActivity {
                 }
 
                 TaskDataService.Async.getInstance().getTaskDataForSessions(sessionIds,
-                        new TaskDataDtoListQueryAsyncCallback(sessionIds, testDataGrid));
+                        new TaskDataDtoListQueryAsyncCallback(sessionIds, taskDataTreeViewModel));
             }
         }
     }
@@ -803,6 +687,7 @@ public class Trends extends DefaultActivity {
             }
         }
     }
+
     /**
      * Handles clicks on session scope plot checkboxes
      */
