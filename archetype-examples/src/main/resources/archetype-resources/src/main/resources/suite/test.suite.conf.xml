@@ -45,7 +45,7 @@
             <percentile>97</percentile>
             <percentile>95</percentile>
             <percentile>90</percentile>
-            <percentile>95</percentile>
+            <percentile>85</percentile>
             <percentile>60</percentile>
         </latency-percentiles>
 
