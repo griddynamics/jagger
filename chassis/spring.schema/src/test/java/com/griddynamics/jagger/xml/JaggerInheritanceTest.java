@@ -55,7 +55,7 @@ public class JaggerInheritanceTest {
         List<DistributionListener> listeners = config1.getDistributionListeners();
         DurationLogProcessor latencyValues = (DurationLogProcessor) listeners.get(listeners.size()-1);
         Assert.assertEquals(latencyValues.getGlobalPercentilesKeys().size(), 2);
-        Assert.assertEquals(latencyValues.getTimeWindowPercentilesKeys().size(), 8);
+        Assert.assertEquals(latencyValues.getTimeWindowPercentilesKeys().size(), 2);
     }
 
 //    @Test

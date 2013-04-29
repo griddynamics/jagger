@@ -65,6 +65,7 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
             durationLogProcessorBean.setParentName(XMLConstants.DURATION_LOG_PROCESSOR);
 
             setBeanProperty(XMLConstants.GLOBAL_PERCENTILES_KEYS, percentilesElement, parserContext, durationLogProcessorBean.getBeanDefinition());
+            setBeanProperty(XMLConstants.TIME_WINDOW_PERCENTILES_KEYS, percentilesElement, parserContext, durationLogProcessorBean.getBeanDefinition());
 
             initStandardListeners(tlList, slList);
 

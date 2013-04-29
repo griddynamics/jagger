@@ -9,14 +9,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <targetJdkVersion>1.6</targetJdkVersion>
-        <targetJdk>${JAVA_HOME}</targetJdk>
-
         <spring.version>3.0.5.RELEASE</spring.version>
-
-        <jagger.version>1.1.3</jagger.version>
-
+        <jagger.version>jagger.version.placeholder</jagger.version>
     </properties>
 
     <repositories>
@@ -95,13 +89,10 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <target>${targetJdkVersion}</target>
-                    <source>${targetJdkVersion}</source>
-                    <fork>true</fork>
-                    <executable>${targetJdk}/bin/javac</executable>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
