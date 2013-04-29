@@ -23,14 +23,14 @@ package com.griddynamics.jagger.invoker;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.Pair;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * Structure that OneByOneLoadBalancerShared uses
+ * Structure that OneByOneLoadBalancer uses
+ * content ImmutableList of Pairs - (query, endpoint)
  */
-public class OneByOnePairSupplier <Q, E> implements PairSupplier<Q, E>, Serializable {
+public class OneByOnePairSupplier <Q, E> implements PairSupplier<Q, E> {
 
     private final ImmutableList<Pair<Q, E>> list;
 

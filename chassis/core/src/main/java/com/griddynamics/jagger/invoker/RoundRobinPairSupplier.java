@@ -23,14 +23,14 @@ package com.griddynamics.jagger.invoker;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.Pair;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * Structure that RoundRobinLoadBalancerShared uses
+ * Structure that RoundRobinLoadBalancer uses
+ * content ImmutableList of Pairs - (query, endpoint)
  */
-public class RoundRobinPairSupplier<Q, E> implements PairSupplier<Q, E>, Serializable {
+public class RoundRobinPairSupplier<Q, E> implements PairSupplier<Q, E> {
 
     private final ImmutableList<Pair<Q, E>> list;
 
@@ -43,16 +43,16 @@ public class RoundRobinPairSupplier<Q, E> implements PairSupplier<Q, E>, Seriali
         E currentEndpoint;
         Q currentQuery;
         while(endpointIt.hasNext() || queryIt.hasNext()) {
-                if(!endpointIt.hasNext()) {
-                    endpointIt = endpoints.iterator();
-                }
-                if(!queryIt.hasNext()) {
-                    queryIt = querys.iterator();
-                }
-                currentEndpoint = endpointIt.next();
-                currentQuery = queryIt.next();
+            if(!endpointIt.hasNext()) {
+                endpointIt = endpoints.iterator();
+            }
+            if(!queryIt.hasNext()) {
+                queryIt = querys.iterator();
+            }
+            currentEndpoint = endpointIt.next();
+            currentQuery = queryIt.next();
 
-                tempList.add(Pair.of(currentQuery, currentEndpoint));
+            tempList.add(Pair.of(currentQuery, currentEndpoint));
         }
 
         return new RoundRobinPairSupplier<Q, E>(ImmutableList.copyOf(tempList));

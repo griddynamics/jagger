@@ -35,6 +35,8 @@ import java.util.Iterator;
  */
 public class RoundRobinLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
+    private PairSupplier<Q, E> pairSupplier = null;
+
     public RoundRobinLoadBalancer(){
         super();
     }
@@ -45,10 +47,14 @@ public class RoundRobinLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
     @Override
     public Iterator<Pair<Q, E>> provide() {
-        final CircularSupplier<Q> querySupplier = CircularSupplier.create(queryProvider);
-        final CircularSupplier<E> endpointSupplier = CircularSupplier.create(endpointProvider);
+
+        checkPairSupplier();
 
         return new Iterator<Pair<Q, E>>() {
+
+            private int size = pairSupplier.size();
+            private int index = 0;
+
             @Override
             public boolean hasNext() {
                 return true;
@@ -56,9 +62,10 @@ public class RoundRobinLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
             @Override
             public Pair<Q, E> next() {
-                E endpoint = endpointSupplier.pop();
-                Q query = querySupplier.pop();
-                return Pair.of(query, endpoint);
+                if(index >= size) {
+                    index = 0;
+                }
+                return pairSupplier.pop(index++);
             }
 
             @Override
@@ -71,6 +78,12 @@ public class RoundRobinLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
                 return "RoundRobinLoadBalancer iterator";
             }
         };
+    }
+
+    private void checkPairSupplier() {
+        if(pairSupplier == null) {
+            pairSupplier = RoundRobinPairSupplier.create(queryProvider, endpointProvider);
+        }
     }
 
     @Override
