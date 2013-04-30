@@ -69,6 +69,9 @@ public class TestConfiguration {
     }
 
     public String getName() {
+        if ("".equals(id)){
+            return testGroupName;
+        }
         return String.format("%s [%s]", testGroupName, id);
     }
 
