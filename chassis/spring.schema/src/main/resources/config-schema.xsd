@@ -1111,16 +1111,10 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="queryType">
-                <xsd:choice>
-                    <xsd:sequence>
-                        <xsd:element name="method-params" type="primitiveMap" minOccurs="0" maxOccurs="1"/>
-                        <xsd:element name="client-params" type="primitiveMap" minOccurs="0" maxOccurs="1"/>
-                    </xsd:sequence>
-                    <xsd:sequence>
-                        <xsd:element name="client-params" type="primitiveMap" minOccurs="0" maxOccurs="1"/>
-                        <xsd:element name="method-params" type="primitiveMap" minOccurs="0" maxOccurs="1"/>
-                    </xsd:sequence>
-                </xsd:choice>
+                <xsd:sequence>
+                    <xsd:element name="method-params" type="primitiveMap" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="client-params" type="primitiveMap" minOccurs="0" maxOccurs="1"/>
+                </xsd:sequence>
                 <xsd:attribute name="method" type="httpMethodsEnum" default="GET"/>
             </xsd:extension>
         </xsd:complexContent>

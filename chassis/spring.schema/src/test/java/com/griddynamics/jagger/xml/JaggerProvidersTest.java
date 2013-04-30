@@ -50,6 +50,8 @@ public class JaggerProvidersTest {
         Assert.assertNotNull(query);
         int timeOut = (Integer)query.getClientParams().get("http.protocol.max-redirects");
         Assert.assertEquals(timeOut, 2);
+        String queryWord = query.getMethodParams().get("query");
+        Assert.assertEquals(queryWord, "griddynamics");
     }
 
     private int getSize(Iterable iterable){
