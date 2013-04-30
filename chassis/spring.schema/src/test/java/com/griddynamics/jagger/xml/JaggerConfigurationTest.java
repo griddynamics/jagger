@@ -1,7 +1,9 @@
 package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
+import com.griddynamics.jagger.invoker.ScenarioFactory;
+import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.reporting.ReportingService;
 import junit.framework.Assert;
@@ -86,6 +88,16 @@ public class JaggerConfigurationTest {
         Configuration config1 = (Configuration) ctx.getBean("config1");
         ExampleTestListener exampleTestListener = (ExampleTestListener)config1.getDistributionListeners().get(config1.getDistributionListeners().size()-1);
         Assert.assertNotNull(exampleTestListener);
+    }
+
+    @Test
+    public void conf1CalibrationSamplesCountTest(){
+        Configuration config1 = (Configuration) ctx.getBean("config1");
+        // DANGER! CLASS CAST MAGIC!!!
+        ScenarioFactory scenarioFactory =
+                ((WorkloadTask)((CompositeTask) config1.getTasks().get(0)).getAttendant().get(0)).getScenarioFactory();
+        int calibrationSamplesCount = scenarioFactory.getCalibrationSamplesCount();
+        Assert.assertEquals(1101, calibrationSamplesCount);
     }
 
     @Test

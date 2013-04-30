@@ -3,7 +3,6 @@ package com.griddynamics.jagger.xml.beanParsers.workload.scenario;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.xml.DomUtils;
@@ -41,6 +40,11 @@ public class QueryPoolScenarioDefinitionParser extends CustomBeanDefinitionParse
         //parse queryProvider
         Element queryProviderElement = DomUtils.getChildElementByTagName(element, XMLConstants.QUERY_PROVIDER_ELEMENT);
         setBeanProperty(XMLConstants.QUERY_PROVIDER, queryProviderElement, parserContext, builder.getBeanDefinition());
+
+        // calibrationSamplesCount
+        if(element.hasAttribute("calibrationSamplesCount")){
+            builder.addPropertyValue("calibrationSamplesCount", element.getAttribute("calibrationSamplesCount"));
+        }
     }
 
 }

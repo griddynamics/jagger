@@ -913,6 +913,7 @@
                     <xsd:element name="endpoint-provider" type="endpointProviderAbstract" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="query-distributor" type="queryDistributorAbstract" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
+                <xsd:attribute name="calibrationSamplesCount" type="xsd:int" use="optional"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
