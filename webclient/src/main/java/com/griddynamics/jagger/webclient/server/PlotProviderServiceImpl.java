@@ -244,7 +244,6 @@ public class PlotProviderServiceImpl implements PlotProviderService {
 
     private boolean isWorkloadStatisticsAvailable(Set<String> sessionIds, TaskDataDto tests) {
         long timestamp = System.currentTimeMillis();
-        String testDataName = tests.getTaskName()+" "+tests.getVersion();
         long workloadStatisticsCount = (Long) entityManager.createQuery("select count(tis.id) from TimeInvocationStatistics as tis where tis.taskData.sessionId in (:sessionIds) and tis.taskData.id in (:tests)")
                 .setParameter("tests", tests.getIds())
                 .setParameter("sessionIds", sessionIds)

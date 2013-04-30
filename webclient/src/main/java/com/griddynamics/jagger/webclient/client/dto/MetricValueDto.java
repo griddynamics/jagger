@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class MetricValueDto implements Serializable {
 
     private long testId;
+    private long sessionId;
     private String value;
 
 
@@ -29,5 +30,13 @@ public class MetricValueDto implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public long getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(long sessionId) {
+        this.sessionId = sessionId;
     }
 }

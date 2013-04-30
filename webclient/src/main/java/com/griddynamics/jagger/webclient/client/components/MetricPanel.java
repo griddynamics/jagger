@@ -3,21 +3,15 @@ package com.griddynamics.jagger.webclient.client.components;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTree;
+import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
+import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.MetricDataService;
+import com.griddynamics.jagger.webclient.client.data.MetricProvider;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
-import com.smartgwt.client.types.SelectionAppearance;
-import com.smartgwt.client.types.TreeModelType;
-import com.smartgwt.client.widgets.events.DrawEvent;
-import com.smartgwt.client.widgets.events.DrawHandler;
-import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
-import com.smartgwt.client.widgets.tree.Tree;
-import com.smartgwt.client.widgets.tree.TreeGrid;
-import com.smartgwt.client.widgets.tree.TreeNode;
 
 import java.util.*;
 
@@ -34,39 +28,46 @@ public class MetricPanel extends Composite {
 
     private static MetricPanelUiBinder ourUiBinder = GWT.create(MetricPanelUiBinder.class);
 
-    @UiField
-    VerticalPanel pane;
+    @UiField(provided = true)
+    CellTree tree;
 
-    final TreeGrid metricTreeGrid = new TreeGrid();
+    private final ListDataProvider<TaskDataDto> provider = new ListDataProvider<TaskDataDto>();
+    private final MultiSelectionModel selectionModel = new MultiSelectionModel<MetricNameDto>();
+    private final MetricModel viewModel = new MetricModel(selectionModel, provider);
 
     public MetricPanel() {
+        tree = new CellTree(viewModel, null);
+        tree.setTitle("Metrics");
+
         initWidget(ourUiBinder.createAndBindUi(this));
-
-        MetricTreeModel tree = new MetricTreeModel(defaultData);
-
-        metricTreeGrid.setWidth(400);
-        metricTreeGrid.setHeight(200);
-        metricTreeGrid.setShowDropIcons(false);
-        metricTreeGrid.setShowOpenIcons(false);
-        metricTreeGrid.setClosedIconSuffix("");
-        metricTreeGrid.setData(tree);
-
-        metricTreeGrid.setSelectionAppearance(SelectionAppearance.CHECKBOX);
-        metricTreeGrid.setShowSelectedStyle(false);
-        metricTreeGrid.setShowPartialSelection(true);
-        metricTreeGrid.setCascadeSelection(true);
-
-        metricTreeGrid.addDrawHandler(new DrawHandler() {
-            public void onDraw(DrawEvent event) {
-                metricTreeGrid.selectAllRecords();
-            }
-        });
-
-        pane.add(metricTreeGrid);
     }
 
     public void updateTests(Set<TaskDataDto> tests){
-        final Set<TaskDataDto> temp = tests;
+
+        for (Object o : selectionModel.getSelectedSet()){
+            selectionModel.setSelected(o, false);
+        }
+        provider.setList(Arrays.asList((TaskDataDto)null));
+
+
+        if (tests.size()==0){
+            return;
+        }
+
+        boolean manySessions = false;
+        for (TaskDataDto test : tests){
+            if (test.getIds().size() > 1){
+                manySessions = true;
+                break;
+            }
+        }
+
+        if (!manySessions){
+            //nothing to show
+            return;
+        }
+        provider.setList(new ArrayList<TaskDataDto>(tests));
+
         MetricDataService.Async.getInstance().getMetricsNames(tests, new AsyncCallback<Set<MetricNameDto>>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -75,78 +76,18 @@ public class MetricPanel extends Composite {
 
             @Override
             public void onSuccess(Set<MetricNameDto> result) {
-                ArrayList<MetricTreeNode> nodes = new ArrayList<MetricTreeNode>(result.size());
-
-                //init tests nodes
-                for (TaskDataDto test : temp){
-                    nodes.add(new MetricTreeNode(test.getTaskName(), null));
+                for (MetricNameDto dto : result){
+                    selectionModel.setSelected(dto, true);
                 }
-
-                //init metrics nodes
-                for (MetricNameDto metricName : result)
-                    nodes.add(new MetricTreeNode(metricName.getTaskName(), metricName.getName()));
-                MetricTreeModel model = new MetricTreeModel(nodes);
-                metricTreeGrid.setData(model);
             }
         });
     }
 
-    public void addSelectionListener(SelectionChangedHandler listener){
-        metricTreeGrid.addSelectionChangedHandler(listener);
+    public Set<MetricNameDto> getSelected(){
+        return selectionModel.getSelectedSet();
     }
 
-    public TreeNode[] defaultData = new TreeNode[] {
-        new MetricTreeNode("Select tests", null),
-    };
-
-
-    private String root = "root";
-    private String testNameAttribute = "testName";
-    private String metricNameAttribute = "metricName";
-    private String nodeId = "id";
-    private String nodeParentId = "parentId";
-    private String valueAttribute = "value";
-
-    private class MetricTreeModel extends Tree{
-
-        public MetricTreeModel(Collection<? extends TreeNode> data){
-            init();
-            TreeNode[] mas = data.toArray(new TreeNode[]{});
-            setData(mas);
-        }
-
-        public MetricTreeModel(TreeNode[] data){
-            init();
-            setData(data);
-        }
-
-        private void init(){
-            setModelType(TreeModelType.PARENT);
-
-            setNameProperty(valueAttribute);
-            setIdField(nodeId);
-            setParentIdField(testNameAttribute);
-
-            setRootValue(root);
-        }
+    public void addSelectionListener(SelectionChangeEvent.Handler handler){
+        selectionModel.addSelectionChangeHandler(handler);
     }
-
-    private class MetricTreeNode extends TreeNode {
-        public MetricTreeNode(String testName, String metricName) {
-            setAttribute(nodeId, testName+(metricName == null ? "" : metricName));
-            setAttribute(testNameAttribute, testName);
-            setAttribute(metricNameAttribute, metricName);
-            if (metricName == null){
-                setAttribute(valueAttribute, testName);
-                setAttribute(nodeParentId, root);
-            }else{
-                setAttribute(valueAttribute, metricName);
-                setAttribute(nodeParentId, testName);
-            }
-        }
-    }
-
-
-
-
 }
