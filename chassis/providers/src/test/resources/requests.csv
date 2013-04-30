@@ -1,0 +1,4 @@
+host,path
+http://localhost,sleep/10
+http://localhost,sleep/10
+http://localhost:8080,sleep/10

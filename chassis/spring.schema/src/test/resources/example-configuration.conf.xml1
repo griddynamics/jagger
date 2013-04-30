@@ -83,11 +83,11 @@
 
     <metric id="metric1" xsi:type="metric-not-null-response"/>
 
-    <endpoint-provider id="endpointProvider1" xsi:type="endpoint-provider-list">
-        <endpoint>http://localhost:8090/sleep/5</endpoint>
-        <endpoint>http://localhost:8090/sleep/25</endpoint>
-        <endpoint>http://localhost:8090/sleep/50</endpoint>
+    <endpoint-provider id="endpointProvider1" xsi:type="endpoint-provider-csv" path="../spring.schema/src/test/resources/endpoints.csv" readHeader="true">
+        <object-creator xsi:type="object-creator-ref" ref="endpoints-creator"/>
     </endpoint-provider>
+
+    <beans:bean id="endpoints-creator" class="com.griddynamics.jagger.xml.RequestPathCvsWrapper"/>
 
     <query id="httpQ1" xsi:type="query-http" method="GET">
         <client-params>

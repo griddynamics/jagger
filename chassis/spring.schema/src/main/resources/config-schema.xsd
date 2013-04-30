@@ -1017,6 +1017,22 @@
         </xsd:annotation>
     </xsd:element>
 
+    <xsd:element name="query-provider-file" type="query-provider-file" substitutionGroup="query-provider">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a file of line-separated elements - query.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="query-provider-csv" type="query-provider-csv" substitutionGroup="query-provider">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a file of csv elements - query.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
     <xsd:element name="query" type="queryType">
         <xsd:annotation>
             <xsd:documentation>
@@ -1072,6 +1088,64 @@
                 <xsd:choice minOccurs="1" maxOccurs="unbounded">
                     <xsd:element ref="query"/>
                 </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-provider-file">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a file of line-separated elements - query.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="queryProviderAbstract">
+                <xsd:attribute name="path" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-provider-csv">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a file of csv elements - query.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="queryProviderAbstract">
+                <xsd:choice minOccurs="1" maxOccurs="1">
+                    <xsd:element name="objectCreator" type="objectCreatorAbstract"/>
+                </xsd:choice>
+                <xsd:attribute name="path" type="xsd:string" use="required"/>
+                <xsd:attribute name="readHeader" type="xsd:boolean" use="optional" default="true"/>
+                <xsd:attribute name="strategy" type="csvStrategy" use="optional" default="DEFAULT"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="csvStrategy">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="DEFAULT"/>
+            <xsd:enumeration value="EXCEL"/>
+            <xsd:enumeration value="TDF"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="objectCreatorAbstract" abstract="true" >
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="objectCreator" type="objectCreatorAbstract"/>
+
+    <xsd:element name="objectCreator-ref" type="object-creator-ref" substitutionGroup="objectCreator"/>
+
+    <xsd:complexType name="object-creator-ref">
+        <xsd:complexContent>
+            <xsd:extension base="objectCreatorAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -1152,6 +1226,22 @@
         </xsd:annotation>
     </xsd:element>
 
+    <xsd:element name="endpoint-provider-file" type="endpoint-provider-file" substitutionGroup="endpoint-provider">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a file of line-separated elements - endpoint.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="endpoint-provider-csv" type="endpoint-provider-csv" substitutionGroup="endpoint-provider">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a file of csv elements - endpoint.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
     <xsd:element name="endpoint" type="endpointType">
         <xsd:annotation>
             <xsd:documentation>
@@ -1198,6 +1288,37 @@
                 <xsd:choice minOccurs="1" maxOccurs="unbounded">
                     <xsd:element ref="endpoint"/>
                 </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="endpoint-provider-file">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a file of line-separated elements - endpoint.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="endpointProviderAbstract">
+                <xsd:attribute name="path" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="endpoint-provider-csv">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element is a file of csv elements - query.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="endpointProviderAbstract">
+                <xsd:choice minOccurs="1" maxOccurs="1">
+                    <xsd:element name="object-creator" type="objectCreatorAbstract"/>
+                </xsd:choice>
+                <xsd:attribute name="path" type="xsd:string" use="required"/>
+                <xsd:attribute name="readHeader" type="xsd:boolean" use="optional" default="true"/>
+                <xsd:attribute name="strategy" type="csvStrategy" use="optional" default="DEFAULT"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

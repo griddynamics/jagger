@@ -181,6 +181,12 @@
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
+                <artifactId>chassis.providers</artifactId>
+                <version>${version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.invoker.hessian</artifactId>
                 <version>${version}</version>
             </dependency>

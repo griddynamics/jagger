@@ -1,8 +1,9 @@
 package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
-import com.griddynamics.jagger.invoker.ScenarioFactory;
+import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.reporting.ReportingService;
@@ -11,7 +12,9 @@ import org.springframework.context.ApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -107,6 +110,15 @@ public class JaggerConfigurationTest {
         ReportingService reportingService = config1.getReport();
         Assert.assertNotNull(reportingService);
     }
+
+    @Test
+    public void conf1ProviderTest() throws Exception {
+        Configuration config1 = (Configuration) ctx.getBean("config1");
+        // DANGER! CLASS CAST MAGIC!!!
+        Iterator it=((QueryPoolScenarioFactory)((WorkloadTask)((CompositeTask) config1.getTasks().get(0)).getAttendant().get(0)).getScenarioFactory()).getEndpointProvider().iterator();
+        Assert.assertEquals(RequestPath.class, it.next().getClass());
+    }
+
 
     private void checkListOnNull(List list){
         for (Object o : list){
