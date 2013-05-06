@@ -35,6 +35,7 @@ import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -129,9 +130,7 @@ public class WorkloadProcess implements NodeProcess<Integer> {
 
         if (threadDiff < 0) {
             log.debug("Going to decrease thread count by {}", threadDiff);
-            for (int i = threadDiff; i < 0; i++) {
-                removeThread();
-            }
+            removeThreads(Math.abs(threadDiff));
         }
 
         if (totalSamplesCountRequested != configuration.getSamples()) {
@@ -178,20 +177,20 @@ public class WorkloadProcess implements NodeProcess<Integer> {
         return totalSamplesCountRequested != -1;
     }
 
-    private void removeThread() {
+    private void removeThreads(int count) {
         Preconditions.checkState(!threads.isEmpty());
+        Preconditions.checkState(threads.size() >= count);
+
+        Collection<Future<Service.State>> futures = Lists.newLinkedList();
 
         Iterator<WorkloadService> iterator = threads.iterator();
-
-        if (!iterator.hasNext()) {
-            log.debug("Cannot remove task. No tasks started.");
-            return;
+        for (int i=0; i<count; i++){
+            WorkloadService service = iterator.next();
+            futures.add(service.stop());
         }
 
-        WorkloadService thread = iterator.next();
-        Future<Service.State> stop = thread.stop();
-        Futures.get(stop, timeoutsConfiguration.getWorkloadStopTimeout());
-        samplesCountDoneFromTerminatedThreads += thread.getSamples();
-        iterator.remove();
+        for (Future<Service.State> future : futures){
+            Futures.get(future, timeoutsConfiguration.getWorkloadStopTimeout());
+        }
     }
 }
