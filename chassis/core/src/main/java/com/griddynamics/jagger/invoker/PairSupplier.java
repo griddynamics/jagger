@@ -26,5 +26,5 @@ public interface PairSupplier<Q, E> {
 
     public int size();
 
-    public Pair<Q, E> pop(int index);
+    public Pair<Q, E> get(int index);
 }

@@ -66,7 +66,7 @@ public class RoundRobinPairSupplier<Q, E> implements PairSupplier<Q, E> {
         return list.size();
     }
 
-    public Pair<Q, E> pop(int index) {
+    public Pair<Q, E> get(int index) {
         return list.get(index);
     }
 }

@@ -44,14 +44,14 @@ public class PairSupplierTest {
 
     @Test
     public void roundRobinPairSupplierSequenceTest() {
-        assertEquals(roundRobinPairSupplier.pop(0), Pair.of("first",  1));
-        assertEquals(roundRobinPairSupplier.pop(1), Pair.of("second", 2));
-        assertEquals(roundRobinPairSupplier.pop(2), Pair.of("third",  1));
-        assertEquals(roundRobinPairSupplier.pop(3), Pair.of("first",  2));
-        assertEquals(roundRobinPairSupplier.pop(4), Pair.of("second", 1));
-        assertEquals(roundRobinPairSupplier.pop(5), Pair.of("third",  2));
-        assertEquals(roundRobinPairSupplier.pop(0), Pair.of("first",  1));
-        assertEquals(roundRobinPairSupplier.pop(1), Pair.of("second", 2));
+        assertEquals(roundRobinPairSupplier.get(0), Pair.of("first",  1));
+        assertEquals(roundRobinPairSupplier.get(1), Pair.of("second", 2));
+        assertEquals(roundRobinPairSupplier.get(2), Pair.of("third",  1));
+        assertEquals(roundRobinPairSupplier.get(3), Pair.of("first",  2));
+        assertEquals(roundRobinPairSupplier.get(4), Pair.of("second", 1));
+        assertEquals(roundRobinPairSupplier.get(5), Pair.of("third",  2));
+        assertEquals(roundRobinPairSupplier.get(0), Pair.of("first",  1));
+        assertEquals(roundRobinPairSupplier.get(1), Pair.of("second", 2));
     }
 
     @Test
@@ -62,14 +62,14 @@ public class PairSupplierTest {
     @Test
     public void oneByOnePairSupplierSequenceTest() {
 
-        assertEquals(oneByOnePairSupplier.pop(0), Pair.of("first",  1));
-        assertEquals(oneByOnePairSupplier.pop(1), Pair.of("first",  2));
-        assertEquals(oneByOnePairSupplier.pop(2), Pair.of("second", 1));
-        assertEquals(oneByOnePairSupplier.pop(3), Pair.of("second", 2));
-        assertEquals(oneByOnePairSupplier.pop(4), Pair.of("third",  1));
-        assertEquals(oneByOnePairSupplier.pop(5), Pair.of("third",  2));
-        assertEquals(oneByOnePairSupplier.pop(0), Pair.of("first",  1));
-        assertEquals(oneByOnePairSupplier.pop(1), Pair.of("first",  2));
+        assertEquals(oneByOnePairSupplier.get(0), Pair.of("first",  1));
+        assertEquals(oneByOnePairSupplier.get(1), Pair.of("first",  2));
+        assertEquals(oneByOnePairSupplier.get(2), Pair.of("second", 1));
+        assertEquals(oneByOnePairSupplier.get(3), Pair.of("second", 2));
+        assertEquals(oneByOnePairSupplier.get(4), Pair.of("third",  1));
+        assertEquals(oneByOnePairSupplier.get(5), Pair.of("third",  2));
+        assertEquals(oneByOnePairSupplier.get(0), Pair.of("first",  1));
+        assertEquals(oneByOnePairSupplier.get(1), Pair.of("first",  2));
     }
 
     @Test
