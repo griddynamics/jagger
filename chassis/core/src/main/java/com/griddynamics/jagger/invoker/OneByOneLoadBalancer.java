@@ -23,7 +23,6 @@ package com.griddynamics.jagger.invoker;
 import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Schedules queries across endpoints one by one. For input: endpoints [e1,
@@ -36,6 +35,8 @@ import java.util.List;
  */
 public class OneByOneLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
+    private PairSupplier<Q, E> pairSupplier = null;
+
     public OneByOneLoadBalancer(){
         super();
     }
@@ -44,12 +45,18 @@ public class OneByOneLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
         super(queryProvider, endpointProvider);
     }
 
+    public void setPairSupplier(PairSupplier<Q, E> pairSupplier) {
+        this.pairSupplier = pairSupplier;
+    }
+
     @Override
     public Iterator<Pair<Q, E>> provide() {
-        final CircularSupplier<Q> querySupplier = CircularSupplier.create(queryProvider);
-        final CircularSupplier<E> endpointSupplier = CircularSupplier.create(endpointProvider);
 
         return new Iterator<Pair<Q, E>>() {
+
+            private int index = 0;
+            private int size = getPairSupplier().size();
+
             @Override
             public boolean hasNext() {
                 return true;
@@ -57,13 +64,10 @@ public class OneByOneLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
             @Override
             public Pair<Q, E> next() {
-                boolean exceeded = endpointSupplier.exceeded();
-
-                E endpoint = endpointSupplier.pop();
-                Q query = exceeded ? querySupplier.pop() : querySupplier.peek();
-
-                return Pair.of(query, endpoint);
-
+                if(index >= size) {
+                    index = 0;
+                }
+                return getPairSupplier().get(index++);
             }
 
             @Override
@@ -75,8 +79,14 @@ public class OneByOneLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
             public String toString() {
                 return "OneByOneLoadBalancer iterator";
             }
-
         };
+    }
+
+    public PairSupplier<Q, E> getPairSupplier() {
+        if(pairSupplier == null) {
+            pairSupplier = OneByOnePairSupplier.create(queryProvider, endpointProvider);
+        }
+        return pairSupplier;
     }
 
     @Override

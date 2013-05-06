@@ -34,6 +34,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -105,12 +106,12 @@ public class LogProcessor extends HibernateDaoSupport {
 
     @Required
     public void setTimeWindowPercentilesKeys(List<Double> timeWindowPercentilesKeys) {
-        this.timeWindowPercentilesKeys = timeWindowPercentilesKeys;
+        this.timeWindowPercentilesKeys = new ArrayList<Double>(new HashSet<Double>(timeWindowPercentilesKeys));
     }
 
     @Required
     public void setGlobalPercentilesKeys(List<Double> globalPercentilesKeys) {
-        this.globalPercentilesKeys = globalPercentilesKeys;
+        this.globalPercentilesKeys = new ArrayList<Double>(new HashSet<Double>(globalPercentilesKeys));
     }
 
 

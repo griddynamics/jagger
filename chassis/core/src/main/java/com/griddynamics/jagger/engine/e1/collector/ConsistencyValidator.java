@@ -22,13 +22,13 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import com.google.common.base.Equivalence;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.CalibrationInfo;
 import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 public class ConsistencyValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
@@ -56,6 +56,10 @@ public class ConsistencyValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
 
     @Override
     public boolean validate(Q query, E endpoint, R result, long duration) {
+        if (getExpected().isEmpty()) {
+            return false;
+        }
+
         CalibrationInfo<Q, E, R> info = null;
         for (CalibrationInfo<Q, E, R> expected : getExpected()) {
             if (match(CalibrationInfo.create(query, endpoint, result), expected)) {
@@ -102,7 +106,12 @@ public class ConsistencyValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
         try {
             reader = logReader.read(sessionId, taskId + "/" + "Calibration", "kernel", CalibrationInfo.class);
             return ImmutableList.copyOf(reader.iterator());
-        } finally {
+        } catch (Exception e) {
+            log.warn("Calibration data not available. Skipping validation!");
+            log.debug("Calibration info not found: {}: {}", e.getMessage(), e);
+            return Lists.newLinkedList();
+        }
+        finally {
             if (reader != null) {
                 reader.close();
             }

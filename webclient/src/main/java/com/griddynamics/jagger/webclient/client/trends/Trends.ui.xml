@@ -11,7 +11,7 @@
             <g:TabLayoutPanel barHeight="20" ui:field="mainTabPanel">
                 <g:tab>
                     <g:header> <b>Summary</b> </g:header>
-                    <g:ScrollPanel ui:field="scrollPanelSummary" >
+                    <g:ScrollPanel>
                         <custom:SummaryPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
                     </g:ScrollPanel>
                 </g:tab>
@@ -24,7 +24,7 @@
             </g:TabLayoutPanel>
         </g:center>
         <g:south size="250">
-            <g:SplitLayoutPanel>
+            <g:SplitLayoutPanel ui:field="settingsPanel">
                 <g:west size="600">
                     <g:DockLayoutPanel>
                         <g:north size="34">
@@ -80,21 +80,35 @@
                             </g:FlowPanel>
                         </g:north>
                         <g:center>
-                            <g:ScrollPanel>
-                                <g:VerticalPanel>
-                                    <g:VerticalPanel width="100%" ui:field="trendsDetails" visible="false">
-                                        <g:VerticalPanel ui:field="sessionScopePlotList"/>
-                                        <c:CellTree title="Task Details" ui:field="taskDetailsTree"/>
-                                    </g:VerticalPanel>
-                                    <g:HorizontalPanel width="100%" ui:field="summaryDetails">
-                                        <c:CellTable ui:field="testDataGrid" width="100%" title="Tests"/>
-                                        <g:VerticalPanel>
-                                            <g:Label text="Available metrics"/>
-                                            <custom:MetricPanel ui:field="metricPanel"/>
+                            <g:DockLayoutPanel width="100%" height="100%" ui:field="testsMetricsPanel">
+                                <g:center>
+                                    <g:SplitLayoutPanel ui:field="summaryDetails" height="100%" width="100%" visible="true">
+                                        <g:center>
+                                            <g:ScrollPanel width="100%" height="100%">
+                                                <c:CellTable ui:field="testDataGrid" width="100%" height="100%" title="Tests"/>
+                                            </g:ScrollPanel>
+                                        </g:center>
+                                        <g:east size="400">
+                                            <g:DockLayoutPanel height="100%" width="100%">
+                                                <g:north size="0">
+                                                    <g:Label text="Metrics"/>
+                                                </g:north>
+                                                <g:center>
+                                                    <custom:MetricPanel ui:field="metricPanel"/>
+                                                </g:center>
+                                            </g:DockLayoutPanel>
+                                        </g:east>
+                                    </g:SplitLayoutPanel>
+                                </g:center>
+                                <g:west size="600">
+                                    <g:ScrollPanel width="100%" height="100%" ui:field="trendsDetails">
+                                        <g:VerticalPanel width="100%" height="100%">
+                                            <g:VerticalPanel ui:field="sessionScopePlotList" width="100%" height="100%"/>
+                                            <c:CellTree title="Task Details" ui:field="taskDetailsTree" height="100%" width="100%"/>
                                         </g:VerticalPanel>
-                                    </g:HorizontalPanel>
-                                </g:VerticalPanel>
-                            </g:ScrollPanel>
+                                    </g:ScrollPanel>
+                                </g:west>
+                            </g:DockLayoutPanel>
                         </g:center>
                     </g:DockLayoutPanel>
                 </g:center>

@@ -75,5 +75,9 @@ public interface JaggerResources extends ClientBundle {
         String panLabel();
 
         String toolBar();
+
+        String sessionNameHeader();
+
+        String testNameHeader();
     }
 }

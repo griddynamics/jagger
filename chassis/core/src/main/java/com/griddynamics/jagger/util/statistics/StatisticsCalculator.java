@@ -47,7 +47,7 @@ public class StatisticsCalculator {
     }
 
     public double getStandardDeviation() {
-        return summaryStatistics.getMean();
+        return summaryStatistics.getStandardDeviation();
     }
 
     public double getPercentile(double p) {

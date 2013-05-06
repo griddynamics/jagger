@@ -12,6 +12,8 @@ import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefi
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.*;
+import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.CsvProviderDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.FileProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.scenario.QueryPoolScenarioDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
@@ -106,12 +108,19 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
 
         //endpointProviders
         registerBeanDefinitionParser("endpoint-provider-list", listCustomDefinitionParser);
+        registerBeanDefinitionParser("endpoint-provider-file", new FileProviderDefinitionParser());
+        registerBeanDefinitionParser("endpoint-provider-csv", new CsvProviderDefinitionParser());
 
         //queryProvider
         registerBeanDefinitionParser("query-provider", findTypeParser);
 
         //queryProviders
         registerBeanDefinitionParser("query-provider-list", listCustomDefinitionParser);
+        registerBeanDefinitionParser("query-provider-file", new FileProviderDefinitionParser());
+        registerBeanDefinitionParser("query-provider-csv", new CsvProviderDefinitionParser());
+
+        //objectCreator
+        registerBeanDefinitionParser("object-creator", findTypeParser);
 
         //queries
         registerBeanDefinitionParser("query", findTypeParser);

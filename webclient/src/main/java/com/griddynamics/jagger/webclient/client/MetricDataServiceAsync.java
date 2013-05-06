@@ -5,6 +5,7 @@ import com.griddynamics.jagger.webclient.client.dto.MetricDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,5 +17,6 @@ import java.util.Set;
  */
 public interface MetricDataServiceAsync {
     void getMetricsNames(Set<TaskDataDto> tests,AsyncCallback<Set<MetricNameDto>> async);
-    void getMetric(TaskDataDto tests, MetricNameDto metricName, AsyncCallback<MetricDto> async);
+    void getMetric(MetricNameDto metricName, AsyncCallback<MetricDto> async);
+    void getMetrics(List<MetricNameDto> metricNames, AsyncCallback<List<MetricDto>> async);
 }

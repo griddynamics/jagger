@@ -37,6 +37,12 @@
 		<property name="url" value="${chassis.storage.rdb.client.url}" />
 		<property name="username" value="${chassis.storage.rdb.username}" />
 		<property name="password" value="${chassis.storage.rdb.password}" />
+        <property name="testOnBorrow" value="true"/>
+        <property name="validationQuery" value="SELECT 1;"/>
+        <property name="minIdle" value="5"/>
+        <property name="maxIdle" value="5"/>
+        <property name="initialSize" value="5"/>
+        <property name="maxActive" value="40"/>
 	</bean>
 
 	<bean id="sessionFactory"

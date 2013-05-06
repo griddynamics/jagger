@@ -7,6 +7,7 @@ import com.griddynamics.jagger.webclient.client.dto.MetricDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Set;
  * Time: 17:53
  * To change this template use File | Settings | File Templates.
  */
-@RemoteServiceRelativePath("MetricDataService")
+@RemoteServiceRelativePath("rpc/MetricDataService")
 public interface MetricDataService extends RemoteService {
     /**
      * Utility/Convenience class.
@@ -31,5 +32,6 @@ public interface MetricDataService extends RemoteService {
     }
 
     public Set<MetricNameDto> getMetricsNames(Set<TaskDataDto> tests);
-    public MetricDto getMetric(TaskDataDto tests, MetricNameDto metricName);
+    public MetricDto getMetric( MetricNameDto metricName);
+    public List<MetricDto> getMetrics(List<MetricNameDto> metricNames);
 }

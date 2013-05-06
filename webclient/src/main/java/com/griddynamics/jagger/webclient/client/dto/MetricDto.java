@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.webclient.client.dto;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -9,7 +10,9 @@ import java.util.Set;
  * Time: 14:12
  * To change this template use File | Settings | File Templates.
  */
-public class MetricDto extends MetricNameDto{
+public class MetricDto implements Serializable {
+
+    private MetricNameDto metricName;
 
     private Set<MetricValueDto> values;
 
@@ -19,5 +22,13 @@ public class MetricDto extends MetricNameDto{
 
     public void setValues(Set<MetricValueDto> values) {
         this.values = values;
+    }
+
+    public MetricNameDto getMetricName() {
+        return metricName;
+    }
+
+    public void setMetricName(MetricNameDto metricName) {
+        this.metricName = metricName;
     }
 }

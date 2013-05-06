@@ -94,7 +94,7 @@ public class WorkloadProcessTimePlotsReporter extends AbstractMappedReportProvid
             List<TimeInvocationStatistics> taskStats = aggregatedByTasks.get(taskId);
 
             XYSeries throughput = new XYSeries("Throughput");
-            XYSeries latency = new XYSeries("Latency", true, false);
+            XYSeries latency = new XYSeries("Latency avg", true, false);
             XYSeries latencyStdDev = new XYSeries("Latency StdDev", true, false);
 
             SortedMap<Integer, XYSeries> percentileSeries = new TreeMap<Integer, XYSeries>();
