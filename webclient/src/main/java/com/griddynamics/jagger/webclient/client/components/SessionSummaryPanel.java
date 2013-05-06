@@ -7,6 +7,7 @@ import com.griddynamics.jagger.webclient.client.WorkloadTaskDataService;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.dto.WorkloadTaskDataDto;
+import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.Set;
  * Time: 15:41
  * To change this template use File | Settings | File Templates.
  */
-public class SessionSummaryPanel extends VerticalPanel implements SessionPanel{
+public class SessionSummaryPanel extends VerticalPanel{
 
     private HashMap<String, TestPanel> testPanels = new HashMap<String, TestPanel>();
     private final Panel testPanel = new VerticalPanel();
@@ -32,13 +33,13 @@ public class SessionSummaryPanel extends VerticalPanel implements SessionPanel{
     }
 
     private void initStyle(){
+        addStyleName(JaggerResources.INSTANCE.css().summaryPanel());
         setWidth("1350px");
     }
 
     private void initData(SessionDataDto sessionData){
-
         Label name = new Label("Session #"+sessionData.getSessionId());
-        name.setStyleName("sessionNameHeader");
+        name.setStyleName(JaggerResources.INSTANCE.css().sessionNameHeader());
         add(name);
 
         Grid summaryGrid = new Grid(6, 2);
@@ -77,35 +78,13 @@ public class SessionSummaryPanel extends VerticalPanel implements SessionPanel{
         add(summaryGrid);
 
         Label testPanelName = new Label("Tests");
-        testPanelName.addStyleName("testNameHeader");
+        testPanelName.addStyleName(JaggerResources.INSTANCE.css().testNameHeader());
         add(testPanelName);
 
         add(testPanel);
     }
 
-    private VerticalPanel createTestPanel(String sessionId){
-        final VerticalPanel testPanel = new VerticalPanel();
-        WorkloadTaskDataService.Async.getInstance().getWorkloadTaskData(sessionId, new AsyncCallback<List<WorkloadTaskDataDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                caught.printStackTrace();
-            }
-
-            @Override
-            public void onSuccess(List<WorkloadTaskDataDto> result) {
-                for (WorkloadTaskDataDto data : result){
-                    TestPanel testPanel = new TestPanel(data);
-                    testPanels.put(data.getTaskId(), testPanel);
-                    testPanel.add(testPanel);
-                }
-            }
-        });
-
-        return testPanel;
-    }
-
-    @Override
-    public void update(Set<TaskDataDto> tests) {
+    public void updateTests(Set<TaskDataDto> tests) {
         removeOld(tests);
         addNew(tests);
     }
@@ -127,7 +106,6 @@ public class SessionSummaryPanel extends VerticalPanel implements SessionPanel{
         }
     }
 
-    @Override
     public void addTest(TaskDataDto test) {
         WorkloadTaskDataService.Async.getInstance().getWorkloadTaskData(session.getSessionId(), test.getId(), new AsyncCallback<WorkloadTaskDataDto>() {
             @Override
@@ -142,35 +120,5 @@ public class SessionSummaryPanel extends VerticalPanel implements SessionPanel{
                 testPanels.put(result.getName(), test);
             }
         });
-    }
-
-    @Override
-    public void removeTest(TaskDataDto test) {
-        if (testPanels.containsKey(test.getTaskName())){
-            TestPanel testPanel = testPanels.get(test.getTaskName());
-            if (testPanel.isVisible()){
-                testPanel.setVisible(false);
-            }
-        }
-    }
-
-    @Override
-    public void showMetric(TaskDataDto test, String metricName) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void hideMetric(TaskDataDto test, String metricName) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void showMetric(String metricName) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void hideMetric(String metricName) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

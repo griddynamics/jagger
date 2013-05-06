@@ -74,9 +74,6 @@ public class Trends extends DefaultActivity {
     ScrollPanel scrollPanelTrends;
 
     @UiField
-    ScrollPanel scrollPanelSummary;
-
-    @UiField
     SummaryPanel summaryPanel;
 
     @UiField
@@ -94,14 +91,23 @@ public class Trends extends DefaultActivity {
     DateBox sessionsTo;
 
     @UiField
-    VerticalPanel trendsDetails;
+    Panel trendsDetails;
 
     @UiField
-    HorizontalPanel summaryDetails;
+    Panel summaryDetails;
+
+    @UiField
+    SplitLayoutPanel settingsPanel;
+
+    @UiField
+    DockLayoutPanel testsMetricsPanel;
 
     @UiHandler("uncheckSessionsButton")
     void handleUncheckSessionsButtonClick(ClickEvent e) {
-        ((MultiSelectionModel<?>) sessionsDataGrid.getSelectionModel()).clear();
+        MultiSelectionModel model = (MultiSelectionModel<?>) sessionsDataGrid.getSelectionModel();
+        for (Object select : model.getSelectedSet()){
+            model.setSelected(select, false);
+        }
     }
 
     @UiHandler("showCheckedSessionsButton")
@@ -189,6 +195,8 @@ public class Trends extends DefaultActivity {
         setupTabPanel();
         setupSessionNumberTextBox();
         setupSessionsDateRange();
+        setupMetricPanel();
+        setupSettingsPanel();
     }
 
     private SimplePlot createPlot(final String id, Markings markings) {
@@ -240,18 +248,25 @@ public class Trends extends DefaultActivity {
         return plot;
     }
 
+    private void setupSettingsPanel(){
+        SplitLayoutPanel root = (SplitLayoutPanel) widget;
+        root.setWidgetToggleDisplayAllowed(settingsPanel, true);
+        testsMetricsPanel.setWidgetHidden(trendsDetails, true);
+    }
+
     private void setupTabPanel(){
         mainTabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
             @Override
             public void onSelection(SelectionEvent<Integer> event) {
                 int selected = event.getSelectedItem();
                 if (selected == 0){
-                    summaryDetails.setVisible(true);
-                    trendsDetails.setVisible(false);
+                    testsMetricsPanel.setWidgetHidden(summaryDetails, false);
+                    testsMetricsPanel.setWidgetHidden(trendsDetails, true);
                 }else
                 if (selected == 1){
-                    summaryDetails.setVisible(false);
-                    trendsDetails.setVisible(true);
+                    testsMetricsPanel.setWidgetHidden(summaryDetails, true);
+                    testsMetricsPanel.setWidgetHidden(trendsDetails, false);
+                    testsMetricsPanel.setWidgetSize(trendsDetails, testsMetricsPanel.getOffsetWidth());
                 }
             }
         });
@@ -312,14 +327,14 @@ public class Trends extends DefaultActivity {
 
     private void setupTestDataGrid(){
         testDataGrid = new CellTable<TaskDataDto>();
-        testDataGrid.setPageSize(15);
+        testDataGrid.setWidth("500px");
         testDataGrid.setEmptyTableWidget(new Label("No Tests"));
 
         // Add a selection model so we can select cells.
         final SelectionModel<TaskDataDto> selectionModel = new MultiSelectionModel<TaskDataDto>(new ProvidesKey<TaskDataDto>() {
             @Override
             public Object getKey(TaskDataDto item) {
-                return item.getTaskName()+item.getVersion();
+                return item.getTaskName()+item.getDescription();
             }
         });
         testDataGrid.setSelectionModel(selectionModel, DefaultSelectionEventManager.<TaskDataDto>createCheckboxManager());
@@ -450,6 +465,16 @@ public class Trends extends DefaultActivity {
 
         sessionsTo.addValueChangeHandler(valueChangeHandler);
         sessionsFrom.addValueChangeHandler(valueChangeHandler);
+    }
+
+    private void setupMetricPanel(){
+        metricPanel.addSelectionListener(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                Set<MetricNameDto> metrics = metricPanel.getSelected();
+                summaryPanel.updataMetrics(metrics);
+            }
+        });
     }
 
     private boolean isMaxPlotCountReached() {
@@ -636,6 +661,8 @@ public class Trends extends DefaultActivity {
             // Clear markings dto map
             markingsMap.clear();
             taskDataTreeViewModel.clear();
+            summaryPanel.updataMetrics(Collections.EMPTY_SET);
+            metricPanel.updateTests(Collections.EMPTY_SET);
             testDataGrid.setRowData(Collections.EMPTY_LIST);
 
             if (selected.size() == 1) {

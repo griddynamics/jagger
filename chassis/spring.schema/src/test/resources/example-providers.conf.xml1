@@ -41,6 +41,11 @@
     <query-provider id="queryProvider" xsi:type="query-provider-list">
 
         <query xsi:type="query-http" method="GET">
+            <method-params>
+                <param key="query">
+                    <value xsi:type="string" >griddynamics</value>
+                </param>
+            </method-params>
             <client-params>
                 <param key="http.protocol.allow-circular-redirects">
                     <value xsi:type="boolean" >false</value>
