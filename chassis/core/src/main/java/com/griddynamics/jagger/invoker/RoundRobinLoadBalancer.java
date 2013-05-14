@@ -20,10 +20,6 @@
 
 package com.griddynamics.jagger.invoker;
 
-import com.griddynamics.jagger.util.Pair;
-
-import java.util.Iterator;
-
 /**
  * Encapsulates round robin algorithm. For input: endpoints [e1, e2] and
  * queries [q1, q2, q3] returns (invoker, query) pairs in following order: (e1,
@@ -33,60 +29,27 @@ import java.util.Iterator;
  * @param <E> Endpoint type
  * @author Mairbek Khadikov
  */
-public class RoundRobinLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
+public class RoundRobinLoadBalancer<Q, E> extends SharePairSupplierLoadBalancer<Q, E> {
 
-    private PairSupplier<Q, E> pairSupplier = null;
-
-    public RoundRobinLoadBalancer(){
+    public RoundRobinLoadBalancer() {
         super();
     }
 
-    public RoundRobinLoadBalancer(Iterable<Q> queryProvider, Iterable<E> endpointProvider){
+    public RoundRobinLoadBalancer(Iterable<Q> queryProvider, Iterable<E> endpointProvider) {
         super(queryProvider, endpointProvider);
-    }
-
-    public void setPairSupplier(PairSupplier<Q, E> pairSupplier) {
-        this.pairSupplier = pairSupplier;
-    }
-
-    @Override
-    public Iterator<Pair<Q, E>> provide() {
-
-        return new Iterator<Pair<Q, E>>() {
-
-            private int size = getPairSupplier().size();
-            private int index = 0;
-
-            @Override
-            public boolean hasNext() {
-                return true;
-            }
-
-            @Override
-            public Pair<Q, E> next() {
-                if(index >= size) {
-                    index = 0;
-                }
-                return getPairSupplier().get(index++);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Read only iterator");
-            }
-
-            @Override
-            public String toString() {
-                return "RoundRobinLoadBalancer iterator";
-            }
-        };
     }
 
     public PairSupplier<Q, E> getPairSupplier() {
         if(pairSupplier == null) {
-            pairSupplier = RoundRobinPairSupplier.create(queryProvider, endpointProvider);
+            initPairSupplier(queryProvider, endpointProvider);
         }
         return pairSupplier;
+    }
+
+    private synchronized void initPairSupplier(Iterable<Q> queryProvider, Iterable<E> endpointProvider) {
+        if(pairSupplier == null) {
+            pairSupplier = RoundRobinPairSupplier.create(queryProvider, endpointProvider);
+        }
     }
 
     @Override
