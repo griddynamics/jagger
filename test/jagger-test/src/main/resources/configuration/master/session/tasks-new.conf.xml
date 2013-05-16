@@ -32,26 +32,33 @@
         >
 
 
-    <beans:bean id="endpointsIterable" class="java.util.LinkedList">
-        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints()}"/>
+    <beans:bean id="endpointsIterable-sleep-5ms" class="java.util.LinkedList">
+        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/5')}"/>
     </beans:bean>
-
 
      <test-description id="sleep-service-5ms" name="sleep-service-5ms" version="1">
 
          <scenario  xsi:type="scenario-query-pool">
-             <query-distributor xsi:type="query-distributor-round-robin"/>
+
+             <query-distributor xsi:type="query-distributor-round-robin" />
+
              <invoker xsi:type="invoker-http"/>
 
-             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable"/>
+             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable-sleep-5ms"/>
 
              <query-provider xsi:type="query-provider-list">
-                 <query-http>sleep/5</query-http>
+                 <query-http>emptyTestQuery</query-http>
+
              </query-provider>
 
          </scenario>
 
     </test-description>
+
+
+    <beans:bean id="endpointsIterable-sleep-50ms" class="java.util.LinkedList">
+        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/50')}"/>
+    </beans:bean>
 
     <test-description id="sleep-service-50ms" name="sleep-service-50ms" version="1">
 
@@ -59,15 +66,20 @@
              <query-distributor xsi:type="query-distributor-round-robin"/>
              <invoker xsi:type="invoker-http"/>
 
-             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable"/>
+             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable-sleep-50ms"/>
 
              <query-provider xsi:type="query-provider-list">
-                 <query-http>sleep/50</query-http>
+                 <query-http>emptyTestQuery</query-http>
              </query-provider>
 
          </scenario>
 
     </test-description>
+
+
+    <beans:bean id="endpointsIterable-sleep-50-150ms" class="java.util.LinkedList">
+        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/50-150')}"/>
+    </beans:bean>
 
     <test-description id="sleep-service-50-150ms" name="sleep-service-50-150ms" version="1">
 
@@ -75,16 +87,20 @@
              <query-distributor xsi:type="query-distributor-round-robin"/>
              <invoker xsi:type="invoker-http"/>
 
-             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable"/>
+             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable-sleep-50-150ms"/>
 
              <query-provider xsi:type="query-provider-list">
-                 <query-http>sleep/50-150</query-http>
+                 <query-http>emptyTestQuery</query-http>
              </query-provider>
 
          </scenario>
 
     </test-description>
 
+
+    <beans:bean id="endpointsIterable-pulse-service-30000-500" class="java.util.LinkedList">
+        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/pulse/30000/500')}"/>
+    </beans:bean>
 
     <test-description id="pulse-service-30000-500-abstract" name="pulse-service-30000-500" version="1" >
 
@@ -92,15 +108,20 @@
              <query-distributor xsi:type="query-distributor-round-robin"/>
              <invoker xsi:type="invoker-http"/>
 
-             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable"/>
+             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable-pulse-service-30000-500"/>
 
              <query-provider xsi:type="query-provider-list">
-                 <query-http>sleep/pulse/30000/500</query-http>
+                 <query-http>emptyTestQuery</query-http>
              </query-provider>
 
          </scenario>
 
     </test-description>
+
+
+     <beans:bean id="endpointsIterable-load-cpu-service-10000000" class="java.util.LinkedList">
+        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/load/10000000')}"/>
+    </beans:bean>
 
     <test-description id="load-cpu-service-10000000" name="load-cpu-service-10000000" version="1" >
 
@@ -108,16 +129,20 @@
              <query-distributor xsi:type="query-distributor-round-robin"/>
              <invoker xsi:type="invoker-http"/>
 
-             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable"/>
+             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable-load-cpu-service-10000000"/>
 
              <query-provider xsi:type="query-provider-list">
-                 <query-http>load/10000000</query-http>
+                 <query-http>emptyTestQuery</query-http>
              </query-provider>
 
          </scenario>
 
     </test-description>
 
+
+    <beans:bean id="endpointsIterable-allocate-memory-service-1000000x200" class="java.util.LinkedList">
+        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/allocate/1000000x200')}"/>
+    </beans:bean>
 
     <test-description id="allocate-memory-service-1000000x200" name="allocate-memory-service-1000000x200" version="1" >
 
@@ -125,10 +150,10 @@
              <query-distributor xsi:type="query-distributor-round-robin"/>
              <invoker xsi:type="invoker-http"/>
 
-             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable"/>
+             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable-allocate-memory-service-1000000x200"/>
 
              <query-provider xsi:type="query-provider-list">
-                 <query-http>allocate/1000000x200</query-http>
+                 <query-http>emptyTestQuery</query-http>
              </query-provider>
 
          </scenario>
@@ -136,16 +161,20 @@
     </test-description>
 
 
+    <beans:bean id="endpointsIterable-tcp-service-10000" class="java.util.LinkedList">
+        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/net/text/10000')}"/>
+    </beans:bean>
+
     <test-description id="tcp-service-10000" name="tcp-service-10000" version="1" >
 
         <scenario  xsi:type="scenario-query-pool">
              <query-distributor xsi:type="query-distributor-round-robin"/>
              <invoker xsi:type="invoker-http"/>
 
-             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable"/>
+             <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable-tcp-service-10000"/>
 
              <query-provider xsi:type="query-provider-list">
-                 <query-http>net/text/10000</query-http>
+                 <query-http>emptyTestQuery</query-http>
              </query-provider>
 
          </scenario>

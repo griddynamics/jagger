@@ -20,40 +20,11 @@
 
 package com.griddynamics.jagger.invoker;
 
-/**
- * Schedules queries across endpoints one by one. For input: endpoints [e1,
- * e2] and queries [q1, q2, q3] executes actions in following order: (e1, q1),
- * (e2, q1), (e1, q2), (e2, q2), (e1, q3), (e2, q3).
- *
- * @param <Q> Query type
- * @param <E> Endpoint type
- * @author Mairbek Khadikov
- */
-public class OneByOneLoadBalancer<Q, E> extends SharePairSupplierLoadBalancer<Q, E> {
+import com.griddynamics.jagger.util.Pair;
 
-    public OneByOneLoadBalancer() {
-        super();
-    }
+public interface PairSupplier<Q, E> {
 
-    public OneByOneLoadBalancer(Iterable<Q> queryProvider, Iterable<E> endpointProvider) {
-        super(queryProvider, endpointProvider);
-    }
+    public int size();
 
-    public PairSupplier<Q, E> getPairSupplier() {
-        if(pairSupplier == null) {
-            initPairSupplier(queryProvider, endpointProvider);
-        }
-        return pairSupplier;
-    }
-
-    private synchronized void initPairSupplier(Iterable<Q> queryProvider, Iterable<E> endpointProvider) {
-        if(pairSupplier == null) {
-            pairSupplier = OneByOnePairSupplier.create(queryProvider, endpointProvider);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "OneByOneLoadBalancer";
-    }
+    public Pair<Q, E> get(int index);
 }
