@@ -19,22 +19,15 @@
  */
 package com.griddynamics.jagger.invoker.http;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -42,60 +35,11 @@ import java.util.*;
  *
  * @author Alexey Kiselyov
  */
-public class HttpInvoker implements Invoker<HttpQuery, HttpResponse, String> {
-    private static final Logger log = LoggerFactory.getLogger(HttpInvoker.class);
-
-    private HttpClient httpClient;
-
-    @Required
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
+public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {
+    private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 
     @Override
-    public final HttpResponse invoke(HttpQuery query, String endpoint) throws InvocationException {
-        Preconditions.checkNotNull(query);
-        Preconditions.checkNotNull(endpoint);
-
-        HttpMethod method = prepareMethod(query, endpoint);
-
-        BufferedReader br = null;
-
-        try {
-            int returnCode = httpClient.executeMethod(method);
-
-            br = new BufferedReader(new InputStreamReader(method.getResponseBodyAsStream()));
-            StringBuilder response = new StringBuilder();
-
-            String readLine;
-            while ((readLine = br.readLine()) != null) {
-                response.append(readLine);
-            }
-
-            return HttpResponse.create(returnCode, response.toString());
-        } catch (HttpException e) {
-            log.debug("Error during invocation", e);
-            throw new InvocationException("InvocationException : ", e);
-        } catch (IOException e) {
-            log.debug("Error during invocation", e);
-            throw new InvocationException("InvocationException : ", e);
-        } finally {
-            try {
-                method.releaseConnection();
-            } catch (Throwable e) {
-                log.error("Cannot release connection", e);
-            }
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (Throwable e) {
-                    log.error("Can't close connection", e);
-                }
-            }
-        }
-    }
-
-    private HttpMethod prepareMethod(HttpQuery query, String endpoint) {
+    protected HttpMethod getHttpMethod(HttpQuery query, String endpoint) {
         HttpMethod method = createMethod(query, endpoint);
 
         if (!HttpQuery.Method.POST.equals(query.getMethod()) && !HttpQuery.Method.CONNECT.equals(query.getMethod())) {
@@ -106,14 +50,16 @@ public class HttpInvoker implements Invoker<HttpQuery, HttpResponse, String> {
             method.setQueryString(params.toArray(new NameValuePair[params.size()]));
         }
 
+        return method;
+    }
+
+    @Override
+    protected HttpClientParams getHttpClientParams(HttpQuery query) {
         HttpClientParams clientParams = new HttpClientParams();
         for (Map.Entry<String, Object> clientParam : query.getClientParams().entrySet()) {
             clientParams.setParameter(clientParam.getKey(), clientParam.getValue());
         }
-
-        httpClient.setParams(clientParams);
-
-        return method;
+        return clientParams;
     }
 
     private HttpMethod createMethod(HttpQuery query, String endpoint) {
