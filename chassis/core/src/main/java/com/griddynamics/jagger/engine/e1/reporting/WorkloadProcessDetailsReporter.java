@@ -28,6 +28,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +77,14 @@ public class WorkloadProcessDetailsReporter extends AbstractMappedReportProvider
                     String.format("%.3fs", percentile.getPercentileValue() / 1000));
             result.add(dto);
         }
-
+        
+        Collections.sort(result, new Comparator<WorkloadProcessDetailsDTO>() {
+            @Override
+            public int compare(WorkloadProcessDetailsDTO o1, WorkloadProcessDetailsDTO o2) {
+                return o1.getKey().compareTo(o2.getKey());
+            }
+        });
+        
         return new JRBeanCollectionDataSource(result);
     }
 }
