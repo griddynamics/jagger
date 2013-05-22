@@ -25,6 +25,7 @@ import com.griddynamics.jagger.exception.TechnicalException;
 import java.io.*;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 /**
  * @author Nikolay Musienko
@@ -54,9 +55,7 @@ public class FileProvider implements Iterable<String> {
 
         return new Iterator<String>() {
 
-            private BufferedReader reader;
-            String next;
-            private boolean loaded = false;
+            private Scanner scanner;
 
             {
                 init();
@@ -67,41 +66,22 @@ public class FileProvider implements Iterable<String> {
                     throw new TechnicalException("File path can't be NULL!");
                 }
                 try {
-                    reader = new BufferedReader(new FileReader(new File(path)));
+                    scanner = new Scanner(new File(path));
                 } catch (FileNotFoundException e) {
                     throw Throwables.propagate(e);
                 }
-                next = readNext();
             }
 
             @Override
             public boolean hasNext() {
-                return next != null;
+                return scanner.hasNextLine();
             }
 
             @Override
             public String next() {
-                String ret = next;
-                if(ret == null){
-                    throw new NoSuchElementException("Iteration has no more elements");
-                }
-                next = readNext();
-                return ret;
+                return scanner.nextLine();
             }
 
-            private String readNext() {
-                if (loaded) {
-                    return null;
-                }
-                try {
-                    return reader.readLine();
-                } catch (EOFException e) {
-                    loaded = true;
-                    return null;
-                } catch (IOException e) {
-                    throw Throwables.propagate(e);
-                }
-            }
 
             @Override
             public void remove() {
