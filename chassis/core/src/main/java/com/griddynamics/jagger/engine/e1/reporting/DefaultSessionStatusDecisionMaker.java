@@ -22,18 +22,24 @@ package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
+import org.apache.commons.math.util.MathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionMaker {
-    private static final double OK_SUCCESS_RATE = 1.0;
+    private static final Logger log = LoggerFactory.getLogger(DefaultSessionStatusDecisionMaker.class);
+    private static final double epsilon = 0.0000001;
+    public static double successRateThreshold = 1.0;
 
     private String description;
 
     @Override
     public Decision decideOnTest(WorkloadTaskData workloadTaskData) {
-        if (Double.compare(workloadTaskData.getSuccessRate().doubleValue(), OK_SUCCESS_RATE) == 0) {
+        if (MathUtils.compareTo(workloadTaskData.getSuccessRate().doubleValue(), successRateThreshold, epsilon) >= 0) {
             return Decision.OK;
         }
         return Decision.FATAL;
@@ -60,4 +66,20 @@ public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionM
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public static Configurator getConfigurator() {
+        return Configurator.configuratorInstance;
+    }
+
+    public static class Configurator {
+        private static final Configurator configuratorInstance = new Configurator();
+
+        private Configurator() {}
+
+        public void setSuccessRateThreshold(double successRateThreshold) {
+            log.info("setting successRateThreshold= {}", successRateThreshold);
+            DefaultSessionStatusDecisionMaker.successRateThreshold = successRateThreshold;
+        }
+    }
 }
+

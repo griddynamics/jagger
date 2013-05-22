@@ -34,6 +34,10 @@
         </property>
     </bean>
 
+    <bean id="defaultSessionStatusDecisionMaker" class="com.griddynamics.jagger.engine.e1.reporting.DefaultSessionStatusDecisionMaker" factory-method="getConfigurator">
+        <property name="successRateThreshold" value="${chassis.master.reporting.successrate.threshold}"/>
+    </bean>
+
     <alias name="sessionIdProviderReadOnly_${report.only}" alias="sessionIdProvider"/>
     <alias name="sessionIdProviderBean" alias="sessionIdProviderReadOnly_true"/>
     <alias name="sequenceSessionIdProvider" alias="sessionIdProviderReadOnly_false"/>
