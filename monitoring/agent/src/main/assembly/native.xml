@@ -10,7 +10,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>${project.build.directory}/lib/native/hyperic-sigar-1.6.0.14/sigar-bin/lib</directory>
+            <directory>${project.build.directory}/lib/native/hyperic-sigar-1.6.3/sigar-bin/lib</directory>
             <includes>
                 <include>*.*</include>
             </includes>

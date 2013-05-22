@@ -36,7 +36,7 @@
     </parent>
 
     <properties>
-        <sigar.version>1.6.0.14</sigar.version>
+        <sigar.version>1.6.3.82</sigar.version>
         <sigar.native.libs.dest>${project.build.directory}/lib/native</sigar.native.libs.dest>
     </properties>
 
@@ -152,8 +152,8 @@
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${sigar.native.libs.dest}</outputDirectory>
-                            <includes>hyperic-sigar-1.6.0.14/sigar-bin/lib/*.*</includes>
-                            <excludes>hyperic-sigar-1.6.0.14/sigar-bin/lib/*.jar</excludes>
+                            <includes>hyperic-sigar-1.6.3/sigar-bin/lib/*.*</includes>
+                            <excludes>hyperic-sigar-1.6.3/sigar-bin/lib/*.jar</excludes>
                         </configuration>
                     </execution>
                 </executions>
