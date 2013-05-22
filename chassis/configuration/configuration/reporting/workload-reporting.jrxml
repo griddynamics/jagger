@@ -39,6 +39,7 @@
     <field name="samples" class="java.lang.Integer"/>
     <field name="termination" class="java.lang.String"/>
     <field name="duration" class="java.math.BigDecimal"/>
+    <field name="startTime" class="java.util.Date"/>
     <field name="throughput" class="java.math.BigDecimal"/>
     <field name="failuresCount" class="java.lang.Integer"/>
     <field name="successRate" class="java.math.BigDecimal"/>
@@ -102,7 +103,7 @@
         </band>
     </columnHeader>
     <detail>
-        <band height="96" splitType="Stretch">
+        <band height="106" splitType="Stretch">
             <textField isStretchWithOverflow="true">
                 <reportElement style="Compact_Header_Bold" x="0" y="0" width="30" height="10"/>
                 <textElement textAlignment="Center"/>
@@ -164,60 +165,71 @@
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="340" y="30" width="110" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
-                <text><![CDATA[Duration (sec)]]></text>
+                <text><![CDATA[Start time]]></text>
             </staticText>
-            <textField isStretchWithOverflow="true" pattern="##0.000">
+            <textField isStretchWithOverflow="true" pattern="HH:mm:ss.SSS, dd MMMMM yyyy">
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="450" y="30" width="100" height="10"/>
                 <textElement textAlignment="Left"/>
-                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{duration}]]></textFieldExpression>
+                <textFieldExpression class="java.util.Date"><![CDATA[$F{startTime}]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="340" y="40" width="110" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
-                <text><![CDATA[Average Latency (sec)]]></text>
+                <text><![CDATA[Duration (sec)]]></text>
             </staticText>
             <textField isStretchWithOverflow="true" pattern="##0.000">
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="450" y="40" width="100" height="10"/>
                 <textElement textAlignment="Left"/>
-                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{avgLatency}]]></textFieldExpression>
+                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{duration}]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="340" y="50" width="110" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
-                <text><![CDATA[StdDev Latency (sec)]]></text>
+                <text><![CDATA[Average Latency (sec)]]></text>
             </staticText>
             <textField isStretchWithOverflow="true" pattern="##0.000">
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="450" y="50" width="100" height="10"/>
                 <textElement textAlignment="Left"/>
-                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{stdDevLatency}]]></textFieldExpression>
+                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{avgLatency}]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="340" y="60" width="110" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
-                <text><![CDATA[Number of failures]]></text>
+                <text><![CDATA[StdDev Latency (sec)]]></text>
             </staticText>
-            <textField isStretchWithOverflow="true">
+            <textField isStretchWithOverflow="true" pattern="##0.000">
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="450" y="60" width="100" height="10"/>
                 <textElement textAlignment="Left"/>
-                <textFieldExpression class="java.lang.Integer"><![CDATA[$F{failuresCount}]]></textFieldExpression>
+                <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{stdDevLatency}]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="340" y="70" width="110" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
-                <text><![CDATA[Success Rate]]></text>
+                <text><![CDATA[Number of failures]]></text>
             </staticText>
             <textField isStretchWithOverflow="true">
                 <reportElement style="Compact_Header_Bold" positionType="Float" x="450" y="70" width="100" height="10"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression class="java.lang.Integer"><![CDATA[$F{failuresCount}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement style="Compact_Header_Bold" positionType="Float" x="340" y="80" width="110" height="10"
+                               forecolor="#AAAAAA"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle"/>
+                <text><![CDATA[Success Rate]]></text>
+            </staticText>
+            <textField isStretchWithOverflow="true">
+                <reportElement style="Compact_Header_Bold" positionType="Float" x="450" y="80" width="100" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{successRate}]]></textFieldExpression>
             </textField>
 
             <subreport>
-                <reportElement positionType="Float" x="340" y="80" width="110" height="10"/>
+                <reportElement positionType="Float" x="340" y="90" width="110" height="10"/>
                 <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[$P{context}.getMappedProvider("diagnosticResults").getDataSource( $F{testId} )]]></dataSourceExpression>
@@ -234,7 +246,7 @@
                     <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("workloadProcessDetails").getReport( $F{testId} )]]></subreportExpression>
             </subreport>
             <rectangle>
-                <reportElement positionType="Float" x="0" y="92" width="550" height="2" backcolor="#777777"/>
+                <reportElement positionType="Float" x="0" y="102" width="550" height="2" backcolor="#777777"/>
                 <graphicElement>
                     <pen lineWidth="0.0" lineStyle="Solid"/>
                 </graphicElement>

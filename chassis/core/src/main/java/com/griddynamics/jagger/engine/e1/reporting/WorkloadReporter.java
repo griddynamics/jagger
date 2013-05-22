@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import java.awt.*;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +77,8 @@ public class WorkloadReporter extends AbstractReportProvider {
 			BigDecimal duration = new BigDecimal(workloadData.getEndTime().getTime()
 					- workloadData.getStartTime().getTime()).divide(new BigDecimal(1000));
 			reportData.setDuration(duration);
+
+            reportData.setStartTime(workloadData.getStartTime());
 
 			WorkloadTaskData resultData = null;
 			for (WorkloadTaskData workloadTaskData : allWorkloadTasks) {
@@ -143,6 +146,7 @@ public class WorkloadReporter extends AbstractReportProvider {
         private String termination;
         private Integer samples;
         private BigDecimal duration;
+        private Date startTime;
 		private BigDecimal totalDuration;
 		private BigDecimal throughput;
         private String latency85;
@@ -160,6 +164,14 @@ public class WorkloadReporter extends AbstractReportProvider {
 		public void setSessionId(String sessionId) {
 			this.sessionId = sessionId;
 		}
+
+        public Date getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(Date startTime) {
+            this.startTime = startTime;
+        }
 
         public String getTestId() {
             return testId;
