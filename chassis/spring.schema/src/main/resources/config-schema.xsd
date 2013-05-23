@@ -936,6 +936,14 @@
         </xsd:annotation>
     </xsd:element>
 
+    <xsd:element name="invoker-apache-http" type="invoker-apache-http" substitutionGroup="invoker">
+        <xsd:annotation>
+            <xsd:documentation>
+                An invoker, that invoke apache http query (based on 'org.apache.http.client.methods.HttpRequestBase').
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
     <xsd:element name="invoker-soap" type="invoker-soap" substitutionGroup="invoker">
         <xsd:annotation>
             <xsd:documentation>
@@ -956,6 +964,19 @@
     <xsd:complexType name="invokerAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="invoker-apache-http">
+        <xsd:annotation>
+            <xsd:documentation>
+                An invoker, that invoke apache http query (based on 'org.apache.http.client.methods.HttpRequestBase').
+                org.apache.http.client.methods. HttpGet, HttpPos, HttpPut ...
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="invokerAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

@@ -30,28 +30,35 @@
 
     <bean id="tcpTrafficInvoker" class="com.griddynamics.jagger.invoker.http.TcpTrafficInvoker" />
 
-    <bean id="commonHttpMultithreadedConnectionManager"
-          class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">
-        <property name="params">
-            <bean class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
-                <property name="connectionTimeout" value="60000"/>
-                <property name="soTimeout" value="60000"/>
-                <property name="staleCheckingEnabled" value="true"/>
-                <property name="receiveBufferSize" value="65536"/>
-                <property name="sendBufferSize" value="65536"/>
-                <property name="tcpNoDelay" value="true"/>
-                <property name="defaultMaxConnectionsPerHost" value="100"/>
-                <property name="maxTotalConnections" value="1000"/>
-            </bean>
-        </property>
+    <bean id="poolingClientConnectionManager"
+          class="org.apache.http.impl.conn.PoolingClientConnectionManager" >
+        <property name="maxTotal" value="1000" />
+        <property name="defaultMaxPerRoute" value="100" />
     </bean>
 
-    <bean id="apacheHttpClient" class="org.apache.commons.httpclient.HttpClient">
-        <property name="httpConnectionManager" ref="commonHttpMultithreadedConnectionManager"/>
+    <bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+        <constructor-arg name="conman" ref="poolingClientConnectionManager" />
+        <property name="params" ref="defaultHttpParams" />
+    </bean>
+
+    <bean id="defaultHttpParams" class="org.apache.http.params.BasicHttpParams" />
+
+    <bean class="org.apache.http.params.HttpConnectionParamBean">
+        <constructor-arg name="params" ref="defaultHttpParams"/>
+
+        <property name="connectionTimeout" value="60000"/>
+        <property name="soTimeout" value="60000" />
+        <property name="tcpNoDelay" value="true"/>
+        <property name="staleCheckingEnabled" value="true"/>
+        <property name="socketBufferSize" value="65536"/>
     </bean>
 
     <bean id="httpInvoker" class="com.griddynamics.jagger.invoker.http.HttpInvoker">
-        <property name="httpClient" ref="apacheHttpClient" />
+        <property name="httpClient" ref="httpClient" />
+    </bean>
+
+    <bean id="apacheHttpInvoker" class="com.griddynamics.jagger.invoker.http.ApacheHttpInvoker">
+        <property name="httpClient" ref="httpClient" />
     </bean>
 
 

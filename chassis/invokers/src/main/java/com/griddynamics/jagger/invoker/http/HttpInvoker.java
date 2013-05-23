@@ -19,22 +19,19 @@
  */
 package com.griddynamics.jagger.invoker.http;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.*;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.*;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -42,121 +39,64 @@ import java.util.*;
  *
  * @author Alexey Kiselyov
  */
-public class HttpInvoker implements Invoker<HttpQuery, HttpResponse, String> {
-    private static final Logger log = LoggerFactory.getLogger(HttpInvoker.class);
+public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {
+    private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 
-    private HttpClient httpClient;
+    @Override
+    protected HttpRequestBase getHttpMethod(HttpQuery query, String endpoint) {
 
-    @Required
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
+        try {
+            URIBuilder uriBuilder = new URIBuilder(endpoint);
+
+            if (!HttpQuery.Method.POST.equals(query.getMethod())) {
+                for (Map.Entry<String, String> methodParam : query.getMethodParams().entrySet()) {
+                    uriBuilder.setParameter(methodParam.getKey(), methodParam.getValue());
+                }
+            }
+
+            return createMethod(query, uriBuilder.build());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public final HttpResponse invoke(HttpQuery query, String endpoint) throws InvocationException {
-        Preconditions.checkNotNull(query);
-        Preconditions.checkNotNull(endpoint);
-
-        HttpMethod method = prepareMethod(query, endpoint);
-
-        BufferedReader br = null;
-
-        try {
-            int returnCode = httpClient.executeMethod(method);
-
-            br = new BufferedReader(new InputStreamReader(method.getResponseBodyAsStream()));
-            StringBuilder response = new StringBuilder();
-
-            String readLine;
-            while ((readLine = br.readLine()) != null) {
-                response.append(readLine);
-            }
-
-            return HttpResponse.create(returnCode, response.toString());
-        } catch (HttpException e) {
-            log.debug("Error during invocation", e);
-            throw new InvocationException("InvocationException : ", e);
-        } catch (IOException e) {
-            log.debug("Error during invocation", e);
-            throw new InvocationException("InvocationException : ", e);
-        } finally {
-            try {
-                method.releaseConnection();
-            } catch (Throwable e) {
-                log.error("Cannot release connection", e);
-            }
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (Throwable e) {
-                    log.error("Can't close connection", e);
-                }
-            }
-        }
-    }
-
-    private HttpMethod prepareMethod(HttpQuery query, String endpoint) {
-        HttpMethod method = createMethod(query, endpoint);
-
-        if (!HttpQuery.Method.POST.equals(query.getMethod()) && !HttpQuery.Method.CONNECT.equals(query.getMethod())) {
-            List<NameValuePair> params = Lists.newLinkedList();
-            for (Map.Entry<String, String> methodParam : query.getMethodParams().entrySet()) {
-                params.add(new NameValuePair(methodParam.getKey(), methodParam.getValue()));
-            }
-            method.setQueryString(params.toArray(new NameValuePair[params.size()]));
-        }
-
-        HttpClientParams clientParams = new HttpClientParams();
+    protected HttpParams getHttpClientParams(HttpQuery query) {
+        HttpParams clientParams = new BasicHttpParams();
         for (Map.Entry<String, Object> clientParam : query.getClientParams().entrySet()) {
             clientParams.setParameter(clientParam.getKey(), clientParam.getValue());
         }
-
-        httpClient.setParams(clientParams);
-
-        return method;
+        return clientParams;
     }
 
-    private HttpMethod createMethod(HttpQuery query, String endpoint) {
-        HttpMethod method;
+    private HttpRequestBase createMethod(HttpQuery query, URI uri) throws UnsupportedEncodingException {
+        HttpRequestBase method;
         switch (query.getMethod()) {
             case POST:
-                method = new PostMethod(endpoint);
+                method = new HttpPost(uri);
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 for (Map.Entry<String, String> methodParam : query.getMethodParams().entrySet()) {
-                    ((PostMethod) method).addParameter(methodParam.getKey(), methodParam.getValue());
+                    nameValuePairs.add(new BasicNameValuePair(methodParam.getKey(), methodParam.getValue()));
                 }
+                ((HttpPost) method).setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 break;
             case PUT:
-                method = new PutMethod(endpoint);
+                method = new HttpPut(uri);
                 break;
             case GET:
-                method = new GetMethod(endpoint);
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
-                for (Map.Entry<String, String> stringStringEntry : query.getMethodParams().entrySet()) {
-                    params.add(new NameValuePair(stringStringEntry.getKey(), stringStringEntry.getValue()));
-                }
-                method.setQueryString(params.toArray(new NameValuePair[params.size()]));
+                method = new HttpGet(uri);
                 break;
             case DELETE:
-                method = new DeleteMethod(endpoint);
+                method = new HttpDelete(uri);
                 break;
             case TRACE:
-                method = new TraceMethod(endpoint);
+                method = new HttpTrace(uri);
                 break;
             case HEAD:
-                method = new HeadMethod(endpoint);
+                method = new HttpHead(uri);
                 break;
             case OPTIONS:
-                method = new OptionsMethod(endpoint);
-                break;
-            case CONNECT:
-                HostConfiguration hostConfiguration = new HostConfiguration();
-                hostConfiguration.setHost(endpoint);
-                method = new ConnectMethod();
-                try {
-                    method.setURI(new URI(endpoint, true));
-                } catch (URIException e) {
-                    throw new InvocationException("InvocationException : ", e);
-                }
+                method = new HttpOptions(uri);
                 break;
             default:
                 throw new UnsupportedOperationException("Invoker does not support \"" + query.getMethod() + "\" HTTP request.");

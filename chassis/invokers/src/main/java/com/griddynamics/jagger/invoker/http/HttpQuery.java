@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.invoker.http;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.httpclient.methods.RequestEntity;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.Serializable;
@@ -39,8 +40,7 @@ public class HttpQuery implements Serializable {
         DELETE,
         TRACE,
         HEAD,
-        OPTIONS,
-        CONNECT
+        OPTIONS
     }
 
     private Method method = Method.GET;
