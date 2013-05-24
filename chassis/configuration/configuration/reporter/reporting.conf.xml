@@ -117,6 +117,13 @@
                 <entry key="scalabilityPlots">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadScalabilityPlotsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/scalability-plots.jrxml"/>
+                        <property name="clockDictionary">
+                            <map key-type="java.lang.String" value-type="java.lang.String">
+                                <entry key="invocation" value="Invocations" />
+                                <entry key="user" value="Thread Count" />
+                                <entry key="tps" value="TPS" />
+                            </map>
+                        </property>
                     </bean>
                 </entry>
 

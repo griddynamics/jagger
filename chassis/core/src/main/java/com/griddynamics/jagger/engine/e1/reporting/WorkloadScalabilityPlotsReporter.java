@@ -69,6 +69,16 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
         }
     }
 
+    private HashMap<String, String> clockDictionary;
+
+    public HashMap<String, String> getClockDictionary() {
+        return clockDictionary;
+    }
+
+    public void setClockDictionary(HashMap<String, String> clockDictionary) {
+        this.clockDictionary = clockDictionary;
+    }
+
     @Override
     public JRDataSource getDataSource() {
 
@@ -85,17 +95,22 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
 
     private Collection<ScenarioPlotDTO> getScenarioPlots(List<WorkloadData> scenarios) {
         HashMap<String, ScenarioPlotDTO> throughputPlots = new HashMap<String, ScenarioPlotDTO>();
+        List<WorkloadTaskData> resultData;
         for (WorkloadData scenario : scenarios) {
             String scenarioName = scenario.getScenario().getName();
 
             if (!throughputPlots.containsKey(scenarioName)) {
-                XYDataset latencyData = getLatencyData(scenarioName);
-                XYDataset throughputData = getThroughputData(scenarioName);
 
-                JFreeChart chartThroughput = ChartHelper.createXYChart(null, throughputData, "Thread Count",
+                resultData = getResultData(scenarioName);
+
+                XYDataset latencyData = getLatencyData(resultData);
+                XYDataset throughputData = getThroughputData(resultData);
+                String clockForPlot = getClockForPlot(resultData);
+
+                JFreeChart chartThroughput = ChartHelper.createXYChart(null, throughputData, clockForPlot,
                         "Throughput (TPS)", 6, 3, ChartHelper.ColorTheme.LIGHT);
 
-                JFreeChart chartLatency = ChartHelper.createXYChart(null, latencyData, "Thread Count",
+                JFreeChart chartLatency = ChartHelper.createXYChart(null, latencyData, clockForPlot,
                         "Latency (sec)", 6, 3, ChartHelper.ColorTheme.LIGHT);
 
                 ScenarioPlotDTO plotDTO = new ScenarioPlotDTO();
@@ -104,30 +119,45 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
                 plotDTO.setLatencyPlot(new JCommonDrawableRenderer(chartLatency));
 
                 throughputPlots.put(scenarioName, plotDTO);
+
+                resultData.clear();
             }
         }
         return throughputPlots.values();
     }
 
-    private XYDataset getThroughputData(String scenarioName) {
-        List<WorkloadTaskData> all = getResultData(scenarioName);
+    private String getClockForPlot(List<WorkloadTaskData> resultData) {
+        String clock = "-";
+        if (resultData.size() > 0) {
+            clock = resultData.get(0).getClock();
+            if (clockDictionary != null) {
+                for (String key : clockDictionary.keySet()) {
+                    if (clock.contains(key)) {
+                        return clockDictionary.get(key);
+                    }
+                }
+            }
+        }
+        return clock;
+    }
+
+    private XYDataset getThroughputData(List<WorkloadTaskData> resultData) {
 
         XYSeries throughput = new XYSeries("Througput");
         throughput.add(0, 0);
-        for (WorkloadTaskData workloadTaskData : all) {
+        for (WorkloadTaskData workloadTaskData : resultData) {
             throughput.add(workloadTaskData.getClockValue(), workloadTaskData.getThroughput());
         }
         return new XYSeriesCollection(throughput);
     }
 
-    private XYDataset getLatencyData(String scenarioName) {
-        List<WorkloadTaskData> all = getResultData(scenarioName);
+    private XYDataset getLatencyData(List<WorkloadTaskData> resultData) {
 
         XYSeries meanLatency = new XYSeries("Mean");
         XYSeries stdDevLatency = new XYSeries("StdDev");
         meanLatency.add(0, 0);
         stdDevLatency.add(0, 0);
-        for (WorkloadTaskData workloadTaskData : all) {
+        for (WorkloadTaskData workloadTaskData : resultData) {
             meanLatency.add(workloadTaskData.getClockValue(), workloadTaskData.getAvgLatency());
             stdDevLatency.add(workloadTaskData.getClockValue(), workloadTaskData.getStdDevLatency());
         }

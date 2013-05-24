@@ -114,6 +114,6 @@ public class ExactInvocationsClock implements WorkloadClock {
 
     @Override
     public String toString() {
-        return threadCount+" virtual users";
+        return samplesCount + " invocations";
     }
 }

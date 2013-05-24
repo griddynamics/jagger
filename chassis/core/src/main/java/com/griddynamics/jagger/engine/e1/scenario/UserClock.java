@@ -131,6 +131,6 @@ public class UserClock implements WorkloadClock {
 
     @Override
     public String toString() {
-        return totalUserCount + " virtual user with " + workload.getDelay() + " delay";
+        return totalUserCount + " virtual user(s) with " + workload.getDelay() + " delay";
     }
 }
