@@ -47,11 +47,11 @@ public abstract class ApacheAbstractHttpInvoker<Q> implements Invoker<Q, HttpRes
         Preconditions.checkNotNull(query);
         Preconditions.checkNotNull(endpoint);
 
-        httpClient.setParams(getHttpClientParams(query));
         HttpRequestBase method = null;
         HttpEntity response = null;
         try {
             method = getHttpMethod(query, endpoint);
+            method.setParams(getHttpClientParams(query));
 
             org.apache.http.HttpResponse httpResponse = httpClient.execute(method);
             response = httpResponse.getEntity();
