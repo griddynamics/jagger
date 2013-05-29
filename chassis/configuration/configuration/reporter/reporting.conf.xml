@@ -119,9 +119,9 @@
                         <property name="template" value="configuration/reporting/scalability-plots.jrxml"/>
                         <property name="clockDictionary">
                             <map key-type="java.lang.String" value-type="java.lang.String">
-                                <entry key="invocation" value="Invocations" />
-                                <entry key="user" value="Thread Count" />
-                                <entry key="tps" value="TPS" />
+                                <entry key="delay" value="Thread Count"/>
+                                <entry key="tps" value="TPS"/>
+                                <entry key="user" value="Invocations"/>
                             </map>
                         </property>
                     </bean>
