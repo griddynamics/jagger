@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
-public class ApacheHttpInvoker extends  ApacheAbstractHttpInvoker<HttpRequestBase> {
+public class ApacheHttpInvoker extends ApacheAbstractHttpInvoker<HttpRequestBase> {
     private static final Logger log = LoggerFactory.getLogger(ApacheHttpInvoker.class);
 
     @Override
@@ -41,6 +41,9 @@ public class ApacheHttpInvoker extends  ApacheAbstractHttpInvoker<HttpRequestBas
                 uriBuilder.setQuery(query.getURI().getQuery());
                 uriBuilder.setFragment(query.getURI().getFragment());
                 uriBuilder.setUserInfo(query.getURI().getUserInfo());
+                if (!query.getURI().getPath().isEmpty()) {
+                    uriBuilder.setPath(query.getURI().getPath());
+                }
                 query.setURI(uriBuilder.build());
                 return query;
             }
