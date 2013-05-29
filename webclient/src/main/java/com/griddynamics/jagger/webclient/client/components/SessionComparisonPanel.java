@@ -46,6 +46,7 @@ public class SessionComparisonPanel extends VerticalPanel{
         grid.setBorder("1px solid blue");
         grid.setWidth("97%");
         grid.setHeight("80%");
+        grid.setCanCollapseGroup(false);
 
         List<ListGridField> fields = new ArrayList<ListGridField>(chosenSessions.size()+3);
 

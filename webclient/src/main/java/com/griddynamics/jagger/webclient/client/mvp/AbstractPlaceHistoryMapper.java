@@ -4,10 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceHistoryMapper;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -15,7 +12,7 @@ import java.util.Set;
  */
 public abstract class AbstractPlaceHistoryMapper implements PlaceHistoryMapper {
 
-    protected static final String SEPARATOR_TOKEN_PARAMETERS = ":";
+    protected static final String SEPARATOR_TOKEN_PARAMETERS = "?";
 
     protected static final String SEPARATOR_PARAMETERS = "&";
 
@@ -39,20 +36,60 @@ public abstract class AbstractPlaceHistoryMapper implements PlaceHistoryMapper {
         if (place instanceof PlaceWithParameters) {
             int index = token.indexOf(SEPARATOR_TOKEN_PARAMETERS);
             if (index != -1) {
-                String[] parameters = token.substring(index + 1).split(SEPARATOR_PARAMETERS);
-                Map<String, Set<String>> mapParameters = new HashMap<String, Set<String>>();
-                for (String parameter : parameters) {
-                    String[] paramIdValue = parameter.split(SEPARATOR_PARAMETER_ID_VALUE);
-                    if (!mapParameters.containsKey(paramIdValue[0])) {
-                        mapParameters.put(paramIdValue[0], new HashSet<String>());
-                    }
-                    mapParameters.get(paramIdValue[0]).add(paramIdValue[1]);
-                }
-                ((PlaceWithParameters) place).setParameters(mapParameters);
+                ((PlaceWithParameters) place).setParameters(getParameters(token.substring(index+1)));
             }
         }
 
         return place;
+    }
+
+    public static Map<String, Set<String>> getParameters(String line){
+        Map<String, Set<String>> mapParameters = new HashMap<String, Set<String>>();
+
+        String[] parameters = complexSplit(line, '&');
+
+        for (String parameter : parameters) {
+            String[] paramIdValue = complexSplit(parameter, '=');
+            if (!mapParameters.containsKey(paramIdValue[0])) {
+                String[] values = complexSplit(paramIdValue[1], ',');
+                if (values.length > 0){
+                    HashSet<String> set = new HashSet<String>(Arrays.asList(values));
+                    mapParameters.put(paramIdValue[0], set);
+                }
+            }
+        }
+
+        return mapParameters;
+    }
+
+    public static String[] complexSplit(String line, char separator){
+        ArrayList<String> elements = new ArrayList<String>();
+        int startPos = 0;
+        int bracketCount = 0;
+        for (int i=0; i<line.length(); i++){
+            char current = line.charAt(i);
+            if (current == '('){
+                bracketCount++;
+                i++;
+                while (bracketCount!=0 && i<line.length()){
+                    if (line.charAt(i)=='('){
+                        bracketCount++;
+                    }
+                    if (line.charAt(i)==')'){
+                        bracketCount--;
+                    }
+                    i++;
+                }
+            }
+            if (i<line.length() && line.charAt(i) == separator){
+                elements.add(line.substring(startPos, i));
+                startPos = i+1;
+            }
+        }
+
+        elements.add(line.substring(startPos, line.length()));
+
+        return elements.toArray(new String[]{});
     }
 
     @Override
@@ -64,20 +101,20 @@ public abstract class AbstractPlaceHistoryMapper implements PlaceHistoryMapper {
             if (null != parameters && !parameters.isEmpty()) {
                 StringBuilder tokenBuilder = new StringBuilder(token);
                 tokenBuilder.append(SEPARATOR_TOKEN_PARAMETERS);
-                boolean first = true;
                 for (Map.Entry<String, Set<String>> parameter : parameters.entrySet()) {
 
+                    tokenBuilder.append(parameter.getKey());
+                    tokenBuilder.append(SEPARATOR_PARAMETER_ID_VALUE);
+
+                    StringBuilder paramBuilder = new StringBuilder();
                     for (String paramValue : parameter.getValue()) {
-                        if (!first) {
-                            tokenBuilder.append(SEPARATOR_PARAMETERS);
-                        }
-                        tokenBuilder.append(parameter.getKey());
-                        tokenBuilder.append(SEPARATOR_PARAMETER_ID_VALUE);
-                        tokenBuilder.append(paramValue);
-                        first = false;
+                        paramBuilder.append(paramValue);
+                        paramBuilder.append(',');
                     }
+                    tokenBuilder.append(paramBuilder.toString().substring(0, paramBuilder.length()-1));
+                    tokenBuilder.append(SEPARATOR_PARAMETERS);
                 }
-                token = tokenBuilder.toString();
+                token = tokenBuilder.toString().substring(0, tokenBuilder.length()-1);
             }
         }
         return token;

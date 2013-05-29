@@ -214,7 +214,6 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
 
         for (MonitoringStatistics monitoringStatistics : monitoringStatisticsList) {
             String boxIdentifier = monitoringStatistics.getBoxIdentifier() != null ? monitoringStatistics.getBoxIdentifier() : monitoringStatistics.getSystemUnderTestUrl();
-            boxIdentifier = cutBoxUuid(boxIdentifier);
 
             String description = legendProvider.generatePlotLegend(monitoringStatistics.getTaskData().getSessionId(), monitoringStatistics.getParameterId().getDescription(), addSessionPrefix);
 
@@ -251,24 +250,6 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
         }
 
         return plotSeriesDtoList;
-    }
-
-    /**
-     * Uses to cut box UUID for cross session plot comparing
-     *
-     * @param boxIdentifier
-     * @return
-     */
-    private String cutBoxUuid(String boxIdentifier) {
-        if (!boxIdentifier.matches(IP_ADDRESS_REG_EXP)) {
-            return boxIdentifier;
-        }
-        if (boxIdentifier.contains("jmx port")) {
-            return boxIdentifier;
-        }
-
-        String toCut = boxIdentifier.substring(boxIdentifier.indexOf("-"), boxIdentifier.indexOf("[") - 1);
-        return boxIdentifier.replace(toCut, "");
     }
 
     private DefaultMonitoringParameters[] findDefaultMonitoringParameters(Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups, String plotName) {

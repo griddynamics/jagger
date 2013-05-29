@@ -78,10 +78,12 @@ public class MetricDataServiceImpl implements MetricDataService {
 
         if (standardMetrics.containsKey(metricName.getName())){
             //it is a standard metric
-            List<Object[]> result = entityManager.createQuery("select workload."+ standardMetrics.get(metricName.getName())+", workload.sessionId "+
+            List<Object[]> result = entityManager.createNativeQuery("select workload."+standardMetrics.get(metricName.getName())+", workload.sessionId "+
                                                                     "from WorkloadTaskData as workload " +
-                                                              "where (workload.taskId, workload.sessionId) " +
-                                                                    "in (select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))").setParameter("ids", metricName.getTests().getIds()).getResultList();
+                                                                    "inner join (select taskId, sessionId from TaskData where id in (:ids)) as taskData "+
+                                                                    "on workload.taskId=taskData.taskId and " +
+                                                                       "workload.sessionId=taskData.sessionId ")
+                                                                    .setParameter("ids", metricName.getTests().getIds()).getResultList();
 
             for (Object[] temp : result){
                 String metricValue = temp[0].toString();
@@ -114,10 +116,11 @@ public class MetricDataServiceImpl implements MetricDataService {
             }else{
                 //custom metric
                 List<Object[]> metrics = entityManager.createQuery("select metric, metric.workloadData.sessionId " +
-                                                                        "from DiagnosticResultEntity as metric " +
+                                                                   "from DiagnosticResultEntity as metric " +
                                                                    "where metric.name=:name " +
                                                                             "and (metric.workloadData.taskId, metric.workloadData.sessionId) " +
-                                                                                "in (select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))").setParameter("ids", metricName.getTests().getIds()).setParameter("name", metricName.getName()).getResultList();
+                                                                                "in (select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))")
+                                                                   .setParameter("ids", metricName.getTests().getIds()).setParameter("name", metricName.getName()).getResultList();
 
                 if (!metrics.isEmpty()){
                     for (Object[] mas : metrics){
@@ -162,20 +165,25 @@ public class MetricDataServiceImpl implements MetricDataService {
     public Set<MetricNameDto> getCustomMetricsNames(TaskDataDto tests){
         Set<MetricNameDto> metrics;
 
-        List<String> metricNames = entityManager.createQuery("select metric.name from DiagnosticResultEntity as metric where " +
-                                                                "(metric.workloadData.taskId, metric.workloadData.sessionId) in " +
-                                                                    "(select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))").setParameter("ids", tests.getIds()).getResultList();
+        List<String> metricNames = entityManager.createNativeQuery("select metric.name from DiagnosticResultEntity as metric " +
+                                                                       "where metric.workloadData_id in " +
+                                                                       "(select workloadData.id from WorkloadData as workloadData " +
+                                                                        "inner join (select id, taskId, sessionId from TaskData where id in (:ids)) as taskData on " +
+                                                                        "workloadData.taskId=taskData.taskId and workloadData.sessionId=taskData.sessionId)")
+                                                                       .setParameter("ids", tests.getIds()).getResultList();
 
-        List<String> validatorNames = entityManager.createQuery("select metric.validator from ValidationResultEntity as metric where " +
-                                                                    "(metric.workloadData.taskId, metric.workloadData.sessionId) in " +
-                                                                        "(select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))").setParameter("ids", tests.getIds()).getResultList();
-
+        List<String> validatorNames = entityManager.createNativeQuery("select metric.validator from ValidationResultEntity as metric " +
+                                                                        "where metric.workloadData_id in " +
+                                                                        "(select workloadData.id from WorkloadData as workloadData " +
+                                                                        "inner join (select id, taskId, sessionId from TaskData where id in (:ids)) as taskData on " +
+                                                                        "workloadData.taskId=taskData.taskId and workloadData.sessionId=taskData.sessionId)")
+                                                                        .setParameter("ids", tests.getIds()).getResultList();
         metrics = new HashSet<MetricNameDto>(metricNames.size()+validatorNames.size());
 
         for (String name : metricNames){
             MetricNameDto metric = new MetricNameDto();
             metric.setTests(tests);
-            metric.setName(name);
+            metric.setName((name==null ? "Some metric" : name));
 
             metrics.add(metric);
         }

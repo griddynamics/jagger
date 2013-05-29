@@ -72,14 +72,14 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         try {
             if (isWorkloadStatisticsAvailable(sessionIds, taskDataDto)) {
                 for (Map.Entry<GroupKey, DefaultWorkloadParameters[]> monitoringPlot : workloadPlotGroups.entrySet()) {
-                    plotNameDtoSet.add(new PlotNameDto(taskDataDto.getIds(), monitoringPlot.getKey().getUpperName()));
+                    plotNameDtoSet.add(new PlotNameDto(taskDataDto, monitoringPlot.getKey().getUpperName()));
                 }
             }
 
             for (String sessionId : sessionIds) {
                 if (isMonitoringStatisticsAvailable(sessionId)) {
                     for (Map.Entry<GroupKey, DefaultMonitoringParameters[]> monitoringPlot : monitoringPlotGroups.entrySet()) {
-                        plotNameDtoSet.add(new PlotNameDto(taskDataDto.getIds(), monitoringPlot.getKey().getUpperName()));
+                        plotNameDtoSet.add(new PlotNameDto(taskDataDto, monitoringPlot.getKey().getUpperName()));
                     }
                 }
             }
@@ -150,6 +150,16 @@ public class PlotProviderServiceImpl implements PlotProviderService {
 
         return plotSeriesDtoList;
     }
+
+    @Override
+    public Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots) {
+        Map<PlotNameDto,List<PlotSeriesDto>> result = new HashMap<PlotNameDto, List<PlotSeriesDto>>(plots.size());
+        for (PlotNameDto plot : plots){
+            result.put(plot, getPlotData(plot.getTaskIds(), plot.getPlotName()));
+        }
+        return result;
+    }
+
 
     @Override
     public List<PlotSeriesDto> getSessionScopePlotData(String sessionId, String plotName) {

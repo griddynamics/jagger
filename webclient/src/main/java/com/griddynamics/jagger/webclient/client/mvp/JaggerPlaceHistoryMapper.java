@@ -2,7 +2,6 @@ package com.griddynamics.jagger.webclient.client.mvp;
 
 import com.google.gwt.place.shared.Place;
 import com.griddynamics.jagger.webclient.client.trends.TrendsPlace;
-import com.griddynamics.jagger.webclient.client.viewresults.ViewResultsPlace;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -14,10 +13,10 @@ public class JaggerPlaceHistoryMapper extends AbstractPlaceHistoryMapper {
     protected Place getPlaceFromToken(String token) {
         // Add any new place here
 
-        if (token.startsWith(NameTokens.TRENDS)) {
-            return new TrendsPlace();
-        } else if (token.startsWith(NameTokens.VIEW_RESULTS)) {
-            return new ViewResultsPlace();
+        if (token.startsWith(NameTokens.SUMMARY)) {
+            return new TrendsPlace(NameTokens.SUMMARY);
+        } else if (token.startsWith(NameTokens.TRENDS)) {
+            return new TrendsPlace(NameTokens.TRENDS);
         }
 
         throw new UnsupportedOperationException("Token " + token + " is unsupported now");
@@ -28,9 +27,8 @@ public class JaggerPlaceHistoryMapper extends AbstractPlaceHistoryMapper {
         // Add any new place here
 
         if (place instanceof TrendsPlace) {
-            return NameTokens.TRENDS;
-        } else if (place instanceof ViewResultsPlace) {
-            return NameTokens.VIEW_RESULTS;
+            TrendsPlace trendsPlace = (TrendsPlace)place;
+            return trendsPlace.getToken();
         }
 
         throw new UnsupportedOperationException("Place " + place + " is unsupported now");

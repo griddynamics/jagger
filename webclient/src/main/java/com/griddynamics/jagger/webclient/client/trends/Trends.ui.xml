@@ -32,6 +32,7 @@
                                 <g:Image resource="{res.getShowChecked}" title="Show Checked Sessions" ui:field="showCheckedSessionsButton"/>
                                 <g:Image resource="{res.getUncheckAll}" title="Uncheck sessions" ui:field="uncheckSessionsButton"/>
                                 <g:Image resource="{res.getClearImage}" title="Clear session filters" ui:field="clearSessionFiltersButton"/>
+                                <g:Image resource="{res.getHyperlinkImage}" title="Hyperlink" ui:field="getHyperlink"/>
                             </g:FlowPanel>
                         </g:north>
                         <g:center>
@@ -74,40 +75,38 @@
                 </g:west>
                 <g:center>
                     <g:DockLayoutPanel>
-                        <g:north size="34">
-                            <g:FlowPanel addStyleNames="{res.css.toolBar}">
-                                <g:Image resource="{res.getRenderPlots}" title="Render Plots"/>
-                            </g:FlowPanel>
-                        </g:north>
                         <g:center>
-                            <g:DockLayoutPanel width="100%" height="100%" ui:field="testsMetricsPanel">
+                            <g:DockLayoutPanel width="100%" height="100%">
                                 <g:center>
-                                    <g:SplitLayoutPanel ui:field="summaryDetails" height="100%" width="100%" visible="true">
+                                    <g:SplitLayoutPanel  height="100%" width="100%" visible="true">
                                         <g:center>
                                             <g:ScrollPanel width="100%" height="100%">
                                                 <c:CellTable ui:field="testDataGrid" width="100%" height="100%" title="Tests"/>
                                             </g:ScrollPanel>
                                         </g:center>
                                         <g:east size="400">
-                                            <g:DockLayoutPanel height="100%" width="100%">
-                                                <g:north size="0">
-                                                    <g:Label text="Metrics"/>
-                                                </g:north>
-                                                <g:center>
-                                                    <custom:MetricPanel ui:field="metricPanel"/>
-                                                </g:center>
-                                            </g:DockLayoutPanel>
+                                            <g:DeckPanel width="100%" height="100%" ui:field="testsMetricsPanel">
+
+                                                <custom:MetricPanel ui:field="metricPanel"/>
+
+                                                <g:DockLayoutPanel height="100%" width="100%" ui:field="trendsDetails">
+                                                    <g:north size="20">
+                                                        <g:Label text="Trends"/>
+                                                    </g:north>
+                                                    <g:center>
+                                                        <g:ScrollPanel width="100%" height="100%">
+                                                            <g:VerticalPanel width="100%" height="100%">
+                                                                <g:VerticalPanel ui:field="sessionScopePlotList" width="100%" height="100%"/>
+                                                                <c:CellTree title="Task Details" ui:field="taskDetailsTree" height="100%" width="100%"/>
+                                                            </g:VerticalPanel>
+                                                        </g:ScrollPanel>
+                                                    </g:center>
+                                                </g:DockLayoutPanel>
+
+                                            </g:DeckPanel>
                                         </g:east>
                                     </g:SplitLayoutPanel>
                                 </g:center>
-                                <g:west size="600">
-                                    <g:ScrollPanel width="100%" height="100%" ui:field="trendsDetails">
-                                        <g:VerticalPanel width="100%" height="100%">
-                                            <g:VerticalPanel ui:field="sessionScopePlotList" width="100%" height="100%"/>
-                                            <c:CellTree title="Task Details" ui:field="taskDetailsTree" height="100%" width="100%"/>
-                                        </g:VerticalPanel>
-                                    </g:ScrollPanel>
-                                </g:west>
                             </g:DockLayoutPanel>
                         </g:center>
                     </g:DockLayoutPanel>

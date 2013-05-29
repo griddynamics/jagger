@@ -9,9 +9,7 @@ import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.dto.WorkloadTaskDataDto;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,12 +20,10 @@ import java.util.Set;
  */
 public class SessionSummaryPanel extends VerticalPanel{
 
-    private HashMap<String, TestPanel> testPanels = new HashMap<String, TestPanel>();
+    private HashMap<String, WorkloadTaskDataDto> cache = new HashMap<String, WorkloadTaskDataDto>();
     private final Panel testPanel = new VerticalPanel();
-    private SessionDataDto session;
 
     public SessionSummaryPanel(SessionDataDto sessionData){
-        session = sessionData;
         initStyle();
         initData(sessionData);
     }
@@ -85,39 +81,44 @@ public class SessionSummaryPanel extends VerticalPanel{
     }
 
     public void updateTests(Set<TaskDataDto> tests) {
-        removeOld(tests);
-        addNew(tests);
-    }
 
-    private void removeOld(Set<TaskDataDto> tests){
-        //remove all
-        for (String testName : testPanels.keySet()){
-            testPanels.get(testName).setVisible(false);
-        }
-    }
+        Set<TaskDataDto> testsToLoad = new HashSet<TaskDataDto>(tests.size());
+        final List<WorkloadTaskDataDto> testsLoaded = new ArrayList<WorkloadTaskDataDto>(tests.size());
 
-    private void addNew(Set<TaskDataDto> tests){
-        for (TaskDataDto test : tests){
-            if (testPanels.containsKey(test.getTaskName())){
-                testPanels.get(test.getTaskName()).setVisible(true);
+        for (TaskDataDto taskDataDto : tests){
+            if (!cache.containsKey(taskDataDto.getTaskName())){
+                testsToLoad.add(taskDataDto);
             }else{
-                addTest(test);
+                testsLoaded.add(cache.get(taskDataDto.getTaskName()));
             }
         }
-    }
 
-    public void addTest(TaskDataDto test) {
-        WorkloadTaskDataService.Async.getInstance().getWorkloadTaskData(session.getSessionId(), test.getId(), new AsyncCallback<WorkloadTaskDataDto>() {
+        WorkloadTaskDataService.Async.getInstance().getWorkloadTaskData(testsToLoad, new AsyncCallback<Set<WorkloadTaskDataDto>>() {
             @Override
-            public void onFailure(Throwable caught) {
-                caught.printStackTrace();
+            public void onFailure(Throwable throwable) {
+                throwable.printStackTrace();
             }
 
             @Override
-            public void onSuccess(WorkloadTaskDataDto result) {
-                TestPanel test = new TestPanel(result);
-                testPanel.add(test);
-                testPanels.put(result.getName(), test);
+            public void onSuccess(Set<WorkloadTaskDataDto> workloadTaskDataDtos) {
+                for (WorkloadTaskDataDto workloadTaskDataDto : workloadTaskDataDtos){
+                    testsLoaded.add(workloadTaskDataDto);
+                    cache.put(workloadTaskDataDto.getName(), workloadTaskDataDto);
+                }
+
+                Collections.sort(testsLoaded, new Comparator<WorkloadTaskDataDto>() {
+                    @Override
+                    public int compare(WorkloadTaskDataDto o1, WorkloadTaskDataDto o2) {
+                        Integer rank1 = Integer.parseInt(o1.getTaskId().substring(5));
+                        Integer rank2 = Integer.parseInt(o2.getTaskId().substring(5));
+                        return rank1.compareTo(rank2);
+                    }
+                });
+
+                testPanel.clear();
+                for (WorkloadTaskDataDto workloadTaskDataDto : testsLoaded){
+                    testPanel.add(new TestPanel(workloadTaskDataDto));
+                }
             }
         });
     }

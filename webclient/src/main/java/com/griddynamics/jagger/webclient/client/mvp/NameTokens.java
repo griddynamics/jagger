@@ -11,15 +11,17 @@ public class NameTokens {
     protected NameTokens() {
     }
 
+    public static final String SUMMARY = "summary";
+
     public static final String TRENDS = "trends";
 
-    public static final String VIEW_RESULTS = "view-results";
+    public static String EMPTY = "";
+
+    public static String summary() {
+        return SUMMARY;
+    }
 
     public static String trends() {
         return TRENDS;
-    }
-
-    public static String viewResults() {
-        return VIEW_RESULTS;
     }
 }

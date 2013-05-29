@@ -39,6 +39,9 @@ public interface JaggerResources extends ClientBundle {
     @Source("plot.png")
     ImageResource getPlotImage();
 
+    @Source("hyperlink.png")
+    ImageResource getHyperlinkImage();
+
     @Source("JaggerWebClient.css")
     @CssResource.NotStrict
     JaggerStyle css();

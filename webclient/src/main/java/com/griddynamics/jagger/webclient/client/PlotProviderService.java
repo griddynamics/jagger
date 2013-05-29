@@ -8,6 +8,7 @@ import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,6 +25,8 @@ public interface PlotProviderService extends RemoteService {
     List<PlotSeriesDto> getPlotData(long taskId, String plotType);
 
     List<PlotSeriesDto> getPlotData(Set<Long> taskId, String plotType);
+
+    Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots);
 
     List<PlotSeriesDto> getSessionScopePlotData(String sessionId, String plotType);
 

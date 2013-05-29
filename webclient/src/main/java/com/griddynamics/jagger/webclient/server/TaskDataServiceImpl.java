@@ -32,27 +32,40 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
         try {
             @SuppressWarnings("unchecked")
             List<Object[]> taskDataList = entityManager.createNativeQuery(
-                            "select taskData.id, workloadTaskData.name, workloadTaskData.version, workloadTaskData.clock, workloadTaskData.clockValue, workloadTaskData.termination from " +
+                            "select taskData.id, workloadTaskData.name, workloadTaskData.description, taskData.taskId from " +
                                             "( "+
                                                 "select " +
                                                     "l.*, s.name, s.description, s.version " +
                                                 "from "+
-                                                    "WorkloadTaskData as l "+
+                                                    "(select * from WorkloadTaskData where sessionId=:sessionId) as l "+
                                                 "left outer join "+
                                                     "WorkloadDetails as s "+
                                                 "on l.scenario_id=s.id "+
+                                                "where " +
+                                                    "l.sessionId =:sessionId"+
                                             ") as workloadTaskData " +
                             "inner join " +
-                                "TaskData as taskData "+
+                                "(select * from TaskData where sessionId=:sessionId) as taskData "+
                             "on " +
                                     "taskData.taskId=workloadTaskData.taskId and " +
-                                    "taskData.sessionId=workloadTaskData.sessionId " +
-                            "where " +
-                                    "workloadTaskData.sessionId in (:sessionId)")
-                    .setParameter("sessionId", sessionId).getResultList();
+                                    "taskData.sessionId=workloadTaskData.sessionId ")
+                            .setParameter("sessionId", sessionId).getResultList();
+            log.info("For session {} was loaded {} tasks for {} ms", new Object[]{sessionId, taskDataList.size(), System.currentTimeMillis() - timestamp});
             if (taskDataList == null) {
                 return Collections.emptyList();
             }
+
+            Collections.sort(taskDataList, new Comparator<Object[]>() {
+                @Override
+                public int compare(Object[] o1, Object[] o2) {
+                    String o1TaskId = (String)o1[3];
+                    String o2TaskId = (String)o2[3];
+
+                    Integer o1Id = Integer.parseInt(o1TaskId.substring(5));
+                    Integer o2Id = Integer.parseInt(o2TaskId.substring(5));
+                    return o1Id.compareTo(o2Id);
+                }
+            });
 
             taskDataDtoList = new ArrayList<TaskDataDto>(taskDataList.size());
             for (Object[] taskData : taskDataList) {
@@ -60,7 +73,6 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                 taskDataDtoList.add(dto);
             }
 
-            log.info("For session {} was loaded {} tasks for {} ms", new Object[]{sessionId, taskDataDtoList.size(), System.currentTimeMillis() - timestamp});
         } catch (Exception e) {
             log.error("Error was occurred during tasks fetching for session "+sessionId, e);
             throw new RuntimeException(e);
@@ -72,18 +84,17 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
     @Override
     public List<TaskDataDto> getTaskDataForSessions(Set<String> sessionIds) {
 
-        List<TaskDataDto> taskDataDtoList = new ArrayList<TaskDataDto>();
-
+        long timestamp = System.currentTimeMillis();
         List<Object[]> list = entityManager.createNativeQuery
                 (
-                "select taskData.id, commonTests.name, commonTests.description, commonTests.version from "+
+                "select taskData.id, commonTests.name, commonTests.description, taskData.taskId from "+
                            "( "+
                            "select test.name, test.description, test.version, test.sessionId, test.taskId from " +
                                                                     "( "+
                                                                           "select " +
                                                                                 "l.*, s.name, s.description, s.version " +
                                                                           "from "+
-                                                                                 "WorkloadTaskData as l "+
+                                                                                 "(select * from WorkloadTaskData where sessionId in (:sessions)) as l "+
                                                                           "left outer join "+
                                                                                  "(select * from WorkloadDetails) as s "+
                                                                           "on l.scenario_id=s.id "+
@@ -95,13 +106,11 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                                                        "select " +
                                                             "l.*, s.name, s.description, s.version " +
                                                        "from "+
-                                                            "WorkloadTaskData as l "+
+                                                            "(select * from WorkloadTaskData where sessionId in (:sessions)) as l "+
                                                        "left outer join "+
                                                             "(select * from WorkloadDetails) as s "+
-                                                       "on l.scenario_id=s.id "+
+                                                       "on l.scenario_id=s.id " +
                                                     ") as t "+
-                                        "where "+
-                                            "sessionId in (:sessions) "+
                                         "group by "+
                                             "t.termination, t.clock, t.clockValue, t.name, t.version "+
                                         "having count(t.id)>=:sessionCount" +
@@ -113,11 +122,9 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                                    "test.termination=testArch.termination and "+
                                    "test.name=testArch.name and "+
                                    "test.version=testArch.version "+
-                           "where test.sessionId in(:sessions)"+
-                           "order by test.description "+
                            ") as commonTests "+
                 "left outer join "+
-                        "TaskData as taskData "+
+                        "(select * from TaskData where sessionId in (:sessions)) as taskData "+
                 "on "+
                         "commonTests.sessionId=taskData.sessionId and "+
                         "commonTests.taskId=taskData.taskId "
@@ -126,28 +133,56 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
 
         //group tests by description
         HashMap<String, TaskDataDto> map = new HashMap<String, TaskDataDto>(list.size());
+        HashMap<String, Integer> mapIds = new HashMap<String, Integer>(list.size());
         for (Object[] testData : list){
             BigInteger id = (BigInteger)testData[0];
             String name = (String) testData[1];
             String description = (String) testData[2];
+            String taskId = (String)testData[3];
+            int taskIdInt = Integer.parseInt(taskId.substring(5));
             String key = description+name;
             if (map.containsKey(key)){
                 map.get(key).getIds().add(id.longValue());
+
+                Integer oldValue = mapIds.get(key);
+                mapIds.put(key, (oldValue==null ? 0 : oldValue)+taskIdInt);
             }else{
                 TaskDataDto taskDataDto = new TaskDataDto(id.longValue(), name, description);
                 //merge
                 if (map.containsKey(name)){
                     taskDataDto.getIds().addAll(map.get(name).getIds());
+
+                    taskIdInt = taskIdInt + mapIds.get(name);
                 }
                 map.put(key, taskDataDto);
+                mapIds.put(key, taskIdInt);
             }
         }
+
+        if (map.isEmpty()){
+            return Collections.EMPTY_LIST;
+        }
+
+        PriorityQueue<Object[]> priorityQueue= new PriorityQueue<Object[]>(mapIds.size(), new Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] o1, Object[] o2) {
+                return ((Comparable)o1[0]).compareTo(o2[0]);
+            }
+        });
+
         for (String key : map.keySet()){
             TaskDataDto taskDataDto = map.get(key);
             if (taskDataDto.getIds().size() == sessionIds.size()){
-                taskDataDtoList.add(taskDataDto);
+                priorityQueue.add(new Object[]{mapIds.get(key), taskDataDto});
             }
         }
-        return taskDataDtoList;
+
+        ArrayList<TaskDataDto> result = new ArrayList<TaskDataDto>(priorityQueue.size());
+        while (!priorityQueue.isEmpty()){
+            result.add((TaskDataDto)priorityQueue.poll()[1]);
+        }
+
+        log.info("For sessions {} was loaded {} tasks for {} ms", new Object[]{sessionIds, result.size(), System.currentTimeMillis() - timestamp});
+        return result;
     }
 }

@@ -15,6 +15,7 @@ public class JaggerActivityMapper implements ActivityMapper {
     JaggerResources resources;
 
     Trends trendsActivity;
+    boolean was = false;
 
     public JaggerActivityMapper(JaggerResources resources) {
         this.resources = resources;
@@ -26,7 +27,10 @@ public class JaggerActivityMapper implements ActivityMapper {
             if (trendsActivity == null) {
                 trendsActivity = new Trends(resources);
             }
-            trendsActivity.setSessionIds(((TrendsPlace) place).getSessionIds());
+            if (!was){
+                trendsActivity.updatePlace((TrendsPlace)place);
+                was = true;
+            }
             return trendsActivity;
         }
 

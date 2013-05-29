@@ -6,6 +6,7 @@ import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,4 +23,6 @@ public interface PlotProviderServiceAsync {
     void getTaskScopePlotList(Set<String> sessionIds, TaskDataDto taskDataDto, AsyncCallback<Set<PlotNameDto>> async);
 
     void getPlotData(Set<Long> taskId, String plotType, AsyncCallback<List<PlotSeriesDto>> async);
+
+    void getPlotDatas(Set<PlotNameDto> plots, AsyncCallback<Map<PlotNameDto,List<PlotSeriesDto>>> async);
 }

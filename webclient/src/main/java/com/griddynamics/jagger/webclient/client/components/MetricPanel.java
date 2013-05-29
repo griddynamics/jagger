@@ -4,14 +4,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTree;
-import com.google.gwt.user.cellview.client.TreeNode;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.view.client.*;
-import com.griddynamics.jagger.webclient.client.MetricDataService;
-import com.griddynamics.jagger.webclient.client.data.MetricProvider;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
+import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 
 import java.util.*;
 
@@ -31,28 +28,21 @@ public class MetricPanel extends Composite {
     @UiField(provided = true)
     CellTree tree;
 
-    private final ListDataProvider<TaskDataDto> provider = new ListDataProvider<TaskDataDto>();
+    private final ListDataProvider<TaskDataDto> provider = new ListDataProvider<TaskDataDto>(Arrays.asList(MetricModel.NO_METRIC_TO_SHOW));
     private final MultiSelectionModel selectionModel = new MultiSelectionModel<MetricNameDto>();
-    private final MetricModel viewModel = new MetricModel(selectionModel, provider);
 
     public MetricPanel() {
-        tree = new CellTree(viewModel, null);
-        tree.setTitle("Metrics");
+        CellTree.Resources res = GWT.create(CellTree.BasicResources.class);
+        tree = new CellTree(new MetricModel(selectionModel, provider), null, res);
+        tree.addStyleName(JaggerResources.INSTANCE.css().taskDetailsTree());
 
         initWidget(ourUiBinder.createAndBindUi(this));
     }
 
     public void updateTests(Set<TaskDataDto> tests){
 
-        for (Object o : selectionModel.getSelectedSet()){
-            selectionModel.setSelected(o, false);
-        }
+        selectionModel.clear();
         provider.setList(Arrays.asList((TaskDataDto)null));
-
-
-        if (tests.size()==0){
-            return;
-        }
 
         boolean manySessions = false;
         for (TaskDataDto test : tests){
@@ -62,29 +52,20 @@ public class MetricPanel extends Composite {
             }
         }
 
-        if (!manySessions){
+        if (tests.size()==0 || !manySessions){
             //nothing to show
+            provider.setList(Arrays.asList(MetricModel.NO_METRIC_TO_SHOW));
             return;
         }
         provider.setList(new ArrayList<TaskDataDto>(tests));
-
-        MetricDataService.Async.getInstance().getMetricsNames(tests, new AsyncCallback<Set<MetricNameDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                caught.printStackTrace();
-            }
-
-            @Override
-            public void onSuccess(Set<MetricNameDto> result) {
-                for (MetricNameDto dto : result){
-                    selectionModel.setSelected(dto, true);
-                }
-            }
-        });
     }
 
     public Set<MetricNameDto> getSelected(){
         return selectionModel.getSelectedSet();
+    }
+
+    public void setSelected(MetricNameDto metric){
+        selectionModel.setSelected(metric, true);
     }
 
     public void addSelectionListener(SelectionChangeEvent.Handler handler){
