@@ -71,7 +71,7 @@ public class ExactInvocationsClock implements WorkloadClock {
         for (NodeId node : nodes) {
             int submittedSamplesCount = submittedConfigurations.get(node) != null ? submittedConfigurations.get(node).getSamples() : 0;
             int samples = (int) Math.round(samplesToAdd * factors.get(node)) + submittedSamplesCount;
-            
+
             WorkloadConfiguration workloadConfiguration = WorkloadConfiguration.with(threads, delay, samples);
             adjuster.adjustConfiguration(node, workloadConfiguration);
             s += samples;
@@ -90,16 +90,16 @@ public class ExactInvocationsClock implements WorkloadClock {
             double totalSamplesRate = (status.getTotalSamples() == 0) ?
                     (1d / nodesCount) :
                     (double) status.getSamples(nodeId) / status.getTotalSamples();
-            
+
             double score = totalSamplesRate;
             scores.put(nodeId, score);
-            scoreSum += score; 
+            scoreSum += score;
         }
-        
+
         for (NodeId nodeId: status.getNodes()) {
             result.put(nodeId, scores.get(nodeId) / scoreSum);
         }
-        return result;        
+        return result;
     }
 
     @Override
@@ -114,6 +114,6 @@ public class ExactInvocationsClock implements WorkloadClock {
 
     @Override
     public String toString() {
-        return samplesCount + " invocations";
+        return threadCount + " virtual users";
     }
 }

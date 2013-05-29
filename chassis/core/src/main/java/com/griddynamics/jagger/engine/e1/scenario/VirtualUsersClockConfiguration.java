@@ -130,7 +130,7 @@ public class VirtualUsersClockConfiguration implements WorkloadClockConfiguratio
 
         @Override
         public String toString() {
-            return users + " virtual user(s) with " + delay + " delay";
+            return users + " virtual users with " + delay + " delay";
         }
     }
 
