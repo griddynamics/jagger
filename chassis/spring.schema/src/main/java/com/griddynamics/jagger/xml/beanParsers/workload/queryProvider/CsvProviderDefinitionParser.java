@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.xml.beanParsers.workload.queryProvider;
 
+import com.google.common.base.Preconditions;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.providers.CsvProvider;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
@@ -43,9 +44,9 @@ public class CsvProviderDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        if(element.hasAttribute("path")){
-            builder.addPropertyValue("path", element.getAttribute("path"));
-        }
+        Preconditions.checkArgument(element.hasAttribute("path"));
+        builder.addPropertyValue("path", element.getAttribute("path"));
+
         if(element.hasAttribute("readHeader")){
             builder.addPropertyValue("readHeader", element.getAttribute("readHeader").equals("true"));
         }
@@ -61,8 +62,7 @@ public class CsvProviderDefinitionParser extends CustomBeanDefinitionParser {
             }
         }
         List childes =  parseCustomListElement(element, parserContext, builder.getBeanDefinition());
-        if(childes.size()>0){
-            builder.addPropertyValue("objectCreator", childes.get(0));
-        }
+        Preconditions.checkState(childes!=null, "Must specify objectCreator in CSVProvider");
+        builder.addPropertyValue("objectCreator", childes.get(0));
     }
 }

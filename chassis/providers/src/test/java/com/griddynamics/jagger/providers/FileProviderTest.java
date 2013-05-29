@@ -35,15 +35,16 @@ public class FileProviderTest {
 
     @Test
     public static void test() throws Exception {
-        Iterable iterable = new FileProvider("src/test/resources/file-reader.txt");
-        testIterable(iterable);
-        testIterable(iterable);
-        testIterable(new FileProvider("src/test/resources/file-reader.txt"));
-        testIterable(iterable);
+        FileProvider<String> firstProvider = new FileProvider<String>("src/test/resources/file-reader.txt");
+        testIterable(firstProvider);
+        testIterable(firstProvider);
+        FileProvider<String> secondProvider = new FileProvider<String>("src/test/resources/file-reader.txt");
+        testIterable(secondProvider);
+        testIterable(firstProvider);
     }
 
-    private static void testIterable(Iterable i) {
-        Iterator it = i.iterator();
+    private static void testIterable(Iterable<String> i) {
+        Iterator<String> it = i.iterator();
         Assert.assertEquals(it.hasNext(), true);
         Assert.assertEquals(it.hasNext(), true);
         Assert.assertEquals(it.next(), "test1");

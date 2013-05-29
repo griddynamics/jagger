@@ -54,6 +54,15 @@ public class JaggerProvidersTest {
         Assert.assertEquals(queryWord, "griddynamics");
     }
 
+    @Test
+    public void testFileQueryProvider() {
+        Iterable queries = (Iterable)ctx.getBean("fileQueryProvider");
+        Iterator iterator = queries.iterator();
+        Assert.assertEquals("get_text", iterator.next());
+        Assert.assertEquals("get_data", iterator.next());
+        Assert.assertEquals("get_all", iterator.next());
+    }
+
     private int getSize(Iterable iterable){
         int size = 0;
         Iterator iterator = iterable.iterator();

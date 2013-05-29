@@ -18,34 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.griddynamics.jagger.providers.csv;
+package com.griddynamics.jagger.providers.creators;
 
-import com.griddynamics.jagger.providers.creators.ObjectCreator;
+import com.google.common.base.Preconditions;
 
 /**
  * @author Nikolay Musienko
- *         Date: 22.04.13
+ *         Date: 27.05.13
  */
 
-public class RequestPathCvsWrapper implements ObjectCreator<RequestPath> {
-
-    String[] header;
+public class StringCreator implements ObjectCreator<String> {
 
     @Override
-    public RequestPath createObject(String... strings) {
-        RequestPath ret = new RequestPath();
-        for (int i = 0; i < header.length; i++){
-            if ( header[i].equals("host") ) {
-                ret.setHost(strings[i]);
-            } else if( header[i].equals("path") ){
-                ret.setPath(strings[i]);
-            }
+    public String createObject(final String... strings) {
+        Preconditions.checkNotNull(strings);
+        Preconditions.checkState(strings.length > 0);
+        if(strings.length == 1) {
+            return strings[0];
         }
-        return ret;
+        return buildString(strings);
     }
 
     @Override
-    public void setHeader(String[] header) {
-        this.header = header;
+    public void setHeader(final String[] header) {
+    }
+
+    private String buildString(final String[] strings) {
+        StringBuilder builder = new StringBuilder();
+        for (String s: strings){
+            builder.append(s);
+        }
+        return builder.toString();
     }
 }

@@ -62,6 +62,12 @@
 
     </query-provider>
 
+    <beans:bean id="stringCreator" class="com.griddynamics.jagger.providers.creators.StringCreator"/>
+
+    <query-provider id="fileQueryProvider" xsi:type="query-provider-file" path="../spring.schema/src/test/resources/queries.txt" delimeter=";">
+            <object-creator xsi:type="object-creator-ref" ref="stringCreator"/>
+    </query-provider>
+
     <query id="httpQ1" xsi:type="query-http" method="GET">
         <client-params>
             <param key="http.protocol.allow-circular-redirects">

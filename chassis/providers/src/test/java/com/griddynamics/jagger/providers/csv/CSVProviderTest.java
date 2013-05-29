@@ -38,7 +38,7 @@ public class CSVProviderTest {
 
     @Test
     public static void test() throws Exception {
-        CsvProvider iterable = new CsvProvider();
+        CsvProvider<RequestPath> iterable = new CsvProvider<RequestPath>();
         iterable.setObjectCreator(new RequestPathCvsWrapper());
         iterable.setPath("src/test/resources/requests.csv");
         iterable.setStrategy(CSVStrategy.EXCEL_STRATEGY);
@@ -50,15 +50,15 @@ public class CSVProviderTest {
         };
         testIterable(iterable, requestPaths);
         testIterable(iterable, requestPaths);
-        iterable = new CsvProvider();
+        iterable = new CsvProvider<RequestPath>();
         iterable.setObjectCreator(new RequestPathCvsWrapper());
         iterable.setPath("src/test/resources/requests.csv");
         iterable.setReadHeader(true);
         testIterable(iterable, requestPaths);
     }
 
-    private static void testIterable(Iterable i, RequestPath[] requestPaths) {
-        Iterator it = i.iterator();
+    private static void testIterable(Iterable<RequestPath> i, RequestPath[] requestPaths) {
+        Iterator<RequestPath> it = i.iterator();
         Assert.assertEquals(it.hasNext(), true);
         Assert.assertEquals(it.hasNext(), true);
         Assert.assertEquals(it.next(), requestPaths[0]);

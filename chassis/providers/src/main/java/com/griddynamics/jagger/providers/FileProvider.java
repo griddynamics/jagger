@@ -20,8 +20,12 @@
 
 package com.griddynamics.jagger.providers;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-import com.griddynamics.jagger.exception.TechnicalException;
+import com.google.common.collect.AbstractIterator;
+import com.griddynamics.jagger.providers.creators.ObjectCreator;
+import com.griddynamics.jagger.providers.creators.StringCreator;
+
 import java.io.*;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -32,15 +36,40 @@ import java.util.Scanner;
  *         Date: 22.04.13
  */
 
-public class FileProvider implements Iterable<String> {
+public class FileProvider<T> implements Iterable<T> {
 
     private String path;
+    private String delimeter;
+    private ObjectCreator<T> objectCreator;
 
-    public FileProvider(String filePath) {
-        this.path = filePath;
+    public FileProvider(String path, String delimeter, ObjectCreator<T> objectCreator) {
+        this.path = path;
+        this.delimeter = delimeter;
+        this.objectCreator = objectCreator;
     }
 
-    public FileProvider() {
+    public FileProvider(String path, ObjectCreator<T> objectCreator) {
+        this(path, System.getProperty("line.separator"), objectCreator);
+    }
+
+    public FileProvider(String path) {
+        this(path, (ObjectCreator<T>) new StringCreator());
+    }
+
+    public String getDelimeter() {
+        return delimeter;
+    }
+
+    public void setDelimeter(String delimeter) {
+        this.delimeter = delimeter;
+    }
+
+    public ObjectCreator<T> getObjectCreator() {
+        return objectCreator;
+    }
+
+    public void setObjectCreator(ObjectCreator<T> objectCreator) {
+        this.objectCreator = objectCreator;
     }
 
     public String getPath() {
@@ -51,9 +80,12 @@ public class FileProvider implements Iterable<String> {
         this.path = filePath;
     }
 
-    public Iterator<String> iterator() {
+    public Iterator<T> iterator() {
+        Preconditions.checkNotNull(delimeter);
+        Preconditions.checkNotNull(path);
+        Preconditions.checkNotNull(objectCreator);
 
-        return new Iterator<String>() {
+        return new AbstractIterator<T>() {
 
             private Scanner scanner;
 
@@ -61,31 +93,20 @@ public class FileProvider implements Iterable<String> {
                 init();
             }
 
-            private void init(){
-                if (path == null) {
-                    throw new TechnicalException("File path can't be NULL!");
-                }
+            private void init() {
                 try {
-                    scanner = new Scanner(new File(path));
+                    scanner = new Scanner(new File(path)).useDelimiter(delimeter);
                 } catch (FileNotFoundException e) {
                     throw Throwables.propagate(e);
                 }
             }
-
             @Override
-            public boolean hasNext() {
-                return scanner.hasNextLine();
-            }
-
-            @Override
-            public String next() {
-                return scanner.nextLine();
-            }
-
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Read only iterator!");
+            protected T computeNext() {
+                try {
+                    return objectCreator.createObject(scanner.next());
+                } catch (NoSuchElementException e) {
+                    return endOfData();
+                }
             }
         };
     }

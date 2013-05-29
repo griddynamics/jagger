@@ -120,6 +120,11 @@
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.providers</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>monitoring.agent</artifactId>
             <type>zip</type>
             <classifier>native</classifier>

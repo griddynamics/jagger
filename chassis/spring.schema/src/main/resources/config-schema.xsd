@@ -1121,6 +1121,10 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="queryProviderAbstract">
+                <xsd:choice minOccurs="0" maxOccurs="1">
+                    <xsd:element name="object-creator" type="objectCreatorAbstract"/>
+                </xsd:choice>
+                <xsd:attribute name="delimeter" type="xsd:string" use="optional"/>
                 <xsd:attribute name="path" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
@@ -1159,9 +1163,9 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:element name="objectCreator" type="objectCreatorAbstract"/>
+    <xsd:element name="object-creator" type="objectCreatorAbstract"/>
 
-    <xsd:element name="objectCreator-ref" type="object-creator-ref" substitutionGroup="objectCreator"/>
+    <xsd:element name="object-creator-ref" type="object-creator-ref" substitutionGroup="object-creator"/>
 
     <xsd:complexType name="object-creator-ref">
         <xsd:complexContent>
@@ -1321,6 +1325,10 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="endpointProviderAbstract">
+                <xsd:choice minOccurs="0" maxOccurs="1">
+                    <xsd:element name="object-creator" type="objectCreatorAbstract"/>
+                </xsd:choice>
+                <xsd:attribute name="delimeter" type="xsd:string" use="optional"/>
                 <xsd:attribute name="path" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>

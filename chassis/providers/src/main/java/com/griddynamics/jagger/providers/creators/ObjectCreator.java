@@ -18,15 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.griddynamics.jagger.providers;
+package com.griddynamics.jagger.providers.creators;
 
 /**
  * @author Nikolay Musienko
  *         Date: 23.04.13
  */
-public interface CsvObjectCreator<T> {
+public interface ObjectCreator<T> {
 
-    public abstract T createObject(String[] strings);
+    public abstract T createObject(String... strings);
 
     public abstract void setHeader(String[] header);
 }

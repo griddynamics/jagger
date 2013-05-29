@@ -20,26 +20,36 @@
 
 package com.griddynamics.jagger.xml.beanParsers.workload.queryProvider;
 
+import com.google.common.base.Preconditions;
 import com.griddynamics.jagger.providers.FileProvider;
+import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import java.util.List;
 
 /**
  * @author Nikolay Musienko
  *         Date: 23.04.13
  */
-public class FileProviderDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class FileProviderDefinitionParser extends CustomBeanDefinitionParser {
     @Override
     protected Class getBeanClass(Element element) {
         return FileProvider.class;
     }
 
     @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        if(element.hasAttribute("path")){
-            builder.addPropertyValue("path", element.getAttribute("path"));
+    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        Preconditions.checkArgument(element.hasAttribute("path"));
+        builder.addConstructorArgValue(element.getAttribute("path"));
+
+        if(element.hasAttribute("delimeter")) {
+            builder.addPropertyValue("delimeter", element.getAttribute("delimeter"));
+        }
+        List childes =  parseCustomListElement(element, parserContext, builder.getBeanDefinition());
+        if(childes!= null && childes.size() > 0) {
+            builder.addPropertyValue("objectCreator", childes.get(0));
         }
     }
 }
