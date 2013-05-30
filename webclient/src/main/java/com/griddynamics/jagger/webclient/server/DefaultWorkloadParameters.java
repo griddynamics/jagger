@@ -39,6 +39,6 @@ public enum DefaultWorkloadParameters {
                 return defaultWorkloadParameter;
             }
         }
-        throw new IllegalArgumentException("Can't parse description " + description);
+        return null;
     }
 }

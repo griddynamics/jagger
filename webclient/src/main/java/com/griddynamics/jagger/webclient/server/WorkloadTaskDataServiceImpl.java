@@ -146,6 +146,10 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             ids.add(taskDataDto.getId());
         }
 
+        if (ids.isEmpty()){
+            return Collections.EMPTY_SET;
+        }
+
         List<WorkloadTaskData> workloadTaskDatas = entityManager.createNativeQuery("select * " +
                                                                                     "from WorkloadTaskData workloadTaskData " +
                                                                                     "inner join  " +

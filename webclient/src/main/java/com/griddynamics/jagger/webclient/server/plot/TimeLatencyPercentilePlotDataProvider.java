@@ -101,7 +101,9 @@ public class TimeLatencyPercentilePlotDataProvider implements PlotDataProvider {
         }
 
         for (Map.Entry<String, List<PointDto>> entry : percentiles.entrySet()) {
-            String legend = legendProvider.generatePlotLegend(sessionId, DefaultWorkloadParameters.fromDescription(entry.getKey()).getDescription(), addSessionPrefix);
+            DefaultWorkloadParameters parameter = DefaultWorkloadParameters.fromDescription(entry.getKey());
+            String description = (parameter == null ? entry.getKey() : parameter.getDescription());
+            String legend = legendProvider.generatePlotLegend(sessionId, description, addSessionPrefix);
             plotDatasetDtoList.add(new PlotDatasetDto(entry.getValue(), legend, ColorCodeGenerator.getHexColorCode()));
         }
 

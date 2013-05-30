@@ -12,6 +12,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -166,6 +167,7 @@ public class Trends extends DefaultActivity {
         newPlace.setSelectedTestsMetrics(testsMetricses);
 
         String linkText = Window.Location.getHost()+Window.Location.getQueryString()+"/#"+new JaggerPlaceHistoryMapper().getToken(newPlace);
+        linkText = URL.encode(linkText);
 
         //create a dialog for copy link
         final DialogBox dialog = new DialogBox(false, true);
@@ -691,6 +693,7 @@ public class Trends extends DefaultActivity {
         @Override
         public void onSelectionChange(SelectionChangeEvent event) {
             Set<TaskDataDto> selected = ((MultiSelectionModel<TaskDataDto>) event.getSource()).getSelectedSet();
+            Set<SessionDataDto> selectedSessions =  ((MultiSelectionModel<SessionDataDto>)sessionsDataGrid.getSelectionModel()).getSelectedSet();
             List<TaskDataDto> result = new ArrayList<TaskDataDto>(selected.size());
             result.addAll(selected);
             TaskDataTreeViewModel taskDataTreeViewModel = (TaskDataTreeViewModel) taskDetailsTree.getTreeViewModel();
@@ -702,6 +705,12 @@ public class Trends extends DefaultActivity {
             plotNameSelectionModel.clear();
             // Clear session scope plot list
             sessionScopePlotList.clear();
+            if (selectedSessions.size() == 1){
+                SessionDataDto session = selectedSessions.iterator().next();
+                PlotProviderService.Async.getInstance().getSessionScopePlotList(session.getSessionId(),
+                        new SessionScopePlotListQueryCallback(session.getSessionId(), sessionScopePlotList, plotPanel, new SessionScopePlotCheckBoxClickHandler(), getResources()));
+            }
+
             // Clear markings dto map
             markingsMap.clear();
             taskDataTreeViewModel.clear();
