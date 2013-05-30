@@ -65,41 +65,30 @@ public class ExactInvocationsClock implements WorkloadClock {
 
         Set<NodeId> nodes = status.getNodes();
         int threads =  threadCount / nodes.size();
-        int samplesToAdd = (samplesLeft <= SAMPLES_COUNT_SPLITTING_FACTOR || samplesLeft < avgSamplesPerTick * 1.5) ? samplesLeft : samplesLeft / SAMPLES_COUNT_SPLITTING_FACTOR;
-        Map<NodeId, Double>  factors = calculateFactors(status, submittedConfigurations);
+        int residue = threadCount % nodes.size();
+        int samplesToAdd = (samplesLeft <= SAMPLES_COUNT_SPLITTING_FACTOR || samplesLeft < avgSamplesPerTick * 1.5) ?
+                samplesLeft : samplesLeft / SAMPLES_COUNT_SPLITTING_FACTOR;
         int s = 0;
         for (NodeId node : nodes) {
             int submittedSamplesCount = submittedConfigurations.get(node) != null ? submittedConfigurations.get(node).getSamples() : 0;
-            int samples = (int) Math.round(samplesToAdd * factors.get(node)) + submittedSamplesCount;
+            int curThreads = threads;
+            if (residue > 0) {
+                threads += residue--;
+            }
+            int samples = submittedSamplesCount;
+            if (samplesToAdd < nodes.size()) {
+                samples += samplesToAdd;
+                samplesToAdd = 0;
+            } else {
+                samples += Math.round((double) samplesToAdd * curThreads / threadCount);
+            }
 
-            WorkloadConfiguration workloadConfiguration = WorkloadConfiguration.with(threads, delay, samples);
+            WorkloadConfiguration workloadConfiguration = WorkloadConfiguration.with(curThreads, delay, samples);
             adjuster.adjustConfiguration(node, workloadConfiguration);
             s += samples;
             submittedConfigurations.put(node, workloadConfiguration);
         }
         samplesSubmitted = s;
-    }
-
-    private Map<NodeId, Double> calculateFactors(WorkloadExecutionStatus status, Map<NodeId, WorkloadConfiguration> configurations) {
-        Map<NodeId, Double> result = new HashMap<NodeId, Double>();
-
-        Map<NodeId, Double> scores = new HashMap<NodeId, Double>();
-        int nodesCount = status.getNodes().size();
-        double scoreSum = 0;
-        for (NodeId nodeId: status.getNodes()) {
-            double totalSamplesRate = (status.getTotalSamples() == 0) ?
-                    (1d / nodesCount) :
-                    (double) status.getSamples(nodeId) / status.getTotalSamples();
-
-            double score = totalSamplesRate;
-            scores.put(nodeId, score);
-            scoreSum += score;
-        }
-
-        for (NodeId nodeId: status.getNodes()) {
-            result.put(nodeId, scores.get(nodeId) / scoreSum);
-        }
-        return result;
     }
 
     @Override
