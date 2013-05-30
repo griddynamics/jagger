@@ -31,6 +31,7 @@
     <bean id="basicAggregator" class="com.griddynamics.jagger.engine.e1.aggregator.session.BasicAggregator">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="keyValueStorage" ref="h2KeyValueStorage"/>
+        <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
     </bean>
 
     <bean id="standardPercentilesGlobal" class="java.util.ArrayList">

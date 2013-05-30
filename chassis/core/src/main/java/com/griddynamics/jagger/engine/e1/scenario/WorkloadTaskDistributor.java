@@ -24,11 +24,13 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.*;
+import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.engine.e1.process.PollWorkloadProcessStatus;
 import com.griddynamics.jagger.engine.e1.process.StartWorkloadProcess;
 import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
 import com.griddynamics.jagger.master.AbstractDistributionService;
 import com.griddynamics.jagger.master.AbstractDistributor;
+import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +47,8 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
 
     private TimeoutsConfiguration timeoutsConfiguration;
 
+    private TaskExecutionStatusProvider taskExecutionStatusProvider;
+
     private long logInterval;
 
     @Override
@@ -56,6 +60,10 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
         result.add(Qualifier.of(PollWorkloadProcessStatus.class));
 
         return result;
+    }
+
+    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
+        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
     }
 
     @Required
@@ -71,54 +79,62 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
         return new AbstractDistributionService(executor) {
             @Override
             protected void run() throws Exception {
-                log.info("Going to distribute workload task {}", task);
+                DefaultWorkloadController controller = null;
+                try {
+                    log.info("Going to distribute workload task {}", task);
 
-                log.debug("Going to do calibration");
-                Calibrator calibrator = task.getCalibrator();
-                calibrator.calibrate(sessionId, taskId, task.getScenarioFactory(), remotes, timeoutsConfiguration.getCalibrationTimeout());
-                log.debug("Calibrator completed");
+                    log.debug("Going to do calibration");
+                    Calibrator calibrator = task.getCalibrator();
+                    calibrator.calibrate(sessionId, taskId, task.getScenarioFactory(), remotes, timeoutsConfiguration.getCalibrationTimeout());
+                    log.debug("Calibrator completed");
 
-                DefaultWorkloadController controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration);
+                    controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration);
 
-                WorkloadClock clock = task.getClock();
-                TerminationStrategy terminationStrategy = task.getTerminationStrategy();
+                    WorkloadClock clock = task.getClock();
+                    TerminationStrategy terminationStrategy = task.getTerminationStrategy();
 
-                log.debug("Going to start workload");
-                controller.startWorkload(clock.getPoolSizes(controller.getNodes()));
-                log.debug("Workload started");
+                    log.debug("Going to start workload");
+                    controller.startWorkload(clock.getPoolSizes(controller.getNodes()));
+                    log.debug("Workload started");
 
-                int sleepInterval = clock.getTickInterval();
-                long multiplicity = logInterval / sleepInterval;
-                long countIntervals = 0;
+                    int sleepInterval = clock.getTickInterval();
+                    long multiplicity = logInterval / sleepInterval;
+                    long countIntervals = 0;
 
-                while (true) {
-                    if (!isRunning()) {
-                        log.debug("Going to terminate work. Requested from outside");
-                        break;
+                    while (true) {
+                        if (!isRunning()) {
+                            log.debug("Going to terminate work. Requested from outside");
+                            break;
+                        }
+
+                        WorkloadExecutionStatus status = controller.getStatus();
+
+                        if (terminationStrategy.isTerminationRequired(status)) {
+                            log.debug("Going to terminate work. According to termination strategy");
+                            break;
+                        }
+
+                        clock.tick(status, controller);
+                        if (--countIntervals <= 0) {
+                            log.info("Status of execution {}", status);
+                            countIntervals = multiplicity;
+                        }
+
+                        log.debug("Clock should continue. Going to sleep {} seconds", sleepInterval);
+                        sleepMillis(sleepInterval);
                     }
-
-                    WorkloadExecutionStatus status = controller.getStatus();
-
-                    if (terminationStrategy.isTerminationRequired(status)) {
-                        log.debug("Going to terminate work. According to termination strategy");
-                        break;
-                    }
-
-                    clock.tick(status, controller);
-                    if (--countIntervals <= 0) {
-                        log.info("Status of execution {}", status);
-                        countIntervals = multiplicity;
-                    }
-
-                    log.debug("Clock should continue. Going to sleep {} seconds", sleepInterval);
-                    sleepMillis(sleepInterval);
-
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
+                } catch (Exception e) {
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.FAILED);
+                    log.error("Workload task error: ", e);
                 }
-
-                log.debug("Going to stop workload");
-                controller.stopWorkload();
-                log.debug("Workload stopped");
-
+                finally {
+                    if(controller != null) {
+                        log.debug("Going to stop workload");
+                        controller.stopWorkload();
+                        log.debug("Workload stopped");
+                    }
+                }
             }
 
             @Override

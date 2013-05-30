@@ -25,10 +25,10 @@ import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData.ExecutionStatus;
 import com.griddynamics.jagger.master.DistributionListener;
-import com.griddynamics.jagger.master.configuration.SessionListener;
+import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
+import com.griddynamics.jagger.master.configuration.SessionListener;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
@@ -54,6 +54,12 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
     private KeyValueStorage keyValueStorage;
 
+    TaskExecutionStatusProvider taskExecutionStatusProvider;
+
+    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
+        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
+    }
+
     @Override
     public void onSessionStarted(String sessionId, Multimap<NodeType, NodeId> nodes) {
         log.debug("onSessionStarted invoked");
@@ -61,7 +67,7 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
     @Override
     public void onSessionExecuted(String sessionId, String sessionComment) {
-        onSessionExecuted(sessionId, sessionComment, null);
+        onSessionExecuted(sessionId, sessionComment, SessionExecutionStatus.EMPTY);
     }
 
     @Override
@@ -84,14 +90,15 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
         Integer taskExecuted = (Integer) getFirst(all, TASK_EXECUTED);
         sessionData.setTaskExecuted(taskExecuted);
 
-        // TODO implement
-        sessionData.setTaskFailed(0);
+        Integer tasksFailed = (Integer) getFirst(all, FAILED);
+        sessionData.setTaskFailed(tasksFailed);
 
         Integer activeKernels = (Integer) getFirst(all, KERNELS_COUNT);
         sessionData.setActiveKernels(activeKernels);
-        if(status!=null){
-            sessionData.setErrorMessage(status.getStatus().getMessage());
-        }
+
+        String errorMessage = (String) getFirst(all, ERROR_MESSAGE);
+        sessionData.setErrorMessage(errorMessage);
+
         getHibernateTemplate().persist(sessionData);
     }
 
@@ -124,7 +131,7 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
         taskData.setSessionId(sessionId);
         taskData.setTaskName(task.getTaskName());
         taskData.setNumber(task.getNumber());
-        taskData.setStatus(ExecutionStatus.SUCCEEDED);
+        taskData.setStatus(taskExecutionStatusProvider.getStatus(taskId));
         getHibernateTemplate().persist(taskData);
     }
 }

@@ -25,6 +25,7 @@
 
 	<bean id="basicSessionCollector" class="com.griddynamics.jagger.engine.e1.collector.BasicSessionCollector">
 		<property name="keyValueStorage" ref="h2KeyValueStorage"/>
+        <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
 	</bean>
 
 	<bean id="e1MasterCollector" class="com.griddynamics.jagger.engine.e1.collector.MasterWorkloadCollector">

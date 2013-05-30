@@ -21,10 +21,12 @@ package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -55,6 +57,10 @@ public class WorkloadReporter extends AbstractReportProvider {
 
         @SuppressWarnings({"unchecked"}) List<WorkloadProcessDescriptiveStatistics> statistics = getHibernateTemplate().find(
                 "select s from WorkloadProcessDescriptiveStatistics s where s.taskData.sessionId=?",
+                getSessionIdProvider().getSessionId());
+
+        @SuppressWarnings({"unchecked"}) List<TaskData> taskDatas = getHibernateTemplate().find(
+                "select d from TaskData d where d.sessionId=?",
                 getSessionIdProvider().getSessionId());
 
         Map<String, WorkloadProcessDescriptiveStatistics> statisticsByTasks = Maps.newHashMap();
@@ -104,6 +110,15 @@ public class WorkloadReporter extends AbstractReportProvider {
             reportData.setLatency85(getLatency85(statisticsByTasks, workloadData.getTaskId()));
 
             reportData.setStatusImage(statusImageProvider.getImageByDecision(decisionMaker.decideOnTest(resultData)));
+
+            for(TaskData taskData: taskDatas) {
+                if(workloadData.getTaskId().equals(taskData.getTaskId())) {
+                    if(TaskData.ExecutionStatus.FAILED.equals(taskData.getStatus())) {
+                        reportData.setStatusImage(statusImageProvider.getImageByDecision(Decision.ERROR));
+                    }
+                }
+            }
+
 
 			result.add(reportData);
 		}

@@ -59,6 +59,7 @@
         <property name="statusImageWarningLocation"
                   value="configuration/reporting/common/images/yellow_ball_84.png"/>
         <property name="statusImageFatalLocation" value="configuration/reporting/common/images/red_ball_84.png"/>
+        <property name="statusImageErrorLocation" value="configuration/reporting/common/images/gray_ball_84.png"/>
     </bean>
 
     <bean id="sessionStatusDecisionMaker"

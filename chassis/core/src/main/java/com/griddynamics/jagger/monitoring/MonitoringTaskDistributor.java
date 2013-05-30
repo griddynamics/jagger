@@ -24,7 +24,9 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.*;
+import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.master.AbstractDistributor;
+import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,8 @@ import java.util.concurrent.ExecutorService;
 public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTask> {
     private static Logger log = LoggerFactory.getLogger(MonitoringTaskDistributor.class);
     private long ttl;
+
+    private TaskExecutionStatusProvider taskExecutionStatusProvider;
 
     @Override
     protected Set<Qualifier<?>> getQualifiers() {
@@ -54,30 +58,42 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
         return new AbstractExecutionThreadService() {
             @Override
             protected void run() throws Exception {
-                MonitoringTerminationStrategy terminationStrategy = task.getTerminationStrategy().get();
+                MonitoringController monitoringController = null;
+                try {
+                    MonitoringTerminationStrategy terminationStrategy = task.getTerminationStrategy().get();
 
-                MonitoringController monitoringController =
-                        new MonitoringController(sessionId, taskId, availableNodes, coordinator, remotes.keySet(), ttl);
-                monitoringController.startMonitoring();
+                    monitoringController =
+                            new MonitoringController(sessionId, taskId, availableNodes, coordinator, remotes.keySet(), ttl);
+                    monitoringController.startMonitoring();
 
-                while (true) {
-                    if (!isRunning()) {
-                        log.debug("Going to terminate work. Requested from outside");
-                        break;
+                    while (true) {
+                        if (!isRunning()) {
+                            log.debug("Going to terminate work. Requested from outside");
+                            break;
+                        }
+
+                        Map<NodeId, MonitoringStatus> status = monitoringController.getStatus();
+
+                        if (terminationStrategy.isTerminationRequired(status)) {
+                            log.debug("Going to terminate work. According to termination strategy");
+                            break;
+                        }
+
+                        // todo mairbek: configure
+                        TimeUtils.sleepMillis(500);
                     }
 
-                    Map<NodeId, MonitoringStatus> status = monitoringController.getStatus();
-
-                    if (terminationStrategy.isTerminationRequired(status)) {
-                        log.debug("Going to terminate work. According to termination strategy");
-                        break;
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
+                } catch (Exception e) {
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.FAILED);
+                    log.error("Monitoring task error: ", e);
+                } finally {
+                    if (monitoringController != null) {
+                        log.debug("Going to stop monitoring");
+                        monitoringController.stopMonitoring();
+                        log.debug("Monitoring stopped");
                     }
-
-                    // todo mairbek: configure
-                    TimeUtils.sleepMillis(500);
                 }
-
-                monitoringController.stopMonitoring();
             }
 
             @Override
@@ -86,6 +102,10 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
             }
 
         };
+    }
+
+    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
+        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
     }
 
     public void setTtl(long ttl) {

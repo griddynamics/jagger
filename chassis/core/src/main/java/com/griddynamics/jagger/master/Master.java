@@ -186,8 +186,7 @@ public class Master implements Runnable {
     }
 
     private SessionExecutionStatus runConfiguration(Multimap<NodeType, NodeId> allNodes) {
-        SessionExecutionStatus status= new SessionExecutionStatus();
-        status.setStatus(SessionErrorStatus.EMPTY);
+        SessionExecutionStatus status = SessionExecutionStatus.EMPTY;
         try {
             log.info("Execution started");
             for (Task task : configuration.getTasks()) {
@@ -200,13 +199,13 @@ public class Master implements Runnable {
                 try{
                     executeTask(task, allNodes);
                 } catch (Exception e){
-                    status.setStatus(SessionErrorStatus.TASK_FAILED);
+                    status = SessionExecutionStatus.TASK_FAILED;
                     log.error("Exception during execute task: {}", e);
                 }
             }
             log.info("Execution done");
         } catch (Exception e) {
-            status.setStatus(SessionErrorStatus.TERMINATED);
+            status = SessionExecutionStatus.TERMINATED;
             log.error(" Exception while running configuration: {}",e);
         }
         return status;

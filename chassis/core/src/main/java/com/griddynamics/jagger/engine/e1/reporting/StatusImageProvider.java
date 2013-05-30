@@ -36,12 +36,14 @@ public class StatusImageProvider {
     private Image statusImageOK;
     private Image statusImageWarning;
     private Image statusImageFatal;
+    private Image statusImageError;
 
     public Image getImageByDecision(Decision decision) {
         switch (decision) {
             case OK: return statusImageOK;
             case WARNING: return statusImageWarning;
             case FATAL: return statusImageFatal;
+            case ERROR: return statusImageError;
         }
 
         throw new IllegalStateException("Unknown decision : " + decision);
@@ -68,6 +70,14 @@ public class StatusImageProvider {
             this.statusImageFatal = ImageIO.read(statusImageFatalLocation.getInputStream());
         } catch (IOException e) {
             log.error("Failed to resolve image [" + statusImageFatalLocation + "]");
+        }
+    }
+
+    public void setStatusImageErrorLocation(Resource statusImageErrorLocation) {
+        try {
+            this.statusImageError = ImageIO.read(statusImageErrorLocation.getInputStream());
+        } catch (IOException e) {
+            log.error("Failed to resolve image [" + statusImageErrorLocation + "]");
         }
     }
 }

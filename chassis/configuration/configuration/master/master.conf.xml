@@ -81,6 +81,7 @@
           class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTaskDistributor">
         <property name="logInterval" value="${chassis.logging.period}"/>
         <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
+        <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
     </bean>
 
     <bean id="compositeTaskDistributor" class="com.griddynamics.jagger.master.CompositeTaskDistributor">
@@ -98,8 +99,12 @@
     <bean id="taskIdProvider" class="com.griddynamics.jagger.master.ThreadSafeTaskIdProvider">
 
     </bean>
+
+    <bean id="taskStatusProvider" class="com.griddynamics.jagger.master.TaskExecutionStatusProvider"/>
+
     <bean id="monitoringTaskDistributor" class="com.griddynamics.jagger.monitoring.MonitoringTaskDistributor">
         <property name="ttl" value="${chassis.monitoring.command.execution.ttl}"/>
+        <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
     </bean>
 
 </beans>

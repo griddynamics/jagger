@@ -24,9 +24,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.master.DistributionListener;
-import com.griddynamics.jagger.master.configuration.SessionListener;
+import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
+import com.griddynamics.jagger.master.configuration.SessionListener;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
@@ -44,6 +46,12 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 public class BasicSessionCollector implements SessionListener, DistributionListener {
     private KeyValueStorage keyValueStorage;
     private Integer taskCounter;
+
+    TaskExecutionStatusProvider taskExecutionStatusProvider;
+
+    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
+        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
+    }
 
     public void setKeyValueStorage(KeyValueStorage keyValueStorage) {
         this.keyValueStorage = keyValueStorage;
@@ -67,7 +75,7 @@ public class BasicSessionCollector implements SessionListener, DistributionListe
 
     @Override
     public void onSessionExecuted(String sessionId, String sessionComment) {
-        onSessionExecuted(sessionId, sessionComment, null);
+        onSessionExecuted(sessionId, sessionComment, SessionExecutionStatus.EMPTY);
     }
 
     @Override
@@ -76,9 +84,15 @@ public class BasicSessionCollector implements SessionListener, DistributionListe
         Multimap<String, Object> objectsMap = HashMultimap.create();
         objectsMap.put(END_TIME, System.currentTimeMillis());
         objectsMap.put(TASK_EXECUTED, taskCounter);
-        if(status!=null){
-            objectsMap.put(ERROR_MESSAGE, status.getStatus().getMessage());
+        Integer failedTasks = taskExecutionStatusProvider.getTasksWithStatus(TaskData.ExecutionStatus.FAILED).size();
+        objectsMap.put(FAILED, failedTasks);
+        if(failedTasks > 0) {
+            if(SessionExecutionStatus.EMPTY.equals(status)){
+                status = SessionExecutionStatus.TASK_FAILED;
+            }
         }
+        objectsMap.put(ERROR_MESSAGE, status.getMessage());
+
         keyValueStorage.putAll(namespace, objectsMap);
     }
 

@@ -20,5 +20,5 @@
 package com.griddynamics.jagger.engine.e1.sessioncomparation;
 
 public enum Decision {
-    OK, WARNING, FATAL
+    OK, WARNING, FATAL, ERROR
 }
