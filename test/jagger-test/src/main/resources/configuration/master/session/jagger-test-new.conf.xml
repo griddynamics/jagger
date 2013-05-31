@@ -58,6 +58,14 @@
                 </test-group>
 
                 <test-group>
+                    <test id="sleep-service-5ms-http-query-provider" testDescription="sleep-service-5ms-simple-http-query-provider">
+                        <load xsi:type="load-threads" count="1" tickInterval="500" />
+                        <termination xsi:type="termination-iterations" iterations="1000"/>
+                    </test>
+                </test-group>
+
+
+                <test-group>
                     <test id="sleep-service-50ms-1000-samples-per-thread-1-thread" testDescription="sleep-service-50ms">
                         <load xsi:type="load-threads" count="1" tickInterval="500" />
                         <termination xsi:type="termination-iterations" iterations="1000"/>
