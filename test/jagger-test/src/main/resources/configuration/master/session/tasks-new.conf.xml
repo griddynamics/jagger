@@ -31,10 +31,29 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
+    <beans:import resource="../provider/object-creators.conf.xml" />
 
     <beans:bean id="endpointsIterable-sleep-5ms" class="java.util.LinkedList">
         <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/5')}"/>
     </beans:bean>
+
+    <test-description id="sleep-service-5ms-simple-http-query-provider" name="sleep-service-5ms-simple-http-query-provider" version="1">
+
+        <scenario  xsi:type="scenario-query-pool">
+
+            <query-distributor xsi:type="query-distributor-round-robin" />
+
+            <invoker xsi:type="invoker-apache-http"/>
+
+            <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointsIterable-sleep-5ms"/>
+
+            <query-provider xsi:type="query-provider-file" path="configuration/master/provider/resources/queries.txt">
+                <object-creator xsi:type="object-creator-ref" ref="simple-http-query-creator"/>
+            </query-provider>
+
+        </scenario>
+
+    </test-description>
 
     <test-description id="sleep-service-5ms" name="sleep-service-5ms" version="1">
 
