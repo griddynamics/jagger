@@ -18,9 +18,18 @@ public class TrendsPlace extends PlaceWithParameters {
     private String token;
     private Set<String> selectedSessionIds = Collections.EMPTY_SET;
     private Set<TestsMetrics> selectedTestsMetrics = Collections.EMPTY_SET;
+    private Set<String> sessionTrends = Collections.EMPTY_SET;
 
     public TrendsPlace(String token){
         this.token = token;
+    }
+
+    public Set<String> getSessionTrends() {
+        return sessionTrends;
+    }
+
+    public void setSessionTrends(Set<String> sessionTrends) {
+        this.sessionTrends = sessionTrends;
     }
 
     public void setSelectedSessionIds(Set<String> selectedSessionIds){
@@ -53,7 +62,25 @@ public class TrendsPlace extends PlaceWithParameters {
         HashMap<String, Set<String>> parameters = new HashMap<String, Set<String>>();
 
         if (!selectedSessionIds.isEmpty()){
-            parameters.put(PARAM_SESSIONS, selectedSessionIds);
+
+            StringBuilder sessionsBuilder = new StringBuilder("ids=");
+            for (String session : selectedSessionIds){
+                sessionsBuilder.append(session+",");
+            }
+            String  sessions = sessionsBuilder.toString().substring(0, sessionsBuilder.length()-1);
+
+            String trends = "";
+            if (!sessionTrends.isEmpty()){
+                StringBuilder trendsBuilder = new StringBuilder("&trends=");
+                for (String trend : sessionTrends){
+                    trendsBuilder.append(trend+",");
+                }
+                trends = trendsBuilder.toString().substring(0, trendsBuilder.length()-1);
+            }
+
+            parameters.put(PARAM_SESSIONS, new HashSet<String>(Arrays.asList("("+sessions+trends+")")));
+        }else{
+            return Collections.EMPTY_MAP;
         }
 
         HashSet<String> testMetrics = new HashSet<String>();
@@ -98,9 +125,22 @@ public class TrendsPlace extends PlaceWithParameters {
         selectedSessionIds = new HashSet<String>();
         if (parameters != null && !parameters.isEmpty()) {
 
-            Set<String> sessions =  parameters.get(PARAM_SESSIONS);
-            if (sessions!=null && !sessions.isEmpty()){
+            Set<String> sessionGroups =  parameters.get(PARAM_SESSIONS);
+            if (sessionGroups!=null && !sessionGroups.isEmpty()){
+                String group = sessionGroups.iterator().next();
+
+                String temp = group.substring(1, group.length()-1);
+
+                Map<String, Set<String>> idsAndTrends = AbstractPlaceHistoryMapper.getParameters(temp);
+
+                Set<String> sessions = idsAndTrends.get("ids");
+                sessions = sessions!=null ? sessions : Collections.EMPTY_SET;
+
+                Set<String> trends = idsAndTrends.get("trends");
+                trends = trends!=null ? trends : Collections.EMPTY_SET;
+
                 selectedSessionIds = sessions;
+                sessionTrends = trends;
             }
 
             Set<String> groups = parameters.get(PARAM_TESTS);

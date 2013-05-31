@@ -28,8 +28,8 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.*;
-import com.griddynamics.jagger.webclient.client.callback.SessionScopePlotListQueryCallback;
 import com.griddynamics.jagger.webclient.client.components.MetricPanel;
+import com.griddynamics.jagger.webclient.client.components.SessionPlotPanel;
 import com.griddynamics.jagger.webclient.client.components.SummaryPanel;
 import com.griddynamics.jagger.webclient.client.data.*;
 import com.griddynamics.jagger.webclient.client.dto.*;
@@ -82,6 +82,8 @@ public class Trends extends DefaultActivity {
 
     @UiField
     VerticalPanel sessionScopePlotList;
+
+    SessionPlotPanel sessionPlotPanel;
 
     @UiField
     TextBox sessionIdsTextBox;
@@ -165,6 +167,7 @@ public class Trends extends DefaultActivity {
 
         newPlace.setSelectedSessionIds(sessionsIds);
         newPlace.setSelectedTestsMetrics(testsMetricses);
+        newPlace.setSessionTrends(sessionPlotPanel.getSelected());
 
         String linkText = Window.Location.getHost()+Window.Location.getQueryString()+"/#"+new JaggerPlaceHistoryMapper().getToken(newPlace);
         linkText = URL.encode(linkText);
@@ -222,7 +225,7 @@ public class Trends extends DefaultActivity {
         final TrendsPlace finalPlace = this.place;
         if (place.getSelectedSessionIds().isEmpty()){
 
-            sessionsDataGrid.getSelectionModel().addSelectionChangeHandler(new SessionSelectChangeHandler(new SessionScopePlotCheckBoxClickHandler()));
+            sessionsDataGrid.getSelectionModel().addSelectionChangeHandler(new SessionSelectChangeHandler());
 
             selectTests = true;
             testDataGrid.getSelectionModel().addSelectionChangeHandler(new TestSelectChangeHandler());
@@ -253,7 +256,7 @@ public class Trends extends DefaultActivity {
                 for (SessionDataDto session : result.getSessionDataDtoList()){
                     sessionsDataGrid.getSelectionModel().setSelected(session, true);
                 }
-                sessionsDataGrid.getSelectionModel().addSelectionChangeHandler(new SessionSelectChangeHandler(new SessionScopePlotCheckBoxClickHandler()));
+                sessionsDataGrid.getSelectionModel().addSelectionChangeHandler(new SessionSelectChangeHandler());
                 sessionsDataGrid.getSelectionModel().setSelected(result.getSessionDataDtoList().iterator().next(), true);
                 chooseTab(finalPlace.getToken());
             }
@@ -355,6 +358,9 @@ public class Trends extends DefaultActivity {
         SplitLayoutPanel root = (SplitLayoutPanel) widget;
         root.setWidgetToggleDisplayAllowed(settingsPanel, true);
         testsMetricsPanel.showWidget(0);
+
+        sessionPlotPanel = new SessionPlotPanel(new SessionScopePlotCheckBoxClickHandler(), plotPanel);
+        sessionScopePlotList.add(sessionPlotPanel);
     }
 
     private void setupTabPanel(){
@@ -704,12 +710,7 @@ public class Trends extends DefaultActivity {
             // Clear task scope plot selection model
             plotNameSelectionModel.clear();
             // Clear session scope plot list
-            sessionScopePlotList.clear();
-            if (selectedSessions.size() == 1){
-                SessionDataDto session = selectedSessions.iterator().next();
-                PlotProviderService.Async.getInstance().getSessionScopePlotList(session.getSessionId(),
-                        new SessionScopePlotListQueryCallback(session.getSessionId(), sessionScopePlotList, plotPanel, new SessionScopePlotCheckBoxClickHandler(), getResources()));
-            }
+            sessionPlotPanel.clearPlots();
 
             // Clear markings dto map
             markingsMap.clear();
@@ -781,16 +782,27 @@ public class Trends extends DefaultActivity {
 
                 if (firePlot != null)
                     taskDataTreeViewModel.getSelectionModel().setSelected(firePlot, true);
+
+            }else{
+                if (selectedSessions.size() == 1){
+                    final SessionDataDto session = selectedSessions.iterator().next();
+                    PlotProviderService.Async.getInstance().getSessionScopePlotList(session.getSessionId(),new AsyncCallback<Set<String>>() {
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+
+                        @Override
+                        public void onSuccess(Set<String> strings) {
+                            sessionPlotPanel.update(session.getSessionId(), strings);
+                        }
+                    });
+                }
             }
         }
     }
 
     private class SessionSelectChangeHandler implements SelectionChangeEvent.Handler {
-        private final ClickHandler sessionScopePlotCheckBoxClickHandler;
-
-        private SessionSelectChangeHandler(ClickHandler sessionScopePlotCheckBoxClickHandler) {
-            this.sessionScopePlotCheckBoxClickHandler = sessionScopePlotCheckBoxClickHandler;
-        }
 
         @Override
         public void onSelectionChange(SelectionChangeEvent event) {
@@ -806,8 +818,8 @@ public class Trends extends DefaultActivity {
             plotPanel.clear();
             // Clear task scope plot selection model
             plotNameSelectionModel.clear();
-            // Clear session scope plot list
-            sessionScopePlotList.clear();
+            //clearPlots session plots
+            sessionPlotPanel.clearPlots();
             // Clear markings dto map
             markingsMap.clear();
             taskDataTreeViewModel.clear();
@@ -816,27 +828,22 @@ public class Trends extends DefaultActivity {
             testDataGrid.setRowData(Collections.EMPTY_LIST);
 
             if (selected.size() == 1) {
-                // If selected single session clear plot display, clear plot selection and fetch all data for given session
+                // If selected single session clearPlots plot display, clearPlots plot selection and fetch all data for given session
 
                 final String sessionId = selected.iterator().next().getSessionId();
 
-                // Populate session scope plot list
-                PlotProviderService.Async.getInstance().getSessionScopePlotList(sessionId,
-                        new SessionScopePlotListQueryCallback(sessionId, sessionScopePlotList, plotPanel, sessionScopePlotCheckBoxClickHandler, getResources()));
+                        // Populate task scope session list
+                        TaskDataService.Async.getInstance().getTaskDataForSession(sessionId, new AsyncCallback<List<TaskDataDto>>() {
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                caught.printStackTrace();
+                            }
 
-                // Populate task scope session list
-                TaskDataService.Async.getInstance().getTaskDataForSession(sessionId, new AsyncCallback<List<TaskDataDto>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        caught.printStackTrace();
-                    }
-
-                    @Override
-                    public void onSuccess(List<TaskDataDto> result) {
-                        updateTests(result);
-                    }
-                });
-
+                            @Override
+                            public void onSuccess(List<TaskDataDto> result) {
+                                updateTests(result);
+                            }
+                        });
             } else if (selected.size() > 1) {
                 // If selected several sessions
 
@@ -861,9 +868,42 @@ public class Trends extends DefaultActivity {
     }
 
     private void updateTests(List<TaskDataDto> tests){
+        Set<SessionDataDto> selected = ((MultiSelectionModel<SessionDataDto>) sessionsDataGrid.getSelectionModel()).getSelectedSet();
+        if (selected.size() == 1){
+            final String sessionId = selected.iterator().next().getSessionId();
+            if (!selectTests){
+                PlotProviderService.Async.getInstance().getSessionScopePlotList(sessionId,
+                        new AsyncCallback<Set<String>>() {
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                throwable.printStackTrace();
+                            }
+
+                            @Override
+                            public void onSuccess(Set<String> strings) {
+                                sessionPlotPanel.update(sessionId, strings);
+                                sessionPlotPanel.setSelected(place.getSessionTrends());
+                            }
+                        });
+            }else{
+                PlotProviderService.Async.getInstance().getSessionScopePlotList(sessionId,new AsyncCallback<Set<String>>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+
+                    @Override
+                    public void onSuccess(Set<String> strings) {
+                        sessionPlotPanel.update(sessionId, strings);
+                    }
+                });
+            }
+        }
+
         if (tests.isEmpty()) {
             return;
         }
+
         MultiSelectionModel model = (MultiSelectionModel)testDataGrid.getSelectionModel();
         model.clear();
 
@@ -884,8 +924,12 @@ public class Trends extends DefaultActivity {
             model.addSelectionChangeHandler(new TestSelectChangeHandler());
 
             //fire event
-            if (selectObject != null)
+            if (selectObject != null){
                 model.setSelected(selectObject, true);
+            }else{
+                //nothing to select
+                selectTests = true;
+            }
         }
     }
 
@@ -1008,9 +1052,9 @@ public class Trends extends DefaultActivity {
     /**
      * Handles clicks on session scope plot checkboxes
      */
-    private class SessionScopePlotCheckBoxClickHandler extends PlotsServingBase implements ClickHandler {
+    private class SessionScopePlotCheckBoxClickHandler extends PlotsServingBase implements ValueChangeHandler<Boolean> {
         @Override
-        public void onClick(ClickEvent event) {
+        public void onValueChange(ValueChangeEvent<Boolean> event) {
             final CheckBox source = (CheckBox) event.getSource();
             final String sessionId = extractEntityIdFromDomId(source.getElement().getId());
             final String plotName = source.getText();
