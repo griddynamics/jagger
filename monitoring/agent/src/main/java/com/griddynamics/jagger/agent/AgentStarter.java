@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.agent;
 
-import com.google.common.base.Objects;
 import com.griddynamics.jagger.agent.worker.AgentWorker;
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.NodeId;
@@ -34,11 +33,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -89,9 +85,9 @@ public class AgentStarter {
                         if (Ack.SUCCESS.equals(ack)) break;
                     } catch (IOException e) {
                         log.info("Agent {} can't do registration {}", agent.getNodeContext().getId(), e);
-                        log.info("Wait 10 seconds and try again");
-                        Thread.sleep(REGISTRATION_PERIOD);
                     }
+                    log.info("Wait 10 seconds and try register  again");
+                    Thread.sleep(REGISTRATION_PERIOD);
                 }
                 while (true);
                 log.info("Registration agent {} has been done", agent.getNodeContext().getId());
