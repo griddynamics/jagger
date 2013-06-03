@@ -20,9 +20,15 @@
 
 package com.griddynamics.jagger.coordinator;
 
+import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 
 public class DefaultNodeContext implements NodeContext {
+    Logger log = LoggerFactory.getLogger(DefaultNodeContext.class);
+
     private final NodeId id;
     private final Map<Class<?>, Object> services;
 
@@ -38,7 +44,18 @@ public class DefaultNodeContext implements NodeContext {
 
     @Override
     public <T> T getService(Class<T> clazz) {
-        return (T) services.get(clazz);
+        T service = (T) services.get(clazz);
+        if(service == null) {
+            log.warn("Not found service for class '{}'. Try to create via default constructor", clazz.getCanonicalName());
+            try {
+                service = clazz.newInstance();
+            } catch (InstantiationException e) {
+                throw Throwables.propagate(e);
+            } catch (IllegalAccessException e) {
+                throw Throwables.propagate(e);
+            }
+        }
+        return service;
     }
 
     @Override
