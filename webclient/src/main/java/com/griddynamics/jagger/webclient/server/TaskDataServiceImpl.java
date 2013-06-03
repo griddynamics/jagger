@@ -50,7 +50,6 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                                     "taskData.taskId=workloadTaskData.taskId and " +
                                     "taskData.sessionId=workloadTaskData.sessionId ")
                             .setParameter("sessionId", sessionId).getResultList();
-            log.info("For session {} was loaded {} tasks for {} ms", new Object[]{sessionId, taskDataList.size(), System.currentTimeMillis() - timestamp});
             if (taskDataList == null) {
                 return Collections.emptyList();
             }
@@ -72,7 +71,7 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                 TaskDataDto dto = new TaskDataDto(((BigInteger)taskData[0]).longValue(), (String)taskData[1], (String)taskData[2]);
                 taskDataDtoList.add(dto);
             }
-
+            log.info("For session {} was loaded {} tasks for {} ms", new Object[]{sessionId, taskDataList.size(), System.currentTimeMillis() - timestamp});
         } catch (Exception e) {
             log.error("Error was occurred during tasks fetching for session "+sessionId, e);
             throw new RuntimeException(e);

@@ -34,6 +34,8 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
     @Deprecated
     @Override
     public List<WorkloadTaskDataDto> getWorkloadTaskData(String sessionId) {
+        Long time = System.currentTimeMillis();
+
         List<WorkloadTaskData> datas = entityManager.createQuery("select workloadTaskData from WorkloadTaskData as workloadTaskData where workloadTaskData.sessionId=:sessionId").
                                                                                 setParameter("sessionId", sessionId).getResultList();
         List<WorkloadTaskDataDto> dataDtos = new ArrayList<WorkloadTaskDataDto>(datas.size());
@@ -76,6 +78,8 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
 
             dataDtos.add(dto);
         }
+
+        log.info("For session {} was loaded {} workloadTasks for {} ms", new Object[]{sessionId, dataDtos.size(), System.currentTimeMillis() - time});
         return dataDtos;
     }
 
@@ -138,6 +142,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
 
     @Override
     public Set<WorkloadTaskDataDto> getWorkloadTaskData(Set<TaskDataDto> tests) {
+        Long time = System.currentTimeMillis();
         Set<WorkloadTaskDataDto> result = new HashSet<WorkloadTaskDataDto>(tests.size());
 
         List<Long> ids = new ArrayList<Long>(tests.size());
@@ -204,6 +209,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
 
             result.add(dto);
         }
+        log.info("For tasks ids {} was loaded {} workloadTasks for {} ms", new Object[]{ids, result.size(), System.currentTimeMillis() - time});
         return result;
     }
 }

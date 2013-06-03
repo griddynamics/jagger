@@ -45,6 +45,7 @@ public class MetricDataServiceImpl implements MetricDataService {
 
     @Override
     public Set<MetricNameDto> getMetricsNames(Set<TaskDataDto> tests) {
+        Long time = System.currentTimeMillis();
         HashSet<MetricNameDto> set = new HashSet<MetricNameDto>();
         for (TaskDataDto taskDataDto : tests){
             for (String standardMetricName : standardMetrics.keySet()){
@@ -56,6 +57,7 @@ public class MetricDataServiceImpl implements MetricDataService {
             set.addAll(getLatencyMetricsNames(taskDataDto));
             set.addAll(getCustomMetricsNames(taskDataDto));
         }
+        log.info("For tasks {} was found {} metrics names for {} ms", new Object[]{tests, set.size(), System.currentTimeMillis() - time});
         return set;
     }
 
@@ -71,7 +73,7 @@ public class MetricDataServiceImpl implements MetricDataService {
 
     @Override
     public MetricDto getMetric(MetricNameDto metricName) {
-
+        Long time = System.currentTimeMillis();
         MetricDto dto = new MetricDto();
         dto.setValues(new HashSet<MetricValueDto>());
         dto.setMetricName(metricName);
@@ -158,7 +160,7 @@ public class MetricDataServiceImpl implements MetricDataService {
                 }
             }
         }
-
+        log.info("For metric name {} was found metric value for {} ms", new Object[]{metricName, System.currentTimeMillis() - time});
         return dto;
     }
 
