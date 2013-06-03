@@ -65,14 +65,29 @@ public class ExactInvocationsClock implements WorkloadClock {
 
         Set<NodeId> nodes = status.getNodes();
         int threads =  threadCount / nodes.size();
-        int samplesToAdd = (samplesLeft <= SAMPLES_COUNT_SPLITTING_FACTOR || samplesLeft < avgSamplesPerTick * 1.5) ? samplesLeft : samplesLeft / SAMPLES_COUNT_SPLITTING_FACTOR;
+        int residue = threadCount % nodes.size();
+        int samplesToAdd = (samplesLeft <= SAMPLES_COUNT_SPLITTING_FACTOR || samplesLeft < avgSamplesPerTick * 1.5) ?
+                samplesLeft : samplesLeft / SAMPLES_COUNT_SPLITTING_FACTOR;
+        if (samplesLeft > nodes.size() && samplesToAdd < nodes.size()) {
+            samplesToAdd = nodes.size();
+        }
         Map<NodeId, Double>  factors = calculateFactors(status, submittedConfigurations);
         int s = 0;
         for (NodeId node : nodes) {
-            int submittedSamplesCount = submittedConfigurations.get(node) != null ? submittedConfigurations.get(node).getSamples() : 0;
-            int samples = (int) Math.round(samplesToAdd * factors.get(node)) + submittedSamplesCount;
+            int samples = submittedConfigurations.get(node) != null ? submittedConfigurations.get(node).getSamples() : 0;
+            int curThreads = threads;
+            if (residue > 0) {
+                curThreads ++;
+                residue --;
+            }
+            if (samplesToAdd > 0 && samplesToAdd < nodes.size()) {
+                samples ++;
+                samplesToAdd --;
+            } else {
+                samples += samplesToAdd * factors.get(node);
+            }
 
-            WorkloadConfiguration workloadConfiguration = WorkloadConfiguration.with(threads, delay, samples);
+            WorkloadConfiguration workloadConfiguration = WorkloadConfiguration.with(curThreads, delay, samples);
             adjuster.adjustConfiguration(node, workloadConfiguration);
             s += samples;
             submittedConfigurations.put(node, workloadConfiguration);
