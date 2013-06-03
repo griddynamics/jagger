@@ -45,6 +45,8 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
     private final AtomicInteger delay = new AtomicInteger(0);
     private final AtomicInteger samples = new AtomicInteger(0);
 
+    private Throwable error = null;
+
     public static WorkloadServiceBuilder builder(Scenario<Object, Object, Object> scenario) {
         return new WorkloadServiceBuilder(scenario);
     }
@@ -66,7 +68,8 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
                 samples.incrementAndGet();
             }
         } catch (Throwable error) {
-            log.error("Error during the invocation", error);
+            log.error("Error during the invocation");
+            this.error = error;
         }
     }
 
@@ -79,6 +82,10 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         } catch (Throwable error) {
             log.error("Error during flushing", error);
         }
+    }
+
+    public Throwable getError() {
+        return error;
     }
 
     @Override
@@ -142,7 +149,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         }
 
         private class InfiniteWorkloadService extends WorkloadService {
-            
+
             private InfiniteWorkloadService(ImmutableList<ScenarioCollector<?, ?, ?>> list) {
                 super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
             }
@@ -169,7 +176,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         }
 
         private class SharedSamplesCountWorkloadService extends WorkloadService {
-            
+
             private final AtomicInteger samplesLeft;
 
             private SharedSamplesCountWorkloadService(ImmutableList<ScenarioCollector<?, ?, ?>> list, AtomicInteger samples) {
