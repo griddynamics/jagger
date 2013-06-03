@@ -23,12 +23,11 @@ package com.griddynamics.jagger.invoker.hessian;
 import com.caucho.hessian.client.HessianProxyFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
 import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
 
 import java.net.MalformedURLException;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Abstract class for invokers built on top of hessian protocol.
@@ -36,8 +35,7 @@ import java.util.Map;
  * @author Mairbek Khadikov
  */
 public abstract class HessianInvoker<S, Q, R> implements Invoker<Q, R, String> {
-    private Map<String, S> services = Maps.newHashMap();
-    private final Object lock = new Object();
+    private final ConcurrentHashMap<String, S> services = new ConcurrentHashMap<String, S>();
 
     @Override
     public final R invoke(Q query, String endpoint) throws InvocationException {
@@ -51,14 +49,9 @@ public abstract class HessianInvoker<S, Q, R> implements Invoker<Q, R, String> {
     private S getService(String url) {
         S service = services.get(url);
         if (service == null) {
-            synchronized (lock) {
-                service = services.get(url);
-                if (service == null) {
-                    service = initService(url);
-
-                    services.put(url, service);
-                }
-            }
+            service = initService(url);
+            services.putIfAbsent(url, service);
+            service = services.get(url);
         }
 
         return service;
@@ -66,9 +59,10 @@ public abstract class HessianInvoker<S, Q, R> implements Invoker<Q, R, String> {
 
     @SuppressWarnings("unchecked")
     protected S initService(String url) {
-        HessianProxyFactory factory = new HessianProxyFactory();
-        factory.setOverloadEnabled(true);
         try {
+            HessianProxyFactory factory = new HessianProxyFactory();
+            factory.setOverloadEnabled(true);
+
             return (S) factory.create(getClazz(), url);
         } catch (MalformedURLException e) {
             throw Throwables.propagate(e);
