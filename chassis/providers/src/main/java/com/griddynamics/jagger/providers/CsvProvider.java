@@ -35,7 +35,7 @@ import java.util.NoSuchElementException;
  *         Date: 22.04.13
  */
 
-public class CsvProvider<T> implements Iterable<T> {
+public class CsvProvider<T> implements Iterable<T>, Serializable  {
 
     private String path;
     private CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;

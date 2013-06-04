@@ -36,7 +36,7 @@ import java.util.Scanner;
  *         Date: 22.04.13
  */
 
-public class FileProvider<T> implements Iterable<T> {
+public class FileProvider<T> implements Iterable<T>, Serializable {
 
     private String path;
     private String delimeter;

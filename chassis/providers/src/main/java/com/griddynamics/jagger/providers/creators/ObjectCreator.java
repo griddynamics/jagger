@@ -20,11 +20,13 @@
 
 package com.griddynamics.jagger.providers.creators;
 
+import java.io.Serializable;
+
 /**
  * @author Nikolay Musienko
  *         Date: 23.04.13
  */
-public interface ObjectCreator<T> {
+public interface ObjectCreator<T> extends Serializable {
 
     public abstract T createObject(String... strings);
 
