@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.engine.e1.process;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
@@ -123,6 +124,9 @@ public class WorkloadProcess implements NodeProcess<Integer> {
             if (workloadService.state().equals(Service.State.TERMINATED)) {
                 samplesCountDoneFromTerminatedThreads += workloadService.getSamples();
                 it.remove();
+                if (workloadService.getError() != null) {
+                    Throwables.propagate(workloadService.getError());
+                }
             }
         }
 
