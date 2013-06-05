@@ -137,6 +137,7 @@ public class XMLConstants {
     public static final String ITERATIONS = "iterations";
     public static final String DELAY = "delay";
     public static final String DESCRIPTION = "description";
+    public static final String PAIR_SUPPLIER_FACTORY = "pairSupplierFactory";
 
     public static final String PLOT_DATA = "plotData";
     public static final String SIMPLE_COLLECTOR = "simpleCollector";

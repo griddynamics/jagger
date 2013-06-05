@@ -1,6 +1,13 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.balancer;
 
-import com.griddynamics.jagger.invoker.OneByOneLoadBalancer;
+import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
+import com.griddynamics.jagger.invoker.OneByOnePairSupplierFactory;
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,10 +16,12 @@ import com.griddynamics.jagger.invoker.OneByOneLoadBalancer;
  * Time: 1:14 PM
  * To change this template use File | Settings | File Templates.
  */
-public class OneByOneBalancerDefinitionParser extends AbstractBalancerDefinitionParser{
+public class OneByOneBalancerDefinitionParser implements BeanDefinitionParser {
 
     @Override
-    public Class getBalancerClass() {
-        return OneByOneLoadBalancer.class;
+    public BeanDefinition parse(Element element, ParserContext parserContext) {
+        return BeanDefinitionBuilder.genericBeanDefinition(SimpleCircularLoadBalancer.class)
+                .addPropertyValue(XMLConstants.PAIR_SUPPLIER_FACTORY, new OneByOnePairSupplierFactory())
+                .getBeanDefinition();
     }
 }
