@@ -564,6 +564,7 @@
 
     <xsd:attributeGroup name="virtualUserAttributes">
         <xsd:attribute name="count" type="xsd:integer" use="required"></xsd:attribute>
+        <xsd:attribute name="delay" type="xsd:integer" use="optional"></xsd:attribute>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="invocationAttributes">

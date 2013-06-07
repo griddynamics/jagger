@@ -57,6 +57,10 @@ public class VirtualUsersClockConfiguration implements WorkloadClockConfiguratio
         this.delay = delay;
     }
 
+    public InvocationDelayConfiguration getDelay() {
+        return delay;
+    }
+
     private class VirtualUsersClock implements WorkloadClock {
 
         @Override

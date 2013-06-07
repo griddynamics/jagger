@@ -52,6 +52,9 @@ public class TimeUtils {
     }
 
     public static void sleepMillis(long seconds) {
+        if (seconds == 0) {
+            return;
+        }
         try {
             Thread.sleep(seconds);
         } catch (InterruptedException e) {

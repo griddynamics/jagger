@@ -166,6 +166,7 @@ public class WorkloadProcess implements NodeProcess<Integer> {
                 .addCollectors(collectors)
                 .useExecutor(executor);
         WorkloadService thread = ( predefinedSamplesCount()) ? builder.buildServiceWithSharedSamplesCount(leftSamplesCount) : builder.buildInfiniteService();
+        thread.changeDelay(delay);
         log.debug("Starting workload");
         Future<Service.State> future = thread.start();
         Service.State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());

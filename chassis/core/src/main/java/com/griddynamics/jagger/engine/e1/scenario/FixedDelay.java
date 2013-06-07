@@ -26,10 +26,15 @@ import org.springframework.beans.factory.annotation.Required;
 public class FixedDelay implements InvocationDelayConfiguration {
     private int delay;
 
+    public FixedDelay(int delay) {
+        this.delay = delay;
+    }
+
+    public FixedDelay() {
+    }
+
     public static FixedDelay noDelay() {
-        FixedDelay result = new FixedDelay();
-        result.setDelay(0);
-        return result;
+        return new FixedDelay(0);
     }
 
     @Override

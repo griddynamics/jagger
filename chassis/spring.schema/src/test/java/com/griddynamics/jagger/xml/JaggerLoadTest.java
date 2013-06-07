@@ -5,11 +5,8 @@ import com.griddynamics.jagger.engine.e1.scenario.*;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.user.TestConfiguration;
 import com.griddynamics.jagger.user.TestGroupConfiguration;
-import com.griddynamics.jagger.xml.beanParsers.task.BackgroundTerminationStrategyDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.task.IterationsOrDurationTerminationStrategyDefinitionParser;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -61,6 +58,13 @@ public class JaggerLoadTest {
         Assert.assertEquals(invClock.getSamplesCount(), 50);
         Assert.assertEquals(invClock.getThreadCount(), 2);
         Assert.assertEquals(invClock.getDelay(), 0);
+
+    }
+
+    @Test
+    public void testThreadsDelay(){
+        VirtualUsersClockConfiguration invClock = (VirtualUsersClockConfiguration)context.getBean("load_threads_with_delay");
+        Assert.assertEquals(1101, invClock.getDelay().getInvocationDelay().getValue());
 
     }
 

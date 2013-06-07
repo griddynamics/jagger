@@ -35,6 +35,8 @@
 
     <jgr:load-invocation id="inv1" exactcount="100" threads="1" delay="100"/>
 
+    <jgr:load-threads id="load_threads_with_delay" count="100" delay="1101" />
+
     <jgr:load-invocation id="inv2" exactcount="50" threads="2" tickInterval="500"/>
 
     <jgr:termination-duration id="ts1" duration="2h"/>
