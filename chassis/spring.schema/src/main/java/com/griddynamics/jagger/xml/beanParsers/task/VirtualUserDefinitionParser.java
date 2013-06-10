@@ -24,8 +24,11 @@ public class VirtualUserDefinitionParser extends AbstractSimpleBeanDefinitionPar
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        if (element.getAttribute(XMLConstants.TICK_INTERVAL).isEmpty()){
+        String tickInterval = element.getAttribute(XMLConstants.TICK_INTERVAL);
+        if (tickInterval.isEmpty()){
             builder.addPropertyValue(XMLConstants.TICK_INTERVAL, XMLConstants.DEFAULT_TICK_INTERVAL);
+        } else {
+            builder.addPropertyValue(XMLConstants.TICK_INTERVAL, tickInterval);
         }
         if (!element.getAttribute(XMLConstants.DELAY).isEmpty()){
             builder.addPropertyValue(XMLConstants.DELAY, new FixedDelay(Integer.parseInt(element.getAttribute(XMLConstants.DELAY))));
