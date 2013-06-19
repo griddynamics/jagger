@@ -44,7 +44,8 @@ import static com.griddynamics.jagger.util.Units.bytesToMiB;
  */
 public class MonitoringInfoServiceImpl implements MonitoringInfoService {
     private static final Logger log = LoggerFactory.getLogger(MonitoringInfoServiceImpl.class);
-    private static final int JMX_TIMEOUT = 300;
+
+    private int jmxTimeout = 300;
 
     private SystemInfoCollector systemInfoService;
     private SystemUnderTestService systemUnderTestService;
@@ -57,6 +58,10 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
 
     public void setSystemUnderTestService(SystemUnderTestService systemUnderTestService) {
         this.systemUnderTestService = systemUnderTestService;
+    }
+
+    public void setJmxTimeout(int jmxTimeout) {
+        this.jmxTimeout = jmxTimeout;
     }
 
     @Override
@@ -111,14 +116,14 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
             });
             Map<String, SystemUnderTestInfo> jmxInfo;
             try {
-                jmxInfo = Futures.makeUninterruptible(future).get(JMX_TIMEOUT, TimeUnit.MILLISECONDS);
+                jmxInfo = Futures.makeUninterruptible(future).get(jmxTimeout, TimeUnit.MILLISECONDS);
                 systemInfo.setSysUnderTest(jmxInfo);
             } catch (ExecutionException e) {
                 log.error("Execution failed {}", e);
                 throw Throwables.propagate(e);
             } catch (TimeoutException e) {
-                log.warn("Time is left for collecting through JMX, make pause {} ms and pass out without jmxInfo", JMX_TIMEOUT);
-                TimeUtils.sleepMillis(JMX_TIMEOUT);
+                log.warn("Time is left for collecting through JMX, make pause {} ms and pass out without jmxInfo", jmxTimeout);
+                TimeUtils.sleepMillis(jmxTimeout);
             }
         } else {
             log.warn("jmxThread is busy. pass out");

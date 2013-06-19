@@ -123,6 +123,7 @@
     <bean id="monitoringService" class="com.griddynamics.jagger.agent.impl.MonitoringInfoServiceImpl">
         <property name="systemInfoService" ref="sigarAgent"/>
         <property name="systemUnderTestService" ref="jmxAgent"/>
+        <property name="jmxTimeout" value="${jmx.monitoring.timeout}"/>
     </bean>
 
     <bean id="defaultExchanger" class="com.griddynamics.jagger.coordinator.http.DefaultPackExchanger">

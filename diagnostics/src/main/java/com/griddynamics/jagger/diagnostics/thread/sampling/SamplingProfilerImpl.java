@@ -41,13 +41,17 @@ import java.util.regex.Pattern;
 public class SamplingProfilerImpl implements SamplingProfiler {
 
     private static final Logger log = LoggerFactory.getLogger(SamplingProfilerImpl.class);
-    private static final int JMX_TIMEOUT = 300;
+    private int jmxTimeout = 300;
 
     private ThreadInfoProvider threadInfoProvider;
     private long pollingInterval;
     private List<Pattern> includePatterns;
     private List<Pattern> excludePatterns;
     private ThreadPoolExecutor jmxThreadPoolExecutor = createJMXThreadPoolExecutor();
+
+    public void setJmxTimeout(int jmxTimeout) {
+        this.jmxTimeout = jmxTimeout;
+    }
 
     private ThreadPoolExecutor createJMXThreadPoolExecutor() {
         log.debug("Create new JMX thread pool executor.");
@@ -116,13 +120,13 @@ public class SamplingProfilerImpl implements SamplingProfiler {
                         }
                     });
                     try {
-                        threadInfos = Futures.makeUninterruptible(future).get(JMX_TIMEOUT, TimeUnit.MILLISECONDS);
+                        threadInfos = Futures.makeUninterruptible(future).get(jmxTimeout, TimeUnit.MILLISECONDS);
                     } catch (ExecutionException e) {
                         log.error("Execution failed {}", e);
                         throw Throwables.propagate(e);
                     } catch (TimeoutException e) {
-                        log.warn("SamplingProfiler {} : Time is left for collecting through JMX, make pause {} ms and pass out", identifier, JMX_TIMEOUT);
-                        timeout = JMX_TIMEOUT;
+                        log.warn("SamplingProfiler {} : Time is left for collecting through JMX, make pause {} ms and pass out", identifier, jmxTimeout);
+                        timeout = jmxTimeout;
                         jmxThreadPoolExecutor.shutdown();
                         jmxThreadPoolExecutor = createJMXThreadPoolExecutor();
                         continue;
