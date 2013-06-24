@@ -20,20 +20,26 @@
 
 package com.griddynamics.jagger.util;
 
+import org.codehaus.groovy.runtime.typehandling.BigDecimalMath;
+
 import java.math.BigDecimal;
 
 public class DecimalUtil {
-    private static final double IMPRESSION = 0.1f;
+    private static final BigDecimal IMPRESSION = new BigDecimal(0.1f);
 
     private DecimalUtil() {
 
     }
 
     public static boolean areEqual(BigDecimal first, BigDecimal second) {
-        BigDecimal rightBoundary = second.add(new BigDecimal(IMPRESSION));
-        BigDecimal leftBoundary = second.subtract(new BigDecimal(IMPRESSION));
+        return areEqual(first, second, IMPRESSION);
+    }
 
-        return first.compareTo(rightBoundary) <= 0 && first.compareTo(leftBoundary) >= 0;
+
+    public static boolean areEqual(BigDecimal first, BigDecimal second, BigDecimal impression) {
+        BigDecimal temp = BigDecimalMath.toBigDecimal(BigDecimalMath.abs(first.subtract(second)));
+        return temp.compareTo(impression) <= 0;
+
     }
 
     public static int compare(BigDecimal first, BigDecimal second) {
