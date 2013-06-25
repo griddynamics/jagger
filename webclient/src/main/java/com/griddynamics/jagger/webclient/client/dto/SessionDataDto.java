@@ -7,6 +7,7 @@ import java.io.Serializable;
  * @since 5/29/12
  */
 public class SessionDataDto implements Serializable {
+    private String comment;
     private String sessionId;
     private String startDate;
     private String endDate;
@@ -21,13 +22,14 @@ public class SessionDataDto implements Serializable {
         this.sessionId = sessionId;
     }
 
-    public SessionDataDto(String sessionId, String startDate, String endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed) {
+    public SessionDataDto(String sessionId, String startDate, String endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed, String comment) {
         this.sessionId = sessionId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.activeKernelsCount = activeKernelsCount;
         this.tasksExecuted = tasksExecuted;
         this.tasksFailed = tasksFailed;
+        this.comment = comment;
     }
 
     public String getName() {
@@ -56,6 +58,14 @@ public class SessionDataDto implements Serializable {
 
     public int getTasksFailed() {
         return tasksFailed;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     @Override

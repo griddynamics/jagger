@@ -38,7 +38,7 @@ public class SessionSummaryPanel extends VerticalPanel{
         name.setStyleName(JaggerResources.INSTANCE.css().sessionNameHeader());
         add(name);
 
-        Grid summaryGrid = new Grid(6, 2);
+        Grid summaryGrid = new Grid(7, 2);
         summaryGrid.getElement().getStyle().setProperty("margin", "40px");
 
         Label sessionLabel = new Label("Session id");
@@ -70,6 +70,11 @@ public class SessionSummaryPanel extends VerticalPanel{
         activeKernels.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
         summaryGrid.setWidget(5, 0, activeKernels);
         summaryGrid.setWidget(5, 1, new Label(Integer.toString(sessionData.getActiveKernelsCount())));
+
+        Label commentTitle = new Label("Comment");
+        commentTitle.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
+        summaryGrid.setWidget(6, 0, commentTitle);
+        summaryGrid.setWidget(6, 1, new HTMLPanel(sessionData.getComment()));
 
         add(summaryGrid);
 

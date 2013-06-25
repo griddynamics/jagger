@@ -58,7 +58,8 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
                     dateFormatter.format(sessionData.getEndTime()),
                     sessionData.getActiveKernels(),
                     sessionData.getTaskExecuted(),
-                    sessionData.getTaskFailed())
+                    sessionData.getTaskFailed(),
+                    HTMLFormatter.format(sessionData.getComment()))
             );
         }
 
@@ -84,7 +85,8 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
                     dateFormatter.format(sessionData.getEndTime()),
                     sessionData.getActiveKernels(),
                     sessionData.getTaskExecuted(),
-                    sessionData.getTaskFailed()
+                    sessionData.getTaskFailed(),
+                    HTMLFormatter.format(sessionData.getComment())
             );
             log.info("There was loaded session data with id {} for {} ms", sessionId, System.currentTimeMillis() - timestamp);
         } catch (NoResultException e) {
@@ -137,7 +139,8 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
                         dateFormatter.format(sessionData.getEndTime()),
                         sessionData.getActiveKernels(),
                         sessionData.getTaskExecuted(),
-                        sessionData.getTaskFailed())
+                        sessionData.getTaskFailed(),
+                        HTMLFormatter.format(sessionData.getComment()))
                 );
             }
 
@@ -187,7 +190,8 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
                         dateFormatter.format(sessionData.getEndTime()),
                         sessionData.getActiveKernels(),
                         sessionData.getTaskExecuted(),
-                        sessionData.getTaskFailed())
+                        sessionData.getTaskFailed(),
+                        HTMLFormatter.format(sessionData.getComment()))
                 );
             }
 

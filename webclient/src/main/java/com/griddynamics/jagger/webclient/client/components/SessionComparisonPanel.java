@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.webclient.client.components;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.griddynamics.jagger.webclient.client.MetricDataService;
@@ -10,6 +9,8 @@ import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.AutoFitWidthApproach;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -25,8 +26,28 @@ import java.util.*;
  */
 public class SessionComparisonPanel extends VerticalPanel{
 
+    private final String TEST_DESCRIPTION = "testDescription";
+    private final String TEST_NAME = "testName";
+    private final String TEST_METRIC = "testMetric";
+    private final String SESSION_HEADER = "Session ";
+    private final String SESSION_DATA_SUFFIX = "_data";
+
     private Label title = new Label();
-    private ListGrid grid = new ListGrid();
+    private ListGrid grid = new ListGrid(){
+        @Override
+        protected Canvas createRecordComponent(final ListGridRecord record, Integer colNum) {
+            String fieldName = this.getFieldName(colNum);
+            if (fieldName.startsWith(SESSION_HEADER)){
+                String text = record.getAttribute(fieldName+ SESSION_DATA_SUFFIX);
+
+                Label label = new Label(text);
+                label.setAutoHeight();
+                label.setWidth100();
+                return label;
+            }
+            return null;
+        }
+    };
 
     private ListGridRecord[] EMPTY_DATA = new ListGridRecord[0];
     private HashMap<MetricNameDto, MetricDto> cache;
@@ -47,16 +68,20 @@ public class SessionComparisonPanel extends VerticalPanel{
         grid.setWidth("97%");
         grid.setHeight("80%");
         grid.setCanCollapseGroup(false);
+        grid.setWrapCells(true);
+        grid.setFixedRecordHeights(false);
+        grid.setShowRecordComponents(true);
+        grid.setShowRecordComponentsByCell(true);
 
         List<ListGridField> fields = new ArrayList<ListGridField>(chosenSessions.size()+3);
 
-        ListGridField field = new ListGridField("testDescription", "Test Description");
+        ListGridField field = new ListGridField(TEST_DESCRIPTION, "Test Description");
         fields.add(field);
 
-        field = new ListGridField("testName", "Name");
+        field = new ListGridField(TEST_NAME, "Name");
         fields.add(field);
 
-        field = new ListGridField("testMetric", "Metric");
+        field = new ListGridField(TEST_METRIC, "Metric");
         field.setAutoFitWidth(true);
         fields.add(field);
 
@@ -82,26 +107,41 @@ public class SessionComparisonPanel extends VerticalPanel{
         }
 
         String titleString = titleText.toString();
-        title.setText(titleString.substring(0, titleString.length()-1));
+        title.setContents(titleString.substring(0, titleString.length()-1));
 
         grid.setFields(fields.toArray(new ListGridField[]{}));
 
-        grid.setGroupByField("testDescription", "testName");
-        grid.freezeField("testName");
-        grid.freezeField("testMetric");
+        grid.setGroupByField(TEST_DESCRIPTION, TEST_NAME);
+        grid.freezeField(TEST_NAME);
+        grid.freezeField(TEST_NAME);
 
-        grid.hideField("testName");
-        grid.hideField("testDescription");
+        grid.hideField(TEST_NAME);
+        grid.hideField(TEST_DESCRIPTION);
 
         ScrollPanel scrollPanel = new ScrollPanel(grid);
         add(scrollPanel);
         cache = new HashMap<MetricNameDto, MetricDto>();
+
+        EMPTY_DATA = new ListGridRecord[]{new InformationRecord(chosenSessions){
+
+            @Override
+            public String getInformationName() {
+                return "Comment";
+            }
+
+            @Override
+            public String getInfo(SessionDataDto session) {
+                return session.getComment();
+            }
+        }};
+
+        grid.setData(EMPTY_DATA);
+        grid.setShowAllRecords(true);
     }
 
     public void updateMetrics(Set<MetricNameDto> dto){
-        if (dto.size()==0){
+        if (dto.isEmpty()){
             grid.setData(EMPTY_DATA);
-            grid.refreshFields();
             return;
         }
 
@@ -130,6 +170,8 @@ public class SessionComparisonPanel extends VerticalPanel{
                 MetricRankingProvider.sortMetrics(loaded);
 
                 RecordList list = new RecordList();
+                list.addList(EMPTY_DATA);
+
                 for (MetricDto metric : loaded){
                     MetricRecord record = new MetricRecord(metric);
                     cache.put(metric.getMetricName(), metric);
@@ -147,12 +189,27 @@ public class SessionComparisonPanel extends VerticalPanel{
     private class MetricRecord extends ListGridRecord{
         public MetricRecord(MetricDto dto){
             String description = dto.getMetricName().getTests().getDescription();
-            setAttribute("testDescription", ((description==null|| "".equals(description) ? "Empty description" : description)));
-            setAttribute("testName", dto.getMetricName().getTests().getTaskName());
-            setAttribute("testMetric", dto.getMetricName().getName());
+            setAttribute(TEST_DESCRIPTION, ((description==null|| "".equals(description) ? "Empty description" : description)));
+            setAttribute(TEST_NAME, dto.getMetricName().getTests().getTaskName());
+            setAttribute(TEST_METRIC, dto.getMetricName().getName());
             for (MetricValueDto value : dto.getValues()){
-                setAttribute("Session "+value.getSessionId(), value.getValue());
+                setAttribute(SESSION_HEADER+value.getSessionId()+ SESSION_DATA_SUFFIX, value.getValue());
             }
         }
+    }
+
+    private abstract class InformationRecord extends ListGridRecord{
+        public InformationRecord(Set<SessionDataDto> sessions){
+            setAttribute(TEST_DESCRIPTION,"Sessions information");
+            setAttribute(TEST_NAME,"Common information");
+            setAttribute(TEST_METRIC, getInformationName());
+            for (SessionDataDto sessionDataDto : sessions){
+                setAttribute(SESSION_HEADER + sessionDataDto.getSessionId() + SESSION_DATA_SUFFIX, getInfo(sessionDataDto));
+            }
+        }
+
+        public abstract String getInformationName();
+
+        public abstract String getInfo(SessionDataDto session);
     }
 }
