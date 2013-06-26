@@ -22,6 +22,7 @@ package com.griddynamics.jagger.engine.e1.aggregator.session.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -97,6 +98,7 @@ public class SessionData {
 		this.activeKernels = activeKernels;
 	}
 
+    @Column(length=7000)
 	public String getComment() {
 		return comment;
 	}
