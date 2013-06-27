@@ -20,12 +20,11 @@
 
 package com.griddynamics.jagger.agent.impl;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
 import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
 import com.griddynamics.jagger.agent.model.SystemUnderTestService;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +38,7 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
-import java.net.InetAddress;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,7 +57,8 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     private final static Logger log = LoggerFactory.getLogger(JMXSystemUnderTestImpl.class);
 
     private static final String JMX_URL_TEMPLATE = "service:jmx:rmi:///jndi/rmi://%s/jmxrmi";
-    private static final Collection<String> GENS = Sets.newHashSet("PS Old Gen", "PS Perm Gen");
+    private static final Collection<String> OLD_GEN_GC =
+            ImmutableSet.of("MarkSweepCompact", "PS MarkSweep", "ConcurrentMarkSweep", "G1 Old Generation");
 
     private String jmxServices;
     private String name;
@@ -139,8 +137,8 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
                                     GarbageCollectorMXBean.class);
 
                     if (gcMgrBean.isValid()) {
-                        HashSet<String> poolNames = Sets.newHashSet(gcMgrBean.getMemoryPoolNames());
-                        if (CollectionUtils.containsAny(poolNames, GENS)) {
+                        boolean majorCollector = OLD_GEN_GC.contains(gcMgrBean.getName());
+                        if (majorCollector) {
                             major_units += gcMgrBean.getCollectionCount();
                             major_time += gcMgrBean.getCollectionTime();
                         } else {
