@@ -140,7 +140,13 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
         if (current.getParentId() == null && baseline.getParentId() == null) {
             return true;
         }
-        return current.getMonitoringId().equals(baseline.getMonitoringId());
+
+        //if baseline or current task was created by old configuration
+        if (current.getName().equals(" --- monitoring") || baseline.getName().equals(" --- monitoring")){
+            return current.getMonitoringId().equals(baseline.getMonitoringId());
+        }
+
+        return current.getName().equals(baseline.getName());
     }
 
     @SuppressWarnings("unchecked")
