@@ -19,6 +19,15 @@
         <xsd:attribute name="id" type="xsd:ID"/>
     </xsd:complexType>
 
+    <xsd:complexType name="identifiedRequiredType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Basic type which contains id attribute to identify elements.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+    </xsd:complexType>
+
     <xsd:complexType name="basicType" abstract="true">
         <xsd:annotation>
             <xsd:documentation>
@@ -395,7 +404,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="identifiedType">
+            <xsd:extension base="identifiedRequiredType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
                     <xsd:element ref="test" maxOccurs="unbounded"/>
                     <xsd:element ref="beans:bean"/>
