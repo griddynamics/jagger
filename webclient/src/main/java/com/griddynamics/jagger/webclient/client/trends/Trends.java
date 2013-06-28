@@ -307,6 +307,7 @@ public class Trends extends DefaultActivity {
 
     private SimplePlot createPlot(final String id, Markings markings) {
         PlotOptions plotOptions = new PlotOptions();
+        plotOptions.setZoomOptions(new ZoomOptions().setAmount(1.02));
         plotOptions.setGlobalSeriesOptions(new GlobalSeriesOptions()
                 .setLineSeriesOptions(new LineSeriesOptions().setLineWidth(1).setShow(true).setFill(0.1))
                 .setPointsOptions(new PointsSeriesOptions().setRadius(1).setShow(true)).setShadowSize(0d));
