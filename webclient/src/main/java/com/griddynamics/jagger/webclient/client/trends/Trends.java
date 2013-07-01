@@ -314,7 +314,7 @@ public class Trends extends DefaultActivity {
 
         plotOptions.setPanOptions(new PanOptions().setInteractive(true));
 
-        plotOptions.addXAxisOptions(new AxisOptions().setZoomRange(true));
+        plotOptions.addXAxisOptions(new AxisOptions().setZoomRange(true).setMinimum(0));
         plotOptions.addYAxisOptions(new AxisOptions().setZoomRange(false));
 
         plotOptions.setLegendOptions(new LegendOptions().setNumOfColumns(2));
