@@ -550,6 +550,21 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:complexType name="load-rps">
+        <xsd:annotation>
+            <xsd:documentation>
+                This type of load imitates an exact number of transactions per second.
+                By using attribute 'value', you can configure a number of transactions.
+                Attribute 'maxThreadNumber' say how much threads you would like to use, to create such tps load. By default it equals 4000.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="loadAbstract">
+                <xsd:attributeGroup ref="tpsAttributes"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <xsd:complexType name="load-ref">
         <xsd:annotation>
             <xsd:documentation>

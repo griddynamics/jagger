@@ -122,13 +122,13 @@ public class WorkloadWorker extends ConfigurableWorker {
         }
         );
 
-        onCommandReceived(PollWorkloadProcessStatus.class).execute(new CommandExecutor<PollWorkloadProcessStatus, Integer>() {
+        onCommandReceived(PollWorkloadProcessStatus.class).execute(new CommandExecutor<PollWorkloadProcessStatus, WorkloadStatus>() {
 
             public Qualifier<PollWorkloadProcessStatus> getQualifier() {
                 return Qualifier.of(PollWorkloadProcessStatus.class);
             }
 
-            public Integer execute(PollWorkloadProcessStatus command, NodeContext nodeContext) {
+            public WorkloadStatus execute(PollWorkloadProcessStatus command, NodeContext nodeContext) {
                 Preconditions.checkArgument(command.getProcessId() != null, "Process id cannot be null");
 
                 WorkloadProcess process = getProcess(command.getProcessId());
@@ -137,12 +137,12 @@ public class WorkloadWorker extends ConfigurableWorker {
         }
         );
 
-        onCommandReceived(StopWorkloadProcess.class).execute(new CommandExecutor<StopWorkloadProcess, Integer>() {
+        onCommandReceived(StopWorkloadProcess.class).execute(new CommandExecutor<StopWorkloadProcess, WorkloadStatus>() {
             public Qualifier<StopWorkloadProcess> getQualifier() {
                 return Qualifier.of(StopWorkloadProcess.class);
             }
 
-            public Integer execute(StopWorkloadProcess command, NodeContext nodeContext) {
+            public WorkloadStatus execute(StopWorkloadProcess command, NodeContext nodeContext) {
                 log.debug("Going to stop process {} on kernel {}", command.getProcessId(), nodeContext.getId().getIdentifier());
 
                 Preconditions.checkArgument(command.getProcessId() != null, "Process id cannot be null");

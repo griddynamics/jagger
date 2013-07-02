@@ -30,7 +30,8 @@ import java.util.Set;
 
 public class WorkloadExecutionStatusBuilder {
     private final Map<NodeId, Integer> threads = Maps.newConcurrentMap();
-    private final Map<NodeId, Integer> samples = Maps.newConcurrentMap();
+    private final Map<NodeId, Integer> startedSamples = Maps.newConcurrentMap();
+    private final Map<NodeId, Integer> finishedSamples = Maps.newConcurrentMap();
     private final Map<NodeId, Integer> delays = Maps.newConcurrentMap();
     private final Map<NodeId, Long> pollTime = Maps.newConcurrentMap();
     private WorkloadTask task;
@@ -39,36 +40,40 @@ public class WorkloadExecutionStatusBuilder {
         this.task = task;
     }
 
-    public WorkloadExecutionStatusBuilder addNodeInfo(NodeId id, int threads, int samples, Integer delay, long pollTime) {
+    public WorkloadExecutionStatusBuilder addNodeInfo(NodeId id, int threads, int startedSamples, int finishedSamples, Integer delay, long pollTime) {
         this.threads.put(id, threads);
-        this.samples.put(id, samples);
+        this.startedSamples.put(id, startedSamples);
+        this.finishedSamples.put(id, finishedSamples);
         this.delays.put(id, delay);
         this.pollTime.put(id, pollTime);
         return this;
     }
 
     public WorkloadExecutionStatus build() {
-        return new DefaultWorkloadExecutionStatus(threads, samples, delays, pollTime, task);
+        return new DefaultWorkloadExecutionStatus(threads, startedSamples, finishedSamples, delays, pollTime, task);
     }
 
     private class DefaultWorkloadExecutionStatus implements WorkloadExecutionStatus {
         private final Set<NodeId> nodes;
         private final Map<NodeId, Integer> threads;
-        private final Map<NodeId, Integer> samples;
+        private final Map<NodeId, Integer> startedSamples;
+        private final Map<NodeId, Integer> finishedSamples;
         private final Map<NodeId, Integer> delays;
         private final Map<NodeId, Long> pollTime;
         private WorkloadTask task;
 
-        private DefaultWorkloadExecutionStatus(Map<NodeId, Integer> threads, Map<NodeId, Integer> samples,
+        private DefaultWorkloadExecutionStatus(Map<NodeId, Integer> threads, Map<NodeId, Integer> startedSamples,
+                                               Map<NodeId, Integer> finishedSamples,
                                                Map<NodeId, Integer> delays, Map<NodeId, Long> pollTime, WorkloadTask task) {
-            boolean nodesAreEqual = threads.keySet().equals(samples.keySet()) && samples.keySet().equals(pollTime.keySet());
+            boolean nodesAreEqual = threads.keySet().equals(startedSamples.keySet()) && startedSamples.keySet().equals(pollTime.keySet());
 
             Preconditions.checkArgument(nodesAreEqual);
             this.nodes = threads.keySet();
 
             this.task = task;
             this.threads = threads;
-            this.samples = samples;
+            this.startedSamples = startedSamples;
+            this.finishedSamples = finishedSamples;
             this.delays = delays;
             this.pollTime = pollTime;
         }
@@ -85,8 +90,13 @@ public class WorkloadExecutionStatusBuilder {
         }
 
         @Override
-        public Integer getSamples(NodeId id) {
-            return samples.get(id);
+        public Integer getStartedSamples(NodeId id) {
+            return startedSamples.get(id);
+        }
+
+        @Override
+        public Integer getFinishedSamples(NodeId id) {
+            return finishedSamples.get(id);
         }
 
         @Override
@@ -100,9 +110,18 @@ public class WorkloadExecutionStatusBuilder {
         }
 
         @Override
-        public int getTotalSamples() {
+        public int getTotalStartedSamples() {
             int result = 0;
-            for (Integer sample : samples.values()) {
+            for (Integer sample : startedSamples.values()) {
+                result += sample;
+            }
+            return result;
+        }
+
+        @Override
+        public int getTotalFinishedSamples() {
+            int result = 0;
+            for (Integer sample : finishedSamples.values()) {
                 result += sample;
             }
             return result;
@@ -119,18 +138,19 @@ public class WorkloadExecutionStatusBuilder {
 
         @Override
         public String toString() {
-            String line = "---------------------------------------------------------------------------------------------------------\n";
-            String format = "|%1$-40s|%2$-20s|%3$-20s|%4$-20s|\n";
+            String line = "------------------------------------------------------------------------------------------------------------------------------\n";
+            String format = "|%1$-40s|%2$-20s|%3$-20s|%4$-20s|%5$-20s|\n";
             String report = String.format(this.task.getTaskName() + '\n' +
-                    line + format + line, "IDENTIFIER", "THREADS", "SAMPLES", "DELAYS");
+                    line + format + line, "IDENTIFIER", "THREADS", "STARTED", "SAMPLES", "DELAYS");
             Set<NodeId> nodes = Sets.newHashSet(this.threads.keySet());
-            nodes.addAll(this.samples.keySet());
+            nodes.addAll(this.startedSamples.keySet());
             nodes.addAll(this.delays.keySet());
 
             for (NodeId node : nodes) {
                 report += String.format(format,
                         node.getIdentifier(), this.threads.get(node),
-                        this.samples.get(node), this.delays.get(node));
+                        this.startedSamples.get(node),
+                        this.finishedSamples.get(node), this.delays.get(node));
             }
             return report + line;
         }

@@ -22,7 +22,7 @@ package com.griddynamics.jagger.engine.e1.process;
 
 import com.griddynamics.jagger.coordinator.Command;
 
-public class StopWorkloadProcess implements Command<Integer> {
+public class StopWorkloadProcess implements Command<WorkloadStatus> {
 
     private String sessionId;
     private String processId;

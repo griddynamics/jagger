@@ -51,7 +51,7 @@ public class ExactInvocationsClock implements WorkloadClock {
         log.debug("Going to perform tick with status {}", status);
 
         tickCount ++;
-        totalSamples = status.getTotalSamples();
+        totalSamples = status.getTotalFinishedSamples();
         int avgSamplesPerTick = totalSamples / tickCount;
 
         int samplesLeft = samplesCount - samplesSubmitted;
@@ -59,7 +59,7 @@ public class ExactInvocationsClock implements WorkloadClock {
             return;
         }
 
-        if (status.getTotalSamples() < samplesSubmitted / 2) {
+        if (status.getTotalFinishedSamples() < samplesSubmitted / 2) {
             return;
         }
 
@@ -102,9 +102,9 @@ public class ExactInvocationsClock implements WorkloadClock {
         int nodesCount = status.getNodes().size();
         double scoreSum = 0;
         for (NodeId nodeId: status.getNodes()) {
-            double totalSamplesRate = (status.getTotalSamples() == 0) ?
+            double totalSamplesRate = (status.getTotalFinishedSamples() == 0) ?
                     (1d / nodesCount) :
-                    (double) status.getSamples(nodeId) / status.getTotalSamples();
+                    (double) status.getFinishedSamples(nodeId) / status.getTotalFinishedSamples();
 
             double score = totalSamplesRate;
             scores.put(nodeId, score);

@@ -252,9 +252,23 @@
                     </test>
                 </test-group>
 
+            <!--RPS-->
+
+                <test-group>
+                    <test id="sleep-service-50-150ms-500-rps-5-min-10-threads" testDescription="sleep-service-50-150ms">
+                        <load xsi:type="load-rps" value="500" tickInterval="500"/>
+                        <termination xsi:type="termination-duration" duration="5m"/>
+                    </test>
+                </test-group>
+
+                <test-group>
+                    <test id="sleep-service-50-150ms-600-rps-5-min-50-threads" testDescription="sleep-service-50-150ms">
+                        <load xsi:type="load-rps" value="500" tickInterval="500"/>
+                        <termination xsi:type="termination-duration" duration="5m"/>
+                    </test>
+                </test-group>
+
             </test-suite>
-
-
 
             <report outputReportLocation="report.pdf">
                 <session-comparators baselineId="115" strategy="worstCase">

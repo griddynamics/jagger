@@ -51,7 +51,8 @@ public class TerminateByTotalSamplingTest {
     @Test
     public void shouldTerminateWhenSamplesAreEqualToConfiguredOne() throws Exception {
         configuration.setSamples(5);
-        when(status.getTotalSamples()).thenReturn(5);
+        when(status.getTotalFinishedSamples()).thenReturn(5);
+        when(status.getTotalStartedSamples()).thenReturn(5);
 
         TerminationStrategy terminateStrategy = configuration.getTerminateStrategy();
         assertTrue(terminateStrategy.isTerminationRequired(status));
@@ -60,7 +61,8 @@ public class TerminateByTotalSamplingTest {
     @Test
     public void shouldTerminateWhenSamplesMoreThenConfiguredOne() throws Exception {
         configuration.setSamples(5);
-        when(status.getTotalSamples()).thenReturn(6);
+        when(status.getTotalFinishedSamples()).thenReturn(6);
+        when(status.getTotalStartedSamples()).thenReturn(6);
 
         TerminationStrategy terminateStrategy = configuration.getTerminateStrategy();
         assertTrue(terminateStrategy.isTerminationRequired(status));
@@ -69,7 +71,8 @@ public class TerminateByTotalSamplingTest {
     @Test
     public void shouldNotTerminateWhenSamplesLessThenConfiguredOne() throws Exception {
         configuration.setSamples(5);
-        when(status.getTotalSamples()).thenReturn(4);
+        when(status.getTotalFinishedSamples()).thenReturn(4);
+        when(status.getTotalStartedSamples()).thenReturn(4);
 
         TerminationStrategy terminateStrategy = configuration.getTerminateStrategy();
         assertFalse(terminateStrategy.isTerminationRequired(status));

@@ -43,7 +43,8 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
     private final List<ScenarioCollector<?, ?, ?>> collectors;
 
     private final AtomicInteger delay = new AtomicInteger(0);
-    private final AtomicInteger samples = new AtomicInteger(0);
+    private final AtomicInteger startedSamples = new AtomicInteger(0);
+    private final AtomicInteger finishedSamples = new AtomicInteger(0);
 
     public static WorkloadServiceBuilder builder(Scenario<Object, Object, Object> scenario) {
         return new WorkloadServiceBuilder(scenario);
@@ -60,10 +61,11 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         try {
             while (isRunning() && !terminationRequired()) {
                 log.debug("Scenario {} doTransaction called", scenario);
+                startedSamples.incrementAndGet();
                 scenario.doTransaction();
                 log.debug("Sleep between invocations for {}", delay);
                 sleepMillis(delay.get());
-                samples.incrementAndGet();
+                finishedSamples.incrementAndGet();
             }
         } catch (Throwable error) {
             log.error("Error during the invocation", error);
@@ -88,8 +90,13 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
 
     protected abstract boolean terminationRequired();
 
-    public int getSamples() {
-        return samples.get();
+
+    public Integer getStartedSamples() {
+        return startedSamples.get();
+    }
+
+    public Integer getFinishedSamples() {
+        return finishedSamples.get();
     }
 
     public void changeDelay(int delay) {
@@ -164,7 +171,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
 
             @Override
             protected boolean terminationRequired() {
-                return getSamples() >= samples;
+                return getFinishedSamples() >= samples;
             }
         }
 

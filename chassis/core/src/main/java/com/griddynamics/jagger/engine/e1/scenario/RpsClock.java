@@ -23,20 +23,25 @@ package com.griddynamics.jagger.engine.e1.scenario;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.util.SystemClock;
 
-public class TpsClock extends AbstractRateClock {
+/**
+ * @author Nikolay Musienko
+ *         Date: 26.06.13
+ */
 
-    public TpsClock(int tickInterval, TpsRouter tpsRouter, WorkloadSuggestionMaker workloadSuggestionMaker, SystemClock systemClock, int maxThreads) {
+public class RpsClock extends AbstractRateClock {
+
+    public RpsClock(int tickInterval, TpsRouter tpsRouter, WorkloadSuggestionMaker workloadSuggestionMaker, SystemClock systemClock, int maxThreads) {
         super(tickInterval, tpsRouter, workloadSuggestionMaker, systemClock, maxThreads);
     }
 
     @Override
     protected Integer getSamples(WorkloadExecutionStatus status, NodeId node) {
-        return status.getFinishedSamples(node);
+        return status.getStartedSamples(node);
     }
 
     @Override
     public String toString() {
-        return getValue() + " tps";
+        return getValue() + " rps";
     }
-}
 
+}

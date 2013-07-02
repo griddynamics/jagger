@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A process that performs remote service invocation in specified thread number.
  */
-public class WorkloadProcess implements NodeProcess<Integer> {
+public class WorkloadProcess implements NodeProcess<WorkloadStatus> {
 
     private static final Logger log = LoggerFactory.getLogger(WorkloadProcess.class);
     private final TimeoutsConfiguration timeoutsConfiguration;
@@ -60,7 +60,8 @@ public class WorkloadProcess implements NodeProcess<Integer> {
 
     private volatile int delay;
 
-    private int samplesCountDoneFromTerminatedThreads = 0;
+    private int samplesCountStartedFromTerminatedThreads = 0;
+    private int samplesCountFinishedFromTerminatedThreads = 0;
 
     private int totalSamplesCountRequested;
 
@@ -107,12 +108,14 @@ public class WorkloadProcess implements NodeProcess<Integer> {
         log.debug("Shutting down executor");
     }
 
-    public Integer getStatus() {
-        Integer result = samplesCountDoneFromTerminatedThreads;
+    public WorkloadStatus getStatus() {
+        int started = samplesCountStartedFromTerminatedThreads;
+        int finished = samplesCountFinishedFromTerminatedThreads;
         for (WorkloadService thread : threads) {
-            result += thread.getSamples();
+            started += thread.getStartedSamples();
+            finished += thread.getFinishedSamples();
         }
-        return result;
+        return new WorkloadStatus(started, finished);
     }
 
     public void changeConfiguration(WorkloadConfiguration configuration) {
@@ -121,7 +124,8 @@ public class WorkloadProcess implements NodeProcess<Integer> {
         for (Iterator<WorkloadService> it = threads.iterator(); it.hasNext(); ){
             WorkloadService workloadService = it.next();
             if (workloadService.state().equals(Service.State.TERMINATED)) {
-                samplesCountDoneFromTerminatedThreads += workloadService.getSamples();
+                samplesCountStartedFromTerminatedThreads += workloadService.getStartedSamples();
+                samplesCountFinishedFromTerminatedThreads += workloadService.getFinishedSamples();
                 it.remove();
             }
         }

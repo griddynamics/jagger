@@ -1,4 +1,4 @@
-/*
+package com.griddynamics.jagger.engine.e1.process;/*
  * Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
  * http://www.griddynamics.com
  *
@@ -18,25 +18,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.griddynamics.jagger.engine.e1.scenario;
+import java.io.Serializable;
 
-import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.util.SystemClock;
+/**
+ * @author Nikolay Musienko
+ *         Date: 26.06.13
+ */
+public class WorkloadStatus implements Serializable {
+    private final int startedSamples;
+    private final int finishedSamples;
 
-public class TpsClock extends AbstractRateClock {
-
-    public TpsClock(int tickInterval, TpsRouter tpsRouter, WorkloadSuggestionMaker workloadSuggestionMaker, SystemClock systemClock, int maxThreads) {
-        super(tickInterval, tpsRouter, workloadSuggestionMaker, systemClock, maxThreads);
+    public WorkloadStatus(int startedSamples, int finishedSamples) {
+        this.startedSamples = startedSamples;
+        this.finishedSamples = finishedSamples;
     }
 
-    @Override
-    protected Integer getSamples(WorkloadExecutionStatus status, NodeId node) {
-        return status.getFinishedSamples(node);
+    public int getStartedSamples() {
+        return startedSamples;
+    }
+
+    public int getFinishedSamples() {
+        return finishedSamples;
     }
 
     @Override
     public String toString() {
-        return getValue() + " tps";
+        return "WorkloadStatus{" +
+                "startedSamples=" + startedSamples +
+                ", finishedSamples=" + finishedSamples +
+                '}';
     }
 }
-

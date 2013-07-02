@@ -51,6 +51,11 @@
         <jgr:termination xsi:type="jgr:termination-iterations" iterations="255" maxDuration="2h"/>
     </jgr:test>
 
+    <jgr:test id="test-rps" testDescription="descr">
+        <jgr:load xsi:type="jgr:load-rps" value="100"/>
+        <jgr:termination xsi:type="jgr:termination-iterations" iterations="255" maxDuration="2h"/>
+    </jgr:test>
+
     <jgr:test-description id="descr" calibration="false" />
 
     <jgr:test-group id="gr1">

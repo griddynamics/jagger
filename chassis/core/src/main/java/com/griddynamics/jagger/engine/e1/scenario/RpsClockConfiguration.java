@@ -17,26 +17,24 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.util.SystemClock;
 
-public class TpsClock extends AbstractRateClock {
+/**
+ * @author Nikolay Musienko
+ *         Date: 28.06.13
+ */
 
-    public TpsClock(int tickInterval, TpsRouter tpsRouter, WorkloadSuggestionMaker workloadSuggestionMaker, SystemClock systemClock, int maxThreads) {
-        super(tickInterval, tpsRouter, workloadSuggestionMaker, systemClock, maxThreads);
-    }
+public class RpsClockConfiguration extends AbstractRateClockConfiguration {
 
     @Override
-    protected Integer getSamples(WorkloadExecutionStatus status, NodeId node) {
-        return status.getFinishedSamples(node);
+    protected WorkloadClock getRateClock(int tickInterval, TpsRouter tpsRouter, WorkloadSuggestionMaker workloadSuggestionMaker, SystemClock systemClock, int maxThreadNumber) {
+        return new RpsClock(tickInterval, tpsRouter, workloadSuggestionMaker, systemClock, maxThreadNumber);
     }
 
     @Override
     public String toString() {
-        return getValue() + " tps";
+        return getTps() + " rps";
     }
 }
-
