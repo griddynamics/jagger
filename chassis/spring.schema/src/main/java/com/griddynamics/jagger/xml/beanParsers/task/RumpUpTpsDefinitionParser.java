@@ -17,32 +17,35 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.griddynamics.jagger.xml.beanParsers.task;
 
-import  com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration;
+import com.griddynamics.jagger.util.Parser;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-
 /**
  * @author Nikolay Musienko
- *         Date: 28.06.13
+ *         Date: 01.07.13
  */
-
-public class RpsDefinitionParser  extends CustomBeanDefinitionParser {
-
+public class RumpUpTpsDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {
-        return RpsClockConfiguration.class;
+        return TpsClockConfiguration.class;
     }
 
     @Override
     protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         new TpsDefinitionParser().preParseAttributes(element, parserContext, builder);
+
+        if (element.hasAttribute(XMLConstants.WARM_UP_TIME)) {
+            builder.addPropertyValue(XMLConstants.WARM_UP_TIME, Parser.parseTimeMillis(element.getAttribute(XMLConstants.WARM_UP_TIME)));
+            element.removeAttribute(XMLConstants.WARM_UP_TIME);
+        }
     }
 
     @Override

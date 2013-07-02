@@ -33,4 +33,16 @@ public class ConstantTps implements DesiredTps {
     public BigDecimal get(long period) {
         return tps;
     }
+
+    @Override
+    public BigDecimal getDesiredTps() {
+        return tps;
+    }
+
+    @Override
+    public String toString() {
+        return "ConstantTps{" +
+                "tps=" + tps +
+                '}';
+    }
 }

@@ -108,6 +108,20 @@ public class JaggerLoadTest {
     }
 
     @Test
+    public void testRumpUpLoad(){
+        TestConfiguration testConfiguration = (TestConfiguration) context.getBean("test-rump-up");
+
+        IterationsOrDurationStrategyConfiguration termination = (IterationsOrDurationStrategyConfiguration)testConfiguration.getTerminateStrategyConfiguration();
+        Assert.assertEquals(255, termination.getIterations());
+        Assert.assertEquals("2h", termination.getDuration());
+
+        TpsClockConfiguration tps = (TpsClockConfiguration) testConfiguration.getClockConfiguration();
+        Assert.assertEquals(100d, tps.getTps());
+        Assert.assertEquals(TpsClock.class, tps.getClock().getClass());
+        Assert.assertEquals(10000L, tps.getWarmUpTime());
+    }
+
+    @Test
     public void testNewTestGroup(){
         TestGroupConfiguration testGroup = (TestGroupConfiguration)context.getBean("gr1");
 

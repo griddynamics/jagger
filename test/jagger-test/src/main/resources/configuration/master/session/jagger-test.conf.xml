@@ -930,15 +930,17 @@
                     </property>
                 </bean>
 
+                <!-- sleep random 50-150ms/5 min/ 600 rump-up-tps -->
                 <bean parent="abstractComposite">
                     <property name="leading">
                         <list>
                             <bean parent="abstractSleepRandom50to150msTask">
-                                <property name="name" value="sleep-service-random-50-150ms-5-min-rps"/>
+                                <property name="name" value="sleep-service-50-150ms-600-rump-up-tps-5-min"/>
                                 <property name="clockConfiguration">
-                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration">
                                         <property name="tps" value="600"/>
                                         <property name="tickInterval" value="500"/>
+                                        <property name="warmUpTime" value="100000"/>
                                     </bean>
                                 </property>
                                 <property name="terminateStrategyConfiguration">

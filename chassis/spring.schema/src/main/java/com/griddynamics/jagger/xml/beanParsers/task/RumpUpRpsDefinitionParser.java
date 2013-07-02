@@ -17,24 +17,32 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.griddynamics.jagger.xml.beanParsers.task;
 
-package com.griddynamics.jagger.engine.e1.scenario;
+import  com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration;
+import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
-import java.math.BigDecimal;
+/**
+ * @author Nikolay Musienko
+ *         Date: 02.07.13
+ */
+public class RumpUpRpsDefinitionParser extends CustomBeanDefinitionParser {
 
-public interface DesiredTps {
+    @Override
+    protected Class getBeanClass(Element element) {
+        return RpsClockConfiguration.class;
+    }
 
-    /**
-     * Get value of TPS in depending of time
-     * @param period - time for function
-     * @return TPS for this time
-     */
-    BigDecimal get(long period);
+    @Override
+    protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        new RumpUpTpsDefinitionParser().preParseAttributes(element, parserContext, builder);
+    }
 
-    /**
-     * Get some value, which describes distribution of TPS
-     * @return TPS
-     */
-    BigDecimal getDesiredTps();
+    @Override
+    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
+    }
 }

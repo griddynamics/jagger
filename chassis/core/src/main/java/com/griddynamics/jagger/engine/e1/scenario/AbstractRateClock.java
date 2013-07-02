@@ -138,7 +138,6 @@ abstract class AbstractRateClock implements WorkloadClock {
 
     @Override
     public int getValue() {
-        // todo bug!
         return tpsRouter.getDesiredTps().intValue();
     }
 }
