@@ -1,8 +1,10 @@
 package com.griddynamics.jagger.webclient.server;
 
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.webclient.client.WorkloadTaskDataService;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.dto.WorkloadTaskDataDto;
@@ -75,6 +77,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             dto.setSuccessRate(data.getSuccessRate());
             dto.setAvgLatency(data.getAvgLatency());
             dto.setStdDevLatency(data.getStdDevLatency());
+            dto.setDuration(getDuration(data));
 
             dataDtos.add(dto);
         }
@@ -137,6 +140,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             dto.setSuccessRate(data.getSuccessRate());
             dto.setAvgLatency(data.getAvgLatency());
             dto.setStdDevLatency(data.getStdDevLatency());
+            dto.setDuration(getDuration(data));
         return dto;
     }
 
@@ -185,6 +189,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             dto.setSuccessRate(data.getSuccessRate());
             dto.setAvgLatency(data.getAvgLatency());
             dto.setStdDevLatency(data.getStdDevLatency());
+            dto.setDuration(getDuration(data));
 
             List<WorkloadProcessDescriptiveStatistics> latency = entityManager.createNativeQuery("select * " +
                                                                                                  "from WorkloadProcessDescriptiveStatistics s " +
@@ -211,5 +216,28 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
         }
         log.info("For tasks ids {} was loaded {} workloadTasks for {} ms", new Object[]{ids, result.size(), System.currentTimeMillis() - time});
         return result;
+    }
+
+    private Date[] getStartEndDates(WorkloadTaskData workloadTaskData){
+        Date[] dates = new Date[2];
+        List<Object[]> datesList =  entityManager.createNativeQuery("select task.startTime, task.endTime from WorkloadData as task where task.taskId=:taskId and task.sessionId=:sessionId")
+                            .setParameter("taskId", workloadTaskData.getTaskId()).setParameter("sessionId", workloadTaskData.getSessionId()).getResultList();
+        if (datesList.size()==1){
+            Object[] element = datesList.iterator().next();
+            dates[0] = (Date)element[0];
+            dates[1] = (Date)element[1];
+        }
+        return dates;
+    }
+
+    private String getDuration(Date[] startEndTime){
+        Long startTime = startEndTime[0].getTime();
+        Long endTime = startEndTime[1].getTime();
+        return TimeUtils.formatDuration(endTime - startTime);
+    }
+
+    private String getDuration(WorkloadTaskData workloadTaskData){
+        Date[] dates = getStartEndDates(workloadTaskData);
+        return getDuration(dates);
     }
 }
