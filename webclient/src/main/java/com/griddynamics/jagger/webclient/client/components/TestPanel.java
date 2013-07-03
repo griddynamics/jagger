@@ -106,10 +106,10 @@ public class TestPanel extends HorizontalPanel {
         detailsGrid.setWidget(1, 0, termination);
         detailsGrid.setWidget(1, 1, new Label(taskData.getTermination()));
 
-        Label duration = new Label("Duration (sec)");
+        Label duration = new Label("Duration");
         duration.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
         detailsGrid.setWidget(2, 0, duration);
-        detailsGrid.setWidget(2, 1, new Label(taskData.getTotalDuration().toString()));
+        detailsGrid.setWidget(2, 1, new Label(taskData.getDuration()));
 
         Label avgLatency = new Label("Average Latency (sec)");
         avgLatency.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
