@@ -60,6 +60,8 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("load-invocation", new InvocationDefinitionParser());
         registerBeanDefinitionParser("user", new UserDefinitionParser());
         registerBeanDefinitionParser("load-tps", new TpsDefinitionParser());
+        registerBeanDefinitionParser("load-rump-up-tps", new RumpUpTpsDefinitionParser());
+        registerBeanDefinitionParser("load-rump-up-rps", new RumpUpRpsDefinitionParser());
         registerBeanDefinitionParser("load-rps", new RpsDefinitionParser());
         registerBeanDefinitionParser("load-threads", new VirtualUserDefinitionParser());
 

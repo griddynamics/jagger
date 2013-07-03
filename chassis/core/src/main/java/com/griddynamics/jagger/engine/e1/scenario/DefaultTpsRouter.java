@@ -54,9 +54,7 @@ public class DefaultTpsRouter implements TpsRouter {
         // todo maybe pass interval?
         BigDecimal tps = desiredTps.get(clock.currentTimeMillis());
 
-        if (desiredTpsPerNode.isEmpty()) {
-            initialize(tpsStat.keySet());
-        }
+        initialize(tpsStat.keySet());
 
         final Map<NodeId, BigDecimal> maxTpsPerNode = Maps.newHashMap();
 
@@ -136,7 +134,7 @@ public class DefaultTpsRouter implements TpsRouter {
 
     @Override
     public BigDecimal getDesiredTps() {
-        return desiredTps.get(clock.currentTimeMillis());
+        return desiredTps.getDesiredTps();
     }
 
     private void initialize(Set<NodeId> nodes) {

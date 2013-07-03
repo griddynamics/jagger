@@ -52,6 +52,9 @@ public class DefaultWorkloadSuggestionMaker implements WorkloadSuggestionMaker {
 
         Table<Integer, Integer, Pair<Long, BigDecimal>> threadDelayStats = statistics.getThreadDelayStats();
 
+        if(areEqual(desiredTps, BigDecimal.ZERO)) {
+            return WorkloadConfiguration.with(0, 0);
+        }
 
         if (threadDelayStats.isEmpty()) {
             throw new IllegalArgumentException("Cannot suggest workload configuration");

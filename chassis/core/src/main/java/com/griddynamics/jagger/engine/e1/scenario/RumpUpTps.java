@@ -20,21 +20,55 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 
-public interface DesiredTps {
+/**
+ * @author Nikolay Musienko
+ *         Date: 01.07.13
+ */
+public class RumpUpTps  implements DesiredTps {
+    Logger log = LoggerFactory.getLogger(RumpUpTps.class);
 
-    /**
-     * Get value of TPS in depending of time
-     * @param period - time for function
-     * @return TPS for this time
-     */
-    BigDecimal get(long period);
+    private final BigDecimal tps;
+    private long warmUpTime;
+    private long startTime = -1;
 
-    /**
-     * Get some value, which describes distribution of TPS
-     * @return TPS
-     */
-    BigDecimal getDesiredTps();
+    public RumpUpTps(BigDecimal tps, long warmUpTime) {
+        this.tps = tps;
+        this.warmUpTime = warmUpTime;
+    }
+
+    @Override
+    public BigDecimal get(long time) {
+        if(startTime == -1) {
+            startTime = time;
+            warmUpTime += time;
+        }
+        if (time > warmUpTime) {
+            return tps;
+        }
+        double k = ((double)(time - startTime)) / (warmUpTime - startTime);
+        BigDecimal currentTps = tps.multiply(new BigDecimal(k));
+        log.debug("Changing rate up to: {}", currentTps);
+        return currentTps;
+    }
+
+    @Override
+    public BigDecimal getDesiredTps() {
+        return tps;
+    }
+
+    @Override
+    public String toString() {
+        return "RumpUpTps{" +
+                "log=" + log +
+                ", tps=" + tps +
+                ", warmUpTime=" + warmUpTime +
+                ", startTime=" + startTime +
+                '}';
+    }
 
 }
