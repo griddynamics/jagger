@@ -24,6 +24,17 @@ import java.math.BigDecimal;
 
 public interface DesiredTps {
 
+    /**
+     * Get value of TPS in depending of time
+     * @param period - time for function
+     * @return TPS for this time
+     */
     BigDecimal get(long period);
+
+    /**
+     * Get some value, which describes distribution of TPS
+     * @return TPS
+     */
+    BigDecimal getDesiredTps();
 
 }

@@ -20,9 +20,8 @@
 
 package com.griddynamics.jagger.xml.beanParsers.task;
 
-import com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration;
+import  com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -43,14 +42,7 @@ public class RpsDefinitionParser  extends CustomBeanDefinitionParser {
 
     @Override
     protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        if (element.getAttribute(XMLConstants.TICK_INTERVAL).isEmpty()){
-            builder.addPropertyValue(XMLConstants.TICK_INTERVAL, XMLConstants.DEFAULT_TICK_INTERVAL);
-        }
-        if (!element.getAttribute(XMLConstants.MAX_THREAD_NUMBER).isEmpty()){
-            builder.addPropertyValue(XMLConstants.MAX_THREAD_NUMBER, element.getAttribute(XMLConstants.MAX_THREAD_NUMBER));
-        } else{
-            builder.addPropertyValue(XMLConstants.MAX_THREAD_NUMBER, XMLConstants.DEFAULT_MAX_THREAD_COUNT);
-        }
+        new TpsDefinitionParser().preParseAttributes(element, parserContext, builder);
     }
 
     @Override

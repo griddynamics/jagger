@@ -42,6 +42,8 @@ public abstract class AbstractRateClockConfiguration implements WorkloadClockCon
     private int maxThreadDiff = 10;
     private SystemClock systemClock = new JavaSystemClock();
 
+    private long warmUpTime = -1;
+
     public void setTickInterval(int tickInterval) {
         this.tickInterval = tickInterval;
     }
@@ -49,13 +51,23 @@ public abstract class AbstractRateClockConfiguration implements WorkloadClockCon
     @Override
     public WorkloadClock getClock() {
         log.debug("Going to create workload clock");
-        TpsRouter tpsRouter = new DefaultTpsRouter(new ConstantTps(new BigDecimal(tps)), maxTpsCalculator, systemClock);
+        TpsRouter tpsRouter = new DefaultTpsRouter(createDesiredTps(new BigDecimal(tps)), maxTpsCalculator, systemClock);
 
         if (workloadSuggestionMaker == null) {
             workloadSuggestionMaker = new DefaultWorkloadSuggestionMaker(maxThreadDiff);
         }
 
         return getRateClock(tickInterval, tpsRouter, workloadSuggestionMaker, systemClock, maxThreadNumber);
+    }
+
+    protected DesiredTps createDesiredTps (BigDecimal tps) {
+        log.debug("creating createDesiredTps({}, {})", new Object[] { tps, warmUpTime });
+        if (!isRumpUp()) {
+            log.debug("creating ConstantTps({})", tps);
+            return new ConstantTps(tps);
+        }
+        log.debug("creating RumpUpTps({}, {})", new Object[]{ tps, warmUpTime });
+        return new RumpUpTps(tps, warmUpTime);
     }
 
     protected abstract WorkloadClock getRateClock(int tickInterval, TpsRouter tpsRouter,
@@ -105,5 +117,17 @@ public abstract class AbstractRateClockConfiguration implements WorkloadClockCon
 
     public void setWorkloadSuggestionMaker(WorkloadSuggestionMaker workloadSuggestionMaker) {
         this.workloadSuggestionMaker = workloadSuggestionMaker;
+    }
+
+    public long getWarmUpTime() {
+        return warmUpTime;
+    }
+
+    public void setWarmUpTime(long warmUpTime) {
+        this.warmUpTime = warmUpTime;
+    }
+
+    public boolean isRumpUp() {
+        return (warmUpTime != -1);
     }
 }

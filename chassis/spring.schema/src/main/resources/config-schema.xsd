@@ -541,6 +541,7 @@
                 This type of load imitates an exact number of transactions per second.
                 By using attribute 'value', you can configure a number of transactions.
                 Attribute 'maxThreadNumber' say how much threads you would like to use, to create such tps load. By default it equals 4000.
+                Attribute 'warmUpTime' -  time for increase of tps.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
@@ -553,9 +554,10 @@
     <xsd:complexType name="load-rps">
         <xsd:annotation>
             <xsd:documentation>
-                This type of load imitates an exact number of transactions per second.
-                By using attribute 'value', you can configure a number of transactions.
-                Attribute 'maxThreadNumber' say how much threads you would like to use, to create such tps load. By default it equals 4000.
+                This type of load imitates an exact number of requests per second.
+                By using attribute 'value', you can configure a number of requests.
+                Attribute 'maxThreadNumber' say how much threads you would like to use, to create such rps load. By default it equals 4000.
+                Attribute 'warmUpTime' -  time for increase of rps.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
@@ -599,6 +601,7 @@
 
     <xsd:attributeGroup name="tpsAttributes">
         <xsd:attribute name="value" type="xsd:integer" use="required"></xsd:attribute>
+        <xsd:attribute name="warmUpTime" type="xsd:string" use="optional"></xsd:attribute>
         <xsd:attribute name="maxThreadNumber" type="xsd:integer"/>
     </xsd:attributeGroup>
 

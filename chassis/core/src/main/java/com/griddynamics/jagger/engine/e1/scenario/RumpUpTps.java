@@ -17,27 +17,59 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.griddynamics.jagger.util.SystemClock;
+import org.bouncycastle.x509.NoSuchStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
 
 /**
  * @author Nikolay Musienko
- *         Date: 28.06.13
+ *         Date: 01.07.13
  */
+public class RumpUpTps  implements DesiredTps {
+    Logger log = LoggerFactory.getLogger(RumpUpTps.class);
 
-public class RpsClockConfiguration extends AbstractRateClockConfiguration {
+    private final BigDecimal tps;
+    private long warmUpTime;
+    private long startTime = -1;
+    private BigDecimal k;
+
+    public RumpUpTps(BigDecimal tps, long warmUpTime) {
+        this.tps = tps;
+        this.warmUpTime = warmUpTime;
+    }
 
     @Override
-    protected WorkloadClock getRateClock(int tickInterval, TpsRouter tpsRouter, WorkloadSuggestionMaker workloadSuggestionMaker, SystemClock systemClock, int maxThreadNumber) {
-        return new RpsClock(tickInterval, tpsRouter, workloadSuggestionMaker, systemClock, maxThreadNumber);
+    public BigDecimal get(long time) {
+        if(startTime == -1) {
+            startTime = time;
+            warmUpTime += time;
+            k = tps.divide(new BigDecimal(warmUpTime - startTime));
+        }
+        if (time > warmUpTime) {
+            return tps;
+        }
+        BigDecimal currentTps = k.multiply(new BigDecimal(time - startTime));
+        log.debug("Changing rate up to: {}", currentTps);
+        return currentTps;
+    }
+
+    @Override
+    public BigDecimal getDesiredTps() {
+        return tps;
     }
 
     @Override
     public String toString() {
-        if (isRumpUp()){
-            return getTps() + " rump-up rps";
-        }
-        return getTps() + " rps";
+        return "RumpUpTps{" +
+                "log=" + log +
+                ", tps=" + tps +
+                ", warmUpTime=" + warmUpTime +
+                ", startTime=" + startTime +
+                '}';
     }
 }

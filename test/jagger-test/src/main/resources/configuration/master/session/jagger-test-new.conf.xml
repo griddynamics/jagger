@@ -254,16 +254,17 @@
 
             <!--RPS-->
 
-                <test-group>
-                    <test id="sleep-service-50-150ms-500-rps-5-min-10-threads" testDescription="sleep-service-50-150ms">
+                <test-group id="sleep-service-50-150ms-500-rps-5-min-10-threads">
+                    <test testDescription="sleep-service-50-150ms">
                         <load xsi:type="load-rps" value="500" tickInterval="500"/>
                         <termination xsi:type="termination-duration" duration="5m"/>
                     </test>
                 </test-group>
 
-                <test-group>
-                    <test id="sleep-service-50-150ms-600-rps-5-min-50-threads" testDescription="sleep-service-50-150ms">
-                        <load xsi:type="load-rps" value="500" tickInterval="500"/>
+            <!--RumpUpTps-->
+                <test-group id="sleep-service-50-150ms-600-rump-up-tps-5-min">
+                    <test testDescription="sleep-service-50-150ms">
+                        <load xsi:type="load-tps" warmUpTime="100s" value="600" tickInterval="500"/>
                         <termination xsi:type="termination-duration" duration="5m"/>
                     </test>
                 </test-group>

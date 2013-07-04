@@ -2,6 +2,7 @@ package com.griddynamics.jagger.xml.beanParsers.task;
 
 import com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration;
 import com.griddynamics.jagger.user.ProcessingConfig;
+import com.griddynamics.jagger.util.Parser;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -34,6 +35,10 @@ public class TpsDefinitionParser extends CustomBeanDefinitionParser {
             builder.addPropertyValue(XMLConstants.MAX_THREAD_NUMBER, element.getAttribute(XMLConstants.MAX_THREAD_NUMBER));
         }else{
             builder.addPropertyValue(XMLConstants.MAX_THREAD_NUMBER, XMLConstants.DEFAULT_MAX_THREAD_COUNT);
+        }
+        if (element.hasAttribute(XMLConstants.WARM_UP_TIME)) {
+            builder.addPropertyValue(XMLConstants.WARM_UP_TIME, Parser.parseTimeMillis(element.getAttribute(XMLConstants.WARM_UP_TIME)));
+            element.removeAttribute(XMLConstants.WARM_UP_TIME);
         }
     }
 

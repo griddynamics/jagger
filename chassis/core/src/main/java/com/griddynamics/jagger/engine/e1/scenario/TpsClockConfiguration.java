@@ -34,6 +34,9 @@ public class TpsClockConfiguration extends AbstractRateClockConfiguration {
 
     @Override
     public String toString() {
+        if (isRumpUp()){
+            return getTps() + " rump-up tps";
+        }
         return getTps() + " tps";
     }
 }
