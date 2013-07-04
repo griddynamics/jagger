@@ -28,6 +28,7 @@ import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProce
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
+import com.griddynamics.jagger.util.TimeUtils;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
@@ -82,7 +83,7 @@ public class WorkloadReporter extends AbstractReportProvider {
 			reportData.setVersion(workloadData.getScenario().getVersion());
 			BigDecimal duration = new BigDecimal(workloadData.getEndTime().getTime()
 					- workloadData.getStartTime().getTime()).divide(new BigDecimal(1000));
-			reportData.setDuration(duration);
+			reportData.setDuration(TimeUtils.formatDuration(duration));
 
             reportData.setStartTime(workloadData.getStartTime());
 
@@ -160,7 +161,7 @@ public class WorkloadReporter extends AbstractReportProvider {
 		private String clock;
         private String termination;
         private Integer samples;
-        private BigDecimal duration;
+        private String duration;
         private Date startTime;
 		private BigDecimal totalDuration;
 		private BigDecimal throughput;
@@ -221,11 +222,11 @@ public class WorkloadReporter extends AbstractReportProvider {
 		}
 
 
-		public BigDecimal getDuration() {
+		public String getDuration() {
 			return duration;
 		}
 
-		public void setDuration(BigDecimal duration) {
+		public void setDuration(String duration) {
 			this.duration = duration;
 		}
 
