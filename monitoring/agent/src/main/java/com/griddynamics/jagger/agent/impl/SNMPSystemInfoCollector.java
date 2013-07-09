@@ -20,7 +20,10 @@
 
 package com.griddynamics.jagger.agent.impl;
 
+import com.griddynamics.jagger.agent.model.CpuData;
+import com.griddynamics.jagger.agent.model.DisksData;
 import com.griddynamics.jagger.agent.model.SystemInfoCollector;
+import com.griddynamics.jagger.agent.model.TcpData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.smi.OID;
@@ -93,32 +96,28 @@ public class SNMPSystemInfoCollector implements SystemInfoCollector {
     }
 
     @Override
-    public int getTcpBound() {
-        return 0;
+    public TcpData getTcpData() {
+        return new TcpData();
     }
 
     @Override
-    public int getTcpListen() {
-        return 0;
+    public CpuData getCpuData() {
+        CpuData data = new CpuData();
+
+        data.setCpuStateIdle(getCPUStateIdle());
+        data.setCpuStateSys(getCPUStateSys());
+        data.setCpuStateUser(getCPUStateUser());
+        data.setCpuStateWait(getCPUStateWait());
+
+        return data;
     }
 
     @Override
-    public int getTcpEstablished() {
-        return 0;
+    public DisksData getDisksData() {
+        return new DisksData();
     }
 
-    @Override
-    public int getTcpIdle() {
-        return 0;
-    }
-
-    @Override
-    public int getTcpSynchronizedReceived() {
-        return 0;
-    }
-
-    @Override
-    public double getCPUStateSys() {
+    private double getCPUStateSys() {
         double result = 0;
         try {
             return Double.parseDouble(provider.getAsString(new OID(".1.3.6.1.4.1.2021.11.10.0"))) / 100.0;
@@ -129,8 +128,7 @@ public class SNMPSystemInfoCollector implements SystemInfoCollector {
         return result;
     }
 
-    @Override
-    public double getCPUStateUser() {
+    private double getCPUStateUser() {
         double result = 0;
         try {
             return Double.parseDouble(provider.getAsString(new OID(".1.3.6.1.4.1.2021.11.9.0"))) / 100.0;
@@ -141,8 +139,7 @@ public class SNMPSystemInfoCollector implements SystemInfoCollector {
         return result;
     }
 
-    @Override
-    public double getCPUStateWait() {
+    private double getCPUStateWait() {
         double result = 0;
         try {
             return Double.parseDouble(provider.getAsString(new OID(".1.3.6.1.4.1.2021.11.51.0"))) / 100.0;
@@ -153,8 +150,7 @@ public class SNMPSystemInfoCollector implements SystemInfoCollector {
         return result;
     }
 
-    @Override
-    public double getCPUStateIdle() {
+    private double getCPUStateIdle() {
         double result = 0;
         try {
             return Double.parseDouble(provider.getAsString(new OID(".1.3.6.1.4.1.2021.11.11.0"))) / 100.0;
@@ -163,16 +159,6 @@ public class SNMPSystemInfoCollector implements SystemInfoCollector {
         }
         logger.trace("getCPUStateIdle: {}", result);
         return result;
-    }
-
-    @Override
-    public long getTCPInboundTotal() {
-        return 0;
-    }
-
-    @Override
-    public long getTCPOutboundTotal() {
-        return 0;
     }
 
     @Override
@@ -185,15 +171,5 @@ public class SNMPSystemInfoCollector implements SystemInfoCollector {
             logger.warn("Exception during load average polling", e);
             return new double[] {0, 0, 0};
         }
-    }
-
-    @Override
-    public long getDisksReadBytesTotal() {
-        return 0;
-    }
-
-    @Override
-    public long getDisksWriteBytesTotal() {
-        return 0;
     }
 }

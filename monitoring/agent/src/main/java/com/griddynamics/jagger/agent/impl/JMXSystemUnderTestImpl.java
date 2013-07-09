@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
 import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
 import com.griddynamics.jagger.agent.model.SystemUnderTestService;
+import com.sun.management.UnixOperatingSystemMXBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +118,16 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
             MemoryMXBean memoryMXBean = ManagementFactory.newPlatformMXBeanProxy(connection,
                     ManagementFactory.MEMORY_MXBEAN_NAME, MemoryMXBean.class);
             MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+
+            try {
+                UnixOperatingSystemMXBean unixOperatingSystemMXBean = ManagementFactory.newPlatformMXBeanProxy(connection,
+                        ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, UnixOperatingSystemMXBean.class);
+                result.putSysUTEntry(DefaultMonitoringParameters.OPEN_FILE_DESCRIPTOR_COUNT,
+                        (double) unixOperatingSystemMXBean.getOpenFileDescriptorCount());
+            } catch (Exception e) {
+                log.warn("Can not get count of open file descriptors from '{}' ", identifier, e);
+            }
+
             result.putSysUTEntry(DefaultMonitoringParameters.HEAP_MEMORY_MAX, bytesToMiB(heapMemoryUsage.getMax()));
             result.putSysUTEntry(DefaultMonitoringParameters.HEAP_MEMORY_COMMITTED, bytesToMiB(heapMemoryUsage.getCommitted()));
             result.putSysUTEntry(DefaultMonitoringParameters.HEAP_MEMORY_USED, bytesToMiB(heapMemoryUsage.getUsed()));

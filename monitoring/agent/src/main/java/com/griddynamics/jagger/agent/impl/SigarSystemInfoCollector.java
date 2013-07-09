@@ -21,7 +21,10 @@
 package com.griddynamics.jagger.agent.impl;
 
 import com.google.common.collect.Maps;
+import com.griddynamics.jagger.agent.model.CpuData;
+import com.griddynamics.jagger.agent.model.DisksData;
 import com.griddynamics.jagger.agent.model.SystemInfoCollector;
+import com.griddynamics.jagger.agent.model.TcpData;
 import org.apache.commons.lang.StringUtils;
 import org.hyperic.sigar.*;
 import org.slf4j.Logger;
@@ -129,216 +132,108 @@ public class SigarSystemInfoCollector implements SystemInfoCollector {
         return result;
     }
 
-    public int getTcpBound() {
-        int result = -1;
-        try {
-            result = sigar.getNetStat().getTcpBound();
-        } catch (Exception e) {
-            logger.warn("Exception during getTcpBound", e);
-        }
-        logger.trace("getTcpBound: {}", result);
-        return result;
-    }
-
-    public int getTcpListen() {
-        int result = -1;
-        try {
-            result = sigar.getNetStat().getTcpListen();
-
-        } catch (Exception e) {
-            logger.warn("Exception during getTcpListen", e);
-        }
-        logger.trace("getTcpListen: {}", result);
-        return result;
-    }
-
-    public int getTcpEstablished() {
-        int result = -1;
-        try {
-            result = sigar.getNetStat().getTcpEstablished();
-
-        } catch (Exception e) {
-            logger.warn("Exception during getTcpEstablished", e);
-        }
-        logger.trace("getTcpEstablished: {}", result);
-        return result;
-    }
-
-    public int getTcpIdle() {
-        int result = -1;
-        try {
-            result = sigar.getNetStat().getTcpIdle();
-        } catch (Exception e) {
-            logger.warn("Exception during getTcpIdle", e);
-        }
-        logger.trace("getTcpIdle: {}", result);
-        return result;
-    }
-
-    public int getTcpSynchronizedReceived() {
-        int result = -1;
-        try {
-            result = sigar.getNetStat().getTcpSynRecv();
-        } catch (Exception e) {
-            logger.warn("Exception during getTcpSynchronizedReceived", e);
-        }
-        logger.trace("getTcpSynchronizedReceived: {}", result);
-        return result;
-    }
+   @Override
+   public double[] getLoadAverage() {
+       try {
+           return sigar.getLoadAverage();
+       } catch (SigarException e) {
+           logger.warn("Exception during load average polling", e);
+       }
+       return new double[] {0, 0, 0};
+   }
 
     @Override
-    public double getCPUStateSys() {
-        double result = 0;
+    public TcpData getTcpData() {
+        TcpData data = new TcpData();
         try {
-            CpuPerc[] cpuPercList = sigar.getCpuPercList();
-            for (CpuPerc cpuPerc : cpuPercList) {
-                double value = cpuPerc.getSys();
-                result += Double.isNaN(value) ? 0 : value;
-            }
-            result /= cpuPercList.length;
-        } catch (Exception e) {
-            logger.warn("Exception during getCPUStateSys", e);
-        }
-        logger.trace("getCPUStateSys: {}", result);
-        return result;
-    }
+            NetStat stat = sigar.getNetStat();
+            data.setTcpBound(stat.getTcpBound());
+            data.setTcpEstablished(stat.getTcpEstablished());
+            data.setTcpIdle(stat.getTcpIdle());
+            data.setTcpListen(stat.getTcpListen());
+            data.setTcpSynchronizedReceived(stat.getTcpSynRecv());
 
-    @Override
-    public double getCPUStateUser() {
-        double result = 0;
-        try {
-            CpuPerc[] cpuPercList = sigar.getCpuPercList();
-            for (CpuPerc cpuPerc : cpuPercList) {
-                double value = cpuPerc.getUser();
-                result += Double.isNaN(value) ? 0 : value;
-            }
-            result /= cpuPercList.length;
-        } catch (Exception e) {
-            logger.warn("Exception during getCPUStateSys", e);
-        }
-        logger.trace("getCPUStateUser: {}", result);
-        return result;
-    }
-
-    @Override
-    public double getCPUStateWait() {
-        double result = 0;
-        try {
-            CpuPerc[] cpuPercList = sigar.getCpuPercList();
-            for (CpuPerc cpuPerc : cpuPercList) {
-                double value = cpuPerc.getWait();
-                result += Double.isNaN(value) ? 0 : value;
-            }
-            result /= cpuPercList.length;
-        } catch (Exception e) {
-            logger.warn("Exception during getCPUStateWait", e);
-        }
-        logger.trace("getCPUStateWait: {}", result);
-        return result;
-    }
-
-    @Override
-    public double getCPUStateIdle() {
-        double result = 0;
-        try {
-            CpuPerc[] cpuPercList = sigar.getCpuPercList();
-            for (CpuPerc cpuPerc : cpuPercList) {
-                double value = cpuPerc.getIdle();
-                result += Double.isNaN(value) ? 0 : value;
-            }
-            result /= cpuPercList.length;
-        } catch (Exception e) {
-            logger.warn("Exception during getCPUStateIdle", e);
-        }
-        logger.trace("getCPUStateIdle: {}", result);
-        return result;
-    }
-
-    @Override
-    public long getTCPInboundTotal() {
-        try {
             long inboundBytes = 0;
-            for(String netInterface : sigar.getNetInterfaceList()) {
-                for(String mask : interfaceNames) {
-                    if(netInterface.matches(mask)) {
-                        inboundBytes += sigar.getNetInterfaceStat(netInterface).getRxBytes();
-                    }
-                }
-            }
-            logger.trace("getTCPInboundTotal: {}", inboundBytes);
-            return inboundBytes;
-        } catch (SigarException e) {
-            logger.warn("Exception during network polling", e);
-        }
-        return -1;
-    }
-
-    @Override
-    public long getTCPOutboundTotal() {
-        try {
             long outboundBytes = 0;
             for(String netInterface : sigar.getNetInterfaceList()) {
                 for(String mask : interfaceNames) {
                     if(netInterface.matches(mask)) {
+                        inboundBytes += sigar.getNetInterfaceStat(netInterface).getRxBytes();
                         outboundBytes += sigar.getNetInterfaceStat(netInterface).getTxBytes();
                     }
                 }
             }
-            logger.trace("getTCPOutboundTotal: {}", outboundBytes);
-            return outboundBytes;
+            data.setTcpInboundTotal(inboundBytes);
+            data.setTcpOutboundTotal(outboundBytes);
+
+            logger.debug("getTcpData: {}", data);
         } catch (SigarException e) {
-            logger.warn("Exception during network polling", e);
+            logger.warn("Exception during getTcpData", e);
         }
-        return -1;
+        return data;
     }
 
     @Override
-    public long getDisksReadBytesTotal() {
+    public CpuData getCpuData() {
+        CpuData data = new CpuData();
         try {
-            long readBytes = 0;
+            CpuPerc cpuPerc = sigar.getCpuPerc();
+
+            double value = cpuPerc.getIdle();
+            data.setCpuStateIdle(Double.isNaN(value) ? 0 : value);
+
+            value = cpuPerc.getSys();
+            data.setCpuStateSys(Double.isNaN(value) ? 0 : value);
+
+            value = cpuPerc.getUser();
+            data.setCpuStateUser(Double.isNaN(value) ? 0 : value);
+
+            value = cpuPerc.getWait();
+            data.setCpuStateWait(Double.isNaN(value) ? 0 : value);
+
+
+            value = cpuPerc.getCombined();
+            data.setCpuStateCombined(Double.isNaN(value) ? 0 : value);
+
+            logger.debug("getCpuData: {}", data);
+        } catch (SigarException e) {
+            logger.warn("Exception during getCpuData", e);
+        }
+        return data;
+    }
+
+    @Override
+    public DisksData getDisksData() {
+        DisksData data = new DisksData();
+        try {
+            long disksReadBytesTotal = 0;
+            long disksQueueTotal = 0;
+            long disksSvcTimeTotal = 0;
+            long disksWriteBytesTotal = 0;
+
             FileSystem[] devices = sigar.getFileSystemList();
             for (FileSystem dev : devices) {
                 if(FileSystem.TYPE_LOCAL_DISK == dev.getType()) {
                     DiskUsage disk = sigar.getDiskUsage(dev.getDirName());
-                    readBytes += disk.getReadBytes();
+                    disksReadBytesTotal += disk.getReadBytes();
+                    disksWriteBytesTotal += disk.getWriteBytes();
+
+                    double value = disk.getQueue();
+                    disksQueueTotal += Double.isNaN(value) ? 0 : value;
+
+                    value = disk.getServiceTime();
+                    disksSvcTimeTotal += Double.isNaN(value) ? 0 : value;
                 }
             }
-            logger.trace("getDisksReadBytesTotal : {}", readBytes);
-            return readBytes;
-        } catch (SigarException e) {
-            logger.warn("Exception during getting disks information", e);
-        }
-        return -1;
-    }
+            data.setDisksQueueTotal(disksQueueTotal);
+            data.setDisksReadBytesTotal(disksReadBytesTotal);
+            data.setDisksSvcTimeTotal(disksSvcTimeTotal);
+            data.setDisksWriteBytesTotal(disksWriteBytesTotal);
 
-    @Override
-    public long getDisksWriteBytesTotal() {
-        try {
-            long writeBytes = 0;
-            FileSystem[] devices = sigar.getFileSystemList();
-            for (FileSystem dev : devices) {
-                if(FileSystem.TYPE_LOCAL_DISK == dev.getType()) {
-                    DiskUsage disk = sigar.getDiskUsage(dev.getDirName());
-                    writeBytes += disk.getWriteBytes();
-                }
-            }
-            logger.trace("getDisksWriteBytesTotal: {}", writeBytes);
-            return writeBytes;
+            logger.debug("getDisksData: {}", data);
         } catch (SigarException e) {
-            logger.warn("Exception during getting disks information", e);
+            logger.warn("Exception during getDisksData", e);
         }
-        return -1;
-    }
-
-    @Override
-    public double[] getLoadAverage() {
-        try {
-            return sigar.getLoadAverage();
-        } catch (SigarNotImplementedException e) {
-            return new double[] {0, 0, 0};
-        } catch (SigarException e) {
-            logger.warn("Exception during load average polling", e);
-            return new double[] {0, 0, 0};
-        }
+        return data;
     }
 }

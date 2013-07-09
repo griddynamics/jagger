@@ -38,31 +38,11 @@ public interface SystemInfoCollector {
 
     Map<String, String> getNetworkInfo();
 
-    int getTcpBound();
+    TcpData getTcpData();
 
-    int getTcpListen();
+    CpuData getCpuData();
 
-    int getTcpEstablished();
-
-    int getTcpIdle();
-
-    int getTcpSynchronizedReceived();
-
-    double getCPUStateSys();
-
-    double getCPUStateUser();
-
-    double getCPUStateWait();
-
-    double getCPUStateIdle();
-
-    long getTCPInboundTotal();
-
-    long getTCPOutboundTotal();
-
-    long getDisksReadBytesTotal();
-
-    long getDisksWriteBytesTotal();
+    DisksData getDisksData();
 
     double[] getLoadAverage();
 }

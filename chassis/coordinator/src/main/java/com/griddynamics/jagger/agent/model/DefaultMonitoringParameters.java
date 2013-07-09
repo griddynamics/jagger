@@ -40,10 +40,14 @@ public enum DefaultMonitoringParameters implements MonitoringParameter {
     DISKS_READ_BYTES_TOTAL("Disks read bytes total, KiB/sec", true, BOX),
     DISKS_WRITE_BYTES_TOTAL("Disks write bytes total, KiB/sec", true, BOX),
 
+    DISKS_SERVICE_TIME_TOTAL("Disks service time", false, BOX),
+    DISKS_AVERAGE_QUEUE_SIZE_TOTAL("Disks queue", false, BOX),
+
     CPU_STATE_USER_PERC("CPU user, %", false, BOX),
     CPU_STATE_SYSTEM_PERC("CPU system, %", false, BOX),
     CPU_STATE_IDLE_PERC("CPU idle, %", false, BOX),
     CPU_STATE_IDLE_WAIT("CPU wait, %", false, BOX),
+    CPU_STATE_COMBINED("CPU combined, %", false, BOX),
 
     CPU_LOAD_AVERAGE_1("CPU load average for the past 1 minute, %", false, BOX),
     CPU_LOAD_AVERAGE_5("CPU load average for the past 5 minutes, %", false, BOX),
@@ -62,7 +66,9 @@ public enum DefaultMonitoringParameters implements MonitoringParameter {
     NON_HEAP_MEMORY_INIT("Non heap init memory, MiB", false, SUT),
     NON_HEAP_MEMORY_USED("Non heap used memory, MiB", false, SUT),
     NON_HEAP_MEMORY_COMMITTED("Non heap committed memory, MiB", false, SUT),
-    NON_HEAP_MEMORY_MAX("Non heap max memory, MiB", false, SUT);
+    NON_HEAP_MEMORY_MAX("Non heap max memory, MiB", false, SUT),
+
+    OPEN_FILE_DESCRIPTOR_COUNT("Count of open file descriptors", false, SUT);
 
     private String description;
     private boolean isCumulativeCounter;

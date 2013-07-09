@@ -34,8 +34,9 @@
                         </bean>
                     </key>
                     <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <!--<value>CPU_STATE_IDLE_PERC</value>-->
-                        <!--<value>CPU_STATE_IDLE_WAIT</value>-->
+                        <value>CPU_STATE_COMBINED</value>
+                        <value>CPU_STATE_IDLE_PERC</value>
+                        <value>CPU_STATE_IDLE_WAIT</value>
                         <value>CPU_STATE_SYSTEM_PERC</value>
                         <value>CPU_STATE_USER_PERC</value>
                     </array>
@@ -177,6 +178,39 @@
                     <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
                         <value>DISKS_READ_BYTES_TOTAL</value>
                         <value>DISKS_WRITE_BYTES_TOTAL</value>
+                    </array>
+                </entry>
+
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                            <constructor-arg index="0" value="Disks queue"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                        <value>DISKS_AVERAGE_QUEUE_SIZE_TOTAL</value>
+                    </array>
+                </entry>
+
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                            <constructor-arg index="0" value="Disks service time, ms"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                        <value>DISKS_SERVICE_TIME_TOTAL</value>
+                    </array>
+                </entry>
+
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                            <constructor-arg index="0" value="File descriptors count"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                        <value>OPEN_FILE_DESCRIPTOR_COUNT</value>
                     </array>
                 </entry>
 
