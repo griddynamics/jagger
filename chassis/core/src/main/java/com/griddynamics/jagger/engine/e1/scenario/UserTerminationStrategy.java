@@ -64,7 +64,7 @@ public class UserTerminationStrategy implements TerminationStrategy {
             }
         }
         if (stopSampleCount != -1) {
-            if (status.getTotalFinishedSamples() >= stopSampleCount) {
+            if (status.getTotalSamples() >= stopSampleCount) {
                 return true;
             }
         }

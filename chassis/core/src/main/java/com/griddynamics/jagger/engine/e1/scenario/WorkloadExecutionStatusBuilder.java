@@ -95,7 +95,7 @@ public class WorkloadExecutionStatusBuilder {
         }
 
         @Override
-        public Integer getFinishedSamples(NodeId id) {
+        public Integer getSamples(NodeId id) {
             return finishedSamples.get(id);
         }
 
@@ -119,7 +119,7 @@ public class WorkloadExecutionStatusBuilder {
         }
 
         @Override
-        public int getTotalFinishedSamples() {
+        public int getTotalSamples() {
             int result = 0;
             for (Integer sample : finishedSamples.values()) {
                 result += sample;

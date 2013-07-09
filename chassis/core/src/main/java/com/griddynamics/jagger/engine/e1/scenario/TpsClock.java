@@ -31,7 +31,7 @@ public class TpsClock extends AbstractRateClock {
 
     @Override
     protected Integer getSamples(WorkloadExecutionStatus status, NodeId node) {
-        return status.getFinishedSamples(node);
+        return status.getSamples(node);
     }
 
     @Override

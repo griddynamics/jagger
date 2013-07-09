@@ -37,7 +37,7 @@ public interface WorkloadExecutionStatus {
 
     Integer getStartedSamples(NodeId id);
 
-    Integer getFinishedSamples(NodeId id);
+    Integer getSamples(NodeId id);
 
     Integer getDelay(NodeId id);
 
@@ -45,7 +45,7 @@ public interface WorkloadExecutionStatus {
 
     int getTotalStartedSamples();
 
-    int getTotalFinishedSamples();
+    int getTotalSamples();
 
     int getTotalThreads();
 }
