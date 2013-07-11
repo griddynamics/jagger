@@ -333,13 +333,12 @@ public class Trends extends DefaultActivity {
         plot.setWidth("100%");
 
         final PopupPanel popup = new PopupPanel();
-        popup.setWidth("50px");
         popup.addStyleName(getResources().css().infoPanel());
         final HTML popupPanelContent = new HTML();
         popup.add(popupPanelContent);
 
         // add hover listener
-        plot.addHoverListener(new ShowCurrentValueHoverListener(popup, 50, popupPanelContent), false);
+        plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent), false);
 
         if (markings != null && markingsMap != null && !markingsMap.isEmpty()) {
             final PopupPanel taskInfoPanel = new PopupPanel();

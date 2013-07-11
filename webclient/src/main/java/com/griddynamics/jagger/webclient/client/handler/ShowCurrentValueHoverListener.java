@@ -14,26 +14,30 @@ import com.google.gwt.user.client.ui.PopupPanel;
  */
 public class ShowCurrentValueHoverListener implements PlotHoverListener {
     private final PopupPanel popup;
-    private final int popupWidth;
     private final HTML popupPanelContent;
 
-    public ShowCurrentValueHoverListener(PopupPanel popup, int popupWidth, HTML popupPanelContent) {
+    public ShowCurrentValueHoverListener(PopupPanel popup, HTML popupPanelContent) {
         this.popup = popup;
-        this.popupWidth = popupWidth;
         this.popupPanelContent = popupPanelContent;
     }
 
     @Override
     public void onPlotHover(Plot plot, PlotPosition position, PlotItem item) {
         if (item != null) {
-            popupPanelContent.setHTML("<table width=\"100%\"><tr><td>Time</td><td>" + item.getDataPoint().getX() +
+            String label = item.getSeries().getLabel();
+            popupPanelContent.setHTML("<table width=\"100%\"><tr><td>Plot</td><td>"+label+"</td></tr>" +
+                    "<tr><td>Time</td><td>" + item.getDataPoint().getX() +
                     "</td></tr><tr><td>Value</td><td>" + item.getDataPoint().getY() + "</td></tr></table>");
 
             int clientWidth = Window.getClientWidth();
-            if (item.getPageX() + popupWidth <= clientWidth) {
+
+            int popupWidth = 8*(5+label.length());
+            popup.setWidth(popupWidth+"px");
+
+            if (item.getPageX() + popupWidth + 10 <= clientWidth) {
                 popup.setPopupPosition(item.getPageX() + 10, item.getPageY() - 25);
             } else {
-                popup.setPopupPosition(item.getPageX() - popupWidth, item.getPageY() - 25);
+                popup.setPopupPosition(item.getPageX() - popupWidth - 10, item.getPageY() - 25);
             }
 
             popup.show();
