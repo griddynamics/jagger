@@ -67,6 +67,7 @@
         <property name="workloadPlotGroups" ref="workloadPlotGroups"/>
         <property name="monitoringPlotDataProviders" ref="monitoringPlotDataProviders"/>
         <property name="workloadPlotDataProviders" ref="workloadPlotDataProviders"/>
+        <property name="customMetricPlotDataProvider" ref="customMetricPlotDataProvider"/>
     </bean>
 
     <bean id="sessionDataService" class="com.griddynamics.jagger.webclient.server.SessionDataServiceImpl"/>
@@ -87,6 +88,10 @@
         <property name="legendProvider" ref="legendProvider"/>
     </bean>
     <bean id="timeLatencyPercentilePlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.TimeLatencyPercentilePlotDataProvider">
+        <property name="legendProvider" ref="legendProvider"/>
+    </bean>
+
+    <bean id="customMetricPlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.CustomMetricPlotDataProvider">
         <property name="legendProvider" ref="legendProvider"/>
     </bean>
 

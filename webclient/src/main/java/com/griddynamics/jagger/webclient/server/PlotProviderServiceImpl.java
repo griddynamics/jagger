@@ -4,6 +4,7 @@ import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
 import com.griddynamics.jagger.monitoring.reporting.GroupKey;
 import com.griddynamics.jagger.webclient.client.PlotProviderService;
 import com.griddynamics.jagger.webclient.client.dto.*;
+import com.griddynamics.jagger.webclient.server.plot.CustomMetricPlotDataProvider;
 import com.griddynamics.jagger.webclient.server.plot.DataPointCompressingProcessor;
 import com.griddynamics.jagger.webclient.server.plot.PlotDataProvider;
 import com.griddynamics.jagger.webclient.server.plot.SessionScopePlotDataProvider;
@@ -29,6 +30,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     private Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups;
     private Map<String, PlotDataProvider> workloadPlotDataProviders;
     private Map<String, PlotDataProvider> monitoringPlotDataProviders;
+    private CustomMetricPlotDataProvider customMetricPlotDataProvider;
 
     //==========Setters
 
@@ -57,6 +59,11 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         this.monitoringPlotDataProviders = monitoringPlotDataProviders;
     }
 
+    @Required
+    public void setCustomMetricPlotDataProvider(CustomMetricPlotDataProvider customMetricPlotDataProvider) {
+        this.customMetricPlotDataProvider = customMetricPlotDataProvider;
+    }
+
     @PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -83,6 +90,12 @@ public class PlotProviderServiceImpl implements PlotProviderService {
                     }
                 }
             }
+
+            List<PlotNameDto> customMetrics = customMetricPlotDataProvider.getPlotNames(taskDataDto);
+            for (PlotNameDto plotNameDto : customMetrics){
+                plotNameDtoSet.add(new PlotNameDto(taskDataDto, plotNameDto.getPlotName()));
+            }
+
             log.debug("For sessions {} are available these plots: {}", sessionIds, plotNameDtoSet);
         } catch (Exception e) {
             log.error("Error was occurred during task scope plots data getting for session IDs " + sessionIds + ", task name " + taskDataDto.getTaskName(), e);
@@ -273,6 +286,11 @@ public class PlotProviderServiceImpl implements PlotProviderService {
             plotDataProvider = monitoringPlotDataProviders.get(plotName);
         }
         if (plotDataProvider == null) {
+            if (customMetricPlotDataProvider.isAvailable(plotName)){
+                plotDataProvider = customMetricPlotDataProvider;
+            }
+        }
+        if (plotDataProvider == null){
             log.warn("getPlotData was invoked with unsupported plotName={}", plotName);
             throw new UnsupportedOperationException("Plot type " + plotName + " doesn't supported");
         }
