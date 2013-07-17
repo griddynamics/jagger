@@ -25,6 +25,8 @@ import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.storage.fs.logging.MetricLogEntry;
 
+import java.io.File;
+
 /**
  * Created with IntelliJ IDEA.
  * User: nmusienko
@@ -57,7 +59,7 @@ public class MetricCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
         Long endTime = System.currentTimeMillis();
         LogWriter logWriter = kernelContext.getService(LogWriter.class);
         long startTime = endTime - duration;
-        logWriter.log(sessionId, taskId + "/" + METRIC_MARKER, kernelContext.getId().getIdentifier(),
+        logWriter.log(sessionId, taskId + File.separatorChar + METRIC_MARKER + File.separatorChar + name, kernelContext.getId().getIdentifier(),
                 new MetricLogEntry(startTime, name,  metricCalculator.calculate(result)));
     }
 

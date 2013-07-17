@@ -82,6 +82,7 @@
         <property name="logAggregator" ref="chronologyLogAggregator"/>
         <property name="sessionIdProvider" ref="sessionIdProvider"/>
         <property name="pointCount" value="${chassis.engine.e1.reporting.task.point.count}"/>
+        <property name="fileStorage" ref="fileStorage"/>
 
         <property name="logReader"  ref="bufferedLogReader"/>
 

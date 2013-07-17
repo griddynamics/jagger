@@ -31,6 +31,7 @@ import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -78,7 +79,7 @@ public class DurationCollector extends ScenarioCollector {
 
         LogWriter logWriter = kernelContext.getService(LogWriter.class);
         long startTime = endTime - duration;
-        logWriter.log(sessionId, taskId + "/" + DURATION_MARKER, kernelContext.getId().getIdentifier(),
+        logWriter.log(sessionId, taskId + File.separatorChar + DURATION_MARKER, kernelContext.getId().getIdentifier(),
                 new DurationLogEntry(startTime, duration));
     }
 

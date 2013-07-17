@@ -19,6 +19,7 @@
  */
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
@@ -28,6 +29,7 @@ import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.storage.FileStorage;
 import com.griddynamics.jagger.storage.fs.logging.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -57,10 +59,16 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     private LogReader logReader;
     private SessionIdProvider sessionIdProvider;
     private int pointCount;
+    private FileStorage fileStorage;
 
     @Required
     public void setLogReader(LogReader logReader) {
         this.logReader = logReader;
+    }
+
+    @Required
+    public void setFileStorage(FileStorage fileStorage) {
+        this.fileStorage = fileStorage;
     }
 
     @Required
@@ -91,40 +99,46 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     }
 
     private void processLog(String sessionId, String taskId) {
-        try {
 
+        try {
             TaskData taskData = getTaskData(taskId, sessionId);
             if (taskData == null) {
                 log.error("TaskData not found by taskId: {}", taskId);
                 return;
             }
+            String dir = sessionId + File.separatorChar + taskId + File.separatorChar + MetricCollector.METRIC_MARKER + File.separatorChar;
+            Set<String> metrics = fileStorage.getFileNameList(dir);
 
-            String dir = sessionId + File.separatorChar + taskId + File.separatorChar + MetricCollector.METRIC_MARKER;
+            for (String metricPath: metrics) {
+                try {
+                    String file = metricPath + File.separatorChar + "aggregated.dat";
+                    AggregationInfo aggregationInfo = logAggregator.chronology(metricPath, file);
 
-            String file = dir + File.separatorChar + "aggregated.dat";
-            AggregationInfo aggregationInfo = logAggregator.chronology(dir, file);
-
-            if(aggregationInfo.getCount()==0){
-                //metrics not collected
-                return;
-            }
-            int intervalSize = (int) ((aggregationInfo.getMaxTime() - aggregationInfo.getMinTime()) / pointCount);
-            if (intervalSize < 1) {
-                intervalSize = 1;
-            }
-            StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSize, taskData).generate();
-            final Collection<MetricDetails> statistics = statisticsGenerator.getStatistics();
-
-            getHibernateTemplate().execute(new HibernateCallback<Void>() {
-                @Override
-                public Void doInHibernate(Session session) throws HibernateException, SQLException {
-                    for (MetricDetails stat : statistics) {
-                        session.persist(stat);
+                    if(aggregationInfo.getCount() == 0) {
+                        //metric not collected
+                        return;
                     }
-                    session.flush();
-                    return null;
+                    int intervalSize = (int) ((aggregationInfo.getMaxTime() - aggregationInfo.getMinTime()) / pointCount);
+                    if (intervalSize < 1) {
+                        intervalSize = 1;
+                    }
+                    StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSize, taskData).generate();
+                    final Collection<MetricDetails> statistics = statisticsGenerator.getStatistics();
+
+                    getHibernateTemplate().execute(new HibernateCallback<Void>() {
+                        @Override
+                        public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                            for (MetricDetails stat : statistics) {
+                                session.persist(stat);
+                            }
+                            session.flush();
+                            return null;
+                        }
+                    });
+                } catch (Exception e) {
+                    log.error("Error during processing metric by path: '{}'",metricPath , e);
                 }
-            });
+            }
 
         } catch (Exception e) {
             log.error("Error during log processing", e);

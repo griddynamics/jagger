@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.io.File;
+
 /**
  * Default implementation of {@link MonitoringProcessor}
  */
@@ -39,7 +41,7 @@ public class LoggingMonitoringProcessor implements MonitoringProcessor {
 
     @Override
     public void process(String sessionId, String taskId, NodeId agentId, SystemInfo systemInfo) {
-        logWriter.log(sessionId, taskId + "/" + MONITORING_MARKER,
+        logWriter.log(sessionId, taskId + File.separatorChar + MONITORING_MARKER,
                 agentId.getIdentifier(), new MonitoringLogEntry(systemInfo));
         log.trace("System info {} received from agent {} and has been written to FileStorage", systemInfo, agentId);
     }
