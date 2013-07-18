@@ -165,33 +165,30 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
         }
 
         public StatisticsGenerator generate() throws IOException {
+            long currentInterval = aggregationInfo.getMinTime() + intervalSize;
+            int currentCount = 0;
+            long time = 0;
             statistics = new LinkedList<MetricDetails>();
-            Map<String, MetricStatistics> metrics = new HashMap<String, MetricStatistics>();
 
             LogReader.FileReader<MetricLogEntry> fileReader = null;
             try {
                 fileReader = logReader.read(path, MetricLogEntry.class);
                 for (MetricLogEntry logEntry : fileReader) {
-                    MetricStatistics stat = metrics.get(logEntry.getMetricName());
-                    if (stat == null) {
-                        stat = new MetricStatistics(aggregationInfo.getMinTime() + intervalSize);
-                        metrics.put(logEntry.getMetricName(), stat);
-                    }
                     log.debug("Log entry {} time", logEntry.getTime());
 
-                    while (logEntry.getTime() > stat.currentInterval) {
-                        log.debug("processing count {} interval {}", stat.currentCount, intervalSize);
+                    while (logEntry.getTime() > currentInterval) {
+                        log.debug("processing count {} interval {}", currentCount, intervalSize);
 
-                        if (stat.currentCount > 0) {
-                            statistics.add(new MetricDetails(stat.time, logEntry.getMetricName(), stat.currentCount, taskData));
-                            stat.currentCount = 0;
+                        if (currentCount > 0) {
+                            statistics.add(new MetricDetails(time, logEntry.getMetricName(), currentCount, taskData));
+                            currentCount = 0;
                         } else {
-                            statistics.add(new MetricDetails(stat.time, logEntry.getMetricName(), 0l, taskData));
+                            statistics.add(new MetricDetails(time, logEntry.getMetricName(), 0l, taskData));
                         }
-                        stat.time += intervalSize;
-                        stat.currentInterval += intervalSize;
+                        time += intervalSize;
+                        currentInterval += intervalSize;
                     }
-                    stat.currentCount += logEntry.getMetric();
+                    currentCount += logEntry.getMetric();
                 }
             } finally {
                 if (fileReader != null) {
@@ -203,15 +200,5 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
         }
     }
 
-    private class MetricStatistics {
-        //for separating time-line in metrics
-        int currentCount;
-        long currentInterval;
-        long time;
-
-        private MetricStatistics(long currentInterval) {
-            this.currentInterval = currentInterval;
-        }
-    }
 }
 
