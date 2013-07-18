@@ -48,6 +48,8 @@ public class AgentWorker extends ConfigurableWorker {
     private Profiler profiler;
     private final Agent agent;
 
+    private ArrayList<JmxMetric> jmxMetricList = null;
+
     public AgentWorker(Agent agent) {
         this.agent = agent;
     }
@@ -153,6 +155,13 @@ public class AgentWorker extends ConfigurableWorker {
                                     }
                                     Long waitBefore = Long.parseLong(ManageAgent.extractParameter(command.getParams(),
                                             ManageAgent.ActionProp.WAIT_BEFORE).toString());
+
+                                    jmxMetricList = (ArrayList) ManageAgent.extractParameter(command.getParams(),
+                                            ManageAgent.ActionProp.SET_JMX_METRICS);
+                                    AgentContext agentContext = new AgentContext();
+                                    agentContext.setProperty(AgentContext.AgentContextProperty.JMX_METRICS, jmxMetricList);
+                                    monitoringInfoService.setContext(agentContext);
+
                                     log.info("Waiting before action {} millis", waitBefore);
                                     AgentStarter.agentLatch.await(waitBefore, TimeUnit.MILLISECONDS);
                                     AgentStarter.alive.set(!Boolean.parseBoolean(ManageAgent.extractParameter(command.getParams(),

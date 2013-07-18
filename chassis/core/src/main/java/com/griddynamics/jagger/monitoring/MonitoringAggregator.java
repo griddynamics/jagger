@@ -306,10 +306,9 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                                                 Map<NodeId, Map<MonitoringParameter, Long>> countByInterval,
                                                 ListMultimap<MonitoringStream, MonitoringStatistics> aggregatedData) {
         for (NodeId nodeId : countByInterval.keySet()) {
-            for (DefaultMonitoringParameters parameterId : DefaultMonitoringParameters.values()) {
+            for (MonitoringParameter parameterId : countByInterval.get(nodeId).keySet()) {
                 MonitoringParameterBean parameter = MonitoringParameterBean.copyOf(parameterId);
-                if (parameterId.getLevel() == MonitoringParameterLevel.BOX) {
-                    if (!countByInterval.get(nodeId).containsKey(parameterId)) break;
+                if (parameter.getLevel() == MonitoringParameterLevel.BOX) {
                     Double avgValue = sumByInterval.get(nodeId).get(parameterId) / countByInterval.get(nodeId).get(parameterId);
 
                     aggregatedData.put(
@@ -327,10 +326,9 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                                               Map<String, Map<MonitoringParameter, Long>> countByInterval,
                                               ListMultimap<MonitoringStream, MonitoringStatistics> aggregatedData) {
         for (String url : countByInterval.keySet()) {
-            for (DefaultMonitoringParameters parameterId : DefaultMonitoringParameters.values()) {
-                if (parameterId.getLevel() == MonitoringParameterLevel.SUT) {
-                    MonitoringParameterBean parameter = MonitoringParameterBean.copyOf(parameterId);
-                    if (!countByInterval.get(url).containsKey(parameterId)) break;
+            for (MonitoringParameter parameterId : countByInterval.get(url).keySet()) {
+                MonitoringParameterBean parameter = MonitoringParameterBean.copyOf(parameterId);
+                if (parameter.getLevel() == MonitoringParameterLevel.SUT) {
                     Double avgValue = sumByInterval.get(url).get(parameterId) / countByInterval.get(url).get(parameterId);
 
                     aggregatedData.put(
@@ -358,7 +356,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
         private String sourceId;
         private MonitoringParameter monitoringParameter;
 
-        public MonitoringStream(String sourceId, DefaultMonitoringParameters parameter) {
+        public MonitoringStream(String sourceId, MonitoringParameter parameter) {
             this.sourceId = sourceId;
             this.monitoringParameter = parameter;
         }

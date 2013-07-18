@@ -28,6 +28,7 @@ import com.griddynamics.jagger.agent.model.ManageAgent;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.engine.e1.process.Services;
 import com.griddynamics.jagger.master.configuration.*;
+import com.griddynamics.jagger.monitoring.reporting.DynamicPlotGroups;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.util.Futures;
@@ -60,12 +61,13 @@ public class Master implements Runnable {
     private Conditions conditions;
     private ExecutorService executor;
     private TaskIdProvider taskIdProvider;
-    private Map<ManageAgent.ActionProp, Serializable> agentManagementProps;
+    private Map<ManageAgent.ActionProp, Serializable> agentStopManagementProps;
     private MasterTimeoutConfiguration timeoutConfiguration;
     private boolean terminateConfiguration = false;
     private final Object terminateConfigurationLock = new Object();
     private CountDownLatch terminateConfigurationLatch = null;
     private final WeakHashMap<Service, Object> distributes = new WeakHashMap<Service, Object>();
+    private DynamicPlotGroups dynamicPlotGroups;
 
     @Required
     public void setReconnectPeriod(long reconnectPeriod) {
@@ -85,6 +87,11 @@ public class Master implements Runnable {
     @Required
     public void setDistributorRegistry(DistributorRegistry distributorRegistry) {
         this.distributorRegistry = distributorRegistry;
+    }
+
+    @Required
+    public void setDynamicPlotGroups(DynamicPlotGroups dynamicPlotGroups) {
+        this.dynamicPlotGroups = dynamicPlotGroups;
     }
 
     @Required
@@ -125,6 +132,17 @@ public class Master implements Runnable {
             log.warn("CountDownLatch await interrupted", e);
         }
 
+        if (configuration.getMonitoringConfiguration() != null) {
+            dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
+		    Map<ManageAgent.ActionProp, Serializable>  agentStartManagementProps = Maps.newHashMap();
+
+		    agentStartManagementProps.put(
+		            ManageAgent.ActionProp.SET_JMX_METRICS, dynamicPlotGroups.getJmxMetrics());
+		    processAgentManagement(sessionId, agentStartManagementProps);
+		}
+
+        
+
         for (SessionExecutionListener listener : configuration.getSessionExecutionListeners()) {
             listener.onSessionStarted(sessionId, allNodes);
         }
@@ -162,7 +180,7 @@ public class Master implements Runnable {
             log.info("Report generated");
 
             log.info("Going to stop all agents");
-            finishAgentManagement(sessionId);
+            processAgentManagement(sessionId, agentStopManagementProps);
             log.info("Agents stopped");
         } finally {
             try {
@@ -173,7 +191,7 @@ public class Master implements Runnable {
         }
     }
 
-    private void finishAgentManagement(String sessionId) {
+    private void processAgentManagement(String sessionId, Map<ManageAgent.ActionProp, Serializable> agentManagementProps) {
         for (NodeId agent : coordinator.getAvailableNodes(NodeType.AGENT)) {
             // async run
             coordinator.getExecutor(agent).run(new ManageAgent(sessionId, agentManagementProps),
@@ -280,12 +298,12 @@ public class Master implements Runnable {
         this.taskIdProvider = taskIdProvider;
     }
 
-    public void setAgentManagementProps(Map<ManageAgent.ActionProp, Serializable> agentManagementProps) {
-        this.agentManagementProps = agentManagementProps;
+    public Map<ManageAgent.ActionProp, Serializable> getAgentStopManagementProps() {
+        return agentStopManagementProps;
     }
 
-    public Map<ManageAgent.ActionProp, Serializable> getAgentManagementProps() {
-        return this.agentManagementProps;
+    public void setAgentStopManagementProps(Map<ManageAgent.ActionProp, Serializable> agentStopManagementProps) {
+        this.agentStopManagementProps = agentStopManagementProps;
     }
 
     @Required

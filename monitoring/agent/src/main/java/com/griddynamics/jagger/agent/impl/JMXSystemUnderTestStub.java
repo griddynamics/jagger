@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.agent.impl;
 
+import com.griddynamics.jagger.agent.model.AgentContext;
 import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
 import com.griddynamics.jagger.agent.model.SystemUnderTestService;
 import org.slf4j.Logger;
@@ -34,5 +35,10 @@ public class JMXSystemUnderTestStub implements SystemUnderTestService {
     public Map<String, SystemUnderTestInfo> getInfo() {
         log.debug("JMX functionality disabled. Launching in a stub mode.");
         return null;
+    }
+
+    @Override
+    public void setContext(AgentContext context) {
+        //nothing to do...
     }
 }

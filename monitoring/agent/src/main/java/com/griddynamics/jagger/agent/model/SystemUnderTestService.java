@@ -20,6 +20,8 @@
 
 package com.griddynamics.jagger.agent.model;
 
+import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,8 +29,11 @@ import java.util.Map;
  * Date: 7/5/11
  * Time: 4:41 PM
  */
+
 public interface SystemUnderTestService {
 
     Map<String, SystemUnderTestInfo> getInfo();
+
+    void setContext(AgentContext context);
 
 }

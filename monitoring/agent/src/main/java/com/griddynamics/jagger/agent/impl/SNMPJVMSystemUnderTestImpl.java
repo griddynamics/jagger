@@ -21,9 +21,7 @@
 package com.griddynamics.jagger.agent.impl;
 
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
-import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
-import com.griddynamics.jagger.agent.model.SystemUnderTestService;
+import com.griddynamics.jagger.agent.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.smi.OID;
@@ -56,6 +54,11 @@ public class SNMPJVMSystemUnderTestImpl implements SystemUnderTestService {
             result.put(systemIdentifier, pollSystem(systemIdentifier));
         }
         return result;
+    }
+
+    @Override
+    public void setContext(AgentContext context) {
+        //nothing to do...
     }
 
     public void setSnmpProviders(Map<String, SNMPProvider> snmpProviders) {

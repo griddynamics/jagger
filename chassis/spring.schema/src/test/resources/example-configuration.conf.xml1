@@ -35,6 +35,15 @@
     <beans:import resource="example-configuration-import.conf.xml1"/>
 
     <configuration id="config1" parent="config2">
+        <monitoring>
+            <monitoring-sut>
+                <jmx-metrics>
+                    <jmx-metrics-group groupName="OperatingSystem" objectName="java.lang:type=OperatingSystem">
+                        <jmx-metric-attribute>MaxFileDescriptorCount</jmx-metric-attribute>
+                    </jmx-metrics-group>
+                </jmx-metrics>
+            </monitoring-sut>
+        </monitoring>
         <test-suite ref="test-plan-1"/>
 
         <session-execution-listeners>

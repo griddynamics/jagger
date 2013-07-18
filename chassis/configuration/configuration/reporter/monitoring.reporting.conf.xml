@@ -24,198 +24,203 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-    <bean id="monitoringPlotGroups" class="java.util.LinkedHashMap">
-        <constructor-arg index="0">
-            <map>
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="CPU Utilization"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>CPU_STATE_COMBINED</value>
-                        <value>CPU_STATE_IDLE_PERC</value>
-                        <value>CPU_STATE_IDLE_WAIT</value>
-                        <value>CPU_STATE_SYSTEM_PERC</value>
-                        <value>CPU_STATE_USER_PERC</value>
-                    </array>
-                </entry>
+    <bean id="monitoringPlotGroups" class="com.griddynamics.jagger.monitoring.reporting.DynamicPlotGroups">
+        <property name="plotGroups">
+            <bean class="java.util.LinkedHashMap">
+                <constructor-arg index="0">
+                    <map>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="CPU Utilization"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>CPU_STATE_COMBINED</value>
+                                <value>CPU_STATE_IDLE_PERC</value>
+                                <value>CPU_STATE_IDLE_WAIT</value>
+                                <value>CPU_STATE_SYSTEM_PERC</value>
+                                <value>CPU_STATE_USER_PERC</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="CPU Load Average"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>CPU_LOAD_AVERAGE_1</value>
-                        <value>CPU_LOAD_AVERAGE_5</value>
-                        <value>CPU_LOAD_AVERAGE_15</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="CPU Load Average"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>CPU_LOAD_AVERAGE_1</value>
+                                <value>CPU_LOAD_AVERAGE_5</value>
+                                <value>CPU_LOAD_AVERAGE_15</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="System Memory"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>MEM_TOTAL</value>
-                        <value>MEM_USED</value>
-                        <value>MEM_FREE</value>
-                        <value>MEM_ACTUAL_USED</value>
-                        <value>MEM_ACTUAL_FREE</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="System Memory"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>MEM_TOTAL</value>
+                                <value>MEM_USED</value>
+                                <value>MEM_FREE</value>
+                                <value>MEM_ACTUAL_USED</value>
+                                <value>MEM_ACTUAL_FREE</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="TCP Connections"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>TCP_LISTEN</value>
-                        <!--<value>TCP_SYNCHRONIZED_RECEIVED</value>-->
-                        <value>TCP_ESTABLISHED</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="TCP Connections"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>TCP_LISTEN</value>
+                                <!--<value>TCP_SYNCHRONIZED_RECEIVED</value>-->
+                                <value>TCP_ESTABLISHED</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="TCP Traffic"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>TCP_INBOUND_TOTAL</value>
-                        <value>TCP_OUTBOUND_TOTAL</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="TCP Traffic"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>TCP_INBOUND_TOTAL</value>
+                                <value>TCP_OUTBOUND_TOTAL</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="GC major count"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>JMX_GC_MAJOR_UNIT</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="GC major count"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>JMX_GC_MAJOR_UNIT</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="GC major time"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>JMX_GC_MAJOR_TIME</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="GC major time"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>JMX_GC_MAJOR_TIME</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="GC minor count"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>JMX_GC_MINOR_UNIT</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="GC minor count"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>JMX_GC_MINOR_UNIT</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="GC minor time"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>JMX_GC_MINOR_TIME</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="GC minor time"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>JMX_GC_MINOR_TIME</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="Heap Memory"/>
-                            <constructor-arg index="1" value="Heap Memory, MiB"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>HEAP_MEMORY_INIT</value>
-                        <value>HEAP_MEMORY_USED</value>
-                        <value>HEAP_MEMORY_COMMITTED</value>
-                        <value>HEAP_MEMORY_MAX</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="Heap Memory"/>
+                                    <constructor-arg index="1" value="Heap Memory, MiB"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>HEAP_MEMORY_INIT</value>
+                                <value>HEAP_MEMORY_USED</value>
+                                <value>HEAP_MEMORY_COMMITTED</value>
+                                <value>HEAP_MEMORY_MAX</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="Non Heap Memory"/>
-                            <constructor-arg index="1" value="Non Heap Memory, MiB"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>NON_HEAP_MEMORY_INIT</value>
-                        <value>NON_HEAP_MEMORY_USED</value>
-                        <value>NON_HEAP_MEMORY_COMMITTED</value>
-                        <value>NON_HEAP_MEMORY_MAX</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="Non Heap Memory"/>
+                                    <constructor-arg index="1" value="Non Heap Memory, MiB"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>NON_HEAP_MEMORY_INIT</value>
+                                <value>NON_HEAP_MEMORY_USED</value>
+                                <value>NON_HEAP_MEMORY_COMMITTED</value>
+                                <value>NON_HEAP_MEMORY_MAX</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="Disks IO, KiB/sec"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>DISKS_READ_BYTES_TOTAL</value>
-                        <value>DISKS_WRITE_BYTES_TOTAL</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="Disks IO, KiB/sec"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>DISKS_READ_BYTES_TOTAL</value>
+                                <value>DISKS_WRITE_BYTES_TOTAL</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="Disks queue"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>DISKS_AVERAGE_QUEUE_SIZE_TOTAL</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="Disks queue"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>DISKS_AVERAGE_QUEUE_SIZE_TOTAL</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="Disks service time, ms"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>DISKS_SERVICE_TIME_TOTAL</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="Disks service time, ms"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>DISKS_SERVICE_TIME_TOTAL</value>
+                            </array>
+                        </entry>
 
-                <entry>
-                    <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
-                            <constructor-arg index="0" value="File descriptors count"/>
-                        </bean>
-                    </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
-                        <value>OPEN_FILE_DESCRIPTOR_COUNT</value>
-                    </array>
-                </entry>
+                        <entry>
+                            <key>
+                                <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                                    <constructor-arg index="0" value="File descriptors count"/>
+                                </bean>
+                            </key>
+                            <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                                <value>OPEN_FILE_DESCRIPTOR_COUNT</value>
+                            </array>
+                        </entry>
 
-            </map>
-        </constructor-arg>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </property>
     </bean>
+
 
 </beans>

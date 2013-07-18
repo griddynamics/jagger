@@ -29,6 +29,8 @@ import com.griddynamics.jagger.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -138,6 +140,11 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
 
         log.debug("finish collecting SuT info through jmx on agent: time {} ms", System.currentTimeMillis() - startTimeLog);
         return systemInfo;
+    }
+
+    @Override
+    public void setContext(AgentContext context) {
+        systemUnderTestService.setContext(context);
     }
 
 }

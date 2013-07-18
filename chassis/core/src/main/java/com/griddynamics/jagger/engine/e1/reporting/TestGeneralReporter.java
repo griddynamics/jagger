@@ -64,7 +64,7 @@ public class TestGeneralReporter extends AbstractReportProvider {
         List<TestDetailsDTO> result = new ArrayList<TestDetailsDTO>();
         Set<String> boxIdentifiers = plotsGeneralProvider.getStatistics().findBoxIdentifiers();
         Set<String> sutUrls = plotsGeneralProvider.getStatistics().findSutUrls();
-        for (GroupKey groupName : plotsGeneralProvider.getPlotGroups().keySet()) {
+        for (GroupKey groupName : plotsGeneralProvider.getPlotGroups().getPlotGroups().keySet()) {
             if (hasGlobalStatistics(plotsGeneralProvider, groupName)) {
                 TestDetailsDTO testDetailsDTO = new TestDetailsDTO();
                 testDetailsDTO.setTestId(groupName.getUpperName());
@@ -97,7 +97,7 @@ public class TestGeneralReporter extends AbstractReportProvider {
     }
 
     private boolean hasGlobalStatistics(SystemUnderTestPlotsGeneralProvider plotsGeneralProvider, GroupKey groupName) {
-        for (MonitoringParameter parameterId : plotsGeneralProvider.getPlotGroups().get(groupName)) {
+        for (MonitoringParameter parameterId : plotsGeneralProvider.getPlotGroups().getPlotGroups().get(groupName)) {
             MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
             if (plotsGeneralProvider.getStatistics().hasGlobalStatistics(param)) {
                 return true;
@@ -107,7 +107,7 @@ public class TestGeneralReporter extends AbstractReportProvider {
     }
 
     private boolean hasBoxStatistics(SystemUnderTestPlotsGeneralProvider plotsGeneralProvider, String boxIdentifier, GroupKey groupName) {
-        for (MonitoringParameter parameterId : plotsGeneralProvider.getPlotGroups().get(groupName)) {
+        for (MonitoringParameter parameterId : plotsGeneralProvider.getPlotGroups().getPlotGroups().get(groupName)) {
             MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
             if (plotsGeneralProvider.getStatistics().hasBoxStatistics(param, boxIdentifier)) {
                 return true;
@@ -117,7 +117,7 @@ public class TestGeneralReporter extends AbstractReportProvider {
     }
 
     private boolean hasSutStatistics(SystemUnderTestPlotsGeneralProvider plotsGeneralProvider, String sutUrl, GroupKey groupName) {
-        for (MonitoringParameter parameterId : plotsGeneralProvider.getPlotGroups().get(groupName)) {
+        for (MonitoringParameter parameterId : plotsGeneralProvider.getPlotGroups().getPlotGroups().get(groupName)) {
             MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
             if (plotsGeneralProvider.getStatistics().hasSutStatistics(param, sutUrl)) {
                 return true;

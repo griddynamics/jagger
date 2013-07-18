@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
+import com.griddynamics.jagger.agent.model.JmxMetricGroup;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
@@ -13,8 +14,11 @@ import org.springframework.context.ApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -120,6 +124,17 @@ public class JaggerConfigurationTest {
         Assert.assertEquals(RequestPath.class, it.next().getClass());
     }
 
+    @Test
+    public void jmxMetrics() throws MalformedObjectNameException {
+        Configuration config1 = (Configuration) ctx.getBean("config1");
+        ArrayList<JmxMetricGroup> groupArrayList = config1.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups();
+        Assert.assertEquals(1, groupArrayList.size());
+        JmxMetricGroup metric = groupArrayList.get(0);
+        Assert.assertEquals(new ObjectName("java.lang:type=OperatingSystem"), metric.getObjectName());
+        Assert.assertEquals("OperatingSystem", metric.getGroupName());
+        Assert.assertEquals(1, metric.getAttributes().length);
+        Assert.assertEquals("MaxFileDescriptorCount", metric.getAttributes()[0]);
+    }
 
     private void checkListOnNull(List list){
         for (Object o : list){

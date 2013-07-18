@@ -2,7 +2,6 @@ package com.griddynamics.jagger.xml.beanParsers.configuration;
 
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.master.configuration.Configuration;
-import com.griddynamics.jagger.user.TestSuitConfiguration;
 import com.griddynamics.jagger.xml.TaskGeneratorBean;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
@@ -101,6 +100,10 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
             Element tListenerGroup = DomUtils.getChildElementByTagName(element, XMLConstants.TASK_EXECUTION_LISTENERS);
             setBeanListProperty(XMLConstants.TASK_EXECUTION_LISTENERS_CLASS_FIELD, true, true, tListenerGroup, parserContext, builder.getBeanDefinition());
         }
+
+        Element monitoring = DomUtils.getChildElementByTagName(element, XMLConstants.MONITORING);
+        builder.addPropertyValue("monitoringConfiguration", parseCustomElement(monitoring, parserContext, builder.getBeanDefinition()));
+
 
     }
 

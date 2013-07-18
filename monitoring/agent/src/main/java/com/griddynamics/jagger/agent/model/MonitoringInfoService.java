@@ -29,4 +29,6 @@ public interface MonitoringInfoService {
 
     SystemInfo getSystemInfo();
 
+    void setContext(AgentContext context);
+
 }

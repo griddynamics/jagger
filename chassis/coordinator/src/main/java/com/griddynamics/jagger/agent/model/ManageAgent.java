@@ -20,10 +20,12 @@
 
 package com.griddynamics.jagger.agent.model;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.coordinator.Command;
 import com.griddynamics.jagger.coordinator.VoidResult;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -35,6 +37,7 @@ public class ManageAgent implements Command<VoidResult> {
     public enum ActionProp {
         WAIT_BEFORE(Long.class, 60000L),
         NEW_MESSAGE_SERVICE_URL(String.class, ""),
+        SET_JMX_METRICS(ArrayList.class, Lists.newArrayListWithExpectedSize(0)),
         HALT(Boolean.class, false);
 
         private Class clazz;

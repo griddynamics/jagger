@@ -169,6 +169,7 @@
                     <xsd:element name="task-execution-listeners" type="tlistenersTypeIn" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="latency-percentiles" type="latencyPercentilesTypeIn" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="report" type="reportType" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="monitoring" type="monitoringType" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
             </xsd:extension>
         </xsd:complexContent>
@@ -1682,5 +1683,86 @@
             <xsd:enumeration value="worstCase"/>
         </xsd:restriction>
     </xsd:simpleType>
+
+    <xsd:complexType name="monitoringType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element can configure your monitoring.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:all>
+                    <xsd:element name="monitoring-sut" type="monitoringSutType" minOccurs="0" maxOccurs="1"/>
+                </xsd:all>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="monitoringSutType">
+        <xsd:annotation>
+            <xsd:documentation>
+                This element can configure monitoring on System Under Test.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:all>
+                    <xsd:element name="jmx-metrics" type="jmxMetricsType" minOccurs="0" maxOccurs="1"/>
+                </xsd:all>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="jmxMetricsType">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:choice>
+                    <xsd:element name="jmx-metrics-group" type="jmxMetricsGroupType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:choice>
+                <xsd:attributeGroup ref="jmxMetricsAttribute"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="jmxMetricsAttribute">
+        <xsd:attribute name="ref" type="xsd:IDREF" use="optional"/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="jmxMetricsGroupType">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:choice>
+                    <xsd:element name="jmx-metric-attribute" type="jmxMetricAttributeType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:choice>
+                <xsd:attributeGroup ref="jmxMetricsGroupAttribute"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="jmxMetricsGroupAttribute">
+        <xsd:attribute name="groupName" type="xsd:string"/>
+        <xsd:attribute name="objectName" type="xsd:string"/>
+        <xsd:attribute name="ref" type="xsd:IDREF"/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="jmxMetricAttributeType">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
 
 </xsd:schema>

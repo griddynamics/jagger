@@ -51,7 +51,7 @@ import java.util.List;
 public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvider<String> {
     private Logger log = LoggerFactory.getLogger(SystemUnderTestPlotsProvider.class);
 
-    private Map<GroupKey, MonitoringParameter[]> plotGroups;
+    private DynamicPlotGroups plotGroups;
     private boolean showPlotsByGlobal;
     private boolean showPlotsByBox;
     private boolean showPlotsBySuT;
@@ -110,14 +110,14 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
             log.info("    Create task plots for task '{}'", taskId);
 
             List<MonitoringReporterData> plots = new LinkedList<MonitoringReporterData>();
-            for (GroupKey groupName : plotGroups.keySet()) {
+            for (GroupKey groupName : plotGroups.getPlotGroups().keySet()) {
                 log.info("        Create task plots for group '{}'", groupName);
 
                 if (showPlotsByGlobal) {
                     log.info("            Create global task plots");
 
                     XYSeriesCollection chartsCollection = new XYSeriesCollection();
-                    for (MonitoringParameter parameterId : plotGroups.get(groupName)) {
+                    for (MonitoringParameter parameterId : plotGroups.getPlotGroups().get(groupName)) {
                         log.info("                Create global task plots for parameter '{}'", parameterId);
 
                         MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
@@ -134,7 +134,7 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
                         }
                     }
 
-                    log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.get(groupName)));
+                    log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.getPlotGroups().get(groupName)));
 
                     Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(chartsCollection, null);
 
@@ -158,7 +158,7 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
                         log.info("                Create box task plots for box '{}'", boxIdentifier);
 
                         XYSeriesCollection chartsCollection = new XYSeriesCollection();
-                        for (MonitoringParameter parameterId : plotGroups.get(groupName)) {
+                        for (MonitoringParameter parameterId : plotGroups.getPlotGroups().get(groupName)) {
                             log.info("                    Create box task plots for parameter '{}'", parameterId);
 
                             MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
@@ -175,7 +175,7 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
                             }
                         }
 
-                        log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.get(groupName)));
+                        log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.getPlotGroups().get(groupName)));
 
                         Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(chartsCollection, null);
 
@@ -200,7 +200,7 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
                         log.info("                Create sut task plots for sut '{}'", sutUrl);
 
                         XYSeriesCollection chartsCollection = new XYSeriesCollection();
-                        for (MonitoringParameter parameterId : plotGroups.get(groupName)) {
+                        for (MonitoringParameter parameterId : plotGroups.getPlotGroups().get(groupName)) {
                             log.info("                    Create sut task plots for parameter '{}'", parameterId);
 
                             MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
@@ -217,7 +217,7 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
                             }
                         }
 
-                        log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.get(groupName)));
+                        log.debug("group name \n{} \nparams {}]\n", groupName, Lists.newArrayList(plotGroups.getPlotGroups().get(groupName)));
 
                         Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(chartsCollection, null);
 
@@ -271,12 +271,12 @@ public class SystemUnderTestPlotsProvider extends AbstractMonitoringReportProvid
         this.enable = enable;
     }
 
-    public Map<GroupKey, MonitoringParameter[]> getPlotGroups() {
+    public DynamicPlotGroups getPlotGroups() {
         return plotGroups;
     }
 
     @Required
-    public void setPlotGroups(Map<GroupKey, MonitoringParameter[]> plotGroups) {
+    public void setPlotGroups(DynamicPlotGroups plotGroups) {
         this.plotGroups = plotGroups;
     }
 

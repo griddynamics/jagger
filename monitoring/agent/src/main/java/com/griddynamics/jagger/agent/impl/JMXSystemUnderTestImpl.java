@@ -22,9 +22,7 @@ package com.griddynamics.jagger.agent.impl;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
-import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
-import com.griddynamics.jagger.agent.model.SystemUnderTestService;
+import com.griddynamics.jagger.agent.model.*;
 import com.sun.management.UnixOperatingSystemMXBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +37,7 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.griddynamics.jagger.util.Units.bytesToMiB;
 
@@ -61,6 +57,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     private static final Collection<String> OLD_GEN_GC =
             ImmutableSet.of("MarkSweepCompact", "PS MarkSweep", "ConcurrentMarkSweep", "G1 Old Generation");
 
+    private AgentContext context;
     private String jmxServices;
     private String name;
     private Map<String, MBeanServerConnection> connections = Maps.newHashMap();
@@ -85,6 +82,11 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
             result.put(identifier, analyzeJVM(identifier));
         }
         return result;
+    }
+
+    @Override
+    public void setContext(AgentContext context) {
+        this.context = context;
     }
 
     public void init() {
@@ -165,6 +167,25 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
             result.putSysUTEntry(DefaultMonitoringParameters.JMX_GC_MAJOR_UNIT, (double) major_units);
             result.putSysUTEntry(DefaultMonitoringParameters.JMX_GC_MINOR_TIME, (double) minor_time);
             result.putSysUTEntry(DefaultMonitoringParameters.JMX_GC_MINOR_UNIT, (double) minor_units);
+
+            if (context != null) {
+                List<JmxMetric> jmxMetricList = (List<JmxMetric>) context.getProperty(AgentContext.AgentContextProperty.JMX_METRICS);
+                if (jmxMetricList != null) {
+                    for (JmxMetric metric : jmxMetricList) {
+                        try {
+                            Object num = connection.getAttribute(metric.getObjectName(), metric.getAttributeName());
+                            if (num instanceof Number) {
+                                result.putSysUTEntry(metric.getParameter(), ((Number) num).doubleValue());
+                            } else {
+                                log.warn("Return value from MBean: '{}'; attribute: '{}'; is not a Number",
+                                        metric.getObjectName(), metric.getAttributeName());
+                            }
+                        } catch (Exception e) {
+                            log.error("Can not get from MBean: '{}'; attribute: '{}'", new Object[] {metric.getObjectName(), metric.getAttributeName(), e});
+                        }
+                    }
+                }
+            }
 
         } catch (Exception ee) {
             log.error("Error in JMXSigarMonitorController.analyzeJVM", ee);

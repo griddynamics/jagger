@@ -161,4 +161,11 @@ public class XMLConstants {
     public static final String DEFAULT_NAMESPACE = "http://www.griddynamics.com/schema/jagger";
 
     public static final String  DEFAULT_METRIC_NAME = "No name metric";
+
+    public static final String MONITORING_SUT_CONFIGURATION = "monitoringSutConfiguration";
+    public static final String JMX_METRIC_ATTRIBUTE = "jmx-metric-attribute";
+    public static final String ATTRIBUTES = "attributes";
+    public static final String JMX_METRIC_GROUPS = "jmxMetricGroups";
+    public static final String JMX_METRICS = "jmx-metrics";
+
 }
