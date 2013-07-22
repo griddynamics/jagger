@@ -80,6 +80,7 @@ public class ExactInvocationsClock implements WorkloadClock {
                 curThreads ++;
                 residue --;
             }
+            if (curThreads == 0 ) continue;
             if (samplesToAdd > 0 && samplesToAdd < nodes.size()) {
                 samples ++;
                 samplesToAdd --;
