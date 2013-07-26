@@ -18,6 +18,12 @@
                 <g:tab>
                     <g:header> <b>Trends</b> </g:header>
                     <g:ScrollPanel ui:field="scrollPanelTrends">
+                        <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotTrendsPanel"/>
+                    </g:ScrollPanel>
+                </g:tab>
+                <g:tab>
+                    <g:header> <b>Metrics</b> </g:header>
+                    <g:ScrollPanel ui:field="scrollPanelMetrics">
                         <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotPanel"/>
                     </g:ScrollPanel>
                 </g:tab>

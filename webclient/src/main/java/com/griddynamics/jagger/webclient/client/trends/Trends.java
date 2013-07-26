@@ -38,6 +38,10 @@ import com.griddynamics.jagger.webclient.client.handler.ShowTaskDetailsListener;
 import com.griddynamics.jagger.webclient.client.mvp.JaggerPlaceHistoryMapper;
 import com.griddynamics.jagger.webclient.client.mvp.NameTokens;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
+import com.griddynamics.jagger.webclient.client.ColorCodeGenerator;
+import com.smartgwt.client.data.RecordList;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 import java.util.*;
 
@@ -76,6 +80,12 @@ public class Trends extends DefaultActivity {
 
     @UiField
     ScrollPanel scrollPanelTrends;
+
+    @UiField
+    ScrollPanel scrollPanelMetrics;
+
+    @UiField
+    HTMLPanel plotTrendsPanel;
 
     @UiField
     SummaryPanel summaryPanel;
@@ -162,7 +172,8 @@ public class Trends extends DefaultActivity {
         }
 
         TrendsPlace newPlace = new TrendsPlace(
-                mainTabPanel.getSelectedIndex() == 0 ? NameTokens.SUMMARY : NameTokens.TRENDS
+            mainTabPanel.getSelectedIndex() == 0 ? NameTokens.SUMMARY :
+                    mainTabPanel.getSelectedIndex() == 1 ? NameTokens.TRENDS : NameTokens.METRICS
         );
 
         newPlace.setSelectedSessionIds(sessionsIds);
@@ -233,13 +244,7 @@ public class Trends extends DefaultActivity {
             TaskDataTreeViewModel viewModel = (TaskDataTreeViewModel)taskDetailsTree.getTreeViewModel();
             viewModel.getSelectionModel().addSelectionChangeHandler(new TaskPlotSelectionChangedHandler());
 
-            metricPanel.addSelectionListener(new SelectionChangeEvent.Handler() {
-                @Override
-                public void onSelectionChange(SelectionChangeEvent event) {
-                    Set<MetricNameDto> metrics = metricPanel.getSelected();
-                    summaryPanel.updataMetrics(metrics);
-                }
-            });
+            metricPanel.addSelectionListener(new MetricsSelectionChangedHandler());
 
             chooseTab(place.getToken());
             return;
@@ -305,7 +310,13 @@ public class Trends extends DefaultActivity {
         setupSettingsPanel();
     }
 
-    private SimplePlot createPlot(final String id, Markings markings) {
+    /**
+     * Field to hold number of sessions that were chosen.
+     * spike for rendering metrics plots
+     */
+    private ArrayList<Long> chosenSessions = new ArrayList<Long>();
+
+    private SimplePlot createPlot(final String id, Markings markings, String xAxisLabel, double yMinimum, boolean isMetric) {
         PlotOptions plotOptions = new PlotOptions();
         plotOptions.setZoomOptions(new ZoomOptions().setAmount(1.02));
         plotOptions.setGlobalSeriesOptions(new GlobalSeriesOptions()
@@ -314,8 +325,19 @@ public class Trends extends DefaultActivity {
 
         plotOptions.setPanOptions(new PanOptions().setInteractive(true));
 
-        plotOptions.addXAxisOptions(new AxisOptions().setZoomRange(true).setMinimum(0));
-        plotOptions.addYAxisOptions(new AxisOptions().setZoomRange(false));
+        if (isMetric) {
+            plotOptions.addXAxisOptions(new AxisOptions().setZoomRange(true).setTickDecimals(0).setReserveSpace(true)
+                    .setTickFormatter(new TickFormatter() {
+                        @Override
+                        public String formatTickValue(double tickValue, Axis axis) {
+                            return String.valueOf(chosenSessions.get((int) tickValue));
+                        }
+                    }));
+        } else {
+            plotOptions.addXAxisOptions(new AxisOptions().setZoomRange(true).setMinimum(0));
+        }
+
+        plotOptions.addYAxisOptions(new AxisOptions().setZoomRange(false).setMinimum(yMinimum));
 
         plotOptions.setLegendOptions(new LegendOptions().setNumOfColumns(2));
 
@@ -338,9 +360,13 @@ public class Trends extends DefaultActivity {
         popup.add(popupPanelContent);
 
         // add hover listener
-        plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent), false);
+        if (isMetric) {
+            plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent, xAxisLabel, chosenSessions), false);
+        } else {
+            plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent, xAxisLabel, null), false);
+        }
 
-        if (markings != null && markingsMap != null && !markingsMap.isEmpty()) {
+        if (!isMetric && markings != null && markingsMap != null && !markingsMap.isEmpty()) {
             final PopupPanel taskInfoPanel = new PopupPanel();
             taskInfoPanel.setWidth("200px");
             taskInfoPanel.addStyleName(getResources().css().infoPanel());
@@ -372,18 +398,22 @@ public class Trends extends DefaultActivity {
                     testsMetricsPanel.showWidget(0);
                 }else
                 if (selected == 1){
+                    testsMetricsPanel.showWidget(0);
+                }else
+                if (selected == 2){
                     testsMetricsPanel.showWidget(1);
                 }
             }
         });
     }
 
-    private void chooseTab(String token){
-        if (NameTokens.SUMMARY.equals(token)){
+    private void chooseTab(String token) {
+        if (NameTokens.SUMMARY.equals(token)) {
             mainTabPanel.selectTab(0);
-        }else
-        if (NameTokens.TRENDS.equals(token)){
+        } else if (NameTokens.TRENDS.equals(token)) {
             mainTabPanel.selectTab(1);
+        } else {
+            mainTabPanel.selectTab(2);
         }
     }
 
@@ -575,8 +605,12 @@ public class Trends extends DefaultActivity {
         return plotPanel.getWidgetCount() >= MAX_PLOT_COUNT;
     }
 
-    private void renderPlots(List<PlotSeriesDto> plotSeriesDtoList, String id) {
-        plotPanel.add(loadIndicator);
+    private void renderPlots(HTMLPanel panel, List<PlotSeriesDto> plotSeriesDtoList, String id) {
+        renderPlots(panel, plotSeriesDtoList, id, 0, false);
+    }
+
+    private void renderPlots(HTMLPanel panel, List<PlotSeriesDto> plotSeriesDtoList, String id, double yMinimum, boolean isMetric) {
+        panel.add(loadIndicator);
 
         SimplePlot redrawingPlot = null;
 
@@ -596,7 +630,7 @@ public class Trends extends DefaultActivity {
                 markingsMap.put(id, new TreeSet<MarkingDto>(plotSeriesDto.getMarkingSeries()));
             }
 
-            final SimplePlot plot = createPlot(id, markings);
+            final SimplePlot plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric);
             redrawingPlot = plot;
             PlotModel plotModel = plot.getModel();
 
@@ -677,9 +711,9 @@ public class Trends extends DefaultActivity {
             plotGroupPanel.add(vp);
 
         }
-        int loadingId = plotPanel.getWidgetCount() - 1;
-        plotPanel.remove(loadingId);
-        plotPanel.add(plotGroupPanel);
+        int loadingId = panel.getWidgetCount() - 1;
+        panel.remove(loadingId);
+        panel.add(plotGroupPanel);
 
         // Redraw plot
         if (redrawingPlot != null) {
@@ -759,13 +793,7 @@ public class Trends extends DefaultActivity {
                 for (MetricNameDto metric : metricsToSelect){
                     metricPanel.setSelected(metric);
                 }
-                metricPanel.addSelectionListener(new SelectionChangeEvent.Handler() {
-                    @Override
-                    public void onSelectionChange(SelectionChangeEvent event) {
-                        Set<MetricNameDto> metrics = metricPanel.getSelected();
-                        summaryPanel.updataMetrics(metrics);
-                    }
-                });
+                metricPanel.addSelectionListener(new MetricsSelectionChangedHandler());
 
                 if (fireMetric != null)
                     metricPanel.setSelected(fireMetric);
@@ -823,7 +851,6 @@ public class Trends extends DefaultActivity {
             // Clear markings dto map
             markingsMap.clear();
             taskDataTreeViewModel.clear();
-            summaryPanel.updataMetrics(Collections.EMPTY_SET);
             metricPanel.updateTests(Collections.EMPTY_SET);
             testDataGrid.setRowData(Collections.EMPTY_LIST);
 
@@ -934,6 +961,171 @@ public class Trends extends DefaultActivity {
     }
 
     /**
+     * Handles metrics change
+     */
+    private class MetricsSelectionChangedHandler extends PlotsServingBase implements SelectionChangeEvent.Handler {
+
+        @Override
+        public void onSelectionChange(SelectionChangeEvent event) {
+
+            if (summaryPanel.getSessionComparisonPanel() == null) {
+                chosenSessions.clear();
+                plotTrendsPanel.clear();
+                return;
+            }
+
+            Set<MetricNameDto> metrics = metricPanel.getSelected();
+            final ListGrid grid = summaryPanel.getSessionComparisonPanel().getGrid();
+            final ListGridRecord[] emptyData = summaryPanel.getSessionComparisonPanel().getEMPTY_DATA();
+
+            if (metrics.isEmpty()) {
+                grid.setData(emptyData);
+                // Remove plots from display which were unchecked
+                plotTrendsPanel.clear();
+                chosenSessions.clear();
+            } else {
+
+                //Generate all id of plots which should be displayed
+                Set<String> selectedMetricsIds = new HashSet<String>();
+                for (MetricNameDto plotNameDto : metrics) {
+                    selectedMetricsIds.add(generateMetricPlotId(plotNameDto));
+                }
+
+                // Remove plots from display which were unchecked
+                for (int i = 0; i < plotTrendsPanel.getWidgetCount(); i++) {
+                    Widget widget = plotTrendsPanel.getWidget(i);
+                    String widgetId = widget.getElement().getId();
+                    if (!isMetricPlotId(widgetId) || selectedMetricsIds.contains(widgetId)) {
+                        continue;
+                    }
+                    // Remove plot
+                    plotTrendsPanel.remove(i);
+                }
+
+                final ArrayList<MetricNameDto> notLoaded = new ArrayList<MetricNameDto>();
+                final ArrayList<MetricDto> loaded = new ArrayList<MetricDto>();
+
+                for (MetricNameDto metricName : metrics){
+                    if (!summaryPanel.getCachedMetrics().containsKey(metricName)){
+                        notLoaded.add(metricName);
+                    }else{
+                        MetricDto metric = summaryPanel.getCachedMetrics().get(metricName);
+                        loaded.add(metric);
+                    }
+                }
+                renderMetricPlots(loaded);
+
+                MetricDataService.Async.getInstance().getMetrics(notLoaded, new AsyncCallback<List<MetricDto>>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        caught.printStackTrace();
+                    }
+
+                    @Override
+                    public void onSuccess(List<MetricDto> result) {
+                        loaded.addAll(result);
+                        MetricRankingProvider.sortMetrics(loaded);
+                        RecordList list = new RecordList();
+                        list.addList(emptyData);
+                        for (MetricDto metric : loaded){
+                            summaryPanel.getCachedMetrics().put(metric.getMetricName(), metric);
+                            list.add(summaryPanel.getSessionComparisonPanel().generateRecord(metric));
+                        }
+                        renderMetricPlots(result);
+                        grid.setData(list);
+                        grid.setShowAllRecords(true);
+                        grid.refreshFields();
+                        grid.redraw();
+                    }
+                });
+            }
+        }
+
+        private void renderMetricPlots(List<MetricDto> result) {
+            for (MetricDto metric : result) {
+
+                if (isMaxPlotCountReached()) {
+                    Window.alert("You are reached max count of plot on display");
+                    break;
+                }
+                // Generate DOM id for plot
+                final String id = generateMetricPlotId(metric.getMetricName());
+
+                // If plot has already displayed, then pass it
+                if (plotTrendsPanel.getElementById(id) != null) {
+                    continue;
+                }
+
+                renderPlots(plotTrendsPanel, generatePlotSeriesDto(metric), id, yMinimum, true);
+                scrollPanelTrends.scrollToBottom();
+            }
+        }
+
+        private double yMinimum;
+
+        private  List<PlotSeriesDto> generatePlotSeriesDto(MetricDto metricValue) {
+            yMinimum = Double.MAX_VALUE;
+
+            //So plot draws as {(0, val0),(1, val1), (2, val2), ... (n, valn)}
+            int iter = 0;
+            List<PointDto> list = new ArrayList<PointDto>();
+
+            List<MetricValueDto> metricList = new ArrayList<MetricValueDto>();
+            for(MetricValueDto value :metricValue.getValues()) {
+                metricList.add(value);
+            }
+
+            Collections.sort(metricList, new Comparator<MetricValueDto> () {
+
+                @Override
+                public int compare(MetricValueDto o1, MetricValueDto o2) {
+                    if (o2.getSessionId() < o1.getSessionId()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+            });
+
+            for (MetricValueDto value: metricList) {
+                double temp = Double.parseDouble(value.getValue());
+                chosenSessions.add(value.getSessionId());
+                list.add(new PointDto(iter ++, temp));
+                if (yMinimum == Double.MAX_VALUE || temp < yMinimum)
+                    yMinimum = temp;
+            }
+
+            PlotDatasetDto pdd = new PlotDatasetDto(
+                    list,
+                    metricValue.getMetricName().getName(),
+                    ColorCodeGenerator.getHexColorCode()
+            );
+
+            StringBuilder headerBuilder = new StringBuilder("Sessions ");
+            List<Long> ids = new ArrayList<Long>();
+            for (MetricValueDto mvd: metricValue.getValues()) {
+                ids.add(mvd.getSessionId());
+            }
+            Collections.sort(ids);
+            for(long id : ids) {
+                headerBuilder.append("#").append(id).append(", ");
+            }
+            headerBuilder.append(metricValue.getMetricName().getTests().getTaskName()).
+                    append(", ").
+                    append(metricValue.getMetricName().getName());
+
+            PlotSeriesDto psd = new PlotSeriesDto(
+                    Arrays.asList(pdd),
+                    "Sessions" ,
+                    metricValue.getMetricName().getName(),
+                    headerBuilder.toString()
+            );
+
+            return Arrays.asList(psd);
+        }
+    }
+
+    /**
      * Handles specific plot of task selection
      */
     private class TaskPlotSelectionChangedHandler extends PlotsServingBase implements SelectionChangeEvent.Handler {
@@ -993,9 +1185,8 @@ public class Trends extends DefaultActivity {
                                 continue;
                             }
 
-                            scrollPanelTrends.scrollToBottom();
-
-                            renderPlots(result.get(plotNameDto), id);
+                            renderPlots(plotPanel, result.get(plotNameDto), id);
+                            scrollPanelMetrics.scrollToBottom();
                         }
                     }
                 });
@@ -1040,9 +1231,9 @@ public class Trends extends DefaultActivity {
                             if (plotPanel.getElementById(id) != null) {
                                 continue;
                             }
-                            scrollPanelTrends.scrollToBottom();
 
-                            renderPlots(result.get(plotNameDto), id);
+                            renderPlots(plotPanel, result.get(plotNameDto), id);
+                            scrollPanelMetrics.scrollToBottom();
                         }
                     }
                 });
@@ -1062,7 +1253,7 @@ public class Trends extends DefaultActivity {
             // If checkbox is checked
             if (source.getValue()) {
                 plotPanel.add(loadIndicator);
-                scrollPanelTrends.scrollToBottom();
+                scrollPanelMetrics.scrollToBottom();
                 final int loadingId = plotPanel.getWidgetCount() - 1;
                 PlotProviderService.Async.getInstance().getSessionScopePlotData(sessionId, plotName, new AsyncCallback<List<PlotSeriesDto>>() {
                     @Override
@@ -1078,7 +1269,8 @@ public class Trends extends DefaultActivity {
                             Window.alert("There are no data found for " + plotName);
                         }
 
-                        renderPlots(result, id);
+                        renderPlots(plotPanel, result, id);
+                        scrollPanelMetrics.scrollToBottom();
                     }
                 });
             } else {

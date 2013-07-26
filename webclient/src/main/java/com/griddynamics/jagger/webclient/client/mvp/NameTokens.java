@@ -15,6 +15,8 @@ public class NameTokens {
 
     public static final String TRENDS = "trends";
 
+    public static final String METRICS = "metrics";
+
     public static String EMPTY = "";
 
     public static String summary() {
