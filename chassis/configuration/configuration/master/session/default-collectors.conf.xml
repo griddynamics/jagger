@@ -44,6 +44,12 @@
 		<property name="metricCalculator" ref="simpleMetricCalculator"/>
 	</bean>
 
-	<bean id="simpleMetricCalculator" class="com.griddynamics.jagger.engine.e1.collector.SimpleMetricCalculator"/>
+    <bean id="simpleMetricCalculator" class="com.griddynamics.jagger.engine.e1.collector.SimpleMetricCalculator"/>
+
+    <bean id="sumMetricAggregatorProvider" class="com.griddynamics.jagger.engine.e1.collector.SumMetricAggregatorProvider"/>
+
+    <bean id="avgMetricAggregatorProvider" class="com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider"/>
+
+    <bean id="stdDevMetricAggregatorProvider" class="com.griddynamics.jagger.engine.e1.collector.StdDevMetricAggregatorProvider"/>
 
 </beans>

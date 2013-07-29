@@ -19,10 +19,14 @@
  */
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
-import com.google.common.collect.Lists;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
+import com.griddynamics.jagger.engine.e1.collector.MetricAggregator;
+import com.griddynamics.jagger.engine.e1.collector.MetricLogProcessorContext;
+import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.MetricCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
@@ -61,6 +65,8 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     private int pointCount;
     private FileStorage fileStorage;
 
+    private MetricLogProcessorContext metricLogProcessorContext;
+
     @Required
     public void setLogReader(LogReader logReader) {
         this.logReader = logReader;
@@ -69,6 +75,10 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     @Required
     public void setFileStorage(FileStorage fileStorage) {
         this.fileStorage = fileStorage;
+    }
+
+    public void setMetricLogProcessorContext(MetricLogProcessorContext metricLogProcessorContext) {
+        this.metricLogProcessorContext = metricLogProcessorContext;
     }
 
     @Required
@@ -113,6 +123,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                 try {
                     String file = metricPath + File.separatorChar + "aggregated.dat";
                     AggregationInfo aggregationInfo = logAggregator.chronology(metricPath, file);
+                    String metricName = metricPath.substring(metricPath.lastIndexOf(File.separatorChar) + 1);
 
                     if(aggregationInfo.getCount() == 0) {
                         //metric not collected
@@ -122,7 +133,8 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     if (intervalSize < 1) {
                         intervalSize = 1;
                     }
-                    StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSize, taskData).generate();
+
+                    StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, metricName, intervalSize, taskData).generate();
                     final Collection<MetricDetails> statistics = statisticsGenerator.getStatistics();
 
                     getHibernateTemplate().execute(new HibernateCallback<Void>() {
@@ -136,7 +148,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         }
                     });
                 } catch (Exception e) {
-                    log.error("Error during processing metric by path: '{}'",metricPath , e);
+                    log.error("Error during processing metric by path: '{}': {}", metricPath, e);
                 }
             }
 
@@ -152,12 +164,15 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
         private int intervalSize;
         private TaskData taskData;
         private Collection<MetricDetails> statistics;
+        String metricName;
 
-        public StatisticsGenerator(String path, AggregationInfo aggregationInfo, int intervalSize, TaskData taskData) {
+
+        public StatisticsGenerator(String path, AggregationInfo aggregationInfo, String metricName, int intervalSize, TaskData taskData) {
             this.path = path;
             this.aggregationInfo = aggregationInfo;
             this.intervalSize = intervalSize;
             this.taskData = taskData;
+            this.metricName = metricName;
         }
 
         public Collection<MetricDetails> getStatistics() {
@@ -165,8 +180,18 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
         }
 
         public StatisticsGenerator generate() throws IOException {
+            MetricLogProcessorContext.MetricAggregatorContextEntry metricAggregatorContextEntry
+                    = metricLogProcessorContext.getMetricAggregatorContextEntry(metricName);
+
+            MetricAggregatorProvider metricAggregatorProvider = metricAggregatorContextEntry.getMetricAggregatorProvider();
+            boolean plotData = metricAggregatorContextEntry.getPlotData();
+
+            MetricAggregator overallMetricAggregator =  metricAggregatorProvider.provide();
+            MetricAggregator metricAggregator = null;
+            if (plotData) {
+                  metricAggregator = metricAggregatorProvider.provide();
+            }
             long currentInterval = aggregationInfo.getMinTime() + intervalSize;
-            int currentCount = 0;
             long time = 0;
             statistics = new LinkedList<MetricDetails>();
 
@@ -176,20 +201,19 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                 for (MetricLogEntry logEntry : fileReader) {
                     log.debug("Log entry {} time", logEntry.getTime());
 
-                    while (logEntry.getTime() > currentInterval) {
-                        log.debug("processing count {} interval {}", currentCount, intervalSize);
+                    if (plotData) {
+                        while (logEntry.getTime() > currentInterval) {
+                            statistics.add(new MetricDetails(time, logEntry.getMetricName(), metricAggregator.getAggregated(), taskData));
+                            metricAggregator.reset();
 
-                        if (currentCount > 0) {
-                            statistics.add(new MetricDetails(time, logEntry.getMetricName(), currentCount, taskData));
-                            currentCount = 0;
-                        } else {
-                            statistics.add(new MetricDetails(time, logEntry.getMetricName(), 0l, taskData));
+                            time += intervalSize;
+                            currentInterval += intervalSize;
                         }
-                        time += intervalSize;
-                        currentInterval += intervalSize;
+                        metricAggregator.append((int) logEntry.getMetric());
                     }
-                    currentCount += logEntry.getMetric();
+                    overallMetricAggregator.append((int) logEntry.getMetric());
                 }
+                persistAggregatedMetricValue(metricName, overallMetricAggregator.getAggregated());
             } finally {
                 if (fileReader != null) {
                     fileReader.close();
@@ -197,6 +221,58 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             }
 
             return this;
+        }
+
+        private void persistAggregatedMetricValue(String metricName, Integer value) {
+
+            WorkloadData workloadData = getWorkloadData(taskData.getSessionId(), taskData.getTaskId());
+            if(workloadData == null) {
+               log.warn("WorkloadData is not collected for task: '{}' terminating write metric: '{}' with value: '{}'",
+                       new Object[] {taskData.getTaskId(), metricName, value});
+                return;
+            }
+            DiagnosticResultEntity entity = getDiagnosticResultEntity(metricName, workloadData);
+            if (entity != null) {
+                log.info("DiagnosticResultEntity with name: '{}', for task: '{}' is  already exists. " +
+                        "Skipping write (please, disable DiagnosticCollector for this metric)",
+                        metricName, workloadData.getTaskId());
+                return;
+            }
+
+            entity = new DiagnosticResultEntity();
+            entity.setName(metricName);
+            entity.setTotal(value);
+            entity.setWorkloadData(workloadData);
+
+            getHibernateTemplate().persist(entity);
+        }
+
+        @SuppressWarnings("unchecked")
+        private DiagnosticResultEntity getDiagnosticResultEntity(final String metricName, final WorkloadData workloadData) {
+            return getHibernateTemplate().execute(new HibernateCallback<DiagnosticResultEntity>() {
+                @Override
+                public DiagnosticResultEntity doInHibernate(Session session) throws HibernateException, SQLException {
+                    return (DiagnosticResultEntity) session
+                            .createQuery("select t from DiagnosticResultEntity t where name=? and workloadData=?")
+                            .setParameter(0, metricName)
+                            .setParameter(1, workloadData)
+                            .uniqueResult();
+                }
+            });
+        }
+
+        @SuppressWarnings("unchecked")
+        private WorkloadData getWorkloadData(final String sessionId, final String taskId) {
+            return getHibernateTemplate().execute(new HibernateCallback<WorkloadData>() {
+                @Override
+                public WorkloadData doInHibernate(Session session) throws HibernateException, SQLException {
+                    return (WorkloadData) session
+                            .createQuery("select t from WorkloadData t where sessionId=? and taskId=?")
+                            .setParameter(0, sessionId)
+                            .setParameter(1, taskId)
+                            .uniqueResult();
+                }
+            });
         }
     }
 

@@ -3,6 +3,8 @@ package com.griddynamics.jagger.xml;
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.agent.model.JmxMetricGroup;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
+import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
+import com.griddynamics.jagger.engine.e1.collector.SumMetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -106,6 +108,16 @@ public class JaggerConfigurationTest {
                 ((WorkloadTask)((CompositeTask) config1.getTasks().get(0)).getAttendant().get(0)).getScenarioFactory();
         int calibrationSamplesCount = scenarioFactory.getCalibrationSamplesCount();
         Assert.assertEquals(1101, calibrationSamplesCount);
+    }
+
+    @Test
+    public void testW1() {
+        WorkloadTask task = (WorkloadTask) ctx.getBean("w1");
+        Assert.assertEquals(5, task.getCollectors().size());
+        MetricCollectorProvider provider = (MetricCollectorProvider) task.getCollectors().get(4);
+        Assert.assertEquals(true, provider.getPlotData());
+        Assert.assertEquals("sampleMetric", provider.getName());
+        Assert.assertEquals(SumMetricAggregatorProvider.class, provider.getMetricAggregatorProvider().getClass());
     }
 
     @Test

@@ -88,6 +88,7 @@
         <property name="logInterval" value="${chassis.logging.period}"/>
         <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
+        <property name="metricLogProcessorContext" ref="metricLogProcessorContext"/>
     </bean>
 
     <bean id="compositeTaskDistributor" class="com.griddynamics.jagger.master.CompositeTaskDistributor">
