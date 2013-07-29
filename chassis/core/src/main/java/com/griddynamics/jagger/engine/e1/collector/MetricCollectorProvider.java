@@ -31,17 +31,39 @@ import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 public class MetricCollectorProvider<Q, R, E> implements KernelSideObjectProvider<ScenarioCollector<Q, R, E>> {
     private MetricCalculator<R> metricCalculator;
     private String name;
+    private MetricAggregatorProvider metricAggregatorProvider = new SumMetricAggregatorProvider(); //default value
+    private boolean plotData = false; //defaultValue
 
     @Override
     public ScenarioCollector<Q, R, E> provide(String sessionId, String taskId, NodeContext kernelContext) {
         return new MetricCollector<Q, R, E>(sessionId, taskId, kernelContext, metricCalculator, name);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public MetricAggregatorProvider getMetricAggregatorProvider() {
+        return metricAggregatorProvider;
+    }
+
     public void setMetricCalculator(MetricCalculator<R> metricCalculator) {
         this.metricCalculator = metricCalculator;
     }
 
+    public void setMetricAggregatorProvider(MetricAggregatorProvider metricAggregatorProvider) {
+        this.metricAggregatorProvider = metricAggregatorProvider;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean getPlotData() {
+        return plotData;
+    }
+
+    public void setPlotData(boolean plotData) {
+        this.plotData = plotData;
     }
 }

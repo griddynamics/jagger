@@ -25,6 +25,9 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.engine.e1.collector.CompositeMetricCollectorProvider;
+import com.griddynamics.jagger.engine.e1.collector.MetricLogProcessorContext;
+import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
 import com.griddynamics.jagger.engine.e1.process.PollWorkloadProcessStatus;
 import com.griddynamics.jagger.engine.e1.process.StartWorkloadProcess;
 import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
@@ -36,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -50,6 +54,7 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
     private TaskExecutionStatusProvider taskExecutionStatusProvider;
 
     private long logInterval;
+    private MetricLogProcessorContext metricLogProcessorContext;
 
     @Override
     public Set<Qualifier<?>> getQualifiers() {
@@ -75,6 +80,28 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
     protected Service performDistribution(final ExecutorService executor, final String sessionId, final String taskId, final WorkloadTask task,
                                           final Map<NodeId, RemoteExecutor> remotes, final Multimap<NodeType, NodeId> availableNodes,
                                           final Coordinator coordinator) {
+
+        List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> providers = task.getCollectors();
+
+        //TODO REFACTOR
+        for (KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>> provider: providers) {
+            MetricCollectorProvider metricCollectorProvider;
+            if (provider.getClass() == CompositeMetricCollectorProvider.class) {
+                metricCollectorProvider = ((CompositeMetricCollectorProvider) provider).getMetricCollectorProvider();
+                metricLogProcessorContext.addMetricAggregatorContextEntry(
+                        metricCollectorProvider.getName(),
+                        metricCollectorProvider.getMetricAggregatorProvider(),
+                        metricCollectorProvider.getPlotData(),
+                        true);
+            } else if (provider.getClass() == MetricCollectorProvider.class) {
+                metricCollectorProvider = (MetricCollectorProvider) provider;
+                metricLogProcessorContext.addMetricAggregatorContextEntry(
+                        metricCollectorProvider.getName(),
+                        metricCollectorProvider.getMetricAggregatorProvider(),
+                        metricCollectorProvider.getPlotData(),
+                        true);
+            }
+        }
 
         return new AbstractDistributionService(executor) {
             @Override
@@ -148,4 +175,7 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
         this.logInterval = logInterval;
     }
 
+    public void setMetricLogProcessorContext(MetricLogProcessorContext metricLogProcessorContext) {
+        this.metricLogProcessorContext = metricLogProcessorContext;
+    }
 }

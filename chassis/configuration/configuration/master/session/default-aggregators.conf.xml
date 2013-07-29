@@ -85,10 +85,13 @@
         <property name="fileStorage" ref="fileStorage"/>
 
         <property name="logReader"  ref="bufferedLogReader"/>
+        <property name="metricLogProcessorContext" ref="metricLogProcessorContext"/>
 
         <property name="timeWindowPercentilesKeys" ref="standardPercentilesTimeSeries"/>
         <property name="globalPercentilesKeys" ref="standardPercentilesGlobal"/>
     </bean>
+
+    <bean id="metricLogProcessorContext" class="com.griddynamics.jagger.engine.e1.collector.MetricLogProcessorContext"/>
 
     <bean id="monitoringAggregator" class="com.griddynamics.jagger.monitoring.MonitoringAggregator">
         <property name="sessionFactory" ref="sessionFactory"/>

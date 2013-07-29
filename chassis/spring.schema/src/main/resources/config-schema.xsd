@@ -778,6 +778,7 @@
         <xsd:complexContent>
             <xsd:extension base="metricAbstract">
                 <xsd:attribute name="calculator" type="xsd:string" use="required"/>
+                <xsd:attribute name="aggregator" type="aggregatorEnum" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -795,6 +796,20 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:simpleType name="aggregatorEnum">
+        <xsd:union>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="sum"/>
+                    <xsd:enumeration value="avg"/>
+                    <xsd:enumeration value="std_dev"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string"/>
+            </xsd:simpleType>
+        </xsd:union>
+    </xsd:simpleType>
 
     <xsd:complexType name="validatorAbstract">
         <xsd:annotation>

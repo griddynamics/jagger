@@ -119,12 +119,14 @@
         <query xsi:type="query-ref" ref="httpQ1"/>
     </query-provider>
 
+    <beans:bean class="com.griddynamics.jagger.engine.e1.collector.SimpleMetricCalculator" id="simpleCalc"/>
+
     <test-description id="w1" calibration="true">
 
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
             <validator xsi:type="validator-consistency"/>
-            <metric id="sampleMetric" xsi:type="metric-not-null-response" plotData="true"/>
+			<metric id="sampleMetric" xsi:type="metric-custom" aggregator="sum" calculator="simpleCalc" plotData="true"/>
         </info-collectors>
 
         <scenario xsi:type="scenario-ref" ref="sc1"/>
