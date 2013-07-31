@@ -20,6 +20,8 @@
 
 package com.griddynamics.jagger.engine.e1.sessioncomparation.workload;
 
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.ComparisonUtil;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,17 +33,15 @@ public class ThroughputWorkloadDecisionMaker implements WorkloadDecisionMaker {
     private double warningDeviationThreshold;
     private double fatalDeviationThreshold;
 
-    public Decision makeDecision(WorkloadComparisonResult result) {
-        log.debug("Going to make decision based on comparison result {}", result);
-
-        if (Math.abs(result.getThroughputDeviation()) > fatalDeviationThreshold) {
+    @Override
+    public Decision makeDecision(WorkloadTaskData currentTest, WorkloadTaskData baselineTest) {
+        double result = ComparisonUtil.calculateDeviation(currentTest.getThroughput(), baselineTest.getThroughput());
+        if (Math.abs(result) > fatalDeviationThreshold) {
             return Decision.FATAL;
-        } else if (Math.abs(result.getThroughputDeviation()) > warningDeviationThreshold) {
+        } else if (Math.abs(result) > warningDeviationThreshold) {
             return Decision.WARNING;
         }
-
         return Decision.OK;
-
     }
 
     @Required

@@ -63,11 +63,10 @@ public class WorkloadFeatureComparator extends HibernateDaoSupport implements Fe
                     workloadMatched = true;
 
                     log.debug("Going to compare workload {}", describe(currentTest));
-                    WorkloadComparisonResult comparisonResult = compareWorkloads(currentTest, baselineTest);
-                    Decision decision = workloadDecisionMaker.makeDecision(comparisonResult);
+                    Decision decision = workloadDecisionMaker.makeDecision(currentTest, baselineTest);
                     String description = describe(currentTest);
 
-                    Verdict<WorkloadComparisonResult> verdict = new Verdict<WorkloadComparisonResult>(description, decision, comparisonResult);
+                    Verdict<WorkloadComparisonResult> verdict = new Verdict<WorkloadComparisonResult>(description, decision, compareWorkloads(currentTest, baselineTest));
 
                     log.debug("Verdict {}", verdict);
 
