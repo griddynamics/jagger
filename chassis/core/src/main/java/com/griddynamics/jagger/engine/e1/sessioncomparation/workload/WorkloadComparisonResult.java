@@ -20,8 +20,12 @@
 package com.griddynamics.jagger.engine.e1.sessioncomparation.workload;
 
 import com.google.common.base.Objects;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
 
 public class WorkloadComparisonResult {
+    private final WorkloadTaskData currentData;
+    private final WorkloadTaskData baselineData;
+
     private final double throughputDeviation;
     private final double totalDurationDeviation;
     private final double successRateDeviation;
@@ -32,7 +36,11 @@ public class WorkloadComparisonResult {
         return new WorkloadComparisonResultBuilder();
     }
 
-    private WorkloadComparisonResult(double throughputDeviation, double totalDurationDeviation, double successRateDeviation, double avgLatencyDeviation, double stdDevLatencyDeviation) {
+    private WorkloadComparisonResult(WorkloadTaskData currentData, WorkloadTaskData baselineData,
+                                     double throughputDeviation, double totalDurationDeviation,
+                                     double successRateDeviation, double avgLatencyDeviation, double stdDevLatencyDeviation) {
+        this.currentData = currentData;
+        this.baselineData = baselineData;
         this.throughputDeviation = throughputDeviation;
         this.totalDurationDeviation = totalDurationDeviation;
         this.successRateDeviation = successRateDeviation;
@@ -60,15 +68,25 @@ public class WorkloadComparisonResult {
         return stdDevLatencyDeviation;
     }
 
+    public WorkloadTaskData getCurrentData() {
+        return currentData;
+    }
+
+    public WorkloadTaskData getBaselineData() {
+        return baselineData;
+    }
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("throughputDeviation", throughputDeviation)
-                .add("totalDurationDeviation", totalDurationDeviation)
-                .add("successRateDeviation", successRateDeviation)
-                .add("avgLatencyDeviation", avgLatencyDeviation)
-                .add("stdDevLatencyDeviation", stdDevLatencyDeviation)
-                .toString();
+        return "WorkloadComparisonResult{" +
+                "currentData=" + currentData +
+                ", baselineData=" + baselineData +
+                ", throughputDeviation=" + throughputDeviation +
+                ", totalDurationDeviation=" + totalDurationDeviation +
+                ", successRateDeviation=" + successRateDeviation +
+                ", avgLatencyDeviation=" + avgLatencyDeviation +
+                ", stdDevLatencyDeviation=" + stdDevLatencyDeviation +
+                '}';
     }
 
     @Override
@@ -83,6 +101,8 @@ public class WorkloadComparisonResult {
         if (Double.compare(that.successRateDeviation, successRateDeviation) != 0) return false;
         if (Double.compare(that.throughputDeviation, throughputDeviation) != 0) return false;
         if (Double.compare(that.totalDurationDeviation, totalDurationDeviation) != 0) return false;
+        if (baselineData != null ? !baselineData.equals(that.baselineData) : that.baselineData != null) return false;
+        if (currentData != null ? !currentData.equals(that.currentData) : that.currentData != null) return false;
 
         return true;
     }
@@ -91,8 +111,10 @@ public class WorkloadComparisonResult {
     public int hashCode() {
         int result;
         long temp;
+        result = currentData != null ? currentData.hashCode() : 0;
+        result = 31 * result + (baselineData != null ? baselineData.hashCode() : 0);
         temp = throughputDeviation != +0.0d ? Double.doubleToLongBits(throughputDeviation) : 0L;
-        result = (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = totalDurationDeviation != +0.0d ? Double.doubleToLongBits(totalDurationDeviation) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = successRateDeviation != +0.0d ? Double.doubleToLongBits(successRateDeviation) : 0L;
@@ -110,6 +132,8 @@ public class WorkloadComparisonResult {
         private double successRateDeviation;
         private double avgLatencyDeviation;
         private double stdDevLatencyDeviation;
+        private WorkloadTaskData currentData;
+        private WorkloadTaskData baselineData;
 
         private WorkloadComparisonResultBuilder() {
 
@@ -135,13 +159,25 @@ public class WorkloadComparisonResult {
             return this;
         }
 
+        public WorkloadComparisonResultBuilder baselineData(WorkloadTaskData baselineData) {
+            this.baselineData = baselineData;
+            return this;
+        }
+
+        public WorkloadComparisonResultBuilder currentData(WorkloadTaskData currentData) {
+            this.currentData = currentData;
+            return this;
+        }
+
         public WorkloadComparisonResultBuilder stdDevLatencyDeviation(double stdDevLatencyDeviation) {
             this.stdDevLatencyDeviation = stdDevLatencyDeviation;
             return this;
         }
 
         public WorkloadComparisonResult build() {
-            return new WorkloadComparisonResult(throughputDeviation, totalDurationDeviation, successRateDeviation, avgLatencyDeviation, stdDevLatencyDeviation);
+            return new WorkloadComparisonResult(currentData, baselineData,
+                    throughputDeviation, totalDurationDeviation,
+                    successRateDeviation, avgLatencyDeviation, stdDevLatencyDeviation);
         }
     }
 

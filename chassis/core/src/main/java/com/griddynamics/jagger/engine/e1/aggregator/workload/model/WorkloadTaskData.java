@@ -176,4 +176,26 @@ public class WorkloadTaskData {
     public void setClockValue(Integer clockValue) {
         this.clockValue = clockValue;
     }
+
+    @Override
+    public String toString() {
+        return "WorkloadTaskData{" +
+                "id=" + id +
+                ", sessionId='" + sessionId + '\'' +
+                ", taskId='" + taskId + '\'' +
+                ", number=" + number +
+                ", scenario=" + scenario +
+                ", samples=" + samples +
+                ", clock='" + clock + '\'' +
+                ", clockValue=" + clockValue +
+                ", termination='" + termination + '\'' +
+                ", kernels=" + kernels +
+                ", totalDuration=" + totalDuration +
+                ", throughput=" + throughput +
+                ", failuresCount=" + failuresCount +
+                ", successRate=" + successRate +
+                ", avgLatency=" + avgLatency +
+                ", stdDevLatency=" + stdDevLatency +
+                '}';
+    }
 }

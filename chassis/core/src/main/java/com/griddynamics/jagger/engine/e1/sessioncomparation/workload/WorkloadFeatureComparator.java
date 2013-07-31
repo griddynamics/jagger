@@ -63,10 +63,11 @@ public class WorkloadFeatureComparator extends HibernateDaoSupport implements Fe
                     workloadMatched = true;
 
                     log.debug("Going to compare workload {}", describe(currentTest));
-                    Decision decision = workloadDecisionMaker.makeDecision(currentTest, baselineTest);
+                    WorkloadComparisonResult comparisonResult = compareWorkloads(currentTest, baselineTest);
+                    Decision decision = workloadDecisionMaker.makeDecision(comparisonResult);
                     String description = describe(currentTest);
 
-                    Verdict<WorkloadComparisonResult> verdict = new Verdict<WorkloadComparisonResult>(description, decision, compareWorkloads(currentTest, baselineTest));
+                    Verdict<WorkloadComparisonResult> verdict = new Verdict<WorkloadComparisonResult>(description, decision, comparisonResult);
 
                     log.debug("Verdict {}", verdict);
 
@@ -95,6 +96,8 @@ public class WorkloadFeatureComparator extends HibernateDaoSupport implements Fe
                 .stdDevLatencyDeviation(calculateDeviation(first.getStdDevLatency(), second.getStdDevLatency()))
                 .successRateDeviation(calculateDeviation(first.getSuccessRate(), second.getSuccessRate()))
                 .totalDurationDeviation(calculateDeviation(first.getTotalDuration(), second.getTotalDuration()))
+                .currentData(first)
+                .baselineData(second)
                 .build();
     }
 

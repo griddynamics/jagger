@@ -19,10 +19,10 @@
  */
 package com.griddynamics.jagger.engine.e1.sessioncomparation.workload;
 
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 
 public interface WorkloadDecisionMaker {
 
-    Decision makeDecision(WorkloadTaskData currentTest, WorkloadTaskData baselineTest);
+    Decision makeDecision(WorkloadComparisonResult result);
+
 }
