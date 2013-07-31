@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.webclient.client;
 
+import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
 
 /**
@@ -23,6 +24,14 @@ public abstract class PlotsServingBase {
 
     protected boolean isCrossSessionsTaskScopePlotId(String domId) {
         return domId.contains("#cross-sessions-task-scope-plot-");
+    }
+
+    protected boolean isMetricPlotId(String domId) {
+        return domId.contains("#metric-scope-plot-");
+    }
+
+    protected String generateMetricPlotId(MetricNameDto plotNameDto) {
+        return "" + plotNameDto.getTests().getTaskName() + "#metric-scope-plot-" + plotNameDto.getName().toLowerCase().replaceAll("\\s+", "-");
     }
 
     protected boolean isSessionScopePlotId(String domId) {
