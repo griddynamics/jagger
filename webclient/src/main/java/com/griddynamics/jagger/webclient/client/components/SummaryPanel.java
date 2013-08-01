@@ -4,11 +4,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
+import com.griddynamics.jagger.webclient.client.dto.MetricDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,6 +40,14 @@ public class SummaryPanel extends Composite {
         initWidget(ourUiBinder.createAndBindUi(this));
     }
 
+    public HashMap<MetricNameDto, MetricDto> getCachedMetrics() {
+        return sessionComparisonPanel.getCachedMetrics();
+    }
+
+    public SessionComparisonPanel getSessionComparisonPanel() {
+        return sessionComparisonPanel;
+    }
+
     public void updateSessions(Set<SessionDataDto> chosenSessions){
         if (chosenSessions.size() == 1){
             //show session summary
@@ -63,12 +73,6 @@ public class SummaryPanel extends Composite {
     public void updateTests(Set<TaskDataDto> tests) {
         if(sessionSummaryPanel != null){
             sessionSummaryPanel.updateTests(tests);
-        }
-    }
-
-    public void updataMetrics(Set<MetricNameDto> metrics){
-        if (sessionComparisonPanel != null){
-            sessionComparisonPanel.updateMetrics(metrics);
         }
     }
 
