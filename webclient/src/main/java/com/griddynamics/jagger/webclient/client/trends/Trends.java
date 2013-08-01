@@ -228,6 +228,15 @@ public class Trends extends DefaultActivity {
     private TrendsPlace place;
     private boolean selectTests = false;
 
+    //plots renders when 'trends' tab is selected
+    private Map<String, PlotWithContext> metricPlotsMap = new HashMap<String, PlotWithContext>();
+
+    //grid set values when 'summary' tab is selected
+    private RecordList recordList;
+
+    //tells if trends plot should be redraw
+    private boolean hasChanged = false;
+
     public void updatePlace(TrendsPlace place){
         if (this.place != null)
             return;
@@ -399,9 +408,22 @@ public class Trends extends DefaultActivity {
                 int selected = event.getSelectedItem();
                 if (selected == 0){
                     testsMetricsPanel.showWidget(0);
+                    if (recordList != null && summaryPanel.getSessionComparisonPanel() != null) {
+                        summaryPanel.getSessionComparisonPanel().getGrid().setData(recordList);
+                        recordList = null;
+                    }
                 }else
                 if (selected == 1){
                     testsMetricsPanel.showWidget(0);
+                    mainTabPanel.forceLayout();
+                    if (!metricPlotsMap.isEmpty() && hasChanged) {
+                        plotTrendsPanel.clear();
+                        for(Map.Entry<String, PlotWithContext> entry : metricPlotsMap.entrySet()) {
+                            renderPlots(entry.getKey(), entry.getValue());
+                        }
+                        scrollPanelTrends.scrollToBottom();
+                        hasChanged = false;
+                    }
                 }else
                 if (selected == 2){
                     testsMetricsPanel.showWidget(1);
@@ -608,6 +630,10 @@ public class Trends extends DefaultActivity {
         return plotPanel.getWidgetCount() >= MAX_PLOT_COUNT;
     }
 
+    private void renderPlots(String id, PlotWithContext plotWC) {
+        renderPlots(plotWC.getPanel(), plotWC.getPlotSeriesDtoList(), id, plotWC.getuMinimum(), plotWC.isMetric());
+    }
+
     private void renderPlots(HTMLPanel panel, List<PlotSeriesDto> plotSeriesDtoList, String id) {
         renderPlots(panel, plotSeriesDtoList, id, 0, false);
     }
@@ -744,6 +770,8 @@ public class Trends extends DefaultActivity {
 
             // Clear plots display
             plotPanel.clear();
+            plotTrendsPanel.clear();
+            metricPlotsMap.clear();
             // Clear task scope plot selection model
             plotNameSelectionModel.clear();
             // Clear session scope plot list
@@ -847,6 +875,8 @@ public class Trends extends DefaultActivity {
             summaryPanel.updateSessions(selected);
             // Clear plots display
             plotPanel.clear();
+            plotTrendsPanel.clear();
+            metricPlotsMap.clear();
             // Clear task scope plot selection model
             plotNameSelectionModel.clear();
             //clearPlots session plots
@@ -971,9 +1001,12 @@ public class Trends extends DefaultActivity {
         @Override
         public void onSelectionChange(SelectionChangeEvent event) {
 
+            hasChanged = true;
             if (summaryPanel.getSessionComparisonPanel() == null) {
                 chosenSessions.clear();
                 plotTrendsPanel.clear();
+                metricPlotsMap.clear();
+                recordList = null;
                 return;
             }
 
@@ -984,6 +1017,8 @@ public class Trends extends DefaultActivity {
             if (metrics.isEmpty()) {
                 grid.setData(emptyData);
                 // Remove plots from display which were unchecked
+                recordList = null;
+                metricPlotsMap.clear();
                 plotTrendsPanel.clear();
                 chosenSessions.clear();
             } else {
@@ -1003,6 +1038,9 @@ public class Trends extends DefaultActivity {
                     }
                     // Remove plot
                     plotTrendsPanel.remove(i);
+                    if (metricPlotsMap.containsKey(widgetId)) {
+                        metricPlotsMap.remove(widgetId);
+                    }
                 }
 
                 final ArrayList<MetricNameDto> notLoaded = new ArrayList<MetricNameDto>();
@@ -1027,17 +1065,17 @@ public class Trends extends DefaultActivity {
                     public void onSuccess(List<MetricDto> result) {
                         loaded.addAll(result);
                         MetricRankingProvider.sortMetrics(loaded);
-                        RecordList list = new RecordList();
-                        list.addList(emptyData);
+                        recordList = new RecordList();
+                        recordList.addList(emptyData);
                         for (MetricDto metric : loaded){
                             summaryPanel.getCachedMetrics().put(metric.getMetricName(), metric);
-                            list.add(summaryPanel.getSessionComparisonPanel().generateRecord(metric));
+                            recordList.add(summaryPanel.getSessionComparisonPanel().generateRecord(metric));
+                        }
+                        if (mainTabPanel.getSelectedIndex() == 0) {
+                            grid.setData(recordList);
+                            recordList = null;
                         }
                         renderMetricPlots(loaded);
-                        grid.setData(list);
-                        grid.setShowAllRecords(true);
-                        grid.refreshFields();
-                        grid.redraw();
                     }
                 });
             }
@@ -1053,13 +1091,21 @@ public class Trends extends DefaultActivity {
                 // Generate DOM id for plot
                 final String id = generateMetricPlotId(metric.getMetricName());
 
+                if (!metricPlotsMap.containsKey(id)) {
+                    metricPlotsMap.put(
+                            id, new PlotWithContext(plotTrendsPanel, generatePlotSeriesDto(metric), yMinimum, true)
+                    );
+                }
                 // If plot has already displayed, then pass it
                 if (plotTrendsPanel.getElementById(id) != null) {
                     continue;
                 }
 
-                renderPlots(plotTrendsPanel, generatePlotSeriesDto(metric), id, yMinimum, true);
-                scrollPanelTrends.scrollToBottom();
+                if (mainTabPanel.getSelectedIndex() == 1) {
+                    renderPlots(plotTrendsPanel, generatePlotSeriesDto(metric), id, yMinimum, true);
+                    scrollPanelTrends.scrollToBottom();
+                    hasChanged = false;
+                }
             }
         }
 
@@ -1133,6 +1179,7 @@ public class Trends extends DefaultActivity {
     private class TaskPlotSelectionChangedHandler extends PlotsServingBase implements SelectionChangeEvent.Handler {
         @Override
         public void onSelectionChange(SelectionChangeEvent event) {
+            hasChanged = true;
             Set<PlotNameDto> selected = ((MultiSelectionModel<PlotNameDto>) event.getSource()).getSelectedSet();
             final Set<SessionDataDto> selectedSessions = ((MultiSelectionModel<SessionDataDto>) sessionsDataGrid.getSelectionModel()).getSelectedSet();
 
