@@ -17,6 +17,8 @@ public class JaggerPlaceHistoryMapper extends AbstractPlaceHistoryMapper {
             return new TrendsPlace(NameTokens.SUMMARY);
         } else if (token.startsWith(NameTokens.TRENDS)) {
             return new TrendsPlace(NameTokens.TRENDS);
+        } else if (token.startsWith(NameTokens.METRICS)) {
+            return new TrendsPlace(NameTokens.METRICS);
         }
 
         throw new UnsupportedOperationException("Token " + token + " is unsupported now");

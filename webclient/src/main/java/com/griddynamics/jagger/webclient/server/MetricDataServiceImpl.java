@@ -7,6 +7,9 @@ import com.griddynamics.jagger.webclient.client.MetricDataService;
 import com.griddynamics.jagger.webclient.client.dto.MetricDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricValueDto;
+import com.griddynamics.jagger.webclient.client.dto.PlotDatasetDto;
+import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
+import com.griddynamics.jagger.webclient.client.dto.PointDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,8 +163,73 @@ public class MetricDataServiceImpl implements MetricDataService {
                 }
             }
         }
+        dto.setPlotSeriesDtos(generatePlotSeriesDto(dto));
+
         log.info("For metric name {} was found metric value for {} ms", new Object[]{metricName, System.currentTimeMillis() - time});
         return dto;
+    }
+
+
+    private PlotSeriesDto generatePlotSeriesDto(MetricDto metricDto) {
+        double yMinimum = Double.MAX_VALUE;
+
+        //So plot draws as {(0, val0),(1, val1), (2, val2), ... (n, valn)}
+        int iter = 0;
+        List<PointDto> list = new ArrayList<PointDto>();
+
+        List<MetricValueDto> metricList = new ArrayList<MetricValueDto>();
+        for(MetricValueDto value :metricDto.getValues()) {
+            metricList.add(value);
+        }
+
+        Collections.sort(metricList, new Comparator<MetricValueDto> () {
+
+            @Override
+            public int compare(MetricValueDto o1, MetricValueDto o2) {
+                if (o2.getSessionId() < o1.getSessionId()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+
+        for (MetricValueDto value: metricList) {
+            double temp = Double.parseDouble(value.getValue());
+            list.add(new PointDto(iter ++, temp));
+            if (yMinimum == Double.MAX_VALUE || temp < yMinimum)
+                yMinimum = temp;
+        }
+
+        PlotDatasetDto pdd = new PlotDatasetDto(
+                list,
+                metricDto.getMetricName().getName(),
+                ColorCodeGenerator.getHexColorCode()
+        );
+
+        StringBuilder headerBuilder = new StringBuilder("Sessions ");
+        List<Long> ids = new ArrayList<Long>();
+        for (MetricValueDto mvd: metricDto.getValues()) {
+            ids.add(mvd.getSessionId());
+        }
+        Collections.sort(ids);
+        for(long id : ids) {
+            headerBuilder.append("#").append(id).append(", ");
+        }
+        headerBuilder.append(metricDto.getMetricName().getTests().getTaskName()).
+                append(", ").
+                append(metricDto.getMetricName().getName());
+
+        PlotSeriesDto psd = new PlotSeriesDto(
+                Arrays.asList(pdd),
+                "Sessions" ,
+                metricDto.getMetricName().getName(),
+                headerBuilder.toString()
+        );
+
+        psd.setYAxisMin(yMinimum);
+
+        return psd;
     }
 
     public Set<MetricNameDto> getCustomMetricsNames(TaskDataDto tests){

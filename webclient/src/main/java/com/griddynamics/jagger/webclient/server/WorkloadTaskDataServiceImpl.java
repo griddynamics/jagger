@@ -204,7 +204,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             List<String> latencyValues = new ArrayList<String>();
             if (!latency.isEmpty()){
                 for(WorkloadProcessLatencyPercentile percentile : latency.get(0).getPercentiles()) {
-                    latencyValues.add(String.format("%.0f", percentile.getPercentileKey()) + "% -"+
+                    latencyValues.add(String.format("%.0f", percentile.getPercentileKey()) + "% - " +
                             String.format("%.3fs", percentile.getPercentileValue() / 1000));
 
                 }
