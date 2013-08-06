@@ -111,9 +111,10 @@ public class UserGroup {
             if (users.isEmpty()) {
                 if (time >= startInTime) {
                     spawnUsers(startCount, time, workloadConfigurations);
+                    startByTime = time + startBy;
                 }
             } else {
-                if (time >= startByTime) {
+                while (time >= startByTime) {
                     spawnUsers(startCount, time, workloadConfigurations);
                 }
             }
@@ -127,7 +128,7 @@ public class UserGroup {
             }
         }
 
-        startByTime = time + startBy;
+        startByTime += startBy;
     }
 
     public static NodeId findNodeWithMinThreadCount(LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
