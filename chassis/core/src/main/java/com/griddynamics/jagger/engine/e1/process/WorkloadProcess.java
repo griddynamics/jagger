@@ -26,6 +26,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeProcess;
+import com.griddynamics.jagger.engine.e1.scenario.KernelSideInitializableObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadConfiguration;
@@ -80,6 +81,12 @@ public class WorkloadProcess implements NodeProcess<WorkloadStatus> {
         delay = command.getScenarioContext().getWorkloadConfiguration().getDelay();
 
         log.debug("Going to execute command {}.", command);
+
+        for (KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>> provider : command.getCollectors()) {
+            if (provider instanceof KernelSideInitializableObjectProvider) {
+                ((KernelSideInitializableObjectProvider) provider).init(sessionId, command.getTaskId(), context);
+            }
+        }
 
         totalSamplesCountRequested = command.getScenarioContext().getWorkloadConfiguration().getSamples();
         leftSamplesCount.set(totalSamplesCountRequested);

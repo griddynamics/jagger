@@ -20,70 +20,57 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
 import com.griddynamics.jagger.engine.e1.collector.*;
+import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import java.util.List;
+
 /**
  * @author Nikolay Musienko
  *         Date: 22.03.13
  */
 public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBeanDefinitionParser {
-
-    protected abstract void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
-
     @Override
     protected Class getBeanClass(Element element) {
-        if(isComposite(element)){
-            return CompositeMetricCollectorProvider.class;
-        } else {
-            return DiagnosticCollectorProvider.class;
-        }
+        return MetricCollectorProvider.class;
     }
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        if(isComposite(element)){
-            parseCompositeBean(element, parserContext, builder);
-        } else{
-            parse(element, parserContext, builder);
+
+        builder.addPropertyValue(XMLConstants.METRIC_CALCULATOR, getMetricCalculator(element, parserContext, builder));
+
+        builder.addPropertyValue(XMLConstants.NAME,element.getAttribute(XMLConstants.ID));
+        Boolean plotData = false;
+        if (element.hasAttribute(XMLConstants.PLOT_DATA)) {
+            plotData = Boolean.valueOf(element.getAttribute(XMLConstants.PLOT_DATA));
         }
-    }
-
-    private void parseCompositeBean(Element element, ParserContext parserContext, BeanDefinitionBuilder builder){
-        BeanDefinitionBuilder diagnosticCollectorBuilder =
-                BeanDefinitionBuilder.rootBeanDefinition(DiagnosticCollectorProvider.class);
-        parse(element, parserContext, diagnosticCollectorBuilder);
-        String diagnosticName="diagnostic-" + getID(element,XMLConstants.DEFAULT_METRIC_NAME);
-        parserContext.getRegistry().registerBeanDefinition(diagnosticName,diagnosticCollectorBuilder.getBeanDefinition());
-
-        BeanDefinitionBuilder metricCollectorBuilder =
-                BeanDefinitionBuilder.rootBeanDefinition (MetricCollectorProvider.class);
-        parse(element, parserContext, metricCollectorBuilder);
-        String metricName="metric-" + getID(element,XMLConstants.DEFAULT_METRIC_NAME);
-        parserContext.getRegistry().registerBeanDefinition(metricName, metricCollectorBuilder.getBeanDefinition());
-
-        builder.addPropertyValue("diagnosticCollectorProvider", new RuntimeBeanReference(diagnosticName));
-        builder.addPropertyValue("metricCollectorProvider", new RuntimeBeanReference(metricName));
-    }
-
-    private boolean isComposite(Element element){
-        return element.getAttribute(XMLConstants.PLOT_DATA).equals("true");
-    }
-
-
-    /**
-     * Returns attribute ID.
-     * @param element - element
-     * @param defaultString - default return string
-     * @return ID. If ID is empty - returns default string.
-     */
-    protected String getID(Element element, String defaultString){
-        if(element.getAttribute(XMLConstants.ID).isEmpty()){
-            return defaultString;
+        List aggregators = CustomBeanDefinitionParser.parseCustomListElement(element, parserContext, builder.getBeanDefinition());
+        List entries = new ManagedList();
+        if (aggregators != null) {
+            for (Object aggregator: aggregators) {
+                entries.add(getAggregatorEntry(aggregator, plotData));
+            }
         }
-        return element.getAttribute(XMLConstants.ID);
+        if (entries.size() == 0) {
+            entries.add(getAggregatorEntry(new SumMetricAggregatorProvider(), plotData));
+        }
+
+        builder.addPropertyValue(XMLConstants.AGGREGATORS, entries);
+    }
+
+    protected abstract Object getMetricCalculator(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
+
+    private BeanDefinition getAggregatorEntry(Object aggregatorProvider, boolean plotData) {
+        BeanDefinitionBuilder entry = BeanDefinitionBuilder.genericBeanDefinition(MetricCollectorProvider.MetricDescriptionEntry.class);
+        entry.addPropertyValue(XMLConstants.NEED_PLOT_DATA, plotData);
+        entry.addPropertyValue(XMLConstants.METRIC_AGGREGATOR_PROVIDER, aggregatorProvider);
+        return entry.getBeanDefinition();
     }
 }

@@ -168,4 +168,7 @@ public class XMLConstants {
     public static final String JMX_METRIC_GROUPS = "jmxMetricGroups";
     public static final String JMX_METRICS = "jmx-metrics";
 
+    public static final String AGGREGATORS = "aggregators";
+    public static final String NEED_PLOT_DATA = "needPlotData";
+    public static final String METRIC_AGGREGATOR_PROVIDER = "metricAggregatorProvider";
 }

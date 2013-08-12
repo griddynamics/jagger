@@ -17,6 +17,10 @@ import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefi
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.*;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.AvgMetricAggregatorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.RefMetricAggregatorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.StdDevMetricAggregatorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.SumMetricAggregatorDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.CsvProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.FileProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryDefinitionParser;
@@ -152,5 +156,13 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("monitoring-sut", new MonitoringSutDefinitionParser());
         registerBeanDefinitionParser("jmx-metrics"  , new JmxMetricsDefinitionParser());
         registerBeanDefinitionParser("jmx-metrics-group", new jmxMetrixGroupDefinitionParser());
+
+
+        //metric aggregators
+        registerBeanDefinitionParser("metric-aggregator", findTypeParser);
+        registerBeanDefinitionParser("metric-aggregator-avg", new AvgMetricAggregatorDefinitionParser());
+        registerBeanDefinitionParser("metric-aggregator-sum", new SumMetricAggregatorDefinitionParser());
+        registerBeanDefinitionParser("metric-aggregator-std", new StdDevMetricAggregatorDefinitionParser());
+        registerBeanDefinitionParser("metric-aggregator-ref", new RefMetricAggregatorDefinitionParser());
     }
 }

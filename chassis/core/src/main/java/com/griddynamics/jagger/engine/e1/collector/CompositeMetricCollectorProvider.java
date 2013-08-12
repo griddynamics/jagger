@@ -21,17 +21,23 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
-import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
+import com.griddynamics.jagger.engine.e1.scenario.KernelSideInitializableObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 
 /**
  * @author Nikolay Musienko
  *         Date: 22.03.13
  */
-public class CompositeMetricCollectorProvider<Q, R, E>  implements KernelSideObjectProvider<ScenarioCollector<Q, R, E>> {
+public class CompositeMetricCollectorProvider<Q, R, E>  implements KernelSideInitializableObjectProvider<ScenarioCollector<Q, R, E>> {
 
     DiagnosticCollectorProvider<Q, R, E> diagnosticCollectorProvider;
     MetricCollectorProvider<Q, R, E> metricCollectorProvider;
+
+
+    @Override
+    public void init(String sessionId, String taskId, NodeContext kernelContext) {
+        metricCollectorProvider.init(sessionId, taskId, kernelContext);
+    }
 
     public DiagnosticCollectorProvider getDiagnosticCollectorProvider() {
         return diagnosticCollectorProvider;

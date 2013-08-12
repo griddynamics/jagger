@@ -84,6 +84,8 @@
         <property name="pointCount" value="${chassis.engine.e1.reporting.task.point.count}"/>
         <property name="fileStorage" ref="fileStorage"/>
 
+        <property name="keyValueStorage" ref="h2KeyValueStorage"/>
+
         <property name="logReader"  ref="bufferedLogReader"/>
 
         <property name="timeWindowPercentilesKeys" ref="standardPercentilesTimeSeries"/>

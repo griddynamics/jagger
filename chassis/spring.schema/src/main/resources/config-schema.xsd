@@ -28,6 +28,19 @@
         <xsd:attribute name="id" type="xsd:ID" use="required"/>
     </xsd:complexType>
 
+    <xsd:complexType name="basicIdentifiedType" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Basic type with id.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedRequiredType">
+                <xsd:attribute name="parent" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <xsd:complexType name="basicType" abstract="true">
         <xsd:annotation>
             <xsd:documentation>
@@ -642,7 +655,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="basicType">
+            <xsd:extension base="basicIdentifiedType">
                 <xsd:all>
                     <xsd:element name="info-collectors" type="workloadListenersType" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="scenario" type="scenarioAbstract" minOccurs="0" maxOccurs="1"/>
@@ -742,6 +755,99 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:element name="metric-aggregator" type="metricAggregatorAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Metric aggregator is a aggregation function for metric.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="metric-aggregator-ref" type="metric-aggregator-ref" substitutionGroup="metric-aggregator">
+        <xsd:annotation>
+            <xsd:documentation>
+                Reference to MetricAggregatorProvider
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="metric-aggregator-avg" type="metric-aggregator-avg" substitutionGroup="metric-aggregator">
+        <xsd:annotation>
+            <xsd:documentation>
+                Aggregate average value
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="metric-aggregator-sum" type="metric-aggregator-sum" substitutionGroup="metric-aggregator">
+        <xsd:annotation>
+            <xsd:documentation>
+                Aggregate sum of values
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="metric-aggregator-std" type="metric-aggregator-std" substitutionGroup="metric-aggregator">
+        <xsd:annotation>
+            <xsd:documentation>
+                Aggregate std dev of values
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="metric-aggregator-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="metricAggregatorAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="metric-aggregator-avg">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="metricAggregatorAbstract">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="metric-aggregator-sum">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="metricAggregatorAbstract">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="metric-aggregator-std">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="metricAggregatorAbstract">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="metricAggregatorAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:complexType>
+
     <xsd:complexType name="metricAbstract" abstract="true">
         <xsd:annotation>
             <xsd:documentation>
@@ -751,6 +857,9 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="workloadCollectorAbstract">
+                <xsd:choice>
+                    <xsd:element name="metric-aggregator" type="metricAggregatorAbstract" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:choice>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -1638,7 +1747,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    
+
     <xsd:complexType name="decision-maker-workload-throughput">
         <xsd:complexContent>
             <xsd:extension base="decisionMakerWorkloadAbstract">

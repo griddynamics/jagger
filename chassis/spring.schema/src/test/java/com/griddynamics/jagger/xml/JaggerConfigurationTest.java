@@ -2,7 +2,11 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.agent.model.JmxMetricGroup;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
+import com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
+import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
+import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -16,7 +20,6 @@ import org.testng.annotations.Test;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -114,6 +117,22 @@ public class JaggerConfigurationTest {
 
         ReportingService reportingService = config1.getReport();
         Assert.assertNotNull(reportingService);
+    }
+
+    @Test
+    public void conf1MetricAggregatorTest(){
+        Configuration config1 = (Configuration) ctx.getBean("config1");
+        // DANGER! CLASS CAST MAGIC!!!
+        List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors =
+                ((WorkloadTask)((CompositeTask) config1.getTasks().get(0)).getAttendant().get(0)).getCollectors();
+        for (KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>> provider : collectors) {
+            if (provider instanceof MetricCollectorProvider) {
+                List<MetricCollectorProvider.MetricDescriptionEntry> providers = ((MetricCollectorProvider) provider).getAggregators();
+                Assert.assertEquals(1, providers.size());
+                MetricAggregatorProvider metricAggregatorProvider = providers.get(0).getMetricAggregatorProvider();
+                Assert.assertEquals(AvgMetricAggregatorProvider.class, metricAggregatorProvider.getClass());
+            }
+        }
     }
 
     @Test
