@@ -3,10 +3,15 @@ package com.griddynamics.jagger.webclient.server;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile;
+import com.griddynamics.jagger.util.Pair;
+import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.webclient.client.MetricDataService;
 import com.griddynamics.jagger.webclient.client.dto.MetricDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricValueDto;
+import com.griddynamics.jagger.webclient.client.dto.PlotDatasetDto;
+import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
+import com.griddynamics.jagger.webclient.client.dto.PointDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +38,15 @@ public class MetricDataServiceImpl implements MetricDataService {
         this.entityManager = entityManager;
     }
 
-    private HashMap<String, String> standardMetrics = new HashMap<String, String>();
+    private HashMap<String, Pair<String, String>> standardMetrics = new HashMap<String, Pair<String, String>>();
 
     public MetricDataServiceImpl(){
-        standardMetrics.put("Throughput", "throughput");
-        standardMetrics.put("Latency", "avgLatency");
-        standardMetrics.put("Duration", "totalDuration");
-        standardMetrics.put("Success rate", "successRate");
-        standardMetrics.put("Iterations", "samples");
+        standardMetrics.put("Throughput", Pair.of("throughput", "Throughput, tps"));
+        standardMetrics.put("Latency", Pair.of("avgLatency", "Latency, sec"));
+        standardMetrics.put("Duration", Pair.of("duration", "Duration, sec"));
+        standardMetrics.put("TotalDuration", Pair.of("totalDuration", "TotalDuration, sec"));
+        standardMetrics.put("Success rate", Pair.of("successRate", "Success rate"));
+        standardMetrics.put("Iterations", Pair.of("samples", "Iterations, samples"));
     }
 
     @Override
@@ -78,9 +84,28 @@ public class MetricDataServiceImpl implements MetricDataService {
         dto.setValues(new HashSet<MetricValueDto>());
         dto.setMetricName(metricName);
 
-        if (standardMetrics.containsKey(metricName.getName())){
+        if ("Duration".equals(metricName.getName())) {
+            List<Object[]> result = entityManager.createNativeQuery("select workload.sessionId, workload.endTime, workload.startTime " +
+                    "from WorkloadData as workload inner join (select taskId, sessionId from TaskData where id in (:ids)) as taskData "+
+            "on workload.taskId=taskData.taskId and " +
+                    "workload.sessionId=taskData.sessionId ")
+            .setParameter("ids", metricName.getTests().getIds()).getResultList();
+
+            for (Object [] entry : result) {
+                MetricValueDto value = new MetricValueDto();
+                Date [] date = new Date[2];
+                date[0] = (Date)entry [1];
+                date[1] = (Date)entry [2];
+                value.setValueRepresentation(TimeUtils.formatDuration(date[0].getTime() - date[1].getTime()));
+                value.setValue(String.valueOf( (date[0].getTime() - date[1].getTime()) / 1000));
+                value.setSessionId(Long.parseLong(String.valueOf(entry[0])));
+
+                dto.getValues().add(value);
+            }
+        }
+        else if (standardMetrics.containsKey(metricName.getName())){
             //it is a standard metric
-            List<Object[]> result = entityManager.createNativeQuery("select workload."+standardMetrics.get(metricName.getName())+", workload.sessionId "+
+            List<Object[]> result = entityManager.createNativeQuery("select workload."+standardMetrics.get(metricName.getName()).getFirst()+", workload.sessionId "+
                                                                     "from WorkloadTaskData as workload " +
                                                                     "inner join (select taskId, sessionId from TaskData where id in (:ids)) as taskData "+
                                                                     "on workload.taskId=taskData.taskId and " +
@@ -93,6 +118,9 @@ public class MetricDataServiceImpl implements MetricDataService {
 
                 MetricValueDto value = new MetricValueDto();
                 value.setValue(metricValue);
+                if ("TotalDuration".equals(metricName.getName())) {
+                    value.setValueRepresentation(TimeUtils.formatDuration((long)(Double.parseDouble(metricValue) * 1000)));
+                }
                 value.setSessionId(sessionId);
 
                 dto.getValues().add(value);
@@ -160,8 +188,77 @@ public class MetricDataServiceImpl implements MetricDataService {
                 }
             }
         }
+        dto.setPlotSeriesDtos(generatePlotSeriesDto(dto));
+
         log.info("For metric name {} was found metric value for {} ms", new Object[]{metricName, System.currentTimeMillis() - time});
         return dto;
+    }
+
+
+    private PlotSeriesDto generatePlotSeriesDto(MetricDto metricDto) {
+        double yMinimum = Double.MAX_VALUE;
+
+        //So plot draws as {(0, val0),(1, val1), (2, val2), ... (n, valn)}
+        int iter = 0;
+        List<PointDto> list = new ArrayList<PointDto>();
+
+        List<MetricValueDto> metricList = new ArrayList<MetricValueDto>();
+        for(MetricValueDto value :metricDto.getValues()) {
+            metricList.add(value);
+        }
+
+        Collections.sort(metricList, new Comparator<MetricValueDto> () {
+
+            @Override
+            public int compare(MetricValueDto o1, MetricValueDto o2) {
+                if (o2.getSessionId() < o1.getSessionId()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+
+        for (MetricValueDto value: metricList) {
+            double temp = Double.parseDouble(value.getValue());
+            list.add(new PointDto(iter ++, temp));
+            if (yMinimum == Double.MAX_VALUE || temp < yMinimum)
+                yMinimum = temp;
+        }
+
+        String legend = metricDto.getMetricName().getName();
+        if (standardMetrics.containsKey(legend)) {
+            legend = standardMetrics.get(legend).getSecond();
+        }
+        PlotDatasetDto pdd = new PlotDatasetDto(
+                list,
+                legend,
+                ColorCodeGenerator.getHexColorCode()
+        );
+
+        StringBuilder headerBuilder = new StringBuilder("Sessions ");
+        List<Long> ids = new ArrayList<Long>();
+        for (MetricValueDto mvd: metricDto.getValues()) {
+            ids.add(mvd.getSessionId());
+        }
+        Collections.sort(ids);
+        for(long id : ids) {
+            headerBuilder.append("#").append(id).append(", ");
+        }
+        headerBuilder.append(metricDto.getMetricName().getTests().getTaskName()).
+                append(", ").
+                append(metricDto.getMetricName().getName());
+
+        PlotSeriesDto psd = new PlotSeriesDto(
+                Arrays.asList(pdd),
+                "Sessions" ,
+                metricDto.getMetricName().getName(),
+                headerBuilder.toString()
+        );
+
+        psd.setYAxisMin(yMinimum);
+
+        return psd;
     }
 
     public Set<MetricNameDto> getCustomMetricsNames(TaskDataDto tests){

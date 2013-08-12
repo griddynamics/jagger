@@ -14,7 +14,15 @@ public class MetricValueDto implements Serializable {
     private long testId;
     private long sessionId;
     private String value;
+    private String valueRepresentation;
 
+    public String getValueRepresentation() {
+        return valueRepresentation;
+    }
+
+    public void setValueRepresentation(String valueRepresentation) {
+        this.valueRepresentation = valueRepresentation;
+    }
 
     public long getTestId() {
         return testId;
@@ -29,6 +37,9 @@ public class MetricValueDto implements Serializable {
     }
 
     public void setValue(String value) {
+        if (valueRepresentation == null) {
+            this.valueRepresentation = value;
+        }
         this.value = value;
     }
 

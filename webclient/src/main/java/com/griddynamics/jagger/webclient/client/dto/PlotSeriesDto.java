@@ -14,6 +14,7 @@ public class PlotSeriesDto implements Serializable {
     private String xAxisLabel;
     private String yAxisLabel;
     private String plotHeader;
+    private double yAxisMin;
 
     public PlotSeriesDto() {
     }
@@ -51,6 +52,14 @@ public class PlotSeriesDto implements Serializable {
 
     public Collection<MarkingDto> getMarkingSeries() {
         return markingSeries;
+    }
+
+    public double getYAxisMin() {
+        return yAxisMin;
+    }
+
+    public void setYAxisMin(double yAxisMin) {
+        this.yAxisMin = yAxisMin;
     }
 
     @Override

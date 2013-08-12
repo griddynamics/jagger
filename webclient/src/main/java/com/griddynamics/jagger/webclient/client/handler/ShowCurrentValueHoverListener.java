@@ -7,6 +7,7 @@ import ca.nanometrics.gflot.client.jsni.Plot;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
+import java.util.List;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -15,18 +16,25 @@ import com.google.gwt.user.client.ui.PopupPanel;
 public class ShowCurrentValueHoverListener implements PlotHoverListener {
     private final PopupPanel popup;
     private final HTML popupPanelContent;
+    private final String xAxisLabel;
+    private final List<Long> chosenSessions;
 
-    public ShowCurrentValueHoverListener(PopupPanel popup, HTML popupPanelContent) {
+    public ShowCurrentValueHoverListener(PopupPanel popup, HTML popupPanelContent, String xAxisLabel, List<Long> chosenSessions) {
         this.popup = popup;
         this.popupPanelContent = popupPanelContent;
+        this.xAxisLabel = xAxisLabel;
+        this.chosenSessions = chosenSessions;
     }
 
     @Override
     public void onPlotHover(Plot plot, PlotPosition position, PlotItem item) {
         if (item != null) {
             String label = item.getSeries().getLabel();
+            double xAxis = item.getDataPoint().getX();
+
             popupPanelContent.setHTML("<table width=\"100%\"><tr><td>Plot</td><td>"+label+"</td></tr>" +
-                    "<tr><td>Time</td><td>" + item.getDataPoint().getX() +
+                    "<tr><td>" + xAxisLabel + "</td><td>" +
+                    ((chosenSessions != null) ? chosenSessions.get((int)xAxis).toString() : xAxis ) +
                     "</td></tr><tr><td>Value</td><td>" + item.getDataPoint().getY() + "</td></tr></table>");
 
             int clientWidth = Window.getClientWidth();

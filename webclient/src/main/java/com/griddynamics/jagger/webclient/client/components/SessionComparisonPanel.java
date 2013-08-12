@@ -1,13 +1,10 @@
 package com.griddynamics.jagger.webclient.client.components;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.griddynamics.jagger.webclient.client.MetricDataService;
-import com.griddynamics.jagger.webclient.client.data.MetricRankingProvider;
 import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
-import com.smartgwt.client.data.RecordList;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.AutoFitWidthApproach;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
@@ -51,6 +48,18 @@ public class SessionComparisonPanel extends VerticalPanel{
 
     private ListGridRecord[] EMPTY_DATA = new ListGridRecord[0];
     private HashMap<MetricNameDto, MetricDto> cache;
+
+    public HashMap<MetricNameDto, MetricDto> getCachedMetrics() {
+        return cache;
+    }
+
+    public ListGrid getGrid() {
+        return grid;
+    }
+
+    public ListGridRecord[] getEmptyListGrid() {
+        return EMPTY_DATA;
+    }
 
     public SessionComparisonPanel(Set<SessionDataDto> chosenSessions){
         init(chosenSessions);
@@ -139,51 +148,9 @@ public class SessionComparisonPanel extends VerticalPanel{
         grid.setShowAllRecords(true);
     }
 
-    public void updateMetrics(Set<MetricNameDto> dto){
-        if (dto.isEmpty()){
-            grid.setData(EMPTY_DATA);
-            return;
-        }
 
-        final ArrayList<MetricNameDto> notLoaded = new ArrayList<MetricNameDto>();
-        final ArrayList<MetricDto> loaded = new ArrayList<MetricDto>();
-
-        for (MetricNameDto metricName : dto){
-            if (!cache.containsKey(metricName)){
-                notLoaded.add(metricName);
-            }else{
-                MetricDto metric = cache.get(metricName);
-                loaded.add(metric);
-            }
-        }
-        MetricDataService.Async.getInstance().getMetrics(notLoaded, new AsyncCallback<List<MetricDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                caught.printStackTrace();
-            }
-
-            @Override
-            public void onSuccess(List<MetricDto> result) {
-
-                loaded.addAll(result);
-
-                MetricRankingProvider.sortMetrics(loaded);
-
-                RecordList list = new RecordList();
-                list.addList(EMPTY_DATA);
-
-                for (MetricDto metric : loaded){
-                    MetricRecord record = new MetricRecord(metric);
-                    cache.put(metric.getMetricName(), metric);
-                    list.add(record);
-                }
-
-                grid.setData(list);
-                grid.setShowAllRecords(true);
-                grid.refreshFields();
-                grid.redraw();
-            }
-        });
+    public Record generateRecord(MetricDto dto) {
+        return new MetricRecord(dto);
     }
 
     private class MetricRecord extends ListGridRecord{
@@ -193,7 +160,7 @@ public class SessionComparisonPanel extends VerticalPanel{
             setAttribute(TEST_NAME, dto.getMetricName().getTests().getTaskName());
             setAttribute(TEST_METRIC, dto.getMetricName().getName());
             for (MetricValueDto value : dto.getValues()){
-                setAttribute(SESSION_HEADER+value.getSessionId()+ SESSION_DATA_SUFFIX, value.getValue());
+                setAttribute(SESSION_HEADER+value.getSessionId()+ SESSION_DATA_SUFFIX, value.getValueRepresentation());
             }
         }
     }
