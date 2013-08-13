@@ -98,7 +98,7 @@ public class SessionComparisonPanel extends VerticalPanel{
         SortedSet<SessionDataDto> sortedSet = new TreeSet<SessionDataDto>(new Comparator<SessionDataDto>() {
             @Override
             public int compare(SessionDataDto o, SessionDataDto o2) {
-                return o.getName().compareTo(o2.getName());
+                return (Long.parseLong(o.getSessionId()) - Long.parseLong(o2.getSessionId())) > 0 ? 1 : -1;
             }
         });
         sortedSet.addAll(chosenSessions);
