@@ -21,11 +21,15 @@
 package com.griddynamics.jagger.util;
 
 import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  * UserGroup: dkotlyarov
  */
 public final class Parser {
+
+    private final static Pattern pattern = Pattern.compile("\\.\\.");
+
     private Parser() {
     }
 
@@ -46,7 +50,7 @@ public final class Parser {
     }
 
     public static long parseTime(String time, Random random) {
-        String[] items = time.split("[..]");
+        String[] items = pattern.split(time);
         if (items.length == 1) {
             return parseTimeMillis(time);
         } else {
@@ -56,12 +60,12 @@ public final class Parser {
             if (delta < 0) {
                 throw new IllegalArgumentException();
             }
-            return random.nextLong() % delta + min;
+            return Math.abs(random.nextLong() % delta) + min;
         }
     }
 
     public static int parseInt(String value, Random random) {
-        String[] items = value.split("[..]");
+        String[] items = pattern.split(value);
         if (items.length == 1) {
             return Integer.parseInt(value);
         } else {
@@ -71,12 +75,12 @@ public final class Parser {
             if (delta < 0) {
                 throw new IllegalArgumentException();
             }
-            return random.nextInt() % delta + min;
+            return random.nextInt(delta) + min;
         }
     }
 
     public static long parseLong(String value, Random random) {
-        String[] items = value.split("[..]");
+        String[] items = pattern.split(value);
         if (items.length == 1) {
             return Long.parseLong(value);
         } else {
@@ -86,7 +90,7 @@ public final class Parser {
             if (delta < 0) {
                 throw new IllegalArgumentException();
             }
-            return random.nextLong() % delta + min;
+            return Math.abs(random.nextLong() % delta) + min;
         }
     }
 }
