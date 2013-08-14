@@ -337,6 +337,7 @@
                     <xsd:element name="load" type="loadAbstract" maxOccurs="1"/>
                     <xsd:element name="termination" type="terminationAbstract" maxOccurs="1"/>
                 </xsd:all>
+                <xsd:attribute name="startDelay" type="xsd:string" use="optional"/>
                 <xsd:attribute name="testDescription" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>

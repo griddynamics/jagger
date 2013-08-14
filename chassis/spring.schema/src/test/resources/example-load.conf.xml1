@@ -61,10 +61,10 @@
         <jgr:termination xsi:type="jgr:termination-iterations" iterations="255" maxDuration="2h"/>
     </jgr:test>
 
-    <jgr:test-description id="descr" calibration="false" />
+    <jgr:test-description id="descr" calibration="false"/>
 
     <jgr:test-group id="gr1">
-         <jgr:test id="innerTest1" testDescription="descr">
+         <jgr:test id="innerTest1" testDescription="descr" startDelay="10">
              <jgr:load xsi:type="jgr:load-user-group" count="5" startCount="5" startBy="0" startIn="0" life="2h"/>
              <jgr:termination xsi:type="jgr:termination-background"/>
          </jgr:test>

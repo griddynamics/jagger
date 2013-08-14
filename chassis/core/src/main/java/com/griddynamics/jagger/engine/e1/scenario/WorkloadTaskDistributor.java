@@ -31,6 +31,7 @@ import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
 import com.griddynamics.jagger.master.AbstractDistributionService;
 import com.griddynamics.jagger.master.AbstractDistributor;
 import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
+import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +88,12 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                     Calibrator calibrator = task.getCalibrator();
                     calibrator.calibrate(sessionId, taskId, task.getScenarioFactory(), remotes, timeoutsConfiguration.getCalibrationTimeout());
                     log.debug("Calibrator completed");
+
+                    if (task.getStartDelay() > 0) {
+                        log.info("Going to sleep '{}' ms before execute task: {}", task.getStartDelay(), task.getName());
+                        TimeUtils.sleepMillis(task.getStartDelay());
+                        log.info("Start execution of task: {}", task);
+                    }
 
                     controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration);
 

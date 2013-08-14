@@ -42,6 +42,15 @@ public class WorkloadTask implements CompositableTask {
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
     private String parentTaskId;
     private Calibrator calibrator = new OneNodeCalibrator();
+    private long startDelay = 0;
+
+    public long getStartDelay() {
+        return startDelay;
+    }
+
+    public void setStartDelay(long waitBefore) {
+        this.startDelay = waitBefore;
+    }
 
     @Override
     public String getTaskName() {
@@ -123,6 +132,7 @@ public class WorkloadTask implements CompositableTask {
         task.setClockConfiguration(clockConfiguration);
         task.setTerminateStrategyConfiguration(terminateStrategyConfiguration);
         task.setCalibrator(calibrator);
+        task.setStartDelay(startDelay);
         task.setDescription(description);
         return task;
     }
@@ -156,8 +166,9 @@ public class WorkloadTask implements CompositableTask {
                 "   collectors=" + collectors + ",\n" +
                 "   clockConfiguration=" + clockConfiguration + ",\n" +
                 "   terminateStrategyConfiguration=" + terminateStrategyConfiguration + ",\n" +
-                "   parentTaskId='" + parentTaskId +
-                '}';
+                "   parentTaskId='" + parentTaskId + "',\n" +
+                "   startDelay='" + startDelay +
+                "'}";
     }
 
     public String getDescription() {

@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.xml.beanParsers.configuration;
 
-import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.user.TestConfiguration;
+import com.griddynamics.jagger.util.Parser;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -33,6 +33,13 @@ public class TaskDefinitionParser extends CustomBeanDefinitionParser {
         if (!testDescription.isEmpty()) {
             builder.addPropertyValue(XMLConstants.TEST_DESCRIPTION_CLASS_FIELD, new RuntimeBeanReference(testDescription));
             element.removeAttribute(XMLConstants.TEST_DESCRIPTION);
+        }
+
+        if (element.hasAttribute(XMLConstants.START_DELAY_ATTRIBUTE)) {
+            builder.addPropertyValue(XMLConstants.START_DELAY_ATTRIBUTE,
+                    Parser.parseTimeMillis(element.getAttribute(XMLConstants.START_DELAY_ATTRIBUTE)));
+
+            element.removeAttribute(XMLConstants.START_DELAY_ATTRIBUTE);
         }
 
     }

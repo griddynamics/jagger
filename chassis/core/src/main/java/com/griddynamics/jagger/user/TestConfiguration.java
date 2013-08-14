@@ -19,6 +19,15 @@ public class TestConfiguration {
     private WorkloadTask prototype;
     private int number;
     private String testGroupName;
+    private long startDelay = -1;
+
+    public long getStartDelay() {
+        return startDelay;
+    }
+
+    public void setStartDelay(long waitBefore) {
+        this.startDelay = waitBefore;
+    }
 
     public void setNumber(int number) {
         this.number = number;
@@ -84,6 +93,9 @@ public class TestConfiguration {
         WorkloadTask task = prototype.copy();
         task.setName(getName());
         task.setNumber(number);
+        if (startDelay > 0) {
+            task.setStartDelay(startDelay);
+        }
         if (task.getVersion()==null) task.setVersion("0");
         task.setParentTaskId(testGroupName);
         //TODO refactor

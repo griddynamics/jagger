@@ -69,7 +69,7 @@ public class MasterWorkloadCollector implements DistributionListener {
 
         Namespace scenarioNamespace = Namespace.of(sessionId, taskId);
         Multimap<String, Object> objectsMap = HashMultimap.create();
-        objectsMap.put(START_TIME, System.currentTimeMillis());
+        objectsMap.put(START_TIME, System.currentTimeMillis() + workload.getStartDelay());
 
         objectsMap.put(CLOCK, workload.getClock().toString());
         objectsMap.put(CLOCK_VALUE, workload.getClock().getValue());

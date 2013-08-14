@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created with IntelliJ IDEA.
@@ -102,6 +103,8 @@ public class JaggerLoadTest {
         Assert.assertEquals(255, termination.getIterations());
         Assert.assertEquals("2h", termination.getDuration());
 
+        Assert.assertEquals(0, testConfiguration.generate(new AtomicBoolean(false)).getStartDelay());
+
         RpsClockConfiguration tps = (RpsClockConfiguration) testConfiguration.getClockConfiguration();
         Assert.assertEquals(100d, tps.getTps());
         Assert.assertEquals(RpsClock.class, tps.getClock().getClass());
@@ -130,6 +133,7 @@ public class JaggerLoadTest {
 
         TestConfiguration test = tests.get(0);
         InfiniteTerminationStrategyConfiguration termination = (InfiniteTerminationStrategyConfiguration)test.getTerminateStrategyConfiguration();
+        Assert.assertEquals(10, test.getStartDelay());
         Assert.assertNotNull(termination);
 
         UserGroupsClockConfiguration userGroup = (UserGroupsClockConfiguration)test.getClockConfiguration();
