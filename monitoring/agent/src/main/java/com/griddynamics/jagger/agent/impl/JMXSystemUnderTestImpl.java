@@ -23,15 +23,13 @@ package com.griddynamics.jagger.agent.impl;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.*;
+import com.griddynamics.jagger.util.AgentUtils;
 import com.sun.management.UnixOperatingSystemMXBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -53,7 +51,6 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
 
     private final static Logger log = LoggerFactory.getLogger(JMXSystemUnderTestImpl.class);
 
-    private static final String JMX_URL_TEMPLATE = "service:jmx:rmi:///jndi/rmi://%s/jmxrmi";
     private static final Collection<String> OLD_GEN_GC =
             ImmutableSet.of("MarkSweepCompact", "PS MarkSweep", "ConcurrentMarkSweep", "G1 Old Generation");
 
@@ -90,16 +87,12 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     }
 
     public void init() {
-        String[] jmxServicePorts = this.jmxServices.split(",");
-        JMXConnector connector;
-        for (String service : jmxServicePorts) {
-            try {
-                connector = JMXConnectorFactory.connect(new JMXServiceURL(String.format(JMX_URL_TEMPLATE, service)));
-                connections.put(name + " collect from jmx port " +
-                        service, connector.getMBeanServerConnection());
-            } catch (IOException e) {
-                log.error("Error during JMX initializing", e);
-            }
+        try {
+            connections = AgentUtils.getMBeanConnections(
+                    AgentUtils.getJMXConnectors(AgentUtils.splitServices(jmxServices), name + " collect from jmx port ")
+            );
+        } catch (IOException e) {
+            log.error("Error during JMX initializing", e);
         }
         if (connections.size() == 0) {
             // TODO: replace it with specific exception for such situations when it is created.

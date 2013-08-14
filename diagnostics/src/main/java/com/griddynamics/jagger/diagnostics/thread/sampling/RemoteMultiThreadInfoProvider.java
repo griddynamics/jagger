@@ -23,6 +23,7 @@ package com.griddynamics.jagger.diagnostics.thread.sampling;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.griddynamics.jagger.exception.TechnicalException;
+import com.griddynamics.jagger.util.AgentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -32,8 +33,6 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
 import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -47,16 +46,16 @@ import java.util.Set;
  */
 public class RemoteMultiThreadInfoProvider implements ThreadInfoProvider {
     private static final Logger log = LoggerFactory.getLogger(RemoteMultiThreadInfoProvider.class);
-    private static final String JMX_URL_TEMPLATE = "service:jmx:rmi:///jndi/rmi://%s/jmxrmi";
 
     private String jmxServices;
     private Map<String, JMXConnector> connector = Maps.newConcurrentMap();
+
     private Map<String, MBeanServerConnection> mbs = Maps.newConcurrentMap();
 
 
     @Override
     public Set<String> getIdentifiersSuT() {
-        return Sets.newHashSet(this.jmxServices.split(","));
+        return Sets.newHashSet(AgentUtils.splitServices(this.jmxServices));
     }
 
     @Override
@@ -110,14 +109,9 @@ public class RemoteMultiThreadInfoProvider implements ThreadInfoProvider {
             }
             this.jmxServices = jmxServices;
 
-            Set<String> jmxServicesSet = getIdentifiersSuT();
-            for (String service : jmxServicesSet) {
+            connector = AgentUtils.getJMXConnectors(AgentUtils.splitServices(this.jmxServices), "");
+            mbs = AgentUtils.getMBeanConnections(connector);
 
-                JMXConnector connect = JMXConnectorFactory.connect(
-                        new JMXServiceURL(String.format(JMX_URL_TEMPLATE, service)));
-                this.connector.put(service, connect);
-                this.mbs.put(service, connect.getMBeanServerConnection());
-            }
         } catch (MalformedURLException e) {
             log.error("MalformedURLException", e);
             throw new TechnicalException(e);

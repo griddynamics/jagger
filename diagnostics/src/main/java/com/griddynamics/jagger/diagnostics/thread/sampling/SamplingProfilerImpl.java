@@ -99,12 +99,8 @@ public class SamplingProfilerImpl implements SamplingProfiler {
 
         public void run() {
 
-            for (String serviceURL : threadInfoProvider.getIdentifiersSuT()) {
-                RuntimeGraph runtimeGraph = new RuntimeGraph();
-                runtimeGraph.setExcludePatterns(excludePatterns);
-                runtimeGraph.setIncludePatterns(includePatterns);
-                runtimeGraphs.put(serviceURL, runtimeGraph);
-            }
+            boolean needReset = true;
+
             int timeout = 0;
             while (isRunning.get()) {
                 TimeUtils.sleepMillis(timeout);
@@ -138,12 +134,22 @@ public class SamplingProfilerImpl implements SamplingProfiler {
                 if (threadInfos == null) {
                     log.warn("SamplingProfiler {} : Getting thread info through jxm failed.");
                 } else {
+
                     for (Map.Entry<String, ThreadInfo[]> threadInfosEntry : threadInfos.entrySet()) {
+
+                        RuntimeGraph runtimeGraph = runtimeGraphs.get(threadInfosEntry.getKey());
+
+                        if (needReset || runtimeGraph == null) {
+                            runtimeGraph = new RuntimeGraph();
+                            runtimeGraph.setExcludePatterns(excludePatterns);
+                            runtimeGraph.setIncludePatterns(includePatterns);
+                            runtimeGraphs.put(threadInfosEntry.getKey(), runtimeGraph);
+                        }
+
                         if (threadInfosEntry.getValue() == null) {
                             log.debug("SamplingProfiler {} : ThreadInfo[] is null.", identifier);
                             continue;
                         }
-                        RuntimeGraph runtimeGraph = runtimeGraphs.get(threadInfosEntry.getKey());
                         for (ThreadInfo info : threadInfosEntry.getValue()) {
                             if (info == null) {
                                 log.debug("SamplingProfiler {} : ThreadInfo is null.", identifier);
@@ -161,6 +167,7 @@ public class SamplingProfilerImpl implements SamplingProfiler {
                         }
                     }
                 }
+                needReset = false;
                 TimeUtils.sleepMillis(pollingInterval);
             }
         }
