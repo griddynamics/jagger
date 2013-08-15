@@ -30,7 +30,7 @@ import com.griddynamics.jagger.coordinator.http.client.ExchangeClient;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.util.ConfigurableExecutor;
 import com.griddynamics.jagger.util.TimeUtils;
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
