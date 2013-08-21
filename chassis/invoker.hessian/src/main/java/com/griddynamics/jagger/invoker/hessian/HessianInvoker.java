@@ -29,11 +29,17 @@ import com.griddynamics.jagger.invoker.Invoker;
 import java.net.MalformedURLException;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Abstract class for invokers built on top of hessian protocol.
- *
+/** Abstract class for invokers built on top of hessian protocol
  * @author Mairbek Khadikov
- */
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @param <Q> -???
+ * @param <R> -???
+ * @param <S> -???
+ *
+ * @ingroup Main_Invokers_group */
 public abstract class HessianInvoker<S, Q, R> implements Invoker<Q, R, String> {
     private final ConcurrentHashMap<String, S> services = new ConcurrentHashMap<String, S>();
 

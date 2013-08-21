@@ -20,11 +20,16 @@
 
 package com.griddynamics.jagger.invoker;
 
-/**
- * Provides ability to share pairs(pairSupplier) via threads on kernel.
+/** Provides ability to share pairs(pairSupplier) via threads on kernel.
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
  * @param <Q> query
  * @param <E> endpoint
- */
+ *
+ * @ingroup Main_Distributors_group */
 public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
     protected PairSupplierFactory<Q, E> pairSupplierFactory;

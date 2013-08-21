@@ -22,11 +22,13 @@ package com.griddynamics.jagger.providers.creators;
 
 import com.google.common.base.Preconditions;
 
-/**
+/** ??? Some short description
  * @author Nikolay Musienko
- *         Date: 27.05.13
- */
-
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Providers_group */
 public class StringCreator implements ObjectCreator<String> {
 
     @Override

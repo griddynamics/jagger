@@ -36,10 +36,12 @@
     <beans:import resource="defaults.config.xml"/>
     <beans:import resource="invokers/invokers.conf.xml"/>
 
+    <!-- begin: following section is used for docu generation - invoker usage -->
     <scenario id="pageScenario" xsi:type="scenario-query-pool">
         <query-distributor xsi:type="query-distributor-round-robin"/>
         <invoker xsi:type="invoker-class" class="${package}.invoker.PageVisitorInvoker"/>
     </scenario>
+    <!-- end: following section is used for docu generation - invoker usage -->
 
     <test-description id="groovyScenarioExample" parent="default" calibration="true">
         <scenario xsi:type="scenario-ref" ref="groovyScenarioFactoryExample"/>
@@ -64,9 +66,11 @@
         </scenario>
     </test-description>
 
+    <!-- begin: following section is used for docu generation - distributor usage -->
     <test-description id="jaggerRandomDistributorScenario" calibration="false">
         <scenario xsi:type="scenario-ref" ref="jaggerRandomScenario"/>
     </test-description>
+    <!-- end: following section is used for docu generation - distributor usage -->
 
     <test-description id="googlePageTest" parent="default" calibration="true">
         <scenario  xsi:type="scenario-query-pool" parent="pageScenario">

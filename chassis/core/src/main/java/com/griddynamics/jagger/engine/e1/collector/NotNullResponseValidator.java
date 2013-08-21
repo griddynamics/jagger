@@ -22,6 +22,17 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @param <Q> - Query type
+ * @param <R> - Result type
+ * @param <E> - Endpoint type
+ *
+ * @ingroup Main_Collectors_group */
 public class NotNullResponseValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
     public NotNullResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);

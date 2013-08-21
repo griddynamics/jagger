@@ -27,6 +27,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Distributors_group */
 public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> {
 
     protected Iterable<Q> queryProvider;

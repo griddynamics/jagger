@@ -30,6 +30,13 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Invokers_group */
 public class TcpTrafficInvoker implements Invoker<Nothing, String, String> {
     private static final long serialVersionUID = -1L;
     private static final Logger log = LoggerFactory.getLogger(TcpTrafficInvoker.class);

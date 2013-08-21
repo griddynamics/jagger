@@ -20,11 +20,29 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-/**
- * Workload termination strategy. Decides to terminate or not workload using current execution status.
- *
+/** Workload termination strategy. Decides to terminate or not workload using current execution status.
  * @author Mairbek Khadikov
- */
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Terminators_Base_group */
 public interface TerminationStrategy {
+
+    /** ??? Some short description
+     * @author ???
+     * @n
+     * @par Details:
+     * @details ???
+     *
+     *  @param status    - ???
+     *
+     *  @return ??? */
     boolean isTerminationRequired(WorkloadExecutionStatus status);
 }
+
+/* **************** How to customize termination strategy ************************* */
+/// @defgroup Main_HowToCustomizeTerminators_group Custom termination strategies
+///
+/// @details
+/// @todo finish section Custom termination strategies

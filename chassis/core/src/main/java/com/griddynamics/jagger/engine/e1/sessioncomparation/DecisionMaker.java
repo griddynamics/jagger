@@ -21,11 +21,30 @@ package com.griddynamics.jagger.engine.e1.sessioncomparation;
 
 import com.google.common.collect.Multimap;
 
-/**
- * Responsible for making final decision based on comparing of features.
- */
+/** Responsible for making final decision based on comparing of features.
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_DecisionMakers_Base_group */
 public interface DecisionMaker {
 
+    /** ??? Some short description
+     * @author ???
+     * @n
+     * @par Details:
+     * @details ???
+     *
+     *  @param verdicts    - ???
+     *
+     *  @return ??? */
     Decision makeDecision(Multimap<String, Verdict> verdicts);
 
 }
+
+/* **************** How to customize decision maker ************************* */
+/// @defgroup Main_HowToCustomizeDecisionMakers_group Custom decision makers
+///
+/// @details
+/// @todo finish docu section Custom decision makers

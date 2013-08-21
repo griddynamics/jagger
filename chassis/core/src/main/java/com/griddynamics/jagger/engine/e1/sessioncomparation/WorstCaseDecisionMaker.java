@@ -22,6 +22,13 @@ package com.griddynamics.jagger.engine.e1.sessioncomparation;
 
 import com.google.common.collect.Multimap;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_DecisionMakers_group */
 public class WorstCaseDecisionMaker implements DecisionMaker {
 
     @Override

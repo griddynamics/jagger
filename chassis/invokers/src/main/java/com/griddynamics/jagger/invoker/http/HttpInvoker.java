@@ -34,11 +34,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.*;
 
-/**
- * {@link Invoker} that invokes services of SuT via http protocol.
- *
+/** Invoker that invokes services of SuT via http protocol
  * @author Alexey Kiselyov
- */
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Invokers_group */
 public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {
     private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 

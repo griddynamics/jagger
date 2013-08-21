@@ -25,9 +25,13 @@ import com.griddynamics.jagger.util.Parser;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * User: dkotlyarov
- */
+/** ??? Some short description
+ * @author dkotlyarov
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Terminators_group */
 public class UserTerminationStrategy implements TerminationStrategy {
     private final long stopTime;
     private final int stopSampleCount;

@@ -31,7 +31,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @param <Q> -???
+ *
+ * @ingroup Main_Invokers_group */
 public abstract class ApacheAbstractHttpInvoker<Q> implements Invoker<Q, HttpResponse, String> {
     private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 

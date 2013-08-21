@@ -22,6 +22,30 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import java.io.Serializable;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @param <R> - ???
+ *
+ * @ingroup Main_Calculators_Base_group */
 public interface MetricCalculator<R> extends Serializable {
+    /** ??? Some short description
+     * @author ???
+     * @n
+     * @par Details:
+     * @details ???
+     *
+     *  @param response - ???
+     *
+     *  @return ??? */
 	Integer calculate(R response);
 }
+
+/* **************** How to customize metric calculator ************************* */
+/// @defgroup Main_HowToCustomizeCalculators_group Custom calculators
+///
+/// @details
+/// @todo finish docu section Custom calculators

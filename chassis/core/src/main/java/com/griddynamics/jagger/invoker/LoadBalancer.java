@@ -25,12 +25,68 @@ import com.griddynamics.jagger.util.Pair;
 import java.io.Serializable;
 import java.util.Iterator;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @param <Q> - Query type
+ * @param <E> - Endpoint type
+ *
+ * @ingroup Main_Distributors_Base_group */
 public interface LoadBalancer<Q, E> extends Iterable<Pair<Q, E>>, Serializable {
 
+    /** ??? Some short description
+     * @author ???
+     * @n
+     * @par Details:
+     * @details ???
+     *
+     *  @return ??? */
     Iterator<Pair<Q, E>> provide();
 
+    /** ??? Some short description
+     * @author ???
+     * @n
+     * @par Details:
+     * @details ???
+     *
+     *  @return ??? */
     int querySize();
 
+    /** ??? Some short description
+     * @author ???
+     * @n
+     * @par Details:
+     * @details ???
+     *
+     *  @return ??? */
     int endpointSize();
 
 }
+
+/* **************** How to customize distributor ************************* */
+/// @defgroup Main_HowToCustomizeDistributors_group Custom distributors
+///
+/// @details
+/// @b Note: full examples of the code are available in maven archetype-examples
+///
+/// To add custom distributor you need to do:
+///
+/// 1. Create class which implements @ref Main_Distributors_Base_group interface or extends one of classes @ref Main_Distributors_group
+/// @dontinclude RandomQueryDistributor.java
+/// @skipline  public class RandomQueryDistributor
+///
+/// 2. Create bean in XML file in the directory "suite/distributor/" with this class
+/// @dontinclude  distributor.conf.xml
+/// @skip  begin: following section is used for docu generation - distributor bean
+/// @until end: following section is used for docu generation - distributor bean
+///
+/// 3. Refer this class in test description XML file
+/// @dontinclude  test.suite.scenario.config.xml
+/// @skip  begin: following section is used for docu generation - distributor usage
+/// @until end: following section is used for docu generation - distributor usage
+
+
+

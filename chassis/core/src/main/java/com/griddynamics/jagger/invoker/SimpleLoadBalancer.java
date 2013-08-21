@@ -24,6 +24,13 @@ import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Distributors_group */
 public class SimpleLoadBalancer<Q, E> implements LoadBalancer<Q, E> {
     private final Q query;
     private final E endpoint;

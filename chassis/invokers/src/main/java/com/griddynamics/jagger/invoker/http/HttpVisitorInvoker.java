@@ -31,6 +31,13 @@ import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.util.Nothing;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Invokers_group */
 public class HttpVisitorInvoker implements Invoker<Nothing, String, String> {
 
     public HttpVisitorInvoker() {

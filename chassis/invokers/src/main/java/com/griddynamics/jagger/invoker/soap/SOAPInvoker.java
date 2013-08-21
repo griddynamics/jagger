@@ -32,11 +32,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
-/**
+/// @todo Lowercase SOAP
+
+/** ??? Some short description
  * @author Alexey Kiselyov
- *         Date: 05.08.11
- */
-// todo Lowercase SOAP
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Invokers_group */
 public class SOAPInvoker implements Invoker<SOAPQuery, String, String> {
     private static final Logger log = LoggerFactory.getLogger(SOAPInvoker.class);
 

@@ -22,13 +22,24 @@ package com.griddynamics.jagger.providers.creators;
 
 import java.io.Serializable;
 
-/**
+/** ??? Some short description
  * @author Nikolay Musienko
- *         Date: 23.04.13
- */
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @param <T> - ???
+ *
+ * @ingroup Main_Providers_Base_group */
 public interface ObjectCreator<T> extends Serializable {
 
     public abstract T createObject(String... strings);
 
     public abstract void setHeader(String[] header);
 }
+
+/* **************** How to customize provider ************************* */
+/// @defgroup Main_HowToCustomizeProviders_group Custom providers
+///
+/// @details
+/// @todo finish section Custom providers

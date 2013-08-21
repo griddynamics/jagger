@@ -23,7 +23,7 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-
+<!-- begin: following section is used for docu generation - invoker bean -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:lang="http://www.springframework.org/schema/lang"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd"
@@ -32,3 +32,4 @@
     <bean id="pageInvoker" class="${package}.invoker.PageVisitorInvoker"/>
 
 </beans>
+<!-- end: following section is used for docu generation - invoker bean -->

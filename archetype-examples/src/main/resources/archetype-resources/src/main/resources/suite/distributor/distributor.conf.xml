@@ -35,6 +35,7 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
+    <!-- begin: following section is used for docu generation - distributor bean -->
     <beans:bean id="jaggerRandomScenario" class="com.griddynamics.jagger.invoker.QueryPoolScenarioFactory" parent="pageScenario">
         <beans:property name="loadBalancer">
             <beans:bean id="randomDistributor" class="${package}.distributor.RandomQueryDistributor">
@@ -43,5 +44,6 @@
             </beans:bean>
         </beans:property>
     </beans:bean>
+    <!-- end: following section is used for docu generation - distributor bean -->
 
 </beans:beans>

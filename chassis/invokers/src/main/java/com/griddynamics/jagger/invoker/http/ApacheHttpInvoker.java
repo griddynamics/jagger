@@ -27,6 +27,13 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Invokers_group */
 public class ApacheHttpInvoker extends ApacheAbstractHttpInvoker<HttpRequestBase> {
     private static final Logger log = LoggerFactory.getLogger(ApacheHttpInvoker.class);
 

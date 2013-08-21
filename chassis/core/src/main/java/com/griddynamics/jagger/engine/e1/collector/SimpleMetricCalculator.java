@@ -20,6 +20,13 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @ingroup Main_Calculators_group */
 public class SimpleMetricCalculator implements MetricCalculator<Object> {
 
 	@Override

@@ -31,6 +31,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @param <Q> - Query type
+ * @param <R> - Result type
+ * @param <E> - Endpoint type
+ *
+ * @ingroup Main_Collectors_group */
 public class ConsistencyValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
     private static final Logger log = LoggerFactory.getLogger(ConsistencyValidator.class);
 

@@ -25,6 +25,17 @@ import com.griddynamics.jagger.invoker.Invoker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** ??? Some short description
+ * @author ???
+ * @n
+ * @par Details:
+ * @details ???
+ *
+ * @param <Q> -???
+ * @param <R> -???
+ * @param <E> -???
+ *
+ * @ingroup Main_Invokers_group */
 public class WaitingInvoker<Q, R, E> implements Invoker<Q, R, E> {
     private static final Logger log = LoggerFactory.getLogger(WaitingInvoker.class);
 
