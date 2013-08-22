@@ -1046,15 +1046,11 @@ public class Trends extends DefaultActivity {
                 }
 
                 // Remove plots from display which were unchecked
-                for (int i = 0; i < plotTrendsPanel.getWidgetCount(); i++) {
-                    Widget widget = plotTrendsPanel.getWidget(i);
-                    String widgetId = widget.getElement().getId();
-                    if (!isMetricPlotId(widgetId) || selectedMetricsIds.contains(widgetId)) {
-                        continue;
+                HashSet<String> metricIdsSet = new HashSet<String>(chosenMetrics.getMetrics().keySet());
+                for (String plotId : metricIdsSet) {
+                    if (!selectedMetricsIds.contains(plotId)) {
+                        chosenMetrics.getMetrics().remove(plotId);
                     }
-                    // Remove plot
-                    plotTrendsPanel.remove(i);
-                    chosenMetrics.getMetrics().remove(widgetId);
                 }
 
                 final ArrayList<MetricNameDto> notLoaded = new ArrayList<MetricNameDto>();
@@ -1112,10 +1108,9 @@ public class Trends extends DefaultActivity {
                 if (plotTrendsPanel.getElementById(id) != null) {
                     continue;
                 }
-
-                if (mainTabPanel.getSelectedIndex() == 1) {
-                    onTrendsTabSelected();
-                }
+            }
+            if (mainTabPanel.getSelectedIndex() == 1) {
+                onTrendsTabSelected();
             }
         }
     }
