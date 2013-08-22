@@ -1,8 +1,8 @@
 package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
+import com.griddynamics.jagger.agent.model.JmxMetricAttribute;
 import com.griddynamics.jagger.agent.model.JmxMetricGroup;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -132,8 +131,12 @@ public class JaggerConfigurationTest {
         JmxMetricGroup metric = groupArrayList.get(0);
         Assert.assertEquals(new ObjectName("java.lang:type=OperatingSystem"), metric.getObjectName());
         Assert.assertEquals("OperatingSystem", metric.getGroupName());
-        Assert.assertEquals(1, metric.getAttributes().length);
-        Assert.assertEquals("MaxFileDescriptorCount", metric.getAttributes()[0]);
+        Assert.assertEquals(1, metric.getAttributes().size());
+
+        JmxMetricAttribute attribute = metric.getAttributes().get(0);
+        Assert.assertEquals("MaxFileDescriptorCount", attribute.getName());
+        Assert.assertEquals(true, attribute.isCumulative());
+        Assert.assertEquals(false, attribute.isRated());
     }
 
     private void checkListOnNull(List list){

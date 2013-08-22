@@ -39,7 +39,7 @@
             <monitoring-sut>
                 <jmx-metrics>
                     <jmx-metrics-group groupName="OperatingSystem" objectName="java.lang:type=OperatingSystem">
-                        <jmx-metric-attribute>MaxFileDescriptorCount</jmx-metric-attribute>
+                        <jmx-metric-attribute cumulative="true" rated="false">MaxFileDescriptorCount</jmx-metric-attribute>
                     </jmx-metrics-group>
                 </jmx-metrics>
             </monitoring-sut>

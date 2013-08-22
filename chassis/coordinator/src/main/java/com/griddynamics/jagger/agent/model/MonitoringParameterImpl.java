@@ -32,14 +32,16 @@ public class MonitoringParameterImpl implements MonitoringParameter, Serializabl
     private String description;
     private MonitoringParameterLevel level;
     private boolean cumulativeCounter;
+    private boolean isRated;
 
     private MonitoringParameterImpl() {
     }
 
-    public MonitoringParameterImpl(String description, MonitoringParameterLevel level, boolean cumulativeCounter) {
+    public MonitoringParameterImpl(String description, MonitoringParameterLevel level, boolean cumulativeCounter, boolean isRated) {
         this.description = description;
         this.level = level;
         this.cumulativeCounter = cumulativeCounter;
+        this.isRated = isRated;
     }
 
     public static MonitoringParameterImpl copyOf(MonitoringParameter parameter) {
@@ -73,6 +75,11 @@ public class MonitoringParameterImpl implements MonitoringParameter, Serializabl
         return cumulativeCounter;
     }
 
+    @Override
+    public boolean isRated() {
+        return isRated;
+    }
+
     public void setCumulativeCounter(boolean cumulativeCounter) {
         this.cumulativeCounter = cumulativeCounter;
     }
@@ -100,6 +107,7 @@ public class MonitoringParameterImpl implements MonitoringParameter, Serializabl
                 .add("description", description)
                 .add("level", level)
                 .add("cumulativeCounter", cumulativeCounter)
+                .add("rated", isRated)
                 .toString();
     }
 }

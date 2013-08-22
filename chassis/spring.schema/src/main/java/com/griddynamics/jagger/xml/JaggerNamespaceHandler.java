@@ -2,10 +2,7 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.xml.beanParsers.*;
 import com.griddynamics.jagger.xml.beanParsers.configuration.*;
-import com.griddynamics.jagger.xml.beanParsers.monitoring.JmxMetricsDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringSutDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.monitoring.jmxMetrixGroupDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.monitoring.*;
 import com.griddynamics.jagger.xml.beanParsers.report.*;
 import com.griddynamics.jagger.xml.beanParsers.task.*;
 import com.griddynamics.jagger.xml.beanParsers.workload.WorkloadDefinitionParser;
@@ -150,7 +147,8 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         //monitoring
         registerBeanDefinitionParser("monitoring", new MonitoringDefinitionParser());
         registerBeanDefinitionParser("monitoring-sut", new MonitoringSutDefinitionParser());
-        registerBeanDefinitionParser("jmx-metrics"  , new JmxMetricsDefinitionParser());
-        registerBeanDefinitionParser("jmx-metrics-group", new jmxMetrixGroupDefinitionParser());
+        registerBeanDefinitionParser("jmx-metrics"  , new JmxMetricDefinitionParser());
+        registerBeanDefinitionParser("jmx-metrics-group", new JmxMetricGroupDefinitionParser());
+        registerBeanDefinitionParser("jmx-metric-attribute", new JmxMetricAttributeDefinitionParser());
     }
 }

@@ -33,7 +33,7 @@ import java.util.List;
  * @author Nikolay Musienko
  *         Date: 15.07.13
  */
-public class JmxMetricsDefinitionParser extends CustomBeanDefinitionParser {
+public class JmxMetricDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {

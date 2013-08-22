@@ -1761,6 +1761,8 @@
         </xsd:annotation>
         <xsd:simpleContent>
             <xsd:extension base="xsd:string">
+                <xsd:attribute name="cumulative" type="xsd:boolean"/>
+                <xsd:attribute name="rated" type="xsd:boolean"/>
             </xsd:extension>
         </xsd:simpleContent>
     </xsd:complexType>

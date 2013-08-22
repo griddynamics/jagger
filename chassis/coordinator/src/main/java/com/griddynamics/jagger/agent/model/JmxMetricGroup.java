@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 
 import javax.management.ObjectName;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Nikolay Musienko
@@ -36,7 +37,7 @@ public class JmxMetricGroup {
 
     private String groupName;
     private ObjectName objectName;
-    private String[] attributes;
+    private List<JmxMetricAttribute> attributes;
 
     private ArrayList<JmxMetric> metrics = null;
 
@@ -44,14 +45,15 @@ public class JmxMetricGroup {
         if (metrics != null) {
             return metrics;
         }
-        metrics = Lists.newArrayListWithExpectedSize(attributes.length);
+        metrics = Lists.newArrayListWithExpectedSize(attributes.size());
 
-        for (int i = 0; i < attributes.length; ++i) {
+        for (JmxMetricAttribute attribute : attributes){
             metrics.add(new JmxMetric(
-                    new MonitoringParameterImpl(objectName.getCanonicalName() + ATTRIBUTE_DELIMETER + attributes[i], MonitoringParameterLevel.SUT, false),
+                    new MonitoringParameterImpl(objectName.getCanonicalName() + ATTRIBUTE_DELIMETER + attribute.getName(), MonitoringParameterLevel.SUT, attribute.isCumulative(), attribute.isRated()),
                     objectName,
-                    attributes[i]));
+                    attribute.getName()));
         }
+
         return metrics;
     }
 
@@ -71,11 +73,11 @@ public class JmxMetricGroup {
         this.objectName = objectName;
     }
 
-    public String[] getAttributes() {
+    public List<JmxMetricAttribute> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(String[] attributes) {
+    public void setAttributes(List<JmxMetricAttribute> attributes) {
         this.attributes = attributes;
     }
 }

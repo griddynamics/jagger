@@ -25,16 +25,14 @@ import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
-import java.util.List;
 
 /**
  * @author Nikolay Musienko
  *         Date: 15.07.13
  */
-public class jmxMetrixGroupDefinitionParser extends CustomBeanDefinitionParser {
+public class JmxMetricGroupDefinitionParser extends CustomBeanDefinitionParser {
     @Override
     protected Class getBeanClass(Element element) {
         return JmxMetricGroup.class;
@@ -42,22 +40,11 @@ public class jmxMetrixGroupDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        builder.addPropertyValue(XMLConstants.ATTRIBUTES, getMetricAttributes(element));
+        builder.addPropertyValue(XMLConstants.ATTRIBUTES, parseCustomListElement(element, parserContext, builder.getBeanDefinition()));
         if (element.hasAttribute(XMLConstants.ID)) {
             if (parserContext.isNested()) {
                 parserContext.getRegistry().registerBeanDefinition(element.getAttribute(XMLConstants.ID), builder.getBeanDefinition());
             }
         }
-    }
-
-    private String[] getMetricAttributes(Element element) {
-        List<Element> elements = DomUtils.getChildElementsByTagName(element, XMLConstants.JMX_METRIC_ATTRIBUTE);
-        String[] attributes = new String[elements.size()];
-        int index = 0;
-        for (Element el: elements) {
-            attributes[index] = el.getTextContent();
-            ++index;
-        }
-        return attributes;
     }
 }
