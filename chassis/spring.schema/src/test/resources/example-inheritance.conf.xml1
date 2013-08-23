@@ -110,11 +110,20 @@
     <test-description id="desc2">
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
+            <metric xsi:type="metric-not-null-response">
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
         </info-collectors>
         <scenario xsi:type="scenario-ref" ref="sc2"/>
     </test-description>
 
     <test-description id="desc1" parent="desc2">
+        <info-collectors>
+            <metric xsi:type="metric-not-null-response">
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
+            <validator xsi:type="validator-consistency"/>
+        </info-collectors>
         <scenario xsi:type="scenario-ref" ref="sc2"/>
     </test-description>
 

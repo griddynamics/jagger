@@ -2,7 +2,7 @@ package com.griddynamics.jagger.xml.beanParsers.workload;
 
 import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
 import com.griddynamics.jagger.engine.e1.scenario.SkipCalibration;
-import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
+import com.griddynamics.jagger.user.TestDescription;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -12,6 +12,8 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: kgribov
@@ -19,48 +21,44 @@ import org.w3c.dom.Element;
  * Time: 2:19 PM
  * To change this template use File | Settings | File Templates.
  */
-public class WorkloadDefinitionParser extends CustomBeanDefinitionParser{
+public class TestDescriptionDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {
-        return WorkloadTask.class;
+        return TestDescription.class;
     }
 
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         builder.addPropertyValue(XMLConstants.DESCRIPTION, element.getAttribute(XMLConstants.ID));
-        //add user's listeners
+
+        ManagedList metrics = new ManagedList();
+        metrics.setMergeEnabled(true);
+
+        ManagedList validators = new ManagedList();
+        validators.setMergeEnabled(true);
+
+        ManagedList standardCollectors = new ManagedList();
+
+        //add user's metrics and validators
         Element listenersGroup = DomUtils.getChildElementByTagName(element, XMLConstants.WORKLOAD_LISTENERS_ELEMENT);
+        if (listenersGroup != null){
+            List<Element> metricElements = DomUtils.getChildElementsByTagName(listenersGroup, XMLConstants.METRIC);
+            if (metricElements != null && !metricElements.isEmpty())
+                metrics.addAll(parseCustomElements(metricElements, parserContext, builder.getBeanDefinition()));
 
-        if (builder.getBeanDefinition().getParentName() == null){
-            ManagedList listeners = new ManagedList();
-
-            //add standard listeners
-            for (String listenerBeanName : XMLConstants.STANDARD_WORKLOAD_LISTENERS){
-                listeners.add(new RuntimeBeanReference(listenerBeanName));
-            }
-            builder.addPropertyValue(XMLConstants.WORKLOAD_LISTENERS_CLASS, listeners);
-
-            if (listenersGroup != null){
-
-                setBeanListProperty(XMLConstants.WORKLOAD_LISTENERS_CLASS, false, true, listenersGroup, parserContext, builder.getBeanDefinition());
-            }
-        }else{
-            if (listenersGroup != null){
-
-                ManagedList listeners = new ManagedList();
-
-                //add standard listeners
-                for (String listenerBeanName : XMLConstants.STANDARD_WORKLOAD_LISTENERS){
-                    listeners.add(new RuntimeBeanReference(listenerBeanName));
-                }
-
-                builder.addPropertyValue(XMLConstants.WORKLOAD_LISTENERS_CLASS, listeners);
-
-                setBeanListProperty(XMLConstants.WORKLOAD_LISTENERS_CLASS, false, true, listenersGroup, parserContext, builder.getBeanDefinition());
-            }
+            List<Element> validatorsElements = DomUtils.getChildElementsByTagName(listenersGroup, XMLConstants.VALIDATOR);
+            if (validatorsElements != null && !validatorsElements.isEmpty())
+                validators.addAll(parseCustomElements(validatorsElements, parserContext, builder.getBeanDefinition()));
         }
 
+        for (String standardCollector : XMLConstants.STANDARD_WORKLOAD_LISTENERS){
+            standardCollectors.add(new RuntimeBeanReference(standardCollector));
+        }
+
+        builder.addPropertyValue(XMLConstants.VALIDATORS, validators);
+        builder.addPropertyValue(XMLConstants.STANDARD_COLLECTORS, standardCollectors);
+        builder.addPropertyValue(XMLConstants.METRICS, metrics);
 
         //add scenario
         Element scenarioElement = DomUtils.getChildElementByTagName(element, XMLConstants.SCENARIO);

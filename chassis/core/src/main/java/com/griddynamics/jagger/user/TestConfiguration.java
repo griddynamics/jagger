@@ -16,10 +16,10 @@ public class TestConfiguration {
     private WorkloadClockConfiguration clockConfiguration;
     private String id;
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
-    private WorkloadTask prototype;
     private int number;
     private String testGroupName;
     private long startDelay = -1;
+    private TestDescription testDescription;
 
     public long getStartDelay() {
         return startDelay;
@@ -37,16 +37,12 @@ public class TestConfiguration {
         this.testGroupName = testGroupName;
     }
 
-    public WorkloadTask getPrototype() {
-        return prototype;
+    public TestDescription getTestDescription() {
+        return testDescription;
     }
 
-    public void setPrototype(WorkloadTask prototype) {
-        this.prototype = prototype;
-    }
-
-    public void setTestDescription(WorkloadTask prototype) {
-        this.prototype = prototype;
+    public void setTestDescription(TestDescription testDescription) {
+        this.testDescription = testDescription;
     }
 
     public WorkloadClockConfiguration getClockConfiguration() {
@@ -90,7 +86,7 @@ public class TestConfiguration {
     }
 
     public WorkloadTask generate(AtomicBoolean shutdown) {
-        WorkloadTask task = prototype.copy();
+        WorkloadTask task = testDescription.generatePrototype();
         task.setName(getName());
         task.setNumber(number);
         if (startDelay > 0) {

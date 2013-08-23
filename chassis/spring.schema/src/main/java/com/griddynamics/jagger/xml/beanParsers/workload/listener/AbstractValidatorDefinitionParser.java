@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
-import com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider;
+import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.w3c.dom.Element;
 
@@ -14,6 +14,6 @@ import org.w3c.dom.Element;
 public abstract class AbstractValidatorDefinitionParser extends AbstractSimpleBeanDefinitionParser {
     @Override
     protected Class getBeanClass(Element element) {
-        return ValidationCollectorProvider.class;
+        return ValidatorProvider.class;
     }
 }

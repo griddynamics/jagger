@@ -28,6 +28,9 @@ import com.griddynamics.jagger.storage.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 
 /**
@@ -38,11 +41,14 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 public class InformationCollector extends ScenarioCollector {
     private static final Logger log = LoggerFactory.getLogger(InformationCollector.class);
 
+    private List<Validator> validators;
+
     private Integer invoked = 0;
     private Integer failed = 0;
 
-    public InformationCollector(String sessionId, String taskId, NodeContext kernelContext) {
+    public InformationCollector(String sessionId, String taskId, NodeContext kernelContext, List<Validator> validators) {
         super(sessionId, taskId, kernelContext);
+        this.validators = validators;
     }
 
     private Namespace namespace() {
@@ -52,6 +58,12 @@ public class InformationCollector extends ScenarioCollector {
 
     @Override
     public void flush() {
+
+        //flush validators
+        for (Validator validator : validators){
+            validator.flush();
+        }
+
         log.debug("Going to store invoked/failed in key-value storage");
 
         Namespace namespace = namespace();
@@ -71,7 +83,16 @@ public class InformationCollector extends ScenarioCollector {
 
     @Override
     public void onSuccess(Object query, Object endpoint, Object result, long duration) {
-        // do nothing
+        boolean success = true;
+        for (Validator validator : validators){
+            if (!validator.validate(query, endpoint, result, duration)){
+                success = false;
+                break;
+            }
+        }
+        if (!success){
+            failed++;
+        }
     }
 
     @Override
