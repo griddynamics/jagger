@@ -8,7 +8,7 @@ import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringSutDefinitio
 import com.griddynamics.jagger.xml.beanParsers.monitoring.jmxMetrixGroupDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.report.*;
 import com.griddynamics.jagger.xml.beanParsers.task.*;
-import com.griddynamics.jagger.xml.beanParsers.workload.WorkloadDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.TestDescriptionDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.OneByOneBalancerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.RoundRobinBalancerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.calibration.DefaultCalibratorDefinitionParser;
@@ -72,7 +72,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("load-threads", new VirtualUserDefinitionParser());
 
         //Test-description
-        registerBeanDefinitionParser("test-description" , new WorkloadDefinitionParser());
+        registerBeanDefinitionParser("test-description" , new TestDescriptionDefinitionParser());
 
         //listeners
 
