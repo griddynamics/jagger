@@ -212,6 +212,19 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             Collections.sort(latencyValues, Collections.reverseOrder());
             dto.setLatency(latencyValues);
 
+            //custom metric
+            List<Object[]> metrics = entityManager.createNativeQuery("select metric.name, metric.total " +
+                    "from DiagnosticResultEntity as metric where metric.workloadData_id=:id")
+                    .setParameter("id", data.getId().toString()).getResultList();
+
+
+            if (!metrics.isEmpty()) {
+                Map<String, String> metricsMap = new TreeMap<String, String>();
+                for (Object[] objects : metrics) {
+                    metricsMap.put(objects[0].toString(), objects[1].toString());
+                }
+                dto.setCustomMetrics(metricsMap);
+            }
             result.add(dto);
         }
         log.info("For tasks ids {} was loaded {} workloadTasks for {} ms", new Object[]{ids, result.size(), System.currentTimeMillis() - time});

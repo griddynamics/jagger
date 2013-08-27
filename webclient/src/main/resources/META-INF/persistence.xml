@@ -21,6 +21,7 @@
         <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile</class>
         <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity</class>
         <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity</class>
+        <class>com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails</class>
 
         <validation-mode>NONE</validation-mode>
 
