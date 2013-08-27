@@ -17,9 +17,9 @@ public class ShowCurrentValueHoverListener implements PlotHoverListener {
     private final PopupPanel popup;
     private final HTML popupPanelContent;
     private final String xAxisLabel;
-    private final List<Long> chosenSessions;
+    private final List<String> chosenSessions;
 
-    public ShowCurrentValueHoverListener(PopupPanel popup, HTML popupPanelContent, String xAxisLabel, List<Long> chosenSessions) {
+    public ShowCurrentValueHoverListener(PopupPanel popup, HTML popupPanelContent, String xAxisLabel, List<String> chosenSessions) {
         this.popup = popup;
         this.popupPanelContent = popupPanelContent;
         this.xAxisLabel = xAxisLabel;
@@ -34,7 +34,7 @@ public class ShowCurrentValueHoverListener implements PlotHoverListener {
 
             popupPanelContent.setHTML("<table width=\"100%\"><tr><td>Plot</td><td>"+label+"</td></tr>" +
                     "<tr><td>" + xAxisLabel + "</td><td>" +
-                    ((chosenSessions != null) ? chosenSessions.get((int)xAxis).toString() : xAxis ) +
+                    ((chosenSessions != null) ? chosenSessions.get((int)xAxis) : xAxis ) +
                     "</td></tr><tr><td>Value</td><td>" + item.getDataPoint().getY() + "</td></tr></table>");
 
             int clientWidth = Window.getClientWidth();

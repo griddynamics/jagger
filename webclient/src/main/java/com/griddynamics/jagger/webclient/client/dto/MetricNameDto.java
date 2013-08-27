@@ -14,6 +14,14 @@ public class MetricNameDto implements Serializable {
     private TaskDataDto tests;
     private String name;
 
+    public MetricNameDto() {
+    }
+
+    public MetricNameDto(TaskDataDto tests, String name) {
+        this.tests = tests;
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
