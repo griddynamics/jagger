@@ -3,6 +3,7 @@ package com.griddynamics.jagger.webclient.client.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,6 +33,15 @@ public class WorkloadTaskDataDto implements Serializable {
     private BigDecimal avgLatency;
     private BigDecimal stdDevLatency;
     private List<String> latency;
+    private Map<String, String> customMetrics;
+
+    public Map<String, String> getCustomMetrics() {
+        return customMetrics;
+    }
+
+    public void setCustomMetrics(Map<String, String> customMetrics) {
+        this.customMetrics = customMetrics;
+    }
 
     public String getName() {
         return name;

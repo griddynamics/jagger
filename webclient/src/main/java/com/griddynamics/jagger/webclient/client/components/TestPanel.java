@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.*;
 import com.griddynamics.jagger.webclient.client.dto.WorkloadTaskDataDto;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -94,7 +95,13 @@ public class TestPanel extends HorizontalPanel {
     }
 
     private Widget getDetailts(WorkloadTaskDataDto taskData){
-        Grid detailsGrid = new Grid(7, 2);
+
+        Map<String, String> customMetrics = taskData.getCustomMetrics();
+        int numOfCustomMetrics = 0;
+        if (customMetrics != null) {
+            numOfCustomMetrics = customMetrics.size();
+        }
+        Grid detailsGrid = new Grid(7 + numOfCustomMetrics, 2);
 
         Label samples = new Label("Samples");
         samples.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
@@ -130,6 +137,17 @@ public class TestPanel extends HorizontalPanel {
         succesRate.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
         detailsGrid.setWidget(6, 0, succesRate);
         detailsGrid.setWidget(6, 1, new Label(taskData.getSuccessRate().toString()));
+
+        if (numOfCustomMetrics > 0 ){
+            numOfCustomMetrics = 0;
+            for (Map.Entry<String, String> entry : customMetrics.entrySet()) {
+                Label label = new Label(entry.getKey());
+                label.getElement().getStyle().setFontWeight(Style.FontWeight.BOLD);
+                detailsGrid.setWidget(7 + numOfCustomMetrics, 0, label);
+                detailsGrid.setWidget(7 + numOfCustomMetrics, 1, new Label(entry.getValue()));
+                numOfCustomMetrics ++;
+            }
+        }
 
         return detailsGrid;
     }
