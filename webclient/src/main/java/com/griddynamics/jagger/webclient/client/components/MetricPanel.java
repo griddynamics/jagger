@@ -29,7 +29,11 @@ public class MetricPanel extends Composite {
     CellTree tree;
 
     private final ListDataProvider<TaskDataDto> provider = new ListDataProvider<TaskDataDto>(Arrays.asList(MetricModel.NO_METRIC_TO_SHOW));
-    private final MultiSelectionModel selectionModel = new MultiSelectionModel<MetricNameDto>();
+    private final MultiSelectionModel<MetricNameDto> selectionModel = new MultiSelectionModel<MetricNameDto>();
+
+    public MultiSelectionModel<MetricNameDto> getSelectionModel() {
+        return selectionModel;
+    }
 
     public MetricPanel() {
         CellTree.Resources res = GWT.create(CellTree.BasicResources.class);
@@ -39,7 +43,7 @@ public class MetricPanel extends Composite {
         initWidget(ourUiBinder.createAndBindUi(this));
     }
 
-    public void updateTests(Set<TaskDataDto> tests){
+    public void updateTests(Collection<TaskDataDto> tests){
 
         selectionModel.clear();
         provider.setList(Arrays.asList((TaskDataDto)null));

@@ -9,10 +9,7 @@ import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -70,7 +67,7 @@ public class SummaryPanel extends Composite {
     }
 
 
-    public void updateTests(Set<TaskDataDto> tests) {
+    public void updateTests(Collection<TaskDataDto> tests) {
         if(sessionSummaryPanel != null){
             sessionSummaryPanel.updateTests(tests);
         }

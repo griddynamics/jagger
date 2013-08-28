@@ -65,7 +65,7 @@ public class SessionPlotPanel extends VerticalPanel {
         Set<String> set = new HashSet<String>();
         for (String plotName : map.keySet()){
             CheckBox box = map.get(plotName);
-            if (box.getValue().booleanValue() == true){
+            if (box.getValue()){
                 set.add(plotName);
             }
         }
