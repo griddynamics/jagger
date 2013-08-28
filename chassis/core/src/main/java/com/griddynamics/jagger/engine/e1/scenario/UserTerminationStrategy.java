@@ -22,6 +22,8 @@ package com.griddynamics.jagger.engine.e1.scenario;
 
 import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.util.Parser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -36,6 +38,8 @@ public class UserTerminationStrategy implements TerminationStrategy {
     private final long stopTime;
     private final int stopSampleCount;
     private final AtomicBoolean shutdown;
+
+    private static Logger log = LoggerFactory.getLogger(UserTerminationStrategy.class);
 
     public UserTerminationStrategy(ProcessingConfig.Test testConfig, ProcessingConfig.Test.Task taskConfig, AtomicBoolean shutdown) {
         this.stopTime = (taskConfig.getDuration() == null) ?
@@ -64,11 +68,13 @@ public class UserTerminationStrategy implements TerminationStrategy {
     public boolean isTerminationRequired(WorkloadExecutionStatus status) {
         if (stopTime != -1) {
             if (System.currentTimeMillis() >= stopTime) {
+                log.info("Request to terminate work. Max duration reached");
                 return true;
             }
         }
         if (stopSampleCount != -1) {
             if (status.getTotalSamples() >= stopSampleCount) {
+                log.info("Request to terminate work. Number of samples reached");
                 return true;
             }
         }

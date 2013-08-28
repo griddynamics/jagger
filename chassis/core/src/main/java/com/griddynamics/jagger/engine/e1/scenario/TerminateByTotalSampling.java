@@ -48,6 +48,13 @@ public class TerminateByTotalSampling implements TerminateStrategyConfiguration 
         @Override
         public boolean isTerminationRequired(WorkloadExecutionStatus status) {
             int samples = status.getTotalSamples();
+            if (samples >= this.samples)
+            {
+                System.out.println("");
+                System.out.println("--->>>>> by samples TRUE");
+                System.out.println("");
+            }
+
             return samples >= this.samples;
         }
     }

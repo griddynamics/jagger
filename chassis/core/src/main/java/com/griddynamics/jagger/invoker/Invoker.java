@@ -54,6 +54,16 @@ public interface Invoker<Q,R,E> extends Serializable {
 
 /// @mainpage Custom components for Jagger
 /// @n
+/// @section Main_flow_sec Test suite execution sequence
+/// @dotfile jagger_flow.dot "Simplified test suite execution sequence"
+///
+/// @section Main_test_flow_sec Test execution sequence
+/// Click on diagram components to learn more about every component:
+/// @li Interface description
+/// @li Interface implementations in Jagger
+/// @li How to customize component
+/// @dotfile jagger_test_flow.dot "Simplified test execution sequence"
+///
 /// @section Main_general_sec General approach to customize Jagger components
 ///
 /// @li @ref Main_Customize_group
@@ -83,6 +93,12 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @li @ref Main_Terminators_group
 ///
 ///
+///
+
+
+
+
+
 
 /// @defgroup Main_Customize_group How to customize Jagger components
 ///

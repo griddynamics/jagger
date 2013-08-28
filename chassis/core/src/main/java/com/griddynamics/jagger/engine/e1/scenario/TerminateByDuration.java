@@ -59,6 +59,14 @@ public class TerminateByDuration implements TerminateStrategyConfiguration {
         public boolean isTerminationRequired(WorkloadExecutionStatus status) {
             long currentTime = systemClock.currentTimeMillis();
 
+
+            if (currentTime >= stopTime)
+            {
+                System.out.println("");
+                System.out.println("--->>>>> by time TRUE");
+                System.out.println("");
+            }
+
             return currentTime >= stopTime;
         }
     }

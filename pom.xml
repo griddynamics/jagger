@@ -36,6 +36,7 @@
         <targetJdk>${JAVA_HOME}</targetJdk>
 
         <spring.version>3.0.5.RELEASE</spring.version>
+        <!--<spring.version>3.1.4.RELEASE</spring.version>-->
     </properties>
 
     <modules>
@@ -109,7 +110,27 @@
             <url>http://openr66.free.fr/maven2</url>
             <layout>default</layout>
     </repository>
+
+
+        <!--???-->
+        <!--<repository>-->
+            <!--<id>springsource-repo</id>-->
+            <!--<name>SpringSource Repository</name>-->
+            <!--<url>http://repo.springsource.org/release</url>-->
+        <!--</repository>-->
+
     </repositories>
+
+    <!--<pluginRepositories>-->
+        <!--<pluginRepository>-->
+            <!--<id>doodleproject-repo</id>-->
+            <!--<name>DoodleProject Maven 2 Repository</name>-->
+            <!--<url>http://doodleproject.sourceforge.net/maven2/release</url>-->
+            <!--<releases>-->
+                <!--<enabled>true</enabled>-->
+            <!--</releases>-->
+        <!--</pluginRepository>-->
+    <!--</pluginRepositories>-->
 
     <distributionManagement>
         <snapshotRepository>
@@ -630,6 +651,14 @@
                 <version>2.2.2</version>
             </plugin>
 
+            <!--???-->
+            <plugin>
+                 <groupId>com.soebes.maven.plugins.dmg</groupId>
+                 <artifactId>doxygen-maven-plugin</artifactId>
+                 <configuration>
+                 <configurationFile>./doc/setup/Doxyfile</configurationFile>
+                 </configuration>
+             </plugin>
         </plugins>
     </build>
 
@@ -674,6 +703,18 @@
                 <artifactId>maven-overview-plugin</artifactId>
                 <version>1.6</version>
             </plugin>
+
+            <!--???-->
+            <!--<plugin>-->
+                <!--<groupId>net.sf.doodleproject</groupId>-->
+                <!--<artifactId>doxygen-maven-plugin</artifactId>-->
+                <!--<version>2.2</version>-->
+                <!--<configuration>-->
+                    <!--<configurationFile>./doc/setup/Doxyfile</configurationFile>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+
+
         </plugins>
     </reporting>
 </project>
