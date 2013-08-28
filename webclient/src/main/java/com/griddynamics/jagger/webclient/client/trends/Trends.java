@@ -179,7 +179,8 @@ public class Trends extends DefaultActivity {
         newPlace.setSelectedTestsMetrics(testsMetricses);
         newPlace.setSessionTrends(sessionPlotPanel.getSelected());
 
-        String linkText = Window.Location.getHost()+Window.Location.getQueryString()+"/#"+new JaggerPlaceHistoryMapper().getToken(newPlace);
+        String linkText = Window.Location.getHost() + Window.Location.getPath() + Window.Location.getQueryString() +
+                "#" + new JaggerPlaceHistoryMapper().getToken(newPlace);
         linkText = URL.encode(linkText);
 
         //create a dialog for copy link
@@ -1086,10 +1087,10 @@ public class Trends extends DefaultActivity {
                             recordList.add(summaryPanel.getSessionComparisonPanel().generateRecord(metric));
                         }
                         chosenMetrics.setRecordList(recordList);
-                        renderMetricPlots(loaded);
                         if (mainTabPanel.getSelectedIndex() == 0) {
                             onSummaryTabSelected();
                         }
+                        renderMetricPlots(loaded);
                     }
                 });
             }
@@ -1108,14 +1109,9 @@ public class Trends extends DefaultActivity {
                 if (!chosenMetrics.getMetrics().containsKey(id)) {
                     chosenMetrics.getMetrics().put(id, metric);
                 }
-                // If plot has already displayed, then pass it
-                if (plotTrendsPanel.getElementById(id) != null) {
-                    continue;
-                }
-
-                if (mainTabPanel.getSelectedIndex() == 1) {
-                    onTrendsTabSelected();
-                }
+            }
+            if (mainTabPanel.getSelectedIndex() == 1) {
+                onTrendsTabSelected();
             }
         }
     }
