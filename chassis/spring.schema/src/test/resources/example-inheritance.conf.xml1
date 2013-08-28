@@ -107,7 +107,7 @@
         <query xsi:type="query-ref" ref="httpQ1"/>
     </query-provider>
 
-    <test-description id="desc2">
+    <test-description id="desc2" version="1">
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
             <metric xsi:type="metric-not-null-response">

@@ -25,6 +25,7 @@ public class TestDescription {
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
     private Calibrator calibrator = new OneNodeCalibrator();
     private String description = "";
+    private String version;
 
     public List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> getStandardCollectors() {
         return standardCollectors;
@@ -72,6 +73,14 @@ public class TestDescription {
 
     public void setScenarioFactory(ScenarioFactory<Object, Object, Object> scenarioFactory) {
         this.scenarioFactory = scenarioFactory;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public WorkloadTask generatePrototype(){
