@@ -652,13 +652,14 @@
             </plugin>
 
             <!--???-->
-            <plugin>
-                 <groupId>com.soebes.maven.plugins.dmg</groupId>
-                 <artifactId>doxygen-maven-plugin</artifactId>
-                 <configuration>
-                 <configurationFile>./doc/setup/Doxyfile</configurationFile>
-                 </configuration>
-             </plugin>
+            <!--<plugin>-->
+                 <!--<groupId>com.soebes.maven.plugins.dmg</groupId>-->
+                 <!--<artifactId>doxygen-maven-plugin</artifactId>-->
+                 <!--<version>1.0.1</version>-->
+                 <!--<configuration>-->
+                    <!--<configurationFile>Doxyfile</configurationFile>-->
+                 <!--</configuration>-->
+             <!--</plugin>-->
         </plugins>
     </build>
 
