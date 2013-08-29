@@ -233,6 +233,7 @@ public class Trends extends DefaultActivity {
 
     //tells if trends plot should be redraw
     private boolean hasChanged = false;
+    private boolean hasChangedGrid = false;
 
     public void updatePlace(TrendsPlace place){
         if (this.place != null)
@@ -417,7 +418,7 @@ public class Trends extends DefaultActivity {
 
     private void onSummaryTabSelected() {
         testsMetricsPanel.showWidget(0);
-        if (summaryPanel.getSessionComparisonPanel() != null) {
+        if (summaryPanel.getSessionComparisonPanel() != null && hasChangedGrid) {
             if (chosenMetrics.getRecordList().isEmpty()) {
                 summaryPanel.getSessionComparisonPanel().getGrid().setData(
                         summaryPanel.getSessionComparisonPanel().getEmptyListGrid()
@@ -427,6 +428,7 @@ public class Trends extends DefaultActivity {
                         chosenMetrics.getRecordList()
                 );
             }
+            hasChangedGrid = false;
         }
     }
 
@@ -1022,6 +1024,7 @@ public class Trends extends DefaultActivity {
         public void onSelectionChange(SelectionChangeEvent event) {
 
             hasChanged = true;
+            hasChangedGrid = true;
             if (summaryPanel.getSessionComparisonPanel() == null) {
                 plotTrendsPanel.clear();
                 chosenMetrics.clear();

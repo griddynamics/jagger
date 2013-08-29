@@ -1,11 +1,9 @@
 package com.griddynamics.jagger.webclient.client.components;
 
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.AutoFitWidthApproach;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.grid.ListGrid;
@@ -108,8 +106,8 @@ public class SessionComparisonPanel extends VerticalPanel{
 
         for (SessionDataDto dto : sortedSet){
             titleText.append(dto.getSessionId()+",");
-            field = new ListGridField(dto.getName(), dto.getName());
-            field.setAutoFitWidthApproach(AutoFitWidthApproach.VALUE);
+            field = new ListGridField(dto.getName() + SESSION_DATA_SUFFIX, dto.getName());
+            field.setAutoFitWidth(true);
             field.setCanGroupBy(false);
             field.setSortByDisplayField(false);
             fields.add(field);
@@ -127,8 +125,7 @@ public class SessionComparisonPanel extends VerticalPanel{
         grid.hideField(TEST_NAME);
         grid.hideField(TEST_DESCRIPTION);
 
-        ScrollPanel scrollPanel = new ScrollPanel(grid);
-        add(scrollPanel);
+        add(grid);
         cache = new HashMap<MetricNameDto, MetricDto>();
 
         EMPTY_DATA = new ListGridRecord[]{new InformationRecord(chosenSessions){
