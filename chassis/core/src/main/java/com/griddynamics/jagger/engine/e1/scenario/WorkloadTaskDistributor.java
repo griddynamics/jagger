@@ -82,6 +82,9 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
             protected void run() throws Exception {
                 DefaultWorkloadController controller = null;
                 try {
+                    String line = "------------------------------------------------------------------------------------------------------------------------------\n";
+                    String report = "\n\n" + line + "S T A R T     W O R K L O A D\n" + line + "\n";
+                    log.info(report);
                     log.info("Going to distribute workload task {}", task);
 
                     log.debug("Going to do calibration");
@@ -110,14 +113,16 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
 
                     while (true) {
                         if (!isRunning()) {
-                            log.debug("Going to terminate work. Requested from outside");
+                            log.info("Going to terminate work {}. Requested from outside",task.getName());
                             break;
                         }
 
                         WorkloadExecutionStatus status = controller.getStatus();
 
                         if (terminationStrategy.isTerminationRequired(status)) {
-                            log.debug("Going to terminate work. According to termination strategy");
+                            report = "\n\n" + line + "S T O P     W O R K L O A D\n" + line + "\n";
+                            log.info(report);
+                            log.info("Going to terminate work {}. According to termination strategy",task.getName());
                             break;
                         }
 

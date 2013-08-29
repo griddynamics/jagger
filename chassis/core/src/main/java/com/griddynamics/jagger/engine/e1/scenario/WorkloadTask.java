@@ -159,15 +159,15 @@ public class WorkloadTask implements CompositableTask {
     @Override
     public String toString() {
         return "WorkloadTask {\n" +
-                "   number='" + number + "\',\n" +
-                "   name='" + name + "\',\n" +
-                "   version='" + version + "\',\n" +
-                "   scenarioFactory=" + scenarioFactory + ",\n" +
-                "   collectors=" + collectors + ",\n" +
-                "   clockConfiguration=" + clockConfiguration + ",\n" +
-                "   terminateStrategyConfiguration=" + terminateStrategyConfiguration + ",\n" +
-                "   parentTaskId='" + parentTaskId + "',\n" +
-                "   startDelay='" + startDelay +
+                "   number                          = '" + number + "\',\n" +
+                "   name                            = '" + name + "\',\n" +
+                "   version                         = '" + version + "\',\n" +
+                "   scenarioFactory                 = " + scenarioFactory + ",\n" +
+                "   collectors                      = " + collectors + ",\n" +
+                "   clockConfiguration              = " + clockConfiguration + ",\n" +
+                "   terminateStrategyConfiguration  = " + terminateStrategyConfiguration + ",\n" +
+                "   parentTaskId                    = '" + parentTaskId + "',\n" +
+                "   startDelay                      = '" + startDelay +
                 "'}";
     }
 
