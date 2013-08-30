@@ -85,7 +85,7 @@ public class TimeLatencyPercentilePlotDataProvider implements PlotDataProvider {
 
     private List<PlotDatasetDto> assemble(List<Object[]> rawData, String sessionId, boolean addSessionPrefix) {
         List<PlotDatasetDto> plotDatasetDtoList = new ArrayList<PlotDatasetDto>();
-        Map<String, List<PointDto>> percentiles = new HashMap<String, List<PointDto>>();
+        Map<String, List<PointDto>> percentiles = new TreeMap<String, List<PointDto>>();
         double previousPercentileValue = 0.0;
         for (Object[] raw : rawData) {
             if (percentiles.get(raw[1].toString()) == null) {
