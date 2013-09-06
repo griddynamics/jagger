@@ -85,7 +85,7 @@ public class SessionSummaryPanel extends VerticalPanel{
         add(testPanel);
     }
 
-    public void updateTests(Set<TaskDataDto> tests) {
+    public void updateTests(Collection<TaskDataDto> tests) {
 
         Set<TaskDataDto> testsToLoad = new HashSet<TaskDataDto>(tests.size());
         final List<WorkloadTaskDataDto> testsLoaded = new ArrayList<WorkloadTaskDataDto>(tests.size());

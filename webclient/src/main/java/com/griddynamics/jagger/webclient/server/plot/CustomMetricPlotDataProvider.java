@@ -94,7 +94,7 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
 
             for (MetricDetails metricDetails : taskMetrics){
                 if (taskData == null) taskData = metricDetails.getTaskData();
-                points.add(new PointDto(metricDetails.getTime(), metricDetails.getValue()));
+                points.add(new PointDto(metricDetails.getTime() / 1000D, metricDetails.getValue()));
             }
 
             PlotDatasetDto plotDatasetDto = new PlotDatasetDto(points, legendProvider.generatePlotLegend(taskData.getSessionId(), plotName, true), ColorCodeGenerator.getHexColorCode());
