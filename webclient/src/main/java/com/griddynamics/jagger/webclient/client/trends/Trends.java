@@ -974,9 +974,9 @@ public class Trends extends DefaultActivity {
 
         Set<TaskDataDto> previousSelectedSet = new HashSet<TaskDataDto>();
 
-        private void updateTests(List<TaskDataDto> tests){
+        private void updateTests(final List<TaskDataDto> tests){
 
-            MultiSelectionModel<TaskDataDto> model = (MultiSelectionModel)testDataGrid.getSelectionModel();
+            final MultiSelectionModel<TaskDataDto> model = (MultiSelectionModel)testDataGrid.getSelectionModel();
             previousSelectedSet.addAll(model.getSelectedSet());
 
             model.clear();
@@ -1002,10 +1002,12 @@ public class Trends extends DefaultActivity {
                         }
                         sessionPlotPanel.getSelectionModel().addSelectionChangeHandler(new SessionScopePlotSelectionChangedHandler());
                         SelectionChangeEvent.fire(sessionPlotPanel.getSelectionModel());
+                        makeSelectionOnTaskDataGrid(model, tests);
                     }
                 });
+            } else {
+                makeSelectionOnTaskDataGrid(model, tests);
             }
-            makeSelectionOnTaskDataGrid(model, tests);
         }
 
         private void makeSelectionOnTaskDataGrid(MultiSelectionModel<TaskDataDto> model, List<TaskDataDto> tests) {
@@ -1021,12 +1023,10 @@ public class Trends extends DefaultActivity {
                 SelectionChangeEvent.fire(testDataGrid.getSelectionModel());
 
             } else {
-                TaskDataDto selectObject = null;
                 Set<TestsMetrics> testsMetrics = place.getSelectedTestsMetrics();
                 for (TaskDataDto taskDataDto : tests){
                     for (TestsMetrics testMetric : testsMetrics){
                         if (testMetric.getTestName().equals(taskDataDto.getTaskName())){
-                            if (selectObject == null) selectObject = taskDataDto;
                             model.setSelected(taskDataDto, true);
                         }
                     }
@@ -1034,13 +1034,11 @@ public class Trends extends DefaultActivity {
                 model.addSelectionChangeHandler(new TestSelectChangeHandler());
 
                 //fire event
-                if (selectObject != null){
-                    model.setSelected(selectObject, true);
-                }
-                else{
-                    //nothing to select
+                SelectionChangeEvent.fire(model);
+                if (model.getSelectedSet().isEmpty()){
                     selectTests = true;
                 }
+
             }
             previousSelectedSet.clear();
         }
