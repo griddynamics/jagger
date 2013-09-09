@@ -31,51 +31,113 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-/**
+/** Reads data from files
  * @author Nikolay Musienko
- *         Date: 22.04.13
- */
-
+ * @n
+ * @par Details:
+ * @details Reads data from files, which uses special delimiter.
+ * @n
+ * For example : if your file contains next info -
+ * @n
+ * @code
+ * NYC 89,5$|MOS 67,4$|SPB 109,6$
+ * @endcode
+ * @n
+ * And your delimiter equals '|'
+ * @n
+ * Provider will create 3 records - 'NYC 89,5$', 'MOS 67,4$', 'SPB 109,6$'.
+ * You can create a special object creator, which will translate such records to your java object.
+ * This object may looks like this
+ * @n
+ * @code
+ * class InternationalTicket{
+ *     private String city;
+ *     private double price;
+ *     ....
+ *     ....
+ * }
+ * @endcode
+ *
+ * @ingroup Main_Providers_group */
 public class FileProvider<T> implements Iterable<T>, Serializable {
 
     private String path;
     private String delimeter;
     private ObjectCreator<T> objectCreator;
 
+    /** Creates new file provider
+     * @author Nikolay Musienko
+     * @n
+     * @param path - full name of file
+     * @param delimeter - a symbol, which separate data
+     * @param objectCreator - translate data to java objects*/
     public FileProvider(String path, String delimeter, ObjectCreator<T> objectCreator) {
         this.path = path;
         this.delimeter = delimeter;
         this.objectCreator = objectCreator;
     }
 
+    /** Creates new file provider.
+     * @author Nikolay Musienko
+     * @n
+     * @par Details:
+     * @details Uses system line separator as default delimiter
+     *
+     * @param path - full name of file
+     * @param objectCreator - translate data to java objects*/
     public FileProvider(String path, ObjectCreator<T> objectCreator) {
         this(path, System.getProperty("line.separator"), objectCreator);
     }
 
+    /** Creates new file provider
+     * @author Nikolay Musienko
+     * @n
+     * @par Details:
+     * @details Uses StringCreator as default objectCreator
+     *
+     * @param path - full name of file*/
     public FileProvider(String path) {
         this(path, (ObjectCreator<T>) new StringCreator());
     }
 
+    /** Returns delimiter
+     * @author Nikolay Musienko
+     * @return delimiter*/
     public String getDelimeter() {
         return delimeter;
     }
 
+    /** Set provider delimiter
+     * @author Nikolay Musienko
+     * @param delimeter - provider delimiter*/
     public void setDelimeter(String delimeter) {
         this.delimeter = delimeter;
     }
 
+    /** Returns object creator, which translate row data to java objects
+     * @author Nikolay Musienko
+     * @return object creator*/
     public ObjectCreator<T> getObjectCreator() {
         return objectCreator;
     }
 
+    /** Set object creator, which translate row data to java objects
+     * @author Nikolay Musienko
+     * @param objectCreator - object creator*/
     public void setObjectCreator(ObjectCreator<T> objectCreator) {
         this.objectCreator = objectCreator;
     }
 
+    /** Returns file name
+     * @author Nikolay Musienko
+     * @return file name*/
     public String getPath() {
         return path;
     }
 
+    /** Set file name
+     * @author Nikolay Musienko
+     * @param filePath - full name of file*/
     public void setPath(String filePath) {
         this.path = filePath;
     }
@@ -111,3 +173,4 @@ public class FileProvider<T> implements Iterable<T>, Serializable {
         };
     }
 }
+

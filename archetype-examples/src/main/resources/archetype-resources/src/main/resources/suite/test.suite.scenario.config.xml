@@ -50,27 +50,33 @@
         </info-collectors>
     </test-description>
 
+    <scenario id="jaggerPageScenario" xsi:type="scenario-query-pool" parent="pageScenario">
+        <endpoint-provider xsi:type="endpoint-provider-list">
+            <endpoint>https://jagger.griddynamics.net</endpoint>
+        </endpoint-provider>
+
+        <query-provider xsi:type="query-provider-list">
+            <query>index.html</query>
+            <query>screenshots.html</query>
+            <query>download.html</query>
+        </query-provider>
+    </scenario>
+
     <test-description id="jaggerPageTest" parent="default" calibration="true">
-        <scenario id="defaultScenario" xsi:type="scenario-query-pool" parent="pageScenario">
-
-            <endpoint-provider xsi:type="endpoint-provider-list">
-                <endpoint>https://jagger.griddynamics.net</endpoint>
-            </endpoint-provider>
-
-            <query-provider xsi:type="query-provider-list">
-                <query>index.html</query>
-                <query>screenshots.html</query>
-                <query>download.html</query>
-            </query-provider>
-
-        </scenario>
+        <scenario xsi:type="scenario-ref" ref="jaggerPageScenario"/>
     </test-description>
 
     <!-- begin: following section is used for docu generation - distributor usage -->
+    <test-description id="jaggerRandomPageTest" parent="jaggerPageTest" calibration="true">
+        <scenario xsi:type="scenario-query-pool" parent="jaggerPageScenario">
+            <query-distributor xsi:type="query-distributor-ref" ref="randomQueryDistributor"/>
+        </scenario>
+    </test-description>
+    <!-- end: following section is used for docu generation - distributor usage -->
+
     <test-description id="jaggerRandomDistributorScenario" calibration="false">
         <scenario xsi:type="scenario-ref" ref="jaggerRandomScenario"/>
     </test-description>
-    <!-- end: following section is used for docu generation - distributor usage -->
 
     <test-description id="googlePageTest" parent="default" calibration="true">
         <scenario  xsi:type="scenario-query-pool" parent="pageScenario">
@@ -117,16 +123,21 @@
 
         </scenario>
 
+        <!-- begin: following section is used for docu generation - validator-custom -->
         <info-collectors parent="defaultCollectors">
             <validator xsi:type="validator-custom" validator="${package}.validator.ResponseFromFileValidator"/>
         </info-collectors>
+        <!-- end: following section is used for docu generation - validator-custom -->
+
     </test-description>
 
     <test-description id="fileProviderJaggerPageTest" parent="googlePageTest">
+        <!-- begin: following section is used for docu generation - provider custom -->
         <scenario id="fileProviderScenario" xsi:type="scenario-query-pool" parent="pageScenario">
             <endpoint-provider xsi:type="endpoint-provider-ref" ref="fileEndpointProvider"/>
             <query-provider xsi:type="query-provider-ref" ref="fileQueryProvider"/>
         </scenario>
+        <!-- end: following section is used for docu generation - provider custom -->
     </test-description>
 
 </beans:beans>

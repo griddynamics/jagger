@@ -22,11 +22,13 @@ package com.griddynamics.jagger.invoker;
 
 import java.io.Serializable;
 
-/** Responsible for action invocation on specified endpoint
+/** Responsible for action invocation on specified endpoint and query
  * @author Mairbek Khadikov
  * @n
  * @par Details:
- * @details ???
+ * @details Create a request to some target with specified query. The result of invocation can be collected by metrics and validators. Note that Invoker is used in multi thread environment, so realize thread-safe implementation @n
+ * @n
+ * To view all invokers implementations click here @ref Main_Invokers_group
  *
  * @param <Q> - Query type
  * @param <R> - Result type
@@ -35,17 +37,18 @@ import java.io.Serializable;
  * @ingroup Main_Invokers_Base_group */
 public interface Invoker<Q,R,E> extends Serializable {
 
-	/** Executes action with given input parameters.
+
+	/** Makes an invocation to target
      * @author Mairbek Khadikov
      * @n
      * @par Details:
-     * @details ???
+     * @details If method throw some exception current invocation will be marked as failed
+     * @n
+     * @param query    - input data for the invocation
+	 * @param endpoint - endpoint
      *
-	 *  @param query    - input data for the invocation
-	 *  @param endpoint - endpoint
-     *
-     *  @return invocation result
-     *  @throws InvocationException when invocation failed */
+     * @return invocation result
+     * @throws InvocationException when invocation failed */
       R invoke(Q query, E endpoint) throws InvocationException;
 
 }
@@ -54,83 +57,59 @@ public interface Invoker<Q,R,E> extends Serializable {
 
 /// @mainpage Custom components for Jagger
 /// @n
-/// @section Main_general_sec General approach to customize Jagger components
+/// @li @ref Main_Test_Suite_Flow_group
+/// @li @ref Main_Test_Flow_group
+/// @li @ref Main_Custom_Components_group
+
+/// @defgroup Main_Test_Suite_Flow_group Test suite execution sequence
 ///
-/// @li @ref Main_Customize_group
+/// @dotfile jagger_flow.dot "Simplified test suite execution sequence"
+
+/// @defgroup Main_Test_Flow_group Test execution sequence
 ///
+/// @details
+/// Click on diagram components to learn more about every component:
+/// @li Interface description
+/// @li Interface implementations in Jagger
+/// @li How to customize component
+/// @dotfile jagger_test_flow.dot "Simplified test execution sequence"
 /// @n
-/// @section Main_detailes_sec Detailed description how customize Jagger components
+/// @details Main components of test flow :
+/// @li endpoint – where to apply test
+/// @li query – what request to provide during test
+/// @li distributor – how to combine endpoints and queries
+/// @li invoker – how to transfer query to endpoint
+/// @li collector – how to collect data
+/// @n
+///
+/// To see full test suite execution sequence click here @ref Main_Test_Suite_Flow_group
+
+/// @defgroup Main_Custom_Components_group Custom component
 ///
 /// @li @ref Main_HowToCustomizeInvokers_group
 /// @li @ref Main_HowToCustomizeProviders_group
 /// @li @ref Main_HowToCustomizeDistributors_group
 /// @li @ref Main_HowToCustomizeCollectors_group
-/// @li @ref Main_HowToCustomizeCalculators_group
 /// @li @ref Main_HowToCustomizeDecisionMakers_group
-/// @li @ref Main_HowToCustomizeTerminators_group
-///
-/// @n
-/// @section Main_override_sec Jagger implementations of base components that can be overrode
-/// All base components have some default implementations in Jagger. You can override base components or @n
-/// listed below implementations to create custom components @n
-///
-/// @li @ref Main_Invokers_group
-/// @li @ref Main_Providers_group
-/// @li @ref Main_Distributors_group
-/// @li @ref Main_Collectors_group
-/// @li @ref Main_Calculators_group
-/// @li @ref Main_DecisionMakers_group
-/// @li @ref Main_Terminators_group
-///
-///
 
-/// @defgroup Main_Customize_group How to customize Jagger components
+/* **************** Invokerss page *************************  */
+/// @defgroup Main_Invokers_General_group General information about invokers
 ///
-/// @par Intro
-///
-/// All Jagger components that can be customized are either classes or interfaces @n
-/// You can override either some abstract base class or some implementation of the class available in Jagger @n
+/// @details Invokers take query and try to create invocation to endpoint. @n
+/// Every invoker returns some result. Usually, query is used as http request and endpoint is used as url of target service @n
+/// Invokers are used in @xlink{scenario-query-pool} element.
 /// @n
-/// @par General approach
-///
-/// Code of examples in this section is truncated to give general overview. @n
-/// Detailed examples are presented for every component that can be overrode in appropriate section @n
-///
-/// @b 1. Create custom class which implements some Jagger interface @n
-///    or extends some Jagger class @n
-/// - Example for interface:
-/// @dontinclude  PageVisitorInvoker.java
-/// @skipline  public class PageVisitorInvoker
-/// - Example for class:
-/// @dontinclude  RandomQueryDistributor.java
-/// @skipline  public class RandomQueryDistributor
-///
-/// @b 2. Create bean in configuration XML file with this class @n
-/// - Example for interface:
-/// @dontinclude  invokers.conf.xml
-/// @skip  begin: following section is used for docu generation - invoker bean
-/// @until end: following section is used for docu generation - invoker bean
-/// - Example for class:
-/// @dontinclude  distributor.conf.xml
-/// @skip  begin: following section is used for docu generation - distributor bean
-/// @until end: following section is used for docu generation - distributor bean
-///
-/// @b 3. Refer this class in test description XML file @n
-/// - Example for interface:
-/// @dontinclude  test.suite.scenario.config.xml
-/// @skip  begin: following section is used for docu generation - invoker usage
-/// @until end: following section is used for docu generation - invoker usage
-/// - Example for class:
-/// @dontinclude  test.suite.scenario.config.xml
-/// @skip  begin: following section is used for docu generation - distributor usage
-/// @until end: following section is used for docu generation - distributor usage
+/// @li General information: @ref Main_Invokers_Base_group
+/// @li Available implementations: @ref Main_Invokers_group
+/// @li How to customize: @ref Main_HowToCustomizeInvokers_group
 
 /* **************** How to customize invoker ************************* */
 /// @defgroup Main_HowToCustomizeInvokers_group Custom invokers
 ///
 /// @details
-/// @b Note: full examples of the code are available in maven archetype-examples
-///
+/// @ref Main_Invokers_General_group
+/// @n
+/// @n
 /// To add custom invoker you need to do:
 ///
 /// 1. Create class which implements interface @ref Invoker<Q,R,E>
@@ -144,69 +123,29 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @until end: following section is used for docu generation - invoker bean
 /// @n
 ///
-/// 3. Create component "invoker" with type "invoker-class" and set attribute "class" with full class name of invoker
+/// 3. Create component @xlink{invoker} with type @xlink{invoker-class} and set attribute @xlink{invoker-class,class} with full class name of invoker
 /// @dontinclude  test.suite.scenario.config.xml
 /// @skip  begin: following section is used for docu generation - invoker usage
 /// @until end: following section is used for docu generation - invoker usage
+/// @n
+/// @b Note:
+/// @li full examples of the code are available in maven archetype-examples
+/// @li instead of ${package} write the name of your package
+
+
+
 
 
 /* **************** Base components ************************* */
 /// @defgroup Main_Invokers_Base_group Invoker
-/// @details Invokers define how to transfer some query (request) to some endpoint (system under test)
-
-/// @defgroup Main_Providers_Base_group Provider
-/// @details ??? Some general description is required here
-
 /// @defgroup Main_Distributors_Base_group Distributor
-/// @details User is providing list of queries and endpoints he wants to check during some test. @n
-/// Distributors define how to combine query (request) & endpoint (system under test) to pairs @n
-/// according to some algorithm and pass these pairs to Invoker
-
 /// @defgroup Main_Collectors_Base_group Collector
-/// @details ??? Some general description is required here
-
-/// @defgroup Main_Calculators_Base_group Calculator
-/// @details ??? Some general description is required here
-
-/// @defgroup Main_DecisionMakers_Base_group Decision Maker
-/// @details ??? Some general description is required here
-
-/// @defgroup Main_Terminators_Base_group Termination Strategy
-/// @details ??? Some general description is required here
 
 
 /* **************** Implementations ************************* */
 /// @defgroup Main_Invokers_group Implementations of invokers
-/// @details ??? Some general description is required here
-
 /// @defgroup Main_Providers_group Implementations of providers
-/// @details ??? Some general description is required here
-
 /// @defgroup Main_Distributors_group Implementations of distributors
-/// @details ??? Some general description is required here
-
 /// @defgroup Main_Collectors_group Implementations of collectors
-/// @details ??? Some general description is required here
-
-/// @defgroup Main_Calculators_group Implementations of calculators
-/// @details ??? Some general description is required here
-
 /// @defgroup Main_DecisionMakers_group Implementations of decision makers
-/// @details ??? Some general description is required here
-
 /// @defgroup Main_Terminators_group Implementations of termination strategies
-/// @details ??? Some general description is required here
-
-
-/* *********************** Currently not used ****************************** */
-/// @n
-/// @section Main_override_base_sec Jagger base components that can be overrode
-///
-/// @li @ref Main_Invokers_Base_group
-/// @li @ref Main_Providers_Base_group
-/// @li @ref Main_Distributors_Base_group
-/// @li @ref Main_Collectors_Base_group
-/// @li @ref Main_Calculators_Base_group
-/// @li @ref Main_DecisionMakers_Base_group
-/// @li @ref Main_Terminators_Base_group
-///

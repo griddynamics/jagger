@@ -22,30 +22,23 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import java.io.Serializable;
 
-/** ??? Some short description
- * @author ???
+/** Calculates information based on invocation response
+ * @author Grid Dynamics
  * @n
  * @par Details:
- * @details ???
+ * @details Such kind of collector is helpful, when you would like to calculate some info from response. The sum of calculates will be stored in database.
  *
- * @param <R> - ???
+ * @param <R> - type of response
  *
- * @ingroup Main_Calculators_Base_group */
+ * @ingroup Main_Collectors_Base_group */
 public interface MetricCalculator<R> extends Serializable {
-    /** ??? Some short description
-     * @author ???
+
+    /**Returns a number, which was calculated from response
+     * @author Grid Dynamics
      * @n
-     * @par Details:
-     * @details ???
      *
-     *  @param response - ???
+     * @param response - response of invocation
      *
-     *  @return ??? */
+     * @return the result of calculating*/
 	Integer calculate(R response);
 }
-
-/* **************** How to customize metric calculator ************************* */
-/// @defgroup Main_HowToCustomizeCalculators_group Custom calculators
-///
-/// @details
-/// @todo finish docu section Custom calculators

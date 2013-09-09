@@ -20,29 +20,24 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-/** Workload termination strategy. Decides to terminate or not workload using current execution status.
+/// @todo Add an ability to use custom termination strategies
+/** This class say when Jagger has to terminate workload
  * @author Mairbek Khadikov
  * @n
  * @par Details:
- * @details ???
+ * @details An object which decides when to terminate the test. The termination decision can be based on such params - time of execution, number of threads, finished samples and current samples.
  *
  * @ingroup Main_Terminators_Base_group */
 public interface TerminationStrategy {
 
-    /** ??? Some short description
-     * @author ???
+    /** Returns true if termination for the test is required
+     * @author Mairbek Khadikov
      * @n
      * @par Details:
-     * @details ???
+     * @details Termination strategy describes when test can be terminated. It can be based on a lot of params. For example test can be terminated when Jagger did an exact number of samples.
      *
-     *  @param status    - ???
+     * @param status - current jagger execution status. Contains such info - number of threads, finished samples, current samples.
      *
-     *  @return ??? */
+     * @return true if termination is required */
     boolean isTerminationRequired(WorkloadExecutionStatus status);
 }
-
-/* **************** How to customize termination strategy ************************* */
-/// @defgroup Main_HowToCustomizeTerminators_group Custom termination strategies
-///
-/// @details
-/// @todo finish section Custom termination strategies

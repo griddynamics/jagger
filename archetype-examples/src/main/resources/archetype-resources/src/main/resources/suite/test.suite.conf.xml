@@ -66,9 +66,13 @@
            </test-group>
 
             <test-group id="randomDistributorGroup">
-                <test id="jaggerRandomDistributorTest" testDescription="jaggerRandomDistributorScenario">
-                    <load xsi:type="load-tps" value="100" maxThreadNumber="1000"/>
+                <test id="jaggerRandomScenarioTest" testDescription="jaggerRandomDistributorScenario">
+                    <load xsi:type="load-tps" value="50" maxThreadNumber="1000"/>
                     <termination xsi:type="termination-iterations" iterations="1000" maxDuration="2m"/>
+                </test>
+                <test id="jaggerRandomDistributorTest" testDescription="jaggerRandomPageTest">
+                    <load xsi:type="load-tps" value="50" maxThreadNumber="1000"/>
+                    <termination xsi:type="termination-background"/>
                 </test>
             </test-group>
 

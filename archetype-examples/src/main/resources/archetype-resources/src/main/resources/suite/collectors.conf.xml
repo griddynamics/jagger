@@ -29,6 +29,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-lazy-init="true">
 
+    <!-- begin: following section is used for docu generation - metric calculator -->
     <bean id="responseSize" class="${package}.calculator.ResponseSize"/>
+    <!-- end: following section is used for docu generation - metric calculator -->
 
 </beans>

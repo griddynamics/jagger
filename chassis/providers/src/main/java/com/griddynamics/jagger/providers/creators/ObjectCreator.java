@@ -22,24 +22,31 @@ package com.griddynamics.jagger.providers.creators;
 
 import java.io.Serializable;
 
-/** ??? Some short description
+/** Creates objects from row data
  * @author Nikolay Musienko
  * @n
  * @par Details:
- * @details ???
+ * @details Convert row data to java objects. You can store your information in row format and load it as java object.
  *
- * @param <T> - ???
+ * @param <T> - Objects type
  *
  * @ingroup Main_Providers_Base_group */
 public interface ObjectCreator<T> extends Serializable {
 
+    /** Creates objects from row data
+     * @author Nikolay Musienko
+     * @n
+     *
+     * @param strings - row data
+     * @return new object*/
     public abstract T createObject(String... strings);
 
+    /** Set header information
+     * @author Nikolay Musienko
+     * @n
+     * @par Details:
+     * @details If data contains header information it will be set to creator
+     *
+     * @param header - array of columns names*/
     public abstract void setHeader(String[] header);
 }
-
-/* **************** How to customize provider ************************* */
-/// @defgroup Main_HowToCustomizeProviders_group Custom providers
-///
-/// @details
-/// @todo finish section Custom providers

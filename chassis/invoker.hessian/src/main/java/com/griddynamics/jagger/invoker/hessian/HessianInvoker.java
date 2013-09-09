@@ -29,15 +29,13 @@ import com.griddynamics.jagger.invoker.Invoker;
 import java.net.MalformedURLException;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Abstract class for invokers built on top of hessian protocol
+/** Abstract class for invokers which create request to Hessian services
  * @author Mairbek Khadikov
  * @n
- * @par Details:
- * @details ???
  *
- * @param <Q> -???
- * @param <R> -???
- * @param <S> -???
+ * @param <Q> - type of input query
+ * @param <R> - type of invocation result
+ * @param <S> - type of Hessian service
  *
  * @ingroup Main_Invokers_group */
 public abstract class HessianInvoker<S, Q, R> implements Invoker<Q, R, String> {
@@ -75,8 +73,20 @@ public abstract class HessianInvoker<S, Q, R> implements Invoker<Q, R, String> {
         }
     }
 
+    /** Returns class of Hessian service
+     * @author Mairbek Khadikov
+     * @n
+     *
+     * @return class of Hessian service */
     protected abstract Class<S> getClazz();
 
+    /** Creates invocation to specified Hessian service
+     * @author Mairbek Khadikov
+     * @n
+     * @param query   - query for invocation
+     * @param service - Hessian service
+     *
+     * @return result of invocation */
     protected abstract R invokeService(S service, Q query);
 
 }

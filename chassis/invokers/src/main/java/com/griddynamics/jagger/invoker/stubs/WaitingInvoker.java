@@ -25,15 +25,15 @@ import com.griddynamics.jagger.invoker.Invoker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** ??? Some short description
- * @author ???
+/** Sleeps for specified time
+ * @author Dmitry Kotlyarov
  * @n
  * @par Details:
- * @details ???
+ * @details It is no matter what type you select for query, endpoint and result. This kind of invoker has no logic. It is very helpful when you would like to create a pause between tests or you are waiting when service will be available.
  *
- * @param <Q> -???
- * @param <R> -???
- * @param <E> -???
+ * @param <Q> - Query type
+ * @param <R> - Result type
+ * @param <E> - Endpoint type
  *
  * @ingroup Main_Invokers_group */
 public class WaitingInvoker<Q, R, E> implements Invoker<Q, R, E> {
@@ -42,11 +42,24 @@ public class WaitingInvoker<Q, R, E> implements Invoker<Q, R, E> {
     private final R result;
     private final int sleepMs;
 
+    /** Make an invocation to target
+     * @author Dmitry Kotlyarov
+     * @n
+     * @param result - an object, which will returns as the result of invocation
+     * @param sleepMs - time for sleeping*/
     public WaitingInvoker(R result, int sleepMs) {
         this.result = result;
         this.sleepMs = sleepMs;
     }
 
+    /** Sleep for exact time
+     * @author Mairbek Khadikov
+     * @n
+     * @param query    - some query
+     * @param endpoint - some endpoint
+     *
+     * @return invocation result
+     * @throws InvocationException when invocation failed */
     @Override
     public R invoke(Q query, E endpoint) throws InvocationException {
         log.debug("Invoked query {} on endpoint {}", query, endpoint);

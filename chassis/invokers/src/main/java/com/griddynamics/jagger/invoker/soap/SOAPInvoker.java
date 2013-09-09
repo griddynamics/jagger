@@ -27,18 +27,16 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.soap.*;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
-/// @todo Lowercase SOAP
+// @todo Lowercase SOAP
+// @todo Refactor code
 
-/** ??? Some short description
- * @author Alexey Kiselyov
+/** Create a SOAP request to SuT
+ * @author Mairbek Khadikov
  * @n
- * @par Details:
- * @details ???
  *
  * @ingroup Main_Invokers_group */
 public class SOAPInvoker implements Invoker<SOAPQuery, String, String> {

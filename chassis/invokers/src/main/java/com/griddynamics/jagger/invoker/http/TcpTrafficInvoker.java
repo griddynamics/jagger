@@ -30,22 +30,31 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/** ??? Some short description
- * @author ???
+/** Creates TCP connections
+ * @author Dmitry Kotlyarov
  * @n
  * @par Details:
- * @details ???
+ * @details Creates an 10000 of TCP connections to SuT
  *
  * @ingroup Main_Invokers_group */
 public class TcpTrafficInvoker implements Invoker<Nothing, String, String> {
     private static final long serialVersionUID = -1L;
     private static final Logger log = LoggerFactory.getLogger(TcpTrafficInvoker.class);
 
+    //@todo - add an ability to customize number of requests
     public static final long COUNT = 10000;
 
     public TcpTrafficInvoker() {
     }
 
+    /** Makes a number of tcp connections
+     * @author Dmitry Kotlyarovv
+     * @n
+     * @param query    - empty query
+     * @param endpoint - url of SuT
+     *
+     * @return empty string
+     * @throws InvocationException when invocation failed */
     @Override
     public String invoke(Nothing query, String endpoint) throws InvocationException {
         try {

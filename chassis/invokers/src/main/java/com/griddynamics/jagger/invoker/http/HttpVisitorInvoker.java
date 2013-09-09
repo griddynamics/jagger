@@ -31,11 +31,11 @@ import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.util.Nothing;
 
-/** ??? Some short description
- * @author ???
+/** Creates http request via java.net.URL
+ * @author Dmitry Kotlyarov
  * @n
  * @par Details:
- * @details ???
+ * @details Creates http request(GET request) to endpoint. Return response of http service. In common ways returns http page.
  *
  * @ingroup Main_Invokers_group */
 public class HttpVisitorInvoker implements Invoker<Nothing, String, String> {
@@ -43,6 +43,15 @@ public class HttpVisitorInvoker implements Invoker<Nothing, String, String> {
     public HttpVisitorInvoker() {
     }
 
+    /** Create GET http request to endpoint
+     * @author Mairbek Khadikov
+     * @n
+     *
+     * @param query - query of type Nothing
+     * @param endpoint - target url
+     *
+     * @return text of http response
+     * @throws InvocationException when invocation failed*/
     @Override
 	public String invoke(Nothing query, String endpoint) throws InvocationException {
 		try {

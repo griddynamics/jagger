@@ -20,15 +20,23 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
-/** ??? Some short description
- * @author ???
+/** Calculates not null responses
+ * @author Grid Dynamics
  * @n
  * @par Details:
- * @details ???
+ * @details Save the number of not null responses in database
  *
- * @ingroup Main_Calculators_group */
+ *
+ * @ingroup Main_Collectors_group */
 public class SimpleMetricCalculator implements MetricCalculator<Object> {
 
+    /**Returns 1 if response is not null
+     * @author Grid Dynamics
+     * @n
+     *
+     * @param response - response of invocation
+     *
+     * @return 1 if response is not null, else returns 0*/
 	@Override
 	public Integer calculate(Object response) {
 		return response == null ? 0 : 1;

@@ -21,24 +21,23 @@ package com.griddynamics.jagger.engine.e1.sessioncomparation;
 
 import com.google.common.collect.Multimap;
 
-/** Responsible for making final decision based on comparing of features.
- * @author ???
+// @todo edit please
+/** Make a decision(OK, WARNING, FATAL, ERROR) by current test
+ * @author Dmitry Kotlyarov
  * @n
  * @par Details:
- * @details ???
+ * @details Make a decision based on comparison between current test and test from baseline session
  *
  * @ingroup Main_DecisionMakers_Base_group */
 public interface DecisionMaker {
 
-    /** ??? Some short description
-     * @author ???
+    /** Returns decision
+     * @author Dmitry Kotlyarov
      * @n
-     * @par Details:
-     * @details ???
      *
-     *  @param verdicts    - ???
+     * @param verdicts - verdicts of comparison between current test and test from baseline session
      *
-     *  @return ??? */
+     * @return decision(OK, WARNING, FATAL, ERROR) */
     Decision makeDecision(Multimap<String, Verdict> verdicts);
 
 }
@@ -46,5 +45,6 @@ public interface DecisionMaker {
 /* **************** How to customize decision maker ************************* */
 /// @defgroup Main_HowToCustomizeDecisionMakers_group Custom decision makers
 ///
-/// @details
-/// @todo finish docu section Custom decision makers
+/// @details  Under construction
+/// @todo implement docu
+///

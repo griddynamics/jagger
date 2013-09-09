@@ -25,13 +25,7 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 
 import java.util.List;
 
-/** ??? Some short description
- * @author ???
- * @n
- * @par Details:
- * @details ???
- *
- * @ingroup Main_Collectors_group */
+//@todo remove
 public class CompositeValidator extends ResponseValidator<Object, Object, Object> {
     private final List<ResponseValidator> validators;
 

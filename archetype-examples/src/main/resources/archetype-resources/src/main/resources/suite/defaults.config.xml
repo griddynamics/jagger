@@ -37,11 +37,13 @@
     <beans:import resource="collectors.conf.xml"/>
 
     <test-description id="default" version="1">
+        <!-- begin: following section is used for docu generation - metric calculator usage-->
         <info-collectors id="defaultCollectors">
             <validator xsi:type="validator-not-null-response"/>
             <validator xsi:type="validator-consistency"/>
             <metric id="responseSize"  xsi:type="metric-custom" calculator="responseSize"/>
         </info-collectors>
+        <!-- end: following section is used for docu generation - metric calculator usage-->
     </test-description>
 
 </beans:beans>

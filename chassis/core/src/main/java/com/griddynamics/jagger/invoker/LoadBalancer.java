@@ -25,11 +25,15 @@ import com.griddynamics.jagger.util.Pair;
 import java.io.Serializable;
 import java.util.Iterator;
 
-/** ??? Some short description
- * @author ???
+/** An object which provides pairs of queries and endpoints for Invoker
+ * @author Grid Dynamics
  * @n
  * @par Details:
- * @details ???
+ * @details LoadBalancer (distributor) can use query and endpoint providers to load data and create pairs by some algorithm. @n
+ * (if you choose @ref QueryPoolLoadBalancer as an abstract implementation). @n
+ * You can use no providers and load all necessary data in your implementation of LoadBalancer. @n
+ * @n
+ * To view all distributors implementations click here @ref Main_Distributors_group
  *
  * @param <Q> - Query type
  * @param <E> - Endpoint type
@@ -37,56 +41,73 @@ import java.util.Iterator;
  * @ingroup Main_Distributors_Base_group */
 public interface LoadBalancer<Q, E> extends Iterable<Pair<Q, E>>, Serializable {
 
-    /** ??? Some short description
-     * @author ???
+    /** Returns an iterator over pairs
+     * @author Grid Dynamics
      * @n
      * @par Details:
-     * @details ???
+     * @details Scenario take the next pair of queries and endpoints and try to execute invocation with this data
      *
-     *  @return ??? */
+     *  @return iterator over pairs */
     Iterator<Pair<Q, E>> provide();
 
-    /** ??? Some short description
-     * @author ???
+    /** Returns number of queries
+     * @author Grid Dynamics
      * @n
      * @par Details:
-     * @details ???
+     * @details Can be used by calibrator to create calibration process
      *
-     *  @return ??? */
+     *  @return number of queries */
     int querySize();
 
-    /** ??? Some short description
-     * @author ???
+    /** Returns number of endpoints
+     * @author Grid Dynamics
      * @n
      * @par Details:
-     * @details ???
+     * @details Can be used by calibrator to create calibration process
      *
-     *  @return ??? */
+     *  @return number of endpoints*/
     int endpointSize();
 
 }
+
+/* **************** Distributors page *************************  */
+/// @defgroup Main_Distributors_General_group General information about distributors
+///
+/// @details Distributors provide pairs of endpoints and queries for invokers
+///
+/// @li General information: @ref Main_Distributors_Base_group
+/// @li Available implementations: @ref Main_Distributors_group
+/// @li How to customize: @ref Main_HowToCustomizeDistributors_group
+
 
 /* **************** How to customize distributor ************************* */
 /// @defgroup Main_HowToCustomizeDistributors_group Custom distributors
 ///
 /// @details
-/// @b Note: full examples of the code are available in maven archetype-examples
-///
+/// @ref Main_Distributors_General_group
+/// @n
+/// @n
 /// To add custom distributor you need to do:
 ///
 /// 1. Create class which implements @ref Main_Distributors_Base_group interface or extends one of classes @ref Main_Distributors_group
 /// @dontinclude RandomQueryDistributor.java
 /// @skipline  public class RandomQueryDistributor
+/// @n
 ///
 /// 2. Create bean in XML file in the directory "suite/distributor/" with this class
 /// @dontinclude  distributor.conf.xml
 /// @skip  begin: following section is used for docu generation - distributor bean
 /// @until end: following section is used for docu generation - distributor bean
+/// @n
 ///
-/// 3. Refer this class in test description XML file
+/// 3. Refer this class in your @xlink{scenario-query-pool} with element @xlink{query-distributor}
 /// @dontinclude  test.suite.scenario.config.xml
 /// @skip  begin: following section is used for docu generation - distributor usage
 /// @until end: following section is used for docu generation - distributor usage
+///
+/// @b Note:
+/// @li full examples of the code are available in maven archetype-examples
+/// @li instead of ${package} write the name of your package
 
 
 

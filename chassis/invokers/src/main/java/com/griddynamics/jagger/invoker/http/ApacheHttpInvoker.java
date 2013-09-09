@@ -27,16 +27,23 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
-/** ??? Some short description
- * @author ???
+/** Invoker that invokes services of SuT via http protocol
+ * @author Evelina Stepanova
  * @n
  * @par Details:
- * @details ???
+ * @details Instead of HttpInvoker use HttpRequestBase as query. It let you to create more difficult requests.
  *
  * @ingroup Main_Invokers_group */
 public class ApacheHttpInvoker extends ApacheAbstractHttpInvoker<HttpRequestBase> {
     private static final Logger log = LoggerFactory.getLogger(ApacheHttpInvoker.class);
 
+    /** Makes http request for apache http-client
+     * @author Mairbek Khadikov
+     * @n
+     * @param query    - input data for http request
+     * @param endpoint - url of SuT
+     *
+     * @return http query for apache http-client*/
     @Override
     protected HttpRequestBase getHttpMethod(HttpRequestBase query, String endpoint) {
         try {
@@ -59,6 +66,12 @@ public class ApacheHttpInvoker extends ApacheAbstractHttpInvoker<HttpRequestBase
         }
     }
 
+    /** Takes client params from query
+     * @author Mairbek Khadikov
+     * @n
+     * @param query - apache http query
+     *
+     * @return client params for apache http-client*/
     @Override
     protected HttpParams getHttpClientParams(HttpRequestBase query) {
         return query.getParams();

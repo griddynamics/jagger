@@ -1,0 +1,80 @@
+digraph g {
+    rankdir="LR";
+    node[
+	shape		= Mrecord,
+	penwidth	= 1,
+    	fontsize	= 12,
+	style		= "filled",
+	fillcolor	= "lightgrey",
+	color	  	= "#87CEEB"	
+	];	
+    fontsize=14;
+    labeljust="l";
+//    size=7;
+
+    edge[style=invis, fontsize=12];
+	
+    { rank=same;
+        "00" [style = invis];
+        "01" [style = invis];
+        "02" [style = invis];
+        "00" -> "01" -> "02";
+    }
+
+    node[fixedsize=true,width="2.5"];
+
+    subgraph cluster_Master
+    {
+	M_start -> M_ctrl
+        label="Master";
+    }
+
+    subgraph cluster_Kernel
+    {
+	subgraph cluster_Workload_1
+	{
+		{
+			rank=same;
+			W1_calibr -> W1_start -> W1_run -> W1_terminate[style=bold, constraint=false, color="#87CEEB"];
+		}
+		W1_terminate -> W1_askM [style=bold, color="#87CEEB"];
+		label="Workload - single test on single thread\n\n";
+	}
+
+	K_next[shape=box,color="black",style=""];
+
+	label = "Kernel";
+	}
+
+    "00" -> M_start[style=invis];
+    "01" -> W1_calibr[style=invis];
+    "02" -> K_next[style=invis];
+	
+	// edges between clusters
+	edge[
+		constraint	= false,
+		style		= bold,
+		color    	= "#87CEEB"
+		];
+
+	M_start 	-> W1_calibr;	
+	W1_askM 	-> M_ctrl	[label = "yes"];
+	W1_askM		-> W1_run;
+	M_ctrl		-> W1_start;
+	W1_terminate	-> K_next	[taillabel = "\n          yes"];
+	
+	// nodes
+	W1_terminate[shape=diamond];
+	W1_askM[shape=diamond];
+	
+	M_start			[label	= "Start workload"];
+	M_ctrl			[label	= "Control number of threads"];
+	W1_calibr		[label	= "Calibrate test"];
+	W1_start		[label	= "Start / change workload"];
+	W1_run			[label	= <<FONT COLOR="black">Run test </FONT><FONT COLOR="#330066" ><B>[more...]</B></FONT>>
+				URL	= "\ref Main_Test_Flow_group"];
+	W1_terminate		[label	= "Terminate?"];
+	W1_askM			[label	= "Ask for control?"];
+	K_next			[label	= "Next workload ..."];
+	
+}

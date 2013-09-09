@@ -31,11 +31,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
-/** ??? Some short description
- * @author ???
+/** Compare invocation result with calibration result
+ * @author Dmitry Kotlyarov
  * @n
  * @par Details:
- * @details ???
+ * @details To use this validator you should set attribute of @xlink{test-description} @xlink{test-description,calibration} to true value.
+ * It means when Jagger launch test it takes all pairs(of queries and endpoints) and creates an invocations with this pairs.
+ * The results will be stored as calibration info. This describes how SuT behave without high load.
+ * All invocations of tests will be compared with results from calibration info.
  *
  * @param <Q> - Query type
  * @param <R> - Result type
@@ -64,7 +67,16 @@ public class ConsistencyValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
     public String getName() {
         return "Consistency Validator";
     }
-
+    /** Returns true if invocation result equals calibration result
+     * @author Dmitry Kotlyarov
+     * @n
+     *
+     * @param query     - the query of current invocation
+     * @param endpoint  - the endpoint of current invocation
+     * @param result    - the result of invocation
+     * @param duration  - the duration of invocation
+     *
+     * @return true if invocation result equals calibration result */
     @Override
     public boolean validate(Q query, E endpoint, R result, long duration) {
         if (getExpected().isEmpty()) {

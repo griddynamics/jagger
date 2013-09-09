@@ -36,9 +36,11 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
+    <!-- begin: following section is used for docu generation - provider usage -->
     <beans:bean id="fileEndpointProvider" class="${package}.provider.FileReaderIterable">
         <beans:property name="filePath" value="suite/provider/resources/endpoints.txt"/>
     </beans:bean>
+    <!-- end: following section is used for docu generation - provider usage -->
 
     <beans:bean id="fileQueryProvider" class="${package}.provider.FileReaderIterable">
         <beans:property name="filePath" value="suite/provider/resources/queries.txt"/>

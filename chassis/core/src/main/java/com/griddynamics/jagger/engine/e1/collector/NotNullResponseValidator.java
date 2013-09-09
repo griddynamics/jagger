@@ -22,11 +22,9 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 
-/** ??? Some short description
- * @author ???
+/** Validates that invocation is not null. To use this validator add @xlink{validator} element with type validator-not-null-response in @xlink{test-description,info-collectors} block.
+ * @author Dmitry Kotlyarov
  * @n
- * @par Details:
- * @details ???
  *
  * @param <Q> - Query type
  * @param <R> - Result type
@@ -43,6 +41,16 @@ public class NotNullResponseValidator<Q, E, R> extends ResponseValidator<Q, E, R
         return "Not-null Validator";
     }
 
+    /** Return true if invocation doesn't equal null
+     * @author Dmitry Kotlyarov
+     * @n
+     *
+     * @param query     - the query of current invocation
+     * @param endpoint  - the endpoint of current invocation
+     * @param result    - the result of invocation
+     * @param duration  - the duration of invocation
+     *
+     * @return false if invocation is null */
     @Override
     public boolean validate(Q query, E endpoint, R result, long duration) {
         return result != null;

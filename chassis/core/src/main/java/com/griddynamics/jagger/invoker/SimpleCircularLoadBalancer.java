@@ -25,16 +25,7 @@ import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
 
-/** LoadBalancer that share PairSupplier (list of pairs (query, endpoint)) with threads on kernel.
- * @author ???
- * @n
- * @par Details:
- * @details Each thread has it's own Iterator that comes from provide() method. ???
- *
- * @param <Q> query
- * @param <E> endpoint
- *
- * @ingroup Main_Distributors_group */
+//@todo add an ability to use in xml configuration
 public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
 
     @Override

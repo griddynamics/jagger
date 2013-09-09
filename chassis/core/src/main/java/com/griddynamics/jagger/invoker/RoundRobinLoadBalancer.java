@@ -24,11 +24,11 @@ import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
 
-/** Encapsulates round robin algorithm
+/** Encapsulates Round-Robin algorithm
  * @author Mairbek Khadikov
  * @n
  * @par Details:
- * @details For input: endpoints [e1, e2] and
+ * @details Round-Robin algorithm - for input endpoints [e1, e2] and
  * queries [q1, q2, q3] returns (invoker, query) pairs in following order:
  * (e1, q1), (e2, q2), (e1, q3), (e2, q1), (e1, q2), (e2, q3).
  *
@@ -46,6 +46,13 @@ public class RoundRobinLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
         super(queryProvider, endpointProvider);
     }
 
+    /** Returns an iterator over pairs
+     * @author Mairbek Khadikov
+     * @n
+     * @par Details:
+     * @details Returns an iterator over pairs, which were created by Round-Robin algorithm
+     *
+     *  @return iterator over pairs */
     @Override
     public Iterator<Pair<Q, E>> provide() {
         final CircularSupplier<Q> querySupplier = CircularSupplier.create(queryProvider);

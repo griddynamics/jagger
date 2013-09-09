@@ -19,7 +19,6 @@
  */
 package com.griddynamics.jagger.invoker.http;
 
-import com.griddynamics.jagger.invoker.Invoker;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
@@ -38,12 +37,21 @@ import java.util.*;
  * @author Alexey Kiselyov
  * @n
  * @par Details:
- * @details ???
+ * @details Invoker uses HttpQuery as query and String as endpoint. Can do POST, GET and etc. request. @n
+ *
+ * To use this element in xml-configuration, see this - @xlink{invoker-http}
  *
  * @ingroup Main_Invokers_group */
 public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {
     private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 
+    /** Creates http request with method params from query and with url equals endpoint
+     * @author Alexey Kiselyov
+     * @n
+     * @param query    - contains method params
+     * @param endpoint - url of target service
+     *
+     * @return http request for http-client */
     @Override
     protected HttpRequestBase getHttpMethod(HttpQuery query, String endpoint) {
 
@@ -62,6 +70,12 @@ public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {
         }
     }
 
+    /** Creates http request with method params from query and with url equals endpoint
+     * @author Alexey Kiselyov
+     * @n
+     * @param query - contains client params
+     *
+     * @return http params for http-client */
     @Override
     protected HttpParams getHttpClientParams(HttpQuery query) {
         HttpParams clientParams = new BasicHttpParams();
