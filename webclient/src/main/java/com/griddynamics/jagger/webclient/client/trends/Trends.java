@@ -39,7 +39,6 @@ import com.griddynamics.jagger.webclient.client.mvp.JaggerPlaceHistoryMapper;
 import com.griddynamics.jagger.webclient.client.mvp.NameTokens;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 import com.smartgwt.client.data.RecordList;
-import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 import java.util.*;
@@ -398,7 +397,7 @@ public class Trends extends DefaultActivity {
         root.setWidgetToggleDisplayAllowed(settingsPanel, true);
         testsMetricsPanel.showWidget(0);
 
-        sessionPlotPanel = new SessionPlotPanel(new SessionScopePlotCheckBoxClickHandler(), plotPanel);
+        sessionPlotPanel = new SessionPlotPanel(plotPanel);
         sessionScopePlotList.add(sessionPlotPanel);
     }
 
@@ -975,9 +974,9 @@ public class Trends extends DefaultActivity {
 
         Set<TaskDataDto> previousSelectedSet = new HashSet<TaskDataDto>();
 
-        private void updateTests(List<TaskDataDto> tests){
+        private void updateTests(final List<TaskDataDto> tests){
 
-            MultiSelectionModel<TaskDataDto> model = (MultiSelectionModel)testDataGrid.getSelectionModel();
+            final MultiSelectionModel<TaskDataDto> model = (MultiSelectionModel)testDataGrid.getSelectionModel();
             previousSelectedSet.addAll(model.getSelectedSet());
 
             model.clear();
@@ -1001,10 +1000,14 @@ public class Trends extends DefaultActivity {
                         if (!selectTestsFinal) {
                             sessionPlotPanel.setSelected(place.getSessionTrends());
                         }
+                        sessionPlotPanel.getSelectionModel().addSelectionChangeHandler(new SessionScopePlotSelectionChangedHandler());
+                        SelectionChangeEvent.fire(sessionPlotPanel.getSelectionModel());
+                        makeSelectionOnTaskDataGrid(model, tests);
                     }
                 });
+            } else {
+                makeSelectionOnTaskDataGrid(model, tests);
             }
-            makeSelectionOnTaskDataGrid(model, tests);
         }
 
         private void makeSelectionOnTaskDataGrid(MultiSelectionModel<TaskDataDto> model, List<TaskDataDto> tests) {
@@ -1020,12 +1023,10 @@ public class Trends extends DefaultActivity {
                 SelectionChangeEvent.fire(testDataGrid.getSelectionModel());
 
             } else {
-                TaskDataDto selectObject = null;
                 Set<TestsMetrics> testsMetrics = place.getSelectedTestsMetrics();
                 for (TaskDataDto taskDataDto : tests){
                     for (TestsMetrics testMetric : testsMetrics){
                         if (testMetric.getTestName().equals(taskDataDto.getTaskName())){
-                            if (selectObject == null) selectObject = taskDataDto;
                             model.setSelected(taskDataDto, true);
                         }
                     }
@@ -1033,13 +1034,11 @@ public class Trends extends DefaultActivity {
                 model.addSelectionChangeHandler(new TestSelectChangeHandler());
 
                 //fire event
-                if (selectObject != null){
-                    model.setSelected(selectObject, true);
-                }
-                else{
-                    //nothing to select
+                SelectionChangeEvent.fire(model);
+                if (model.getSelectedSet().isEmpty()){
                     selectTests = true;
                 }
+
             }
             previousSelectedSet.clear();
         }
@@ -1248,63 +1247,89 @@ public class Trends extends DefaultActivity {
             }
         }
     }
+
+
     /**
-     * Handles clicks on session scope plot checkboxes
+     * Handles specific plot of session scope plot selection
      */
-    private class SessionScopePlotCheckBoxClickHandler extends PlotsServingBase implements ValueChangeHandler<Boolean> {
+    private class SessionScopePlotSelectionChangedHandler extends PlotsServingBase implements SelectionChangeEvent.Handler {
+
         @Override
-        public void onValueChange(ValueChangeEvent<Boolean> event) {
+        public void onSelectionChange(SelectionChangeEvent event) {
 
-            final CheckBox source = (CheckBox) event.getSource();
-            final String plotName = source.getText();
+            Set<String> selected = sessionPlotPanel.getSelectionModel().getSelectedSet();
 
-            // If checkbox is checked
-            if (source.getValue()) {
+            if (selected.isEmpty()) {
+                // Remove plots from display which were unchecked
+                removeUncheckedPlots(Collections.EMPTY_SET);
+            } else {
+                // Generate all id of plots which should be displayed
+                Set<String> selectedTaskIds = generateTaskPlotIds(selected);
 
-                for (String sessionId : chosenSessions) {
-                    plotPanel.add(loadIndicator);
-                    final String plotId = generateSessionScopePlotId(sessionId, plotName);
-                    PlotProviderService.Async.getInstance().getSessionScopePlotData(sessionId, plotName, new AsyncCallback<List<PlotSeriesDto>>() {
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            plotPanel.remove(loadIndicator);
-                            Window.alert("Error is occurred during server request processing (Session scope plot data fetching for " + plotName + ")");
-                        }
+                // Remove plots from display which were unchecked
+                removeUncheckedPlots(selectedTaskIds);
 
-                        @Override
-                        public void onSuccess(List<PlotSeriesDto> result) {
-                            plotPanel.remove(loadIndicator);
-                            if (result.isEmpty()) {
-                                Window.alert("There are no data found for " + plotName);
+                PlotProviderService.Async.getInstance().getSessionScopePlotData
+                    (chosenSessions.get(0), selected,
+                        new AsyncCallback<Map<String, List<PlotSeriesDto>>>() {
+
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                 caught.printStackTrace();
                             }
 
-                            // maybe we should render plots only when we on specifc tab to avoid plot problems.
-                            renderPlots(plotPanel, result, plotId);
-                            scrollPanelMetrics.scrollToBottom();
-                        }
-                    });
+                            @Override
+                            public void onSuccess(Map<String, List<PlotSeriesDto>> result) {
+                                for (String plotName : result.keySet()) {
+                                    if (isMaxPlotCountReached()) {
+                                        Window.alert("You are reached max count of plot on display");
+                                        break;
+                                    }
 
-                }
-            } else {
-                // Remove plots from display which were unchecked
-                List<Widget> toRemove = new ArrayList<Widget>();
-                int count = plotPanel.getWidgetCount();
-                for (int i = 0; i < count; i++) {
-                    Widget widget = plotPanel.getWidget(i);
-                    for (String sessionId: chosenSessions) {
-                        if (generateSessionScopePlotId(sessionId, plotName).equals(widget.getElement().getId())) {
-                            // Remove plot
-                            toRemove.add(widget);
-                            break;
-                        }
-                    }
-                }
+                                    final String id = generateSessionScopePlotId(chosenSessions.get(0), plotName);
 
-                for (Widget widget : toRemove) {
-                    plotPanel.remove(widget);
+                                    // If plot has already displayed, then pass it
+                                    if (chosenPlots.containsKey(id)) {
+                                        continue;
+                                    }
+
+                                    chosenPlots.put(id, result.get(plotName));
+                                }
+                                if (mainTabPanel.getSelectedIndex() == 2) {
+                                    onMetricsTabSelected();
+                                }
+                            }
+
+                        }
+                    );
+            }
+        }
+
+
+        private Set<String> generateTaskPlotIds(Set<String> selected) {
+            HashSet<String> idSet = new HashSet<String>();
+            for (String plotName : selected) {
+                idSet.add(generateSessionScopePlotId(chosenSessions.get(0), plotName));
+            }
+            return idSet;
+        }
+
+        private void removeUncheckedPlots(Set<String> selectedTaskIds) {
+
+            List<Widget> toRemove = new ArrayList<Widget>();
+            for (int i = 0; i < plotPanel.getWidgetCount(); i++) {
+                Widget widget = plotPanel.getWidget(i);
+                String widgetId = widget.getElement().getId();
+                if ((!isSessionScopePlotId(widgetId))
+                        || selectedTaskIds.contains(widgetId)) {
+                    continue;
                 }
+                toRemove.add(widget);
+            }
+            for(Widget widget : toRemove) {
+                plotPanel.remove(widget);
+                chosenPlots.remove(widget.getElement().getId());
             }
         }
     }
-
 }

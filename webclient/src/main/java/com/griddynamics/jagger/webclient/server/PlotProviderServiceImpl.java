@@ -175,34 +175,40 @@ public class PlotProviderServiceImpl implements PlotProviderService {
 
 
     @Override
-    public List<PlotSeriesDto> getSessionScopePlotData(String sessionId, String plotName) {
+    public Map<String,List<PlotSeriesDto>> getSessionScopePlotData(String sessionId, Collection<String> plotNames) {
         long timestamp = System.currentTimeMillis();
-        log.debug("getPlotData was invoked with sessionId={} and plotName={}", sessionId, plotName);
+        Map<String, List<PlotSeriesDto>> resultMap = new HashMap<String, List<PlotSeriesDto>>();
 
-        SessionScopePlotDataProvider plotDataProvider = (SessionScopePlotDataProvider) monitoringPlotDataProviders.get(plotName);
-        if (plotDataProvider == null) {
-            log.warn("getPlotData was invoked with unsupported plotName={}", plotName);
-            throw new UnsupportedOperationException("Plot type " + plotName + " doesn't supported");
-        }
+        for(String plotName : plotNames) {
+            log.debug("getPlotData was invoked with sessionId={} and plotName={}", sessionId, plotName);
+            List<PlotSeriesDto> plotSeriesDtoList;
 
-        List<PlotSeriesDto> plotSeriesDtoList = null;
-        try {
-            plotSeriesDtoList = plotDataProvider.getPlotData(sessionId, plotName);
-            log.info("getSessionScopePlotData(): {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName, System.currentTimeMillis() - timestamp));
-            for (PlotSeriesDto plotSeriesDto : plotSeriesDtoList) {
-                for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
-                    List<PointDto> pointDtoList = compressingProcessor.process(plotDatasetDto.getPlotData());
-                    plotDatasetDto.getPlotData().clear();
-                    plotDatasetDto.getPlotData().addAll(pointDtoList);
-                }
+            SessionScopePlotDataProvider plotDataProvider = (SessionScopePlotDataProvider) monitoringPlotDataProviders.get(plotName);
+            if (plotDataProvider == null) {
+                log.warn("getPlotData was invoked with unsupported plotName={}", plotName);
+                throw new UnsupportedOperationException("Plot type " + plotName + " doesn't supported");
             }
-            log.info("getSessionScopePlotData() after compressing: {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName, System.currentTimeMillis() - timestamp));
-        } catch (Exception e) {
-            log.error("Error is occurred during plot data loading for sessionId=" + sessionId + ", plotName=" + plotName, e);
-            throw new RuntimeException(e);
+
+
+            try {
+                plotSeriesDtoList = plotDataProvider.getPlotData(sessionId, plotName);
+                log.info("getSessionScopePlotData(): {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName, System.currentTimeMillis() - timestamp));
+                for (PlotSeriesDto plotSeriesDto : plotSeriesDtoList) {
+                    for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
+                        List<PointDto> pointDtoList = compressingProcessor.process(plotDatasetDto.getPlotData());
+                        plotDatasetDto.getPlotData().clear();
+                        plotDatasetDto.getPlotData().addAll(pointDtoList);
+                    }
+                }
+                log.info("getSessionScopePlotData() after compressing: {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName, System.currentTimeMillis() - timestamp));
+            } catch (Exception e) {
+                log.error("Error is occurred during plot data loading for sessionId=" + sessionId + ", plotName=" + plotName, e);
+                throw new RuntimeException(e);
+            }
+            resultMap.put(plotName, plotSeriesDtoList);
         }
 
-        return plotSeriesDtoList;
+        return resultMap;
     }
 
     //===========================

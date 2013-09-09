@@ -7,6 +7,7 @@ import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
 import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +29,7 @@ public interface PlotProviderService extends RemoteService {
 
     Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots);
 
-    List<PlotSeriesDto> getSessionScopePlotData(String sessionId, String plotType);
+    Map<String,List<PlotSeriesDto>> getSessionScopePlotData(String sessionId, Collection<String> plotType);
 
     public static class Async {
         private static final PlotProviderServiceAsync ourInstance = (PlotProviderServiceAsync) GWT.create(PlotProviderService.class);
