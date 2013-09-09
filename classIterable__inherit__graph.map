@@ -1,0 +1,11 @@
+<map id="Iterable" name="Iterable">
+<area shape="rect" id="node3" href="$interfacecom_1_1griddynamics_1_1jagger_1_1invoker_1_1LoadBalancer_3_01Q_00_01E_01_4.html" title="An object which provides pairs of queries and endpoints for Invoker. " alt="" coords="139,100,333,164"/>
+<area shape="rect" id="node17" href="$classcom_1_1griddynamics_1_1jagger_1_1providers_1_1CsvProvider_3_01T_01_4.html" title="Reads information from CSV files. " alt="" coords="121,187,351,234"/>
+<area shape="rect" id="node19" href="$classcom_1_1griddynamics_1_1jagger_1_1providers_1_1FileProvider_3_01T_01_4.html" title="Reads data from files. " alt="" coords="123,257,349,303"/>
+<area shape="rect" id="node5" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1QueryPoolLoadBalancer_3_01Q_00_01E_01_4.html" title="LoadBalancer which uses query and endpoint provider. " alt="" coords="401,74,617,121"/>
+<area shape="rect" id="node15" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1SimpleLoadBalancer_3_01Q_00_01E_01_4.html" title="Contains only one query and endpoint. " alt="" coords="401,143,617,190"/>
+<area shape="rect" id="node7" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1OneByOneLoadBalancer_3_01Q_00_01E_01_4.html" title="Schedules queries across endpoints one by one. " alt="" coords="692,5,908,51"/>
+<area shape="rect" id="node9" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1PairSupplierFactoryLoadBalancer_3_01Q_00_01E_01_4.html" title="com.griddynamics.jagger.invoker.\lPairSupplierFactoryLoadBalancer\&lt; Q, E \&gt;" alt="" coords="667,74,933,121"/>
+<area shape="rect" id="node13" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1RoundRobinLoadBalancer_3_01Q_00_01E_01_4.html" title="Encapsulates Round&#45;Robin algorithm. " alt="" coords="688,143,912,190"/>
+<area shape="rect" id="node11" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1SimpleCircularLoadBalancer_3_01Q_00_01E_01_4.html" title="com.griddynamics.jagger.invoker.\lSimpleCircularLoadBalancer\&lt; Q, E \&gt;" alt="" coords="981,74,1219,121"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="com.griddynamics.jagger.invoker.SimpleLoadBalancer&lt; Q, E &gt;" name="com.griddynamics.jagger.invoker.SimpleLoadBalancer&lt; Q, E &gt;">
+<area shape="rect" id="node2" href="$interfacecom_1_1griddynamics_1_1jagger_1_1invoker_1_1LoadBalancer_3_01Q_00_01E_01_4.html" title="An object which provides pairs of queries and endpoints for Invoker. " alt="" coords="25,102,241,149"/>
+<area shape="rect" id="node4" href="$classIterable.html" title="Iterable\&lt; Pair\&lt; Q,\l E \&gt; \&gt;" alt="" coords="5,6,131,53"/>
+</map>

@@ -1,0 +1,15 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node3" href="$interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricCalculator_3_01R_01_4.html" title="Calculates information based on invocation response. " alt="" coords="145,5,428,51"/>
+<area shape="rect" id="node5" href="$interfacecom_1_1griddynamics_1_1jagger_1_1invoker_1_1Invoker_3_01Q_00_01R_00_01E_01_4.html" title="Responsible for action invocation on specified endpoint and query. " alt="" coords="179,74,395,121"/>
+<area shape="rect" id="node7" href="$interfacecom_1_1griddynamics_1_1jagger_1_1invoker_1_1LoadBalancer_3_01Q_00_01E_01_4.html" title="An object which provides pairs of queries and endpoints for Invoker. " alt="" coords="179,213,395,259"/>
+<area shape="rect" id="node21" href="$interfacecom_1_1griddynamics_1_1jagger_1_1providers_1_1creators_1_1ObjectCreator_3_01T_01_4.html" title="Creates objects from row data. " alt="" coords="148,143,425,190"/>
+<area shape="rect" id="node23" href="$classcom_1_1griddynamics_1_1jagger_1_1providers_1_1CsvProvider_3_01T_01_4.html" title="Reads information from CSV files. " alt="" coords="173,282,400,329"/>
+<area shape="rect" id="node25" href="$classcom_1_1griddynamics_1_1jagger_1_1providers_1_1FileProvider_3_01T_01_4.html" title="Reads data from files. " alt="" coords="173,351,400,398"/>
+<area shape="rect" id="node9" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1QueryPoolLoadBalancer_3_01Q_00_01E_01_4.html" title="LoadBalancer which uses query and endpoint provider. " alt="" coords="479,178,695,225"/>
+<area shape="rect" id="node19" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1SimpleLoadBalancer_3_01Q_00_01E_01_4.html" title="Contains only one query and endpoint. " alt="" coords="479,247,695,294"/>
+<area shape="rect" id="node11" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1OneByOneLoadBalancer_3_01Q_00_01E_01_4.html" title="Schedules queries across endpoints one by one. " alt="" coords="769,109,985,155"/>
+<area shape="rect" id="node13" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1PairSupplierFactoryLoadBalancer_3_01Q_00_01E_01_4.html" title="com.griddynamics.jagger.invoker.\lPairSupplierFactoryLoadBalancer\&lt; Q, E \&gt;" alt="" coords="744,178,1011,225"/>
+<area shape="rect" id="node17" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1RoundRobinLoadBalancer_3_01Q_00_01E_01_4.html" title="Encapsulates Round&#45;Robin algorithm. " alt="" coords="765,247,989,294"/>
+<area shape="rect" id="node15" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1SimpleCircularLoadBalancer_3_01Q_00_01E_01_4.html" title="com.griddynamics.jagger.invoker.\lSimpleCircularLoadBalancer\&lt; Q, E \&gt;" alt="" coords="1059,178,1296,225"/>
+<area shape="rect" id="node26" href="$classIterable.html" title="Iterable" alt="" coords="19,291,83,320"/>
+</map>

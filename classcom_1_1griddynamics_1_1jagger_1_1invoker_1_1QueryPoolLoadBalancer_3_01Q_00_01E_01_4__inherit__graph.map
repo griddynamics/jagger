@@ -1,0 +1,8 @@
+<map id="com.griddynamics.jagger.invoker.QueryPoolLoadBalancer&lt; Q, E &gt;" name="com.griddynamics.jagger.invoker.QueryPoolLoadBalancer&lt; Q, E &gt;">
+<area shape="rect" id="node9" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1OneByOneLoadBalancer_3_01Q_00_01E_01_4.html" title="Schedules queries across endpoints one by one. " alt="" coords="740,5,956,51"/>
+<area shape="rect" id="node11" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1PairSupplierFactoryLoadBalancer_3_01Q_00_01E_01_4.html" title="com.griddynamics.jagger.invoker.\lPairSupplierFactoryLoadBalancer\&lt; Q, E \&gt;" alt="" coords="715,74,981,121"/>
+<area shape="rect" id="node15" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1RoundRobinLoadBalancer_3_01Q_00_01E_01_4.html" title="Encapsulates Round&#45;Robin algorithm. " alt="" coords="736,143,960,190"/>
+<area shape="rect" id="node2" href="$interfacecom_1_1griddynamics_1_1jagger_1_1invoker_1_1LoadBalancer_3_01Q_00_01E_01_4.html" title="An object which provides pairs of queries and endpoints for Invoker. " alt="" coords="183,74,399,121"/>
+<area shape="rect" id="node4" href="$classIterable.html" title="Iterable\&lt; Pair\&lt; Q,\l E \&gt; \&gt;" alt="" coords="7,43,132,90"/>
+<area shape="rect" id="node13" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1SimpleCircularLoadBalancer_3_01Q_00_01E_01_4.html" title="com.griddynamics.jagger.invoker.\lSimpleCircularLoadBalancer\&lt; Q, E \&gt;" alt="" coords="1029,74,1267,121"/>
+</map>
