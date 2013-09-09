@@ -1,8 +1,14 @@
 package com.griddynamics.jagger.webclient.client.components;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 
 import java.util.HashMap;
@@ -18,19 +24,34 @@ import java.util.Set;
  */
 public class SessionPlotPanel extends VerticalPanel {
 
+    //todo make it List
     private HashMap<String, CheckBox> map = new HashMap<String, CheckBox>();
-    private ValueChangeHandler<Boolean> clickHandler;
+    final private MultiSelectionModel<String> selectionModel;
     private HTMLPanel plotPanel;
+    private final ValueChangeHandler<Boolean> clickHandler = new ValueChangeHandler<Boolean>() {
 
-    public SessionPlotPanel(ValueChangeHandler<Boolean> valueChangeHandler, HTMLPanel plotPanel){
-        this.clickHandler = valueChangeHandler;
+        @Override
+        public void onValueChange(ValueChangeEvent<Boolean> event) {
+            String plotName = ((CheckBox)event.getSource()).getText();
+            Boolean value = event.getValue();
+            selectionModel.setSelected(plotName, value);
+        }
+    };
+
+    public SessionPlotPanel(HTMLPanel plotPanel){
         this.plotPanel = plotPanel;
+        selectionModel = new MultiSelectionModel<String>();
+    }
+
+    public MultiSelectionModel<String> getSelectionModel() {
+        return selectionModel;
     }
 
     public void update(String sessionId, Set<String> plots){
         clear();
         map = new HashMap<String, CheckBox>();
         for (String plotName : plots) {
+            selectionModel.setSelected(plotName, false);
             SafeHtmlBuilder sb = new SafeHtmlBuilder();
             sb.appendHtmlConstant("<table><tr><td>");
             sb.append(AbstractImagePrototype.create(JaggerResources.INSTANCE.getPlotImage()).getSafeHtml());
@@ -41,6 +62,7 @@ public class SessionPlotPanel extends VerticalPanel {
             map.put(plotName, checkBox);
             // If plot for this one is already rendered we check it
             if (plotPanel.getElementById(generateSessionScopePlotId(sessionId, plotName)) != null) {
+                selectionModel.setSelected(plotName, true);
                 checkBox.setValue(true, false);
             }
             checkBox.getElement().setId(generateSessionScopePlotId(sessionId, plotName) + "_checkbox");
@@ -51,7 +73,8 @@ public class SessionPlotPanel extends VerticalPanel {
 
     public void setSelected(String plot){
         if (map.containsKey(plot)){
-            map.get(plot).setValue(true, true);
+            selectionModel.setSelected(plot, true);
+            map.get(plot).setValue(true);
         }
     }
 
@@ -62,18 +85,12 @@ public class SessionPlotPanel extends VerticalPanel {
     }
 
     public Set<String> getSelected(){
-        Set<String> set = new HashSet<String>();
-        for (String plotName : map.keySet()){
-            CheckBox box = map.get(plotName);
-            if (box.getValue()){
-                set.add(plotName);
-            }
-        }
-        return set;
+        return selectionModel.getSelectedSet();
     }
 
     public void clearPlots(){
         clear();
+        selectionModel.clear();
         map = new HashMap<String, CheckBox>();
     }
 
