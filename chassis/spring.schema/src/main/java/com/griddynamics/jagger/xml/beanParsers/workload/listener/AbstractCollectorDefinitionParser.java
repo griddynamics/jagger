@@ -46,7 +46,12 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
 
         builder.addPropertyValue(XMLConstants.METRIC_CALCULATOR, getMetricCalculator(element, parserContext, builder));
 
-        builder.addPropertyValue(XMLConstants.NAME,element.getAttribute(XMLConstants.ID));
+        if (!element.getAttribute(XMLConstants.ID).isEmpty()) {
+            builder.addPropertyValue(XMLConstants.NAME, element.getAttribute(XMLConstants.ID));
+        } else {
+            builder.addPropertyValue(XMLConstants.NAME, XMLConstants.DEFAULT_METRIC_NAME);
+        }
+
         Boolean plotData = false;
         if (element.hasAttribute(XMLConstants.PLOT_DATA)) {
             plotData = Boolean.valueOf(element.getAttribute(XMLConstants.PLOT_DATA));
