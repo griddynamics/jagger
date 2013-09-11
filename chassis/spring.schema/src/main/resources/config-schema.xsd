@@ -54,6 +54,15 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:complexType name="baseType" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                Base type which help you to realize inheritance.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="parent" type="xsd:string"/>
+    </xsd:complexType>
+
     <xsd:complexType name="primitiveOrObjectAbstract" abstract="true" mixed="true">
         <xsd:annotation>
             <xsd:documentation>
@@ -750,7 +759,7 @@
 
     <xsd:complexType name="workloadCollectorAbstract" abstract="true">
         <xsd:complexContent>
-            <xsd:extension base="basicType">
+            <xsd:extension base="baseType">
                 <xsd:attribute name="plotData" type="xsd:boolean" default="false"/>
             </xsd:extension>
         </xsd:complexContent>
@@ -861,6 +870,7 @@
                 <xsd:choice>
                     <xsd:element name="metric-aggregator" type="metricAggregatorAbstract" minOccurs="0" maxOccurs="unbounded"/>
                 </xsd:choice>
+                <xsd:attribute name="id" type="xsd:ID" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -915,6 +925,7 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="workloadCollectorAbstract">
+                <xsd:attribute name="id" type="xsd:ID" use="optional"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
