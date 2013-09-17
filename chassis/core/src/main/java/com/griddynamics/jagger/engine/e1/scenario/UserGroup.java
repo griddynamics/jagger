@@ -127,7 +127,6 @@ public class UserGroup {
                 new User(clock, this, time, findNodeWithMinThreadCount(workloadConfigurations), workloadConfigurations);
             }
         }
-
         startByTime += startBy;
     }
 
