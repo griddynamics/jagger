@@ -52,14 +52,14 @@
 
                 <test-group id="sleep-service-5ms-1000-samples-per-thread-1-thread">
                     <test testDescription="sleep-service-5ms">
-                        <load xsi:type="load-threads" count="1" tickInterval="500" />
+                        <load xsi:type="load-threads" count="1" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="1000"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-5ms-http-query-provider">
                     <test testDescription="sleep-service-5ms-simple-http-query-provider">
-                        <load xsi:type="load-threads" count="1" tickInterval="500" />
+                        <load xsi:type="load-threads" count="1" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="1000"/>
                     </test>
                 </test-group>
@@ -67,56 +67,56 @@
 
                 <test-group id="sleep-service-50ms-1000-samples-per-thread-1-thread">
                     <test testDescription="sleep-service-50ms">
-                        <load xsi:type="load-threads" count="1" tickInterval="500" />
+                        <load xsi:type="load-threads" count="1" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="1000"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-5ms-1000-samples-per-thread-10-threads">
                     <test testDescription="sleep-service-5ms">
-                        <load xsi:type="load-threads" count="10" tickInterval="500" />
+                        <load xsi:type="load-threads" count="10" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="10000"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-50ms-1000-samples-per-thread-10-threads">
                     <test testDescription="sleep-service-50ms">
-                        <load xsi:type="load-threads" count="10" tickInterval="500" />
+                        <load xsi:type="load-threads" count="10" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="10000"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-5ms-1000-samples-per-thread-50-threads">
                     <test testDescription="sleep-service-5ms">
-                        <load xsi:type="load-threads" count="50" tickInterval="500" />
+                        <load xsi:type="load-threads" count="50" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="50000"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-50ms-1000-samples-per-thread-50-threads">
                     <test testDescription="sleep-service-50ms">
-                        <load xsi:type="load-threads" count="50" tickInterval="500" />
+                        <load xsi:type="load-threads" count="50" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="50000"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-50-150ms-1000-samples-per-thread-1-thread">
                     <test testDescription="sleep-service-50-150ms">
-                        <load xsi:type="load-threads" count="1" tickInterval="500" />
+                        <load xsi:type="load-threads" count="1" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="1000"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-50-150ms-1000-samples-per-thread-10-threads">
                     <test testDescription="sleep-service-50-150ms">
-                        <load xsi:type="load-threads" count="10" tickInterval="500" />
+                        <load xsi:type="load-threads" count="10" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="10000"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-50-150ms-1000-samples-per-thread-50-threads">
                     <test testDescription="sleep-service-50-150ms">
-                        <load xsi:type="load-threads" count="50" tickInterval="500" />
+                        <load xsi:type="load-threads" count="50" tickInterval="${test.configuration.tickinterval}" />
                         <termination xsi:type="termination-iterations" iterations="50000"/>
                     </test>
                 </test-group>
@@ -193,15 +193,15 @@
 
                  <test-group id="sleep-service-50-150ms-500-tps-5-min-10-threads">
                     <test testDescription="sleep-service-50-150ms">
-                        <load xsi:type="load-tps" value="500" tickInterval="500"/>
-                        <termination xsi:type="termination-duration" duration="5m"/>
+                        <load xsi:type="load-tps" value="${test.configuration.tps}" tickInterval="500"/>
+                        <termination xsi:type="termination-duration" duration="${test.configuration.duration}"/>
                     </test>
                 </test-group>
 
                 <test-group id="sleep-service-50-150ms-600-tps-5-min-50-threads">
                     <test testDescription="sleep-service-50-150ms">
-                        <load xsi:type="load-tps" value="500" tickInterval="500"/>
-                        <termination xsi:type="termination-duration" duration="5m"/>
+                        <load xsi:type="load-tps" value="${test.configuration.tps}" tickInterval="500"/>
+                        <termination xsi:type="termination-duration" duration="${test.configuration.duration}"/>
                     </test>
                 </test-group>
 

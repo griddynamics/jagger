@@ -604,20 +604,20 @@
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="virtualUserAttributes">
-        <xsd:attribute name="count" type="xsd:integer" use="required"></xsd:attribute>
-        <xsd:attribute name="delay" type="xsd:integer" use="optional"></xsd:attribute>
+        <xsd:attribute name="count" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="delay" type="xsd:string" use="optional"></xsd:attribute>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="invocationAttributes">
-        <xsd:attribute name="exactcount" type="xsd:integer" use="required"></xsd:attribute>
-        <xsd:attribute name="threads" type="xsd:integer" use="required"></xsd:attribute>
-        <xsd:attribute name="delay" type="xsd:integer" default="0"></xsd:attribute>
+        <xsd:attribute name="exactcount" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="threads" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="delay" type="xsd:string" default="0"></xsd:attribute>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="tpsAttributes">
-        <xsd:attribute name="value" type="xsd:integer" use="required"></xsd:attribute>
+        <xsd:attribute name="value" type="xsd:string" use="required"></xsd:attribute>
         <xsd:attribute name="warmUpTime" type="xsd:string" use="optional"></xsd:attribute>
-        <xsd:attribute name="maxThreadNumber" type="xsd:integer"/>
+        <xsd:attribute name="maxThreadNumber" type="xsd:string"/>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="iterationsAttributes">
@@ -662,8 +662,8 @@
                     <xsd:element name="scenario" type="scenarioAbstract" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
                 <xsd:attribute name="name" type="xsd:string"/>
-                <xsd:attribute name="version" type="xsd:integer"/>
-                <xsd:attribute name="calibration" type="xsd:boolean" default="false"/>
+                <xsd:attribute name="version" type="xsd:string"/>
+                <xsd:attribute name="calibration" type="xsd:string" default="false"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -751,7 +751,7 @@
     <xsd:complexType name="workloadCollectorAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
-                <xsd:attribute name="plotData" type="xsd:boolean" default="false"/>
+                <xsd:attribute name="plotData" type="xsd:string" default="false"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -1281,7 +1281,7 @@
                     <xsd:element name="objectCreator" type="objectCreatorAbstract"/>
                 </xsd:choice>
                 <xsd:attribute name="path" type="xsd:string" use="required"/>
-                <xsd:attribute name="readHeader" type="xsd:boolean" use="optional" default="true"/>
+                <xsd:attribute name="readHeader" type="xsd:string" use="optional" default="true"/>
                 <xsd:attribute name="strategy" type="csvStrategy" use="optional" default="DEFAULT"/>
             </xsd:extension>
         </xsd:complexContent>
@@ -1485,7 +1485,7 @@
                     <xsd:element name="object-creator" type="objectCreatorAbstract"/>
                 </xsd:choice>
                 <xsd:attribute name="path" type="xsd:string" use="required"/>
-                <xsd:attribute name="readHeader" type="xsd:boolean" use="optional" default="true"/>
+                <xsd:attribute name="readHeader" type="xsd:string" use="optional" default="true"/>
                 <xsd:attribute name="strategy" type="csvStrategy" use="optional" default="DEFAULT"/>
             </xsd:extension>
         </xsd:complexContent>
@@ -1752,8 +1752,8 @@
     <xsd:complexType name="decision-maker-workload-throughput">
         <xsd:complexContent>
             <xsd:extension base="decisionMakerWorkloadAbstract">
-                <xsd:attribute name="fatalDeviationThreshold" type="xsd:float" use="required"/>
-                <xsd:attribute name="warningDeviationThreshold" type="xsd:float" use="required"/>
+                <xsd:attribute name="fatalDeviationThreshold" type="xsd:string" use="required"/>
+                <xsd:attribute name="warningDeviationThreshold" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -1761,8 +1761,8 @@
     <xsd:complexType name="decision-maker-monitoring-stddev">
         <xsd:complexContent>
             <xsd:extension base="decisionMakerMonitoringAbstract">
-                <xsd:attribute name="fatalDeviationThreshold" type="xsd:float" use="required"/>
-                <xsd:attribute name="warningDeviationThreshold" type="xsd:float" use="required"/>
+                <xsd:attribute name="fatalDeviationThreshold" type="xsd:string" use="required"/>
+                <xsd:attribute name="warningDeviationThreshold" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -1784,7 +1784,7 @@
     </xsd:complexType>
 
     <xsd:attributeGroup name="sessionComparatorsAttribute">
-        <xsd:attribute name="baselineId" type="xsd:integer" use="optional"/>
+        <xsd:attribute name="baselineId" type="xsd:string" use="optional"/>
         <xsd:attribute name="strategy" type="strategyType" use="optional"/>
     </xsd:attributeGroup>
 
