@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.engine.e1.scenario.KernelSideInitializableObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 
@@ -17,22 +18,43 @@ import java.util.List;
  */
 public class InformationCollectorProvider<Q, R, E> implements KernelSideObjectProvider<ScenarioCollector<Q, R, E>> {
 
-    private List<ValidatorProvider> providers = Collections.emptyList();
+    private List<ValidatorProvider> validatorsProviders = Collections.emptyList();
+    private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> collectorsProviders = Collections.emptyList();
 
     @Override
     public ScenarioCollector<Q, R, E> provide(String sessionId, String taskId, NodeContext kernelContext) {
-        ArrayList<Validator> result = new ArrayList<Validator>(providers.size());
-        for (ValidatorProvider provider  : providers){
-            result.add(provider.provide(taskId, sessionId, kernelContext));
+
+        //create validator chain
+        ArrayList<Validator> validators = new ArrayList<Validator>(validatorsProviders.size());
+        for (ValidatorProvider provider  : validatorsProviders){
+            validators.add(provider.provide(taskId, sessionId, kernelContext));
         }
-        return new InformationCollector(sessionId, taskId, kernelContext, result);
+
+        //create a list of collectors
+        ArrayList<ScenarioCollector> collectors = new ArrayList<ScenarioCollector>(collectorsProviders.size());
+        for (KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>> provider : collectorsProviders){
+            if (provider instanceof KernelSideInitializableObjectProvider){
+                ((KernelSideInitializableObjectProvider) provider).init(sessionId, taskId, kernelContext);
+            }
+            collectors.add(provider.provide(sessionId, taskId, kernelContext));
+        }
+
+        return new InformationCollector(sessionId, taskId, kernelContext, validators, collectors);
     }
 
-    public void setValidators(List<ValidatorProvider> providers){
-        this.providers = providers;
+    public void setValidatorsProviders(List<ValidatorProvider> providers){
+        this.validatorsProviders = providers;
     }
 
     public List<ValidatorProvider> getValidators(){
-        return providers;
+        return validatorsProviders;
+    }
+
+    public List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> getCollectorsProviders() {
+        return collectorsProviders;
+    }
+
+    public void setCollectorsProviders(List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectorsProviders) {
+        this.collectorsProviders = collectorsProviders;
     }
 }

@@ -6,6 +6,7 @@ import com.griddynamics.jagger.engine.e1.scenario.*;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -100,15 +101,15 @@ public class TestDescription {
         prototype.setName(name);
         prototype.setVersion(version);
 
-        List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> listeners = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>>(metrics.size()+ standardCollectors.size()+1);
-        listeners.addAll(standardCollectors);
-        listeners.addAll(metrics);
+        List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> allMetrics = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>>(metrics.size()+ standardCollectors.size());
+        allMetrics.addAll(standardCollectors);
+        allMetrics.addAll(metrics);
 
         InformationCollectorProvider informationCollector = new InformationCollectorProvider();
-        informationCollector.setValidators(validators);
-        listeners.add(informationCollector);
+        informationCollector.setValidatorsProviders(validators);
+        informationCollector.setCollectorsProviders(allMetrics);
 
-        prototype.setCollectors(listeners);
+        prototype.setCollectors(Arrays.asList((KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>)informationCollector));
 
         return prototype;
     }

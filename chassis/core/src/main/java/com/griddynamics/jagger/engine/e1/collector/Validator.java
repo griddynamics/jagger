@@ -43,6 +43,10 @@ public class Validator extends KernelSideObject{
         return true;
     }
 
+    public ResponseValidator getValidator(){
+        return validator;
+    }
+
     private Namespace namespace() {
         return Namespace.of(sessionId, taskId, "ValidationCollector",
                 kernelContext.getId().toString());
