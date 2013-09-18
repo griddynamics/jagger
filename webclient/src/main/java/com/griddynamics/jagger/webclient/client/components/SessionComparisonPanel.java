@@ -1,14 +1,24 @@
 package com.griddynamics.jagger.webclient.client.components;
 
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.griddynamics.jagger.webclient.client.dto.*;
+import com.griddynamics.jagger.webclient.client.dto.MetricDto;
+import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
+import com.griddynamics.jagger.webclient.client.dto.MetricValueDto;
+import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
-import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridField;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.sencha.gxt.core.client.Style;
+import com.sencha.gxt.core.client.ValueProvider;
+import com.sencha.gxt.core.client.dom.ScrollSupport;
+import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.ExpandItemEvent;
+import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
+import com.sencha.gxt.widget.core.client.grid.ColumnModel;
+import com.sencha.gxt.widget.core.client.treegrid.TreeGrid;
 
 import java.util.*;
 
@@ -23,76 +33,48 @@ public class SessionComparisonPanel extends VerticalPanel{
 
     private final String TEST_DESCRIPTION = "testDescription";
     private final String TEST_NAME = "testName";
-    private final String TEST_METRIC = "testMetric";
+    // property to render in Metric column
+    private final String NAME = "name";
     private final String SESSION_HEADER = "Session ";
-    private final String SESSION_DATA_SUFFIX = "_data";
+    private final String SESSION_INFO_ID = "sessionInfo";
+    private final String COMMENT = "Comment";
+    private final int MIN_COLUMN_WIDTH = 200;
 
-    private Label title = new Label();
-    private ListGrid grid = new ListGrid(){
+    private TreeGrid<TreeItem> treeGrid;
+    private TreeStore<TreeItem> treeStore = new TreeStore<TreeItem>(new ModelKeyProvider<TreeItem>() {
         @Override
-        protected Canvas createRecordComponent(final ListGridRecord record, Integer colNum) {
-            String fieldName = this.getFieldName(colNum);
-            if (fieldName.startsWith(SESSION_HEADER)){
-                String text = record.getAttribute(fieldName+ SESSION_DATA_SUFFIX);
-
-                Label label = new Label(text);
-                label.setAutoHeight();
-                label.setWidth100();
-                return label;
-            }
-            return null;
+        public String getKey(TreeItem item) {
+            return String.valueOf(item.getKey());
         }
-    };
+    });
 
-    private ListGridRecord[] EMPTY_DATA = new ListGridRecord[0];
-    private HashMap<MetricNameDto, MetricDto> cache;
+  //  private Record EMPTY_DATA = new Record(COMMENT);
+    private HashMap<MetricNameDto, MetricDto> cache = new HashMap<MetricNameDto, MetricDto>();
+
+    public TreeStore<TreeItem> getTreeStore() {
+        return treeStore;
+    }
 
     public HashMap<MetricNameDto, MetricDto> getCachedMetrics() {
         return cache;
     }
 
-    public ListGrid getGrid() {
-        return grid;
-    }
-
-    public ListGridRecord[] getEmptyListGrid() {
-        return EMPTY_DATA;
+    public TreeGrid<TreeItem> getGrid() {
+        return treeGrid;
     }
 
     public SessionComparisonPanel(Set<SessionDataDto> chosenSessions){
+        setWidth("100%");
+        setHeight("100%");
         init(chosenSessions);
     }
 
     private void init(Set<SessionDataDto> chosenSessions){
-        //init title
-        title.setStyleName(JaggerResources.INSTANCE.css().sessionNameHeader());
 
-        grid.setCanEdit(false);
-        grid.setShowAllRecords(true);
-        grid.setShowResizeBar(true);
-        grid.setRedrawOnResize(true);
-        grid.setBorder("1px solid blue");
-        grid.setWidth("97%");
-        grid.setHeight("80%");
-        grid.setCanCollapseGroup(false);
-        grid.setWrapCells(true);
-        grid.setFixedRecordHeights(false);
-        grid.setShowRecordComponents(true);
-        grid.setShowRecordComponentsByCell(true);
+        treeStore.clear();
+        List<ColumnConfig<TreeItem, ?>> columns = new ArrayList<ColumnConfig<TreeItem, ?>>();
 
-        List<ListGridField> fields = new ArrayList<ListGridField>(chosenSessions.size()+3);
-
-        ListGridField field = new ListGridField(TEST_DESCRIPTION, "Test Description");
-        fields.add(field);
-
-        field = new ListGridField(TEST_NAME, "Name");
-        fields.add(field);
-
-        field = new ListGridField(TEST_METRIC, "Metric");
-        field.setAutoFitWidth(true);
-        fields.add(field);
-
-        //sort sessions by number create
+        //sort sessions by number sessionId
         SortedSet<SessionDataDto> sortedSet = new TreeSet<SessionDataDto>(new Comparator<SessionDataDto>() {
             @Override
             public int compare(SessionDataDto o, SessionDataDto o2) {
@@ -101,79 +83,189 @@ public class SessionComparisonPanel extends VerticalPanel{
         });
         sortedSet.addAll(chosenSessions);
 
+        ColumnConfig<TreeItem, String> nameColumn =
+                new ColumnConfig<TreeItem, String>(new MapValueProvider("name"), 2 * MIN_COLUMN_WIDTH);
+        nameColumn.setHeader("Metric");
+        columns.add(nameColumn);
 
-        StringBuilder titleText = new StringBuilder("Comparison of sessions : ");
-
-        for (SessionDataDto dto : sortedSet){
-            titleText.append(dto.getSessionId()+",");
-            field = new ListGridField(dto.getName() + SESSION_DATA_SUFFIX, dto.getName());
-            field.setAutoFitWidth(true);
-            field.setCanGroupBy(false);
-            field.setSortByDisplayField(false);
-            fields.add(field);
+        for (SessionDataDto session: sortedSet) {
+            ColumnConfig<TreeItem, String> column = new ColumnConfig<TreeItem, String>(
+                    new MapValueProvider(SESSION_HEADER + session.getSessionId())
+            );
+            column.setHeader(SESSION_HEADER + session.getSessionId());
+            column.setWidth(MIN_COLUMN_WIDTH);
+            column.setCell(new AbstractCell<String>() {
+                @Override
+                public void render(Context context, String value, SafeHtmlBuilder sb) {
+                    if (value == null) {
+                        sb.append(SafeHtmlUtils.EMPTY_SAFE_HTML);
+                    } else {
+                        sb.appendHtmlConstant(value = value.replaceAll("\n", "<br>"));
+                    }
+                }
+            });
+            columns.add(column);
         }
 
-        String titleString = titleText.toString();
-        title.setContents(titleString.substring(0, titleString.length()-1));
+        ColumnModel<TreeItem> cm = new ColumnModel<TreeItem>(columns);
+        treeGrid = new TreeGrid<TreeItem>(treeStore, cm, nameColumn);
 
-        grid.setFields(fields.toArray(new ListGridField[]{}));
+        addCommentRecord(sortedSet);
 
-        grid.setGroupByField(TEST_DESCRIPTION, TEST_NAME);
-        grid.freezeField(TEST_NAME);
-        grid.freezeField(TEST_NAME);
+        treeGrid.setAutoExpand(true);
+        treeGrid.setMinColumnWidth(MIN_COLUMN_WIDTH);
+        treeGrid.getView().setAutoExpandColumn(nameColumn);
+        treeGrid.setAllowTextSelection(true);
+        treeGrid.getTreeView().setAutoFill(true);
+        treeGrid.getStyle().setNodeCloseIcon(JaggerResources.INSTANCE.getArrowRight());
+        treeGrid.getStyle().setNodeOpenIcon(JaggerResources.INSTANCE.getArrowRight());
 
-        grid.hideField(TEST_NAME);
-        grid.hideField(TEST_DESCRIPTION);
+        add(treeGrid);
+    }
 
-        add(grid);
-        cache = new HashMap<MetricNameDto, MetricDto>();
+    private void addCommentRecord(Set<SessionDataDto> chosenSessions) {
+        TreeItem sessionInfo = new TreeItem(SESSION_INFO_ID);
+        sessionInfo.put("name", "Session Info");
+        treeStore.add(sessionInfo);
 
-        EMPTY_DATA = new ListGridRecord[]{new InformationRecord(chosenSessions){
-
-            @Override
-            public String getInformationName() {
-                return "Comment";
-            }
-
-            @Override
-            public String getInfo(SessionDataDto session) {
-                return session.getComment();
-            }
-        }};
-
-        grid.setData(EMPTY_DATA);
-        grid.setShowAllRecords(true);
+        TreeItem comment = new TreeItem(COMMENT);
+        comment.put(NAME, COMMENT);
+        for (SessionDataDto session : chosenSessions) {
+            comment.put(SESSION_HEADER + session.getSessionId(), session.getComment());
+        }
+        treeStore.add(sessionInfo, comment);
+        treeGrid.expandAll();
     }
 
 
-    public Record generateRecord(MetricDto dto) {
-        return new MetricRecord(dto);
+    public void updateTable(List<MetricDto> metricDtos) {
+
+        //todo do not clear all tree, but only nodes that were unchecked
+        clearTreeStore();
+        addMetricRecords(metricDtos);
     }
 
-    private class MetricRecord extends ListGridRecord{
-        public MetricRecord(MetricDto dto){
-            String description = dto.getMetricName().getTests().getDescription();
-            setAttribute(TEST_DESCRIPTION, ((description==null|| "".equals(description) ? "Empty description" : description)));
-            setAttribute(TEST_NAME, dto.getMetricName().getTests().getTaskName());
-            setAttribute(TEST_METRIC, dto.getMetricName().getName());
-            for (MetricValueDto value : dto.getValues()){
-                setAttribute(SESSION_HEADER+value.getSessionId()+ SESSION_DATA_SUFFIX, value.getValueRepresentation());
+
+    public void clearTreeStore() {
+
+        for (TreeItem root : treeStore.getRootItems()) {
+            if (root.getKey().equals(SESSION_INFO_ID)) {
+                continue;
             }
+            treeStore.remove(root);
         }
     }
 
-    private abstract class InformationRecord extends ListGridRecord{
-        public InformationRecord(Set<SessionDataDto> sessions){
-            setAttribute(TEST_DESCRIPTION,"Sessions information");
-            setAttribute(TEST_NAME,"Common information");
-            setAttribute(TEST_METRIC, getInformationName());
-            for (SessionDataDto sessionDataDto : sessions){
-                setAttribute(SESSION_HEADER + sessionDataDto.getSessionId() + SESSION_DATA_SUFFIX, getInfo(sessionDataDto));
+
+    public void addMetricRecord(MetricDto metricDto) {
+
+        cache.put(metricDto.getMetricName(), metricDto);
+        TreeItem record = new TreeItem(metricDto);
+        addItemToStore(record);
+        treeGrid.expandAll();
+    }
+
+
+    public void addMetricRecords(List<MetricDto> loaded) {
+        for (MetricDto metric : loaded) {
+            addMetricRecord(metric);
+        }
+    }
+
+    private void addItemToStore(TreeItem record) {
+
+        String descriptionString = record.get(TEST_DESCRIPTION);
+        String testNameString = record.get(TEST_NAME);
+
+        if (descriptionString == null || testNameString == null)
+            return;
+
+        if (descriptionString.equals(testNameString)) {
+            testNameString += " ";
+        }
+
+        for (TreeItem testDescriptionPath : treeStore.getRootItems()) {
+
+            if (testDescriptionPath.get(NAME).equals(descriptionString)) {
+
+                for (TreeItem testName : treeStore.getAllChildren(testDescriptionPath)) {
+                    if (testName.get(NAME).equals(testNameString)) {
+                        treeStore.add(testName, record);
+                        return;
+                    }
+                }
+                //create new TestNamePath
+                TreeItem testName = new TreeItem(testDescriptionPath.getKey() + testNameString);
+                testName.put(NAME, testNameString);
+                treeStore.add(testDescriptionPath, testName);
+                treeStore.add(testName, record);
+                return;
+            }
+        }
+        // create new TestDescriptionPath
+        TreeItem testDescription = new TreeItem(descriptionString);
+        testDescription.put(NAME, descriptionString);
+        treeStore.add(testDescription);
+        TreeItem testName = new TreeItem(descriptionString + testNameString);
+        testName.put(NAME, testNameString);
+        treeStore.add(testDescription, testName);
+        treeStore.add(testName, record);
+    }
+
+   // private static int id = 0;
+    private class TreeItem extends HashMap<String, String> {
+
+        String key;
+
+        private String getKey() {
+            return key;
+        }
+
+        private void setKey(String key) {
+            this.key = key;
+        }
+
+        public TreeItem() {}
+
+        public TreeItem(String key) {
+            this.key = key;
+        }
+
+        public TreeItem(MetricDto metricDto) {
+
+            MetricNameDto metricName = metricDto.getMetricName();
+            this.key = metricName.getTests().getDescription() + metricName.getTests().getTaskName() + metricName.getName();
+            put(NAME, metricName.getName());
+            put(TEST_DESCRIPTION, metricName.getTests().getDescription());
+            put(TEST_NAME, metricName.getTests().getTaskName());
+
+            for (MetricValueDto metricValue : metricDto.getValues()) {
+                put(SESSION_HEADER + metricValue.getSessionId(), metricValue.getValueRepresentation());
             }
         }
 
-        public abstract String getInformationName();
+    }
 
-        public abstract String getInfo(SessionDataDto session);
+    private class MapValueProvider implements ValueProvider<TreeItem, String> {
+        private String field;
+
+        public MapValueProvider(String field) {
+            this.field = field;
+        }
+
+        @Override
+        public String getValue(TreeItem object) {
+            return object.get(field);
+        }
+
+        @Override
+        public void setValue(TreeItem object, String value) {
+            object.put(field, value);
+        }
+
+        @Override
+        public String getPath() {
+            return field;
+        }
     }
 }
