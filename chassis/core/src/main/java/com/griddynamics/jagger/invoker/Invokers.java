@@ -21,10 +21,15 @@
 package com.griddynamics.jagger.invoker;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
+import com.griddynamics.jagger.engine.e1.scenario.Flushable;
 import com.griddynamics.jagger.util.Nothing;
 import com.griddynamics.jagger.util.SystemClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -50,6 +55,20 @@ public class Invokers {
 
     public static <Q, R, E> CompositeLoadInvocationListener<Q, R, E> composeListeners(LoadInvocationListener<Q, R, E>... listeners) {
         return new CompositeLoadInvocationListener<Q, R, E>(newArrayList(listeners));
+    }
+
+    public static <Q, R, E> ValidateLoadInvocationListener<Q, R, E> validateListener(Iterable<Validator> validators, Iterable<? extends LoadInvocationListener<Q, R, E>> listeners){
+        return new ValidateLoadInvocationListener<Q, R, E>(validators, listeners);
+    }
+
+    public static ImmutableList<Flushable> mergeFlushElements(Collection<? extends Flushable>... sources){
+        ImmutableList.Builder<Flushable> builder = ImmutableList.builder();
+
+        for (Collection<? extends Flushable> source : sources){
+            builder.addAll(source);
+        }
+
+        return builder.build();
     }
 
     public static <Q, R, E> ErrorLoggingListener<Q, R, E> logErrors(

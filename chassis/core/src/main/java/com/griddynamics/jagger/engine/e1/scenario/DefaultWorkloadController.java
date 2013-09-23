@@ -171,6 +171,7 @@ public class DefaultWorkloadController implements WorkloadController {
         StartWorkloadProcess start = StartWorkloadProcess.create(sessionId, scenarioContext, nodePoolSize);
         start.setScenarioFactory(task.getScenarioFactory());
         start.setCollectors(task.getCollectors());
+        start.setValidators(task.getValidators());
 
         log.debug("Going to start process {} on node {}", start, node);
 

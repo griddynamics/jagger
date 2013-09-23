@@ -10,11 +10,11 @@ import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
  * Time: 4:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ValidatorProvider {
+public class ValidatorProvider implements KernelSideObjectProvider<Validator>{
 
     private KernelSideObjectProvider<ResponseValidator<Object, Object, Object>> validatorProvider;
 
-    public Validator provide(String taskId, String sessionId, NodeContext kernelContext){
+    public Validator provide(String sessionId, String taskId, NodeContext kernelContext){
         return new Validator(taskId, sessionId, kernelContext, validatorProvider.provide(sessionId, taskId, kernelContext));
     }
 

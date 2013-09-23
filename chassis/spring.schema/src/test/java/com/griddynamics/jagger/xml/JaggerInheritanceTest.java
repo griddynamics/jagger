@@ -3,6 +3,7 @@ package com.griddynamics.jagger.xml;
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.engine.e1.collector.ConsistencyValidatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
@@ -90,9 +91,9 @@ public class JaggerInheritanceTest {
         Assert.assertEquals(description.getMetrics().size(), 2);
 
         //check validators queue
-        List<ValidatorProvider> validators = description.getValidators();
-        KernelSideObjectProvider validatorProvider0 = validators.get(0).getValidatorProvider();
-        KernelSideObjectProvider validatorProvider1 = validators.get(1).getValidatorProvider();
+        List< KernelSideObjectProvider<Validator>> validators = description.getValidators();
+        KernelSideObjectProvider validatorProvider0 = ((ValidatorProvider)validators.get(0)).getValidatorProvider();
+        KernelSideObjectProvider validatorProvider1 = ((ValidatorProvider)validators.get(1)).getValidatorProvider();
 
         Assert.assertEquals(validatorProvider0 instanceof ReflectionProvider, true);
         Assert.assertEquals(validatorProvider1 instanceof ConsistencyValidatorProvider, true);

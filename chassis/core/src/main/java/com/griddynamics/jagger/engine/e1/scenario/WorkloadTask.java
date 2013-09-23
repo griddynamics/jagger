@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.engine.e1.scenario;
 
 import com.google.common.collect.Lists;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.CompositableTask;
 
@@ -37,6 +38,7 @@ public class WorkloadTask implements CompositableTask {
     private String version;
     private String description = "";
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
+    private List<KernelSideObjectProvider<Validator>> validators = Lists.newLinkedList();
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors = Lists.newLinkedList();
     private WorkloadClockConfiguration clockConfiguration;
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
@@ -122,11 +124,20 @@ public class WorkloadTask implements CompositableTask {
         return terminateStrategyConfiguration.getTerminateStrategy();
     }
 
+    public List<KernelSideObjectProvider<Validator>> getValidators() {
+        return validators;
+    }
+
+    public void setValidators(List<KernelSideObjectProvider<Validator>> validators) {
+        this.validators = validators;
+    }
+
     public WorkloadTask copy() {
         WorkloadTask task = new WorkloadTask();
         task.setNumber(number);
         task.setName(name);
         task.setVersion(version);
+        task.setValidators(validators);
         task.setCollectors(collectors);
         task.setScenarioFactory(scenarioFactory);
         task.setClockConfiguration(clockConfiguration);

@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.engine.e1.scenario.Flushable;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObject;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
@@ -16,7 +17,7 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.RES
  * Time: 3:27 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Validator extends KernelSideObject{
+public class Validator extends KernelSideObject implements Flushable{
     private static final Logger log = LoggerFactory.getLogger(Validator.class);
 
     private ResponseValidator validator;
@@ -52,6 +53,7 @@ public class Validator extends KernelSideObject{
                 kernelContext.getId().toString());
     }
 
+    @Override
     public void flush() {
         log.debug("Going to store validation result in key-value storage");
 

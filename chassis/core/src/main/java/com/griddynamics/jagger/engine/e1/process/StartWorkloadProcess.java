@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.engine.e1.process;
 
 import com.griddynamics.jagger.coordinator.Command;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -31,6 +32,7 @@ public class StartWorkloadProcess implements Command<String> {
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
     private String sessionId;
     private ScenarioContext scenarioContext;
+    private List<KernelSideObjectProvider<Validator>> validators;
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors;
     private int poolSize;
 
@@ -75,6 +77,14 @@ public class StartWorkloadProcess implements Command<String> {
 
     public void setCollectors(List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors) {
         this.collectors = collectors;
+    }
+
+    public List<KernelSideObjectProvider<Validator>> getValidators() {
+        return validators;
+    }
+
+    public void setValidators(List<KernelSideObjectProvider<Validator>> validators) {
+        this.validators = validators;
     }
 
     public String getTaskId() {
