@@ -38,8 +38,8 @@ import com.griddynamics.jagger.webclient.client.handler.ShowTaskDetailsListener;
 import com.griddynamics.jagger.webclient.client.mvp.JaggerPlaceHistoryMapper;
 import com.griddynamics.jagger.webclient.client.mvp.NameTokens;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
-import com.smartgwt.client.data.RecordList;
-import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.Store;
 
 import java.util.*;
 
@@ -420,17 +420,17 @@ public class Trends extends DefaultActivity {
 
     private void onSummaryTabSelected() {
         testsMetricsPanel.showWidget(0);
-        if (summaryPanel.getSessionComparisonPanel() != null && hasChangedGrid) {
-            if (chosenMetrics.getRecordList().isEmpty()) {
-                summaryPanel.getSessionComparisonPanel().getGrid().setData(
-                        summaryPanel.getSessionComparisonPanel().getEmptyListGrid()
-                );
-            } else {
-                summaryPanel.getSessionComparisonPanel().getGrid().setData(
-                        chosenMetrics.getRecordList()
-                );
-            }
-        }
+//        if (summaryPanel.getSessionComparisonPanel() != null && hasChangedGrid) {
+//            if (chosenMetrics.getRecordList().isEmpty()) {
+//                summaryPanel.getSessionComparisonPanel().getGrid().setData(
+//                        summaryPanel.getSessionComparisonPanel().getEmptyListGrid()
+//                );
+//            } else {
+//                summaryPanel.getSessionComparisonPanel().getGrid().setData(
+//                        chosenMetrics.getRecordList()
+//                );
+//            }
+//        }
     }
 
     private void onTrendsTabSelected() {
@@ -1063,15 +1063,12 @@ public class Trends extends DefaultActivity {
                 return;
             }
             Set<MetricNameDto> metrics = ((MultiSelectionModel<MetricNameDto>) event.getSource()).getSelectedSet();
-            final ListGridRecord[] emptyData = summaryPanel.getSessionComparisonPanel().getEmptyListGrid();
 
             if (metrics.isEmpty()) {
                 // Remove plots from display which were unchecked
                 chosenMetrics.clear();
                 plotTrendsPanel.clear();
-                if (mainTabPanel.getSelectedIndex() == 0) {
-                    onSummaryTabSelected();
-                }
+                summaryPanel.getSessionComparisonPanel().clearTreeStore();
             } else {
 
                 //Generate all id of plots which should be displayed
@@ -1100,8 +1097,6 @@ public class Trends extends DefaultActivity {
                     plotTrendsPanel.remove(widget);
                 }
 
-
-
                 final ArrayList<MetricNameDto> notLoaded = new ArrayList<MetricNameDto>();
                 final ArrayList<MetricDto> loaded = new ArrayList<MetricDto>();
 
@@ -1124,16 +1119,12 @@ public class Trends extends DefaultActivity {
                     public void onSuccess(List<MetricDto> result) {
                         loaded.addAll(result);
                         MetricRankingProvider.sortMetrics(loaded);
-                        RecordList recordList = new RecordList();
-                        recordList.addList(emptyData);
-                        for (MetricDto metric : loaded){
-                            summaryPanel.getCachedMetrics().put(metric.getMetricName(), metric);
-                            recordList.add(summaryPanel.getSessionComparisonPanel().generateRecord(metric));
-                        }
-                        chosenMetrics.setRecordList(recordList);
-                        if (mainTabPanel.getSelectedIndex() == 0) {
-                            onSummaryTabSelected();
-                        }
+
+                        summaryPanel.getSessionComparisonPanel().updateTable(loaded);
+
+//                        if (mainTabPanel.getSelectedIndex() == 0) {
+//                            onSummaryTabSelected();
+//                        }
                         renderMetricPlots(loaded);
                     }
                 });
