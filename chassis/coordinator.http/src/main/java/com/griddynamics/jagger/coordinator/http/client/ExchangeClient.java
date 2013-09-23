@@ -101,9 +101,13 @@ public class ExchangeClient {
             Pack in = packResponse.getPack();
             packExchanger.process(in);
         } catch (SocketException e) {
-            packExchanger.getCommandsToSend().addAll(out.getCommands());
-            packExchanger.getResultsToSend().addAll(out.getResults());
-            log.warn("Connection lost! Pack {} will be sent again in the next exchange session!", out);
+            if (!out.isEmpty()){
+                packExchanger.getCommandsToSend().addAll(out.getCommands());
+                packExchanger.getResultsToSend().addAll(out.getResults());
+                log.warn("Connection lost! Pack {} will be sent again in the next exchange session!", out);
+            }else{
+                log.warn("Connection lost! Waiting for the next exchange session!");
+            }
         } catch (IOException e) {
             log.error("IOException during deserialization of this data ({})", str);
             throw e;
