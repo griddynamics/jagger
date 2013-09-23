@@ -23,12 +23,9 @@ package com.griddynamics.jagger.engine.e1.scenario;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.invoker.LoadInvocationListener;
 
-public abstract class ScenarioCollector<Q, R, E> extends KernelSideObject implements LoadInvocationListener<Q, R, E> {
+public abstract class ScenarioCollector<Q, R, E> extends KernelSideObject implements LoadInvocationListener<Q, R, E>, Flushable {
 
     public ScenarioCollector(String sessionId, String taskId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
     }
-
-    public abstract void flush();
-
 }

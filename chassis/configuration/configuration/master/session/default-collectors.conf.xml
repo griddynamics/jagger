@@ -36,7 +36,8 @@
         <property name="clazz" value="com.griddynamics.jagger.engine.e1.collector.DurationCollector"/>
     </bean>
 
-	<bean id="informationCollector" class="com.griddynamics.jagger.engine.e1.collector.InformationCollectorProvider">
+	<bean id="informationCollector" class="com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider">
+        <property name="clazz" value="com.griddynamics.jagger.engine.e1.collector.InformationCollector"/>
     </bean>
 
 	<bean id="diagnosticCollector" class="com.griddynamics.jagger.engine.e1.collector.DiagnosticCollectorProvider">

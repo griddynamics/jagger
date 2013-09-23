@@ -22,6 +22,8 @@ package com.griddynamics.jagger.engine.e1.process;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
+import com.griddynamics.jagger.engine.e1.scenario.Flushable;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.invoker.Invokers;
 import com.griddynamics.jagger.invoker.Scenario;
@@ -40,7 +42,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
 
     private final Executor executor;
     private final Scenario<?, ?, ?> scenario;
-    private final List<ScenarioCollector<?, ?, ?>> collectors;
+    private final List<? extends Flushable> collectors;
 
     private final AtomicInteger delay = new AtomicInteger(0);
     private final AtomicInteger startedSamples = new AtomicInteger(0);
@@ -50,7 +52,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         return new WorkloadServiceBuilder(scenario);
     }
 
-    private WorkloadService(Executor executor, Scenario<?, ?, ?> scenario, List<ScenarioCollector<?, ?, ?>> collectors) {
+    private WorkloadService(Executor executor, Scenario<?, ?, ?> scenario, List<? extends Flushable> collectors) {
         this.executor = executor;
         this.scenario = scenario;
         this.collectors = collectors;
@@ -75,7 +77,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
     @Override
     protected void shutDown() throws Exception {
         try {
-            for (ScenarioCollector collector : collectors) {
+            for (Flushable collector : collectors) {
                 collector.flush();
             }
         } catch (Throwable error) {
@@ -107,6 +109,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         private final Scenario<Object, Object, Object> scenario;
         private Executor executor = NewThreadExecutor.INSTANCE;
         private ImmutableList.Builder<ScenarioCollector<?, ?, ?>> collectors = ImmutableList.builder();
+        private ImmutableList.Builder<Validator> validators = ImmutableList.builder();
 
         private WorkloadServiceBuilder(Scenario<Object, Object, Object> scenario) {
             this.scenario = scenario;
@@ -122,35 +125,43 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
             return this;
         }
 
+        public WorkloadServiceBuilder addValidators(List<Validator> validators) {
+            this.validators.addAll(validators);
+            return this;
+        }
+
         public WorkloadServiceBuilder useExecutor(Executor executor) {
             this.executor = executor;
             return this;
         }
 
         public WorkloadService buildInfiniteService() {
-            ImmutableList<ScenarioCollector<?, ?, ?>> list = collectors.build();
+            ImmutableList<ScenarioCollector<?, ?, ?>> collectorsList = collectors.build();
+            ImmutableList<Validator> validatorList = validators.build();
 
-            scenario.setListener(Invokers.composeListeners((Iterable)list));
-            return new InfiniteWorkloadService(list);
+            scenario.setListener(Invokers.validateListener(validatorList, (Iterable) collectorsList));
+            return new InfiniteWorkloadService(Invokers.mergeFlushElements(validatorList, collectorsList));
         }
 
         public WorkloadService buildServiceWithPredefinedSamples(final int samples) {
-            ImmutableList<ScenarioCollector<?, ?, ?>> list = collectors.build();
+            ImmutableList<ScenarioCollector<?, ?, ?>> collectorsList = collectors.build();
+            ImmutableList<Validator> validatorList = validators.build();
 
-            scenario.setListener(Invokers.composeListeners((Iterable)list));
-            return new PredefinedSamplesWorkloadService(list, samples);
+            scenario.setListener(Invokers.validateListener(validatorList, (Iterable) collectorsList));
+            return new PredefinedSamplesWorkloadService(Invokers.mergeFlushElements(validatorList, collectorsList), samples);
         }
 
         public WorkloadService buildServiceWithSharedSamplesCount(final AtomicInteger samples) {
-            ImmutableList<ScenarioCollector<?, ?, ?>> list = collectors.build();
+            ImmutableList<ScenarioCollector<?, ?, ?>> collectorsList = collectors.build();
+            ImmutableList<Validator> validatorList = validators.build();
 
-            scenario.setListener(Invokers.composeListeners((Iterable)list));
-            return new SharedSamplesCountWorkloadService(list, samples);
+            scenario.setListener(Invokers.validateListener(validatorList, (Iterable) collectorsList));
+            return new SharedSamplesCountWorkloadService(Invokers.mergeFlushElements(validatorList, collectorsList), samples);
         }
 
         private class InfiniteWorkloadService extends WorkloadService {
             
-            private InfiniteWorkloadService(ImmutableList<ScenarioCollector<?, ?, ?>> list) {
+            private InfiniteWorkloadService(ImmutableList<? extends Flushable> list) {
                 super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
             }
 
@@ -164,7 +175,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
 
             private final int samples;
 
-            private PredefinedSamplesWorkloadService(ImmutableList<ScenarioCollector<?, ?, ?>> list, int samples) {
+            private PredefinedSamplesWorkloadService(ImmutableList<? extends Flushable> list, int samples) {
                 super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
                 this.samples = samples;
             }
@@ -179,7 +190,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
             
             private final AtomicInteger samplesLeft;
 
-            private SharedSamplesCountWorkloadService(ImmutableList<ScenarioCollector<?, ?, ?>> list, AtomicInteger samples) {
+            private SharedSamplesCountWorkloadService(ImmutableList<? extends Flushable> list, AtomicInteger samples) {
                 super(WorkloadServiceBuilder.this.executor, WorkloadServiceBuilder.this.scenario, list);
                 this.samplesLeft = samples;
             }

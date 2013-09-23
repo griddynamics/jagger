@@ -57,6 +57,10 @@ public class Pack implements Serializable {
         return SerializationUtils.toString(this);
     }
 
+    public boolean isEmpty(){
+        return commands.isEmpty() && results.isEmpty();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,12 +1,10 @@
 package com.griddynamics.jagger.user;
 
-import com.griddynamics.jagger.engine.e1.collector.InformationCollectorProvider;
-import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.scenario.*;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,7 +16,7 @@ import java.util.List;
  */
 public class TestDescription {
 
-    private List<ValidatorProvider> validators;
+    private List<KernelSideObjectProvider<Validator>> validators;
 
     private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> metrics;
     private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> standardCollectors;
@@ -53,11 +51,11 @@ public class TestDescription {
         this.description = description;
     }
 
-    public List<ValidatorProvider> getValidators() {
+    public List<KernelSideObjectProvider<Validator>> getValidators() {
         return validators;
     }
 
-    public void setValidators(List<ValidatorProvider> validators) {
+    public void setValidators(List<KernelSideObjectProvider<Validator>> validators) {
         this.validators = validators;
     }
 
@@ -100,16 +98,13 @@ public class TestDescription {
         prototype.setScenarioFactory(scenarioFactory);
         prototype.setName(name);
         prototype.setVersion(version);
+        prototype.setValidators(validators);
 
         List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> allMetrics = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>>(metrics.size()+ standardCollectors.size());
         allMetrics.addAll(standardCollectors);
         allMetrics.addAll(metrics);
 
-        InformationCollectorProvider informationCollector = new InformationCollectorProvider();
-        informationCollector.setValidatorsProviders(validators);
-        informationCollector.setCollectorsProviders(allMetrics);
-
-        prototype.setCollectors(Arrays.asList((KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>)informationCollector));
+        prototype.setCollectors(allMetrics);
 
         return prototype;
     }

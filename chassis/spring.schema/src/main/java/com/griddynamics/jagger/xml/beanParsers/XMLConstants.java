@@ -90,7 +90,7 @@ public class XMLConstants {
     //don't change the order!!! will not works
     public static final String STANDARD_COLLECTORS = "standardCollectors";
 
-    public static final List<String> STANDARD_WORKLOAD_LISTENERS = Arrays.asList(DURATION_COLLECTOR);
+    public static final List<String> STANDARD_WORKLOAD_LISTENERS = Arrays.asList(INFORMATION_COLLECTOR, DURATION_COLLECTOR);
 
     public static final String WORKLOAD_LISTENERS_CLASS   = "collectors";
     public static final String VALIDATOR = "validator";

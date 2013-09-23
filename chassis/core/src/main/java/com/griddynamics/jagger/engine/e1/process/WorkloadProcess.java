@@ -26,6 +26,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeProcess;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideInitializableObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
@@ -172,9 +173,15 @@ public class WorkloadProcess implements NodeProcess<WorkloadStatus> {
             collectors.add(provider.provide(sessionId, command.getTaskId(), context));
         }
 
+        List<Validator> validators = Lists.newLinkedList();
+        for (KernelSideObjectProvider<Validator> provider : command.getValidators()){
+            validators.add(provider.provide(sessionId, command.getTaskId(), context));
+        }
+
         WorkloadService.WorkloadServiceBuilder builder = WorkloadService
                 .builder(scenario)
                 .addCollectors(collectors)
+                .addValidators(validators)
                 .useExecutor(executor);
         WorkloadService thread = ( predefinedSamplesCount()) ? builder.buildServiceWithSharedSamplesCount(leftSamplesCount) : builder.buildInfiniteService();
         thread.changeDelay(delay);
