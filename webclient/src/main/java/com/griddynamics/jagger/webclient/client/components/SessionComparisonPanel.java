@@ -9,13 +9,9 @@ import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricValueDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
-import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.ValueProvider;
-import com.sencha.gxt.core.client.dom.ScrollSupport;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
-import com.sencha.gxt.widget.core.client.event.ExpandItemEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.treegrid.TreeGrid;
@@ -27,7 +23,7 @@ import java.util.*;
  * User: kirilkadurilka
  * Date: 26.03.13
  * Time: 12:30
- * To change this template use File | Settings | File Templates.
+ * Panel that contains table of metrics in comparison mod (multiple session selected)
  */
 public class SessionComparisonPanel extends VerticalPanel{
 
@@ -37,8 +33,12 @@ public class SessionComparisonPanel extends VerticalPanel{
     private final String NAME = "name";
     private final String SESSION_HEADER = "Session ";
     private final String SESSION_INFO_ID = "sessionInfo";
+    @SuppressWarnings("all")
     private final String COMMENT = "Comment";
+    @SuppressWarnings("all")
     private final int MIN_COLUMN_WIDTH = 200;
+    @SuppressWarnings("all")
+    private final String ONE_HUNDRED_PERCENTS = "100%";
 
     private TreeGrid<TreeItem> treeGrid;
     private TreeStore<TreeItem> treeStore = new TreeStore<TreeItem>(new ModelKeyProvider<TreeItem>() {
@@ -48,24 +48,15 @@ public class SessionComparisonPanel extends VerticalPanel{
         }
     });
 
-  //  private Record EMPTY_DATA = new Record(COMMENT);
     private HashMap<MetricNameDto, MetricDto> cache = new HashMap<MetricNameDto, MetricDto>();
-
-    public TreeStore<TreeItem> getTreeStore() {
-        return treeStore;
-    }
 
     public HashMap<MetricNameDto, MetricDto> getCachedMetrics() {
         return cache;
     }
 
-    public TreeGrid<TreeItem> getGrid() {
-        return treeGrid;
-    }
-
     public SessionComparisonPanel(Set<SessionDataDto> chosenSessions){
-        setWidth("100%");
-        setHeight("100%");
+        setWidth(ONE_HUNDRED_PERCENTS);
+        setHeight(ONE_HUNDRED_PERCENTS);
         init(chosenSessions);
     }
 
@@ -84,7 +75,7 @@ public class SessionComparisonPanel extends VerticalPanel{
         sortedSet.addAll(chosenSessions);
 
         ColumnConfig<TreeItem, String> nameColumn =
-                new ColumnConfig<TreeItem, String>(new MapValueProvider("name"), 2 * MIN_COLUMN_WIDTH);
+                new ColumnConfig<TreeItem, String>(new MapValueProvider(NAME), (int)(MIN_COLUMN_WIDTH * 1.5));
         nameColumn.setHeader("Metric");
         columns.add(nameColumn);
 
@@ -100,7 +91,7 @@ public class SessionComparisonPanel extends VerticalPanel{
                     if (value == null) {
                         sb.append(SafeHtmlUtils.EMPTY_SAFE_HTML);
                     } else {
-                        sb.appendHtmlConstant(value = value.replaceAll("\n", "<br>"));
+                        sb.appendHtmlConstant(value.replaceAll("\n", "<br>"));
                     }
                 }
             });
@@ -124,8 +115,9 @@ public class SessionComparisonPanel extends VerticalPanel{
     }
 
     private void addCommentRecord(Set<SessionDataDto> chosenSessions) {
+
         TreeItem sessionInfo = new TreeItem(SESSION_INFO_ID);
-        sessionInfo.put("name", "Session Info");
+        sessionInfo.put(NAME, "Session Info");
         treeStore.add(sessionInfo);
 
         TreeItem comment = new TreeItem(COMMENT);
@@ -137,15 +129,7 @@ public class SessionComparisonPanel extends VerticalPanel{
         treeGrid.expandAll();
     }
 
-
-    public void updateTable(List<MetricDto> metricDtos) {
-
-        //todo do not clear all tree, but only nodes that were unchecked
-        clearTreeStore();
-        addMetricRecords(metricDtos);
-    }
-
-
+    // clear everything but Session Information
     public void clearTreeStore() {
 
         for (TreeItem root : treeStore.getRootItems()) {
@@ -212,7 +196,44 @@ public class SessionComparisonPanel extends VerticalPanel{
         treeStore.add(testName, record);
     }
 
-   // private static int id = 0;
+
+    public void removeRecords(List<MetricDto> list) {
+
+        for (MetricDto metric : list) {
+            removeRecord(metric);
+        }
+    }
+
+    private void removeRecord(MetricDto metric) {
+
+        String description = metric.getMetricName().getTests().getDescription();
+        String testName = metric.getMetricName().getTests().getTaskName();
+        String metricName = metric.getMetricName().getName();
+
+        for (TreeItem root : treeStore.getRootItems()) {
+            if (description.equals(root.get(NAME))) {
+                for (TreeItem child : treeStore.getChildren(root)) {
+                    if (testName.equals(child.get(NAME))) {
+                        for (TreeItem record : treeStore.getChildren(child)) {
+                            if (metricName.equals(record.get(NAME))) {
+                                treeStore.remove(record);
+                                if (!treeStore.hasChildren(child)) {
+                                    treeStore.remove(child);
+                                    if (!treeStore.hasChildren(root)) {
+                                        treeStore.remove(root);
+                                    }
+                                }
+                                return;
+                            }
+                        }
+                        return;
+                    }
+                }
+                return;
+            }
+        }
+    }
+
     private class TreeItem extends HashMap<String, String> {
 
         String key;
@@ -221,10 +242,7 @@ public class SessionComparisonPanel extends VerticalPanel{
             return key;
         }
 
-        private void setKey(String key) {
-            this.key = key;
-        }
-
+        @SuppressWarnings("unused")
         public TreeItem() {}
 
         public TreeItem(String key) {
@@ -243,7 +261,6 @@ public class SessionComparisonPanel extends VerticalPanel{
                 put(SESSION_HEADER + metricValue.getSessionId(), metricValue.getValueRepresentation());
             }
         }
-
     }
 
     private class MapValueProvider implements ValueProvider<TreeItem, String> {

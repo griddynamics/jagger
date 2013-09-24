@@ -231,7 +231,7 @@ public class Trends extends DefaultActivity {
      * fields that contain gid/plot information
      * to provide rendering in time of choosing special tab(mainTab) to avoid view problems
      */
-    MetricFullData chosenMetrics = new MetricFullData();
+    HashMap<String, MetricDto> chosenMetrics = new HashMap<String, MetricDto>();
     Map<String, List<PlotSeriesDto>> chosenPlots = new TreeMap<String, List<PlotSeriesDto>>();
 
     /**
@@ -240,7 +240,6 @@ public class Trends extends DefaultActivity {
      */
     private ArrayList<String> chosenSessions = new ArrayList<String>();
     //tells if trends plot should be redraw
-    private boolean hasChangedGrid = false;
     private boolean hasChanged = false;
 
     public void updatePlace(TrendsPlace place){
@@ -420,25 +419,14 @@ public class Trends extends DefaultActivity {
 
     private void onSummaryTabSelected() {
         testsMetricsPanel.showWidget(0);
-//        if (summaryPanel.getSessionComparisonPanel() != null && hasChangedGrid) {
-//            if (chosenMetrics.getRecordList().isEmpty()) {
-//                summaryPanel.getSessionComparisonPanel().getGrid().setData(
-//                        summaryPanel.getSessionComparisonPanel().getEmptyListGrid()
-//                );
-//            } else {
-//                summaryPanel.getSessionComparisonPanel().getGrid().setData(
-//                        chosenMetrics.getRecordList()
-//                );
-//            }
-//        }
     }
 
     private void onTrendsTabSelected() {
         testsMetricsPanel.showWidget(0);
         mainTabPanel.forceLayout();
-        if (!chosenMetrics.getMetrics().isEmpty() && hasChanged) {
+        if (!chosenMetrics.isEmpty() && hasChanged) {
             plotTrendsPanel.clear();
-            for(Map.Entry<String, MetricDto> entry : chosenMetrics.getMetrics().entrySet()) {
+            for(Map.Entry<String, MetricDto> entry : chosenMetrics.entrySet()) {
                 renderPlots(
                         plotTrendsPanel,
                         Arrays.asList(entry.getValue().getPlotSeriesDto()),
@@ -1055,7 +1043,6 @@ public class Trends extends DefaultActivity {
         @Override
         public void onSelectionChange(SelectionChangeEvent event) {
 
-            hasChangedGrid = true;
             hasChanged = true;
             if (summaryPanel.getSessionComparisonPanel() == null) {
                 plotTrendsPanel.clear();
@@ -1071,20 +1058,40 @@ public class Trends extends DefaultActivity {
                 summaryPanel.getSessionComparisonPanel().clearTreeStore();
             } else {
 
+                final ArrayList<MetricNameDto> notLoaded = new ArrayList<MetricNameDto>();
+                final ArrayList<MetricDto> loaded = new ArrayList<MetricDto>();
+
+                for (MetricNameDto metricName : metrics){
+                    if (!summaryPanel.getCachedMetrics().containsKey(metricName)){
+                        notLoaded.add(metricName);
+                    }else{
+                        MetricDto metric = summaryPanel.getCachedMetrics().get(metricName);
+
+                        // if we have not checked it on previous selection, but already cached it
+                        if (!chosenMetrics.values().contains(metric)) {
+                            summaryPanel.getSessionComparisonPanel().addMetricRecord(metric);
+                        }
+
+                        loaded.add(metric);
+                    }
+                }
+
                 //Generate all id of plots which should be displayed
                 Set<String> selectedMetricsIds = new HashSet<String>();
                 for (MetricNameDto plotNameDto : metrics) {
                     selectedMetricsIds.add(generateMetricPlotId(plotNameDto));
                 }
 
+                List<MetricDto> toRemoveFromTable = new ArrayList<MetricDto>();
                 // Remove plots from display which were unchecked
-                Set<String> metricIdsSet = new HashSet<String>(chosenMetrics.getMetrics().keySet());
+                Set<String> metricIdsSet = new HashSet<String>(chosenMetrics.keySet());
                 for (String plotId : metricIdsSet) {
                     if (!selectedMetricsIds.contains(plotId)) {
-                        chosenMetrics.getMetrics().remove(plotId);
+                        toRemoveFromTable.add(chosenMetrics.get(plotId));
+                        chosenMetrics.remove(plotId);
                     }
                 }
-                metricIdsSet = chosenMetrics.getMetrics().keySet();
+                metricIdsSet = chosenMetrics.keySet();
                 List<Widget> toRemove = new ArrayList<Widget>();
                 for (int i = 0; i < plotTrendsPanel.getWidgetCount(); i ++ ) {
                     Widget widget = plotTrendsPanel.getWidget(i);
@@ -1096,18 +1103,7 @@ public class Trends extends DefaultActivity {
                 for (Widget widget : toRemove) {
                     plotTrendsPanel.remove(widget);
                 }
-
-                final ArrayList<MetricNameDto> notLoaded = new ArrayList<MetricNameDto>();
-                final ArrayList<MetricDto> loaded = new ArrayList<MetricDto>();
-
-                for (MetricNameDto metricName : metrics){
-                    if (!summaryPanel.getCachedMetrics().containsKey(metricName)){
-                        notLoaded.add(metricName);
-                    }else{
-                        MetricDto metric = summaryPanel.getCachedMetrics().get(metricName);
-                        loaded.add(metric);
-                    }
-                }
+                summaryPanel.getSessionComparisonPanel().removeRecords(toRemoveFromTable);
 
                 MetricDataService.Async.getInstance().getMetrics(notLoaded, new AsyncCallback<List<MetricDto>>() {
                     @Override
@@ -1120,11 +1116,8 @@ public class Trends extends DefaultActivity {
                         loaded.addAll(result);
                         MetricRankingProvider.sortMetrics(loaded);
 
-                        summaryPanel.getSessionComparisonPanel().updateTable(loaded);
+                        summaryPanel.getSessionComparisonPanel().addMetricRecords(result);
 
-//                        if (mainTabPanel.getSelectedIndex() == 0) {
-//                            onSummaryTabSelected();
-//                        }
                         renderMetricPlots(loaded);
                     }
                 });
@@ -1141,8 +1134,8 @@ public class Trends extends DefaultActivity {
                 // Generate DOM id for plot
                 final String id = generateMetricPlotId(metric.getMetricName());
 
-                if (!chosenMetrics.getMetrics().containsKey(id)) {
-                    chosenMetrics.getMetrics().put(id, metric);
+                if (!chosenMetrics.containsKey(id)) {
+                    chosenMetrics.put(id, metric);
                 }
             }
             if (mainTabPanel.getSelectedIndex() == 1) {
