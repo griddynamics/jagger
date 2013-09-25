@@ -418,7 +418,10 @@ public class Trends extends DefaultActivity {
     }
 
     private void onSummaryTabSelected() {
+        mainTabPanel.forceLayout();
         testsMetricsPanel.showWidget(0);
+        // to make columns fit 100% width if grid created not on Summary Tab
+        summaryPanel.getSessionComparisonPanel().refresh();
     }
 
     private void onTrendsTabSelected() {
@@ -885,7 +888,6 @@ public class Trends extends DefaultActivity {
                         }
                     }
                 }
-                SelectionChangeEvent.fire( metricPanel.getSelectionModel());
             }
         }
 
@@ -901,7 +903,6 @@ public class Trends extends DefaultActivity {
                         }
                     }
                 }
-                SelectionChangeEvent.fire(plotNameSelectionModel);
             }
         }
     }
@@ -1067,7 +1068,7 @@ public class Trends extends DefaultActivity {
                     }else{
                         MetricDto metric = summaryPanel.getCachedMetrics().get(metricName);
 
-                        // if we have not checked it on previous selection, but already cached it
+                        // if we have not checked it on previous selection, but already cached it some time
                         if (!chosenMetrics.values().contains(metric)) {
                             summaryPanel.getSessionComparisonPanel().addMetricRecord(metric);
                         }

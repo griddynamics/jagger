@@ -129,6 +129,12 @@ public class SessionComparisonPanel extends VerticalPanel{
         treeGrid.expandAll();
     }
 
+
+    // // to make columns fit 100% width if grid created not on Summary Tab
+    public void refresh() {
+        treeGrid.getView().refresh(true);
+    }
+
     // clear everything but Session Information
     public void clearTreeStore() {
 
