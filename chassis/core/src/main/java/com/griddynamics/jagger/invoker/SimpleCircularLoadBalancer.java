@@ -25,7 +25,6 @@ import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
 
-//@todo add an ability to use in xml configuration
 public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
 
     @Override
@@ -33,7 +32,8 @@ public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBal
 
         return new AbstractIterator<Pair<Q,E>> () {
 
-            private int size = pairSupplier.size();
+            private PairSupplier<Q, E> pairs = getPairSupplier();
+            private int size = pairs.size();
             private int index = 0;
 
             @Override
@@ -41,7 +41,7 @@ public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBal
                 if(index >= size) {
                     index = 0;
                 }
-                return pairSupplier.get(index++);
+                return pairs.get(index++);
             }
 
             @Override

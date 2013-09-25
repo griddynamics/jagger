@@ -20,31 +20,25 @@
 
 package com.griddynamics.jagger.invoker;
 
-// @todo add an ability to use in xml configuration
 public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
-    protected PairSupplierFactory<Q, E> pairSupplierFactory;
-
-    protected PairSupplier<Q, E> pairSupplier;
+    private PairSupplierFactory<Q, E> pairSupplierFactory;
+    private PairSupplier<Q, E> pairSupplier;
 
     public void setPairSupplierFactory(PairSupplierFactory<Q, E> pairSupplierFactory) {
         this.pairSupplierFactory = pairSupplierFactory;
     }
 
-    @Override
-    public void setEndpointProvider(Iterable<E> endpointProvider) {
-        super.setEndpointProvider(endpointProvider);
-        if (this.endpointProvider != null && this.queryProvider != null) {
-            pairSupplier = pairSupplierFactory.create(this.queryProvider, this.endpointProvider);
+    protected PairSupplier<Q, E> getPairSupplier(){
+        if (endpointProvider == null || queryProvider == null){
+            throw new NullPointerException("Init query and endpoint providers!");
         }
-    }
 
-    @Override
-    public void setQueryProvider(Iterable<Q> queryProvider) {
-        super.setQueryProvider(queryProvider);
-        if (this.endpointProvider != null && this.queryProvider != null) {
-            pairSupplier = pairSupplierFactory.create(this.queryProvider, this.endpointProvider);
+        if (pairSupplier == null){
+            pairSupplier = pairSupplierFactory.create(queryProvider, endpointProvider);
         }
+
+        return pairSupplier;
     }
 
 }
