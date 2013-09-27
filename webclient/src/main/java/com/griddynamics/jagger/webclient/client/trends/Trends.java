@@ -1011,26 +1011,17 @@ public class Trends extends DefaultActivity {
                 }
 
             } else {
-                TaskDataDto selectObject = null;
                 Set<TestsMetrics> testsMetrics = place.getSelectedTestsMetrics();
                 for (TaskDataDto taskDataDto : tests){
                     for (TestsMetrics testMetric : testsMetrics){
                         if (testMetric.getTestName().equals(taskDataDto.getTaskName())){
-                            if (selectObject == null) selectObject = taskDataDto;
                             model.setSelected(taskDataDto, true);
                         }
                     }
                 }
                 model.addSelectionChangeHandler(new TestSelectChangeHandler());
 
-                //fire event
-                if (selectObject != null){
-                    model.setSelected(selectObject, true);
-                }
-                else{
-                    //nothing to select
-                    selectTests = true;
-                }
+                SelectionChangeEvent.fire(model);
             }
             previousSelectedSet.clear();
         }

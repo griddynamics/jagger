@@ -163,6 +163,7 @@ public class SessionComparisonPanel extends VerticalPanel{
 
         String descriptionString = record.get(TEST_DESCRIPTION);
         String testNameString = record.get(TEST_NAME);
+        String metricName = record.get(NAME);
 
         if (descriptionString == null || testNameString == null)
             return;
@@ -173,6 +174,11 @@ public class SessionComparisonPanel extends VerticalPanel{
 
                 for (TreeItem testName : treeStore.getAllChildren(testDescriptionPath)) {
                     if (testName.get(NAME).equals(testNameString)) {
+                        for (TreeItem rec : treeStore.getChildren(testName)) {
+                            if (rec.get(NAME).equals(metricName)) {
+                                return;
+                            }
+                        }
                         treeStore.add(testName, record);
                         return;
                     }
