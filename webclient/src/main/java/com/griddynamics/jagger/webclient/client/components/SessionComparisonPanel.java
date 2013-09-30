@@ -2,8 +2,8 @@ package com.griddynamics.jagger.webclient.client.components;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.griddynamics.jagger.webclient.client.dto.MetricDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
@@ -39,6 +39,8 @@ public class SessionComparisonPanel extends VerticalPanel{
     private final int MIN_COLUMN_WIDTH = 200;
     @SuppressWarnings("all")
     private final String ONE_HUNDRED_PERCENTS = "100%";
+
+    private final String WHITE_SPACE_NORMAL = "white-space: normal";
 
     private TreeGrid<TreeItem> treeGrid;
     private TreeStore<TreeItem> treeStore = new TreeStore<TreeItem>(new ModelKeyProvider<TreeItem>() {
@@ -88,13 +90,19 @@ public class SessionComparisonPanel extends VerticalPanel{
             column.setCell(new AbstractCell<String>() {
                 @Override
                 public void render(Context context, String value, SafeHtmlBuilder sb) {
-                    if (value == null) {
-                        sb.append(SafeHtmlUtils.EMPTY_SAFE_HTML);
-                    } else {
-                        sb.appendHtmlConstant(value.replaceAll("\n", "<br>"));
+                    if (value != null) {
+                        sb.appendHtmlConstant(value);
                     }
                 }
             });
+
+            column.setColumnTextStyle(new SafeStyles() {
+                @Override
+                public String asString() {
+                    return WHITE_SPACE_NORMAL;
+                }
+            });
+
             columns.add(column);
         }
 
