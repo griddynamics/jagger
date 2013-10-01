@@ -35,27 +35,33 @@ public class AvgMetricAggregatorProvider  implements MetricAggregatorProvider {
 
     private static class AvgMetricAggregator  implements MetricAggregator {
 
-        long sum = 0;
+        Long sum = null;
         long count = 0;
 
         @Override
         public void append(Integer calculated) {
+            if (sum == null)
+                sum = new Long(0);
+
             sum += calculated;
             ++count;
         }
 
         @Override
         public Integer getAggregated() {
+            if (sum == null)
+                return null;
+
             if (count == 0) {
                 return 0;
             }
-            double result = (double) sum / count;
+            double result = (double) sum.longValue() / count;
             return (int) result;
         }
 
         @Override
         public void reset() {
-            sum = 0;
+            sum = null;
             count = 0;
         }
 

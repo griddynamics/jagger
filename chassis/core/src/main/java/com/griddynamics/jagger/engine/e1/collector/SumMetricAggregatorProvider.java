@@ -39,30 +39,36 @@ public class SumMetricAggregatorProvider implements MetricAggregatorProvider {
 
         Logger log = LoggerFactory.getLogger(SumMetricAggregator.class);
 
-        long sum = 0;
+        Long sum = null;
 
         @Override
         public void append(Integer calculated) {
             log.debug("append({})", calculated);
+            if (sum == null)
+                sum = new Long(0);
+
             sum += calculated;
         }
 
         @Override
         public Integer getAggregated() {
-            if (sum > Integer.MAX_VALUE) {
+            if (sum == null)
+                return null;
+
+            if (sum.longValue() > Integer.MAX_VALUE) {
                 log.warn("Aggregate value '{}' greater than Integer.MAX_VALUE. Return Integer.MAX_VALUE", sum);
                 return Integer.MAX_VALUE;
-            } else if (sum < Integer.MIN_VALUE) {
+            } else if (sum.longValue() < Integer.MIN_VALUE) {
                 log.warn("Aggregate value '{}' smaller than Integer.MIN_VALUE. Return Integer.MIN_VALUE", sum);
                 return Integer.MIN_VALUE;
             }
-            return (int) sum;
+            return sum.intValue();
         }
 
         @Override
         public void reset() {
             log.debug("Reset aggregator");
-            sum = 0;
+            sum = null;
         }
 
         @Override

@@ -37,7 +37,7 @@ public class StdDevMetricAggregatorProvider implements MetricAggregatorProvider 
 
     private static  class StdDevMetricAggregator implements MetricAggregator {
 
-        List<Integer> points = Lists.newLinkedList();
+        List<Integer> points = null;
 
 
         private double getMean() {
@@ -52,11 +52,16 @@ public class StdDevMetricAggregatorProvider implements MetricAggregatorProvider 
 
         @Override
         public void append(Integer calculated) {
+            if (points == null)
+                points = Lists.newLinkedList();
             points.add(calculated);
         }
 
         @Override
         public Integer getAggregated() {
+            if (points == null)
+                return null;
+
             double mean = getMean();
             double sum = 0;
 
@@ -69,7 +74,7 @@ public class StdDevMetricAggregatorProvider implements MetricAggregatorProvider 
 
         @Override
         public void reset() {
-            points.clear();
+            points = null;
         }
 
         @Override

@@ -218,19 +218,41 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     for (MetricLogEntry logEntry : fileReader) {
                         log.debug("Log entry {} time", logEntry.getTime());
                         if (entry.isNeedPlotData()) {
-                            while (logEntry.getTime() > currentInterval) {
-                                statistics.add(new MetricDetails(time, aggregatedMetricName, intervalAggregator.getAggregated(), taskData));
+                            while (logEntry.getTime() > currentInterval){
+                                // we leave current interval or current interval is empty
+                                Integer aggregated = intervalAggregator.getAggregated();
+                                if (aggregated != null){
+                                    // we leave interval
+                                    // we have some info in interval aggregator
+                                    // we need to save it
+                                    statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated, taskData));
+                                    intervalAggregator.reset();
 
-                                intervalAggregator.reset();
-
-                                time += intervalSize;
-                                currentInterval += intervalSize;
+                                    // go for the next interval
+                                    time += intervalSize;
+                                    currentInterval += intervalSize;
+                                }else{
+                                    // current interval is empty
+                                    // we will extend it
+                                    while (logEntry.getTime() > currentInterval){
+                                        time += intervalSize;
+                                        currentInterval += intervalSize;
+                                    }
+                                }
                             }
                             intervalAggregator.append((int) logEntry.getMetric());
                         }
                         overallMetricAggregator.append((int) logEntry.getMetric());
                     }
+
+                    Integer aggregated = intervalAggregator.getAggregated();
+                    if (aggregated != null){
+                        statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated, taskData));
+                        intervalAggregator.reset();
+                    }
+
                     persistAggregatedMetricValue(aggregatedMetricName, overallMetricAggregator.getAggregated());
+                    ///
                 } finally {
                     if (fileReader != null) {
                         fileReader.close();
