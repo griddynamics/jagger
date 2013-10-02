@@ -1,0 +1,63 @@
+digraph g {
+    rankdir="LR";
+    node[
+        shape		= Mrecord,
+        style		= "filled",
+        fillcolor	= "lightgrey",
+        color	  	= "#87CEEB"
+        penwidth	= 1,
+        fontsize	= 12,
+    ];
+    fontsize=14;
+    labeljust="l";
+
+    edge[style=invis, fontsize=12];
+	
+    { rank=same;
+        "00" [style = invis];
+        "01" [style = invis];        
+        "00" -> "01";
+    }
+
+	node[fixedsize=true,width="2.5"];
+
+    subgraph cluster_Master {
+		I_invoke_pos -> I_invoke_neg[style=invis];								
+		label="Invoker";
+    }
+
+	subgraph cluster_Kernel
+	 {		
+		{
+			rank=same;
+			C_valNull -> C_valCons -> C_valCust -> C_metDef -> C_metCust -> C_colCust -> C_cont[style=solid,constraint=false];
+		}						
+					 
+		C_valNull -> C_invoked_fail[style=solid,label="on Fail"];
+		C_valCons -> C_invoked_fail[style=solid,label="on Fail"];
+		C_valCust -> C_invoked_fail[style=solid,label="on Fail"];
+		C_invoked_fail->C_colCust [style=solid];
+		
+		label="Collectors";
+	}
+	
+    "00" -> I_invoke_pos[style=invis];
+    "01" -> C_valNull[style=invis];
+	
+    // edges between clusters
+    edge[constraint=false, style=solid];
+ 	I_invoke_pos -> C_valNull[style=solid];
+	I_invoke_neg -> C_invoked_fail[style=solid];	
+	
+	I_invoke_pos	[label	= "Invoke pass\ninvoked ++", URL = "\ref Main_Invokers_General_group"];
+	I_invoke_neg	[label	= "Exception occured\ninvoked ++", URL = "\ref Main_Invokers_General_group"];
+	C_invoked_fail	[label	= "failed ++"];
+	C_valNull		[label	= "Not null validator", URL = "\ref Main_Collectors_group"];
+	C_valCons		[label	= "Consistency validator", URL = "\ref Main_Collectors_group"];
+	C_valCust		[label	= "Custom validator", URL = "\ref Main_HowToCustomizeCollectors_group"];
+	C_metDef		[label	= "Default metric\n(f.e. duration)"];
+	C_metCust		[label	= "Custom metric", URL = "\ref Main_HowToCustomizeCollectors_group"];
+	C_colCust		[label	= "Custom collector", URL = "\ref Main_HowToCustomizeCollectors_group"];
+	C_cont			[label	= "Continue ..."];
+
+}

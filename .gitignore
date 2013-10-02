@@ -2,3 +2,16 @@
 /*.ipr
 /*.iws
 /*.log
+/.idea/
+/archetype-examples/jagger-suite-archetype-examples.iml
+/archetype-examples/target/
+/archetype/jagger-suite-archetype.iml
+/archetype/target/
+/chassis/providers/chassis.providers.iml
+/chassis/providers/target/
+/chassis/spring.schema/chassis.spring.schema.iml
+/chassis/spring.schema/target/
+/doc/latex/
+/jagger/
+/test/jagger-test/jagger-test.iml
+

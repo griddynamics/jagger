@@ -140,6 +140,7 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @defgroup Main_Invokers_Base_group Invoker
 /// @defgroup Main_Distributors_Base_group Distributor
 /// @defgroup Main_Collectors_Base_group Collector
+/// @details @ref Main_Collectors_General_group
 
 
 /* **************** Implementations ************************* */
@@ -147,5 +148,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @defgroup Main_Providers_group Implementations of providers
 /// @defgroup Main_Distributors_group Implementations of distributors
 /// @defgroup Main_Collectors_group Implementations of collectors
+/// @details @ref Main_Collectors_General_group
 /// @defgroup Main_DecisionMakers_group Implementations of decision makers
 /// @defgroup Main_Terminators_group Implementations of termination strategies

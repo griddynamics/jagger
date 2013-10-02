@@ -11,6 +11,10 @@
         <source>src/main/java/invoker/PageVisitorInvoker.java</source>
         <source>src/main/java/provider/FileReaderIterable.java</source>
         <source>src/main/java/validator/ResponseFromFileValidator.java</source>
+        <source>src/main/java/collector/SuccessRateCollector.java</source>
+        <source>src/main/java/provider/ProviderOfFailCountAggregator.java</source>
+        <source>src/main/java/provider/ProviderOfSuccessRateAggregator.java</source>
+        <source>src/main/java/provider/ProviderOfSuccessRateCollector.java</source>
     </sources>
     <resources>
         <resource>src/main/resources/profiles/basic/environment.properties</resource>

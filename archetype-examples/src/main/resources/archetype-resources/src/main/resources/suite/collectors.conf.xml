@@ -33,4 +33,8 @@
     <bean id="responseSize" class="${package}.calculator.ResponseSize"/>
     <!-- end: following section is used for docu generation - metric calculator -->
 
+    <!-- begin: following section is used for docu generation - custom collector -->
+    <bean id="successRateCollector" class="${package}.provider.ProviderOfSuccessRateCollector"/>
+    <!-- end: following section is used for docu generation - custom collector -->
+
 </beans>

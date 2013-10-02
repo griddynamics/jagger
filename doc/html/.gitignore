@@ -1,2 +1,5 @@
 *.*
 setup/
+!tab-panel.css
+!tab-panel.js
+!header.html

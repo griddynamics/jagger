@@ -26,7 +26,10 @@ import java.io.Serializable;
  * @author Grid Dynamics
  * @n
  * @par Details:
- * @details Such kind of collector is helpful, when you would like to calculate some info from response. The sum of calculates will be stored in database.
+ * @details Simplified type of collector. @n
+ * Such kind of collector is helpful, when you would like to calculate some info from response. The result of calculation will be stored in database. @n
+ * @n
+ * To view default implementations of collectors click here @ref Main_Collectors_group
  *
  * @param <R> - type of response
  *
@@ -39,6 +42,6 @@ public interface MetricCalculator<R> extends Serializable {
      *
      * @param response - response of invocation
      *
-     * @return the result of calculating*/
+     * @return the result of calculation */
 	Integer calculate(R response);
 }

@@ -197,8 +197,13 @@ TAB_SIZE               = 8
 # will result in a user-defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = "xlink{1}=<a href='./xsd/http___www.griddynamics.com_schema_jagger/element/\1.html'>\1</a>" \
-                         "xlink{2}=<a href='./xsd/http___www.griddynamics.com_schema_jagger/element/\1.html#attr_\2'>\2</a>"
+ALIASES                = "xlink{1}=<a href='./xsd/http___www.griddynamics.com_schema_jagger/element/\1.html'>\1</a>"
+ALIASES                += "xlink{2}=<a href='./xsd/http___www.griddynamics.com_schema_jagger/element/\1.html#attr_\2'>\2</a>"
+ALIASES                += example_begin="@htmlonly <div id=\"tabFrame\"><div id=\"tabMenuDiv\">"
+ALIASES                += example_addmenu{2}="<span class=\"tabMenuActive\" id=\"tabMenu\1\" onclick=\"return raisePanel(\1)\" onmouseover=\"mouseOver(\1)\" onmouseout=\"mouseOut(\1)\">\2</span>"
+ALIASES                += example_begin_content{1}="</div><div style=\"z-index: 2;\" class=\"tabPane\" id=\"tabPane\1\"> @endhtmlonly"
+ALIASES                += example_end_content="@htmlonly </div><div>"
+ALIASES                += example_end="</div><div id=\"tabFiller\"></div></div> @endhtmlonly"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
@@ -659,6 +664,7 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/LoadBalancer.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCalculator.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCollector.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/sessioncomparation/DecisionMaker.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/scenario/TerminationStrategy.java \
                          ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/creators/ObjectCreator.java \
@@ -684,7 +690,10 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/scenario/UserTerminationStrategy.java \
                          ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/creators/StringCreator.java  \
                          ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/FileProvider.java  \
-                         ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/CsvProvider.java
+                         ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/CsvProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCollectorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorProvider.java
+
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -939,7 +948,9 @@ HTML_FILE_EXTENSION    = .html
 # have to redo this when upgrading to a newer version of doxygen or when
 # changing the value of configuration settings such as GENERATE_TREEVIEW!
 
-HTML_HEADER            =
+#doxygen -w html header.html footer.html stylesheet.css ./doc/setup/Doxyfile
+HTML_HEADER            = ./doc/html/header.html
+#HTML_HEADER            =
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for
 # each generated HTML page. If it is left blank doxygen will generate a

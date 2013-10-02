@@ -52,7 +52,7 @@ public abstract class ApacheAbstractHttpInvoker<Q> implements Invoker<Q, HttpRes
 
     /** Executes http request via apache http client
      * @author Mairbek Khadikov
-     * @ns
+     * @n
      *
      * @param query    - input data for the invocation
      * @param endpoint - url of target service
