@@ -1,8 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1hessian_1_1HessianInvoker_3_01S_00_01Q_00_01R_01_4.html" title="Abstract class for invokers which create request to Hessian services. " alt="" coords="120,5,387,51"/>
-<area shape="rect" id="node5" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1http_1_1ApacheAbstractHttpInvoker_3_01Q_01_4.html" title="This class creates http request to the services of SuT. " alt="" coords="132,74,375,121"/>
-<area shape="rect" id="node7" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1http_1_1HttpVisitorInvoker.html" title="Creates http request via java.net.URL. " alt="" coords="132,143,375,190"/>
-<area shape="rect" id="node9" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1http_1_1TcpTrafficInvoker.html" title="Creates TCP connections. " alt="" coords="132,213,375,259"/>
-<area shape="rect" id="node11" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1soap_1_1SOAPInvoker.html" title="Create a SOAP request to SuT. " alt="" coords="129,282,377,329"/>
-<area shape="rect" id="node13" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1stubs_1_1WaitingInvoker_3_01Q_00_01R_00_01E_01_4.html" title="Sleeps for specified time. " alt="" coords="127,351,380,398"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1ResponseValidator_3_01Q_00_01E_00_01R_01_4.html" title="Validates the result of invocation. " alt="" coords="177,39,460,86"/>
+<area shape="rect" id="node5" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1ConsistencyValidator_3_01Q_00_01E_00_01R_01_4.html" title="Compare invocation result with calibration result. " alt="" coords="511,5,793,51"/>
+<area shape="rect" id="node7" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1NotNullResponseValidator_3_01Q_00_01E_00_01R_01_4.html" title="Validates that invocation result is not null. " alt="" coords="511,74,793,121"/>
 </map>

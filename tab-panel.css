@@ -1,0 +1,86 @@
+
+
+/*
+ * This is used just to have a position: relative so I can then put the tabbed panels in it.
+ * it is ugly and a mess, I wonder what people where thinking when they thought about this
+ * boxing model.
+ */
+div#tabFrame
+   {
+   position: relative;
+	margin: 0px 8px 0px 0px;
+	margin-left: 1cm;
+   }
+
+
+div#tabMenuDiv
+   {
+   /* position MUST be relative so to palce this and the TabFiller into a common z-order reference
+    * this fix the Internet Explorer crappy BUG
+    */
+   position: relative;
+   /* since the z-index is four this will be on top of the tabFiller border */
+   z-index: 4;  
+   }
+
+/* this is used to fill the tabs with something so they do not mess up with the page
+ * This div will be used to set the size of the tabPane, the width is automatic.
+ * so, basically, the only thing to set is the height, use the em unit !
+ */
+div#tabFiller
+   {
+   /* position MUST be relative so to palce this and the TabFiller into a common z-order reference
+    * this fix the Internet Explorer crappy BUG
+    */
+   position: relative;
+   border: 1px solid #84b0c7; 
+   background-color: #d5e1e8;
+   height: auto;
+   min-height: 200px;
+   /* z-Index must be lower than the one of tabMenuDiv since this div should be below it */
+   z-index:1;
+   }
+
+/*
+ * This defines the general properties of the tabMenu something like borders, colors, etc.
+ * One important property is the z-index, it must be above the other panels.
+ */
+span.tabMenu, span.tabMenuActive, span.tabMenuOver
+   {
+   /* the background must be the same as the tabFiller background */
+	border: 1px solid #84b0c7;
+	background-color: #d5e1e8;
+   margin: 0px 0px 0px 12px;     /* this moves the buttons to the right */
+   padding: 0px 12px 0px 10px;
+   color: #1A419D
+   }
+
+span.tabMenuActive
+   {
+   /* the color must be the same as the tabFiller background */
+   border-bottom: 1px solid #d5e1e8;
+   color: #000000
+   }
+
+span.tabMenuOver
+   {
+   /* You can set whatever foreground and background color you wish */
+	background-color: #e8eef2
+   }
+
+
+/* the various tab panels are in absolute position relative to the parent, so basically
+ * they all overlap one with the other.
+ * The problem is that their size is dependent on the content and therefore that has to be adjusted.
+ * to do this I need of javascript...
+ * If you want to define some special fonts for the tabbed pane, do it here.
+ */
+div.tabPane
+  {
+  position: absolute;
+  overflow: auto;
+  /* the background of this must be the same of tabFiller */
+	background-color: #e8eef2;
+   margin: 2px 2px 2px 2px;
+  }
+
