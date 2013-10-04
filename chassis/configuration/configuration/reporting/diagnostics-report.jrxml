@@ -31,7 +31,7 @@
         <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="name" class="java.lang.String"/>
-    <field name="total" class="java.lang.Integer"/>
+    <field name="total" class="java.lang.Double"/>
     <detail>
         <band height="10" splitType="Stretch">
             <textField>
@@ -42,7 +42,7 @@
             <textField>
                 <reportElement style="Compact_Header_Bold" x="110" y="0" width="300" height="10"/>
                 <textElement/>
-                <textFieldExpression class="java.lang.Integer"><![CDATA[$F{total}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[new java.text.DecimalFormat("0.0###").format(Double.valueOf($F{total}))]]></textFieldExpression>
             </textField>
         </band>
     </detail>

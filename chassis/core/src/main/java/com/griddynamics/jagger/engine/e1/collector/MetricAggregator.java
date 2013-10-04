@@ -27,9 +27,9 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 public interface MetricAggregator {
 
-    void append(Integer calculated);
+    void append(Number calculated);
 
-    Integer getAggregated();
+    Number getAggregated();
 
     void reset();
 

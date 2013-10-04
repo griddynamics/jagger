@@ -4,9 +4,12 @@ import ca.nanometrics.gflot.client.event.PlotHoverListener;
 import ca.nanometrics.gflot.client.event.PlotItem;
 import ca.nanometrics.gflot.client.event.PlotPosition;
 import ca.nanometrics.gflot.client.jsni.Plot;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
+
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -35,7 +38,7 @@ public class ShowCurrentValueHoverListener implements PlotHoverListener {
             popupPanelContent.setHTML("<table width=\"100%\"><tr><td>Plot</td><td>"+label+"</td></tr>" +
                     "<tr><td>" + xAxisLabel + "</td><td>" +
                     ((chosenSessions != null) ? chosenSessions.get((int)xAxis) : xAxis ) +
-                    "</td></tr><tr><td>Value</td><td>" + item.getDataPoint().getY() + "</td></tr></table>");
+                    "</td></tr><tr><td>Value</td><td>" + NumberFormat.getFormat("0.0###").format(item.getDataPoint().getY()) + "</td></tr></table>");
 
             int clientWidth = Window.getClientWidth();
 

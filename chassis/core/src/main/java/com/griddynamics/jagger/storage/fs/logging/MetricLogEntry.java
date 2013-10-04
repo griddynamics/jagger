@@ -9,10 +9,10 @@ package com.griddynamics.jagger.storage.fs.logging;
  */
 public class MetricLogEntry extends LogEntry<DurationLogEntry> {
 
-    private long metric;
+    private Number metric;
     private String metricName;
 
-    public MetricLogEntry(long time, String metricName, long metric) {
+    public MetricLogEntry(long time, String metricName, Number metric) {
         super(time);
         this.metricName=metricName;
         this.metric = metric;
@@ -26,11 +26,11 @@ public class MetricLogEntry extends LogEntry<DurationLogEntry> {
         this.metricName = metricName;
     }
 
-    public long getMetric() {
+    public Number getMetric() {
         return this.metric;
     }
 
-    public void setMetric(long metric) {
+    public void setMetric(Number metric) {
         this.metric = metric;
     }
 
