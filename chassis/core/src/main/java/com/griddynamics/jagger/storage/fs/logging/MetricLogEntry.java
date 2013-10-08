@@ -7,12 +7,12 @@ package com.griddynamics.jagger.storage.fs.logging;
  * Time: 16:12
  * To change this template use File | Settings | File Templates.
  */
-public class MetricLogEntry extends LogEntry<DurationLogEntry> {
+public class MetricLogEntry extends LogEntry<MetricLogEntry> {
 
-    private long metric;
+    private Double metric;
     private String metricName;
 
-    public MetricLogEntry(long time, String metricName, long metric) {
+    public MetricLogEntry(long time, String metricName, Double metric) {
         super(time);
         this.metricName=metricName;
         this.metric = metric;
@@ -26,11 +26,11 @@ public class MetricLogEntry extends LogEntry<DurationLogEntry> {
         this.metricName = metricName;
     }
 
-    public long getMetric() {
+    public Double getMetric() {
         return this.metric;
     }
 
-    public void setMetric(long metric) {
+    public void setMetric(Double metric) {
         this.metric = metric;
     }
 

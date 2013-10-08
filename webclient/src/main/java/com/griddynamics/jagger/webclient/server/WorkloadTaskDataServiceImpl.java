@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -221,7 +222,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             if (!metrics.isEmpty()) {
                 Map<String, String> metricsMap = new TreeMap<String, String>();
                 for (Object[] objects : metrics) {
-                    metricsMap.put(objects[0].toString(), objects[1].toString());
+                    metricsMap.put(objects[0].toString(), new DecimalFormat("0.0###").format(objects[1]));
                 }
                 dto.setCustomMetrics(metricsMap);
             }

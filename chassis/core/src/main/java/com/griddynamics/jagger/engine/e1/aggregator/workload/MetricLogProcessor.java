@@ -220,12 +220,12 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         if (entry.isNeedPlotData()) {
                             while (logEntry.getTime() > currentInterval){
                                 // we leave current interval or current interval is empty
-                                Integer aggregated = intervalAggregator.getAggregated();
+                                Number aggregated = intervalAggregator.getAggregated();
                                 if (aggregated != null){
                                     // we leave interval
                                     // we have some info in interval aggregator
                                     // we need to save it
-                                    statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated, taskData));
+                                    statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
                                     intervalAggregator.reset();
 
                                     // go for the next interval
@@ -240,15 +240,17 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                     }
                                 }
                             }
-                            intervalAggregator.append((int) logEntry.getMetric());
+                            intervalAggregator.append(logEntry.getMetric());
                         }
-                        overallMetricAggregator.append((int) logEntry.getMetric());
+                        overallMetricAggregator.append(logEntry.getMetric());
                     }
 
-                    Integer aggregated = intervalAggregator.getAggregated();
-                    if (aggregated != null){
-                        statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated, taskData));
-                        intervalAggregator.reset();
+                    if (intervalAggregator != null){
+                        Number aggregated = intervalAggregator.getAggregated();
+                        if (aggregated != null){
+                            statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
+                            intervalAggregator.reset();
+                        }
                     }
 
                     persistAggregatedMetricValue(aggregatedMetricName, overallMetricAggregator.getAggregated());
@@ -271,7 +273,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             return metricAggregatorProviders;
         }
 
-        private void persistAggregatedMetricValue(String metricName, Integer value) {
+        private void persistAggregatedMetricValue(String metricName, Number value) {
 
             WorkloadData workloadData = getWorkloadData(taskData.getSessionId(), taskData.getTaskId());
             if(workloadData == null) {
@@ -289,7 +291,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
 
             entity = new DiagnosticResultEntity();
             entity.setName(metricName);
-            entity.setTotal(value);
+            entity.setTotal(value.doubleValue());
             entity.setWorkloadData(workloadData);
 
             getHibernateTemplate().persist(entity);

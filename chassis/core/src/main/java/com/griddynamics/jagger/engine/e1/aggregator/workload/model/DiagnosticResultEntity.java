@@ -27,7 +27,7 @@ public class DiagnosticResultEntity {
 
     private Long id;
     private String name;
-    private Integer total;
+    private Double total;
     private WorkloadData workloadData;
 
     @Id
@@ -58,11 +58,11 @@ public class DiagnosticResultEntity {
         return name;
     }
 
-    public Integer getTotal() {
+    public Double getTotal() {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Double total) {
         this.total = total;
     }
 

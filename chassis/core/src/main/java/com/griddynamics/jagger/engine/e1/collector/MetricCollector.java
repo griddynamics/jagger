@@ -60,7 +60,7 @@ public class MetricCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
         LogWriter logWriter = kernelContext.getService(LogWriter.class);
         long startTime = endTime - duration;
         logWriter.log(sessionId, taskId + File.separatorChar + METRIC_MARKER + File.separatorChar + name, kernelContext.getId().getIdentifier(),
-                new MetricLogEntry(startTime, name,  metricCalculator.calculate(result)));
+                new MetricLogEntry(startTime, name,  metricCalculator.calculate(result).doubleValue()));
     }
 
     @Override

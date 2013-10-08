@@ -25,11 +25,11 @@ package com.griddynamics.jagger.engine.e1.collector;
  *         Date: 17.07.13
  */
 
-public interface MetricAggregator {
+public interface MetricAggregator<C extends Number> {
 
-    void append(Integer calculated);
+    void append(C calculated);
 
-    Integer getAggregated();
+    C getAggregated();
 
     void reset();
 

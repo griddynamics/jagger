@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -157,8 +158,7 @@ public class MetricDataServiceImpl implements MetricDataService {
                         MetricValueDto value = new MetricValueDto();
 
                         DiagnosticResultEntity metric = (DiagnosticResultEntity)mas[0];
-                        value.setValue(metric.getTotal().toString());
-
+                        value.setValue(new DecimalFormat("0.0###").format(metric.getTotal()));
                         value.setSessionId(Long.parseLong(mas[1].toString()));
                         dto.getValues().add(value);
                     }

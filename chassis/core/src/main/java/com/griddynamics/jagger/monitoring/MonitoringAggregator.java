@@ -103,6 +103,11 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
         try {
             AggregationInfo aggregationInfo = logAggregator.chronology(dir, aggregatedFile);
 
+            if(aggregationInfo.getCount() == 0) {
+                //metric not collected
+                return;
+            }
+
             long intervalSize = (aggregationInfo.getMaxTime() - aggregationInfo.getMinTime()) / (long) (pointCount - 1);
             if (intervalSize < 1) {
                 intervalSize = 1;

@@ -34,7 +34,7 @@ import java.io.Serializable;
  * @param <R> - type of response
  *
  * @ingroup Main_Collectors_Base_group */
-public interface MetricCalculator<R> extends Serializable {
+public interface MetricCalculator<R> extends AbstractMetricCalculator<R, Number>, Serializable {
 
     /**Returns a number, which was calculated from response
      * @author Grid Dynamics
@@ -43,5 +43,5 @@ public interface MetricCalculator<R> extends Serializable {
      * @param response - response of invocation
      *
      * @return the result of calculation */
-	Integer calculate(R response);
+	Number calculate(R response);
 }

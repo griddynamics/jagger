@@ -40,7 +40,7 @@ public class DiagnosticCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
 	private final MetricCalculator<R> metricCalculator;
     private final String name;
 
-	private int metric = 0;
+	private double metric = 0;
 
     public DiagnosticCollector(String sessionId, String taskId, NodeContext kernelContext, MetricCalculator<R> metricCalculator, String name) {
         super(sessionId, taskId, kernelContext);
@@ -63,7 +63,7 @@ public class DiagnosticCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
 
     @Override
     public void onSuccess(Q query, E endpoint, R result, long duration) {
-		metric += metricCalculator.calculate(result);
+		metric += metricCalculator.calculate(result).doubleValue();
     }
 
     @Override

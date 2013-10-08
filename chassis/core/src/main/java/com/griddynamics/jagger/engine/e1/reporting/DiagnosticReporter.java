@@ -34,14 +34,14 @@ public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
     private static final Logger log = LoggerFactory.getLogger(DiagnosticReporter.class);
 
     public static class DiagnosticResult {
-        private int total;
+        private double total;
         private String name;
 
-        public int getTotal() {
+        public double getTotal() {
             return total;
         }
 
-        public void setTotal(int total) {
+        public void setTotal(double total) {
             this.total = total;
         }
 
@@ -78,7 +78,7 @@ public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
 
     private DiagnosticResult convert(DiagnosticResultEntity entity) {
         String name  = entity.getName();
-        Integer total = entity.getTotal();
+        Double total = entity.getTotal();
 
         DiagnosticResult result = new DiagnosticResult();
         result.setTotal(total);
