@@ -16,10 +16,10 @@ import java.util.Set;
 @RemoteServiceRelativePath("rpc/SessionDataService")
 public interface SessionDataService extends RemoteService {
 
-    PagedSessionDataDto getAll(int start, int length);
-    PagedSessionDataDto getByDatePeriod(int start, int length, Date from, Date to);
-    PagedSessionDataDto getBySessionIds(int start, int length, Set<String> sessionIds);
-    SessionDataDto getBySessionId(String sessionId);
+    PagedSessionDataDto getAll(int start, int length) throws RuntimeException;
+    PagedSessionDataDto getByDatePeriod(int start, int length, Date from, Date to) throws RuntimeException;
+    PagedSessionDataDto getBySessionIds(int start, int length, Set<String> sessionIds) throws RuntimeException;
+    SessionDataDto getBySessionId(String sessionId) throws RuntimeException;
 
     public static class Async {
         private static final SessionDataServiceAsync ourInstance = (SessionDataServiceAsync) GWT.create(SessionDataService.class);

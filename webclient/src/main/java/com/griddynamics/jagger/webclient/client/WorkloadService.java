@@ -14,7 +14,7 @@ import java.util.List;
 @RemoteServiceRelativePath("rpc/WorkloadService")
 public interface WorkloadService extends RemoteService {
 
-    List<WorkloadDetailsDto> getWorkloadDetailsForSession(List<String> sessionIds);
+    List<WorkloadDetailsDto> getWorkloadDetailsForSession(List<String> sessionIds) throws RuntimeException;
 
     public static class Async {
         private static final WorkloadServiceAsync ourInstance = (WorkloadServiceAsync) GWT.create(WorkloadService.class);

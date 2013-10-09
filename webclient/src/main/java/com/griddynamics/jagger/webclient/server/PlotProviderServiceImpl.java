@@ -165,7 +165,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     }
 
     @Override
-    public Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots) {
+    public Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots) throws IllegalArgumentException{
         Map<PlotNameDto,List<PlotSeriesDto>> result = new HashMap<PlotNameDto, List<PlotSeriesDto>>(plots.size());
         for (PlotNameDto plot : plots){
             result.put(plot, getPlotData(plot.getTaskIds(), plot.getPlotName()));
@@ -298,7 +298,8 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         }
         if (plotDataProvider == null){
             log.warn("getPlotData was invoked with unsupported plotName={}", plotName);
-            throw new UnsupportedOperationException("Plot type " + plotName + " doesn't supported");
+            throw new UnsupportedOperationException("Can not find data for plot \"" + plotName +
+                    "\". \nProbably it is link problem");
         }
 
         return plotDataProvider;

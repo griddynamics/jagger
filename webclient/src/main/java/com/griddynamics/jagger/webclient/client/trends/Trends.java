@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.*;
+import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
 import com.griddynamics.jagger.webclient.client.components.MetricPanel;
 import com.griddynamics.jagger.webclient.client.components.SessionPlotPanel;
 import com.griddynamics.jagger.webclient.client.components.SummaryPanel;
@@ -38,8 +39,6 @@ import com.griddynamics.jagger.webclient.client.handler.ShowTaskDetailsListener;
 import com.griddynamics.jagger.webclient.client.mvp.JaggerPlaceHistoryMapper;
 import com.griddynamics.jagger.webclient.client.mvp.NameTokens;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
-import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.Store;
 
 import java.util.*;
 
@@ -249,18 +248,7 @@ public class Trends extends DefaultActivity {
         this.place = place;
         final TrendsPlace finalPlace = this.place;
         if (place.getSelectedSessionIds().isEmpty()){
-
-            sessionsDataGrid.getSelectionModel().addSelectionChangeHandler(new SessionSelectChangeHandler());
-
-            selectTests = true;
-            testDataGrid.getSelectionModel().addSelectionChangeHandler(new TestSelectChangeHandler());
-
-            TaskDataTreeViewModel viewModel = (TaskDataTreeViewModel)taskDetailsTree.getTreeViewModel();
-            viewModel.getSelectionModel().addSelectionChangeHandler(new TaskPlotSelectionChangedHandler());
-
-            metricPanel.addSelectionListener(new MetricsSelectionChangedHandler());
-
-            chooseTab(place.getToken());
+            noSessionsFromLink();
             return;
         }
 
@@ -268,6 +256,8 @@ public class Trends extends DefaultActivity {
             @Override
             public void onFailure(Throwable caught) {
                 caught.printStackTrace();
+                new ExceptionPanel(caught.getMessage());
+                noSessionsFromLink();
             }
 
             @Override
@@ -281,6 +271,20 @@ public class Trends extends DefaultActivity {
             }
         });
         History.newItem(NameTokens.EMPTY);
+    }
+
+    private void noSessionsFromLink() {
+        sessionsDataGrid.getSelectionModel().addSelectionChangeHandler(new SessionSelectChangeHandler());
+
+        selectTests = true;
+        testDataGrid.getSelectionModel().addSelectionChangeHandler(new TestSelectChangeHandler());
+
+        TaskDataTreeViewModel viewModel = (TaskDataTreeViewModel)taskDetailsTree.getTreeViewModel();
+        viewModel.getSelectionModel().addSelectionChangeHandler(new TaskPlotSelectionChangedHandler());
+
+        metricPanel.addSelectionListener(new MetricsSelectionChangedHandler());
+
+        chooseTab(place.getToken());
     }
 
     private void filterSessions(Set<SessionDataDto> sessionDataDtoSet) {
@@ -950,6 +954,8 @@ public class Trends extends DefaultActivity {
                 @Override
                 public void onFailure(Throwable caught) {
                     caught.printStackTrace();
+                    new ExceptionPanel(caught.getMessage());
+                    ((MultiSelectionModel)sessionsDataGrid.getSelectionModel()).clear();
                 }
 
                 @Override
@@ -980,6 +986,8 @@ public class Trends extends DefaultActivity {
                     @Override
                     public void onFailure(Throwable throwable) {
                         throwable.printStackTrace();
+                        new ExceptionPanel(throwable.getMessage());
+                        sessionPlotPanel.clearPlots();
                     }
 
                     @Override
@@ -1101,6 +1109,8 @@ public class Trends extends DefaultActivity {
                     @Override
                     public void onFailure(Throwable caught) {
                         caught.printStackTrace();
+                        new ExceptionPanel(caught.getMessage());
+                        metricPanel.getSelectionModel().clear();
                     }
 
                     @Override
@@ -1159,7 +1169,10 @@ public class Trends extends DefaultActivity {
 
                     @Override
                     public void onFailure(Throwable caught) {
+
                         caught.printStackTrace();
+                        new ExceptionPanel(caught.getLocalizedMessage());
+                        ((TaskDataTreeViewModel)taskDetailsTree.getTreeViewModel()).getSelectionModel().clear();
                     }
 
                     @Override
@@ -1255,6 +1268,7 @@ public class Trends extends DefaultActivity {
                             @Override
                             public void onFailure(Throwable caught) {
                                  caught.printStackTrace();
+                                 new ExceptionPanel(caught.getMessage());
                             }
 
                             @Override

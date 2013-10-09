@@ -15,9 +15,9 @@ import java.util.Set;
 @RemoteServiceRelativePath("rpc/TaskDataService")
 public interface TaskDataService extends RemoteService {
 
-    List<TaskDataDto> getTaskDataForSession(String sessionId);
+    List<TaskDataDto> getTaskDataForSession(String sessionId) throws RuntimeException;
 
-    List<TaskDataDto> getTaskDataForSessions(Set<String> sessionIds);
+    List<TaskDataDto> getTaskDataForSessions(Set<String> sessionIds) throws RuntimeException;
 
     public static class Async {
         private static final TaskDataServiceAsync ourInstance = (TaskDataServiceAsync) GWT.create(TaskDataService.class);
