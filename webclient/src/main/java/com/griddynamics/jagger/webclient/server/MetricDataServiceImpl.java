@@ -221,7 +221,7 @@ public class MetricDataServiceImpl implements MetricDataService {
 
         for (MetricValueDto value: metricList) {
             double temp = Double.parseDouble(value.getValue());
-            list.add(new PointDto(iter ++, temp));
+            list.add(new PointDto(value.getSessionId(), temp));
             if (yMinimum == Double.MAX_VALUE || temp < yMinimum)
                 yMinimum = temp;
         }

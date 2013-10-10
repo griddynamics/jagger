@@ -324,7 +324,8 @@ public class Trends extends DefaultActivity {
         setupSettingsPanel();
     }
 
-    private SimplePlot createPlot(final String id, Markings markings, String xAxisLabel, double yMinimum, boolean isMetric) {
+    private SimplePlot createPlot(final String id, Markings markings, String xAxisLabel,
+                                  double yMinimum, boolean isMetric, final List<String> sessionIds) {
         PlotOptions plotOptions = new PlotOptions();
         plotOptions.setZoomOptions(new ZoomOptions().setAmount(1.02));
         plotOptions.setGlobalSeriesOptions(new GlobalSeriesOptions()
@@ -338,8 +339,8 @@ public class Trends extends DefaultActivity {
                     .setTickFormatter(new TickFormatter() {
                         @Override
                         public String formatTickValue(double tickValue, Axis axis) {
-                            if (tickValue >= 0 && tickValue < chosenSessions.size())
-                                return chosenSessions.get((int) tickValue);
+                            if (tickValue >= 0 && tickValue < sessionIds.size())
+                                return sessionIds.get((int) tickValue);
                             else
                                 return "";
                         }
@@ -372,7 +373,7 @@ public class Trends extends DefaultActivity {
 
         // add hover listener
         if (isMetric) {
-            plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent, xAxisLabel, chosenSessions), false);
+            plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent, xAxisLabel, sessionIds), false);
         } else {
             plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent, xAxisLabel, null), false);
         }
@@ -679,16 +680,38 @@ public class Trends extends DefaultActivity {
                 markingsMap.put(id, new TreeSet<MarkingDto>(plotSeriesDto.getMarkingSeries()));
             }
 
-            final SimplePlot plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric);
-            redrawingPlot = plot;
-            PlotModel plotModel = plot.getModel();
+            final SimplePlot plot;
+            PlotModel plotModel;
+            if (isMetric) {
+                List <String> sessionIds = new ArrayList<String>();
+                for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
+                    // find all sessions in plot
+                    for (PointDto pointDto : plotDatasetDto.getPlotData()) {
+                        sessionIds.add(String.valueOf((int)pointDto.getX()));
+                    }
+                }
+                plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric, sessionIds);
+                plotModel = plot.getModel();
+                redrawingPlot = plot;
+                int iter = 0;
+                for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
+                    SeriesHandler handler = plotModel.addSeries(plotDatasetDto.getLegend(), plotDatasetDto.getColor());
+                    // Populate plot with data
+                    for (PointDto pointDto : plotDatasetDto.getPlotData()) {
+                        handler.add(new DataPoint(iter ++, pointDto.getY()));
+                    }
+                }
+            } else {
+                plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric, null);
+                plotModel = plot.getModel();
+                redrawingPlot = plot;
+                for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
+                    SeriesHandler handler = plotModel.addSeries(plotDatasetDto.getLegend(), plotDatasetDto.getColor());
 
-            for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
-                SeriesHandler handler = plotModel.addSeries(plotDatasetDto.getLegend(), plotDatasetDto.getColor());
-
-                // Populate plot with data
-                for (PointDto pointDto : plotDatasetDto.getPlotData()) {
-                    handler.add(new DataPoint(pointDto.getX(), pointDto.getY()));
+                    // Populate plot with data
+                    for (PointDto pointDto : plotDatasetDto.getPlotData()) {
+                        handler.add(new DataPoint(pointDto.getX(), pointDto.getY()));
+                    }
                 }
             }
 
