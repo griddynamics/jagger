@@ -155,6 +155,15 @@ public class JaggerConfigurationTest {
         Assert.assertEquals("MaxFileDescriptorCount", metric.getAttributes()[0]);
     }
 
+    @Test
+    public void mertric1Test() throws Exception {
+        MetricCollectorProvider mcp = (MetricCollectorProvider)ctx.getBean("metric1");
+        Assert.assertNull("should be null", mcp.getDisplayName());
+
+        mcp = (MetricCollectorProvider)ctx.getBean("metric2");
+        Assert.assertEquals("DISPLAY_NAME", mcp.getDisplayName());
+    }
+
     private void checkListOnNull(List list){
         for (Object o : list){
             Assert.assertNotNull(o);

@@ -47,19 +47,31 @@ public class MetricDetails {
     private String metric;
 
     @Column
+    private String displayName;
+
+    @Column
     private double value;
 
     @ManyToOne
     private TaskData taskData;
 
-    public MetricDetails(long time, String metric, double value, TaskData taskData) {
+    public MetricDetails(long time, String metric, String displayName, double value, TaskData taskData) {
         this.time = time;
         this.metric = metric;
         this.value = value;
         this.taskData = taskData;
+        this.displayName = displayName;
     }
 
     public MetricDetails() {
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public Long getId() {
