@@ -124,7 +124,9 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
             }
             for (String metricName : aggregatedByTasks.get(taskId).keySet()) {
                 List<MetricDetails> taskStats = aggregatedByTasks.get(taskId).get(metricName);
-                    XYSeries plotEntry = new XYSeries(metricName);
+                String displayName = taskStats.iterator().next().getDisplayName();
+                if (displayName == null || displayName.isEmpty()) displayName = metricName;
+                    XYSeries plotEntry = new XYSeries(displayName);
                     for (MetricDetails stat : taskStats) {
                         plotEntry.add(stat.getTime(), stat.getValue());
                     }
@@ -133,8 +135,8 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
                     Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(plotCollection, null);
                     plotCollection = pair.getSecond();
                     JFreeChart chartMetric = ChartHelper.createXYChart(null, plotCollection,
-                            "Time (" + pair.getFirst() + ")", metricName, 2, 2, ChartHelper.ColorTheme.LIGHT);
-                taskPlot.addPlot(new MetricPlotDTO(metricName, new JCommonDrawableRenderer(chartMetric)));
+                            "Time (" + pair.getFirst() + ")", displayName, 2, 2, ChartHelper.ColorTheme.LIGHT);
+                taskPlot.addPlot(new MetricPlotDTO(displayName, new JCommonDrawableRenderer(chartMetric)));
             }
         }
         return taskPlots;
