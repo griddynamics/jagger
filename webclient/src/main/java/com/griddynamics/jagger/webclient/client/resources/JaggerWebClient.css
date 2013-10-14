@@ -211,3 +211,12 @@ input[type="text"] {
     display: inline-block;
     vertical-align: bottom;
 }
+
+.exceptionPanel {
+    max-width: 600px;
+    text-wrap: normal
+}
+
+.exceptionPanel i {
+    font-size: x-small;
+}

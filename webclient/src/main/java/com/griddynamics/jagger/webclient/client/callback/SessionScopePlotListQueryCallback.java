@@ -1,15 +1,14 @@
 package com.griddynamics.jagger.webclient.client.callback;
 
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.HasDirection;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.griddynamics.jagger.webclient.client.PlotsServingBase;
+import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 
 import java.util.Set;
@@ -36,7 +35,7 @@ public class SessionScopePlotListQueryCallback extends PlotsServingBase implemen
 
     @Override
     public void onFailure(Throwable caught) {
-        Window.alert("Error is occurred during server request processing (Session scope plot names for task fetching)");
+        new ExceptionPanel("Error is occurred during server request processing (Session scope plot names for task fetching)");
     }
 
     @Override

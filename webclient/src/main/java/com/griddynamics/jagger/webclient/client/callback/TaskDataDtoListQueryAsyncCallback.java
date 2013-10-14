@@ -1,9 +1,9 @@
 package com.griddynamics.jagger.webclient.client.callback;
 
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class TaskDataDtoListQueryAsyncCallback implements AsyncCallback<List<Tas
 
     @Override
     public void onFailure(Throwable caught) {
-        Window.alert("Error is occurred during server request processing (Task data fetching)");
+        new ExceptionPanel("Error is occurred during server request processing (Task data fetching)");
     }
 
     @Override

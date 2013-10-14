@@ -19,6 +19,7 @@ public class TrendsPlace extends PlaceWithParameters {
     private Set<String> selectedSessionIds = Collections.EMPTY_SET;
     private Set<TestsMetrics> selectedTestsMetrics = Collections.EMPTY_SET;
     private Set<String> sessionTrends = Collections.EMPTY_SET;
+    private String url;
 
     public TrendsPlace(String token){
         this.token = token;
@@ -163,5 +164,13 @@ public class TrendsPlace extends PlaceWithParameters {
             }
         }
 
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }
