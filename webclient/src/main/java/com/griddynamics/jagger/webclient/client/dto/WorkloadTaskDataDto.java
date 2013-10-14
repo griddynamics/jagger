@@ -33,14 +33,14 @@ public class WorkloadTaskDataDto implements Serializable {
     private BigDecimal avgLatency;
     private BigDecimal stdDevLatency;
     private List<String> latency;
-    private Map<String, String> customMetrics;
+    private Map<String, String> customInfoCollectors;
 
-    public Map<String, String> getCustomMetrics() {
-        return customMetrics;
+    public Map<String, String> getCustomInfoCollectors() {
+        return customInfoCollectors;
     }
 
-    public void setCustomMetrics(Map<String, String> customMetrics) {
-        this.customMetrics = customMetrics;
+    public void setCustomInfoCollectors(Map<String, String> customInfoCollectors) {
+        this.customInfoCollectors = customInfoCollectors;
     }
 
     public String getName() {

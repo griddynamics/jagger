@@ -96,7 +96,7 @@ public class TestPanel extends HorizontalPanel {
 
     private Widget getDetailts(WorkloadTaskDataDto taskData){
 
-        Map<String, String> customMetrics = taskData.getCustomMetrics();
+        Map<String, String> customMetrics = taskData.getCustomInfoCollectors();
         int numOfCustomMetrics = 0;
         if (customMetrics != null) {
             numOfCustomMetrics = customMetrics.size();
