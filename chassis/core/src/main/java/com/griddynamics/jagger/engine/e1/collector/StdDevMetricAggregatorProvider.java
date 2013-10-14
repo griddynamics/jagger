@@ -30,15 +30,31 @@ import java.util.List;
 
 public class StdDevMetricAggregatorProvider implements MetricAggregatorProvider {
 
+    String displayName;
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     @Override
     public MetricAggregator provide() {
-        return new StdDevMetricAggregator();
+        return new StdDevMetricAggregator(displayName);
     }
 
     private static  class StdDevMetricAggregator implements MetricAggregator<Number> {
 
         List<Number> points = null;
+        String displayName;
 
+        public StdDevMetricAggregator () {}
+
+        public StdDevMetricAggregator (String displayName) {
+            this.displayName = displayName;
+        }
 
         private double getMean() {
             double sum = 0;
@@ -81,6 +97,11 @@ public class StdDevMetricAggregatorProvider implements MetricAggregatorProvider 
         @Override
         public String getName() {
             return "std_dev";
+        }
+
+        @Override
+        public String getDisplayName() {
+            return this.displayName;
         }
 
         @Override

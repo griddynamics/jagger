@@ -30,22 +30,40 @@ import org.slf4j.LoggerFactory;
 
 public class SumMetricAggregatorProvider implements MetricAggregatorProvider {
 
+    String displayName;
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     @Override
     public MetricAggregator provide() {
-        return new SumMetricAggregator();
+        return new SumMetricAggregator(displayName);
     }
 
     private static class SumMetricAggregator implements MetricAggregator<Number> {
+
+        private String displayName;
 
         Logger log = LoggerFactory.getLogger(SumMetricAggregator.class);
 
         Double sum = null;
 
+        public SumMetricAggregator() {}
+
+        public SumMetricAggregator(String displayName) {
+            this.displayName = displayName;
+        }
+
         @Override
         public void append(Number calculated) {
             log.debug("append({})", calculated);
             if (sum == null)
-                sum = new Double(0);
+                sum = 0d;
 
             sum += calculated.doubleValue();
         }
@@ -55,7 +73,7 @@ public class SumMetricAggregatorProvider implements MetricAggregatorProvider {
             if (sum == null)
                 return null;
 
-            return sum.doubleValue();
+            return sum;
         }
 
         @Override
@@ -67,6 +85,11 @@ public class SumMetricAggregatorProvider implements MetricAggregatorProvider {
         @Override
         public String getName() {
             return "sum";
+        }
+
+        @Override
+        public String getDisplayName() {
+            return displayName;
         }
 
         @Override

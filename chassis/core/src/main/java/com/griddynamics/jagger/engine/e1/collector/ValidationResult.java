@@ -24,17 +24,27 @@ import java.io.Serializable;
 
 public class ValidationResult implements Serializable {
     private final String name;
+    private final String displayName;
     private final int invoked;
     private final int failed;
 
     public static ValidationResult create(String name, int invoked, int failed) {
-        return new ValidationResult(name, invoked, failed);
+        return create(name, null, invoked, failed);
     }
 
-    private ValidationResult(String name, int invoked, int failed) {
+    public static ValidationResult create(String name, String displayName, int invoked, int failed) {
+        return new ValidationResult(name, displayName, invoked, failed);
+    }
+
+    private ValidationResult(String name,String displayName, int invoked, int failed) {
         this.name = name;
         this.invoked = invoked;
         this.failed = failed;
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getName() {
@@ -75,6 +85,7 @@ public class ValidationResult implements Serializable {
     public String toString() {
         return "ValidationResult{" +
                 "name='" + name + '\'' +
+                "displayName='" + displayName + '\'' +
                 ", invoked=" + invoked +
                 ", failed=" + failed +
                 '}';

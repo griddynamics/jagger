@@ -210,12 +210,25 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
 
                 String aggregatedMetricName = metricName + "-" + overallMetricAggregator.getName();
 
+                String metricDName = entry.getMetricDisplayName();
+                if (metricDName == null || metricDName.isEmpty()) {
+                    metricDName = metricName;
+                }
+                String aggregatorDName = overallMetricAggregator.getDisplayName();
+                if (aggregatorDName == null || aggregatorDName.isEmpty()) {
+                    aggregatorDName = overallMetricAggregator.getName();
+                }
+
+                String aggregatedDisplayName =  metricDName + "-" + aggregatorDName;
+
+
                 long currentInterval = aggregationInfo.getMinTime() + intervalSize;
                 long time = 0;
 
                 try {
                     fileReader = logReader.read(path, MetricLogEntry.class);
                     for (MetricLogEntry logEntry : fileReader) {
+
                         log.debug("Log entry {} time", logEntry.getTime());
                         if (entry.isNeedPlotData()) {
                             while (logEntry.getTime() > currentInterval){
@@ -225,7 +238,12 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                     // we leave interval
                                     // we have some info in interval aggregator
                                     // we need to save it
-                                    statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
+                                    statistics.add(new MetricDetails(
+                                            time,
+                                            aggregatedMetricName,
+                                            aggregatedDisplayName,
+                                            aggregated.doubleValue(),
+                                            taskData));
                                     intervalAggregator.reset();
 
                                     // go for the next interval
@@ -248,12 +266,12 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     if (intervalAggregator != null){
                         Number aggregated = intervalAggregator.getAggregated();
                         if (aggregated != null){
-                            statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
+                            statistics.add(new MetricDetails(time, aggregatedMetricName, aggregatedDisplayName, aggregated.doubleValue(), taskData));
                             intervalAggregator.reset();
                         }
                     }
 
-                    persistAggregatedMetricValue(aggregatedMetricName, overallMetricAggregator.getAggregated());
+                    persistAggregatedMetricValue(aggregatedMetricName, aggregatedDisplayName, overallMetricAggregator.getAggregated());
                     ///
                 } finally {
                     if (fileReader != null) {
@@ -273,7 +291,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             return metricAggregatorProviders;
         }
 
-        private void persistAggregatedMetricValue(String metricName, Number value) {
+        private void persistAggregatedMetricValue(String metricName, String displayName, Number value) {
 
             WorkloadData workloadData = getWorkloadData(taskData.getSessionId(), taskData.getTaskId());
             if(workloadData == null) {
@@ -293,6 +311,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             entity.setName(metricName);
             entity.setTotal(value.doubleValue());
             entity.setWorkloadData(workloadData);
+            entity.setDisplayName(displayName);
 
             getHibernateTemplate().persist(entity);
         }
