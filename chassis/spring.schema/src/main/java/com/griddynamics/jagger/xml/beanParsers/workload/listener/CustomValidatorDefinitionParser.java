@@ -21,7 +21,7 @@ public class CustomValidatorDefinitionParser extends AbstractValidatorDefinition
     private static final Logger log = LoggerFactory.getLogger(CustomValidatorDefinitionParser.class);
 
     @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         ReflectionProvider provider = new ReflectionProvider();
         try{
             provider.setClazz(Class.forName(element.getAttribute(XMLConstants.VALIDATOR)));

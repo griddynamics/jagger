@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 public class ConsistencyDefinitionParser extends AbstractValidatorDefinitionParser {
 
     @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         BeanDefinitionBuilder validatorBean = BeanDefinitionBuilder.genericBeanDefinition(ConsistencyValidatorProvider.class);
         String queryEq = element.getAttribute(XMLConstants.QUERY_EQ);
         String endpointEq = element.getAttribute(XMLConstants.ENDPOINT_EQ);
