@@ -97,8 +97,13 @@ public class WorkloadValidationReporter extends AbstractMappedReportProvider<Str
         Integer total = entity.getTotal();
         Integer failed = entity.getFailed();
 
+        String displayName = entity.getDisplayName();
+        if (displayName == null || displayName.isEmpty()) {
+            displayName = entity.getValidator();
+        }
+
         ValidationResult result = new ValidationResult();
-        result.setValidator(entity.getValidator());
+        result.setValidator(displayName);
         result.setTotal(total);
         result.setFailed(failed);
 

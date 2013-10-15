@@ -5,6 +5,7 @@ import com.griddynamics.jagger.agent.model.JmxMetricGroup;
 import com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
+import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
@@ -153,6 +154,27 @@ public class JaggerConfigurationTest {
         Assert.assertEquals("OperatingSystem", metric.getGroupName());
         Assert.assertEquals(1, metric.getAttributes().length);
         Assert.assertEquals("MaxFileDescriptorCount", metric.getAttributes()[0]);
+    }
+
+    @Test
+    public void mertric1Test() throws Exception {
+        MetricCollectorProvider mcp = (MetricCollectorProvider)ctx.getBean("metric1");
+        Assert.assertNull("should be null", mcp.getDisplayName());
+
+        mcp = (MetricCollectorProvider)ctx.getBean("metric2");
+        Assert.assertEquals("DISPLAY_NAME", mcp.getDisplayName());
+    }
+
+    @Test
+    public void validator1Test() throws Exception {
+        ValidatorProvider vp = (ValidatorProvider)ctx.getBean("validator1");
+        Assert.assertEquals("not equals", "displayName", vp.getDisplayName());
+    }
+
+    @Test
+    public void validator2Test() throws Exception {
+        ValidatorProvider vp = (ValidatorProvider)ctx.getBean("validator2");
+        Assert.assertNull("should be NULL", vp.getDisplayName());
     }
 
     private void checkListOnNull(List list){

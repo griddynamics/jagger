@@ -77,7 +77,8 @@ public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
     }
 
     private DiagnosticResult convert(DiagnosticResultEntity entity) {
-        String name  = entity.getName();
+        String name  = entity.getDisplayName();
+        if (name == null || name.isEmpty()) name = entity.getName();
         Double total = entity.getTotal();
 
         DiagnosticResult result = new DiagnosticResult();

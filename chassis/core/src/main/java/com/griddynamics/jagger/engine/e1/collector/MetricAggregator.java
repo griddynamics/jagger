@@ -34,4 +34,6 @@ public interface MetricAggregator<C extends Number> {
     void reset();
 
     String getName();  //name
+
+    String getDisplayName();
 }
