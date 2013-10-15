@@ -683,6 +683,14 @@
         </xsd:annotation>
     </xsd:element>
 
+    <xsd:element name="metric-success-rate" type="metric-success-rate" substitutionGroup="metric">
+        <xsd:annotation>
+            <xsd:documentation>
+                This metric calculates success rate and number of fails
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
     <xsd:element name="metric-not-null-response" type="metric-not-null-response" substitutionGroup="metric">
         <xsd:annotation>
             <xsd:documentation>
@@ -751,7 +759,6 @@
     <xsd:complexType name="workloadCollectorAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
-                <xsd:attribute name="plotData" type="xsd:string" default="false"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -861,6 +868,20 @@
                 <xsd:choice>
                     <xsd:element name="metric-aggregator" type="metricAggregatorAbstract" minOccurs="0" maxOccurs="unbounded"/>
                 </xsd:choice>
+                <xsd:attribute name="plotData" type="xsd:string" default="false"/>
+                <xsd:attribute name="saveSummary" type="xsd:string" default="true"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="metric-success-rate">
+        <xsd:annotation>
+            <xsd:documentation>
+                This metric calculates success rate and number of fails
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="metricAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

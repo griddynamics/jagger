@@ -68,7 +68,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     private FileStorage fileStorage;
 
     private final static MetricCollectorProvider.MetricDescriptionEntry defaultMetricAggregatorProvider =
-            new MetricCollectorProvider.MetricDescriptionEntry(new SumMetricAggregatorProvider(), false);
+            new MetricCollectorProvider.MetricDescriptionEntry(new SumMetricAggregatorProvider(), false, true);
 
     private KeyValueStorage keyValueStorage;
 
@@ -202,62 +202,74 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
 
             LogReader.FileReader<MetricLogEntry> fileReader = null;
             for (MetricCollectorProvider.MetricDescriptionEntry entry: providers) {
-                MetricAggregator overallMetricAggregator = entry.getMetricAggregatorProvider().provide();
+                MetricAggregator overallMetricAggregator = null;
                 MetricAggregator intervalAggregator = null;
-                if (entry.isNeedPlotData()) {
+
+                if (entry.isNeedSaveSummary())
+                    overallMetricAggregator=entry.getMetricAggregatorProvider().provide();
+                if (entry.isNeedPlotData())
                     intervalAggregator = entry.getMetricAggregatorProvider().provide();
-                }
 
-                String aggregatedMetricName = metricName + "-" + overallMetricAggregator.getName();
+                if ((entry.isNeedPlotData()) || (entry.isNeedSaveSummary()))
+                {
+                    String aggregatedMetricName = "";
+                    if (overallMetricAggregator != null)
+                        aggregatedMetricName = metricName + "-" + overallMetricAggregator.getName();
+                    if (intervalAggregator != null)
+                        aggregatedMetricName = metricName + "-" + intervalAggregator.getName();
 
-                long currentInterval = aggregationInfo.getMinTime() + intervalSize;
-                long time = 0;
+                    long currentInterval = aggregationInfo.getMinTime() + intervalSize;
+                    long time = 0;
 
-                try {
-                    fileReader = logReader.read(path, MetricLogEntry.class);
-                    for (MetricLogEntry logEntry : fileReader) {
-                        log.debug("Log entry {} time", logEntry.getTime());
-                        if (entry.isNeedPlotData()) {
-                            while (logEntry.getTime() > currentInterval){
-                                // we leave current interval or current interval is empty
-                                Number aggregated = intervalAggregator.getAggregated();
-                                if (aggregated != null){
-                                    // we leave interval
-                                    // we have some info in interval aggregator
-                                    // we need to save it
-                                    statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
-                                    intervalAggregator.reset();
+                    try {
+                        fileReader = logReader.read(path, MetricLogEntry.class);
+                        for (MetricLogEntry logEntry : fileReader) {
+                            log.debug("Log entry {} time", logEntry.getTime());
+                            if (entry.isNeedPlotData()) {
+                                while (logEntry.getTime() > currentInterval){
+                                    // we leave current interval or current interval is empty
+                                    Number aggregated = intervalAggregator.getAggregated();
+                                    if (aggregated != null){
+                                        // we leave interval
+                                        // we have some info in interval aggregator
+                                        // we need to save it
+                                        statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
+                                        intervalAggregator.reset();
 
-                                    // go for the next interval
-                                    time += intervalSize;
-                                    currentInterval += intervalSize;
-                                }else{
-                                    // current interval is empty
-                                    // we will extend it
-                                    while (logEntry.getTime() > currentInterval){
+                                        // go for the next interval
                                         time += intervalSize;
                                         currentInterval += intervalSize;
+                                    }else{
+                                        // current interval is empty
+                                        // we will extend it
+                                        while (logEntry.getTime() > currentInterval){
+                                            time += intervalSize;
+                                            currentInterval += intervalSize;
+                                        }
                                     }
                                 }
+                                intervalAggregator.append(logEntry.getMetric());
                             }
-                            intervalAggregator.append(logEntry.getMetric());
+                            if (entry.isNeedSaveSummary())
+                                overallMetricAggregator.append(logEntry.getMetric());
                         }
-                        overallMetricAggregator.append(logEntry.getMetric());
-                    }
 
-                    if (intervalAggregator != null){
-                        Number aggregated = intervalAggregator.getAggregated();
-                        if (aggregated != null){
-                            statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
-                            intervalAggregator.reset();
+                        if (entry.isNeedPlotData()) {
+                            Number aggregated = intervalAggregator.getAggregated();
+                            if (aggregated != null){
+                                statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
+                                intervalAggregator.reset();
+                            }
                         }
-                    }
 
-                    persistAggregatedMetricValue(aggregatedMetricName, overallMetricAggregator.getAggregated());
-                    ///
-                } finally {
-                    if (fileReader != null) {
-                        fileReader.close();
+                        if (entry.isNeedSaveSummary())
+                            persistAggregatedMetricValue(aggregatedMetricName, overallMetricAggregator.getAggregated());
+
+                    }
+                    finally {
+                        if (fileReader != null) {
+                            fileReader.close();
+                        }
                     }
                 }
             }

@@ -78,10 +78,17 @@ public class MetricCollectorProvider<Q, R, E> implements KernelSideInitializable
 
     public static final class MetricDescriptionEntry {
         private boolean needPlotData;
+        private boolean needSaveSummary;
         private MetricAggregatorProvider metricAggregatorProvider;
 
         public MetricDescriptionEntry(MetricAggregatorProvider metricAggregatorProvider, boolean needPlotData) {
             this.needPlotData = needPlotData;
+            this.needSaveSummary = true;
+            this.metricAggregatorProvider = metricAggregatorProvider;
+        }
+        public MetricDescriptionEntry(MetricAggregatorProvider metricAggregatorProvider, boolean needPlotData, boolean needSaveSummary) {
+            this.needPlotData = needPlotData;
+            this.needSaveSummary = needSaveSummary;
             this.metricAggregatorProvider = metricAggregatorProvider;
         }
 
@@ -94,6 +101,14 @@ public class MetricCollectorProvider<Q, R, E> implements KernelSideInitializable
 
         public void setNeedPlotData(boolean needPlotData) {
             this.needPlotData = needPlotData;
+        }
+
+        public boolean isNeedSaveSummary() {
+            return needSaveSummary;
+        }
+
+        public void setNeedSaveSummary(boolean needSaveSummary) {
+            this.needSaveSummary = needSaveSummary;
         }
 
         public MetricAggregatorProvider getMetricAggregatorProvider() {

@@ -159,6 +159,7 @@ public class MetricDataServiceImpl implements MetricDataService {
 
                         DiagnosticResultEntity metric = (DiagnosticResultEntity)mas[0];
                         value.setValue(new DecimalFormat("0.0###").format(metric.getTotal()));
+
                         value.setSessionId(Long.parseLong(mas[1].toString()));
                         dto.getValues().add(value);
                     }

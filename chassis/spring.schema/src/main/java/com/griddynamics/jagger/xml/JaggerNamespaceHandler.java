@@ -17,10 +17,7 @@ import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefi
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.*;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.AvgMetricAggregatorDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.RefMetricAggregatorDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.StdDevMetricAggregatorDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.SumMetricAggregatorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.*;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.CsvProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.FileProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryDefinitionParser;
@@ -90,6 +87,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         //metric calculators
         registerBeanDefinitionParser("metric-not-null-response", new SimpleMetricDefinitionParser());
         registerBeanDefinitionParser("metric-custom", new CustomMetricDefinitionParser());
+        registerBeanDefinitionParser("metric-success-rate", new SuccessRateCollectorDefinitionParser());
 
         //scenario
         registerBeanDefinitionParser("scenario",  findTypeParser);
