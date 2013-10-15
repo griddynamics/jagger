@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.*;
+import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
 import com.griddynamics.jagger.webclient.client.components.MetricPanel;
 import com.griddynamics.jagger.webclient.client.components.SessionPlotPanel;
 import com.griddynamics.jagger.webclient.client.components.SummaryPanel;
@@ -38,8 +39,6 @@ import com.griddynamics.jagger.webclient.client.handler.ShowTaskDetailsListener;
 import com.griddynamics.jagger.webclient.client.mvp.JaggerPlaceHistoryMapper;
 import com.griddynamics.jagger.webclient.client.mvp.NameTokens;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
-import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.Store;
 
 import java.util.*;
 
@@ -249,18 +248,7 @@ public class Trends extends DefaultActivity {
         this.place = place;
         final TrendsPlace finalPlace = this.place;
         if (place.getSelectedSessionIds().isEmpty()){
-
-            sessionsDataGrid.getSelectionModel().addSelectionChangeHandler(new SessionSelectChangeHandler());
-
-            selectTests = true;
-            testDataGrid.getSelectionModel().addSelectionChangeHandler(new TestSelectChangeHandler());
-
-            TaskDataTreeViewModel viewModel = (TaskDataTreeViewModel)taskDetailsTree.getTreeViewModel();
-            viewModel.getSelectionModel().addSelectionChangeHandler(new TaskPlotSelectionChangedHandler());
-
-            metricPanel.addSelectionListener(new MetricsSelectionChangedHandler());
-
-            chooseTab(place.getToken());
+            noSessionsFromLink();
             return;
         }
 
@@ -268,6 +256,8 @@ public class Trends extends DefaultActivity {
             @Override
             public void onFailure(Throwable caught) {
                 caught.printStackTrace();
+                new ExceptionPanel(finalPlace , caught.getMessage());
+                noSessionsFromLink();
             }
 
             @Override
@@ -281,6 +271,20 @@ public class Trends extends DefaultActivity {
             }
         });
         History.newItem(NameTokens.EMPTY);
+    }
+
+    private void noSessionsFromLink() {
+        sessionsDataGrid.getSelectionModel().addSelectionChangeHandler(new SessionSelectChangeHandler());
+
+        selectTests = true;
+        testDataGrid.getSelectionModel().addSelectionChangeHandler(new TestSelectChangeHandler());
+
+        TaskDataTreeViewModel viewModel = (TaskDataTreeViewModel)taskDetailsTree.getTreeViewModel();
+        viewModel.getSelectionModel().addSelectionChangeHandler(new TaskPlotSelectionChangedHandler());
+
+        metricPanel.addSelectionListener(new MetricsSelectionChangedHandler());
+
+        chooseTab(place.getToken());
     }
 
     private void filterSessions(Set<SessionDataDto> sessionDataDtoSet) {
@@ -324,7 +328,8 @@ public class Trends extends DefaultActivity {
         setupSettingsPanel();
     }
 
-    private SimplePlot createPlot(final String id, Markings markings, String xAxisLabel, double yMinimum, boolean isMetric) {
+    private SimplePlot createPlot(final String id, Markings markings, String xAxisLabel,
+                                  double yMinimum, boolean isMetric, final List<String> sessionIds) {
         PlotOptions plotOptions = new PlotOptions();
         plotOptions.setZoomOptions(new ZoomOptions().setAmount(1.02));
         plotOptions.setGlobalSeriesOptions(new GlobalSeriesOptions()
@@ -338,8 +343,8 @@ public class Trends extends DefaultActivity {
                     .setTickFormatter(new TickFormatter() {
                         @Override
                         public String formatTickValue(double tickValue, Axis axis) {
-                            if (tickValue >= 0 && tickValue < chosenSessions.size())
-                                return chosenSessions.get((int) tickValue);
+                            if (tickValue >= 0 && tickValue < sessionIds.size())
+                                return sessionIds.get((int) tickValue);
                             else
                                 return "";
                         }
@@ -372,7 +377,7 @@ public class Trends extends DefaultActivity {
 
         // add hover listener
         if (isMetric) {
-            plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent, xAxisLabel, chosenSessions), false);
+            plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent, xAxisLabel, sessionIds), false);
         } else {
             plot.addHoverListener(new ShowCurrentValueHoverListener(popup, popupPanelContent, xAxisLabel, null), false);
         }
@@ -679,16 +684,38 @@ public class Trends extends DefaultActivity {
                 markingsMap.put(id, new TreeSet<MarkingDto>(plotSeriesDto.getMarkingSeries()));
             }
 
-            final SimplePlot plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric);
-            redrawingPlot = plot;
-            PlotModel plotModel = plot.getModel();
+            final SimplePlot plot;
+            PlotModel plotModel;
+            if (isMetric) {
+                List <String> sessionIds = new ArrayList<String>();
+                for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
+                    // find all sessions in plot
+                    for (PointDto pointDto : plotDatasetDto.getPlotData()) {
+                        sessionIds.add(String.valueOf((int)pointDto.getX()));
+                    }
+                }
+                plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric, sessionIds);
+                plotModel = plot.getModel();
+                redrawingPlot = plot;
+                int iter = 0;
+                for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
+                    SeriesHandler handler = plotModel.addSeries(plotDatasetDto.getLegend(), plotDatasetDto.getColor());
+                    // Populate plot with data
+                    for (PointDto pointDto : plotDatasetDto.getPlotData()) {
+                        handler.add(new DataPoint(iter ++, pointDto.getY()));
+                    }
+                }
+            } else {
+                plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric, null);
+                plotModel = plot.getModel();
+                redrawingPlot = plot;
+                for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
+                    SeriesHandler handler = plotModel.addSeries(plotDatasetDto.getLegend(), plotDatasetDto.getColor());
 
-            for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
-                SeriesHandler handler = plotModel.addSeries(plotDatasetDto.getLegend(), plotDatasetDto.getColor());
-
-                // Populate plot with data
-                for (PointDto pointDto : plotDatasetDto.getPlotData()) {
-                    handler.add(new DataPoint(pointDto.getX(), pointDto.getY()));
+                    // Populate plot with data
+                    for (PointDto pointDto : plotDatasetDto.getPlotData()) {
+                        handler.add(new DataPoint(pointDto.getX(), pointDto.getY()));
+                    }
                 }
             }
 
@@ -950,6 +977,8 @@ public class Trends extends DefaultActivity {
                 @Override
                 public void onFailure(Throwable caught) {
                     caught.printStackTrace();
+                    new ExceptionPanel(place, caught.getMessage());
+                    ((MultiSelectionModel)sessionsDataGrid.getSelectionModel()).clear();
                 }
 
                 @Override
@@ -980,6 +1009,8 @@ public class Trends extends DefaultActivity {
                     @Override
                     public void onFailure(Throwable throwable) {
                         throwable.printStackTrace();
+                        new ExceptionPanel(place, throwable.getMessage());
+                        sessionPlotPanel.clearPlots();
                     }
 
                     @Override
@@ -1101,6 +1132,8 @@ public class Trends extends DefaultActivity {
                     @Override
                     public void onFailure(Throwable caught) {
                         caught.printStackTrace();
+                        new ExceptionPanel(place, caught.getMessage());
+                        metricPanel.getSelectionModel().clear();
                     }
 
                     @Override
@@ -1159,7 +1192,10 @@ public class Trends extends DefaultActivity {
 
                     @Override
                     public void onFailure(Throwable caught) {
+
                         caught.printStackTrace();
+                        new ExceptionPanel(place, caught.getMessage());
+                        ((TaskDataTreeViewModel)taskDetailsTree.getTreeViewModel()).getSelectionModel().clear();
                     }
 
                     @Override
@@ -1255,6 +1291,7 @@ public class Trends extends DefaultActivity {
                             @Override
                             public void onFailure(Throwable caught) {
                                  caught.printStackTrace();
+                                 new ExceptionPanel(place, caught.getMessage());
                             }
 
                             @Override

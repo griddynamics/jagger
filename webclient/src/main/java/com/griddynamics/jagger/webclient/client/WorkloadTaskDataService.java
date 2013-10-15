@@ -19,11 +19,11 @@ import java.util.Set;
 @RemoteServiceRelativePath("rpc/WorkloadTaskDataService")
 public interface WorkloadTaskDataService extends RemoteService {
 
-    public List<WorkloadTaskDataDto> getWorkloadTaskData(String sessionId);
+    public List<WorkloadTaskDataDto> getWorkloadTaskData(String sessionId) throws RuntimeException;
 
-    public WorkloadTaskDataDto getWorkloadTaskData(String sessionId, long taskId);
+    public WorkloadTaskDataDto getWorkloadTaskData(String sessionId, long taskId) throws RuntimeException;
 
-    public Set<WorkloadTaskDataDto> getWorkloadTaskData(Set<TaskDataDto> tests);
+    public Set<WorkloadTaskDataDto> getWorkloadTaskData(Set<TaskDataDto> tests) throws RuntimeException;
 
     public static class Async {
         private static final WorkloadTaskDataServiceAsync ourInstance = (WorkloadTaskDataServiceAsync) GWT.create(WorkloadTaskDataService.class);

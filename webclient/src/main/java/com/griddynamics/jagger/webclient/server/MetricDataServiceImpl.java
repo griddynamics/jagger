@@ -159,6 +159,7 @@ public class MetricDataServiceImpl implements MetricDataService {
 
                         DiagnosticResultEntity metric = (DiagnosticResultEntity)mas[0];
                         value.setValue(new DecimalFormat("0.0###").format(metric.getTotal()));
+
                         value.setSessionId(Long.parseLong(mas[1].toString()));
                         dto.getValues().add(value);
                     }
@@ -221,7 +222,7 @@ public class MetricDataServiceImpl implements MetricDataService {
 
         for (MetricValueDto value: metricList) {
             double temp = Double.parseDouble(value.getValue());
-            list.add(new PointDto(iter ++, temp));
+            list.add(new PointDto(value.getSessionId(), temp));
             if (yMinimum == Double.MAX_VALUE || temp < yMinimum)
                 yMinimum = temp;
         }

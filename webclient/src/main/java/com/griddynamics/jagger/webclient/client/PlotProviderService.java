@@ -19,17 +19,17 @@ import java.util.Set;
 @RemoteServiceRelativePath("rpc/PlotProviderService")
 public interface PlotProviderService extends RemoteService {
 
-    Set<PlotNameDto> getTaskScopePlotList(Set<String> sessionIds, TaskDataDto taskDataDto);
+    Set<PlotNameDto> getTaskScopePlotList(Set<String> sessionIds, TaskDataDto taskDataDto) throws RuntimeException;
 
-    Set<String> getSessionScopePlotList(String sessionId);
+    Set<String> getSessionScopePlotList(String sessionId) throws RuntimeException;
 
-    List<PlotSeriesDto> getPlotData(long taskId, String plotType);
+    List<PlotSeriesDto> getPlotData(long taskId, String plotType) throws RuntimeException;
 
-    List<PlotSeriesDto> getPlotData(Set<Long> taskId, String plotType);
+    List<PlotSeriesDto> getPlotData(Set<Long> taskId, String plotType) throws RuntimeException;
 
-    Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots);
+    Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots) throws RuntimeException;
 
-    Map<String,List<PlotSeriesDto>> getSessionScopePlotData(String sessionId, Collection<String> plotType);
+    Map<String,List<PlotSeriesDto>> getSessionScopePlotData(String sessionId, Collection<String> plotType) throws RuntimeException;
 
     public static class Async {
         private static final PlotProviderServiceAsync ourInstance = (PlotProviderServiceAsync) GWT.create(PlotProviderService.class);

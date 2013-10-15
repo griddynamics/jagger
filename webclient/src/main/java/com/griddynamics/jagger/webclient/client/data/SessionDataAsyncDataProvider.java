@@ -1,13 +1,12 @@
 package com.griddynamics.jagger.webclient.client.data;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.griddynamics.jagger.webclient.client.SessionDataService;
 import com.griddynamics.jagger.webclient.client.SessionDataServiceAsync;
+import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
 import com.griddynamics.jagger.webclient.client.dto.PagedSessionDataDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
 
@@ -36,7 +35,8 @@ public class SessionDataAsyncDataProvider extends ExtendedAsyncDataProvider<Sess
         AsyncCallback<PagedSessionDataDto> callback = new AsyncCallback<PagedSessionDataDto>() {
             @Override
             public void onFailure(Throwable caught) {
-                Window.alert("Error is occurred during server request processing (Session data fetching)" + caught.getMessage());
+                new ExceptionPanel("Error is occurred during server request processing (Session data fetching)" +
+                        caught.getMessage());
             }
 
             @Override

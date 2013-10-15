@@ -1,9 +1,6 @@
 package com.griddynamics.jagger.webclient.server;
 
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.*;
 import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.webclient.client.WorkloadTaskDataService;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
@@ -13,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -218,14 +216,30 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
                     "from DiagnosticResultEntity as metric where metric.workloadData_id=:id")
                     .setParameter("id", data.getId().toString()).getResultList();
 
+            //custom validators
+            List<Object[]> validators = entityManager.createNativeQuery("select vali.validator, vali.total, vali.failed " +
+                    "from ValidationResultEntity as vali where vali.workloadData_id=:id")
+                    .setParameter("id", data.getId().toString()).getResultList();
+
+            Map<String, String> metricsMap = new LinkedHashMap<String, String>();
+            if (!validators.isEmpty()) {
+                for (Object[] validator : validators) {
+                    BigDecimal percentage = BigDecimal.ZERO;
+                    if ((Integer)validator[1] != 0) {
+                        percentage = new BigDecimal((Integer)validator[1] - (Integer)validator[2])
+                                .divide(new BigDecimal((Integer)validator[1]), 3, BigDecimal.ROUND_HALF_UP);
+                    }
+                    metricsMap.put(validator[0].toString(), percentage.toString());
+                }
+            }
 
             if (!metrics.isEmpty()) {
-                Map<String, String> metricsMap = new TreeMap<String, String>();
                 for (Object[] objects : metrics) {
                     metricsMap.put(objects[0].toString(), new DecimalFormat("0.0###").format(objects[1]));
                 }
-                dto.setCustomMetrics(metricsMap);
             }
+
+            dto.setCustomInfoCollectors(metricsMap);
             result.add(dto);
         }
         log.info("For tasks ids {} was loaded {} workloadTasks for {} ms", new Object[]{ids, result.size(), System.currentTimeMillis() - time});

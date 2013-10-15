@@ -50,12 +50,12 @@ public class MetricDetails {
     private String displayName;
 
     @Column
-    private double value;
+    private Double value;
 
     @ManyToOne
     private TaskData taskData;
 
-    public MetricDetails(long time, String metric, String displayName, double value, TaskData taskData) {
+    public MetricDetails(long time, String metric, String displayName, Double value, TaskData taskData) {
         this.time = time;
         this.metric = metric;
         this.value = value;
@@ -98,11 +98,11 @@ public class MetricDetails {
         this.metric = metric;
     }
 
-    public double getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

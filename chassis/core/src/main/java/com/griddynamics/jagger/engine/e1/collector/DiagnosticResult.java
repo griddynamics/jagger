@@ -24,13 +24,13 @@ import java.io.Serializable;
 
 public class DiagnosticResult implements Serializable {
     private final String name;
-    private final double total;
+    private final Double total;
 
-    public static DiagnosticResult create(String name, double total) {
+    public static DiagnosticResult create(String name, Double total) {
         return new DiagnosticResult(name, total);
     }
 
-    private DiagnosticResult(String name, double total) {
+    private DiagnosticResult(String name, Double total) {
         this.name = name;
         this.total = total;
     }
@@ -39,7 +39,7 @@ public class DiagnosticResult implements Serializable {
         return name;
     }
 
-    public double getTotal() {
+    public Double getTotal() {
         return total;
     }
 
@@ -60,7 +60,7 @@ public class DiagnosticResult implements Serializable {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (int)total;
+        result = 31 * result + total.intValue();
         return result;
     }
 

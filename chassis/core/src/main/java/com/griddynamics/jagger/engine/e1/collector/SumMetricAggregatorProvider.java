@@ -100,7 +100,4 @@ public class SumMetricAggregatorProvider implements MetricAggregatorProvider {
                     '}';
         }
     }
-
-
-
 }

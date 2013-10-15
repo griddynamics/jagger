@@ -1,12 +1,12 @@
 package com.griddynamics.jagger.webclient.client.data;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.griddynamics.jagger.webclient.client.PlotProviderService;
+import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
 import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
@@ -40,7 +40,7 @@ public class TaskPlotNamesAsyncDataProvider extends AsyncDataProvider<PlotNameDt
         PlotProviderService.Async.getInstance().getTaskScopePlotList(sessionIds, taskDataDto, new AsyncCallback<Set<PlotNameDto>>() {
             @Override
             public void onFailure(Throwable caught) {
-                Window.alert("Error is occurred during server request processing (Plot names for task fetching)");
+                new ExceptionPanel("Error is occurred during server request processing (Plot names for task fetching)");
             }
 
             @Override

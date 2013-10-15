@@ -82,5 +82,7 @@ public interface JaggerResources extends ClientBundle {
         String sessionNameHeader();
 
         String testNameHeader();
+
+        String exceptionPanel();
     }
 }
