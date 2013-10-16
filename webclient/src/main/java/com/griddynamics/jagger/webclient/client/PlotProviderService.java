@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
+import com.griddynamics.jagger.webclient.client.dto.PlotNameSeriesDto;
 import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
@@ -23,11 +24,9 @@ public interface PlotProviderService extends RemoteService {
 
     Set<String> getSessionScopePlotList(String sessionId) throws RuntimeException;
 
-    List<PlotSeriesDto> getPlotData(long taskId, String plotType) throws RuntimeException;
+    PlotNameSeriesDto getPlotData(PlotNameDto plotName) throws RuntimeException;
 
-    List<PlotSeriesDto> getPlotData(Set<Long> taskId, String plotType) throws RuntimeException;
-
-    Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots) throws RuntimeException;
+    List<PlotNameSeriesDto> getPlotDatas(Set<PlotNameDto> plots) throws RuntimeException;
 
     Map<String,List<PlotSeriesDto>> getSessionScopePlotData(String sessionId, Collection<String> plotType) throws RuntimeException;
 

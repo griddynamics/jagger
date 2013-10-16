@@ -1188,7 +1188,7 @@ public class Trends extends DefaultActivity {
                 // Remove plots from display which were unchecked
                 removeUncheckedPlots(selectedTaskIds);
 
-                PlotProviderService.Async.getInstance().getPlotDatas(selected, new AsyncCallback<Map<PlotNameDto, List<PlotSeriesDto>>>() {
+                PlotProviderService.Async.getInstance().getPlotDatas(selected, new AsyncCallback<List<PlotNameSeriesDto>>() {
 
                     @Override
                     public void onFailure(Throwable caught) {
@@ -1199,8 +1199,8 @@ public class Trends extends DefaultActivity {
                     }
 
                     @Override
-                    public void onSuccess(Map<PlotNameDto, List<PlotSeriesDto>> result) {
-                        for (PlotNameDto plotNameDto : result.keySet()){
+                    public void onSuccess(List<PlotNameSeriesDto> result) {
+                        for (PlotNameSeriesDto plotNameSeriesDto : result){
                             if (isMaxPlotCountReached()) {
                                 Window.alert("You are reached max count of plot on display");
                                 break;
@@ -1209,9 +1209,9 @@ public class Trends extends DefaultActivity {
                             final String id;
                             // Generate DOM id for plot
                             if (chosenSessions.size() == 1) {
-                                id = generateTaskScopePlotId(plotNameDto);
+                                id = generateTaskScopePlotId(plotNameSeriesDto.getPlotNameDto());
                             } else {
-                                id = generateCrossSessionsTaskScopePlotId(plotNameDto);
+                                id = generateCrossSessionsTaskScopePlotId(plotNameSeriesDto.getPlotNameDto());
                             }
 
                             // If plot has already displayed, then pass it
@@ -1219,7 +1219,7 @@ public class Trends extends DefaultActivity {
                                 continue;
                             }
 
-                            chosenPlots.put(id, result.get(plotNameDto));
+                            chosenPlots.put(id, plotNameSeriesDto.getPlotSeriesDto());
 
                         }
                         if (mainTabPanel.getSelectedIndex() == 2) {
