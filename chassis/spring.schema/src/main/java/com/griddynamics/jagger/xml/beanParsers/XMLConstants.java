@@ -147,6 +147,7 @@ public class XMLConstants {
     public static final String PAIR_SUPPLIER_FACTORY = "pairSupplierFactory";
 
     public static final String PLOT_DATA = "plotData";
+    public static final String SAVE_SUMMARY = "saveSummary";
     public static final String SIMPLE_COLLECTOR = "simpleCollector";
 
     //default reporting names
@@ -166,6 +167,7 @@ public class XMLConstants {
     public static final String DEFAULT_NAMESPACE = "http://www.griddynamics.com/schema/jagger";
 
     public static final String  DEFAULT_METRIC_NAME = "No name metric";
+    public static final String  DEFAULT_METRIC_SUCCESS_RATE_NAME = "SR";
 
     public static final String MONITORING_SUT_CONFIGURATION = "monitoringSutConfiguration";
     public static final String JMX_METRIC_ATTRIBUTE = "jmx-metric-attribute";
@@ -176,5 +178,6 @@ public class XMLConstants {
 
     public static final String AGGREGATORS = "aggregators";
     public static final String NEED_PLOT_DATA = "needPlotData";
+    public static final String NEED_SAVE_SUMMARY = "needSaveSummary";
     public static final String METRIC_AGGREGATOR_PROVIDER = "metricAggregatorProvider";
 }

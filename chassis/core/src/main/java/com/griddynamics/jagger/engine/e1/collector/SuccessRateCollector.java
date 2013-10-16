@@ -17,33 +17,26 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
-import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.storage.fs.logging.MetricLogEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-/**
- * Created with IntelliJ IDEA.
- * User: nmusienko
- * Date: 18.03.13
- * Time: 16:05
- * To change this template use File | Settings | File Templates.
- */
-public class MetricCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
-    private final MetricCalculator<R> metricCalculator;
+public class SuccessRateCollector<Q, R, E> extends MetricCollector<Q, R, E> {
     private final String name;
-    public static final String METRIC_MARKER = "METRIC";
+    private long startTime = 0;
 
-
-    public MetricCollector(String sessionId, String taskId, NodeContext kernelContext, MetricCalculator metricCalculator, String name) {
-        super(sessionId, taskId, kernelContext);
+    public SuccessRateCollector(String sessionId, String taskId, NodeContext kernelContext, String name)
+    {
+        super(sessionId, taskId, kernelContext,new SimpleMetricCalculator(),name);
         this.name = name;
-        this.metricCalculator=metricCalculator;
     }
 
     @Override
@@ -51,23 +44,29 @@ public class MetricCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
     }
 
     @Override
-    public void onStart(Q query, E endpoint) {
+    public void onStart(Object query, Object endpoint) {
+        startTime = System.currentTimeMillis();
     }
 
     @Override
-    public void onSuccess(Q query, E endpoint, R result, long duration) {
-        Long endTime = System.currentTimeMillis();
+    public void onSuccess(Object query, Object endpoint, Object result, long duration) {
+        log(1);
+    }
+
+    @Override
+    public void onFail(Object query, Object endpoint, InvocationException e) {
+        log(0);
+    }
+
+    @Override
+    public void onError(Object query, Object endpoint, Throwable error) {
+        log(0);
+    }
+
+    private void log(long result) {
+        String METRIC_MARKER = "METRIC";
         LogWriter logWriter = kernelContext.getService(LogWriter.class);
-        long startTime = endTime - duration;
         logWriter.log(sessionId, taskId + File.separatorChar + METRIC_MARKER + File.separatorChar + name, kernelContext.getId().getIdentifier(),
-                new MetricLogEntry(startTime, name,  metricCalculator.calculate(result)));
-    }
-
-    @Override
-    public void onFail(Q query, E endpoint, InvocationException e) {
-    }
-
-    @Override
-    public void onError(Q query, E endpoint, Throwable error) {
+                new MetricLogEntry(startTime, name, result));
     }
 }
