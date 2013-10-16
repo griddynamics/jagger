@@ -93,7 +93,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
 
             List<PlotNameDto> customMetrics = customMetricPlotDataProvider.getPlotNames(taskDataDto);
             for (PlotNameDto plotNameDto : customMetrics){
-                plotNameDtoSet.add(new PlotNameDto(taskDataDto, plotNameDto.getPlotName()));
+                plotNameDtoSet.add(plotNameDto);
             }
 
             log.debug("For sessions {} are available these plots: {}", sessionIds, plotNameDtoSet);
@@ -127,48 +127,29 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     }
 
     @Override
-    public List<PlotSeriesDto> getPlotData(long taskId, String plotName) {
+    public PlotNameSeriesDto getPlotData(PlotNameDto plotName) {
         long timestamp = System.currentTimeMillis();
-        log.debug("getPlotData was invoked with taskId={} and plotName={}", taskId, plotName);
+        log.debug("getPlotData was invoked with taskIds={} and plotName={}", plotName.getTaskIds(), plotName.getPlotName());
 
-        PlotDataProvider plotDataProvider = findPlotDataProvider(plotName);
+        PlotDataProvider plotDataProvider = findPlotDataProvider(plotName.getPlotName());
 
-        List<PlotSeriesDto> plotSeriesDto = null;
+        PlotNameSeriesDto plotNameSeriesDto = null;
         try {
-            plotSeriesDto = plotDataProvider.getPlotData(taskId, plotName);
-            log.info("getPlotData(): {}", getFormattedLogMessage(plotSeriesDto, "" + taskId, plotName, System.currentTimeMillis() - timestamp));
+            plotNameSeriesDto = plotDataProvider.getPlotData(plotName);
+            log.info("getPlotData(): {}", getFormattedLogMessage(plotNameSeriesDto.getPlotSeriesDto(), "" + plotName.getTaskIds(), plotName.getPlotName(), System.currentTimeMillis() - timestamp));
         } catch (Exception e) {
-            log.error("Error is occurred during plot data loading for taskId=" + taskId + ", plotName=" + plotName, e);
+            log.error("Error is occurred during plot data loading for taskIds=" + plotName.getTaskIds() + ", plotName=" + plotName, e);
             throw new RuntimeException(e);
         }
 
-        return plotSeriesDto;
+        return plotNameSeriesDto;
     }
 
     @Override
-    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, String plotName) {
-        long timestamp = System.currentTimeMillis();
-        log.debug("getPlotData was invoked with taskIds={} and plotName={}", taskIds, plotName);
-
-        PlotDataProvider plotDataProvider = findPlotDataProvider(plotName);
-
-        List<PlotSeriesDto> plotSeriesDtoList = null;
-        try {
-            plotSeriesDtoList = plotDataProvider.getPlotData(taskIds, plotName);
-            log.info("getPlotData(): {}", getFormattedLogMessage(plotSeriesDtoList, "" + taskIds, plotName, System.currentTimeMillis() - timestamp));
-        } catch (Exception e) {
-            log.error("Error is occurred during plot data loading for taskIds=" + taskIds + ", plotName=" + plotName, e);
-            throw new RuntimeException(e);
-        }
-
-        return plotSeriesDtoList;
-    }
-
-    @Override
-    public Map<PlotNameDto,List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots) throws IllegalArgumentException{
-        Map<PlotNameDto,List<PlotSeriesDto>> result = new HashMap<PlotNameDto, List<PlotSeriesDto>>(plots.size());
+    public List<PlotNameSeriesDto> getPlotDatas(Set<PlotNameDto> plots) throws IllegalArgumentException{
+        List<PlotNameSeriesDto>  result = new ArrayList<PlotNameSeriesDto> (plots.size());
         for (PlotNameDto plot : plots){
-            result.put(plot, getPlotData(plot.getTaskIds(), plot.getPlotName()));
+            result.add(getPlotData(plot));
         }
         return result;
     }

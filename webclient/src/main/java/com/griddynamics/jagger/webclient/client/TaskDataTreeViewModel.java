@@ -205,7 +205,7 @@ public class TaskDataTreeViewModel implements TreeViewModel {
             sb.appendHtmlConstant("<table><tr><td>");
             sb.appendHtmlConstant(imageHtml);
             sb.appendHtmlConstant("</td><td>");
-            sb.appendEscaped(value.getPlotName());
+            sb.appendEscaped(value.getDisplayName());
             sb.appendHtmlConstant("</td></tr></table>");
         }
     }

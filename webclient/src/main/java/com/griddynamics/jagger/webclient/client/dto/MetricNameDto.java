@@ -13,6 +13,7 @@ public class MetricNameDto implements Serializable {
 
     private TaskDataDto tests;
     private String name;
+    private String displayName;
 
     public MetricNameDto() {
     }
@@ -20,6 +21,23 @@ public class MetricNameDto implements Serializable {
     public MetricNameDto(TaskDataDto tests, String name) {
         this.tests = tests;
         this.name = name;
+    }
+
+    public MetricNameDto(TaskDataDto tests, String name, String displayName) {
+        this.tests = tests;
+        this.name = name;
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        if(displayName == null || displayName.isEmpty()) {
+            displayName = name;
+        }
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getName() {

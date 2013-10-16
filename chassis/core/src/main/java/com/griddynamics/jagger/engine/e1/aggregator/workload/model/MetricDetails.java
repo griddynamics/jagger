@@ -47,6 +47,9 @@ public class MetricDetails {
     private String metric;
 
     @Column
+    private String displayName;
+
+    @Column
     private double value;
 
     @ManyToOne
@@ -60,6 +63,14 @@ public class MetricDetails {
     }
 
     public MetricDetails() {
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public Long getId() {

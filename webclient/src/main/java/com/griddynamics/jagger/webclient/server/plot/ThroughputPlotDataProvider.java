@@ -1,9 +1,7 @@
 package com.griddynamics.jagger.webclient.server.plot;
 
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.webclient.client.dto.PlotDatasetDto;
-import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
-import com.griddynamics.jagger.webclient.client.dto.PointDto;
+import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.server.ColorCodeGenerator;
 import com.griddynamics.jagger.webclient.server.DataProcessingUtil;
 import com.griddynamics.jagger.webclient.server.DefaultWorkloadParameters;
@@ -34,33 +32,13 @@ public class ThroughputPlotDataProvider implements PlotDataProvider {
     }
 
     @Override
-    public List<PlotSeriesDto> getPlotData(long taskId, String plotName) {
-        checkArgument(taskId > 0, "taskId is not valid; it's lesser or equal 0");
+    public PlotNameSeriesDto getPlotData(PlotNameDto plotName) {
+        checkNotNull(plotName.getTaskIds(), "taskIds is null");
+        checkArgument(!plotName.getTaskIds().isEmpty(), "taskIds is empty");
         checkNotNull(plotName, "plotName is null");
 
-        List<Object[]> rawData = findAllTimeInvocationStatisticsByTaskData(taskId);
-
-        if (rawData == null) {
-            return Collections.emptyList();
-        }
-
-        TaskData taskData = entityManager.find(TaskData.class, taskId);
-        Set<PlotDatasetDto> plotSeries = new HashSet<PlotDatasetDto>();
-        plotSeries.add(assemble(rawData, taskData.getSessionId(), false));
-
-        PlotSeriesDto plotSeriesDto = new PlotSeriesDto(plotSeries, "Time, sec", "", legendProvider.generatePlotHeader(taskData, plotName));
-
-        return Collections.singletonList(plotSeriesDto);
-    }
-
-    @Override
-    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, String plotName) {
-        checkNotNull(taskIds, "taskIds is null");
-        checkArgument(!taskIds.isEmpty(), "taskIds is empty");
-        checkNotNull(plotName, "plotName is null");
-
-        List<PlotDatasetDto> plotDatasetDtoList = new ArrayList<PlotDatasetDto>(taskIds.size());
-        for (long taskId : taskIds) {
+        List<PlotDatasetDto> plotDatasetDtoList = new ArrayList<PlotDatasetDto>(plotName.getTaskIds().size());
+        for (long taskId : plotName.getTaskIds()) {
             List<Object[]> rawData = findAllTimeInvocationStatisticsByTaskData(taskId);
 
             if (rawData == null) {
@@ -71,7 +49,12 @@ public class ThroughputPlotDataProvider implements PlotDataProvider {
             plotDatasetDtoList.add(assemble(rawData, taskData.getSessionId(), true));
         }
 
-        return Collections.singletonList(new PlotSeriesDto(plotDatasetDtoList, "Time, sec", "", legendProvider.getPlotHeader(taskIds, plotName)));
+        return new PlotNameSeriesDto(
+                plotName,
+                Collections.singletonList(new PlotSeriesDto(plotDatasetDtoList, "Time, sec", "",
+                    legendProvider.getPlotHeader(plotName.getTaskIds(), plotName.getPlotName()))
+                )
+        );
     }
 
     @SuppressWarnings("unchecked")

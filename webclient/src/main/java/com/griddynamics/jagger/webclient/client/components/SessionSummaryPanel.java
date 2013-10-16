@@ -101,6 +101,7 @@ public class SessionSummaryPanel extends VerticalPanel{
         WorkloadTaskDataService.Async.getInstance().getWorkloadTaskData(testsToLoad, new AsyncCallback<Set<WorkloadTaskDataDto>>() {
             @Override
             public void onFailure(Throwable throwable) {
+                new ExceptionPanel(throwable.getMessage());
                 throwable.printStackTrace();
             }
 

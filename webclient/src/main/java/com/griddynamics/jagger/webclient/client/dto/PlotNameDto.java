@@ -11,6 +11,7 @@ public class PlotNameDto implements Serializable {
 
     private TaskDataDto test;
     private String plotName;
+    private String displayName;
 
     public PlotNameDto(){}
 
@@ -19,11 +20,34 @@ public class PlotNameDto implements Serializable {
         this.plotName = plotName;
     }
 
+    public PlotNameDto(TaskDataDto test, String plotName, String displayName) {
+        this.test = test;
+        this.plotName = plotName;
+        this.displayName = displayName;
+    }
+
+    public PlotNameDto(PlotNameDto other) {
+        this.plotName = other.getPlotName();
+        this.displayName = other.getDisplayName();
+        this.test = other.getTest();
+    }
+
     public long getTaskId() {
         if (test.getIds() == null || test.getIds().size() != 1) {
             throw new UnsupportedOperationException("Cannot return id because of ids is null or its size is not equal 1");
         }
         return test.getIds().iterator().next();
+    }
+
+    public String getDisplayName() {
+        if (displayName == null || displayName.isEmpty()) {
+            displayName = plotName;
+        }
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public Set<Long> getTaskIds() {

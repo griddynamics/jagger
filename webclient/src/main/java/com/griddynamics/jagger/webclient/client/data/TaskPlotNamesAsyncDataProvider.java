@@ -40,6 +40,7 @@ public class TaskPlotNamesAsyncDataProvider extends AsyncDataProvider<PlotNameDt
         PlotProviderService.Async.getInstance().getTaskScopePlotList(sessionIds, taskDataDto, new AsyncCallback<Set<PlotNameDto>>() {
             @Override
             public void onFailure(Throwable caught) {
+                caught.printStackTrace();
                 new ExceptionPanel("Error is occurred during server request processing (Plot names for task fetching)");
             }
 

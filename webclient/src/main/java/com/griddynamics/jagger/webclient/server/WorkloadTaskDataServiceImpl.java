@@ -212,34 +212,44 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             dto.setLatency(latencyValues);
 
             //custom metric
-            List<Object[]> metrics = entityManager.createNativeQuery("select metric.name, metric.total " +
-                    "from DiagnosticResultEntity as metric where metric.workloadData_id=:id")
-                    .setParameter("id", data.getId().toString()).getResultList();
+            List<DiagnosticResultEntity> metrics = entityManager.createNativeQuery("select * " +
+                    "from DiagnosticResultEntity metric where metric.workloadData_id=:id", DiagnosticResultEntity.class).
+                    setParameter("id", data.getId()).getResultList();
 
             //custom validators
-            List<Object[]> validators = entityManager.createNativeQuery("select vali.validator, vali.total, vali.failed " +
-                    "from ValidationResultEntity as vali where vali.workloadData_id=:id")
-                    .setParameter("id", data.getId().toString()).getResultList();
+            List<ValidationResultEntity> validators = entityManager.createNativeQuery("select * " +
+                    "from ValidationResultEntity vali where vali.workloadData_id=:id", ValidationResultEntity.class)
+                    .setParameter("id", data.getId()).getResultList();
 
-            Map<String, String> metricsMap = new LinkedHashMap<String, String>();
+            Map<String, String> infoCollectors = new LinkedHashMap<String, String>();
             if (!validators.isEmpty()) {
-                for (Object[] validator : validators) {
+                for (ValidationResultEntity validator : validators) {
                     BigDecimal percentage = BigDecimal.ZERO;
-                    if ((Integer)validator[1] != 0) {
-                        percentage = new BigDecimal((Integer)validator[1] - (Integer)validator[2])
-                                .divide(new BigDecimal((Integer)validator[1]), 3, BigDecimal.ROUND_HALF_UP);
+                    if (validator.getTotal() != 0) {
+                        percentage = new BigDecimal(validator.getTotal() - validator.getFailed())
+                                .divide(new BigDecimal(validator.getTotal()), 3, BigDecimal.ROUND_HALF_UP);
                     }
-                    metricsMap.put(validator[0].toString(), percentage.toString());
+                    String displayName = validator.getDisplayName();
+                    if (displayName == null || displayName.isEmpty()) {
+                        displayName = validator.getValidator();
+                    }
+                    infoCollectors.put(displayName, percentage.toString());
                 }
             }
 
             if (!metrics.isEmpty()) {
-                for (Object[] objects : metrics) {
-                    metricsMap.put(objects[0].toString(), new DecimalFormat("0.0###").format(objects[1]));
+                for (DiagnosticResultEntity metric : metrics) {
+
+                    String displayName = metric.getDisplayName();
+                    if (displayName == null || displayName.isEmpty()) {
+                        displayName = metric.getName();
+                    }
+
+                    infoCollectors.put(displayName, new DecimalFormat("0.0###").format(metric.getTotal()));
                 }
             }
 
-            dto.setCustomInfoCollectors(metricsMap);
+            dto.setCustomInfoCollectors(infoCollectors);
             result.add(dto);
         }
         log.info("For tasks ids {} was loaded {} workloadTasks for {} ms", new Object[]{ids, result.size(), System.currentTimeMillis() - time});

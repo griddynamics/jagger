@@ -4,6 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.griddynamics.jagger.webclient.client.MetricDataService;
+import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
@@ -30,6 +31,7 @@ public class MetricProvider extends AsyncDataProvider<MetricNameDto> {
             @Override
             public void onFailure(Throwable caught) {
                 caught.printStackTrace();
+                new ExceptionPanel(caught.getMessage());
             }
 
             @Override

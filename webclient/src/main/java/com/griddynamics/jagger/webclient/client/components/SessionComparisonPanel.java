@@ -224,7 +224,7 @@ public class SessionComparisonPanel extends VerticalPanel{
 
         String description = metric.getMetricName().getTests().getDescription();
         String testName = metric.getMetricName().getTests().getTaskName();
-        String metricName = metric.getMetricName().getName();
+        String metricName = metric.getMetricName().getDisplayName();
 
         for (TreeItem root : treeStore.getRootItems()) {
             if (description.equals(root.get(NAME))) {
@@ -282,7 +282,7 @@ public class SessionComparisonPanel extends VerticalPanel{
 
             MetricNameDto metricName = metricDto.getMetricName();
             this.key = metricName.getTests().getDescription() + metricName.getTests().getTaskName() + metricName.getName();
-            put(NAME, metricName.getName());
+            put(NAME, metricName.getDisplayName());
             put(TEST_DESCRIPTION, metricName.getTests().getDescription());
             put(TEST_NAME, metricName.getTests().getTaskName());
 

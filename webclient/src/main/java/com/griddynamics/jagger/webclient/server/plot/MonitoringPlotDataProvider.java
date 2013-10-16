@@ -6,10 +6,7 @@ import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
 import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
 import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
 import com.griddynamics.jagger.monitoring.reporting.GroupKey;
-import com.griddynamics.jagger.webclient.client.dto.MarkingDto;
-import com.griddynamics.jagger.webclient.client.dto.PlotDatasetDto;
-import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
-import com.griddynamics.jagger.webclient.client.dto.PointDto;
+import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.server.ColorCodeGenerator;
 import com.griddynamics.jagger.webclient.server.DataProcessingUtil;
 import com.griddynamics.jagger.webclient.server.LegendProvider;
@@ -60,31 +57,6 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
     //==========================
     //==========Contract Methods
     //==========================
-
-    /**
-     * Returns list of PlotSeriesDto for given task ID and plot name
-     *
-     * @param taskId   task ID
-     * @param plotName plot name
-     * @return list of PlotSeriesDto
-     * @see PlotSeriesDto
-     */
-    @Override
-    public List<PlotSeriesDto> getPlotData(long taskId, String plotName) {
-        DefaultMonitoringParameters[] defaultMonitoringParametersGroup = findDefaultMonitoringParameters(monitoringPlotGroups, plotName);
-        List<String> monitoringParametersList = assembleDefaultMonitoringParametersDescriptions(defaultMonitoringParametersGroup);
-        log.debug("For plot {} there are exist {} monitoring parameters", plotName, defaultMonitoringParametersGroup);
-
-        TaskData workloadTaskData = entityManager.find(TaskData.class, taskId);
-
-        WorkloadData workloadData = findWorkloadDataBySessionIdAndTaskId(workloadTaskData.getSessionId(), workloadTaskData.getTaskId());
-
-        TaskData monitoringTaskData = findMonitoringTaskDataBySessionIdAndParentId(workloadData.getSessionId(), workloadData.getParentId());
-
-        List<MonitoringStatistics> monitoringStatisticsList = findAllMonitoringStatisticsByMonitoringTaskDataAndDescriptionInList(monitoringTaskData, monitoringParametersList);
-
-        return assemble(composeByBoxIdentifierAndDescription(monitoringStatisticsList, false), plotName, Collections.singleton(taskId));
-    }
 
     /**
      * Returns list of PlotSeriesDto for given session ID and plot name
@@ -161,7 +133,11 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
     }
 
     @Override
-    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, String plotName) {
+    public PlotNameSeriesDto getPlotData(PlotNameDto plotNameDto) {
+
+        String plotName = plotNameDto.getPlotName();
+        Set<Long> taskIds = plotNameDto.getTaskIds();
+
         checkNotNull(taskIds, "taskIds is null");
         checkArgument(!taskIds.isEmpty(), "taskIds is empty");
         checkNotNull(plotName, "plotName is null");
@@ -196,7 +172,7 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
             }
         }
 
-        return assemble(finalComposedMap, plotName, taskIds);
+        return new PlotNameSeriesDto(plotNameDto, assemble(finalComposedMap, plotName, taskIds));
     }
 
     //============================

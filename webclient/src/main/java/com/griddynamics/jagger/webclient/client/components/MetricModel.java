@@ -63,7 +63,7 @@ public class MetricModel implements TreeViewModel {
             sb.appendHtmlConstant("<table><tr><td>");
             sb.appendHtmlConstant(imageHtml);
             sb.appendHtmlConstant("</td><td>");
-            sb.appendEscaped(value.getName());
+            sb.appendEscaped(value.getDisplayName());
             sb.appendHtmlConstant("</td></tr></table>");
         }
     }
