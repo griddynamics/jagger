@@ -212,23 +212,18 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
 
                 if ((entry.isNeedPlotData()) || (entry.isNeedSaveSummary())){
                     String aggregatedMetricName = "";
-                    if (overallMetricAggregator != null)
-                        aggregatedMetricName = metricName + "-" + overallMetricAggregator.getName();
-                    if (intervalAggregator != null)
-                        aggregatedMetricName = metricName + "-" + intervalAggregator.getName();
-    
-                    long currentInterval = aggregationInfo.getMinTime() + intervalSize;
-                    long time = 0;
+                    String aggregatedDisplayName = "";
                     String metricDName = entry.getMetricDisplayName();
                     if (metricDName == null || metricDName.isEmpty()) {
                         metricDName = metricName;
                     }
-                    String aggregatorDName = overallMetricAggregator.getDisplayName();
-                    if (aggregatorDName == null || aggregatorDName.isEmpty()) {
-                        aggregatorDName = overallMetricAggregator.getName();
-                    }
-    
-                    String aggregatedDisplayName =  metricDName + "-" + aggregatorDName;
+
+                    MetricAggregator nameAggregator = overallMetricAggregator != null ? overallMetricAggregator : intervalAggregator;
+                    aggregatedMetricName = metricName + "-" + nameAggregator.getName();
+                    aggregatedDisplayName =  generateDisplayName(metricDName, nameAggregator);
+
+                    long currentInterval = aggregationInfo.getMinTime() + intervalSize;
+                    long time = 0;
 
                     try {
                         fileReader = logReader.read(path, MetricLogEntry.class);
@@ -285,7 +280,6 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                 intervalAggregator.reset();
                             }
                         }
-                    }
 
                         if (entry.isNeedSaveSummary())
                             persistAggregatedMetricValue(aggregatedMetricName, aggregatedDisplayName, overallMetricAggregator.getAggregated());
@@ -300,6 +294,15 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             }
 
             return this;
+        }
+
+        private String generateDisplayName(String metricDName, MetricAggregator aggregator) {
+            String aggregatorDName = aggregator.getDisplayName();
+            if (aggregatorDName == null || aggregatorDName.isEmpty()) {
+                aggregatorDName = aggregator.getName();
+            }
+
+            return metricDName + "-" + aggregatorDName;
         }
 
         private Collection<Object>  fetchAggregators (String metricName) {
