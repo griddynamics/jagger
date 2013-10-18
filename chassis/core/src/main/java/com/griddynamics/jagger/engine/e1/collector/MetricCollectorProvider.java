@@ -35,6 +35,7 @@ import java.util.List;
 public class MetricCollectorProvider<Q, R, E> implements KernelSideInitializableObjectProvider<ScenarioCollector<Q, R, E>> {
     private MetricCalculator<R> metricCalculator;
     private String name;
+    private String displayName;
     private List<MetricDescriptionEntry> aggregators;
 
     @Override
@@ -50,6 +51,14 @@ public class MetricCollectorProvider<Q, R, E> implements KernelSideInitializable
     @Override
     public ScenarioCollector<Q, R, E> provide(String sessionId, String taskId, NodeContext kernelContext) {
         return new MetricCollector<Q, R, E>(sessionId, taskId, kernelContext, metricCalculator, name);
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public void setName(String name) {
@@ -80,6 +89,7 @@ public class MetricCollectorProvider<Q, R, E> implements KernelSideInitializable
         private boolean needPlotData;
         private boolean needSaveSummary;
         private MetricAggregatorProvider metricAggregatorProvider;
+        private String metricDisplayName;
 
         public MetricDescriptionEntry(MetricAggregatorProvider metricAggregatorProvider, boolean needPlotData) {
             this.needPlotData = needPlotData;
@@ -97,6 +107,14 @@ public class MetricCollectorProvider<Q, R, E> implements KernelSideInitializable
 
         public boolean isNeedPlotData() {
             return needPlotData;
+        }
+
+        public String getMetricDisplayName() {
+            return metricDisplayName;
+        }
+
+        public void setMetricDisplayName(String metricDisplayName) {
+            this.metricDisplayName = metricDisplayName;
         }
 
         public void setNeedPlotData(boolean needPlotData) {

@@ -92,6 +92,12 @@
 
     <metric id="metric1" xsi:type="metric-not-null-response"/>
 
+    <metric id="metric2" xsi:type="metric-not-null-response" displayName="DISPLAY_NAME"/>
+
+    <validator id="validator1" xsi:type="validator-not-null-response" displayName="displayName" />
+
+    <validator id="validator2" xsi:type="validator-not-null-response" />
+
     <endpoint-provider id="endpointProvider1" xsi:type="endpoint-provider-csv" path="../spring.schema/src/test/resources/endpoints.csv" readHeader="true">
         <object-creator xsi:type="object-creator-ref" ref="endpoints-creator"/>
     </endpoint-provider>

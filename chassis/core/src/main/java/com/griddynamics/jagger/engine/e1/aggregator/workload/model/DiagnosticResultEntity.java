@@ -27,6 +27,7 @@ public class DiagnosticResultEntity {
 
     private Long id;
     private String name;
+    private String displayName;
     private Double total;
     private WorkloadData workloadData;
 
@@ -39,6 +40,14 @@ public class DiagnosticResultEntity {
     @ManyToOne
     public WorkloadData getWorkloadData() {
         return workloadData;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public void setWorkloadData(WorkloadData workloadData) {

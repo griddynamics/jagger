@@ -28,20 +28,38 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 public class AvgMetricAggregatorProvider  implements MetricAggregatorProvider {
 
+    String displayName;
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     @Override
     public MetricAggregator provide() {
-        return new AvgMetricAggregator();
+        return new AvgMetricAggregator(displayName);
     }
 
     private static class AvgMetricAggregator  implements MetricAggregator<Number> {
 
         Double sum = null;
         long count = 0;
+        String displayName;
+
+
+        public AvgMetricAggregator() {}
+
+        public AvgMetricAggregator(String displayName) {
+            this.displayName = displayName;
+        }
 
         @Override
         public void append(Number calculated) {
             if (sum == null)
-                sum = new Double(0);
+                sum = 0d;
 
             sum += calculated.doubleValue();
             ++count;
@@ -56,9 +74,7 @@ public class AvgMetricAggregatorProvider  implements MetricAggregatorProvider {
                 return 0;
             }
 
-            double result = sum / count;
-
-            return Double.valueOf(result);
+            return sum / count;
         }
 
         @Override
@@ -70,6 +86,11 @@ public class AvgMetricAggregatorProvider  implements MetricAggregatorProvider {
         @Override
         public String getName() {
             return "avg";
+        }
+
+        @Override
+        public String getDisplayName() {
+            return displayName;
         }
 
         @Override

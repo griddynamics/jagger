@@ -53,21 +53,26 @@ public class SuccessRateCollectorDefinitionParser extends AbstractSimpleBeanDefi
         if (element.hasAttribute(XMLConstants.SAVE_SUMMARY)) {
             saveSummary = Boolean.valueOf(element.getAttribute(XMLConstants.SAVE_SUMMARY));
         }
+        String displayName = null;
+        if (element.hasAttribute(XMLConstants.DISPLAY_NAME)) {
+            displayName = element.getAttribute(XMLConstants.DISPLAY_NAME);
+            builder.addPropertyValue(XMLConstants.DISPLAY_NAME, displayName);
+        }
 
         List aggregators = CustomBeanDefinitionParser.parseCustomListElement(element, parserContext, builder.getBeanDefinition());
         List entries = new ManagedList();
         if (aggregators != null) {
             for (Object aggregator: aggregators) {
-                entries.add(getAggregatorEntry(aggregator, plotData, saveSummary));
+                entries.add(getAggregatorEntry(aggregator, displayName, plotData, saveSummary));
             }
         }
         if (entries.size() == 0) {
-            entries.add(getAggregatorEntry(new SuccessRateAggregatorProvider(), plotData, saveSummary));
-            entries.add(getAggregatorEntry(new SuccessRateFailsAggregatorProvider(), plotData,saveSummary));
+            entries.add(getAggregatorEntry(new SuccessRateAggregatorProvider(), displayName, plotData, saveSummary));
+            entries.add(getAggregatorEntry(new SuccessRateFailsAggregatorProvider(), displayName, plotData, saveSummary));
 
             // If user have not defined any name
             // And we are using metric with default aggregators => we will use default name
-            if (name.equals(XMLConstants.DEFAULT_METRIC_NAME) == true)
+            if (name.equals(XMLConstants.DEFAULT_METRIC_NAME))
                 name = XMLConstants.DEFAULT_METRIC_SUCCESS_RATE_NAME;
         }
 
@@ -75,11 +80,12 @@ public class SuccessRateCollectorDefinitionParser extends AbstractSimpleBeanDefi
         builder.addPropertyValue(XMLConstants.AGGREGATORS, entries);
     }
 
-    private BeanDefinition getAggregatorEntry(Object aggregatorProvider, boolean plotData, boolean saveSummary) {
+    private BeanDefinition getAggregatorEntry(Object aggregatorProvider, String displayName, boolean plotData, boolean saveSummary) {
         BeanDefinitionBuilder entry = BeanDefinitionBuilder.genericBeanDefinition(SuccessRateCollectorProvider.MetricDescriptionEntry.class);
         entry.addPropertyValue(XMLConstants.NEED_PLOT_DATA, plotData);
         entry.addPropertyValue(XMLConstants.NEED_SAVE_SUMMARY, saveSummary);
         entry.addPropertyValue(XMLConstants.METRIC_AGGREGATOR_PROVIDER, aggregatorProvider);
+        entry.addPropertyValue(XMLConstants.METRIC_DISPLAY_NAME, displayName);
         return entry.getBeanDefinition();
     }
 }

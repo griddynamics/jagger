@@ -39,5 +39,10 @@ public class SuccessRateAggregatorProvider implements MetricAggregatorProvider {
         public String getName() {
             return "Success rate";
         }
+
+        @Override
+        public String getDisplayName() {
+            return "Success rate";
+        }
     }
 }

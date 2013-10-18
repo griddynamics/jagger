@@ -52,6 +52,12 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
             builder.addPropertyValue(XMLConstants.NAME, XMLConstants.DEFAULT_METRIC_NAME);
         }
 
+        String displayName = null;
+        if (element.hasAttribute(XMLConstants.DISPLAY_NAME)) {
+            displayName = element.getAttribute(XMLConstants.DISPLAY_NAME);
+            builder.addPropertyValue(XMLConstants.DISPLAY_NAME, displayName);
+        }
+
         Boolean plotData = false;
         if (element.hasAttribute(XMLConstants.PLOT_DATA)) {
             plotData = Boolean.valueOf(element.getAttribute(XMLConstants.PLOT_DATA));
@@ -65,11 +71,11 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
         List entries = new ManagedList();
         if (aggregators != null) {
             for (Object aggregator: aggregators) {
-                entries.add(getAggregatorEntry(aggregator, plotData, saveSummary));
+                entries.add(getAggregatorEntry(aggregator, displayName, plotData, saveSummary));
             }
         }
         if (entries.size() == 0) {
-            entries.add(getAggregatorEntry(new SumMetricAggregatorProvider(), plotData, saveSummary));
+            entries.add(getAggregatorEntry(new SumMetricAggregatorProvider(), displayName, plotData, saveSummary));
         }
 
         builder.addPropertyValue(XMLConstants.AGGREGATORS, entries);
@@ -77,11 +83,12 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
 
     protected abstract Object getMetricCalculator(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
 
-    private BeanDefinition getAggregatorEntry(Object aggregatorProvider, boolean plotData, boolean saveSummary) {
+    private BeanDefinition getAggregatorEntry(Object aggregatorProvider, String displayName, boolean plotData, boolean saveSummary) {
         BeanDefinitionBuilder entry = BeanDefinitionBuilder.genericBeanDefinition(MetricCollectorProvider.MetricDescriptionEntry.class);
         entry.addPropertyValue(XMLConstants.NEED_PLOT_DATA, plotData);
         entry.addPropertyValue(XMLConstants.NEED_SAVE_SUMMARY, saveSummary);
         entry.addPropertyValue(XMLConstants.METRIC_AGGREGATOR_PROVIDER, aggregatorProvider);
+        entry.addPropertyValue(XMLConstants.METRIC_DISPLAY_NAME, displayName);
         return entry.getBeanDefinition();
     }
 }

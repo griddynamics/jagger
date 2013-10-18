@@ -29,6 +29,7 @@ public class ValidationResultEntity {
     private Long id;
     private WorkloadData workloadData;
     private String validator;
+    private String displayName;
     private Integer total;
     private Integer failed;
 
@@ -49,6 +50,14 @@ public class ValidationResultEntity {
 
     public void setWorkloadData(WorkloadData workloadData) {
         this.workloadData = workloadData;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getValidator() {

@@ -147,6 +147,8 @@ public class XMLConstants {
     public static final String PAIR_SUPPLIER_FACTORY = "pairSupplierFactory";
 
     public static final String PLOT_DATA = "plotData";
+    public static final String DISPLAY_NAME = "displayName";
+    public static final String METRIC_DISPLAY_NAME = "metricDisplayName";
     public static final String SAVE_SUMMARY = "saveSummary";
     public static final String SIMPLE_COLLECTOR = "simpleCollector";
 

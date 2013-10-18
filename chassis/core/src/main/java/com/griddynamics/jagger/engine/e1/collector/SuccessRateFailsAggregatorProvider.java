@@ -31,5 +31,10 @@ public class SuccessRateFailsAggregatorProvider implements MetricAggregatorProvi
         public String getName() {
             return "Number of fails";
         }
+
+        @Override
+        public String getDisplayName() {
+            return "Number of fails";
+        }
     }
 }

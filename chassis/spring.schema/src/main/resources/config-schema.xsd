@@ -821,8 +821,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="metricAggregatorAbstract">
-            </xsd:extension>
+            <xsd:extension base="metricAggregatorHasDisplayNameAbstract"/>
         </xsd:complexContent>
     </xsd:complexType>
 
@@ -832,8 +831,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="metricAggregatorAbstract">
-            </xsd:extension>
+            <xsd:extension base="metricAggregatorHasDisplayNameAbstract"/>
         </xsd:complexContent>
     </xsd:complexType>
 
@@ -843,8 +841,7 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
-            <xsd:extension base="metricAggregatorAbstract">
-            </xsd:extension>
+            <xsd:extension base="metricAggregatorHasDisplayNameAbstract"/>
         </xsd:complexContent>
     </xsd:complexType>
 
@@ -854,6 +851,18 @@
             <xsd:documentation>
             </xsd:documentation>
         </xsd:annotation>
+    </xsd:complexType>
+
+    <xsd:complexType name="metricAggregatorHasDisplayNameAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="metricAggregatorAbstract">
+                <xsd:attribute name="displayName" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="metricAbstract" abstract="true">
@@ -868,6 +877,7 @@
                 <xsd:choice>
                     <xsd:element name="metric-aggregator" type="metricAggregatorAbstract" minOccurs="0" maxOccurs="unbounded"/>
                 </xsd:choice>
+                <xsd:attribute name="displayName" type="xsd:string"/>
                 <xsd:attribute name="plotData" type="xsd:string" default="false"/>
                 <xsd:attribute name="saveSummary" type="xsd:string" default="true"/>
             </xsd:extension>
@@ -936,6 +946,7 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="workloadCollectorAbstract">
+                <xsd:attribute name="displayName" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

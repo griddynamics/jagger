@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 public class NotNullResponseDefinitionParser extends AbstractValidatorDefinitionParser {
 
     @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         ReflectionProvider provider = new ReflectionProvider();
         provider.setClazz(NotNullResponseValidator.class);
         builder.addPropertyValue(XMLConstants.VALIDATOR, provider);
