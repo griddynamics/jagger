@@ -223,19 +223,35 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
 
             Map<String, String> metricsMap = new LinkedHashMap<String, String>();
             if (!validators.isEmpty()) {
+                int i = 0;
                 for (Object[] validator : validators) {
                     BigDecimal percentage = BigDecimal.ZERO;
-                    if ((Integer)validator[1] != 0) {
-                        percentage = new BigDecimal((Integer)validator[1] - (Integer)validator[2])
-                                .divide(new BigDecimal((Integer)validator[1]), 3, BigDecimal.ROUND_HALF_UP);
-                    }
-                    metricsMap.put(validator[0].toString(), percentage.toString());
+                    String name = (validator[0] == null) ?
+                        "No name Validator " + i++ : validator[0].toString();
+                    String value = null;
+                    if (validator[1]!=null && validator[2]!=null) {
+                        if ((Integer)validator[1] != 0) {
+                            percentage = new BigDecimal((Integer)validator[1] - (Integer)validator[2])
+                                    .divide(new BigDecimal((Integer)validator[1]), 3, BigDecimal.ROUND_HALF_UP);
+                        }
+                        value = percentage.toString();
+                    } else if (validator[1] != null) {
+                        name += "[total]";
+                        value = validator[1].toString();
+                    } else if (validator[2] != null) {
+                        name += "[failed]";
+                        value = validator[2].toString();
+                    } else {continue;}
+                    metricsMap.put(name, value);
                 }
             }
 
             if (!metrics.isEmpty()) {
+                int i = 1;
                 for (Object[] objects : metrics) {
-                    metricsMap.put(objects[0].toString(), new DecimalFormat("0.0###").format(objects[1]));
+                    String name = (objects[0]==null) ? "No name Metric " + i++ : objects[0].toString();
+                    String value = (objects[1]==null) ? "No Value" : new DecimalFormat("0.0###").format(objects[1]);
+                    metricsMap.put(name, value);
                 }
             }
 
