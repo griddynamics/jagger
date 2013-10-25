@@ -39,7 +39,7 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
     private static final Logger log = LoggerFactory.getLogger(AbstractDistributor.class);
 
     @Override
-    public Service distribute(final ExecutorService executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final T task, final DistributionListener listener) {
+    public Service distribute(final ExecutorService executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final T task, final DistributionListener listener, NodeContext nodeContext) {
         Set<Qualifier<?>> qualifiers = getQualifiers();
 
         final Map<NodeId, RemoteExecutor> remotes = Maps.newHashMap();
@@ -60,7 +60,7 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
             throw new NodeNotFound("Nodes not found to distribute the task");
         }
 
-        final Service service = performDistribution(executor, sessionId, taskId, task, remotes, availableNodes, coordinator);
+        final Service service = performDistribution(executor, sessionId, taskId, task, remotes, availableNodes, coordinator, nodeContext);
         return new ForwardingService() {
 
             @Override
@@ -122,5 +122,5 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
 
     protected abstract Set<Qualifier<?>> getQualifiers();
 
-    protected abstract Service performDistribution(ExecutorService executor, String sessionId, String taskId, T task, Map<NodeId, RemoteExecutor> remotes, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator);
+    protected abstract Service performDistribution(ExecutorService executor, String sessionId, String taskId, T task, Map<NodeId, RemoteExecutor> remotes, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator, NodeContext nodeContext);
 }

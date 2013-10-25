@@ -46,4 +46,21 @@
 
 	<bean id="simpleMetricCalculator" class="com.griddynamics.jagger.engine.e1.collector.SimpleMetricCalculator"/>
 
+    <bean id="threadsAvg" class="com.griddynamics.jagger.engine.e1.collector.CalculatorStatusCollector">
+        <property name="name" value="Jagger.Threads"/>
+        <property name="metricCalculator" ref="threadCalc"/>
+        <property name="aggregators">
+            <list>
+                <bean class="com.griddynamics.jagger.engine.e1.collector.ContextAware$MetricDescriptionEntry">
+                    <property name="needPlotData" value="true"/>
+                    <property name="needSaveSummary" value="true"/>
+                    <property name="metricAggregatorProvider" ref="avgAggregator"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="threadCalc" class="com.griddynamics.jagger.engine.e1.collector.ThreadCalculator"/>
+
+    <bean id="avgAggregator" class="com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider"/>
 </beans>

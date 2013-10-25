@@ -17,22 +17,33 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.griddynamics.jagger.engine.e1.collector;
+package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
-import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
-import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
+import com.griddynamics.jagger.engine.e1.collector.*;
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
+import org.w3c.dom.Element;
 
-/**
- * @author Nikolay Musienko
- *         Date: 18.03.13
- */
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class MetricCollectorProvider<Q, R, E> extends CalculatorContextAware<R> implements KernelSideObjectProvider<ScenarioCollector<Q, R, E>>{
+public class SuccessRateCollectorDefinitionParser extends AbstractCollectorDefinitionParser{
 
     @Override
-    public ScenarioCollector<Q, R, E> provide(String sessionId, String taskId, NodeContext kernelContext) {
-        return new MetricCollector<Q, R, E>(sessionId, taskId, kernelContext, metricCalculator, name);
+    protected Class getBeanClass(Element element) {
+        return SuccessRateCollectorProvider.class;
     }
 
+    @Override
+    protected Collection<MetricAggregatorProvider> getAggregators() {
+        Collection<MetricAggregatorProvider> result = new ArrayList<MetricAggregatorProvider>(1);
+        result.add(new SuccessRateAggregatorProvider());
+        result.add(new SuccessRateFailsAggregatorProvider());
+
+        return result;
+    }
+
+    @Override
+    protected String getDefaultCollectorName() {
+        return XMLConstants.DEFAULT_METRIC_SUCCESS_RATE_NAME;
+    }
 }

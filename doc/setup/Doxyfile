@@ -665,6 +665,7 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCalculator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCollector.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateCollector.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/sessioncomparation/DecisionMaker.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/scenario/TerminationStrategy.java \
                          ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/creators/ObjectCreator.java \
@@ -692,7 +693,9 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/FileProvider.java  \
                          ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/CsvProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCollectorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorProvider.java
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateFailsAggregatorProvider.java
 
 
 # This tag can be used to specify the character encoding of the source files
@@ -1344,7 +1347,7 @@ EXTRA_SEARCH_MAPPINGS  =
 # If the GENERATE_LATEX tag is set to YES (the default) Doxygen will
 # generate Latex output.
 
-GENERATE_LATEX         = YES
+GENERATE_LATEX         = NO
 
 # The LATEX_OUTPUT tag is used to specify where the LaTeX docs will be put.
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be

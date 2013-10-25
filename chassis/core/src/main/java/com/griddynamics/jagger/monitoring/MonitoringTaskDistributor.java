@@ -53,7 +53,7 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
     @Override
     protected Service performDistribution(final ExecutorService executor, final String sessionId, final String taskId, final MonitoringTask task,
                                           final Map<NodeId, RemoteExecutor> remotes, final Multimap<NodeType, NodeId> availableNodes,
-                                          final Coordinator coordinator) {
+                                          final Coordinator coordinator, final NodeContext nodeContext) {
 
         return new AbstractExecutionThreadService() {
             @Override

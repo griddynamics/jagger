@@ -139,7 +139,8 @@ public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 /// <li> Create class which implements @ref ResponseValidator<Q,E,R> @n
 /// Will validate responce from SUT after every successful invocation
 /// @dontinclude  ResponseFromFileValidator.java
-/// @skipline  public class ResponseFromFileValidator
+/// @skip  begin: following section is used for docu generation - validator-custom source
+/// @until end: following section is used for docu generation - validator-custom source
 /// @n
 ///
 /// <li> If your validator doesn't have any properties, create @xlink{validator-custom} collector in @xlink{test-description,info-collectors} block in @xlink{test-description}. @n
@@ -155,7 +156,8 @@ public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 /// <li> Create class which implements @ref MetricCalculator<R>@n
 /// Will calculate some parameters according to SUT response
 /// @dontinclude  ResponseSize.java
-/// @skipline  public class ResponseSize
+/// @skip  begin: following section is used for docu generation - metric calculator source
+/// @until end: following section is used for docu generation - metric calculator source
 /// @n
 ///
 /// <li> Create bean of this class in some configuration file. Put some id for it.

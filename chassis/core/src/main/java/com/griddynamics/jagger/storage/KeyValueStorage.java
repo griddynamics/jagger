@@ -27,25 +27,25 @@ import com.google.common.collect.Multimap;
 
 /**
  * Used for storing data in key-value format.
- * 
+ *
  * @author Mairbek Khadikov
- * 
+ *
  */
 public interface KeyValueStorage {
 
-	boolean isAvailable();
+    boolean isAvailable();
 
-	void initialize();
+    void initialize();
 
-	void put(Namespace namespace, String key, Object value);
+    void put(Namespace namespace, String key, Object value);
 
     void putAll(Namespace namespace, Multimap<String, Object> valuesMap);
-	
-	Object fetch(Namespace namespace, String key);
-	
-	Object fetchNotNull(Namespace namespace, String key);
-	
-	Collection<Object> fetchAll(Namespace namespace, String key);
-	
-	Multimap<String, Object> fetchAll(Namespace namespace);
+
+    Object fetch(Namespace namespace, String key);
+
+    Object fetchNotNull(Namespace namespace, String key);
+
+    Collection<Object> fetchAll(Namespace namespace, String key);
+
+    Multimap<String, Object> fetchAll(Namespace namespace);
 }

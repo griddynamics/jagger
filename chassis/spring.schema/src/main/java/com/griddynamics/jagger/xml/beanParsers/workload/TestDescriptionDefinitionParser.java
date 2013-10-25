@@ -60,6 +60,13 @@ public class TestDescriptionDefinitionParser extends CustomBeanDefinitionParser 
         builder.addPropertyValue(XMLConstants.STANDARD_COLLECTORS, standardCollectors);
         builder.addPropertyValue(XMLConstants.METRICS, metrics);
 
+        ManagedList standardWorkloadStatusCollectors = new ManagedList();
+        for (String standardWorkloadStatusCollector : XMLConstants.STANDARD_WORKLOAD_STATUS_LISTENERS){
+            standardWorkloadStatusCollectors.add(new RuntimeBeanReference(standardWorkloadStatusCollector));
+        }
+
+        builder.addPropertyValue(XMLConstants.STANDARD_WORKLOAD_STATUS_COLLECTORS, standardWorkloadStatusCollectors);
+
         //add scenario
         Element scenarioElement = DomUtils.getChildElementByTagName(element, XMLConstants.SCENARIO);
         setBeanProperty(XMLConstants.SCENARIO_FACTORY, scenarioElement, parserContext, builder.getBeanDefinition());

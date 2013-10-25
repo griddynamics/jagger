@@ -11,8 +11,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/* begin: following section is used for docu generation - validator-custom source */
+/* Will compare result of invokation with expected result, read from file
+ * @author Grid Dynamics
+ *
+ * @param <Q> - Query type
+ * @param <E> - Endpoint type
+ * @param <R> - Result type
+ */
 public class ResponseFromFileValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
-
 
     private String filePath= "suite/validator/resources/response.txt";
     private String expectedResponse;
@@ -45,6 +52,14 @@ public class ResponseFromFileValidator<Q, E, R> extends ResponseValidator<Q, E, 
         expectedResponse=sb.toString();
     }
 
+    /* Following method will be called after every successful invoke to validate result
+     * @author Grid Dynamics
+     *
+     * @param query    - Query that was sent to endpoint
+     * @param endpoint - Endpoint - service under test
+     * @param result   - Result returned from endpoint
+     * @param duration - Duration of invoke
+     * */
     @Override
     public boolean validate(Q query, E endpoint, R result, long duration) {
         if(expectedResponse==null){
@@ -57,3 +72,4 @@ public class ResponseFromFileValidator<Q, E, R> extends ResponseValidator<Q, E, 
         return expectedResponse.equals(result);
     }
 }
+/* end: following section is used for docu generation - validator-custom source */

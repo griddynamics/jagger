@@ -149,5 +149,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @defgroup Main_Distributors_group Implementations of distributors
 /// @defgroup Main_Collectors_group Implementations of collectors
 /// @details @ref Main_Collectors_General_group
+/// @defgroup Main_Aggregators_group Implementations of aggregators
 /// @defgroup Main_DecisionMakers_group Implementations of decision makers
 /// @defgroup Main_Terminators_group Implementations of termination strategies

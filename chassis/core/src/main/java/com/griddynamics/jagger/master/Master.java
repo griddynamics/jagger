@@ -31,6 +31,8 @@ import com.griddynamics.jagger.master.configuration.*;
 import com.griddynamics.jagger.monitoring.reporting.DynamicPlotGroups;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.KeyValueStorage;
+import com.griddynamics.jagger.storage.fs.logging.LogReader;
+import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.Futures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +70,9 @@ public class Master implements Runnable {
     private CountDownLatch terminateConfigurationLatch = null;
     private final WeakHashMap<Service, Object> distributes = new WeakHashMap<Service, Object>();
     private DynamicPlotGroups dynamicPlotGroups;
+    private LogWriter logWriter;
+    private LogReader logReader;
+
 
     @Required
     public void setReconnectPeriod(long reconnectPeriod) {
@@ -99,6 +104,22 @@ public class Master implements Runnable {
         this.conditions = conditions;
     }
 
+    public LogWriter getLogWriter() {
+        return logWriter;
+    }
+
+    public void setLogWriter(LogWriter logWriter) {
+        this.logWriter = logWriter;
+    }
+
+    public LogReader getLogReader() {
+        return logReader;
+    }
+
+    public void setLogReader(LogReader logReader) {
+        this.logReader = logReader;
+    }
+
     @Override
     public void run() {
         validateConfiguration();
@@ -112,6 +133,13 @@ public class Master implements Runnable {
 
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();
         allNodes.putAll(NodeType.MASTER, coordinator.getAvailableNodes(NodeType.MASTER));
+
+        NodeContextBuilder contextBuilder = Coordination.contextBuilder(NodeId.masterNode());
+        contextBuilder
+                .addService(LogWriter.class, getLogWriter())
+                .addService(LogReader.class, getLogReader())
+                .addService(KeyValueStorage.class, keyValueStorage);
+        NodeContext context = contextBuilder.build();
 
         Map<NodeType, CountDownLatch> countDownLatchMap = Maps.newHashMap();
         CountDownLatch agentCountDownLatch = new CountDownLatch(
@@ -158,7 +186,7 @@ public class Master implements Runnable {
         try {
             log.info("Configuration launched!!");
 
-            SessionExecutionStatus status=runConfiguration(allNodes);
+            SessionExecutionStatus status=runConfiguration(allNodes, context);
 
             log.info("Configuration work finished!!");
 
@@ -203,7 +231,7 @@ public class Master implements Runnable {
         // TODO Auto-generated method stub
     }
 
-    private SessionExecutionStatus runConfiguration(Multimap<NodeType, NodeId> allNodes) {
+    private SessionExecutionStatus runConfiguration(Multimap<NodeType, NodeId> allNodes, NodeContext nodeContext) {
         SessionExecutionStatus status = SessionExecutionStatus.EMPTY;
         try {
             log.info("Execution started");
@@ -215,7 +243,7 @@ public class Master implements Runnable {
                 }
 
                 try{
-                    executeTask(task, allNodes);
+                    executeTask(task, allNodes, nodeContext);
                 } catch (Exception e){
                     status = SessionExecutionStatus.TASK_FAILED;
                     log.error("Exception during execute task: {}", e);
@@ -246,7 +274,7 @@ public class Master implements Runnable {
         }
     }
 
-    private void executeTask(Task task, Multimap<NodeType, NodeId> allNodes) throws TerminateException {
+    private void executeTask(Task task, Multimap<NodeType, NodeId> allNodes, NodeContext nodeContext) throws TerminateException {
         log.debug("Distributing task {}", task);
 
         @SuppressWarnings("unchecked")
@@ -258,7 +286,7 @@ public class Master implements Runnable {
 
         String taskId = taskIdProvider.getTaskId();
 
-        Service distribute = taskDistributor.distribute(executor, sessionIdProvider.getSessionId(), taskId, allNodes, coordinator, task, distributionListener());
+        Service distribute = taskDistributor.distribute(executor, sessionIdProvider.getSessionId(), taskId, allNodes, coordinator, task, distributionListener(), nodeContext);
         try{
             Future<Service.State> start;
             synchronized (terminateConfigurationLock) {

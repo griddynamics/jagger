@@ -20,15 +20,12 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
 
 /**
  * @author Nikolay Musienko
  *         Date: 08.08.13
  */
 
-public interface KernelSideInitializableObjectProvider<T extends KernelSideObject> extends KernelSideObjectProvider<T> {
-
-    void init(String sessionId, String taskId, NodeContext kernelContext);
+public interface KernelSideInitializableObjectProvider<T extends KernelSideObject> extends KernelSideObjectProvider<T>, NodeSideInitializable {
 
 }

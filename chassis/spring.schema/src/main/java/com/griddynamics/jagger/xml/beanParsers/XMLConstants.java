@@ -86,11 +86,15 @@ public class XMLConstants {
     public static final String DURATION_COLLECTOR = "durationCollector";
     public static final String INFORMATION_COLLECTOR = "informationCollector";
     public static final String DIAGNOSTIC_COLLECTOR = "diagnosticCollector";
+    public static final String THREADS_AVG_COLLECTOR = "threadsAvg";
 
     //don't change the order!!! will not works
     public static final String STANDARD_COLLECTORS = "standardCollectors";
+    public static final String STANDARD_WORKLOAD_STATUS_COLLECTORS = "workloadStatusCollectors";
 
     public static final List<String> STANDARD_WORKLOAD_LISTENERS = Arrays.asList(INFORMATION_COLLECTOR, DURATION_COLLECTOR);
+    public static final List<String> STANDARD_WORKLOAD_STATUS_LISTENERS = Arrays.asList(THREADS_AVG_COLLECTOR);
+
 
     public static final String WORKLOAD_LISTENERS_CLASS   = "collectors";
     public static final String VALIDATOR = "validator";

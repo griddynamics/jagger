@@ -113,16 +113,16 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
         Set<String> boxIdentifiers = generalStatistics.findBoxIdentifiers();
         Set<String> sutUrls = generalStatistics.findSutUrls();
         for (GroupKey groupName : plotGroups.getPlotGroups().keySet()) {
-            log.info("    Create general task plots for group '{}'", groupName);
+            log.debug("    Create general task plots for group '{}'", groupName);
 
             if (showPlotsByGlobal) {
-                log.info("        Create general global task plots");
+                log.debug("        Create general global task plots");
 
                 List<MonitoringReporterData> plots = new LinkedList<MonitoringReporterData>();
                 XYSeriesCollection chartsCollection = new XYSeriesCollection();
                 LinkedHashMap<String, IntervalMarker> markers = new LinkedHashMap<String, IntervalMarker>();
                 for (MonitoringParameter parameterId : plotGroups.getPlotGroups().get(groupName)) {
-                    log.info("            Create general global task plots for parameter '{}'", parameterId);
+                    log.debug("            Create general global task plots for parameter '{}'", parameterId);
 
                     MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
                     if (generalStatistics.hasGlobalStatistics(param)) {
@@ -130,7 +130,7 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
                         long timeShift = 0;
                         int taskNum = 0;
                         for (String taskId : taskIds) {
-                            log.info("                Create general global task plots for task '{}'", taskId);
+                            log.debug("                Create general global task plots for task '{}'", taskId);
 
                             long maxTime = 0;
                             for (MonitoringStatistics monitoringStatistics : generalStatistics.findGlobalStatistics(taskId, param)) {
@@ -210,16 +210,16 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
             }
 
             if (showPlotsByBox) {
-                log.info("        Create general box task plots");
+                log.debug("        Create general box task plots");
 
                 for (String boxIdentifier : boxIdentifiers) {
-                    log.info("            Create general box task plots for box '{}'", boxIdentifier);
+                    log.debug("            Create general box task plots for box '{}'", boxIdentifier);
 
                     List<MonitoringReporterData> plots = new LinkedList<MonitoringReporterData>();
                     XYSeriesCollection chartsCollection = new XYSeriesCollection();
                     LinkedHashMap<String, IntervalMarker> markers = new LinkedHashMap<String, IntervalMarker>();
                     for (MonitoringParameter parameterId : plotGroups.getPlotGroups().get(groupName)) {
-                        log.info("                Create general box task plots for parameter '{}'", parameterId);
+                        log.debug("                Create general box task plots for parameter '{}'", parameterId);
 
                         MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
                         if (generalStatistics.hasBoxStatistics(param, boxIdentifier)) {
@@ -227,7 +227,7 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
                             long timeShift = 0;
                             int taskNum = 0;
                             for (String taskId : taskIds) {
-                                log.info("                    Create general box task plots for task '{}'", taskId);
+                                log.debug("                    Create general box task plots for task '{}'", taskId);
 
                                 long maxTime = 0;
                                 for (MonitoringStatistics monitoringStatistics : generalStatistics.findBoxStatistics(taskId, param, boxIdentifier)) {
@@ -308,16 +308,16 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
             }
 
             if (showPlotsBySuT) {
-                log.info("        Create general sut task plots");
+                log.debug("        Create general sut task plots");
 
                 for (String sutUrl : sutUrls) {
-                    log.info("            Create general sut task plots for sut '{}'", sutUrl);
+                    log.debug("            Create general sut task plots for sut '{}'", sutUrl);
 
                     List<MonitoringReporterData> plots = new LinkedList<MonitoringReporterData>();
                     XYSeriesCollection chartsCollection = new XYSeriesCollection();
                     LinkedHashMap<String, IntervalMarker> markers = new LinkedHashMap<String, IntervalMarker>();
                     for (MonitoringParameter parameterId : plotGroups.getPlotGroups().get(groupName)) {
-                        log.info("                Create general sut task plots for parameter '{}'", parameterId);
+                        log.debug("                Create general sut task plots for parameter '{}'", parameterId);
 
                         MonitoringParameterBean param = MonitoringParameterBean.copyOf(parameterId);
                         if (generalStatistics.hasSutStatistics(param, sutUrl)) {
@@ -325,7 +325,7 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
                             long timeShift = 0;
                             int taskNum = 0;
                             for (String taskId : taskIds) {
-                                log.info("                    Create general sut task plots for task '{}'", taskId);
+                                log.debug("                    Create general sut task plots for task '{}'", taskId);
 
                                 long maxTime = 0;
                                 for (MonitoringStatistics monitoringStatistics : generalStatistics.findSutStatistics(taskId, param, sutUrl)) {

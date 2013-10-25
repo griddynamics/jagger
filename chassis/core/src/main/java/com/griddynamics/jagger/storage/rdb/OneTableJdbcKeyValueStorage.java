@@ -41,52 +41,52 @@ import java.util.Map;
 
 /**
  * Stores data in one table in relation database.
- * 
+ *
  * @author Mairbek Khadikov
  */
 public class OneTableJdbcKeyValueStorage implements KeyValueStorage {
-	private static final Logger log = LoggerFactory.getLogger(OneTableJdbcKeyValueStorage.class);
+    private static final Logger log = LoggerFactory.getLogger(OneTableJdbcKeyValueStorage.class);
 
-	private static String TABLE_NAME = "keyvalue";
+    private static String TABLE_NAME = "keyvalue";
 
-	private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
-	@Override
-	public boolean isAvailable() {
-		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("SHOW TABLES");
-		log.debug("{}", queryForList);
+    @Override
+    public boolean isAvailable() {
+        List<Map<String, Object>> queryForList = jdbcTemplate.queryForList("SHOW TABLES");
+        log.debug("{}", queryForList);
 
-		for (Map<String, Object> map : queryForList) {
-			if (TABLE_NAME.equalsIgnoreCase((String) map.get("TABLE_NAME"))) {
-				return true;
-			}
-		}
-		return false;
-	}
+        for (Map<String, Object> map : queryForList) {
+            if (TABLE_NAME.equalsIgnoreCase((String) map.get("TABLE_NAME"))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public void initialize() {
-		try {
-			createTable();
-		} catch (Throwable e) {
-			throw new TechnicalException(e);
-		}
-	}
+    @Override
+    public void initialize() {
+        try {
+            createTable();
+        } catch (Throwable e) {
+            throw new TechnicalException(e);
+        }
+    }
 
-	private void createTable() {
-		jdbcTemplate.execute("create table " + TABLE_NAME
-				+ " (id int primary key AUTO_INCREMENT, name varchar, key varchar, value blob)");
-	}
+    private void createTable() {
+        jdbcTemplate.execute("create table " + TABLE_NAME
+                + " (id int primary key AUTO_INCREMENT, name varchar, key varchar, value blob)");
+    }
 
-	@Override
-	public void put(Namespace namespace, String key, Object value) {
-		jdbcTemplate.update("insert into " + TABLE_NAME + " (name, key, value) values (?, ?, ?)", new Object[] {
-				namespace.toString(), key, SerializationUtils.serialize(value) });
-	}
+    @Override
+    public void put(Namespace namespace, String key, Object value) {
+        jdbcTemplate.update("insert into " + TABLE_NAME + " (name, key, value) values (?, ?, ?)", new Object[] {
+                namespace.toString(), key, SerializationUtils.serialize(value) });
+    }
 
     @Override
     public void putAll(Namespace namespace, Multimap<String, Object> valuesMap) {
@@ -110,62 +110,62 @@ public class OneTableJdbcKeyValueStorage implements KeyValueStorage {
     }
 
     @Override
-	public Object fetch(Namespace namespace, String key) {
-		try {
-			Object obj = jdbcTemplate.queryForObject("select value from " + TABLE_NAME + " where name=? and key=?",
-					new Object[] { namespace.toString(), key }, Object.class);
-			return SerializationUtils.deserialize((byte[]) obj);
-		} catch (IncorrectResultSizeDataAccessException e) {
-			return null;
-		}
-	}
+    public Object fetch(Namespace namespace, String key) {
+        try {
+            Object obj = jdbcTemplate.queryForObject("select value from " + TABLE_NAME + " where name=? and key=?",
+                    new Object[] { namespace.toString(), key }, Object.class);
+            return SerializationUtils.deserialize((byte[]) obj);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return null;
+        }
+    }
 
-	@Override
-	public Collection<Object> fetchAll(Namespace namespace, String key) {
-		List<Map<String, Object>> fetch;
-		try {
-			fetch = jdbcTemplate.queryForList(
-					"select value as value from " + TABLE_NAME + " where name=? and key=? ",
-					new Object[] { namespace.toString(), key });
-		} catch (EmptyResultDataAccessException e) {
-			return ImmutableList.of();
-		}
-		List<Object> result = Lists.newLinkedList();
-		for (Map<String, Object> map : fetch) {
-			byte[] data = (byte[]) map.get("value");
-			Object value = SerializationUtils.deserialize(data);
-			result.add(value);
-		}
-		return result;
-	}
+    @Override
+    public Collection<Object> fetchAll(Namespace namespace, String key) {
+        List<Map<String, Object>> fetch;
+        try {
+            fetch = jdbcTemplate.queryForList(
+                    "select value as value from " + TABLE_NAME + " where name=? and key=? ",
+                    new Object[] { namespace.toString(), key });
+        } catch (EmptyResultDataAccessException e) {
+            return ImmutableList.of();
+        }
+        List<Object> result = Lists.newLinkedList();
+        for (Map<String, Object> map : fetch) {
+            byte[] data = (byte[]) map.get("value");
+            Object value = SerializationUtils.deserialize(data);
+            result.add(value);
+        }
+        return result;
+    }
 
-	@Override
-	public Multimap<String, Object> fetchAll(Namespace namespace) {
-		List<Map<String, Object>> fetch;
-		try {
-			fetch = jdbcTemplate.queryForList(
-					"select key as key, value as value from " + TABLE_NAME + " where name=? ",
-					new Object[] { namespace.toString()});
-		} catch (EmptyResultDataAccessException e) {
-			return ImmutableMultimap.of();
-		}
-		Multimap<String, Object> result = ArrayListMultimap.create();
-		for (Map<String, Object> map : fetch) {
-			String key = (String) map.get("key");
-			byte[] data = (byte[]) map.get("value");
-			Object value = SerializationUtils.deserialize(data);
-			result.put(key, value);
-		}
-		return result;
-	}
+    @Override
+    public Multimap<String, Object> fetchAll(Namespace namespace) {
+        List<Map<String, Object>> fetch;
+        try {
+            fetch = jdbcTemplate.queryForList(
+                    "select key as key, value as value from " + TABLE_NAME + " where name=? ",
+                    new Object[] { namespace.toString()});
+        } catch (EmptyResultDataAccessException e) {
+            return ImmutableMultimap.of();
+        }
+        Multimap<String, Object> result = ArrayListMultimap.create();
+        for (Map<String, Object> map : fetch) {
+            String key = (String) map.get("key");
+            byte[] data = (byte[]) map.get("value");
+            Object value = SerializationUtils.deserialize(data);
+            result.put(key, value);
+        }
+        return result;
+    }
 
-	@Override
-	public Object fetchNotNull(Namespace namespace, String key) {
-		// TODO avoid copy-paste
-		Object result = fetch(namespace, key);
-		if (result == null) {
-			throw new IllegalStateException("Cannot find value for namespace " + namespace + " and key " + key);
-		}
-		return result;
-	}
+    @Override
+    public Object fetchNotNull(Namespace namespace, String key) {
+        // TODO avoid copy-paste
+        Object result = fetch(namespace, key);
+        if (result == null) {
+            throw new IllegalStateException("Cannot find value for namespace " + namespace + " and key " + key);
+        }
+        return result;
+    }
 }

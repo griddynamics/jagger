@@ -41,7 +41,7 @@
         <info-collectors id="defaultCollectors">
             <validator xsi:type="validator-not-null-response"/>
             <validator xsi:type="validator-consistency"/>
-            <metric id="responseSize"  xsi:type="metric-custom" calculator="responseSize"/>
+            <metric id="responseSize"  xsi:type="metric-custom" calculator="responseSize" plotData="true"/>
             <metric xsi:type="metric-ref" ref="successRateCollector" plotData="true"/>
         </info-collectors>
         <!-- end: following section is used for docu generation - metric calculator usage-->

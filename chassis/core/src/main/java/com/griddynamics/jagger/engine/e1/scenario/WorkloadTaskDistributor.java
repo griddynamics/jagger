@@ -25,6 +25,7 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.engine.e1.collector.WorkloadStatusCollector;
 import com.griddynamics.jagger.engine.e1.process.PollWorkloadProcessStatus;
 import com.griddynamics.jagger.engine.e1.process.StartWorkloadProcess;
 import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
@@ -75,7 +76,7 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
     @Override
     protected Service performDistribution(final ExecutorService executor, final String sessionId, final String taskId, final WorkloadTask task,
                                           final Map<NodeId, RemoteExecutor> remotes, final Multimap<NodeType, NodeId> availableNodes,
-                                          final Coordinator coordinator) {
+                                          final Coordinator coordinator, final NodeContext nodeContext) {
 
         return new AbstractDistributionService(executor) {
             @Override
@@ -103,6 +104,9 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                     WorkloadClock clock = task.getClock();
                     TerminationStrategy terminationStrategy = task.getTerminationStrategy();
 
+                    WorkloadStatusCollector collector = WorkloadStatusCollector.Composer.compose(task.getWorkloadStatusCollectors());
+                    collector.init(sessionId, taskId, nodeContext);
+
                     log.debug("Going to start workload");
                     controller.startWorkload(clock.getPoolSizes(controller.getNodes()));
                     log.debug("Workload started");
@@ -118,6 +122,8 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                         }
 
                         WorkloadExecutionStatus status = controller.getStatus();
+
+                        collector.collect(status);
 
                         if (terminationStrategy.isTerminationRequired(status)) {
                             report = "\n\n" + line + "S T O P     W O R K L O A D\n" + line + "\n";
@@ -135,6 +141,9 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                         log.debug("Clock should continue. Going to sleep {} seconds", sleepInterval);
                         sleepMillis(sleepInterval);
                     }
+
+                    collector.flush();
+
                     taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
                 } catch (Exception e) {
                     taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.FAILED);

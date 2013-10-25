@@ -79,7 +79,7 @@ public class ChronologyLogAggregator implements LogAggregator {
         BufferedLogWriter.LogWriterOutput objectOutput=null;
         try {
             if (fileStorage.delete(targetFile, false)) {
-                log.warn("Target file {} did not deleted!", targetFile);
+                log.warn("Target file {} was not deleted!", targetFile);
             }
             objectOutput= logWriter.getOutput(fileStorage.create(targetFile));
 

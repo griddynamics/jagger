@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
  * Time: 12:46 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleMetricDefinitionParser extends AbstractCollectorDefinitionParser {
+public class SimpleMetricDefinitionParser extends AbstractCalculatorBasedDefinitionParser {
 
     @Override
     protected Object getMetricCalculator(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

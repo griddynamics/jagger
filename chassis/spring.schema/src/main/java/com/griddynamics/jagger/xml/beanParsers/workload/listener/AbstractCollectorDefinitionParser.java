@@ -29,6 +29,7 @@ import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,26 +37,25 @@ import java.util.List;
  *         Date: 22.03.13
  */
 public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBeanDefinitionParser {
-    @Override
-    protected Class getBeanClass(Element element) {
-        return MetricCollectorProvider.class;
-    }
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
-        builder.addPropertyValue(XMLConstants.METRIC_CALCULATOR, getMetricCalculator(element, parserContext, builder));
+//      Use "XMLConstants.DEFAULT_METRIC_NAME" (No name)
+//      If user have defined custom Id => use this name
+//      If user have not defined custom Id & default aggregators are used => use default collector name
+
+        String name = null;
 
         if (!element.getAttribute(XMLConstants.ID).isEmpty()) {
-            builder.addPropertyValue(XMLConstants.NAME, element.getAttribute(XMLConstants.ID));
-        } else {
-            builder.addPropertyValue(XMLConstants.NAME, XMLConstants.DEFAULT_METRIC_NAME);
+            name = element.getAttribute(XMLConstants.ID);
         }
 
         Boolean plotData = false;
         if (element.hasAttribute(XMLConstants.PLOT_DATA)) {
             plotData = Boolean.valueOf(element.getAttribute(XMLConstants.PLOT_DATA));
         }
+
         Boolean saveSummary = true;
         if (element.hasAttribute(XMLConstants.SAVE_SUMMARY)) {
             saveSummary = Boolean.valueOf(element.getAttribute(XMLConstants.SAVE_SUMMARY));
@@ -69,13 +69,28 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
             }
         }
         if (entries.size() == 0) {
-            entries.add(getAggregatorEntry(new SumMetricAggregatorProvider(), plotData, saveSummary));
+            for (MetricAggregatorProvider aggregatorProvider : getAggregators()){
+                entries.add(getAggregatorEntry(aggregatorProvider, plotData, saveSummary));
+            }
+
+            if (name == null){
+                name = getDefaultCollectorName();
+            }
         }
 
+        if (name == null){
+            name = XMLConstants.DEFAULT_METRIC_NAME;
+        }
+
+        builder.addPropertyValue(XMLConstants.NAME, name);
         builder.addPropertyValue(XMLConstants.AGGREGATORS, entries);
     }
 
-    protected abstract Object getMetricCalculator(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
+    protected abstract Collection<MetricAggregatorProvider> getAggregators();
+
+    protected String getDefaultCollectorName(){
+        return XMLConstants.DEFAULT_METRIC_NAME;
+    }
 
     private BeanDefinition getAggregatorEntry(Object aggregatorProvider, boolean plotData, boolean saveSummary) {
         BeanDefinitionBuilder entry = BeanDefinitionBuilder.genericBeanDefinition(MetricCollectorProvider.MetricDescriptionEntry.class);

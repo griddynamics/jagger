@@ -860,7 +860,7 @@
         <xsd:annotation>
             <xsd:documentation>
                 Metric is a kind of collector, which calculate some information from responses. The result is a sum of all calculations.
-                Possible types of metric : metric-not-null-response, metric-custom, metric-ref.
+                Possible types of metric : metric-success-rate, metric-not-null-response, metric-custom, metric-ref.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
@@ -868,8 +868,17 @@
                 <xsd:choice>
                     <xsd:element name="metric-aggregator" type="metricAggregatorAbstract" minOccurs="0" maxOccurs="unbounded"/>
                 </xsd:choice>
-                <xsd:attribute name="plotData" type="xsd:string" default="false"/>
-                <xsd:attribute name="saveSummary" type="xsd:string" default="true"/>
+                <xsd:attribute name="plotData" type="xsd:string" default="false">
+                    <xsd:annotation><xsd:documentation>
+                        When set to 'true' detailed data 'metric vs time' will be saved to DB and displayed in report and WebUI plots
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="saveSummary" type="xsd:string" default="true">
+                    <xsd:annotation><xsd:documentation>
+                        When set to 'true' metric summary will be saved to DB and displayed in report and WebUI summary page.
+                        Summary is calculated with use of aggregator. It can be mean, sigma, max, min values or some values calculated by custom aggregator
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

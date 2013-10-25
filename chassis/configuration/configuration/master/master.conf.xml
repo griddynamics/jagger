@@ -60,6 +60,8 @@
 
         </property>
         <property name="timeoutConfiguration" ref="masterTimeoutConfiguration"/>
+        <property name="logReader" ref="bufferedLogReader"/>
+        <property name="logWriter" ref="bufferedLogWriter"/>
     </bean>
 
     <bean id="masterTimeoutConfiguration" class="com.griddynamics.jagger.master.MasterTimeoutConfiguration">

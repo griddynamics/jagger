@@ -54,6 +54,7 @@ public class StdDevMetricAggregatorProvider implements MetricAggregatorProvider 
         public void append(Number calculated) {
             if (points == null)
                 points = Lists.newLinkedList();
+
             points.add(calculated);
         }
 

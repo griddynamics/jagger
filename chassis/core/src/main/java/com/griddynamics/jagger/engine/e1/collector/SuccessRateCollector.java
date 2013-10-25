@@ -24,40 +24,68 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.storage.fs.logging.MetricLogEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.io.File;
 
+/** Collects number of pass and fail invokes
+ * @author Dmitry Latnikov
+ * @n
+ * @par Details:
+ * @details Collects number of pass and fail invokes. @n
+ * Success rate and number of fails are calculated from this data. @n
+ * Calculation is provided by aggregators: @n
+ * @li @ref SuccessRateAggregatorProvider @n
+ * @li @ref SuccessRateFailsAggregatorProvider @n
+ *
+ * @par Usage example in XML:
+ * To use this collector add @xlink{metric-success-rate} collector to @xlink{test-description,info-collectors} block.
+ * @n
+ * ??? example is missing @n
+ * @n
+ * @par Result example:
+ * @image html jagger_success_rate_default_agg.png "Success rate data with default accumulative aggregators"
+ * @n
+ * @n
+ * @image html jagger_success_rate_avg_agg.png "Success rate data with aggregator: average on interval"
+ * @n
+ *
+ * @ingroup Main_Collectors_group */
 public class SuccessRateCollector<Q, R, E> extends MetricCollector<Q, R, E> {
     private final String name;
     private long startTime = 0;
 
+    /** Default constructor */
     public SuccessRateCollector(String sessionId, String taskId, NodeContext kernelContext, String name)
     {
         super(sessionId, taskId, kernelContext,new SimpleMetricCalculator(),name);
         this.name = name;
     }
 
+    /** Method is not used for this collector => disabled */
     @Override
     public void flush() {
     }
 
+    /** Method is called before invoke to save invoke start time. Later is used for logging */
     @Override
     public void onStart(Object query, Object endpoint) {
         startTime = System.currentTimeMillis();
     }
 
+    /** Method is called when invoke was successful */
     @Override
     public void onSuccess(Object query, Object endpoint, Object result, long duration) {
         log(1);
     }
 
+    /** Method is called when invoke failed */
     @Override
     public void onFail(Object query, Object endpoint, InvocationException e) {
         log(0);
     }
 
+    /** Method is called when some error occurred */
     @Override
     public void onError(Object query, Object endpoint, Throwable error) {
         log(0);

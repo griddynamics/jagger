@@ -155,9 +155,11 @@ public class MetricDataServiceImpl implements MetricDataService {
 
                 if (!metrics.isEmpty()){
                     for (Object[] mas : metrics){
-                        MetricValueDto value = new MetricValueDto();
 
                         DiagnosticResultEntity metric = (DiagnosticResultEntity)mas[0];
+                        if (metric.getTotal() == null) continue;
+
+                        MetricValueDto value = new MetricValueDto();
                         value.setValue(new DecimalFormat("0.0###").format(metric.getTotal()));
 
                         value.setSessionId(Long.parseLong(mas[1].toString()));
@@ -170,9 +172,10 @@ public class MetricDataServiceImpl implements MetricDataService {
                                                                                    "and (metric.workloadData.taskId, metric.workloadData.sessionId) " +
                                                                                         "in (select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))").setParameter("ids", metricName.getTests().getIds()).setParameter("name", metricName.getName()).getResultList();
                     for (Object[] mas : validators){
-                        MetricValueDto value = new MetricValueDto();
 
                         ValidationResultEntity validator = (ValidationResultEntity)mas[0];
+                        if (validator.getTotal() == null || validator.getFailed() == null) continue;
+                        MetricValueDto value = new MetricValueDto();
 
                         BigDecimal percentage = BigDecimal.ZERO;
 
@@ -281,14 +284,18 @@ public class MetricDataServiceImpl implements MetricDataService {
         metrics = new HashSet<MetricNameDto>(metricNames.size()+validatorNames.size());
 
         for (String name : metricNames){
+            if (name == null) continue;
+
             MetricNameDto metric = new MetricNameDto();
             metric.setTests(tests);
-            metric.setName((name==null ? "Some metric" : name));
+            metric.setName(name);
 
             metrics.add(metric);
         }
 
         for (String name : validatorNames){
+            if (name == null) continue;
+
             MetricNameDto validator = new MetricNameDto();
             validator.setTests(tests);
             validator.setName(name);

@@ -27,6 +27,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.util.Futures;
@@ -66,7 +67,7 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
     }
 
     @Override
-    public Service distribute(final ExecutorService executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final CompositeTask task, final DistributionListener listener) {
+    public Service distribute(final ExecutorService executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final CompositeTask task, final DistributionListener listener, final NodeContext nodeContext) {
         log.debug("Composite task {} with id {} distribute configuration started", task, taskId);
 
         Function<CompositableTask, Service> convertToRunnable = new Function<CompositableTask, Service>() {
@@ -76,7 +77,7 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
                 TaskDistributor taskDistributor = distributorRegistry.getTaskDistributor(task.getClass());
                 task.setParentTaskId(taskId);
                 String childTaskId = taskIdProvider.getTaskId();
-                return taskDistributor.distribute(executor, sessionId, childTaskId, availableNodes, coordinator, task, listener);
+                return taskDistributor.distribute(executor, sessionId, childTaskId, availableNodes, coordinator, task, listener, nodeContext);
             }
         };
 
