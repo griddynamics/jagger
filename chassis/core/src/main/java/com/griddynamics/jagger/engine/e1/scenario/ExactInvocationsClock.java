@@ -52,10 +52,9 @@ public class ExactInvocationsClock implements WorkloadClock {
         int threadsForOneNode =  threadCount / nodesSize;
         int threadsResidue = threadCount % nodesSize;
 
-        int denominator = (threadsForOneNode == 0) ?  threadsResidue :  threadsForOneNode;
-        int samplesForOneThread = samplesLeft / denominator;
+        int samplesForOneThread = samplesLeft / threadCount;
 
-        int samplesResidueByThreads = samplesLeft % denominator;
+        int samplesResidueByThreads = samplesLeft % threadCount;
         int additionalSamplesForOneNode = samplesResidueByThreads / nodesSize;
         int samplesResidue = samplesResidueByThreads % nodesSize;
 

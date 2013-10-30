@@ -97,6 +97,11 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             String file = dir + File.separatorChar + "aggregated.dat";
             AggregationInfo aggregationInfo = logAggregator.chronology(dir, file);
 
+            if(aggregationInfo.getCount() == 0) {
+                //no data collected
+                return;
+            }
+
             int intervalSize = (int) ((aggregationInfo.getMaxTime() - aggregationInfo.getMinTime()) / pointCount);
             if (intervalSize < 1) {
                 intervalSize = 1;

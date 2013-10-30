@@ -222,7 +222,7 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
         return getHibernateTemplate().execute(new HibernateCallback<String>() {
             @Override
             public String doInHibernate(Session session) throws HibernateException, SQLException {
-                SQLQuery query = session.createSQLQuery("SELECT column_type " +
+                SQLQuery query = session.createSQLQuery("SELECT DATA_TYPE " +
                                                         "FROM information_schema.COLUMNS " +
                                                         "WHERE TABLE_SCHEMA=DATABASE() " +
                                                         "AND TABLE_NAME='"+expectedType.entityName+"'" +
