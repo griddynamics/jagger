@@ -40,7 +40,7 @@ public class DefaultWorkloadController implements WorkloadController {
     private final String sessionId;
     private final String taskId;
     private final Map<NodeId, RemoteExecutor> remotes;
-
+    private final Long startTime;
     private final TimeoutsConfiguration timeoutsConfiguration;
     private final WorkloadTask task;
     private Progress progress;
@@ -49,13 +49,13 @@ public class DefaultWorkloadController implements WorkloadController {
     private Map<NodeId, Integer> delays;
     private Map<NodeId, Integer> poolSize;
 
-    public DefaultWorkloadController(String sessionId, String taskId, WorkloadTask task, Map<NodeId, RemoteExecutor> remotes, TimeoutsConfiguration timeoutsConfiguration) {
+    public DefaultWorkloadController(String sessionId, String taskId, WorkloadTask task, Map<NodeId, RemoteExecutor> remotes, TimeoutsConfiguration timeoutsConfiguration, Long startTime) {
         this.sessionId = Preconditions.checkNotNull(sessionId);
         this.taskId = Preconditions.checkNotNull(taskId);
         this.task = Preconditions.checkNotNull(task);
         this.remotes = ImmutableMap.copyOf(remotes);
         this.timeoutsConfiguration = timeoutsConfiguration;
-
+        this.startTime = startTime;
         progress = Progress.IDLE;
         processes = Maps.newHashMap();
         threads = Maps.newHashMap();
@@ -75,7 +75,7 @@ public class DefaultWorkloadController implements WorkloadController {
         WorkloadExecutionStatusBuilder builder = new WorkloadExecutionStatusBuilder(task);
 
         for (Map.Entry<NodeId, RemoteExecutor> entry : remotes.entrySet()) {
-            Long pollTime = System.currentTimeMillis();
+            Long pollTime =System.currentTimeMillis()-startTime;
 
             NodeId id = entry.getKey();
             RemoteExecutor remote = entry.getValue();

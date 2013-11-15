@@ -50,7 +50,7 @@ public class WorkloadExecutionStatusBuilder {
     }
 
     public WorkloadExecutionStatus build() {
-        return new DefaultWorkloadExecutionStatus(threads, startedSamples, finishedSamples, delays, pollTime, task);
+        return new DefaultWorkloadExecutionStatus(threads, startedSamples, finishedSamples, delays, pollTime,  task);
     }
 
     private class DefaultWorkloadExecutionStatus implements WorkloadExecutionStatus {
@@ -138,10 +138,10 @@ public class WorkloadExecutionStatusBuilder {
 
         @Override
         public String toString() {
-            String line = "------------------------------------------------------------------------------------------------------------------------------\n";
-            String format = "|%1$-40s|%2$-20s|%3$-20s|%4$-20s|%5$-20s|\n";
+            String line = "---------------------------------------------------------------------------------------------------------------------------------------------------\n";
+            String format = "|%1$-40s|%2$-20s|%3$-20s|%4$-20s|%5$-20s|%6$-20s|\n";
             String report = String.format(this.task.getTaskName() + '\n' +
-                    line + format + line, "IDENTIFIER", "THREADS", "STARTED", "SAMPLES", "DELAYS");
+                    line + format + line, "IDENTIFIER", "THREADS", "STARTED", "SAMPLES", "DELAYS", "DURATION,s");
             Set<NodeId> nodes = Sets.newHashSet(this.threads.keySet());
             nodes.addAll(this.startedSamples.keySet());
             nodes.addAll(this.delays.keySet());
@@ -150,7 +150,7 @@ public class WorkloadExecutionStatusBuilder {
                 report += String.format(format,
                         node.getIdentifier(), this.threads.get(node),
                         this.startedSamples.get(node),
-                        this.finishedSamples.get(node), this.delays.get(node));
+                        this.finishedSamples.get(node), this.delays.get(node),(double)this.pollTime.get(node)/1000.0);
             }
             return report + line;
         }
