@@ -75,8 +75,8 @@ public class DefaultWorkloadController implements WorkloadController {
         WorkloadExecutionStatusBuilder builder = new WorkloadExecutionStatusBuilder(task);
 
         for (Map.Entry<NodeId, RemoteExecutor> entry : remotes.entrySet()) {
-            Long pollTime =System.currentTimeMillis()-startTime;
-
+            Long pollTime =System.currentTimeMillis();
+            Long durationTime = System.currentTimeMillis()-startTime;
             NodeId id = entry.getKey();
             RemoteExecutor remote = entry.getValue();
 
@@ -93,7 +93,7 @@ public class DefaultWorkloadController implements WorkloadController {
 
             log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}", new Object[]{pollTime, id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay});
 
-            builder.addNodeInfo(id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay, pollTime);
+            builder.addNodeInfo(id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay, pollTime,durationTime);
         }
 
         return builder.build();
