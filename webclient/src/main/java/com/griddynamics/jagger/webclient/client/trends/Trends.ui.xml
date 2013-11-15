@@ -8,7 +8,7 @@
 
     <g:SplitLayoutPanel ui:field="widget">
         <g:center>
-            <g:TabLayoutPanel barHeight="20" ui:field="mainTabPanel">
+            <g:TabLayoutPanel barHeight="1.5" barUnit="EM" ui:field="mainTabPanel">
                 <g:tab>
                     <g:header> <b>Summary</b> </g:header>
                     <g:ScrollPanel>

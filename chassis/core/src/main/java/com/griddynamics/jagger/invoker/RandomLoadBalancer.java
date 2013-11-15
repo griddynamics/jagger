@@ -18,17 +18,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.griddynamics.jagger.engine.e1.collector;
+package com.griddynamics.jagger.invoker;
 
-import com.griddynamics.jagger.engine.e1.Provider;
+import com.google.common.collect.AbstractIterator;
+import com.griddynamics.jagger.util.Pair;
+import java.util.Iterator;
+import java.util.Random;
 
-/**
- * @author Nikolay Musienko
- *         Date: 25.07.13
- */
+public class RandomLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
 
-public interface MetricAggregatorProvider extends Provider<MetricAggregator> {
+    private long randomSeed;
 
-    MetricAggregator provide();
+    public void setRandomSeed(long randomSeed) {
+        this.randomSeed = randomSeed;
+    }
 
+    public long getRandomSeed() {
+        return randomSeed;
+    }
+
+    @Override
+    public Iterator<Pair<Q, E>> provide() {
+
+        return new AbstractIterator<Pair<Q,E>>() {
+
+            private PairSupplier<Q, E> pairs = getPairSupplier();
+            private int size = pairs.size();
+            private Random random = new Random(randomSeed++);
+
+            @Override
+            protected Pair<Q, E> computeNext() {
+                return pairs.get(random.nextInt(size));
+            }
+
+            @Override
+            public String toString() {
+                return "RandomLoadBalancer iterator";
+            }
+        };
+    }
 }

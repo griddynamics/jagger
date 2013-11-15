@@ -227,6 +227,13 @@
                     <webResources>
                         <resource>
                             <directory>src/main/webapp</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>index.html</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>src/main/webapp</directory>
                             <includes>
                                 <include>**/*</include>
                             </includes>
@@ -308,5 +315,6 @@
 
         <outputDirectory>${build.directory}/${build.finalName}/WEB-INF/classes</outputDirectory>
 
-    </build>
+
+</build>
 </project>

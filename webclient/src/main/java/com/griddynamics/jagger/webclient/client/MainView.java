@@ -49,28 +49,12 @@ public class MainView extends ResizeComposite implements IsWidget, Handler {
         }
     }
 
-    private List<Link> links;
-
-    private JaggerResources resources;
-
     @UiField
     DeckLayoutPanel contentContainer;
 
-    @UiField
-    Hyperlink trendsLink;
-
     public MainView(EventBus eventBus, JaggerResources resources) {
-        this.resources = resources;
 
         initWidget(uiBinder.createAndBindUi(this));
-
-        links = new ArrayList<Link>();
-        links.add(new Link(trendsLink, new Predicate() {
-            @Override
-            public boolean apply(Place place) {
-                return place instanceof TrendsPlace;
-            }
-        }));
 
         eventBus.addHandler(PlaceChangeEvent.TYPE, this);
     }
@@ -81,15 +65,5 @@ public class MainView extends ResizeComposite implements IsWidget, Handler {
 
     @Override
     public void onPlaceChange(PlaceChangeEvent event) {
-        Place newPlace = event.getNewPlace();
-
-        // select the link corresponding to the place
-        for (Link link : links) {
-            if (link.isPlaceMatchLink(newPlace)) {
-                link.getLink().addStyleName(resources.css().currentItem());
-            } else {
-                link.getLink().removeStyleName(resources.css().currentItem());
-            }
-        }
     }
 }

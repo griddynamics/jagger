@@ -12,6 +12,8 @@ public class TaskDataDto implements Serializable {
     private Set<Long> ids;
     private String taskName;
     private String description;
+    private String TerminationStrategy;
+    private String Clock;
 
     public TaskDataDto() {
     }
@@ -78,5 +80,21 @@ public class TaskDataDto implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTerminationStrategy() {
+        return TerminationStrategy;
+    }
+
+    public void setTerminationStrategy(String terminationStrategy) {
+        TerminationStrategy = terminationStrategy;
+    }
+
+    public String getClock() {
+        return Clock;
+    }
+
+    public void setClock(String clock) {
+        Clock = clock;
     }
 }

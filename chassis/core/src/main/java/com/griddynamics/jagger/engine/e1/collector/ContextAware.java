@@ -2,11 +2,11 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.NodeSideInitializable;
+import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +21,7 @@ public abstract class ContextAware implements NodeSideInitializable, Serializabl
     protected NodeContext nodeContext;
 
     protected String name;
-    protected List<MetricDescriptionEntry> aggregators;
+    protected MetricDescription metricDescription;
 
     @Override
     public void init(String sessionId, String taskId, NodeContext nodeContext) {
@@ -33,7 +33,7 @@ public abstract class ContextAware implements NodeSideInitializable, Serializabl
         storage.put(Namespace.of(
                 sessionId, taskId, "metricAggregatorProviders"),
                 name,
-                aggregators
+                metricDescription
         );
     }
 
@@ -45,56 +45,11 @@ public abstract class ContextAware implements NodeSideInitializable, Serializabl
         return name;
     }
 
-    public void setAggregators(List<MetricDescriptionEntry> aggregators) {
-        this.aggregators = aggregators;
+    public void setMetricDescription(MetricDescription metricDescriptions) {
+        this.metricDescription = metricDescriptions;
     }
 
-    public List<MetricDescriptionEntry> getAggregators() {
-        return aggregators;
-    }
-
-
-    public static final class MetricDescriptionEntry {
-        private boolean needPlotData;
-        private boolean needSaveSummary;
-        private MetricAggregatorProvider metricAggregatorProvider;
-
-        public MetricDescriptionEntry(MetricAggregatorProvider metricAggregatorProvider, boolean needPlotData) {
-            this.needPlotData = needPlotData;
-            this.needSaveSummary = true;
-            this.metricAggregatorProvider = metricAggregatorProvider;
-        }
-        public MetricDescriptionEntry(MetricAggregatorProvider metricAggregatorProvider, boolean needPlotData, boolean needSaveSummary) {
-            this.needPlotData = needPlotData;
-            this.needSaveSummary = needSaveSummary;
-            this.metricAggregatorProvider = metricAggregatorProvider;
-        }
-
-        public MetricDescriptionEntry() {
-        }
-
-        public boolean isNeedPlotData() {
-            return needPlotData;
-        }
-
-        public void setNeedPlotData(boolean needPlotData) {
-            this.needPlotData = needPlotData;
-        }
-
-        public boolean isNeedSaveSummary() {
-            return needSaveSummary;
-        }
-
-        public void setNeedSaveSummary(boolean needSaveSummary) {
-            this.needSaveSummary = needSaveSummary;
-        }
-
-        public MetricAggregatorProvider getMetricAggregatorProvider() {
-            return metricAggregatorProvider;
-        }
-
-        public void setMetricAggregatorProvider(MetricAggregatorProvider metricAggregatorProvider) {
-            this.metricAggregatorProvider = metricAggregatorProvider;
-        }
+    public MetricDescription getMetricDescriptions() {
+        return metricDescription;
     }
 }

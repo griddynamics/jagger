@@ -86,9 +86,10 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
         long timestamp = System.currentTimeMillis();
         List<Object[]> list = entityManager.createNativeQuery
                 (
-                "select taskData.id, commonTests.name, commonTests.description, taskData.taskId from "+
+                "select taskData.id, commonTests.name, commonTests.description, taskData.taskId , commonTests.clock, commonTests.clockValue, commonTests.termination" +
+                        " from "+
                            "( "+
-                           "select test.name, test.description, test.version, test.sessionId, test.taskId from " +
+                           "select test.name, test.description, test.version, test.sessionId, test.taskId, test.clock, test.clockValue, test.termination from " +
                                                                     "( "+
                                                                           "select " +
                                                                                 "l.*, s.name, s.description, s.version " +
@@ -138,6 +139,10 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
             String name = (String) testData[1];
             String description = (String) testData[2];
             String taskId = (String)testData[3];
+            String clock = testData[4] + " (" + testData[5] + ")";
+            String termination = (String) testData[6];
+
+
             int taskIdInt = Integer.parseInt(taskId.substring(5));
             String key = description+name;
             if (map.containsKey(key)){
@@ -147,6 +152,8 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                 mapIds.put(key, (oldValue==null ? 0 : oldValue)+taskIdInt);
             }else{
                 TaskDataDto taskDataDto = new TaskDataDto(id.longValue(), name, description);
+                taskDataDto.setClock(clock);
+                taskDataDto.setTerminationStrategy(termination);
                 //merge
                 if (map.containsKey(name)){
                     taskDataDto.getIds().addAll(map.get(name).getIds());

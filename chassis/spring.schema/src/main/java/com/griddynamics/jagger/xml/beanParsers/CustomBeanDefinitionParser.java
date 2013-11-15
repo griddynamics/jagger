@@ -113,8 +113,6 @@ public abstract class CustomBeanDefinitionParser extends AbstractSimpleBeanDefin
                     result.add(parserContext.getDelegate().parsePropertySubElement(el, bean));
                 }
             }
-        }else{
-            return null;
         }
         return result;
     }

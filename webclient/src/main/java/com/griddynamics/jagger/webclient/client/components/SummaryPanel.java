@@ -28,7 +28,6 @@ public class SummaryPanel extends Composite {
     @UiField
     VerticalPanel pane;
 
-    private SessionSummaryPanel sessionSummaryPanel;
     private SessionComparisonPanel sessionComparisonPanel;
 
     private Set<SessionDataDto> active = Collections.EMPTY_SET;
@@ -46,30 +45,20 @@ public class SummaryPanel extends Composite {
     }
 
     public void updateSessions(Set<SessionDataDto> chosenSessions){
-        if (chosenSessions.size() == 1){
-            //show session summary
+        if (chosenSessions.size() > 0){
+            //show sessions comparison
             pane.clear();
-            sessionSummaryPanel = new SessionSummaryPanel(chosenSessions.iterator().next());
-            sessionComparisonPanel = null;
-            pane.add(sessionSummaryPanel);
+            sessionComparisonPanel = new SessionComparisonPanel(chosenSessions);
+            pane.add(sessionComparisonPanel);
         }else{
-            if (chosenSessions.size() > 1){
-                //show sessions comparison
-                pane.clear();
-                sessionComparisonPanel = new SessionComparisonPanel(chosenSessions);
-                sessionSummaryPanel = null;
-                pane.add(sessionComparisonPanel);
-            }else{
-                pane.clear();
-            }
+            pane.clear();
         }
         active = chosenSessions;
     }
 
-
     public void updateTests(Collection<TaskDataDto> tests) {
-        if(sessionSummaryPanel != null){
-            sessionSummaryPanel.updateTests(tests);
+        if (sessionComparisonPanel != null) { // imposible
+            sessionComparisonPanel.updateTests(tests);
         }
     }
 

@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import com.google.common.collect.MinMaxPriorityQueue;
 import com.google.common.io.Closeables;
 import com.griddynamics.jagger.storage.FileStorage;
 import org.slf4j.Logger;
@@ -28,10 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Alexey Kiselyov
@@ -83,7 +79,7 @@ public class ChronologyLogAggregator implements LogAggregator {
             }
             objectOutput= logWriter.getOutput(fileStorage.create(targetFile));
 
-            MinMaxPriorityQueue<StreamInfo> queue = MinMaxPriorityQueue.create();
+            PriorityQueue<StreamInfo> queue = new PriorityQueue<StreamInfo>();
             for (Iterable<LogEntry> inputStream : readers) {
                 LogEntry logEntry;
                 Iterator<LogEntry> it = inputStream.iterator();
@@ -96,7 +92,7 @@ public class ChronologyLogAggregator implements LogAggregator {
             }
 
             while (!queue.isEmpty()) {
-                StreamInfo<LogEntry> streamInfo = queue.removeFirst();
+                StreamInfo<LogEntry> streamInfo = queue.poll();
                 objectOutput.writeObject(streamInfo.lastLogEntry);
 
                 if (count == 0) {

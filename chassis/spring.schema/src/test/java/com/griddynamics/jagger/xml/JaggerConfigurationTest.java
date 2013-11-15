@@ -122,17 +122,7 @@ public class JaggerConfigurationTest {
     @Test
     public void conf1MetricAggregatorTest(){
         Configuration config1 = (Configuration) ctx.getBean("config1");
-        // DANGER! CLASS CAST MAGIC!!!
-        List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors =
-                ((WorkloadTask)((CompositeTask) config1.getTasks().get(0)).getAttendant().get(0)).getCollectors();
-        for (KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>> provider : collectors) {
-            if (provider instanceof MetricCollectorProvider) {
-                List<MetricCollectorProvider.MetricDescriptionEntry> providers = ((MetricCollectorProvider) provider).getAggregators();
-                Assert.assertEquals(1, providers.size());
-                MetricAggregatorProvider metricAggregatorProvider = providers.get(0).getMetricAggregatorProvider();
-                Assert.assertEquals(AvgMetricAggregatorProvider.class, metricAggregatorProvider.getClass());
-            }
-        }
+        //NEED TO UPDATE!!
     }
 
     @Test

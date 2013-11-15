@@ -21,7 +21,7 @@ public class MetricModel implements TreeViewModel {
 
     private final JaggerResources resources = JaggerResources.INSTANCE;
 
-    public static final TaskDataDto NO_METRIC_TO_SHOW = new TaskDataDto(0, "Select at least two sessions and one test", "");
+    public static final TaskDataDto NO_METRIC_TO_SHOW = new TaskDataDto(0, "Select at least one sessions and one test", "");
 
     private final Cell<MetricNameDto> metricDataCell;
 

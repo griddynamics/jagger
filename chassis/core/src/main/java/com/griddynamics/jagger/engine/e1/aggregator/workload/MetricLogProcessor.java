@@ -24,15 +24,13 @@ import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregator;
-import com.griddynamics.jagger.engine.e1.collector.MetricCollector;
-import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
-import com.griddynamics.jagger.engine.e1.collector.SumMetricAggregatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 import com.griddynamics.jagger.storage.FileStorage;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
@@ -67,8 +65,13 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     private int pointCount;
     private FileStorage fileStorage;
 
-    private final static MetricCollectorProvider.MetricDescriptionEntry defaultMetricAggregatorProvider =
-            new MetricCollectorProvider.MetricDescriptionEntry(new SumMetricAggregatorProvider(), false, true);
+    private MetricDescription defaultMetricDescription;
+    {
+        defaultMetricDescription = new MetricDescription("default");
+        defaultMetricDescription.setShowPlotData(false);
+        defaultMetricDescription.setShowSummary(true);
+        defaultMetricDescription.setAggregators(Arrays.<MetricAggregatorProvider>asList(new SumMetricAggregatorProvider()));
+    }
 
     private KeyValueStorage keyValueStorage;
 
@@ -184,33 +187,30 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             String tmp = path.substring(0, path.lastIndexOf(File.separatorChar));
             String metricName = tmp.substring(tmp.lastIndexOf(File.separatorChar) + 1);
 
-            Collection<Object> metricAggregatorProviders = fetchAggregators(metricName);
+            Object object = fetchDescription(metricName);
 
-            List<MetricCollectorProvider.MetricDescriptionEntry> providers = new LinkedList<MetricCollectorProvider.MetricDescriptionEntry>();
-            if (metricAggregatorProviders.size() > 0) {
-                providers.addAll((Collection<? extends MetricCollectorProvider.MetricDescriptionEntry>) metricAggregatorProviders.iterator().next());
-            }
+            MetricDescription metricDescription = defaultMetricDescription;
 
-            statistics = new LinkedList<MetricDetails>();
-
-            if (providers.size() == 0) {
+            if (object != null) {
+                metricDescription = (MetricDescription) object;
+            }else{
                 log.warn("Aggregators not found for metric: '{}' in task: '{}'; Using default aggregator", metricName, taskData.getTaskId());
-
-                providers.add(defaultMetricAggregatorProvider);
             }
-
 
             LogReader.FileReader<MetricLogEntry> fileReader = null;
-            for (MetricCollectorProvider.MetricDescriptionEntry entry: providers) {
+            statistics = new LinkedList<MetricDetails>();
+
+            for (MetricAggregatorProvider entry: metricDescription.getAggregators()) {
                 MetricAggregator overallMetricAggregator = null;
                 MetricAggregator intervalAggregator = null;
 
-                if (entry.isNeedSaveSummary())
-                    overallMetricAggregator=entry.getMetricAggregatorProvider().provide();
-                if (entry.isNeedPlotData())
-                    intervalAggregator = entry.getMetricAggregatorProvider().provide();
+                if (metricDescription.getShowSummary())
+                    overallMetricAggregator= entry.provide();
 
-                if ((entry.isNeedPlotData()) || (entry.isNeedSaveSummary()))
+                if (metricDescription.getShowPlotData())
+                    intervalAggregator = entry.provide();
+
+                if ((metricDescription.getShowSummary()) || (metricDescription.getShowPlotData()))
                 {
                     String aggregatedMetricName = "";
                     if (overallMetricAggregator != null)
@@ -225,7 +225,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         fileReader = logReader.read(path, MetricLogEntry.class);
                         for (MetricLogEntry logEntry : fileReader) {
                             log.debug("Log entry {} time", logEntry.getTime());
-                            if (entry.isNeedPlotData()) {
+                            if (metricDescription.getShowPlotData()) {
                                 while (logEntry.getTime() > currentInterval){
                                     // we leave current interval or current interval is empty
                                     Number aggregated = intervalAggregator.getAggregated();
@@ -250,11 +250,11 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                 }
                                 intervalAggregator.append(logEntry.getMetric());
                             }
-                            if (entry.isNeedSaveSummary())
+                            if (metricDescription.getShowSummary())
                                 overallMetricAggregator.append(logEntry.getMetric());
                         }
 
-                        if (entry.isNeedPlotData()) {
+                        if (metricDescription.getShowPlotData()) {
                             Number aggregated = intervalAggregator.getAggregated();
                             if (aggregated != null){
                                 statistics.add(new MetricDetails(time, aggregatedMetricName, aggregated.doubleValue(), taskData));
@@ -262,7 +262,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                             }
                         }
 
-                        if (entry.isNeedSaveSummary())
+                        if (metricDescription.getShowSummary())
                             persistAggregatedMetricValue(aggregatedMetricName, overallMetricAggregator.getAggregated());
 
                     }
@@ -277,12 +277,12 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             return this;
         }
 
-        private Collection<Object>  fetchAggregators (String metricName) {
-            Collection<Object> metricAggregatorProviders = keyValueStorage.fetchAll(
+        private Object fetchDescription(String metricName) {
+            Collection<Object> metricDescription = keyValueStorage.fetchAll(
                     Namespace.of(taskData.getSessionId(), taskData.getTaskId(), "metricAggregatorProviders"),
                     metricName
             );
-            return metricAggregatorProviders;
+            return metricDescription.iterator().next();
         }
 
         private void persistAggregatedMetricValue(String metricName, Number value) {

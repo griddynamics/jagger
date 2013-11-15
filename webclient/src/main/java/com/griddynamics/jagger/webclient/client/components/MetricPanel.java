@@ -48,15 +48,7 @@ public class MetricPanel extends Composite {
         selectionModel.clear();
         provider.setList(Arrays.asList((TaskDataDto)null));
 
-        boolean manySessions = false;
-        for (TaskDataDto test : tests){
-            if (test.getIds().size() > 1){
-                manySessions = true;
-                break;
-            }
-        }
-
-        if (tests.size()==0 || !manySessions){
+        if (tests.size()==0){
             //nothing to show
             provider.setList(Arrays.asList(MetricModel.NO_METRIC_TO_SHOW));
             return;

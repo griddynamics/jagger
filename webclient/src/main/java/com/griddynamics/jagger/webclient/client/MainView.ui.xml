@@ -5,13 +5,7 @@
     <ui:with type="com.griddynamics.jagger.webclient.client.mvp.NameTokens" field="tokens" />
 
     <g:DockLayoutPanel unit="EM" addStyleNames="{res.css.mainPanel}">
-        <g:north size="1.6">
-            <g:HTMLPanel styleName="{res.css.navPanel}">
-                <ul>
-                    <li><g:Hyperlink text="Main" targetHistoryToken="{tokens.summary}" ui:field="trendsLink"/></li>
-                </ul>
-            </g:HTMLPanel>
-        </g:north>
+
         <g:center>
             <g:DeckLayoutPanel styleName="{res.css.contentPanel}" ui:field="contentContainer"/>
         </g:center>

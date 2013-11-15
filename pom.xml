@@ -91,14 +91,6 @@
             <url>https://server.oosnmp.net/dist/release/</url>
         </repository>
         <repository>
-            <id>gflot</id>
-            <name>Code Monkey</name>
-            <url>http://codemonkey.dumontierlab.com/maven/repo/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>smartclient</id>
             <name>smartclient.com</name>
             <url>http://www.smartclient.com/maven2</url>
