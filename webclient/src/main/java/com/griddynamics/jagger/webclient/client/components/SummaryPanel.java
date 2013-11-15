@@ -48,7 +48,7 @@ public class SummaryPanel extends Composite {
         if (chosenSessions.size() > 0){
             //show sessions comparison
             pane.clear();
-            sessionComparisonPanel = new SessionComparisonPanel(chosenSessions);
+            sessionComparisonPanel = new SessionComparisonPanel(chosenSessions, pane.getOffsetWidth());
             pane.add(sessionComparisonPanel);
         }else{
             pane.clear();

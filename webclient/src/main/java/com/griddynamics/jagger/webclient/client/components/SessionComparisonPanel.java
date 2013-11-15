@@ -48,6 +48,7 @@ public class SessionComparisonPanel extends VerticalPanel{
     @SuppressWarnings("all")
     private final String TASKS_FAILED = "Tasks Failed";
     private final String TEST_INFO = "Test Info";
+    private final double METRIC_COLUMN_WIDTH_FACTOR = 1.5;
 
     private Collection<SessionDataDto> chosenSessions;
     private Collection<TaskDataDto> chosenTests;
@@ -68,15 +69,18 @@ public class SessionComparisonPanel extends VerticalPanel{
         return cache;
     }
 
-    public SessionComparisonPanel(Set<SessionDataDto> chosenSessions){
+    public SessionComparisonPanel(Set<SessionDataDto> chosenSessions, int width){
         setWidth(ONE_HUNDRED_PERCENTS);
         setHeight(ONE_HUNDRED_PERCENTS);
         this.chosenSessions = chosenSessions;
         this.chosenTests = new ArrayList<TaskDataDto>();
-        init(chosenSessions);
+        init(chosenSessions, width);
     }
 
-    private void init(Set<SessionDataDto> chosenSessions){
+    private void init(Set<SessionDataDto> chosenSessions, int width){
+
+        int colWidth = calculateWidth(chosenSessions.size(), width);
+
 
         treeStore.clear();
         List<ColumnConfig<TreeItem, ?>> columns = new ArrayList<ColumnConfig<TreeItem, ?>>();
@@ -91,9 +95,10 @@ public class SessionComparisonPanel extends VerticalPanel{
         sortedSet.addAll(chosenSessions);
 
         ColumnConfig<TreeItem, String> nameColumn =
-                new ColumnConfig<TreeItem, String>(new MapValueProvider(NAME), (int)(MIN_COLUMN_WIDTH * 1.5));
+                new ColumnConfig<TreeItem, String>(new MapValueProvider(NAME), (int)(colWidth * METRIC_COLUMN_WIDTH_FACTOR));
         nameColumn.setHeader("Metric");
         nameColumn.setSortable(false);
+        nameColumn.setMenuDisabled(true);
         columns.add(nameColumn);
 
         for (SessionDataDto session: sortedSet) {
@@ -101,7 +106,7 @@ public class SessionComparisonPanel extends VerticalPanel{
                     new MapValueProvider(SESSION_HEADER + session.getSessionId())
             );
             column.setHeader(SESSION_HEADER + session.getSessionId());
-            column.setWidth(MIN_COLUMN_WIDTH);
+            column.setWidth(colWidth);
             column.setSortable(false);
             column.setCell(new AbstractCell<String>() {
                 @Override
@@ -111,6 +116,7 @@ public class SessionComparisonPanel extends VerticalPanel{
                     }
                 }
             });
+            column.setMenuDisabled(true);
 
             column.setColumnTextStyle(new SafeStyles() {
                 @Override
@@ -132,10 +138,8 @@ public class SessionComparisonPanel extends VerticalPanel{
         treeGrid.setAutoExpand(true);
         treeGrid.getView().setStripeRows(true);
         treeGrid.setMinColumnWidth(MIN_COLUMN_WIDTH);
-        treeGrid.getView().setAutoExpandColumn(nameColumn);
         treeGrid.setAllowTextSelection(true);
-        treeGrid.getTreeView().setAutoFill(true);
-        add(treeGrid);
+        treeGrid.getView().setForceFit(true);
 
         treeStore.addStoreAddHandler(new StoreAddEvent.StoreAddHandler<TreeItem>() {
             @Override
@@ -151,6 +155,22 @@ public class SessionComparisonPanel extends VerticalPanel{
         });
 
         addSessionInfo(chosenSessions);
+
+        add(treeGrid);
+    }
+
+    /**
+     * calculates width for columns
+     * @param size number of chosen sessions
+     * @param width is offset width of parent container
+     * @return width of Session * column
+     */
+    private int calculateWidth(int size, int width) {
+        int colWidth = (int)(width / (size + METRIC_COLUMN_WIDTH_FACTOR));
+        if (colWidth < MIN_COLUMN_WIDTH)
+            colWidth = MIN_COLUMN_WIDTH;
+
+        return colWidth;
     }
 
     private void addSessionInfo(Set<SessionDataDto> chosenSessions) {
