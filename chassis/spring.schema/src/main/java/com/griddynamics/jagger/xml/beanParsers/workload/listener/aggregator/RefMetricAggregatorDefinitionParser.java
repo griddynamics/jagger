@@ -20,7 +20,8 @@
 
 package com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator;
 
-import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -30,11 +31,13 @@ import org.w3c.dom.Element;
  *         Date: 06.08.13
  */
 
-public class RefMetricAggregatorDefinitionParser extends CustomBeanDefinitionParser {
+public class RefMetricAggregatorDefinitionParser extends AbstractMetricAggregatorDefinitionParser {
 
     @Override
-    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        //nothing to do
+    protected Object getMetricAggregatorProvider(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        if (!element.hasAttribute(XMLConstants.ATTRIBUTE_REF)) {
+            throw new RuntimeException("metric-aggregator-ref element has no ref attribute");
+        }
+        return new RuntimeBeanReference(element.getAttribute(XMLConstants.ATTRIBUTE_REF));
     }
-
 }

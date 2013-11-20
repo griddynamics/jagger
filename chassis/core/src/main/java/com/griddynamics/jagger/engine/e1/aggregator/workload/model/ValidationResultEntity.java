@@ -28,7 +28,7 @@ import javax.persistence.ManyToOne;
 public class ValidationResultEntity {
     private Long id;
     private WorkloadData workloadData;
-    private String validator;
+    private CollectorDescription description;
     private Integer total;
     private Integer failed;
 
@@ -51,12 +51,13 @@ public class ValidationResultEntity {
         this.workloadData = workloadData;
     }
 
-    public String getValidator() {
-        return validator;
+    @ManyToOne
+    public CollectorDescription getDescription() {
+        return description;
     }
 
-    public void setValidator(String validator) {
-        this.validator = validator;
+    public void setDescription(CollectorDescription validator) {
+        this.description = validator;
     }
 
     public Integer getTotal() {

@@ -18,52 +18,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.griddynamics.jagger.engine.e1.aggregator.workload.model;
 
-import javax.persistence.*;
+package com.griddynamics.jagger.engine.e1.collector;
 
-@Entity
-public class DiagnosticResultEntity {
+/**
+ * User: amikryukov
+ * Date: 11/19/13
+ */
+public class MetricAggregatorProviderWrapper {
 
-    private Long id;
-    private CollectorDescription description;
-    private Double total;
-    private WorkloadData workloadData;
+    private String displayName;
+    private MetricAggregatorProvider metricAggregatorProvider;
 
-    @Id
-    @GeneratedValue
-    public Long getId() {
-        return id;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    @ManyToOne
-    public WorkloadData getWorkloadData() {
-        return workloadData;
+    public MetricAggregatorProviderWrapper(MetricAggregatorProvider metricAggregatorProvider) {
+        this.metricAggregatorProvider = metricAggregatorProvider;
     }
 
-    public void setWorkloadData(WorkloadData workloadData) {
-        this.workloadData = workloadData;
+    public static MetricAggregatorProviderWrapper of(MetricAggregatorProvider metricAggregatorProvider) {
+        return new MetricAggregatorProviderWrapper(metricAggregatorProvider);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // for spring parser
+    public MetricAggregatorProviderWrapper() {}
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public void setDescription(CollectorDescription description) {
-        this.description = description;
+    public MetricAggregatorProvider getMetricAggregatorProvider() {
+        return metricAggregatorProvider;
     }
 
-    @ManyToOne
-    public CollectorDescription getDescription() {
-        return description;
+    public void setMetricAggregatorProvider(MetricAggregatorProvider metricAggregatorProvider) {
+        this.metricAggregatorProvider = metricAggregatorProvider;
     }
-
-    public Double getTotal() {
-        return total;
-    }
-
-    public void setTotal(Double total) {
-        this.total = total;
-    }
-
 }
