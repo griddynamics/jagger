@@ -36,8 +36,6 @@ public class LegendProvider {
 
     public String generatePlotLegend(String sessionId, String description, boolean addSessionPrefix) {
         if (!addSessionPrefix) {
-            if (description.equals("All GC minor time") || description.equals("All GC major time"))
-                description+= ", ms";
             return description;
         }
 
