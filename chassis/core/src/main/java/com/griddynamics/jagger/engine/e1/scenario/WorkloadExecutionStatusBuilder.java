@@ -52,7 +52,7 @@ public class WorkloadExecutionStatusBuilder {
     }
 
     public WorkloadExecutionStatus build() {
-        return new DefaultWorkloadExecutionStatus(threads, startedSamples, finishedSamples, delays, pollTime, durationTime,  task);
+        return new DefaultWorkloadExecutionStatus(threads, startedSamples, finishedSamples, delays, pollTime, durationTime, task);
     }
 
     private class DefaultWorkloadExecutionStatus implements WorkloadExecutionStatus {
@@ -67,7 +67,7 @@ public class WorkloadExecutionStatusBuilder {
 
         private DefaultWorkloadExecutionStatus(Map<NodeId, Integer> threads, Map<NodeId, Integer> startedSamples,
                                                Map<NodeId, Integer> finishedSamples,
-                                               Map<NodeId, Integer> delays, Map<NodeId, Long> pollTime,Map<NodeId, Long> durationTime, WorkloadTask task) {
+                                               Map<NodeId, Integer> delays, Map<NodeId, Long> pollTime, Map<NodeId, Long> durationTime, WorkloadTask task) {
             boolean nodesAreEqual = threads.keySet().equals(startedSamples.keySet()) && startedSamples.keySet().equals(pollTime.keySet());
 
             Preconditions.checkArgument(nodesAreEqual);
@@ -154,7 +154,7 @@ public class WorkloadExecutionStatusBuilder {
                 report += String.format(format,
                         node.getIdentifier(), this.threads.get(node),
                         this.startedSamples.get(node),
-                        this.finishedSamples.get(node), this.delays.get(node),(double)this.durationTime.get(node)/1000.0);
+                        this.finishedSamples.get(node), this.delays.get(node), (double)this.durationTime.get(node)/1000.0);
             }
             return report + line;
         }
