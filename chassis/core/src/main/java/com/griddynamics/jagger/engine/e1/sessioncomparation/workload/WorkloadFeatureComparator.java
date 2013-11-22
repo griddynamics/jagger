@@ -95,7 +95,6 @@ public class WorkloadFeatureComparator extends HibernateDaoSupport implements Fe
                 .avgLatencyDeviation(calculateDeviation(first.getAvgLatency(), second.getAvgLatency()))
                 .stdDevLatencyDeviation(calculateDeviation(first.getStdDevLatency(), second.getStdDevLatency()))
                 .successRateDeviation(calculateDeviation(first.getSuccessRate(), second.getSuccessRate()))
-//                .totalDurationDeviation(calculateDeviation(first.getTotalDuration(), second.getTotalDuration()))
                 .currentData(first)
                 .baselineData(second)
                 .build();

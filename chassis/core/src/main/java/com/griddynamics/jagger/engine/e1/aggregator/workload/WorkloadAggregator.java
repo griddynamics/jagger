@@ -164,7 +164,6 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         workloadTaskData.setTermination(termination);
         workloadTaskData.setKernels(kernels.size());
         workloadTaskData.setSamples(invoked);
-//        workloadTaskData.setTotalDuration(BigDecimal.valueOf(totalDuration));
         workloadTaskData.setThroughput(BigDecimal.valueOf(throughput));
         workloadTaskData.setFailuresCount(failed);
         workloadTaskData.setSuccessRate(BigDecimal.valueOf(successRate));
