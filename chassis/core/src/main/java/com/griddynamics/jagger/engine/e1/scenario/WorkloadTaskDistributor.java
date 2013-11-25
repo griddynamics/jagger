@@ -83,8 +83,7 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
             protected void run() throws Exception {
                 DefaultWorkloadController controller = null;
                 try {
-                    final Long startTime = System.currentTimeMillis() ;
-                    String line = " ---------------------------------------------------------------------------------------------------------------------------------------------------\n";
+                    String line = "------------------------------------------------------------------------------------------------------------------------------\n";
                     String report = "\n\n" + line + "S T A R T     W O R K L O A D\n" + line + "\n";
                     log.info(report);
                     log.info("Going to distribute workload task {}", task);
@@ -100,7 +99,7 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                         log.info("Start execution of task: {}", task);
                     }
 
-                    controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration, startTime);
+                    controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration);
 
                     WorkloadClock clock = task.getClock();
                     TerminationStrategy terminationStrategy = task.getTerminationStrategy();

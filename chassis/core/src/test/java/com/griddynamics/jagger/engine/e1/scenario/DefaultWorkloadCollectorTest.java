@@ -35,7 +35,6 @@ public class DefaultWorkloadCollectorTest {
     private String taskId;
     private WorkloadTask task;
     private Map<NodeId, RemoteExecutor> remotes;
-    private Long startTime;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -43,8 +42,7 @@ public class DefaultWorkloadCollectorTest {
         taskId = "testWorkload";
         task = new WorkloadTask();
         remotes = Maps.newHashMap();
-        startTime = System.currentTimeMillis();
-        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, TimeoutsConfiguration.getDefaultTimeouts(),startTime);
+        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, TimeoutsConfiguration.getDefaultTimeouts());
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
