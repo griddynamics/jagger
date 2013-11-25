@@ -28,9 +28,10 @@ import javax.persistence.ManyToOne;
 public class ValidationResultEntity {
     private Long id;
     private WorkloadData workloadData;
-    private CollectorDescription description;
+    private String validator;
     private Integer total;
     private Integer failed;
+    private CollectorDescription description;
 
     @Id
     @GeneratedValue
@@ -49,6 +50,14 @@ public class ValidationResultEntity {
 
     public void setWorkloadData(WorkloadData workloadData) {
         this.workloadData = workloadData;
+    }
+
+    public String getValidator() {
+        return validator;
+    }
+
+    public void setValidator(String validator) {
+        this.validator = validator;
     }
 
     @ManyToOne

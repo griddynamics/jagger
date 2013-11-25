@@ -110,6 +110,9 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
                 aggregatedByTasks.put(detail.getTaskData().getTaskId(), byTaskId);
             }
             CollectorDescription displayName = detail.getDescription();
+            if (displayName == null) {
+                displayName = new CollectorDescription(detail.getMetric());
+            }
             List<MetricDetails> taskData = byTaskId.get(displayName);
             if (taskData == null) {
                 taskData = new LinkedList<MetricDetails>();

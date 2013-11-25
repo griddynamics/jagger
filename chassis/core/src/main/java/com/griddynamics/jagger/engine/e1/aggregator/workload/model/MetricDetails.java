@@ -43,6 +43,9 @@ public class MetricDetails {
     @Column
     private long time;
 
+    @Column
+    private String metric;
+
     @ManyToOne
     private CollectorDescription description;
 
@@ -57,6 +60,21 @@ public class MetricDetails {
         this.description = description;
         this.value = value;
         this.taskData = taskData;
+    }
+
+    public MetricDetails(long time, String metric, Double value, TaskData taskData) {
+        this.time = time;
+        this.metric = metric;
+        this.value = value;
+        this.taskData = taskData;
+    }
+
+    public String getMetric() {
+        return metric;
+    }
+
+    public void setMetric(String metric) {
+        this.metric = metric;
     }
 
     public MetricDetails() {

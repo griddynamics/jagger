@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Lists;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.CollectorDescription;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -98,7 +99,10 @@ public class WorkloadValidationReporter extends AbstractMappedReportProvider<Str
         Integer failed = entity.getFailed();
 
         ValidationResult result = new ValidationResult();
-        result.setValidator(entity.getDescription().getDisplay());
+
+        CollectorDescription description = entity.getDescription();
+        String name = (description != null) ? description.getDisplay() : entity.getValidator();
+        result.setValidator(name);
         result.setTotal(total);
         result.setFailed(failed);
 
