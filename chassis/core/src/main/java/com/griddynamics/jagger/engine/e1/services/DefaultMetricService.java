@@ -36,7 +36,7 @@ public class DefaultMetricService implements MetricService {
         KeyValueStorage storage = nodeContext.getService(KeyValueStorage.class);
 
         storage.put(Namespace.of(
-                sessionId, taskId, "metricAggregatorProviders"),
+                sessionId, taskId, "metricDescription"),
                 metricDescription.getId(),
                 metricDescription
         );

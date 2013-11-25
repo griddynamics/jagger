@@ -21,6 +21,8 @@
 package com.griddynamics.jagger.master;
 
 import com.google.common.collect.ImmutableList;
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.master.configuration.Task;
 
 import java.util.List;
@@ -33,10 +35,19 @@ import java.util.List;
 public class CompositeTask implements Task {
     private List<CompositableTask> leading;
     private List<CompositableTask> attendant = ImmutableList.of();
+    private List<Provider<TestGroupListener>> listeners = ImmutableList.of();
     private int number;
 
     public List<CompositableTask> getLeading() {
         return leading;
+    }
+
+    public List<Provider<TestGroupListener>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<TestGroupListener>> listeners) {
+        this.listeners = listeners;
     }
 
     public void setLeading(List<CompositableTask> leading) {

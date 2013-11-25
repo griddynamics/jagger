@@ -189,14 +189,11 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             String tmp = path.substring(0, path.lastIndexOf(File.separatorChar));
             String metricName = tmp.substring(tmp.lastIndexOf(File.separatorChar) + 1);
 
-            Object object = fetchDescription(metricName);
+            MetricDescription metricDescription = fetchDescription(metricName);
 
-            MetricDescription metricDescription = defaultMetricDescription;
-
-            if (object != null) {
-                metricDescription = (MetricDescription) object;
-            }else{
+            if (metricDescription == null) {
                 log.warn("Aggregators not found for metric: '{}' in task: '{}'; Using default aggregator", metricName, taskData.getTaskId());
+                metricDescription = defaultMetricDescription;
             }
 
             LogReader.FileReader<MetricLogEntry> fileReader = null;
@@ -279,12 +276,17 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             return this;
         }
 
-        private Object fetchDescription(String metricName) {
+        private MetricDescription fetchDescription(String metricName) {
             Collection<Object> metricDescription = keyValueStorage.fetchAll(
-                    Namespace.of(taskData.getSessionId(), taskData.getTaskId(), "metricAggregatorProviders"),
+                    Namespace.of(taskData.getSessionId(), taskData.getTaskId(), "metricDescription"),
                     metricName
             );
-            return metricDescription.iterator().next();
+
+            if (!metricDescription.iterator().hasNext()){
+                return null;
+            }
+
+            return (MetricDescription)metricDescription.iterator().next();
         }
 
         private void persistAggregatedMetricValue(String metricName, Number value) {

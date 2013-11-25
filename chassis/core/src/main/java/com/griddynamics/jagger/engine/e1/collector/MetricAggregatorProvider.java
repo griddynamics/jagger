@@ -28,7 +28,4 @@ import com.griddynamics.jagger.engine.e1.Provider;
  */
 
 public interface MetricAggregatorProvider extends Provider<MetricAggregator> {
-
-    MetricAggregator provide();
-
 }

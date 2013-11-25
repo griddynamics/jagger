@@ -30,7 +30,12 @@ import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfoStart;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfoStop;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.util.Futures;
+import com.griddynamics.jagger.util.Injector;
 import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
@@ -91,6 +96,20 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
             @Override
             protected void run() throws Exception {
 
+                List<TestGroupListener> listeners = new ArrayList<TestGroupListener>(task.getListeners().size());
+
+                for (Provider<TestGroupListener> provider : task.getListeners()){
+                    TestGroupListener groupListener = provider.provide();
+                    Injector.injectNodeContext(groupListener, sessionId, taskId, nodeContext);
+
+                    listeners.add(groupListener);
+                }
+
+                TestGroupListener compositeTestGroupListener = TestGroupListener.Composer.compose(listeners);
+
+                //update!!!
+                compositeTestGroupListener.onStart(new TestGroupInfoStart());
+                long startTime = System.currentTimeMillis();
 
                 List<Future<State>> futures = Lists.newLinkedList();
                 for (Service service : Iterables.concat(leading, attendant)) {
@@ -110,6 +129,11 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
                     TimeUtils.sleepMillis(500);
                 }
+
+                TestGroupInfoStop testGroupInfoStop = new TestGroupInfoStop();
+                testGroupInfoStop.setTask(task);
+                testGroupInfoStop.setDuration(System.currentTimeMillis() - startTime);
+                compositeTestGroupListener.onStop(testGroupInfoStop);
             }
 
             private int activeLeadingTasks() {

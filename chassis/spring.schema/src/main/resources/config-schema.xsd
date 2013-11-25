@@ -434,10 +434,53 @@
             <xsd:extension base="identifiedRequiredType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
                     <xsd:element ref="test" maxOccurs="unbounded"/>
+                    <xsd:element ref="test-group-listeners" maxOccurs="unbounded"/>
                     <xsd:element ref="beans:bean"/>
                     <xsd:element ref="beans:ref"/>
                 </xsd:choice>
                 <xsd:attribute name="monitoringEnabled" type="xsd:string" default="${chassis.conditions.monitoring.enable}" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="test-group-listeners" type="testGroupListenersType"/>
+    
+    <xsd:complexType name="testGroupListenersType">
+        <xsd:annotation>
+            <xsd:documentation>
+                ADD
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element name="test-group-listener" type="testGroupListenerAbstract" maxOccurs="unbounded"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="testGroupListenerAbstract" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>
+                ADD
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="test-group-listener-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                ADD
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="testGroupListenerAbstract">
+                <xsd:attribute name="ref" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
