@@ -26,13 +26,14 @@ import com.griddynamics.jagger.storage.fs.hdfs.utils.HadoopUtils;
 import org.apache.hadoop.hdfs.protocol.FSConstants.SafeModeAction;
 import org.apache.hadoop.hdfs.server.common.InconsistentFSStateException;
 import org.apache.hadoop.hdfs.server.namenode.NameNode;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Properties;
 
 public class HDFSNamenodeServer implements AttendantServer {
-    private static Logger log = Logger.getLogger(HDFSNamenodeServer.class);
+    private static Logger log = LoggerFactory.getLogger(HDFSNamenodeServer.class);
 
     private NameNode nameNode;
     private Properties startupProperties;

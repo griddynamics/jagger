@@ -22,7 +22,6 @@ package com.griddynamics.jagger.monitoring;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
 import com.griddynamics.jagger.agent.model.MonitoringParameter;
 import com.griddynamics.jagger.agent.model.MonitoringParameterLevel;
 import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
@@ -137,7 +136,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                                 avgStatisticsBySuT, logEntry);
                     } catch (ClassCastException e){
                         //HotFix for hessian de/serialization problem
-                        log.error("Deserialization problem: {}",e);
+                        log.error("Deserialization problem: ",e);
                     }
             }
 
@@ -293,8 +292,8 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                         double diffValue = statisticsBySuT.getAverageValue() - previousStatisticsBySuT.getAverageValue();
                         if (diffValue < 0) {
                             log.warn("Negative cumulative metric has been flushed and will be removed. Difference with previous value by parameter {} is {}: ({} - {})",
-                                    new Object[]{statisticsBySuT.getParameterId(), diffValue, statisticsBySuT.getAverageValue(),
-                                            previousStatisticsBySuT.getAverageValue()});
+                                    statisticsBySuT.getParameterId(), diffValue, statisticsBySuT.getAverageValue(),
+                                    previousStatisticsBySuT.getAverageValue());
                             trace.remove(i);
                         } else {
                             statisticsBySuT.setAverageValue(diffValue);

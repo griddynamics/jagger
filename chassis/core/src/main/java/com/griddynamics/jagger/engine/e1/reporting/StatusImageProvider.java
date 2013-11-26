@@ -53,7 +53,7 @@ public class StatusImageProvider {
         try {
             this.statusImageOK = ImageIO.read(statusImageOKLocation.getInputStream());
         } catch (IOException e) {
-            log.error("Failed to resolve image [" + statusImageOKLocation + "]");
+            log.error("Failed to resolve image [{}]", statusImageOKLocation);
         }
     }
 
@@ -61,7 +61,7 @@ public class StatusImageProvider {
         try {
             this.statusImageWarning = ImageIO.read(statusImageWarningLocation.getInputStream());
         } catch (IOException e) {
-            log.error("Failed to resolve image [" + statusImageWarningLocation + "]");
+            log.error("Failed to resolve image [{}]", statusImageWarningLocation);
         }
     }
 
@@ -69,7 +69,7 @@ public class StatusImageProvider {
         try {
             this.statusImageFatal = ImageIO.read(statusImageFatalLocation.getInputStream());
         } catch (IOException e) {
-            log.error("Failed to resolve image [" + statusImageFatalLocation + "]");
+            log.error("Failed to resolve image [{}]", statusImageFatalLocation);
         }
     }
 
@@ -77,7 +77,7 @@ public class StatusImageProvider {
         try {
             this.statusImageError = ImageIO.read(statusImageErrorLocation.getInputStream());
         } catch (IOException e) {
-            log.error("Failed to resolve image [" + statusImageErrorLocation + "]");
+            log.error("Failed to resolve image [{}]", statusImageErrorLocation);
         }
     }
 }

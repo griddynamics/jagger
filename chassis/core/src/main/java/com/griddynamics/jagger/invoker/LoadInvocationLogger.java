@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.invoker;
 
-import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,16 +49,16 @@ public class LoadInvocationLogger<Q, R, E> implements LoadInvocationListener<Q, 
 
     @Override
     public void onSuccess(Q query, E endpoint, R result, long duration) {
-        log.debug("Invoked query {} on endpoint {} result {} duration {}", new Object[] {query, endpoint, result, duration});
+        log.debug("Invoked query {} on endpoint {} result {} duration {}", query, endpoint, result, duration);
     }
 
     @Override
     public void onFail(Q query, E endpoint, InvocationException e) {
-        log.warn("Invocation failed on {} error {} \n{}", new Object[] {endpoint, e.getMessage(), Throwables.getStackTraceAsString(e)});
+        log.warn("Invocation failed on {} error ", endpoint, e);
     }
 
     @Override
     public void onError(Q query, E endpoint, Throwable error) {
-        log.warn("Invocation failed on {} error {} \n{}", new Object[] {endpoint, error.getMessage(), Throwables.getStackTraceAsString(error)});
+        log.warn("Invocation failed on {} error ", endpoint, error);
     }
 }

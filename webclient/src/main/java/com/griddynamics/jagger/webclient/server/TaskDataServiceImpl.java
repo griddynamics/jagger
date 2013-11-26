@@ -71,9 +71,9 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                 TaskDataDto dto = new TaskDataDto(((BigInteger)taskData[0]).longValue(), (String)taskData[1], (String)taskData[2]);
                 taskDataDtoList.add(dto);
             }
-            log.info("For session {} was loaded {} tasks for {} ms", new Object[]{sessionId, taskDataList.size(), System.currentTimeMillis() - timestamp});
+            log.info("For session {} was loaded {} tasks for {} ms", sessionId, taskDataList.size(), System.currentTimeMillis() - timestamp);
         } catch (Exception e) {
-            log.error("Error was occurred during tasks fetching for session "+sessionId, e);
+            log.error("Error was occurred during tasks fetching for session {}", sessionId, e);
             throw new RuntimeException(e);
         }
         return taskDataDtoList;
@@ -188,7 +188,7 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
             result.add((TaskDataDto)priorityQueue.poll()[1]);
         }
 
-        log.info("For sessions {} was loaded {} tasks for {} ms", new Object[]{sessionIds, result.size(), System.currentTimeMillis() - timestamp});
+        log.info("For sessions {} was loaded {} tasks for {} ms", sessionIds, result.size(), System.currentTimeMillis() - timestamp);
         return result;
     }
 }

@@ -70,7 +70,7 @@ public class UserGroup {
         this.startInTime = startInTime;
         this.startBy = startBy;
 
-        log.info(String.format("User group %d is created", id));
+        log.info("User group {} is created", id);
 
     }
 

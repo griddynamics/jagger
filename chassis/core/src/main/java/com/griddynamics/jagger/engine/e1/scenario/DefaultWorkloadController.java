@@ -91,7 +91,7 @@ public class DefaultWorkloadController implements WorkloadController {
             Integer threadsOnNode = threads.get(id);
             Integer delay = delays.get(id);
 
-            log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}", new Object[]{pollTime, id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay});
+            log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}", pollTime, id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay);
 
             builder.addNodeInfo(id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay, pollTime, durationTime);
         }

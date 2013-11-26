@@ -86,7 +86,7 @@ public class DefaultWorkloadSuggestionMaker implements WorkloadSuggestionMaker {
         int currentThreads = statistics.getCurrentWorkloadConfiguration().getThreads();
         int diff = threadCount - currentThreads;
         if (diff > maxDiff) {
-            log.debug("Increasing to {} is required current thread count is {} max allowed diff is {}", new Object[]{threadCount, currentThreads, maxDiff});
+            log.debug("Increasing to {} is required current thread count is {} max allowed diff is {}", threadCount, currentThreads, maxDiff);
             return WorkloadConfiguration.with(currentThreads + maxDiff, 0);
         }
 

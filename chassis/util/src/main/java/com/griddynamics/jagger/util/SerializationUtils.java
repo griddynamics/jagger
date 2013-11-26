@@ -20,16 +20,16 @@
 
 package com.griddynamics.jagger.util;
 
-import java.io.*;
-import java.util.concurrent.atomic.AtomicLong;
-
 import biz.source_code.base64Coder.Base64Coder;
+import com.google.common.io.Closeables;
 import com.griddynamics.jagger.exception.TechnicalException;
 import org.jboss.serial.io.JBossObjectInputStream;
 import org.jboss.serial.io.JBossObjectOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.io.Closeables;
+
+import java.io.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 // TODO Avoid static code. Extract interface and make this one default implementation.
 public class SerializationUtils {
@@ -58,8 +58,7 @@ public class SerializationUtils {
             T obj = (T) ois.readObject();
             return obj;
         } catch (IOException e) {
-            log.error("Deserialization exception ", e);
-            log.error("fromString('{}')", s);
+            log.error("Deserialization exception from string '{}' ", s, e);
             throw new TechnicalException(e);
         } catch (ClassNotFoundException e) {
             log.error("Deserialization exception ", e);
@@ -86,7 +85,7 @@ public class SerializationUtils {
         } finally {
             String s = new String(Base64Coder.encode(baos.toByteArray()));
             if (s.isEmpty()) {
-                log.info("toString({}, '{}', '{}')", new Object[] {toStringCount.getAndIncrement(), s, o});
+                log.info("toString({}, '{}', '{}')", toStringCount.getAndIncrement(), s, o);
             }
             Closeables.closeQuietly(oos);
             return s;
@@ -144,7 +143,7 @@ public class SerializationUtils {
         private Configurator() {}
 
         public void setUseJBoss(boolean useJBoss) {
-            log.info("setting useJBoss= {}",useJBoss);
+            log.info("setting useJBoss = {}",useJBoss);
             SerializationUtils.useJBoss = useJBoss;
         }
     }

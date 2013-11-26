@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
-import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ public class CustomValidatorDefinitionParser extends AbstractValidatorDefinition
         try{
             provider.setClazz(Class.forName(element.getAttribute(XMLConstants.VALIDATOR)));
         }catch (ClassNotFoundException ex){
-            log.warn("Can't find class="+element.getAttribute(XMLConstants.VALIDATOR), ex);
+            log.warn("Can't find class = " + element.getAttribute(XMLConstants.VALIDATOR), ex);
         }
         builder.addPropertyValue(XMLConstants.VALIDATOR, provider);
     }

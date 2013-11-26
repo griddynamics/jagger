@@ -92,7 +92,7 @@ public class DefaultTpsRouter implements TpsRouter {
             BigDecimal desiredTpsForNode = desiredTpsPerNode.get(node);
             BigDecimal maxTpsForNode = maxTpsPerNode.get(node);
 
-            log.debug("For node {} desired tps {} max tps {}", new Object[]{node, desiredTpsForNode, maxTpsForNode});
+            log.debug("For node {} desired tps {} max tps {}", node, desiredTpsForNode, maxTpsForNode);
 
             if (compare(desiredTpsForNode, maxTpsForNode) > 0) {
                 log.debug("Cannot increase tps at node {} to {}", node, desiredTpsForNode);

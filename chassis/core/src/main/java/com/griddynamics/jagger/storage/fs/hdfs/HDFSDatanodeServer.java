@@ -72,7 +72,7 @@ public class HDFSDatanodeServer implements BlockingBean, AttendantServer {
                             break;
                         } else Thread.sleep(10000);
                     } catch (Exception e) {
-                        log.warn("Failed start DataNode: {}", e);
+                        log.warn("Failed start DataNode: ", e);
                         try {
                             Thread.sleep(10000);
                         } catch (InterruptedException e1) {

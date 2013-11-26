@@ -93,7 +93,7 @@ public class LogProcessor extends HibernateDaoSupport {
         for (double percentileKey : getGlobalPercentilesKeys()) {
             double percentileValue = calculator.getPercentile(percentileKey);
             if (Double.isNaN(percentileKey) || Double.isNaN(percentileValue)) {
-                log.error("Percentile has NaN values : key={}, value={}", percentileKey, percentileValue);
+                log.error("Percentile has NaN values : key = {}, value = {}", percentileKey, percentileValue);
                 continue;
             }
             WorkloadProcessLatencyPercentile percentile = new WorkloadProcessLatencyPercentile(percentileKey, percentileValue);

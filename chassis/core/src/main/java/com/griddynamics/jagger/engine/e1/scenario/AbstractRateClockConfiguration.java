@@ -61,12 +61,12 @@ public abstract class AbstractRateClockConfiguration implements WorkloadClockCon
     }
 
     protected DesiredTps createDesiredTps (BigDecimal tps) {
-        log.debug("creating createDesiredTps({}, {})", new Object[] { tps, warmUpTime });
+        log.debug("creating createDesiredTps({}, {})", tps, warmUpTime );
         if (!isRumpUp()) {
             log.debug("creating ConstantTps({})", tps);
             return new ConstantTps(tps);
         }
-        log.debug("creating RumpUpTps({}, {})", new Object[]{ tps, warmUpTime });
+        log.debug("creating RumpUpTps({}, {})", tps, warmUpTime );
         return new RumpUpTps(tps, warmUpTime);
     }
 

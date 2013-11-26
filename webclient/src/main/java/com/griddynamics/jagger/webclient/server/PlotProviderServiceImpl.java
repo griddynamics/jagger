@@ -119,7 +119,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
                 plotNameDtoSet.add(monitoringPlot.getKey().getUpperName());
             }
         } catch (Exception e) {
-            log.error("Error was occurred during session scope plots data getting for session ID " + sessionId, e);
+            log.error("Error was occurred during session scope plots data getting for session ID {}", sessionId, e);
             throw new RuntimeException(e);
         }
 
@@ -138,7 +138,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
             plotSeriesDto = plotDataProvider.getPlotData(taskId, plotName);
             log.info("getPlotData(): {}", getFormattedLogMessage(plotSeriesDto, "" + taskId, plotName, System.currentTimeMillis() - timestamp));
         } catch (Exception e) {
-            log.error("Error is occurred during plot data loading for taskId=" + taskId + ", plotName=" + plotName, e);
+            log.error("Error is occurred during plot data loading for taskId = {}, plotName = {}", taskId, plotName, e);
             throw new RuntimeException(e);
         }
 
@@ -148,7 +148,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     @Override
     public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, String plotName) {
         long timestamp = System.currentTimeMillis();
-        log.debug("getPlotData was invoked with taskIds={} and plotName={}", taskIds, plotName);
+        log.debug("getPlotData was invoked with taskIds = {} and plotName = {}", taskIds, plotName);
 
         PlotDataProvider plotDataProvider = findPlotDataProvider(plotName);
 
@@ -157,7 +157,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
             plotSeriesDtoList = plotDataProvider.getPlotData(taskIds, plotName);
             log.info("getPlotData(): {}", getFormattedLogMessage(plotSeriesDtoList, "" + taskIds, plotName, System.currentTimeMillis() - timestamp));
         } catch (Exception e) {
-            log.error("Error is occurred during plot data loading for taskIds=" + taskIds + ", plotName=" + plotName, e);
+            log.error("Error is occurred during plot data loading for taskIds = {}, plotName = {}" , taskIds, plotName, e);
             throw new RuntimeException(e);
         }
 
@@ -185,7 +185,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
 
             SessionScopePlotDataProvider plotDataProvider = (SessionScopePlotDataProvider) monitoringPlotDataProviders.get(plotName);
             if (plotDataProvider == null) {
-                log.warn("getPlotData was invoked with unsupported plotName={}", plotName);
+                log.warn("getPlotData was invoked with unsupported plotName = {}", plotName);
                 throw new UnsupportedOperationException("Plot type " + plotName + " doesn't supported");
             }
 
@@ -202,7 +202,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
                 }
                 log.info("getSessionScopePlotData() after compressing: {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName, System.currentTimeMillis() - timestamp));
             } catch (Exception e) {
-                log.error("Error is occurred during plot data loading for sessionId=" + sessionId + ", plotName=" + plotName, e);
+                log.error("Error is occurred during plot data loading for sessionId = {}, plotName = {}", sessionId, plotName, e);
                 throw new RuntimeException(e);
             }
             resultMap.put(plotName, plotSeriesDtoList);
@@ -297,7 +297,7 @@ public class PlotProviderServiceImpl implements PlotProviderService {
             }
         }
         if (plotDataProvider == null){
-            log.warn("getPlotData was invoked with unsupported plotName={}", plotName);
+            log.warn("getPlotData was invoked with unsupported plotName = {}", plotName);
             throw new UnsupportedOperationException("Can not find data for plot \"" + plotName +
                     "\". \nProbably it is link problem");
         }

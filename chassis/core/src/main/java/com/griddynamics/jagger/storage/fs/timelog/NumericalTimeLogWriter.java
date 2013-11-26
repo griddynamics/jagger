@@ -20,17 +20,17 @@
 
 package com.griddynamics.jagger.storage.fs.timelog;
 
+import com.griddynamics.jagger.exception.TechnicalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.griddynamics.jagger.exception.TechnicalException;
-import org.apache.log4j.Logger;
 
 /**
  * This class in intended for writing logs in format (timestamp | value1 | value2 | ...)
@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
  */
 public class NumericalTimeLogWriter {
 
-    private static final Logger log = Logger.getLogger(NumericalTimeLogWriter.class);
+    private static final Logger log = LoggerFactory.getLogger(NumericalTimeLogWriter.class);
 
     private String delimiter = "|";
     private int maxBufferSize = 10000;
@@ -124,7 +124,7 @@ public class NumericalTimeLogWriter {
                 writeEntry(entry, streams.get(0));
             }
         } catch (InterruptedException e) {
-            log.error("Final flushing was interrupted. About [" + buffer.size() + "] entries can be lost.", e);
+            log.error("Final flushing was interrupted. About [{}] entries can be lost.", buffer.size(), e);
         }
 
         for(DataOutputStream stream : streams) {

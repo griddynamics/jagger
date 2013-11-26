@@ -43,7 +43,7 @@ public class StdDevMonitoringParameterDecisionMaker implements MonitoringParamet
         MonitoringStats first = comparison.getFirst();
         MonitoringStats second = comparison.getSecond();
 
-        log.debug("Going to make decision based on\n name = '{}', first = '{}', second = '{}'", new Object[]{name, first, second});
+        log.debug("Going to make decision based on\n name = '{}', first = '{}', second = '{}'", name, first, second);
 
         double firstStdDev = first.getSttDev();
         double secondStdDev = second.getSttDev();

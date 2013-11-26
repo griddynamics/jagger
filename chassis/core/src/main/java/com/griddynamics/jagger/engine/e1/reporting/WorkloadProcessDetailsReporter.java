@@ -63,7 +63,7 @@ public class WorkloadProcessDetailsReporter extends AbstractMappedReportProvider
                 key, getSessionIdProvider().getSessionId());
 
         if(statistics == null || statistics.isEmpty()) {
-            log.error("Data for process [" + key + "] not found");
+            log.error("Data for process [{}] not found", key);
             return null;
         }
         if(statistics.size() > 1) {

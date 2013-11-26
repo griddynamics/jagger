@@ -81,7 +81,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             dataDtos.add(dto);
         }
 
-        log.info("For session {} was loaded {} workloadTasks for {} ms", new Object[]{sessionId, dataDtos.size(), System.currentTimeMillis() - time});
+        log.info("For session {} was loaded {} workloadTasks for {} ms", sessionId, dataDtos.size(), System.currentTimeMillis() - time);
         return dataDtos;
     }
 
@@ -260,7 +260,7 @@ public class WorkloadTaskDataServiceImpl implements WorkloadTaskDataService {
             dto.setCustomInfoCollectors(metricsMap);
             result.add(dto);
         }
-        log.info("For tasks ids {} was loaded {} workloadTasks for {} ms", new Object[]{ids, result.size(), System.currentTimeMillis() - time});
+        log.info("For tasks ids {} was loaded {} workloadTasks for {} ms", ids, result.size(), System.currentTimeMillis() - time);
         return result;
     }
 

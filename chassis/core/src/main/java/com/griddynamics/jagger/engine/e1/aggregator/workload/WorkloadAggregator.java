@@ -82,7 +82,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         Long startTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, START_TIME);
         Long endTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, END_TIME);
         double duration = (double) (endTime - startTime) / 1000;
-        log.debug("start {} end {} duration {}", new Object[]{startTime, endTime, duration});
+        log.debug("start {} end {} duration {}", startTime, endTime, duration);
         
         @SuppressWarnings({"unchecked", "rawtypes"})
         Collection<String> kernels = (Collection) keyValueStorage.fetchAll(taskNamespace, KERNELS);
@@ -121,7 +121,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
 
         double throughput = Math.rint(succeeded / duration * 100) / 100;
         if (Double.isNaN(throughput)) {
-            log.error("throughput is NaN (succeeded={},duration={}). Value for throughput will be set zero", succeeded, duration);
+            log.error("throughput is NaN (succeeded = {}, duration = {}). Value for throughput will be set zero", succeeded, duration);
             throughput = 0;
         }
         log.debug("Throughput: {}", throughput);
@@ -130,7 +130,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
                 ? Math.rint(succeeded / invoked.doubleValue() * 10000) / 10000
                 : 1;
         if (Double.isNaN(successRate)) {
-            log.error("successRate is NaN (succeeded={},invoked={}). Value for successRate will be set zero", succeeded, invoked);
+            log.error("successRate is NaN (succeeded = {}, invoked = {}). Value for successRate will be set zero", succeeded, invoked);
             successRate = 0;
         }
         log.debug("Success rate: {}", successRate);

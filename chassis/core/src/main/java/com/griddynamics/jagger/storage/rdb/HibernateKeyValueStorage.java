@@ -202,7 +202,7 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
             String oldType = validateType(type);
             if (oldType != null){
                 needToPrintMessage = true;
-                log.warn("Your database is out of date. In column {}.{} expected {}, but found {}", new Object[]{type.getEntityName(), type.getPropertyName(), type.getExpectedType(), oldType});
+                log.warn("Your database is out of date. In column {}.{} expected {}, but found {}", type.getEntityName(), type.getPropertyName(), type.getExpectedType(), oldType);
             }
         }
 
@@ -213,7 +213,7 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
         try {
             Thread.currentThread().sleep(4*1000);
         } catch (InterruptedException e) {
-            log.error("Error during try to sleep",e);
+            log.error("Error during try to sleep", e);
             Thread.currentThread().interrupt();
         }
     }

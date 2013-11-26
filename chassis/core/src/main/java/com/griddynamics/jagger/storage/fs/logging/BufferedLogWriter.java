@@ -21,7 +21,6 @@
 package com.griddynamics.jagger.storage.fs.logging;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
@@ -40,8 +39,6 @@ import java.util.Collection;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Alexey Kiselyov, Vladimir Shulga
@@ -80,7 +77,7 @@ public abstract class BufferedLogWriter implements LogWriter {
         try {
             buffer.put(new Log(path, logEntry));
         } catch (InterruptedException e) {
-            log.error("Failed to write {} by path: {}", new Object[]{logEntry, path}, e);
+            log.error("Failed to write {} by path: {}", logEntry, path, e);
             Thread.currentThread().interrupt();
         }
     }

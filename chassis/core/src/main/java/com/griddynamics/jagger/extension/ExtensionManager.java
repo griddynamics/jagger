@@ -57,13 +57,13 @@ public class ExtensionManager implements Ordered, ApplicationListener {
                 } else {
                     log.debug("Extension registries :");
                     for(Map.Entry<String, ExtensionRegistry<?>> extensionRegistry : extensionRegistryMap.entrySet()) {
-                        log.debug(String.format(
-                                "   Registry : [ %s ]<%s> (autodiscovery=%s) contains [%d] extensions :",
+                        log.debug(
+                                "   Registry : [ {} ]<{}> (autodiscovery={}) contains [{}] extensions :",
                                 extensionRegistry.getKey(),
                                 extensionRegistry.getValue().getExtensionClass().getCanonicalName(),
                                 extensionRegistry.getValue().isAutoDiscovery(),
                                 extensionRegistry.getValue().getExtensions().size()
-                        ));
+                        );
                         for(Map.Entry<String, ?> extension : extensionRegistry.getValue().getExtensions().entrySet()) {
                             log.debug("      Extension : class [ " + extension.getValue().getClass().getCanonicalName() + " ], bean name [ " + extension.getKey() + " ]");
                         }

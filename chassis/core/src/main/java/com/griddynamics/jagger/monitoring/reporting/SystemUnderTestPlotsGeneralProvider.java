@@ -96,8 +96,7 @@ public class SystemUnderTestPlotsGeneralProvider extends AbstractMonitoringRepor
         }
 
         if (data == null) {
-            log.warn("SuT plots not found for task with id {}", groupName);
-            log.warn("Check that MonitoringAggregator is configured!!!");
+            log.warn("SuT plots not found for task with id {}\nCheck that MonitoringAggregator is configured!!!", groupName);
         }
 
         return new JRBeanCollectionDataSource(data);

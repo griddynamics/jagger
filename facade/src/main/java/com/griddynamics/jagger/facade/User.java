@@ -52,7 +52,7 @@ public class User {
             try {
                 new Context(this, location);
             } catch(Exception e) {
-                log.error(String.format("EXCEPTION: Spring context initialization: %s", location), e);
+                log.error("EXCEPTION: Spring context initialization: {}", location, e);
             }
         }
 

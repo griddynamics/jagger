@@ -57,7 +57,7 @@ public class User {
         WorkloadConfiguration workloadConfiguration = workloadConfigurations.get(nodeId);
         workloadConfigurations.put(nodeId, WorkloadConfiguration.with(workloadConfiguration.getThreads() + 1, workloadConfiguration.getDelay()));
 
-        log.info(String.format("User %d from group %d is created at %dms of test on node %s", id, group.getId(), startTime - clock.getStartTime(), nodeId));
+        log.info("User {} from group {} is created at {}ms of test on node {}", id, group.getId(), startTime - clock.getStartTime(), nodeId);
     }
 
     public void delete(long time) {
@@ -65,7 +65,7 @@ public class User {
             deleted = true;
             group.activeUserCount--;
 
-            log.info(String.format("User %d from group %d is deleted at %dms of test on node %s", id, group.getId(), time - clock.getStartTime(), nodeId));
+            log.info("User {} from group {} is deleted at {}ms of test on node {}", id, group.getId(), time - clock.getStartTime(), nodeId);
         } else {
             throw new IllegalStateException();
         }

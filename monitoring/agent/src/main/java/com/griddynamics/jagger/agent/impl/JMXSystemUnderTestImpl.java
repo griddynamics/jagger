@@ -174,7 +174,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
                                         metric.getObjectName(), metric.getAttributeName());
                             }
                         } catch (Exception e) {
-                            log.error("Can not get from MBean: '{}'; attribute: '{}'", new Object[] {metric.getObjectName(), metric.getAttributeName(), e});
+                            log.error("Can not get from MBean: '{}'; attribute: '{}'", metric.getObjectName(), metric.getAttributeName(), e);
                         }
                     }
                 }

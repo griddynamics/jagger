@@ -158,13 +158,13 @@ public final class Context {
                             }
                         }
                     } catch (Exception e) {
-                        log.error(String.format("Log processing for %s is terminated with exception", location.getName()), e);
+                        log.error("Log processing for {} is terminated with exception", location.getName(), e);
                     } finally {
-                        log.info(String.format("Log processing for %s is terminated", location.getName()));
+                        log.info("Log processing for {} is terminated", location.getName());
                     }
                 }
             }.start();
-            new Thread(String.format("Error processing for %s", location.getName())) {
+            new Thread(String.format("Error processing for {}", location.getName())) {
                 @Override
                 public void run() {
                     try {
@@ -181,9 +181,9 @@ public final class Context {
                             }
                         }
                     } catch (Exception e) {
-                        log.error(String.format("Log processing for %s is terminated with exception", location.getName()), e);
+                        log.error("Log processing for {} is terminated with exception", location.getName(), e);
                     } finally {
-                        log.info(String.format("Log processing for %s is terminated", location.getName()));
+                        log.info("Log processing for {} is terminated", location.getName());
                     }
                 }
             }.start();

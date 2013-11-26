@@ -292,7 +292,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             WorkloadData workloadData = getWorkloadData(taskData.getSessionId(), taskData.getTaskId());
             if(workloadData == null) {
                 log.warn("WorkloadData is not collected for task: '{}' terminating write metric: '{}' with value: '{}'",
-                        new Object[] {taskData.getTaskId(), metricName, value});
+                        taskData.getTaskId(), metricName, value);
                 return;
             }
             DiagnosticResultEntity entity = getDiagnosticResultEntity(metricName, workloadData);

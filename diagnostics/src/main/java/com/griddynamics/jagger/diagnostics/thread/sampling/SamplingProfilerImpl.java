@@ -119,7 +119,7 @@ public class SamplingProfilerImpl implements SamplingProfiler {
                     try {
                         threadInfos = Futures.makeUninterruptible(future).get(jmxTimeout.getValue(), TimeUnit.MILLISECONDS);
                     } catch (ExecutionException e) {
-                        log.error("Execution failed {}", e);
+                        log.error("Execution failed", e);
                         throw Throwables.propagate(e);
                     } catch (TimeoutException e) {
                         log.warn("SamplingProfiler {} : timeout. Collection of jmxInfo was not finished in {}. Pass out without jmxInfo",

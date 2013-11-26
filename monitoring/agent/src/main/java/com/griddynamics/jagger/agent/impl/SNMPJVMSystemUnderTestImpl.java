@@ -90,7 +90,7 @@ public class SNMPJVMSystemUnderTestImpl implements SystemUnderTestService {
             pollJVMMetric(result, snmpProvider, JMX_GC_MINOR_TIME, false);
             pollJVMMetric(result, snmpProvider, JMX_GC_MINOR_UNIT, false);
         } catch (Exception e) {
-            log.error("Failed to collect metrics from " + systemIdentifier, e);
+            log.error("Failed to collect metrics from {}", systemIdentifier, e);
         }
 
         return result;
@@ -101,7 +101,7 @@ public class SNMPJVMSystemUnderTestImpl implements SystemUnderTestService {
             long metric = snmpProvider.getAsLong(new OID(snmpOIDs.get(key)));
             result.putSysUTEntry(key, castToMB ? bytesToMiB(metric) : (double)metric);
         } catch(Exception e) {
-            log.error("Failed to collect metrics from " + snmpProvider.getAddress(), e);
+            log.error("Failed to collect metrics from {}", snmpProvider.getAddress(), e);
         }
     }
 }

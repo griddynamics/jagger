@@ -30,6 +30,6 @@ public enum ExceptionLogger implements Thread.UncaughtExceptionHandler {
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        log.error("Exception occurred at thread " + t.getName() + "\n", e);
+        log.error("Exception occurred at thread {}", t.getName(), e);
     }
 }

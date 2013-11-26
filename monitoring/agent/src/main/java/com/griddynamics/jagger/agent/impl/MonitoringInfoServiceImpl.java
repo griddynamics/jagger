@@ -127,7 +127,7 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
                 jmxInfo = Futures.makeUninterruptible(future).get(jmxTimeout.getValue(), TimeUnit.MILLISECONDS);
                 systemInfo.setSysUnderTest(jmxInfo);
             } catch (ExecutionException e) {
-                log.error("Execution failed {}", e);
+                log.error("Execution failed", e);
                 throw Throwables.propagate(e);
             } catch (TimeoutException e) {
                 log.warn("Timeout. Collection of jmxInfo was not finished in {}. Pass out without jmxInfo",

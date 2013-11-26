@@ -246,13 +246,13 @@ public class Master implements Runnable {
                     executeTask(task, allNodes, nodeContext);
                 } catch (Exception e){
                     status = SessionExecutionStatus.TASK_FAILED;
-                    log.error("Exception during execute task: {}", e);
+                    log.error("Exception during execute task:", e);
                 }
             }
             log.info("Execution done");
         } catch (Exception e) {
             status = SessionExecutionStatus.TERMINATED;
-            log.error(" Exception while running configuration: {}",e);
+            log.error("Exception while running configuration:",e);
         }
         return status;
     }
@@ -362,11 +362,10 @@ public class Master implements Runnable {
                             if (!allNodes.get(nodeType).contains(availableNode)) {
                                 allNodes.get(nodeType).add(availableNode);
                                 nodesCountDowns.get(nodeType).countDown();
-                                log.debug("Node id {} with type {} added. Count left {}", new Object[]{
+                                log.debug("Node id {} with type {} added. Count left {}",
                                         availableNode,
                                         nodeType,
-                                        nodesCountDowns.get(nodeType).getCount()}
-                                );
+                                        nodesCountDowns.get(nodeType).getCount());
                             }
                         }
                     }

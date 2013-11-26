@@ -63,7 +63,7 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
             );
         }
 
-        log.info("There was loaded {} sessions data from {} for {} ms", new Object[]{sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp});
+        log.info("There was loaded {} sessions data from {} for {} ms", sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp);
 
         return new PagedSessionDataDto(sessionDataDtoList, (int) totalSize);
     }
@@ -90,10 +90,10 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
             );
             log.info("There was loaded session data with id {} for {} ms", sessionId, System.currentTimeMillis() - timestamp);
         } catch (NoResultException e) {
-            log.info("No session data was found for session ID=" + sessionId, e);
+            log.info("No session data was found for session ID = {}", sessionId, e);
             return null;
         } catch (Exception e) {
-            log.error("Error was occurred during session data with id=" + sessionId + " loading", e);
+            log.error("Error was occurred during session data with id = {} loading", sessionId, e);
             throw new RuntimeException(e);
         }
 
@@ -144,9 +144,9 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
                 );
             }
 
-            log.info("There was loaded {} sessions data from {} for {} ms", new Object[]{sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp});
+            log.info("There was loaded {} sessions data from {} for {} ms", sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp);
         } catch (Exception e) {
-            log.error("Error was occurred during session data between " + from + " to " + to + "; start " + start + ", length " + length, e);
+            log.error("Error was occurred during session data between {} to {}; start {}, length {}", from, to , start, length, e);
             throw new RuntimeException(e);
         }
 
@@ -195,9 +195,9 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
                 );
             }
 
-            log.info("There was loaded {} sessions data from {} for {} ms", new Object[]{sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp});
+            log.info("There was loaded {} sessions data from {} for {} ms", sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp);
         } catch (Exception e) {
-            log.error("Error was occurred during session data fetching for session Ids " + sessionIds + "; start " + start + ", length " + length, e);
+            log.error("Error was occurred during session data fetching for session Ids {}; start {}, length {}",sessionIds, start, length, e);
             throw new RuntimeException(e);
         }
 

@@ -64,7 +64,7 @@ public class MetricDataServiceImpl implements MetricDataService {
             set.addAll(getLatencyMetricsNames(taskDataDto));
             set.addAll(getCustomMetricsNames(taskDataDto));
         }
-        log.info("For tasks {} was found {} metrics names for {} ms", new Object[]{tests, set.size(), System.currentTimeMillis() - time});
+        log.info("For tasks {} was found {} metrics names for {} ms", tests, set.size(), System.currentTimeMillis() - time);
         return set;
     }
 
@@ -194,7 +194,7 @@ public class MetricDataServiceImpl implements MetricDataService {
         }
         dto.setPlotSeriesDtos(generatePlotSeriesDto(dto));
 
-        log.info("For metric name {} was found metric value for {} ms", new Object[]{metricName, System.currentTimeMillis() - time});
+        log.info("For metric name {} was found metric value for {} ms", metricName, System.currentTimeMillis() - time);
         return dto;
     }
 

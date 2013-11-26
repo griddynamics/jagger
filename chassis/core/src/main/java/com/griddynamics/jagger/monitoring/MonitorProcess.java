@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeoutException;
 
 import static com.griddynamics.jagger.agent.model.ManageCollectionProfileFromSuT.ManageHotSpotMethodsFromSuT;
 
@@ -86,7 +85,7 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
 
     @Override
     public void start() throws TechnicalException {
-        log.info("Kernel {} has started monitoring on agent {} by task id {}", new Object[]{nodeContext.getId(), agentId, taskId});
+        log.info("Kernel {} has started monitoring on agent {} by task id {}", nodeContext.getId(), agentId, taskId);
         alive = true;
 
         final RemoteExecutor remote = coordinator.getExecutor(agentId);
@@ -104,7 +103,7 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
                             if (voidResult.hasException())
                                 log.error("Remote exception raised during staring profiling from SuT", voidResult.getException());
                             log.debug("GetSystemInfo got on kernel {} from {} time {} ms",
-                                    new Object[]{nodeContext.getId(), agentId, System.currentTimeMillis() - startTime});
+                                    nodeContext.getId(), agentId, System.currentTimeMillis() - startTime);
                             for (SystemInfo systemInfo : info) {
                                 monitoringProcessor.process(sessionId, taskId, agentId, systemInfo);
                             }
@@ -166,12 +165,12 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
             try {
                 latch.await();
             } catch (InterruptedException e) {
-                log.warn("Interrupted {}", e);
+                log.warn("Interrupted ", e);
             }
             log.info("Kernel {} has stopped monitoring on agent {}", nodeContext.getId(), agentId);
         }
         else {
-            log.warn("Monitoring on agent {} is not running.  Skipping StopMonitoring",agentId);
+            log.warn("Monitoring on agent {} is not running.  Skipping StopMonitoring", agentId);
         }
     }
 

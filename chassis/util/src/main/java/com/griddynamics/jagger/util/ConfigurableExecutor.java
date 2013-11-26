@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.util;
 
-import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,14 +63,14 @@ public class ConfigurableExecutor implements ExecutorService {
     public void setCorePoolSize(int corePoolSize) {
         this.corePoolSize = corePoolSize;
 
-        log.info("corePoolSize={}", corePoolSize);
+        log.info("corePoolSize = {}", corePoolSize);
     }
 
     @Required
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
 
-        log.info("maximumPoolSize={}", maximumPoolSize);
+        log.info("maximumPoolSize = {}", maximumPoolSize);
     }
 
     @Override
@@ -140,7 +139,7 @@ public class ConfigurableExecutor implements ExecutorService {
             delegate().execute(command);
         } catch (RejectedExecutionException e) {
             log.warn("Command {} rejected. Pool size: core {} max {}. Active threads {}" +
-                    "\n Exception {}", new Object[]{command, corePoolSize, maximumPoolSize, delegate().getActiveCount(), Throwables.getStackTraceAsString(e)});
+                    "\n Exception ", command, corePoolSize, maximumPoolSize, delegate().getActiveCount(), e);
         }
     }
 }
