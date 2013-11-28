@@ -45,7 +45,6 @@ public class MetricDataServiceImpl implements MetricDataService {
         standardMetrics.put("Throughput", Pair.of("throughput", "Throughput, tps"));
         standardMetrics.put("Latency", Pair.of("avgLatency", "Latency, sec"));
         standardMetrics.put("Duration", Pair.of("duration", "Duration, sec"));
-        standardMetrics.put("TotalDuration", Pair.of("totalDuration", "TotalDuration, sec"));
         standardMetrics.put("Success rate", Pair.of("successRate", "Success rate"));
         standardMetrics.put("Iterations", Pair.of("samples", "Iterations, samples"));
     }
@@ -119,9 +118,6 @@ public class MetricDataServiceImpl implements MetricDataService {
 
                 MetricValueDto value = new MetricValueDto();
                 value.setValue(metricValue);
-                if ("TotalDuration".equals(metricName.getName())) {
-                    value.setValueRepresentation(TimeUtils.formatDuration((long)(Double.parseDouble(metricValue) * 1000)));
-                }
                 value.setSessionId(sessionId);
 
                 dto.getValues().add(value);

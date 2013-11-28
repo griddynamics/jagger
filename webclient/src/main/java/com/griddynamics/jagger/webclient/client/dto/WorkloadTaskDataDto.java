@@ -25,7 +25,6 @@ public class WorkloadTaskDataDto implements Serializable {
     private Integer clockValue;
     private String termination;
     private Integer kernels;
-    private BigDecimal totalDuration;
     private String duration;
     private BigDecimal throughput;
     private Integer failuresCount;
@@ -129,14 +128,6 @@ public class WorkloadTaskDataDto implements Serializable {
 
     public void setKernels(Integer kernels) {
         this.kernels = kernels;
-    }
-
-    public BigDecimal getTotalDuration() {
-        return totalDuration;
-    }
-
-    public void setTotalDuration(BigDecimal totalDuration) {
-        this.totalDuration = totalDuration;
     }
 
     public String getDuration() {

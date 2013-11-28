@@ -56,7 +56,6 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
             dto.setAvgLatencyDeviation(details.getAvgLatencyDeviation());
             dto.setStdDevLatencyDeviation(details.getStdDevLatencyDeviation());
             dto.setThroughputDeviation(details.getThroughputDeviation());
-            dto.setTotalDurationDeviation(details.getTotalDurationDeviation());
             dto.setSuccessRateDeviation(details.getSuccessRateDeviation());
 
             result.add(dto);
@@ -74,7 +73,6 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
         private String name;
         private Decision decision;
         private double throughputDeviation;
-        private double totalDurationDeviation;
         private double successRateDeviation;
         private double avgLatencyDeviation;
         private double stdDevLatencyDeviation;
@@ -102,14 +100,6 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
 
         public void setThroughputDeviation(double throughputDeviation) {
             this.throughputDeviation = throughputDeviation;
-        }
-
-        public double getTotalDurationDeviation() {
-            return totalDurationDeviation;
-        }
-
-        public void setTotalDurationDeviation(double totalDurationDeviation) {
-            this.totalDurationDeviation = totalDurationDeviation;
         }
 
         public double getSuccessRateDeviation() {

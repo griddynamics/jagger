@@ -13,7 +13,6 @@
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="name" class="java.lang.String"/>
     <field name="throughputDeviation" class="java.lang.Double"/>
-    <field name="totalDurationDeviation" class="java.lang.Double"/>
     <field name="successRateDeviation" class="java.lang.Double"/>
     <field name="avgLatencyDeviation" class="java.lang.Double"/>
     <field name="stdDevLatencyDeviation" class="java.lang.Double"/>
@@ -51,31 +50,25 @@
                 <text><![CDATA[Scenario]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Compact_Header_Bold" mode="Opaque" x="330" y="0" width="40" height="30"
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="330" y="0" width="50" height="30"
                                forecolor="#000000" backcolor="#D7FFB0"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <text><![CDATA[Throughput Deviation]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Compact_Header_Bold" mode="Opaque" x="370" y="0" width="40" height="30"
-                               forecolor="#000000" backcolor="#D7FFB0"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle"/>
-                <text><![CDATA[Total Duration Deviation]]></text>
-            </staticText>
-            <staticText>
-                <reportElement style="Compact_Header_Bold" mode="Opaque" x="410" y="0" width="40" height="30"
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="380" y="0" width="50" height="30"
                                forecolor="#000000" backcolor="#D7FFB0"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <text><![CDATA[Mean Latency Deviation]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Compact_Header_Bold" mode="Opaque" x="450" y="0" width="40" height="30"
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="430" y="0" width="50" height="30"
                                forecolor="#000000" backcolor="#D7FFB0"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <text><![CDATA[StdDev Latency Deviation]]></text>
             </staticText>
             <staticText>
-                <reportElement style="Compact_Header_Bold" mode="Opaque" x="490" y="0" width="40" height="30"
+                <reportElement style="Compact_Header_Bold" mode="Opaque" x="480" y="0" width="50" height="30"
                                forecolor="#000000" backcolor="#D7FFB0"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <text><![CDATA[Success Rate Deviation]]></text>
@@ -95,27 +88,22 @@
                 <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" pattern="##0.00%">
-                <reportElement style="Compact_Header_Bold" positionType="Float" x="330" y="0" width="40" height="20"/>
+                <reportElement style="Compact_Header_Bold" positionType="Float" x="330" y="0" width="50" height="20"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <textFieldExpression class="java.lang.Double"><![CDATA[$F{throughputDeviation}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" pattern="##0.00%">
-                <reportElement style="Compact_Header_Bold" positionType="Float" x="370" y="0" width="40" height="20"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle"/>
-                <textFieldExpression class="java.lang.Double"><![CDATA[$F{totalDurationDeviation}]]></textFieldExpression>
-            </textField>
-            <textField isStretchWithOverflow="true" pattern="##0.00%">
-                <reportElement style="Compact_Header_Bold" positionType="Float" x="410" y="0" width="40" height="20"/>
+                <reportElement style="Compact_Header_Bold" positionType="Float" x="380" y="0" width="50" height="20"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <textFieldExpression class="java.lang.Double"><![CDATA[$F{avgLatencyDeviation}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" pattern="##0.00%">
-                <reportElement style="Compact_Header_Bold" positionType="Float" x="450" y="0" width="40" height="20"/>
+                <reportElement style="Compact_Header_Bold" positionType="Float" x="430" y="0" width="50" height="20"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <textFieldExpression class="java.lang.Double"><![CDATA[$F{stdDevLatencyDeviation}]]></textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="true" pattern="##0.00%">
-                <reportElement style="Compact_Header_Bold" positionType="Float" x="490" y="0" width="40" height="20"/>
+                <reportElement style="Compact_Header_Bold" positionType="Float" x="480" y="0" width="50" height="20"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <textFieldExpression class="java.lang.Double"><![CDATA[$F{successRateDeviation}]]></textFieldExpression>
             </textField>
