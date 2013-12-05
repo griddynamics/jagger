@@ -45,7 +45,7 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
 
         List<WorkloadSessionComparisonDto> result = Lists.newLinkedList();
 
-        for (Verdict<WorkloadComparisonResult> verdict: key) {
+        for (Verdict<WorkloadComparisonResult> verdict : key) {
             WorkloadSessionComparisonDto dto = new WorkloadSessionComparisonDto();
 
             dto.setName(verdict.getDescription());
@@ -74,6 +74,11 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
         private String name;
         private Decision decision;
         private double throughputDeviation;
+        /**
+         * @deprecated We don't show a total duration in the WebUI and a report, but we decided to keep a total duration deviation for a session's comparison.
+         *             Afterwords, we should remove it.
+         */
+        @Deprecated
         private double totalDurationDeviation;
         private double successRateDeviation;
         private double avgLatencyDeviation;
@@ -104,10 +109,18 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
             this.throughputDeviation = throughputDeviation;
         }
 
+        /**
+         * @deprecated we don't show a total duration in the WebUI and a report
+         */
+        @Deprecated
         public double getTotalDurationDeviation() {
             return totalDurationDeviation;
         }
 
+        /**
+         * @deprecated we don't show a total duration in the WebUI and a report
+         */
+        @Deprecated
         public void setTotalDurationDeviation(double totalDurationDeviation) {
             this.totalDurationDeviation = totalDurationDeviation;
         }

@@ -26,48 +26,52 @@ import javax.persistence.*;
 
 @Entity
 public class WorkloadTaskData {
-	private Long id;
-	private String sessionId;
-	private String taskId;
+    private Long id;
+    private String sessionId;
+    private String taskId;
     private Integer number;
-	private WorkloadDetails scenario;
+    private WorkloadDetails scenario;
     private Integer samples;
     private String clock;
     private Integer clockValue;
     private String termination;
-	private Integer kernels;
-	private BigDecimal totalDuration;
-	private BigDecimal throughput;
-	private Integer failuresCount;
-	private BigDecimal successRate;
-	private BigDecimal avgLatency;
-	private BigDecimal stdDevLatency;
+    private Integer kernels;
+    /**
+     * @deprecated an odd parameter (we don't show a total duration in the WebUI and a report)
+     */
+    @Deprecated
+    private BigDecimal totalDuration;
+    private BigDecimal throughput;
+    private Integer failuresCount;
+    private BigDecimal successRate;
+    private BigDecimal avgLatency;
+    private BigDecimal stdDevLatency;
 
-	@Id
-	@GeneratedValue
-	public Long getId() {
-		return id;
-	}
+    @Id
+    @GeneratedValue
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
 
-	public String getTaskId() {
-		return taskId;
-	}
+    public String getTaskId() {
+        return taskId;
+    }
 
-	public String getSessionId() {
-		return sessionId;
-	}
+    public String getSessionId() {
+        return sessionId;
+    }
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
-	}
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     public Integer getNumber() {
         return number;
@@ -78,13 +82,13 @@ public class WorkloadTaskData {
     }
 
     @ManyToOne
-	public WorkloadDetails getScenario() {
-		return scenario;
-	}
+    public WorkloadDetails getScenario() {
+        return scenario;
+    }
 
-	public void setScenario(WorkloadDetails scenario) {
-		this.scenario = scenario;
-	}
+    public void setScenario(WorkloadDetails scenario) {
+        this.scenario = scenario;
+    }
 
     public Integer getSamples() {
         return samples;
@@ -111,63 +115,72 @@ public class WorkloadTaskData {
     }
 
     public void setKernels(Integer kernels) {
-		this.kernels = kernels;
-	}
+        this.kernels = kernels;
+    }
 
-	public Integer getKernels() {
-		return kernels;
-	}
+    public Integer getKernels() {
+        return kernels;
+    }
 
-	public BigDecimal getTotalDuration() {
-		return totalDuration;
-	}
+    /**
+     * @deprecated we don't show a total duration in the WebUI and a report
+     *             For a backward compatibility
+     */
+    @Deprecated
+    public BigDecimal getTotalDuration() {
+        return totalDuration;
+    }
 
-	public void setTotalDuration(BigDecimal totalDuration) {
-		this.totalDuration = totalDuration;
-	}
+    /**
+     * @deprecated we don't show a total duration in the WebUI and a report
+     */
+    @Deprecated
+    public void setTotalDuration(BigDecimal totalDuration) {
+        this.totalDuration = totalDuration;
+    }
 
-	public BigDecimal getThroughput() {
-		return throughput;
-	}
+    public BigDecimal getThroughput() {
+        return throughput;
+    }
 
-	public void setThroughput(BigDecimal throughput) {
-		this.throughput = throughput;
-	}
+    public void setThroughput(BigDecimal throughput) {
+        this.throughput = throughput;
+    }
 
-	public Integer getFailuresCount() {
-		return failuresCount;
-	}
+    public Integer getFailuresCount() {
+        return failuresCount;
+    }
 
-	public void setFailuresCount(Integer failesCount) {
-		this.failuresCount = failesCount;
-	}
+    public void setFailuresCount(Integer failesCount) {
+        this.failuresCount = failesCount;
+    }
 
-    @Column(precision=10, scale=4)
-	public BigDecimal getSuccessRate() {
-		return successRate;
-	}
+    @Column(precision = 10, scale = 4)
+    public BigDecimal getSuccessRate() {
+        return successRate;
+    }
 
-	public void setSuccessRate(BigDecimal successRate) {
-		this.successRate = successRate;
-	}
+    public void setSuccessRate(BigDecimal successRate) {
+        this.successRate = successRate;
+    }
 
-    @Column(precision=10, scale=4)
-	public BigDecimal getAvgLatency() {
-		return avgLatency;
-	}
+    @Column(precision = 10, scale = 4)
+    public BigDecimal getAvgLatency() {
+        return avgLatency;
+    }
 
-	public void setAvgLatency(BigDecimal avgLatency) {
-		this.avgLatency = avgLatency;
-	}
+    public void setAvgLatency(BigDecimal avgLatency) {
+        this.avgLatency = avgLatency;
+    }
 
-    @Column(precision=10, scale=4)
-	public BigDecimal getStdDevLatency() {
-		return stdDevLatency;
-	}
+    @Column(precision = 10, scale = 4)
+    public BigDecimal getStdDevLatency() {
+        return stdDevLatency;
+    }
 
-	public void setStdDevLatency(BigDecimal stdDevLatency) {
-		this.stdDevLatency = stdDevLatency;
-	}
+    public void setStdDevLatency(BigDecimal stdDevLatency) {
+        this.stdDevLatency = stdDevLatency;
+    }
 
     public Integer getClockValue() {
         return clockValue;
