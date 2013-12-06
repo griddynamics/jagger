@@ -154,6 +154,7 @@ public class XMLConstants {
     public static final String PLOT_DATA = "plotData";
     public static final String SAVE_SUMMARY = "saveSummary";
     public static final String SIMPLE_COLLECTOR = "simpleCollector";
+    public static final String DISPLAY_NAME = "displayName";
 
     //default reporting names
     public static final String REPORTER_REGISTRY = "reporterExtensionRegistry";

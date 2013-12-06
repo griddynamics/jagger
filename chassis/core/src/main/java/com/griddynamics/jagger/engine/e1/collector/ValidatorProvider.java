@@ -13,13 +13,26 @@ import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 public class ValidatorProvider implements KernelSideObjectProvider<Validator>{
 
     private KernelSideObjectProvider<ResponseValidator<Object, Object, Object>> validatorProvider;
+    private String displayName;
 
     public Validator provide(String sessionId, String taskId, NodeContext kernelContext){
-        return new Validator(taskId, sessionId, kernelContext, validatorProvider.provide(sessionId, taskId, kernelContext));
+        return new Validator(taskId, sessionId, kernelContext, validatorProvider.provide(sessionId, taskId, kernelContext), getDisplayName());
     }
 
     public void setValidator(KernelSideObjectProvider<ResponseValidator<Object, Object, Object>> validatorProvider) {
         this.validatorProvider = validatorProvider;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+
+        if (displayName != null && displayName.isEmpty())
+            return null;
+
+        return displayName;
     }
 
     public KernelSideObjectProvider<ResponseValidator<Object, Object, Object>> getValidatorProvider() {

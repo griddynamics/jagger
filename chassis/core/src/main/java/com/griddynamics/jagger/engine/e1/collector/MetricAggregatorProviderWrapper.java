@@ -17,33 +17,43 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
-import com.griddynamics.jagger.engine.e1.collector.*;
-import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
-import org.w3c.dom.Element;
 
-import java.util.ArrayList;
-import java.util.Collection;
+package com.griddynamics.jagger.engine.e1.collector;
 
-public class SuccessRateCollectorDefinitionParser extends AbstractCollectorDefinitionParser{
+/**
+ * User: amikryukov
+ * Date: 11/19/13
+ */
+public class MetricAggregatorProviderWrapper {
 
-    @Override
-    protected Class getBeanClass(Element element) {
-        return SuccessRateCollectorProvider.class;
+    private String displayName;
+    private MetricAggregatorProvider metricAggregatorProvider;
+
+    public String getDisplayName() {
+        return displayName;
     }
 
-    @Override
-    protected Collection<MetricAggregatorProviderWrapper> getAggregators() {
-        Collection<MetricAggregatorProviderWrapper> result = new ArrayList<MetricAggregatorProviderWrapper>(1);
-        result.add(MetricAggregatorProviderWrapper.of(new SuccessRateAggregatorProvider()));
-        result.add(MetricAggregatorProviderWrapper.of(new SuccessRateFailsAggregatorProvider()));
-
-        return result;
+    public MetricAggregatorProviderWrapper(MetricAggregatorProvider metricAggregatorProvider) {
+        this.metricAggregatorProvider = metricAggregatorProvider;
     }
 
-    @Override
-    protected String getDefaultCollectorName() {
-        return XMLConstants.DEFAULT_METRIC_SUCCESS_RATE_NAME;
+    public static MetricAggregatorProviderWrapper of(MetricAggregatorProvider metricAggregatorProvider) {
+        return new MetricAggregatorProviderWrapper(metricAggregatorProvider);
+    }
+
+    // for spring parser
+    public MetricAggregatorProviderWrapper() {}
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public MetricAggregatorProvider getMetricAggregatorProvider() {
+        return metricAggregatorProvider;
+    }
+
+    public void setMetricAggregatorProvider(MetricAggregatorProvider metricAggregatorProvider) {
+        this.metricAggregatorProvider = metricAggregatorProvider;
     }
 }

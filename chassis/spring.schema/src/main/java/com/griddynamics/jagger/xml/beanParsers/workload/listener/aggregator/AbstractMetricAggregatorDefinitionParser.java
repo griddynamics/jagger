@@ -17,33 +17,36 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
-import com.griddynamics.jagger.engine.e1.collector.*;
+package com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator;
+
+import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProviderWrapper;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-public class SuccessRateCollectorDefinitionParser extends AbstractCollectorDefinitionParser{
+/**
+ * User: amikryukov
+ * Date: 11/19/13
+ */
+public abstract class AbstractMetricAggregatorDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {
-        return SuccessRateCollectorProvider.class;
+        return MetricAggregatorProviderWrapper.class;
     }
 
     @Override
-    protected Collection<MetricAggregatorProviderWrapper> getAggregators() {
-        Collection<MetricAggregatorProviderWrapper> result = new ArrayList<MetricAggregatorProviderWrapper>(1);
-        result.add(MetricAggregatorProviderWrapper.of(new SuccessRateAggregatorProvider()));
-        result.add(MetricAggregatorProviderWrapper.of(new SuccessRateFailsAggregatorProvider()));
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        String displayName = element.getAttribute(XMLConstants.DISPLAY_NAME);
+        if (!displayName.isEmpty()) {
+            builder.addPropertyValue(XMLConstants.DISPLAY_NAME, displayName);
+        }
 
-        return result;
+        builder.addPropertyValue(XMLConstants.METRIC_AGGREGATOR_PROVIDER, getMetricAggregatorProvider(element, parserContext, builder));
     }
 
-    @Override
-    protected String getDefaultCollectorName() {
-        return XMLConstants.DEFAULT_METRIC_SUCCESS_RATE_NAME;
-    }
+    protected abstract Object getMetricAggregatorProvider(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
 }

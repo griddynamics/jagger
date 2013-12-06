@@ -58,10 +58,14 @@
         <property name="showSummary" value="true"/>
         <property name="aggregators">
             <list>
-                <bean id="avgAggregator" class="com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider"/>
+                <bean id="avgAggregatorWrapper" class="com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProviderWrapper">
+                    <property name="metricAggregatorProvider" ref="avgAggregator"/>
+                </bean>
             </list>
         </property>
     </bean>
+
+    <bean id="avgAggregator" class="com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider" />
 
     <bean id="threadCalc" class="com.griddynamics.jagger.engine.e1.collector.ThreadCalculator"/>
 

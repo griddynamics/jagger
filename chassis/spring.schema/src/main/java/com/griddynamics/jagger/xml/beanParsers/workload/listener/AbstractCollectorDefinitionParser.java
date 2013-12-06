@@ -21,11 +21,13 @@ package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
 import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
-import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 import java.util.Collection;
@@ -60,7 +62,7 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
             saveSummary = Boolean.valueOf(element.getAttribute(XMLConstants.SAVE_SUMMARY));
         }
 
-        List aggregators = CustomBeanDefinitionParser.parseCustomListElement(element, parserContext, builder.getBeanDefinition());
+        List aggregators = parseAggregators(element, parserContext, builder.getBeanDefinition());
 
         if (aggregators.size() == 0) {
             aggregators.addAll(getAggregators());
@@ -74,6 +76,8 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
             name = XMLConstants.DEFAULT_METRIC_NAME;
         }
 
+        String displayName = element.getAttribute(XMLConstants.DISPLAY_NAME);
+
         builder.addPropertyValue(XMLConstants.NAME, name);
 
         BeanDefinitionBuilder metricDescription = BeanDefinitionBuilder.genericBeanDefinition(MetricDescription.class);
@@ -81,12 +85,30 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
         metricDescription.addPropertyValue(XMLConstants.NEED_PLOT_DATA, plotData);
         metricDescription.addPropertyValue(XMLConstants.NEED_SAVE_SUMMARY, saveSummary);
         metricDescription.addPropertyValue(XMLConstants.AGGREGATORS, aggregators);
+        metricDescription.addPropertyValue(XMLConstants.DISPLAY_NAME, displayName.isEmpty() ? null : displayName);
 
         builder.addPropertyValue(XMLConstants.METRIC_DESCRIPTION, metricDescription.getBeanDefinition());
 
     }
 
-    protected abstract Collection<MetricAggregatorProvider> getAggregators();
+    /**
+     * To avoid default parsing of elements with "ref" attribute
+     * @return List of MetricAggregatorProviderWrapper bean definitions.
+     */
+    protected List parseAggregators(Element element, ParserContext parserContext, BeanDefinition bean) {
+
+        List<Element> elements = DomUtils.getChildElements(element);
+
+        ManagedList result = new ManagedList();
+        if (elements != null && !elements.isEmpty()){
+            for (Element el : elements){
+                result.add(parserContext.getDelegate().parsePropertySubElement(el, bean));
+            }
+        }
+        return result;
+    }
+
+    protected abstract Collection<MetricAggregatorProviderWrapper> getAggregators();
 
     protected String getDefaultCollectorName(){
         return XMLConstants.DEFAULT_METRIC_NAME;

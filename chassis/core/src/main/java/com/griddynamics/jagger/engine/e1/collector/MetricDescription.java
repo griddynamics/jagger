@@ -18,7 +18,7 @@ public class MetricDescription implements Serializable{
     protected String displayName;
     protected boolean showSummary = true;
     protected boolean showPlotData;
-    protected List<MetricAggregatorProvider> aggregators;
+    protected List<MetricAggregatorProviderWrapper> aggregators;
 
     public MetricDescription(String id) {
         this.id = id;
@@ -36,11 +36,11 @@ public class MetricDescription implements Serializable{
         this.displayName = displayName;
     }
 
-    public void setAggregators(List<MetricAggregatorProvider> aggregators) {
+    public void setAggregators(List<MetricAggregatorProviderWrapper> aggregators) {
         this.aggregators = aggregators;
     }
 
-    public List<MetricAggregatorProvider> getAggregators() {
+    public List<MetricAggregatorProviderWrapper> getAggregators() {
         return aggregators;
     }
 
