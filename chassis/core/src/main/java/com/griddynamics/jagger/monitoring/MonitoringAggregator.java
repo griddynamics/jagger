@@ -22,7 +22,6 @@ package com.griddynamics.jagger.monitoring;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
 import com.griddynamics.jagger.agent.model.MonitoringParameter;
 import com.griddynamics.jagger.agent.model.MonitoringParameterLevel;
 import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
@@ -35,6 +34,7 @@ import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
 import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
 import com.griddynamics.jagger.monitoring.model.ProfilingSuT;
+import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.storage.FileStorage;
 import com.griddynamics.jagger.storage.fs.logging.*;
 import com.griddynamics.jagger.util.SerializationUtils;
@@ -60,7 +60,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
     private FileStorage fileStorage;
 
     private LogReader logReader;
-    private int pointCount;
+    IntervalSizeProvider intervalSizeProvider;
 
     public void setLogReader(LogReader logReader) {
         this.logReader = logReader;
@@ -108,7 +108,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                 return;
             }
 
-            long intervalSize = (aggregationInfo.getMaxTime() - aggregationInfo.getMinTime()) / (long) (pointCount - 1);
+            long intervalSize = intervalSizeProvider.getIntervalSize(aggregationInfo.getMaxTime(), aggregationInfo.getMinTime());
             if (intervalSize < 1) {
                 intervalSize = 1;
             }
@@ -353,8 +353,8 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
         this.fileStorage = fileStorage;
     }
 
-    public void setPointCount(int pointCount) {
-        this.pointCount = pointCount;
+    public void setIntervalSizeProvider(IntervalSizeProvider intervalSizeProvider) {
+        this.intervalSizeProvider = intervalSizeProvider;
     }
 
     private static class MonitoringStream {

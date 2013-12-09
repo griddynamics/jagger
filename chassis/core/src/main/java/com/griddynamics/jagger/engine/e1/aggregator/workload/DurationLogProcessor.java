@@ -22,6 +22,7 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
@@ -57,16 +58,15 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
     private LogAggregator logAggregator;
     private LogReader logReader;
     private SessionIdProvider sessionIdProvider;
-    private int pointCount;
+    private IntervalSizeProvider intervalSizeProvider;
 
     @Required
     public void setLogReader(LogReader logReader) {
         this.logReader = logReader;
     }
 
-    @Required
-    public void setPointCount(int pointCount) {
-        this.pointCount = pointCount;
+    public void setIntervalSizeProvider(IntervalSizeProvider intervalSizeProvider) {
+        this.intervalSizeProvider = intervalSizeProvider;
     }
 
     @Required
@@ -102,7 +102,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                 return;
             }
 
-            int intervalSize = (int) ((aggregationInfo.getMaxTime() - aggregationInfo.getMinTime()) / pointCount);
+            int intervalSize = intervalSizeProvider.getIntervalSize(aggregationInfo.getMinTime(), aggregationInfo.getMaxTime());
             if (intervalSize < 1) {
                 intervalSize = 1;
             }
