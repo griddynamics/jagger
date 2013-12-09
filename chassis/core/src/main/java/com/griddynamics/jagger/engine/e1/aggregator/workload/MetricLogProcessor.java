@@ -21,6 +21,7 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
@@ -62,7 +63,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     private LogAggregator logAggregator;
     private LogReader logReader;
     private SessionIdProvider sessionIdProvider;
-    private int pointCount;
+    private IntervalSizeProvider intervalSizeProvider;
     private FileStorage fileStorage;
 
     private MetricDescription defaultMetricDescription;
@@ -89,9 +90,8 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
         this.fileStorage = fileStorage;
     }
 
-    @Required
-    public void setPointCount(int pointCount) {
-        this.pointCount = pointCount;
+    public void setIntervalSizeProvider(IntervalSizeProvider intervalSizeProvider) {
+        this.intervalSizeProvider = intervalSizeProvider;
     }
 
     @Required
@@ -137,7 +137,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         //metric not collected
                         return;
                     }
-                    int intervalSize = (int) ((aggregationInfo.getMaxTime() - aggregationInfo.getMinTime()) / pointCount);
+                    int intervalSize = intervalSizeProvider.getIntervalSize(aggregationInfo.getMinTime(), aggregationInfo.getMaxTime());
                     if (intervalSize < 1) {
                         intervalSize = 1;
                     }
