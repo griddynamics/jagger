@@ -56,6 +56,7 @@
     <bean id="agentWorker" class="com.griddynamics.jagger.agent.worker.AgentWorker">
         <constructor-arg ref="agent"/>
         <property name="monitoringInfoService" ref="monitoringService"/>
+        <property name="generalInfoService" ref="generalInfoService"/>
         <property name="profiler">
             <bean class="com.griddynamics.jagger.agent.Profiler">
                 <property name="samplingProfiler" ref="samplingProfiler"/>
@@ -129,6 +130,12 @@
     <bean id="monitoringServiceTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${jmx.monitoring.timeout}"/>
         <property name="name"  value="jmx.monitoring.timeout"/>
+    </bean>
+
+    <bean id="generalInfoService" class="com.griddynamics.jagger.agent.impl.GeneralInfoCollector">
+        <property name="sigar">
+            <bean class="org.hyperic.sigar.Sigar"/>
+        </property>
     </bean>
 
     <bean id="defaultExchanger" class="com.griddynamics.jagger.coordinator.http.DefaultPackExchanger">
