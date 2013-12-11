@@ -31,6 +31,7 @@ public class ValidationResultEntity {
     private String validator;
     private Integer total;
     private Integer failed;
+    private CollectorDescription description;
 
     @Id
     @GeneratedValue
@@ -57,6 +58,15 @@ public class ValidationResultEntity {
 
     public void setValidator(String validator) {
         this.validator = validator;
+    }
+
+    @ManyToOne
+    public CollectorDescription getDescription() {
+        return description;
+    }
+
+    public void setDescription(CollectorDescription validator) {
+        this.description = validator;
     }
 
     public Integer getTotal() {

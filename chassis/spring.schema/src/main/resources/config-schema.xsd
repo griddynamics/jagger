@@ -881,6 +881,7 @@
     <xsd:complexType name="workloadCollectorAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
+                <xsd:attribute name="displayName" type="xsd:string" use="optional" />
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -976,6 +977,7 @@
             <xsd:documentation>
             </xsd:documentation>
         </xsd:annotation>
+        <xsd:attribute name="displayName" type="xsd:string" use="optional"/>
     </xsd:complexType>
 
     <xsd:complexType name="metricAbstract" abstract="true">

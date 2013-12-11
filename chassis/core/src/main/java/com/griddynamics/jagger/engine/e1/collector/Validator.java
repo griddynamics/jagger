@@ -23,10 +23,12 @@ public class Validator extends KernelSideObject implements Flushable{
     private ResponseValidator validator;
     private int invoked = 0;
     private int failed = 0;
+    private String displayName;
 
-    public Validator(String taskId, String sessionId, NodeContext kernelContext, ResponseValidator validator) {
+    public Validator(String taskId, String sessionId, NodeContext kernelContext, ResponseValidator validator, String displayName) {
         super(taskId, sessionId, kernelContext);
         this.validator = validator;
+        this.displayName = displayName;
     }
 
     public String getName() {
@@ -61,7 +63,7 @@ public class Validator extends KernelSideObject implements Flushable{
 
         KeyValueStorage keyValueStorage = kernelContext.getService(KeyValueStorage.class);
 
-        keyValueStorage.put(namespace, RESULT, ValidationResult.create(validator.getName(), invoked, failed));
+        keyValueStorage.put(namespace, RESULT, ValidationResult.create(validator.getName(), displayName, invoked, failed));
 
         log.debug("invoked {} failed {}", invoked, failed);
     }

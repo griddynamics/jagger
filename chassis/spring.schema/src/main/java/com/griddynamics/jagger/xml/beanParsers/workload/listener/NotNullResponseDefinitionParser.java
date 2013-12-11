@@ -20,6 +20,7 @@ public class NotNullResponseDefinitionParser extends AbstractValidatorDefinition
 
     @Override
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
         ReflectionProvider provider = new ReflectionProvider();
         provider.setClazz(NotNullResponseValidator.class);
         builder.addPropertyValue(XMLConstants.VALIDATOR, provider);

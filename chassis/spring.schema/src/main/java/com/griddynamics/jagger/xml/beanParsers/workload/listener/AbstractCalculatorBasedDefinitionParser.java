@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProviderWrapper;
 import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SumMetricAggregatorProvider;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
@@ -34,9 +34,9 @@ public abstract class AbstractCalculatorBasedDefinitionParser extends AbstractCo
     }
 
     @Override
-    protected Collection<MetricAggregatorProvider> getAggregators(){
-        Collection<MetricAggregatorProvider> result = new ArrayList<MetricAggregatorProvider>(1);
-        result.add(new SumMetricAggregatorProvider());
+    protected Collection<MetricAggregatorProviderWrapper> getAggregators(){
+        Collection<MetricAggregatorProviderWrapper> result = new ArrayList<MetricAggregatorProviderWrapper>(1);
+        result.add(MetricAggregatorProviderWrapper.of(new SumMetricAggregatorProvider()));
 
         return result;
     }
