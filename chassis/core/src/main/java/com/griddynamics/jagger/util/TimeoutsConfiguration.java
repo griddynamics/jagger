@@ -2,15 +2,19 @@ package com.griddynamics.jagger.util;
 
 public class TimeoutsConfiguration {
 
-    private static final TimeoutsConfiguration defaultTimeouts = new TimeoutsConfiguration(30000, 3600000, 30000, 10000, 300000);
+    private static final TimeoutsConfiguration defaultTimeouts = new TimeoutsConfiguration( new Timeout (30000,""),
+                                                                                            new Timeout (3600000,""),
+                                                                                            new Timeout (30000,""),
+                                                                                            new Timeout (10000,""),
+                                                                                            new Timeout (300000,""));
 
-    private final int workloadStartTimeout;
-    private final int workloadStopTimeout;
-    private final int workloadPollingTimeout;
-    private final int calibrationTimeout;
-    private final int calibrationStartTimeout;
+    private final Timeout workloadStartTimeout;
+    private final Timeout workloadStopTimeout;
+    private final Timeout workloadPollingTimeout;
+    private final Timeout calibrationTimeout;
+    private final Timeout calibrationStartTimeout;
 
-    private TimeoutsConfiguration(int workloadStartTimeout, int workloadStopTimeout, int workloadPollingTimeout, int calibrationStartTimeout, int calibrationTimeout) {
+    private TimeoutsConfiguration(Timeout workloadStartTimeout, Timeout workloadStopTimeout, Timeout workloadPollingTimeout, Timeout calibrationStartTimeout, Timeout calibrationTimeout) {
         this.calibrationStartTimeout = calibrationStartTimeout;
         this.calibrationTimeout = calibrationTimeout;
         this.workloadPollingTimeout = workloadPollingTimeout;
@@ -22,23 +26,23 @@ public class TimeoutsConfiguration {
         return defaultTimeouts;
     }
 
-    public int getCalibrationStartTimeout() {
+    public Timeout getCalibrationStartTimeout() {
         return calibrationStartTimeout;
     }
 
-    public int getCalibrationTimeout() {
+    public Timeout getCalibrationTimeout() {
         return calibrationTimeout;
     }
 
-    public int getWorkloadPollingTimeout() {
+    public Timeout getWorkloadPollingTimeout() {
         return workloadPollingTimeout;
     }
 
-    public int getWorkloadStartTimeout() {
+    public Timeout getWorkloadStartTimeout() {
         return workloadStartTimeout;
     }
 
-    public int getWorkloadStopTimeout() {
+    public Timeout getWorkloadStopTimeout() {
         return workloadStopTimeout;
     }
 }

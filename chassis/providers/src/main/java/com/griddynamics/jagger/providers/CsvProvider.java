@@ -169,12 +169,35 @@ public class CsvProvider<T> implements Iterable<T>, Serializable  {
 
 
 /* **************** Providers page *************************  */
-/// @defgroup Main_Providers_General_group General information about providers
+/// @defgroup Main_Providers_General_group Providers main page
 ///
-/// @details Provides are providing list of endpoints and queries to distributors.
-/// @n
 /// @li Available implementations: @ref Main_Providers_group
 /// @li How to customize: @ref Main_HowToCustomizeProviders_group
+/// @n
+/// @n
+/// @details
+/// @par General info
+/// Provides are providing list of endpoints and queries to distributors. @n
+/// Endpoint - target for the test (address of System Under Test). @n
+/// Query - request for System Under Test. @n
+/// Providers are executed single time before start of the tests. Test run sequence you can find here: @ref Main_Test_Flow_group @n
+///
+/// @par Example of providers setup in XML:
+/// Below is example of XML @xlink{test-description} section @n
+/// In current example endpoints are hardcoded and list of queries is empty. @n
+/// In real life it is more complicated. Endpoints and queries are usually provided as CVS files, property files or as some SUT test service @n
+/// In this case you need to implement custom provider(s). How to do this you can read here: @ref Main_HowToCustomizeProviders_group
+/// @dontinclude  test.suite.scenario.config.xml
+/// @skip  begin: following section is used for docu generation - simple providers usage
+/// @until end: following section is used for docu generation - simple providers usage
+///
+/// @par Variants of proviers available in XML:
+/// @xlink{endpoint-provider} - documentation of endpoint provider element in XML schema @n
+/// @xlink{query-provider} - documentation of query provider element in XML schema @n
+/// @xlink_complex{endpointProviderAbstract} - types of endpoint providers available in XML schema. See <b> 'Sub Types' </b> section of man page @n
+/// @xlink_complex{queryProviderAbstract} - types of query providers available in XML schema. See <b> 'Sub Types' </b> section of man page @n
+/// How providers mentioned above are implemented you can see in section: @ref Main_Providers_group @n
+/// @n
 
 
 /* **************** How to customize provider ************************* */

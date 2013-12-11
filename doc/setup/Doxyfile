@@ -199,6 +199,8 @@ TAB_SIZE               = 8
 
 ALIASES                = "xlink{1}=<a href='./xsd/http___www.griddynamics.com_schema_jagger/element/\1.html'>\1</a>"
 ALIASES                += "xlink{2}=<a href='./xsd/http___www.griddynamics.com_schema_jagger/element/\1.html#attr_\2'>\2</a>"
+ALIASES                += "xlink_complex{1}=<a href='./xsd/http___www.griddynamics.com_schema_jagger/complexType/\1.html'>\1</a>"
+ALIASES                += "xlink_complex{2}=<a href='./xsd/http___www.griddynamics.com_schema_jagger/complexType/\1.html#attr_\2'>\2</a>"
 ALIASES                += example_begin="@htmlonly <div id=\"tabFrame\"><div id=\"tabMenuDiv\">"
 ALIASES                += example_addmenu{2}="<span class=\"tabMenuActive\" id=\"tabMenu\1\" onclick=\"return raisePanel(\1)\" onmouseover=\"mouseOver(\1)\" onmouseout=\"mouseOut(\1)\">\2</span>"
 ALIASES                += example_begin_content{1}="</div><div style=\"z-index: 2;\" class=\"tabPane\" id=\"tabPane\1\"> @endhtmlonly"

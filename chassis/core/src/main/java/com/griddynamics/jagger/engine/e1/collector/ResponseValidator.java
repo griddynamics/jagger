@@ -80,16 +80,32 @@ public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 }
 
 /* **************** Collectors page ************************* */
-/// @defgroup Main_Collectors_General_group General information about collectors
+/// @defgroup Main_Collectors_General_group Collectors main page
 ///
-/// @details Collectors calculate information based on invocation response and validate result of invocation. @n
-/// @n
-/// @n
-/// @li General information: @ref Main_Collectors_Base_group
+/// @li General information about interfaces: @ref Main_Collectors_Base_group
 /// @li Available implementations: @ref Main_Collectors_group
 /// @li How to customize: @ref Main_HowToCustomizeCollectors_group
 /// @li @ref Section_collectors_execution_flow
 /// @n
+/// @n
+/// @details
+/// @par General info
+/// Collectors calculate information based on invocation response and validate result of invocation. @n
+/// Collectors are executed after every invoke during test run. Test run sequence you can find here: @ref Main_Test_Flow_group @n
+///
+/// @par Example of collectors setup in XML:
+/// Following XML code should be included in @xlink{test-description} section @n
+/// Order of collectors execution is the same as order of their declaration in XML @n
+/// If @xlink{test-description} has @xlink{test-description,parent}, collectors from @xlink{test-description,parent} will be executed first
+/// @dontinclude  defaults.config.xml
+/// @skip  begin: following section is used for docu generation - metric calculator usage
+/// @until end: following section is used for docu generation - metric calculator usage
+///
+/// @par Info collector XML elements
+/// @xlink_complex{metricAbstract} - what metrics can be used in information collector XML element. See <b> 'Sub Types' </b> section of man page @n
+/// @xlink_complex{validatorAbstract} - what validators can be used in information collector XML element. See <b> 'Sub Types' </b> section of man page @n
+/// How metrics and validators mentioned above are implemented you can see in section: @ref Main_Collectors_group @n
+/// What is the difference between metrics, validators, collectors you can see in section: @ref Main_HowToCustomizeCollectors_group
 /// @n
 /// @section Section_collectors_execution_flow Collectors execution sequence
 /// Click on diagram components to learn more about every component

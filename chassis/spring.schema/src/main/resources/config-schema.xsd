@@ -16,16 +16,24 @@
                 Basic type which contains id attribute to identify elements.
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:attribute name="id" type="xsd:ID"/>
+        <xsd:attribute name="id" type="xsd:ID">
+            <xsd:annotation><xsd:documentation>
+                Id of the element
+            </xsd:documentation></xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
 
     <xsd:complexType name="identifiedRequiredType">
         <xsd:annotation>
             <xsd:documentation>
-                Basic type which contains id attribute to identify elements.
+                Basic type which contains id attribute to identify elements. id is required
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="id" type="xsd:ID" use="required">
+            <xsd:annotation><xsd:documentation>
+                Id of the element
+            </xsd:documentation></xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
 
     <xsd:complexType name="basicIdentifiedType" abstract="true">
@@ -36,7 +44,11 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="identifiedRequiredType">
-                <xsd:attribute name="parent" type="xsd:string"/>
+                <xsd:attribute name="parent" type="xsd:string">
+                    <xsd:annotation><xsd:documentation>
+                        Parent of the element. All components of the parent will be inherited by this element
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -336,9 +348,62 @@
                 <xsd:all>
                     <xsd:element name="load" type="loadAbstract" maxOccurs="1"/>
                     <xsd:element name="termination" type="terminationAbstract" maxOccurs="1"/>
+                    <xsd:element name="test-listeners" type="test-listeners" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
                 <xsd:attribute name="startDelay" type="xsd:string" use="optional"/>
                 <xsd:attribute name="testDescription" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="test-listeners">
+        <xsd:annotation>
+            <xsd:documentation>
+                A list of t-listener elements, which give you an ability to execute some actions before and after test.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+                <xsd:choice>
+                    <xsd:element name="test-listener" type="testListenerAbstract" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="testListenerAbstract">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test listener abstract type. See some realizations - t-listener-ref, t-listener-threads.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="test-listener-ref">
+        <xsd:annotation>
+            <xsd:documentation>
+                A reference to test listener bean or element. Create bean, which implements TestListener, set bean id to ref attribute.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="testListenerAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="test-listener-threads">
+        <xsd:annotation>
+            <xsd:documentation>
+                Test listener, that collects number of Jagger threads.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="testListenerAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -420,15 +485,62 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="identifiedRequiredType">
-                <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element ref="test" maxOccurs="unbounded"/>
-                    <xsd:element ref="beans:bean"/>
-                    <xsd:element ref="beans:ref"/>
-                </xsd:choice>
+                <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xsd:choice>
+                        <xsd:element ref="test" maxOccurs="unbounded"/>
+                        <!--Fot current version of Jagger there is no way to show test-group-listeners results-->
+                        <!--<xsd:element ref="tg-listeners" maxOccurs="1"/>-->
+                        <xsd:element ref="beans:bean"/>
+                        <xsd:element ref="beans:ref"/>
+                    </xsd:choice>
+                </xsd:sequence>
                 <xsd:attribute name="monitoringEnabled" type="xsd:string" default="${chassis.conditions.monitoring.enable}" use="optional"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+
+    <!--Fot current version of Jagger there is no way to show test-group-listeners results-->
+    <!--<xsd:element name="tg-listeners" type="testGroupListenersType"/>-->
+    
+    <!--<xsd:complexType name="testGroupListenersType">-->
+        <!--<xsd:annotation>-->
+            <!--<xsd:documentation>-->
+                <!--ADD-->
+            <!--</xsd:documentation>-->
+        <!--</xsd:annotation>-->
+        <!--<xsd:complexContent>-->
+            <!--<xsd:extension base="identifiedType">-->
+                <!--<xsd:choice minOccurs="1" maxOccurs="unbounded">-->
+                    <!--<xsd:element name="tg-listener" type="testGroupListenerAbstract" maxOccurs="unbounded"/>-->
+                <!--</xsd:choice>-->
+            <!--</xsd:extension>-->
+        <!--</xsd:complexContent>-->
+    <!--</xsd:complexType>-->
+
+    <!--<xsd:complexType name="testGroupListenerAbstract" abstract="true">-->
+        <!--<xsd:annotation>-->
+            <!--<xsd:documentation>-->
+                <!--ADD-->
+            <!--</xsd:documentation>-->
+        <!--</xsd:annotation>-->
+        <!--<xsd:complexContent>-->
+            <!--<xsd:extension base="identifiedType">-->
+            <!--</xsd:extension>-->
+        <!--</xsd:complexContent>-->
+    <!--</xsd:complexType>-->
+
+    <!--<xsd:complexType name="tg-listener-ref">-->
+        <!--<xsd:annotation>-->
+            <!--<xsd:documentation>-->
+                <!--ADD-->
+            <!--</xsd:documentation>-->
+        <!--</xsd:annotation>-->
+        <!--<xsd:complexContent>-->
+            <!--<xsd:extension base="testGroupListenerAbstract">-->
+                <!--<xsd:attribute name="ref" type="xsd:string"/>-->
+            <!--</xsd:extension>-->
+        <!--</xsd:complexContent>-->
+    <!--</xsd:complexType>-->
 
     <xsd:complexType name="testGroupTypeIn">
         <xsd:annotation>
@@ -635,11 +747,9 @@
         <xsd:annotation>
             <xsd:documentation>
                 Test description contains two elements - info-collectors and scenario.
-                Info-collectors is a list of collectors. Collector can be as metric element or as validator element.
+                Info-collectors element is a list of collectors. Collector can be a metric element or a validator element.
                 In scenario you can describe what targets will be loaded and what tool use to make load.
                 You can turn on calibration by adding attribute calibration="true".
-                Calibration is a process, when Jagger in a simple(one thread) mode load every target only one time.
-                The results, that were calculated in this process, will be a benchmark for comparison with the new iterations.
             </xsd:documentation>
         </xsd:annotation>
     </xsd:element>
@@ -648,11 +758,9 @@
         <xsd:annotation>
             <xsd:documentation>
                 Test description contains two elements - info-collectors and scenario.
-                Info-collectors is a list of collectors. Collector can be as metric element or as validator element.
+                Info-collectors element is a list of collectors. Collector can be a metric element or a validator element.
                 In scenario you can describe what targets will be loaded and what tool use to make load.
                 You can turn on calibration by adding attribute calibration="true".
-                Calibration is a process, when Jagger in a simple(one thread) mode load every target only one time.
-                The results, that were calculated in this process, will be a benchmark for comparison with the new iterations.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
@@ -661,9 +769,25 @@
                     <xsd:element name="info-collectors" type="workloadListenersType" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="scenario" type="scenarioAbstract" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
-                <xsd:attribute name="name" type="xsd:string"/>
-                <xsd:attribute name="version" type="xsd:string"/>
-                <xsd:attribute name="calibration" type="xsd:string" default="false"/>
+                <xsd:attribute name="name" type="xsd:string">
+                    <xsd:annotation><xsd:documentation>
+                        Name of the test. Will be displayed in report and WebUI
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="version" type="xsd:string">
+                    <xsd:annotation><xsd:documentation>
+                        Version of the test. Just set to 1.
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="calibration" type="xsd:string" default="false">
+                    <xsd:annotation><xsd:documentation>
+                        Set 'true' if you want to provide calibration.
+                        Calibration is a process, when Jagger in a simple (one thread) mode loads every target only one time.
+                        Response from target is saved. During test run it can be used as benchmark to compare response
+                        from system under test. Comparison will be provided if 'validator-consistency' is included in 'info-collectors'
+                        Note that calibration can take long time when number of endpoints you are going to test is large!
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -694,7 +818,7 @@
     <xsd:element name="metric-not-null-response" type="metric-not-null-response" substitutionGroup="metric">
         <xsd:annotation>
             <xsd:documentation>
-                This metric calculate not null responses.
+                This metric indexes number of not null responses.
             </xsd:documentation>
         </xsd:annotation>
     </xsd:element>
@@ -704,7 +828,7 @@
             <xsd:documentation>
                 You can create your custom metric. Create bean with your own class, which implements interface MetricCalculator.
                 Now you can set id of this bean as attribute 'calculator'.
-                Set name of metric to see correct it in your report.
+                Set attribute 'name' to see it in your report and WebUI.
             </xsd:documentation>
         </xsd:annotation>
     </xsd:element>
@@ -914,7 +1038,7 @@
             <xsd:documentation>
                 You can create your custom metric. Create bean with your own class, which implements interface MetricCalculator.
                 Now you can set id of this bean as attribute 'calculator'.
-                Set name of metric to see correct report.
+                See docu section about custom metrics to learn more.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>
@@ -927,7 +1051,9 @@
     <xsd:complexType name="metric-ref">
         <xsd:annotation>
             <xsd:documentation>
-                Set metric element, that you would like to use.
+                You can create your custom collector. Create bean with your own class, which implements interface MetricCollectorProvider.
+                Now you can set id of this bean as attribute 'ref'.
+                See docu section about custom collectors to learn more.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:complexContent>

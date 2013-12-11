@@ -26,11 +26,10 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
 import com.griddynamics.jagger.agent.model.*;
 import com.griddynamics.jagger.util.TimeUtils;
+import com.griddynamics.jagger.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -47,7 +46,7 @@ import static com.griddynamics.jagger.util.Units.bytesToMiB;
 public class MonitoringInfoServiceImpl implements MonitoringInfoService {
     private static final Logger log = LoggerFactory.getLogger(MonitoringInfoServiceImpl.class);
 
-    private int jmxTimeout = 300;
+    private Timeout jmxTimeout = new Timeout(300,"");
 
     private SystemInfoCollector systemInfoService;
     private SystemUnderTestService systemUnderTestService;
@@ -62,7 +61,7 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
         this.systemUnderTestService = systemUnderTestService;
     }
 
-    public void setJmxTimeout(int jmxTimeout) {
+    public void setJmxTimeout(Timeout jmxTimeout) {
         this.jmxTimeout = jmxTimeout;
     }
 
@@ -125,17 +124,18 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
             });
             Map<String, SystemUnderTestInfo> jmxInfo;
             try {
-                jmxInfo = Futures.makeUninterruptible(future).get(jmxTimeout, TimeUnit.MILLISECONDS);
+                jmxInfo = Futures.makeUninterruptible(future).get(jmxTimeout.getValue(), TimeUnit.MILLISECONDS);
                 systemInfo.setSysUnderTest(jmxInfo);
             } catch (ExecutionException e) {
                 log.error("Execution failed {}", e);
                 throw Throwables.propagate(e);
             } catch (TimeoutException e) {
-                log.warn("Time is left for collecting through JMX, make pause {} ms and pass out without jmxInfo", jmxTimeout);
-                TimeUtils.sleepMillis(jmxTimeout);
+                log.warn("Timeout. Collection of jmxInfo was not finished in {}. Pass out without jmxInfo",
+                        jmxTimeout.toString());
+                TimeUtils.sleepMillis(jmxTimeout.getValue());
             }
         } else {
-            log.warn("jmxThread is busy. pass out");
+            log.warn("jmxThread is busy. Pass out without jmxInfo");
         }
 
         log.debug("finish collecting SuT info through jmx on agent: time {} ms", System.currentTimeMillis() - startTimeLog);

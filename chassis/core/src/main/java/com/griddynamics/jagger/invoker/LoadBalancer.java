@@ -30,7 +30,7 @@ import java.util.Iterator;
  * @n
  * @par Details:
  * @details LoadBalancer (distributor) can use query and endpoint providers to load data and create pairs by some algorithm. @n
- * (if you choose @ref QueryPoolLoadBalancer as an abstract implementation). @n
+ * (if you choose @ref QueryPoolLoadBalancer<Q,E> as an abstract implementation). @n
  * You can use no providers and load all necessary data in your implementation of LoadBalancer. @n
  * @n
  * To view all distributors implementations click here @ref Main_Distributors_group
@@ -71,13 +71,37 @@ public interface LoadBalancer<Q, E> extends Iterable<Pair<Q, E>>, Serializable {
 }
 
 /* **************** Distributors page *************************  */
-/// @defgroup Main_Distributors_General_group General information about distributors
+/// @defgroup Main_Distributors_General_group Distributors main page
 ///
-/// @details Distributors provide pairs of endpoints and queries for invokers
-///
-/// @li General information: @ref Main_Distributors_Base_group
+/// @li General information about interface: @ref Main_Distributors_Base_group
 /// @li Available implementations: @ref Main_Distributors_group
 /// @li How to customize: @ref Main_HowToCustomizeDistributors_group
+/// @li How to run test with randomized order of requests: @ref Section_distributors_random
+/// @n
+/// @n
+/// @details
+/// @par General info
+/// Distributors provide pairs of endpoints and queries for invokers @n
+/// Before start of the test distributor is combining all endpoints and queries according to user setup and stores these combination in internal list. @n
+/// \b Important: mentioned list is shared by all threads that produce load. it is not possible to have separate list per workload thread @n
+/// Before every invoke distributor is providing single pair of endpoint / query to invoker. Test run sequence you can find here: @ref Main_Test_Flow_group @n
+///
+/// @par Example of distributor setup in XML:
+/// Following XML code should be included in @xlink{test-description} section @n
+/// @dontinclude  test.suite.scenario.config.xml
+/// @skip  begin: following section is used for docu generation - invoker usage
+/// @until end: following section is used for docu generation - invoker usage
+///
+/// @par Variants of distributors available in XML:
+/// @xlink{query-distributor} - documentation of distributor element in XML schema @n
+/// @xlink_complex{queryDistributorAbstract} - types of distributors available in XML schema. See <b> 'Sub Types' </b> section of man page @n
+/// How distributors mentioned above are implemented you can see in section: @ref Main_Distributors_group @n
+/// @n
+/// @section Section_distributors_random Access SUT with random order of endpoint / query pairs
+/// Pairs of endpoint / query are collected into list single time during Jagger start up. @n
+/// By default all threads are accessing elements of mentioned list in the same order: from first element to the last, doing this in cycle. @n
+/// If it is necessary to execute endpoint / query pairs in random order, set @xlink_complex{queryDistributorRandomAbstract,randomSeed} attribute of f.e. @xlink{query-distributor-round-robin} equal to some integer value @n
+/// @image html jagger_random_query_distribution.png "Access SUT with random order of endpoint / query pairs"
 
 
 /* **************** How to customize distributor ************************* */

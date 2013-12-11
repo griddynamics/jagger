@@ -20,19 +20,16 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.*;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.master.configuration.Task;
-import com.griddynamics.jagger.util.Nothing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 public abstract class AbstractDistributor<T extends Task> implements TaskDistributor<T> {
@@ -61,63 +58,7 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
         }
 
         final Service service = performDistribution(executor, sessionId, taskId, task, remotes, availableNodes, coordinator, nodeContext);
-        return new ForwardingService() {
-
-            @Override
-            public ListenableFuture<State> start() {
-
-                ListenableFuture<Nothing> runListener = Futures.makeListenable(executor.submit(new Callable<Nothing>() {
-                    @Override
-                    public Nothing call() {
-                        listener.onDistributionStarted(sessionId, taskId, task, remotes.keySet());
-                        return Nothing.INSTANCE;
-                    }
-                }));
-
-
-                return Futures.chain(runListener, new Function<Nothing, ListenableFuture<State>>() {
-                    @Override
-                    public ListenableFuture<State> apply(Nothing input) {
-                        return doStart();
-                    }
-                });
-            }
-
-
-            private ListenableFuture<State> doStart() {
-                return super.start();
-            }
-
-            @Override
-            protected Service delegate() {
-                return service;
-            }
-
-            @Override
-            public ListenableFuture<State> stop() {
-                ListenableFuture<State> stop = super.stop();
-
-                return Futures.chain(stop, new Function<State, ListenableFuture<State>>() {
-                    @Override
-                    public ListenableFuture<State> apply(final State input) {
-
-                        final SettableFuture<State> result = SettableFuture.create();
-                        executor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    listener.onTaskDistributionCompleted(sessionId, taskId, task);
-                                } finally {
-                                    result.set(input);
-                                }
-                            }
-                        });
-                        return result;
-                    }
-                });
-            }
-
-        };
+        return new ListenableService<T>(service, executor, sessionId, taskId, task, listener, remotes);
     }
 
     protected abstract Set<Qualifier<?>> getQualifiers();

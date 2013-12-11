@@ -95,6 +95,11 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
         }
     }
 
+    @Override
+    public void deleteAll(){
+        getHibernateTemplate().bulkUpdate("delete from KeyValue");
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Object fetch(Namespace namespace, String key) {

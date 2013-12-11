@@ -53,18 +53,22 @@
         <property name="monitoringProcessor" ref="loggingMonitoringProcessor"/>
         <property name="logWriter" ref="bufferedLogWriter"/>
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="ttl" value="${chassis.monitoring.command.execution.ttl}"/>
+        <property name="ttl" ref="monitoringWorkerTimeout"/>
     </bean>
 
     <bean id="loggingMonitoringProcessor" class="com.griddynamics.jagger.monitoring.LoggingMonitoringProcessor">
         <property name="logWriter" ref="bufferedLogWriter"/>
-
     </bean>
 
     <bean id="monitoringExecutor" class="com.griddynamics.jagger.util.ConfigurableExecutor">
         <property name="corePoolSize" value="${chassis.monitoring.executor.pool.core}"/>
         <property name="maximumPoolSize" value="${chassis.monitoring.executor.pool.max}"/>
         <property name="nameFormat" value="monitoring-pool-%d"/>
+    </bean>
+
+    <bean id="monitoringWorkerTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${chassis.monitoring.command.execution.ttl}"/>
+        <property name="name"  value="chassis.monitoring.command.execution.ttl"/>
     </bean>
 
 </beans>

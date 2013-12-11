@@ -57,9 +57,6 @@ public class LegendProvider {
     private String generatePlotHeader(String sessionId, String taskName, String plotName) {
         StringBuilder builder = new StringBuilder();
         builder
-                .append("Session #")
-                .append(sessionId)
-                .append(", ")
                 .append(taskName)
                 .append(", ")
                 .append(plotName);
@@ -73,11 +70,6 @@ public class LegendProvider {
         }
 
         StringBuilder builder = new StringBuilder();
-        builder.append("Session ");
-        for (String sessionId : sessionIds) {
-            builder.append("#").append(sessionId).append(", ");
-        }
-
         builder
                 .append(taskName)
                 .append(", ")

@@ -45,7 +45,6 @@ public class MetricDataServiceImpl implements MetricDataService {
         standardMetrics.put("Throughput", Pair.of("throughput", "Throughput, tps"));
         standardMetrics.put("Latency", Pair.of("avgLatency", "Latency, sec"));
         standardMetrics.put("Duration", Pair.of("duration", "Duration, sec"));
-        standardMetrics.put("TotalDuration", Pair.of("totalDuration", "TotalDuration, sec"));
         standardMetrics.put("Success rate", Pair.of("successRate", "Success rate"));
         standardMetrics.put("Iterations", Pair.of("samples", "Iterations, samples"));
     }
@@ -119,9 +118,6 @@ public class MetricDataServiceImpl implements MetricDataService {
 
                 MetricValueDto value = new MetricValueDto();
                 value.setValue(metricValue);
-                if ("TotalDuration".equals(metricName.getName())) {
-                    value.setValueRepresentation(TimeUtils.formatDuration((long)(Double.parseDouble(metricValue) * 1000)));
-                }
                 value.setSessionId(sessionId);
 
                 dto.getValues().add(value);
@@ -240,15 +236,7 @@ public class MetricDataServiceImpl implements MetricDataService {
                 ColorCodeGenerator.getHexColorCode()
         );
 
-        StringBuilder headerBuilder = new StringBuilder("Sessions ");
-        List<Long> ids = new ArrayList<Long>();
-        for (MetricValueDto mvd: metricDto.getValues()) {
-            ids.add(mvd.getSessionId());
-        }
-        Collections.sort(ids);
-        for(long id : ids) {
-            headerBuilder.append("#").append(id).append(", ");
-        }
+        StringBuilder headerBuilder = new StringBuilder();
         headerBuilder.append(metricDto.getMetricName().getTests().getTaskName()).
                 append(", ").
                 append(metricDto.getMetricName().getName());

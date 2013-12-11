@@ -4,26 +4,39 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.NodeSideInitializable;
 import com.griddynamics.jagger.engine.e1.Provider;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kgribov
- * Date: 11/7/13
- * Time: 8:56 AM
- * To change this template use File | Settings | File Templates.
- */
+/** Abstract type of Provider, that gives user an access to Jagger services
+ * @author Gribov Kirill
+ * @n
+ * @par Details:
+ * @details If you would like to provide new objects and have an access to jagger services - extend this class.
+ * @n
+ *
+ * @param <T> - type of element, that will be provided
+ * */
 public abstract class AbstractServicesAwareProvider<T> implements NodeSideInitializable, Provider<T> {
 
-    private ServicesContext services;
+    private MetricService metricService;
 
-    protected ServicesContext getServices(){
-        return services;
+    /** Returns MetricService
+     * @author Gribov Kirill
+     * @n
+     * @par Details:
+     * @details Returns metric service for current test
+     *@return metric service */
+    protected MetricService getMetricService(){
+        return metricService;
     }
 
     public final void init(String sessionId, String taskId, NodeContext context){
-        services = new ServicesContext(sessionId, taskId, context);
+        metricService = new DefaultMetricService(sessionId, taskId, context);
 
         init();
     }
 
+    /** User action, that will be executed before at least one object will be provided.
+     * @author Gribov Kirill
+     * @n
+     * @par Details: If you would like to execute some actions, before objects will be provided, override this method
+     * @details */
     protected abstract void init();
 }

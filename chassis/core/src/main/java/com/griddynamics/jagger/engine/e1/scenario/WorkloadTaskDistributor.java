@@ -24,20 +24,24 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.*;
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.collector.WorkloadStatusCollector;
+import com.griddynamics.jagger.engine.e1.collector.test.TestInfo;
+import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.process.PollWorkloadProcessStatus;
 import com.griddynamics.jagger.engine.e1.process.StartWorkloadProcess;
 import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
 import com.griddynamics.jagger.master.AbstractDistributionService;
 import com.griddynamics.jagger.master.AbstractDistributor;
 import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
+import com.griddynamics.jagger.util.Injector;
 import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -81,16 +85,33 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
         return new AbstractDistributionService(executor) {
             @Override
             protected void run() throws Exception {
+                //create test-listeners
+                ArrayList<TestListener> listeners = new ArrayList<TestListener>(task.getTestListeners().size());
+                for (Provider<TestListener> provider : task.getTestListeners()){
+                    Injector.injectNodeContext(provider, sessionId, taskId, nodeContext);
+                    listeners.add(provider.provide());
+                }
+                TestListener testListener = TestListener.Composer.compose(listeners);
+                // start time must be initialized after calibration
+                // if start time will not initialize(calibration) - set 0 test duration
+                Long startTime = null;
+
+                //create status info
+                TestInfo testInfo = new TestInfo(task);
+
                 DefaultWorkloadController controller = null;
                 try {
-                    String line = "------------------------------------------------------------------------------------------------------------------------------\n";
+
+                    testListener.onStart(testInfo);
+
+                    String line = " ---------------------------------------------------------------------------------------------------------------------------------------------------\n";
                     String report = "\n\n" + line + "S T A R T     W O R K L O A D\n" + line + "\n";
                     log.info(report);
                     log.info("Going to distribute workload task {}", task);
 
                     log.debug("Going to do calibration");
                     Calibrator calibrator = task.getCalibrator();
-                    calibrator.calibrate(sessionId, taskId, task.getScenarioFactory(), remotes, timeoutsConfiguration.getCalibrationTimeout());
+                    calibrator.calibrate(sessionId, taskId, task.getScenarioFactory(), remotes, timeoutsConfiguration.getCalibrationTimeout().getValue());
                     log.debug("Calibrator completed");
 
                     if (task.getStartDelay() > 0) {
@@ -99,13 +120,11 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                         log.info("Start execution of task: {}", task);
                     }
 
-                    controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration);
+                    startTime = System.currentTimeMillis() ;
+                    controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration, startTime);
 
                     WorkloadClock clock = task.getClock();
                     TerminationStrategy terminationStrategy = task.getTerminationStrategy();
-
-                    WorkloadStatusCollector collector = WorkloadStatusCollector.Composer.compose(task.getWorkloadStatusCollectors());
-                    collector.init(sessionId, taskId, nodeContext);
 
                     log.debug("Going to start workload");
                     controller.startWorkload(clock.getPoolSizes(controller.getNodes()));
@@ -123,7 +142,13 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
 
                         WorkloadExecutionStatus status = controller.getStatus();
 
-                        collector.collect(status);
+                        // update status for test-listeners
+                        testInfo.setSamples(status.getTotalSamples());
+                        testInfo.setStartedSamples(status.getTotalStartedSamples());
+                        testInfo.setThreads(status.getTotalThreads());
+                        testInfo.setDuration(System.currentTimeMillis() - startTime);
+
+                        testListener.onRun(testInfo);
 
                         if (terminationStrategy.isTerminationRequired(status)) {
                             report = "\n\n" + line + "S T O P     W O R K L O A D\n" + line + "\n";
@@ -142,8 +167,6 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                         sleepMillis(sleepInterval);
                     }
 
-                    collector.flush();
-
                     taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
                 } catch (Exception e) {
                     taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.FAILED);
@@ -155,6 +178,15 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                         controller.stopWorkload();
                         log.debug("Workload stopped");
                     }
+
+                    testInfo.setThreads(0);
+                    if (startTime == null){
+                        testInfo.setDuration(0L);
+                    }else{
+                        testInfo.setDuration(System.currentTimeMillis()-startTime);
+                    }
+
+                    testListener.onStop(testInfo);
                 }
             }
 

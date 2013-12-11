@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.Nothing;
+import com.griddynamics.jagger.util.Timeout;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class MonitoringWorker extends ConfigurableWorker {
     private LogWriter logWriter;
     private Map<String, MonitorProcess> processes = Maps.newConcurrentMap();
     private SessionFactory sessionFactory;
-    private long ttl;
+    private Timeout ttl;
 
     @Override
     public void configure() {
@@ -61,7 +62,7 @@ public class MonitoringWorker extends ConfigurableWorker {
 
             @Override
             public String execute(StartMonitoring command, NodeContext nodeContext) {
-                MonitorProcess process = Monitoring.createProcess(command.getSessionId(), command.getAgentNode(),
+                MonitorProcess process = new MonitorProcess(command.getSessionId(), command.getAgentNode(),
                         nodeContext, coordinator, executor, pollingInterval, profilerPollingInterval, monitoringProcessor, command.getTaskId(),
                         logWriter, sessionFactory, ttl);
 
@@ -149,11 +150,11 @@ public class MonitoringWorker extends ConfigurableWorker {
         return sessionFactory;
     }
 
-    public void setTtl(long ttl) {
+    public void setTtl(Timeout ttl) {
         this.ttl = ttl;
     }
 
-    public long getTtl() {
+    public Timeout getTtl() {
         return ttl;
     }
 }

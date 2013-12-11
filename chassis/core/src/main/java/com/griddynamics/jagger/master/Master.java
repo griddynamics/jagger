@@ -20,9 +20,7 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.agent.model.ManageAgent;
 import com.griddynamics.jagger.coordinator.*;
@@ -34,11 +32,13 @@ import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.Futures;
+import com.griddynamics.jagger.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -154,8 +154,8 @@ public class Master implements Runnable {
         new StartWorkConditions(allNodes, countDownLatchMap);
 
         try {
-            agentCountDownLatch.await(timeoutConfiguration.getNodeAwaitTime(), TimeUnit.MILLISECONDS);
-            kernelCountDownLatch.await(timeoutConfiguration.getNodeAwaitTime(), TimeUnit.MILLISECONDS);
+            agentCountDownLatch.await(timeoutConfiguration.getNodeAwaitTime().getValue(), TimeUnit.MILLISECONDS);
+            kernelCountDownLatch.await(timeoutConfiguration.getNodeAwaitTime().getValue(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             log.warn("CountDownLatch await interrupted", e);
         }
@@ -211,6 +211,12 @@ public class Master implements Runnable {
             processAgentManagement(sessionId, agentStopManagementProps);
             log.info("Agents stopped");
         } finally {
+            try {
+                keyValueStorage.deleteAll();
+                log.info("Temporary data deleted");
+            } catch (Exception e){
+                log.warn(e.getMessage(), e);
+            }
             try {
                 Runtime.getRuntime().removeShutdownHook(shutdownHook);
             } catch (Exception e) {
@@ -294,7 +300,7 @@ public class Master implements Runnable {
                 start = distribute.start();
             }
             Futures.get(start, timeoutConfiguration.getDistributionStartTime());
-            Services.awaitTermination(distribute, timeoutConfiguration.getTaskExecutionTime());
+            Services.awaitTermination(distribute, timeoutConfiguration.getTaskExecutionTime().getValue());
         } finally {
             Future<Service.State> stop = distribute.stop();
             Futures.get(stop, timeoutConfiguration.getDistributionStopTime());
@@ -303,7 +309,25 @@ public class Master implements Runnable {
     }
 
     private DistributionListener distributionListener() {
-        return CompositeDistributionListener.of(configuration.getDistributionListeners());
+        return CompositeDistributionListener.of(Iterables.concat(Arrays.asList(createFlushListener()),
+                                                                 configuration.getDistributionListeners()
+                                                                ));
+    }
+
+    // provide listener, which will flush temporary data in LogStorage
+    // it guarantees that all data will be recorded
+    private DistributionListener createFlushListener(){
+        return new DistributionListener() {
+            @Override
+            public void onDistributionStarted(String sessionId, String taskId, Task task, Collection<NodeId> capableNodes) {
+                //nothing
+            }
+
+            @Override
+            public void onTaskDistributionCompleted(String sessionId, String taskId, Task task) {
+                logWriter.flush();
+            }
+        };
     }
 
     public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {

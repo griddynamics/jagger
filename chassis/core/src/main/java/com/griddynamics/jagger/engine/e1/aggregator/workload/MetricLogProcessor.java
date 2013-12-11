@@ -69,8 +69,8 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
 
     private MetricDescription defaultMetricDescription;
     {
-        defaultMetricDescription = new MetricDescription("default");
-        defaultMetricDescription.setShowPlotData(false);
+        defaultMetricDescription = new MetricDescription("No name metric");
+        defaultMetricDescription.setPlotData(false);
         defaultMetricDescription.setShowSummary(true);
         defaultMetricDescription.setAggregators(Arrays.<MetricAggregatorProviderWrapper>asList(
                 MetricAggregatorProviderWrapper.of(new SumMetricAggregatorProvider()))
@@ -148,6 +148,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSize, taskData).generate();
                     final Collection<MetricDetails> statistics = statisticsGenerator.getStatistics();
 
+                    log.info("BEGIN: Save to data base");
                     getHibernateTemplate().execute(new HibernateCallback<Void>() {
                         @Override
                         public Void doInHibernate(Session session) throws HibernateException, SQLException {
@@ -158,6 +159,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                             return null;
                         }
                     });
+                    log.info("END: Save to data base");
                 } catch (Exception e) {
                     log.error("Error during processing metric by path: '{}'",metricPath);
                 }
@@ -191,14 +193,18 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             String tmp = path.substring(0, path.lastIndexOf(File.separatorChar));
             String metricName = tmp.substring(tmp.lastIndexOf(File.separatorChar) + 1);
 
-            Object object = fetchDescription(metricName);
+            MetricDescription metricDescription = fetchDescription(metricName);
 
-            MetricDescription metricDescription = defaultMetricDescription;
-
-            if (object != null) {
-                metricDescription = (MetricDescription) object;
-            }else{
+            if (metricDescription == null) {
                 log.warn("Aggregators not found for metric: '{}' in task: '{}'; Using default aggregator", metricName, taskData.getTaskId());
+                metricDescription = defaultMetricDescription;
+                metricDescription.setMetricId(metricName);
+            }else{
+                // if there are no aggregators - add default sum-aggregator
+                if (metricDescription.getAggregators().isEmpty()){
+                    log.warn("Aggregators not found for metric: '{}' in task: '{}'; Using default aggregator", metricName, taskData.getTaskId());
+                    metricDescription.getAggregators().add(MetricAggregatorProviderWrapper.of(new SumMetricAggregatorProvider()));
+                }
             }
 
             LogReader.FileReader<MetricLogEntry> fileReader = null;
@@ -211,10 +217,10 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                 if (metricDescription.getShowSummary())
                     overallMetricAggregator= entry.getMetricAggregatorProvider().provide();
 
-                if (metricDescription.getShowPlotData())
+                if (metricDescription.getPlotData())
                     intervalAggregator = entry.getMetricAggregatorProvider().provide();
 
-                if ((metricDescription.getShowSummary()) || (metricDescription.getShowPlotData()))
+                if ((metricDescription.getShowSummary()) || (metricDescription.getPlotData()))
                 {
                     MetricAggregator nameAggregator = overallMetricAggregator == null ? intervalAggregator : overallMetricAggregator;
 
@@ -224,7 +230,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     String displayName = metricDescription.getDisplayName() == null ? null :
                             metricDescription.getDisplayName() + aggregatorDisplayNameSuffix;
 
-                    String metricId = metricDescription.getId() + aggregatorIdSuffix;
+                    String metricId = metricDescription.getMetricId() + aggregatorIdSuffix;
 
                     CollectorDescription collectorDescription = getCollectorDescription(metricId, displayName);
 
@@ -235,7 +241,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         fileReader = logReader.read(path, MetricLogEntry.class);
                         for (MetricLogEntry logEntry : fileReader) {
                             log.debug("Log entry {} time", logEntry.getTime());
-                            if (metricDescription.getShowPlotData()) {
+                            if (metricDescription.getPlotData()) {
                                 while (logEntry.getTime() > currentInterval){
                                     // we leave current interval or current interval is empty
                                     Number aggregated = intervalAggregator.getAggregated();
@@ -264,7 +270,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                 overallMetricAggregator.append(logEntry.getMetric());
                         }
 
-                        if (metricDescription.getShowPlotData()) {
+                        if (metricDescription.getPlotData()) {
                             Number aggregated = intervalAggregator.getAggregated();
                             if (aggregated != null){
                                 statistics.add(new MetricDetails(time, collectorDescription, aggregated.doubleValue(), taskData));
@@ -287,12 +293,17 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             return this;
         }
 
-        private Object fetchDescription(String metricName) {
+        private MetricDescription fetchDescription(String metricName) {
             Collection<Object> metricDescription = keyValueStorage.fetchAll(
-                    Namespace.of(taskData.getSessionId(), taskData.getTaskId(), "metricAggregatorProviders"),
+                    Namespace.of(taskData.getSessionId(), taskData.getTaskId(), "metricDescription"),
                     metricName
             );
-            return metricDescription.iterator().next();
+
+            if (!metricDescription.iterator().hasNext()){
+                return null;
+            }
+
+            return (MetricDescription)metricDescription.iterator().next();
         }
 
         private void persistAggregatedMetricValue(CollectorDescription description, Number value) {

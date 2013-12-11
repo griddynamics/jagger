@@ -32,14 +32,14 @@ import java.util.concurrent.TimeoutException;
 public class Futures {
     private final static Logger log = LoggerFactory.getLogger(Futures.class);
 
-    public static <V> V get(Future<V> future, long millis) {
+    public static <V> V get(Future<V> future, Timeout millis) {
         try {
-            return com.google.common.util.concurrent.Futures.makeUninterruptible(future).get(millis, TimeUnit.MILLISECONDS);
+            return com.google.common.util.concurrent.Futures.makeUninterruptible(future).get(millis.getValue(), TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             log.error("Execution failed {}", e);
             throw Throwables.propagate(e);
         } catch (TimeoutException e) {
-            log.error("Timeout of {} millis failed {}", millis, e);
+            log.error("Timeout of {} failed \n{}", millis.toString(), e);
             throw Throwables.propagate(e);
         }
 

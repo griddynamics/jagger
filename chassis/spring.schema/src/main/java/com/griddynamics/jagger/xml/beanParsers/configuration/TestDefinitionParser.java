@@ -7,7 +7,10 @@ import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
+
+import java.util.List;
 
 //Test-Group
 public class TestDefinitionParser extends CustomBeanDefinitionParser {
@@ -20,7 +23,16 @@ public class TestDefinitionParser extends CustomBeanDefinitionParser {
     @Override
     protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         element.setAttribute(BeanDefinitionParserDelegate.VALUE_TYPE_ATTRIBUTE, TestConfiguration.class.getCanonicalName());
-        setBeanListProperty(XMLConstants.TESTS, false, false, element, parserContext, builder.getBeanDefinition());
+
+        List<Element> tests = DomUtils.getChildElementsByTagName(element, XMLConstants.TEST);
+        builder.addPropertyValue(XMLConstants.TESTS, parseCustomElements(tests, parserContext, builder.getBeanDefinition()));
+
+        Element listenerGroup = DomUtils.getChildElementByTagName(element, XMLConstants.TEST_GROUP_LISTENERS);
+        if (listenerGroup != null){
+            List<Element> listenerElements = DomUtils.getChildElements(listenerGroup);
+            List listeners = parseCustomElements(listenerElements, parserContext, builder.getBeanDefinition());
+            builder.addPropertyValue(XMLConstants.LISTENERS, listeners);
+        }
     }
 
     @Override

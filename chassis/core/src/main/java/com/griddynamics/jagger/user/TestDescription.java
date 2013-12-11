@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.user;
 
 import com.griddynamics.jagger.engine.e1.collector.Validator;
-import com.griddynamics.jagger.engine.e1.collector.WorkloadStatusCollector;
 import com.griddynamics.jagger.engine.e1.scenario.*;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 
@@ -21,7 +20,6 @@ public class TestDescription {
 
     private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> metrics;
     private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> standardCollectors;
-    private List<WorkloadStatusCollector> workloadStatusCollectors;
 
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
     private Calibrator calibrator = new OneNodeCalibrator();
@@ -93,13 +91,6 @@ public class TestDescription {
         this.name = name;
     }
 
-    public List<WorkloadStatusCollector> getWorkloadStatusCollectors() {
-        return workloadStatusCollectors;
-    }
-
-    public void setWorkloadStatusCollectors(List<WorkloadStatusCollector> workloadStatusCollectors) {
-        this.workloadStatusCollectors = workloadStatusCollectors;
-    }
 
     public WorkloadTask generatePrototype(){
         WorkloadTask prototype = new WorkloadTask();
@@ -115,7 +106,6 @@ public class TestDescription {
         allMetrics.addAll(metrics);
 
         prototype.setCollectors(allMetrics);
-        prototype.setWorkloadStatusCollectors(workloadStatusCollectors);
 
         return prototype;
     }

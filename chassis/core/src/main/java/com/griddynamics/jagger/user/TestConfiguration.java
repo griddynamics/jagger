@@ -1,7 +1,11 @@
 package com.griddynamics.jagger.user;
 
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.scenario.*;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -19,6 +23,7 @@ public class TestConfiguration {
     private int number;
     private String testGroupName;
     private long startDelay = -1;
+    private List<Provider<TestListener>> listeners = Collections.EMPTY_LIST;
     private TestDescription testDescription;
 
     public long getStartDelay() {
@@ -73,6 +78,14 @@ public class TestConfiguration {
         this.terminateStrategyConfiguration = terminateStrategyConfiguration;
     }
 
+    public List<Provider<TestListener>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<TestListener>> listeners) {
+        this.listeners = listeners;
+    }
+
     public String getName() {
         if ("".equals(id)){
             return testGroupName;
@@ -94,6 +107,8 @@ public class TestConfiguration {
         }
         if (task.getVersion()==null) task.setVersion("0");
         task.setParentTaskId(testGroupName);
+        task.setTestListeners(listeners);
+
         //TODO refactor
         if (clockConfiguration instanceof UserGroupsClockConfiguration) {
             ((UserGroupsClockConfiguration) clockConfiguration).setShutdown(shutdown);

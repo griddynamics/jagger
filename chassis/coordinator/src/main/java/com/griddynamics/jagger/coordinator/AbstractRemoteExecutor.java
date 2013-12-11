@@ -23,6 +23,7 @@ package com.griddynamics.jagger.coordinator;
 import com.google.common.util.concurrent.SettableFuture;
 import com.griddynamics.jagger.coordinator.async.*;
 import com.griddynamics.jagger.util.Futures;
+import com.griddynamics.jagger.util.Timeout;
 
 import java.io.Serializable;
 import java.util.concurrent.Future;
@@ -38,6 +39,11 @@ public abstract class AbstractRemoteExecutor implements RemoteExecutor {
 
     @Override
     public <C extends Command<R>, R extends Serializable> R runSyncWithTimeout(C command, NodeCommandExecutionListener<C> listener, long millis) {
+        return runSyncWithTimeout(command, listener, new Timeout(millis,"no_name"));
+    }
+
+    @Override
+    public <C extends Command<R>, R extends Serializable> R runSyncWithTimeout(C command, NodeCommandExecutionListener<C> listener, Timeout millis) {
         Future<R> future = run(command, listener);
         return Futures.get(future, millis);
     }

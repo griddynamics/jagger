@@ -20,57 +20,58 @@
 package com.griddynamics.jagger.master;
 
 import com.google.common.base.Objects;
+import com.griddynamics.jagger.util.Timeout;
 import org.springframework.beans.factory.annotation.Required;
 
 public class MasterTimeoutConfiguration {
-    private long nodeAwaitTime;
-    private long taskExecutionTime;
-    private long distributionStartTime;
-    private long distributionStopTime;
+    private Timeout nodeAwaitTime;
+    private Timeout taskExecutionTime;
+    private Timeout distributionStartTime;
+    private Timeout distributionStopTime;
 
-    public long getTaskExecutionTime() {
+    public Timeout getTaskExecutionTime() {
         return taskExecutionTime;
     }
 
     @Required
-    public void setTaskExecutionTime(long taskExecutionTime) {
+    public void setTaskExecutionTime(Timeout taskExecutionTime) {
         this.taskExecutionTime = taskExecutionTime;
     }
 
-    public long getDistributionStartTime() {
+    public Timeout getDistributionStartTime() {
         return distributionStartTime;
     }
 
     @Required
-    public void setDistributionStartTime(long distributionStartTime) {
+    public void setDistributionStartTime(Timeout distributionStartTime) {
         this.distributionStartTime = distributionStartTime;
     }
 
-    public long getDistributionStopTime() {
+    public Timeout getDistributionStopTime() {
         return distributionStopTime;
     }
 
     @Required
-    public void setDistributionStopTime(long distributionStopTime) {
+    public void setDistributionStopTime(Timeout distributionStopTime) {
         this.distributionStopTime = distributionStopTime;
     }
 
-    public long getNodeAwaitTime() {
+    public Timeout getNodeAwaitTime() {
         return nodeAwaitTime;
     }
 
     @Required
-    public void setNodeAwaitTime(long nodeAwaitTime) {
+    public void setNodeAwaitTime(Timeout nodeAwaitTime) {
         this.nodeAwaitTime = nodeAwaitTime;
     }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-                .add("nodeAwaitTime", nodeAwaitTime)
-                .add("taskExecutionTime", taskExecutionTime)
-                .add("distributionStartTime", distributionStartTime)
-                .add("distributionStopTime", distributionStopTime)
+                .add("nodeAwaitTime", nodeAwaitTime.toString())
+                .add("taskExecutionTime", taskExecutionTime.toString())
+                .add("distributionStartTime", distributionStartTime.toString())
+                .add("distributionStopTime", distributionStopTime.toString())
                 .toString();
     }
 }

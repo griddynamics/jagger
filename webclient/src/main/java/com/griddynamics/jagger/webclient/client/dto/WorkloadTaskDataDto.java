@@ -25,6 +25,10 @@ public class WorkloadTaskDataDto implements Serializable {
     private Integer clockValue;
     private String termination;
     private Integer kernels;
+    /**
+     * @deprecated We don't show a total duration in the WebUI and a report
+     */
+    @Deprecated
     private BigDecimal totalDuration;
     private String duration;
     private BigDecimal throughput;
@@ -131,10 +135,20 @@ public class WorkloadTaskDataDto implements Serializable {
         this.kernels = kernels;
     }
 
+    /**
+     * @deprecated we don't show a total duration in the WebUI and a report
+     *             We keep this for a backward compatibility
+     */
+    @Deprecated
     public BigDecimal getTotalDuration() {
         return totalDuration;
     }
 
+    /**
+     * @deprecated we don't show a total duration in the WebUI and a report
+     *             We keep this for a backward compatibility
+     */
+    @Deprecated
     public void setTotalDuration(BigDecimal totalDuration) {
         this.totalDuration = totalDuration;
     }

@@ -42,7 +42,7 @@ public class OneNodeCalibrator implements Calibrator {
     private final static Logger log = LoggerFactory.getLogger(OneNodeCalibrator.class);
 
     @Override
-    public void calibrate(String sessionId, String taskId, ScenarioFactory<Object, Object, Object> scenarioFactory, Map<NodeId, RemoteExecutor> remotes, int timeout) {
+    public void calibrate(String sessionId, String taskId, ScenarioFactory<Object, Object, Object> scenarioFactory, Map<NodeId, RemoteExecutor> remotes, long timeout) {
         checkArgument(!remotes.isEmpty());
 
         log.debug("Going to perform calibration sessionId {} taskId {}", sessionId, taskId);

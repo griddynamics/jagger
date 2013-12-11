@@ -78,8 +78,13 @@
         <scenario xsi:type="scenario-ref" ref="jaggerRandomScenario"/>
     </test-description>
 
+    <!-- begin: following section is used for docu generation - simple providers usage -->
     <test-description id="googlePageTest" parent="default" calibration="true">
-        <scenario  xsi:type="scenario-query-pool" parent="pageScenario">
+        <scenario  xsi:type="scenario-query-pool">
+
+            <query-distributor xsi:type="query-distributor-round-robin"/>
+
+            <invoker xsi:type="invoker-class" class="${package}.invoker.PageVisitorInvoker"/>
 
             <endpoint-provider xsi:type="endpoint-provider-list">
                 <endpoint>http://google.com</endpoint>
@@ -92,6 +97,7 @@
 
         </scenario>
     </test-description>
+    <!-- end: following section is used for docu generation - simple providers usage -->
 
     <test-description id="groovyGooglePageTest" parent="default" calibration="true">
         <scenario  xsi:type="scenario-query-pool" parent="pageScenario">

@@ -70,7 +70,8 @@ public class KernelRegistrar implements Runnable {
                 });
                 kernel.setConnected(true);
             } catch (Throwable e) {
-                log.info("ThreadId {}. KernelID {} Unable to connect to Coordinator. Waiting for {} ms", new Object[]{Thread.currentThread().getId(), kernel.getKernelId(), kernel.getReconnectPeriod()});
+                log.warn("ThreadId {}. KernelID {} Unable to connect to Coordinator. Waiting for {} ms", new Object[]{Thread.currentThread().getId(), kernel.getKernelId(), kernel.getReconnectPeriod()});
+                log.warn("cause: ", e);
                 try {
                     Thread.sleep(kernel.getReconnectPeriod());
                 } catch (InterruptedException ee) {

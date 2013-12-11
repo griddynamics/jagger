@@ -30,14 +30,17 @@ import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.util.Futures;
+import com.griddynamics.jagger.util.Injector;
 import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -84,13 +87,28 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
         final List<Service> leading = Lists.newLinkedList(Lists.transform(task.getLeading(), convertToRunnable));
         final List<Service> attendant = Lists.newLinkedList(Lists.transform(task.getAttendant(), convertToRunnable));
 
-        return new AbstractDistributionService(executor) {
+        Service serviceToExecute = new AbstractDistributionService(executor) {
 
             final List<Future<State>> leadingTerminateFutures = Lists.newLinkedList();
 
             @Override
             protected void run() throws Exception {
 
+                List<TestGroupListener> listeners = new ArrayList<TestGroupListener>(task.getListeners().size());
+
+                for (Provider<TestGroupListener> provider : task.getListeners()){
+                    Injector.injectNodeContext(provider, sessionId, taskId, nodeContext);
+
+                    listeners.add(provider.provide());
+                }
+
+                TestGroupListener compositeTestGroupListener = TestGroupListener.Composer.compose(listeners);
+
+                TestGroupInfo testGroupInfo = new TestGroupInfo(task);
+
+                compositeTestGroupListener.onStart(testGroupInfo);
+
+                long startTime = System.currentTimeMillis();
 
                 List<Future<State>> futures = Lists.newLinkedList();
                 for (Service service : Iterables.concat(leading, attendant)) {
@@ -110,6 +128,9 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
                     TimeUtils.sleepMillis(500);
                 }
+
+                testGroupInfo.setDuration(System.currentTimeMillis() - startTime);
+                compositeTestGroupListener.onStop(testGroupInfo);
             }
 
             private int activeLeadingTasks() {
@@ -171,9 +192,9 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
             private void awaitAttendant(List<Future<State>> attendantFutures) {
                 for (Future<State> future : attendantFutures) {
                     try {
-                        future.get(timeoutsConfiguration.getWorkloadStopTimeout(), TimeUnit.MILLISECONDS);
+                        future.get(timeoutsConfiguration.getWorkloadStopTimeout().getValue(), TimeUnit.MILLISECONDS);
                     } catch (TimeoutException e) {
-                        log.warn("Attendant task timeout", e);
+                        log.warn("Attendant task timeout " + timeoutsConfiguration.getWorkloadStopTimeout().toString(), e);
                     } catch (InterruptedException e) {
                         log.warn("Interrupted", e);
                     } catch (ExecutionException e) {
@@ -187,5 +208,7 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
                 return CompositeTaskDistributor.class.getName() + " distributor";
             }
         };
+
+        return new ListenableService<CompositeTask>(serviceToExecute, executor, sessionId, taskId, task, listener, Collections.EMPTY_MAP);
     }
 }

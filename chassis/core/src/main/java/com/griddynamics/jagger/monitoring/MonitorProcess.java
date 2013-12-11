@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.monitoring;
 
+import com.google.common.base.Throwables;
 import com.griddynamics.jagger.agent.model.GetCollectedProfileFromSuT;
 import com.griddynamics.jagger.agent.model.GetSystemInfo;
 import com.griddynamics.jagger.agent.model.ManageCollectionProfileFromSuT;
@@ -31,6 +32,7 @@ import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.SerializationUtils;
 import com.griddynamics.jagger.util.TimeUtils;
+import com.griddynamics.jagger.util.Timeout;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,12 +66,12 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
     private volatile boolean alive;
     private LogWriter logWriter;
     private CountDownLatch latch;
-    private final long ttl;
+    private final Timeout ttl;
 
     /*package*/ MonitorProcess(String sessionId, NodeId agentId, NodeContext nodeContext, Coordinator coordinator,
                                ExecutorService executor, long pollingInterval, long profilerPollingInterval,
                                MonitoringProcessor monitoringProcessor, String taskId, LogWriter logWriter,
-                               SessionFactory sessionFactory, long ttl) {
+                               SessionFactory sessionFactory, Timeout ttl) {
         this.sessionId = sessionId;
         this.agentId = agentId;
         this.nodeContext = nodeContext;
@@ -110,7 +112,7 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
                             }
                             log.debug("monitoring logged to file storage on kernel {}", nodeContext.getId());
                         } catch (Throwable e) {
-                            // ignore this poll
+                            log.warn("Ignore GetSystemInfo from agent {} due to error", agentId);
                         }
                         TimeUtils.sleepMillis(pollingInterval);
                     }
@@ -119,24 +121,37 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
                     log.debug("monitoring flushed on kernel {}", nodeContext.getId());
                     if (!voidResult.hasException()) {
                         log.debug("try to manage monitoring on agent {} from kernel {}", agentId, nodeContext.getId());
-                        voidResult = remote.runSyncWithTimeout(new ManageCollectionProfileFromSuT(sessionId, ManageHotSpotMethodsFromSuT.STOP_POLLING,
-                                profilerPollingInterval), Coordination.<ManageCollectionProfileFromSuT>doNothing(), ttl);
-                        log.debug("manage monitoring has done on agent {} from kernel {}", agentId, nodeContext.getId());
-                        if (voidResult.hasException())
-                            log.error("Remote exception raised during stopping profiling from SuT", voidResult.getException());
-                        log.debug("try to get collected profiler from agent {} from kernel {}", agentId, nodeContext.getId());
-                        final ProfileDTO profileDTO =
-                                remote.runSyncWithTimeout(GetCollectedProfileFromSuT.create(sessionId), Coordination.<GetCollectedProfileFromSuT>doNothing(), ttl);
-                        log.debug("got collected profiler from agent {} from kernel {}", agentId, nodeContext.getId());
-                        logWriter.log(sessionId, taskId + "/" + PROFILER_MARKER, agentId.getIdentifier(), SerializationUtils.toString(profileDTO));
-                        log.debug("Profiler {} received from agent {} and has been written to FileStorage", profileDTO, agentId);
-                        logWriter.flush();
-                        log.debug("Flushing performed on kernel {}", nodeContext.getId());
 
+                        try {
+                            voidResult = remote.runSyncWithTimeout(new ManageCollectionProfileFromSuT(sessionId, ManageHotSpotMethodsFromSuT.STOP_POLLING,
+                                    profilerPollingInterval), Coordination.<ManageCollectionProfileFromSuT>doNothing(), ttl);
+                            log.debug("manage monitoring has done on agent {} from kernel {}", agentId, nodeContext.getId());
+                            if (voidResult.hasException())
+                                log.error("Remote exception raised during stopping profiling from SuT", voidResult.getException());
+                            log.debug("try to get collected profiler from agent {} from kernel {}", agentId, nodeContext.getId());
+
+                            try {
+                                final ProfileDTO profileDTO =
+                                        remote.runSyncWithTimeout(GetCollectedProfileFromSuT.create(sessionId), Coordination.<GetCollectedProfileFromSuT>doNothing(), ttl);
+                                log.debug("got collected profiler from agent {} from kernel {}", agentId, nodeContext.getId());
+                                logWriter.log(sessionId, taskId + "/" + PROFILER_MARKER, agentId.getIdentifier(), SerializationUtils.toString(profileDTO));
+                                log.debug("Profiler {} received from agent {} and has been written to FileStorage", profileDTO, agentId);
+                                logWriter.flush();
+                                log.debug("Flushing performed on kernel {}", nodeContext.getId());
+                            } catch (Throwable e) {
+                                log.error("Get collected profile failed for agent " + agentId + "\n" + Throwables.getStackTraceAsString(e));
+                            }
+                        } catch (Throwable e) {
+                            log.error("Stop polling failed for agent " + agentId + "\n" + Throwables.getStackTraceAsString(e));
+                        }
                     } else {
-                        log.warn("Collection profiling from SuT didn't started.");
+                        log.warn("Collection profiling from SuT didn't start");
                     }
-                } finally {
+                }
+                catch (Throwable e) {
+                    log.error("Start polling failed for agent " + agentId + "\n" + Throwables.getStackTraceAsString(e));
+                }
+                finally {
                     log.debug("releasing a latch");
                     if (latch != null) {
                         log.debug("latch is available");
@@ -159,7 +174,7 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
 
     @Override
     public void stop() {
-        log.debug("Stop of monitoring requested. agent {}", agentId);
+        log.info("Stop of monitoring requested. agent {}", agentId);
         if(alive){
             latch = new CountDownLatch(1);
             alive = false;
@@ -175,7 +190,7 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
         }
     }
 
-    public long getTtl() {
+    public Timeout getTtl() {
         return ttl;
     }
 }

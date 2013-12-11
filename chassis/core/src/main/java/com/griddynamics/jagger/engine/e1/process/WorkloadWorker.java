@@ -186,7 +186,7 @@ public class WorkloadWorker extends ConfigurableWorker {
 
                 Futures.get(start, timeoutsConfiguration.getCalibrationStartTimeout());
 
-                Services.awaitTermination(calibrationThread, timeoutsConfiguration.getCalibrationTimeout());
+                Services.awaitTermination(calibrationThread, timeoutsConfiguration.getCalibrationTimeout().getValue());
 
                 final Map<Pair<Object, Object>, Throwable> errors = calibrationInfoCollector.getErrors();
                 if (!errors.isEmpty()) {

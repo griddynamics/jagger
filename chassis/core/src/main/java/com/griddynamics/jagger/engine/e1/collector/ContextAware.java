@@ -2,7 +2,6 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.NodeSideInitializable;
-import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 
@@ -31,8 +30,8 @@ public abstract class ContextAware implements NodeSideInitializable, Serializabl
 
         KeyValueStorage storage = nodeContext.getService(KeyValueStorage.class);
         storage.put(Namespace.of(
-                sessionId, taskId, "metricAggregatorProviders"),
-                name,
+                sessionId, taskId, "metricDescription"),
+                metricDescription.getMetricId(),
                 metricDescription
         );
     }

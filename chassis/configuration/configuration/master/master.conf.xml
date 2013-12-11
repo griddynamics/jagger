@@ -64,11 +64,28 @@
         <property name="logWriter" ref="bufferedLogWriter"/>
     </bean>
 
+    <bean id="distributionStartTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${chassis.master.distribution.start}"/>
+        <property name="name"  value="chassis.master.distribution.start"/>
+    </bean>
+    <bean id="distributionStopTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${chassis.master.distribution.stop}"/>
+        <property name="name"  value="chassis.master.distribution.stop"/>
+    </bean>
+    <bean id="taskExecutionTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${chassis.master.task.maxtime}"/>
+        <property name="name"  value="chassis.master.task.maxtime"/>
+    </bean>
+    <bean id="nodeAwaitTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${chassis.master.node.awaittime}"/>
+        <property name="name"  value="chassis.master.node.awaittime"/>
+    </bean>
+
     <bean id="masterTimeoutConfiguration" class="com.griddynamics.jagger.master.MasterTimeoutConfiguration">
-        <property name="distributionStartTime" value="${chassis.master.distribution.start}"/>
-        <property name="distributionStopTime" value="${chassis.master.distribution.stop}"/>
-        <property name="taskExecutionTime" value="${chassis.master.task.maxtime}"/>
-        <property name="nodeAwaitTime" value="${chassis.master.node.awaittime}"/>
+        <property name="distributionStartTime" ref="distributionStartTimeTimeout"/>
+        <property name="distributionStopTime" ref="distributionStopTimeTimeout"/>
+        <property name="taskExecutionTime" ref="taskExecutionTimeTimeout"/>
+        <property name="nodeAwaitTime" ref="nodeAwaitTimeTimeout"/>
     </bean>
 
     <bean id="distributorRegistry" class="com.griddynamics.jagger.master.ConfigurableDistributorRegistry">

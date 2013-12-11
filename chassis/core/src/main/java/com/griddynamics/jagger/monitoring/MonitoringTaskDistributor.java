@@ -68,14 +68,14 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
 
                     while (true) {
                         if (!isRunning()) {
-                            log.debug("Going to terminate work. Requested from outside");
+                            log.info("Going to terminate work {}. Requested from outside", task.getTaskName());
                             break;
                         }
 
                         Map<NodeId, MonitoringStatus> status = monitoringController.getStatus();
 
                         if (terminationStrategy.isTerminationRequired(status)) {
-                            log.debug("Going to terminate work. According to termination strategy");
+                            log.info("Going to terminate work {}. According to termination strategy",task.getTaskName());
                             break;
                         }
 

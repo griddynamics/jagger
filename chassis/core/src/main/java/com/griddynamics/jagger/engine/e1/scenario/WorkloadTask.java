@@ -21,7 +21,9 @@
 package com.griddynamics.jagger.engine.e1.scenario;
 
 import com.google.common.collect.Lists;
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.*;
+import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.CompositableTask;
 
@@ -45,7 +47,7 @@ public class WorkloadTask implements CompositableTask {
     private String parentTaskId;
     private Calibrator calibrator = new OneNodeCalibrator();
     private long startDelay = 0;
-    private List<WorkloadStatusCollector> workloadStatusCollectors = Lists.newArrayList();
+    private List<Provider<TestListener>> testListeners;
 
     public long getStartDelay() {
         return startDelay;
@@ -168,12 +170,12 @@ public class WorkloadTask implements CompositableTask {
         this.calibrator = calibrator;
     }
 
-    public List<WorkloadStatusCollector> getWorkloadStatusCollectors() {
-        return workloadStatusCollectors;
+    public List<Provider<TestListener>> getTestListeners() {
+        return testListeners;
     }
 
-    public void setWorkloadStatusCollectors(List<WorkloadStatusCollector> workloadStatusCollectors) {
-        this.workloadStatusCollectors = workloadStatusCollectors;
+    public void setTestListeners(List<Provider<TestListener>> testListeners) {
+        this.testListeners = testListeners;
     }
 
     @Override

@@ -162,5 +162,10 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("metric-aggregator-sum", new SumMetricAggregatorDefinitionParser());
         registerBeanDefinitionParser("metric-aggregator-std", new StdDevMetricAggregatorDefinitionParser());
         registerBeanDefinitionParser("metric-aggregator-ref", new RefMetricAggregatorDefinitionParser());
+
+        //listeners
+        registerBeanDefinitionParser("test-listener", findTypeParser);
+        registerBeanDefinitionParser("test-listeners", new TestListenersDefinitionParser());
+        registerBeanDefinitionParser("test-listener-threads", new ThreadsTestListenerDefinitionParser());
     }
 }

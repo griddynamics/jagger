@@ -40,6 +40,11 @@
     <alias name="threadInfoProviderStub" alias="falseThreadInfoProvider"/>
     <alias name="${jmx.enabled}ThreadInfoProvider" alias="threadInfoProvider"/>
 
+    <bean id="samplingProfilerTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${jmx.profiler.timeout}"/>
+        <property name="name"  value="jmx.profiler.timeout"/>
+    </bean>
+
     <bean id="samplingProfiler" class="com.griddynamics.jagger.diagnostics.thread.sampling.SamplingProfilerImpl">
         <property name="excludePatterns">
             <list>
@@ -56,7 +61,7 @@
             </list>
         </property>
         <property name="threadInfoProvider" ref="threadInfoProvider"/>
-        <property name="jmxTimeout" value="${jmx.profiler.timeout}"/>
+        <property name="jmxTimeout" ref="samplingProfilerTimeout"/>
     </bean>
 
 </beans>

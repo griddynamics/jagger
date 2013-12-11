@@ -1,14 +1,13 @@
 package com.griddynamics.jagger.engine.e1.services;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
-import com.griddynamics.jagger.engine.e1.services.DefaultMetric;
-import com.griddynamics.jagger.engine.e1.services.Metric;
-import com.griddynamics.jagger.engine.e1.services.MetricService;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
+import com.griddynamics.jagger.storage.fs.logging.LogWriter;
+import com.griddynamics.jagger.storage.fs.logging.MetricLogEntry;
 
-import java.util.HashMap;
+import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,47 +17,46 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class DefaultMetricService implements MetricService {
+    public static final String METRIC_MARKER = "METRIC";
 
     protected String sessionId;
     protected String taskId;
-    protected NodeContext nodeContext;
+    protected NodeContext context;
 
     public DefaultMetricService(String sessionId, String taskId, NodeContext context){
         this.sessionId = sessionId;
         this.taskId = taskId;
-        this.nodeContext = context;
+        this.context = context;
     }
 
-    private HashMap<String, Metric> metricMap = new HashMap<String, Metric>();
-
     @Override
-    public boolean registerMetric(MetricDescription metricDescription) {
-        KeyValueStorage storage = nodeContext.getService(KeyValueStorage.class);
+    public boolean createMetric(MetricDescription metricDescription) {
+        KeyValueStorage storage = context.getService(KeyValueStorage.class);
 
-        storage.put(Namespace.of(
-                sessionId, taskId, "metricAggregatorProviders"),
-                metricDescription.getId(),
-                metricDescription
+        storage.put(Namespace.of(sessionId, taskId, "metricDescription"),
+                    metricDescription.getMetricId(),
+                    metricDescription
         );
-
-        DefaultMetric metric = new DefaultMetric();
-        metric.init(sessionId, taskId, nodeContext);
-        metric.setMetricId(metricDescription.getId());
-
-        metricMap.put(metricDescription.getId(), metric);
 
         return true;
     }
 
     @Override
-    public Metric getMetric(String id) {
-        return metricMap.get(id);
+    public void saveValue(String metricId, Number value) {
+        long current = System.currentTimeMillis();
+        saveValue(metricId, value, current);
     }
 
     @Override
-    public void flushMetrics() {
-        for (Metric metric : metricMap.values()){
-            metric.flush();
-        }
+    public void saveValue(String metricId, Number value, long timeStamp) {
+        LogWriter logWriter = context.getService(LogWriter.class);
+        logWriter.log(sessionId, taskId + File.separatorChar + METRIC_MARKER + File.separatorChar + metricId, context.getId().getIdentifier(),
+                new MetricLogEntry(timeStamp, metricId, value));
+    }
+
+    @Override
+    public void flush() {
+        LogWriter logWriter = context.getService(LogWriter.class);
+        logWriter.flush();
     }
 }

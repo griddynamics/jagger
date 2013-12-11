@@ -37,7 +37,7 @@ public class SkipCalibration implements Calibrator {
     private final static Logger log= LoggerFactory.getLogger(SkipCalibration.class);
 
     @Override
-    public void calibrate(String sessionId, String taskId, ScenarioFactory<Object, Object, Object> scenarioFactory, Map<NodeId, RemoteExecutor> remotes, int timeout) {
+    public void calibrate(String sessionId, String taskId, ScenarioFactory<Object, Object, Object> scenarioFactory, Map<NodeId, RemoteExecutor> remotes, long timeout) {
         log.debug("Calibration requested.");
         log.debug("Skipping calibration");
     }

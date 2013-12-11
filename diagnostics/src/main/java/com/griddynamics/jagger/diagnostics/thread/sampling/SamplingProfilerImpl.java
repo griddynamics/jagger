@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
 import com.griddynamics.jagger.util.TimeUtils;
+import com.griddynamics.jagger.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ import java.util.regex.Pattern;
 public class SamplingProfilerImpl implements SamplingProfiler {
 
     private static final Logger log = LoggerFactory.getLogger(SamplingProfilerImpl.class);
-    private int jmxTimeout = 300;
+    private Timeout jmxTimeout = new Timeout(300,"");
 
     private ThreadInfoProvider threadInfoProvider;
     private long pollingInterval;
@@ -49,7 +50,7 @@ public class SamplingProfilerImpl implements SamplingProfiler {
     private List<Pattern> excludePatterns;
     private ThreadPoolExecutor jmxThreadPoolExecutor = createJMXThreadPoolExecutor();
 
-    public void setJmxTimeout(int jmxTimeout) {
+    public void setJmxTimeout(Timeout jmxTimeout) {
         this.jmxTimeout = jmxTimeout;
     }
 
@@ -101,10 +102,10 @@ public class SamplingProfilerImpl implements SamplingProfiler {
 
             boolean needReset = true;
 
-            int timeout = 0;
+            long timeout = 0;
             while (isRunning.get()) {
                 TimeUtils.sleepMillis(timeout);
-                timeout = 0;
+                timeout = jmxTimeout.getValue();
                 Map<String, ThreadInfo[]> threadInfos = null;
                 if (jmxThreadPoolExecutor.getActiveCount() == 0) {
 
@@ -116,19 +117,18 @@ public class SamplingProfilerImpl implements SamplingProfiler {
                         }
                     });
                     try {
-                        threadInfos = Futures.makeUninterruptible(future).get(jmxTimeout, TimeUnit.MILLISECONDS);
+                        threadInfos = Futures.makeUninterruptible(future).get(jmxTimeout.getValue(), TimeUnit.MILLISECONDS);
                     } catch (ExecutionException e) {
                         log.error("Execution failed {}", e);
                         throw Throwables.propagate(e);
                     } catch (TimeoutException e) {
-                        log.warn("SamplingProfiler {} : Time is left for collecting through JMX, make pause {} ms and pass out", identifier, jmxTimeout);
-                        timeout = jmxTimeout;
-                        jmxThreadPoolExecutor.shutdown();
-                        jmxThreadPoolExecutor = createJMXThreadPoolExecutor();
+                        log.warn("SamplingProfiler {} : timeout. Collection of jmxInfo was not finished in {}. Pass out without jmxInfo",
+                                identifier,jmxTimeout.toString());
                         continue;
                     }
                 } else {
-                    log.debug("SamplingProfiler {} : jmxThread is busy. pass out", identifier);
+                    log.warn("SamplingProfiler {} : jmxThread is busy. Pass out without jmxInfo", identifier);
+                    continue;
                 }
 
                 if (threadInfos == null) {

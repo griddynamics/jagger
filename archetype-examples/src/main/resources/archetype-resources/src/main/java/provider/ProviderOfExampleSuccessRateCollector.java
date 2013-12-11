@@ -18,7 +18,7 @@ public class ProviderOfExampleSuccessRateCollector<Q, R, E> extends MetricCollec
     public void init(java.lang.String sessionId, java.lang.String taskId, NodeContext kernelContext) {
         KeyValueStorage storage = kernelContext.getService(KeyValueStorage.class);
         storage.put(Namespace.of(
-                sessionId, taskId, "metricAggregatorProviders"),
+                sessionId, taskId, "metricDescription"),
                 "successRate",
                 aggregators
         );
@@ -30,16 +30,15 @@ public class ProviderOfExampleSuccessRateCollector<Q, R, E> extends MetricCollec
     }
 
     @Override
-    public void setAggregators(List<MetricDescriptionEntry> aggregators) {
+    public void setMetricDescription(MetricDescription description) {
     }
 
     @Override
-    public List<MetricDescriptionEntry> getAggregators() {
-        return aggregators;
+    public List<MetricDescription> getMetricDescription() {
+        return new MetricDescription("successRate")
+                .showPlotData(true)
+                .showSummary(true)
+                .addAggregator(new ProviderOfExampleSuccessRateAggregator())
+                .addAggregator(new ProviderOfFailCountAggregator());
     }
-
-    private List<MetricDescriptionEntry> aggregators = Arrays.asList(
-            new MetricDescriptionEntry(new ProviderOfExampleSuccessRateAggregator(), true),
-            new MetricDescriptionEntry(new ProviderOfFailCountAggregator(), true));
-
 }

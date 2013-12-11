@@ -55,10 +55,16 @@ public interface Invoker<Q,R,E> extends Serializable {
 
 /* Below is doxygen documentation for Jagger customization */
 
-/// @mainpage Custom components for Jagger
+/// @mainpage Jagger source code documentation
+/// Back to <a href="https://github.com/griddynamics/jagger/wiki">GitHub</a> documentation @n
 /// @n
 /// @li @ref Main_Test_Suite_Flow_group
 /// @li @ref Main_Test_Flow_group
+///
+/// @li @ref Main_Collectors_General_group
+/// @li @ref Main_Providers_General_group
+/// @li @ref Main_Distributors_General_group
+///
 /// @li @ref Main_Custom_Components_group
 
 /// @defgroup Main_Test_Suite_Flow_group Test suite execution sequence
@@ -93,7 +99,7 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @li @ref Main_HowToCustomizeDecisionMakers_group
 
 /* **************** Invokerss page *************************  */
-/// @defgroup Main_Invokers_General_group General information about invokers
+/// @defgroup Main_Invokers_General_group Invokers main page
 ///
 /// @details Invokers take query and try to create invocation to endpoint. @n
 /// Every invoker returns some result. Usually, query is used as http request and endpoint is used as url of target service @n
@@ -139,6 +145,7 @@ public interface Invoker<Q,R,E> extends Serializable {
 /* **************** Base components ************************* */
 /// @defgroup Main_Invokers_Base_group Invoker
 /// @defgroup Main_Distributors_Base_group Distributor
+/// @details @ref Main_Distributors_General_group
 /// @defgroup Main_Collectors_Base_group Collector
 /// @details @ref Main_Collectors_General_group
 
@@ -146,7 +153,9 @@ public interface Invoker<Q,R,E> extends Serializable {
 /* **************** Implementations ************************* */
 /// @defgroup Main_Invokers_group Implementations of invokers
 /// @defgroup Main_Providers_group Implementations of providers
+/// @details @ref Main_Providers_General_group
 /// @defgroup Main_Distributors_group Implementations of distributors
+/// @details @ref Main_Distributors_General_group
 /// @defgroup Main_Collectors_group Implementations of collectors
 /// @details @ref Main_Collectors_General_group
 /// @defgroup Main_Aggregators_group Implementations of aggregators

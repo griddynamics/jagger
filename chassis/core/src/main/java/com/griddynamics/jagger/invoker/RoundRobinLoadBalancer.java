@@ -30,7 +30,9 @@ import java.util.Iterator;
  * @par Details:
  * @details Round-Robin algorithm - for input endpoints [e1, e2] and
  * queries [q1, q2, q3] returns (invoker, query) pairs in following order:
- * (e1, q1), (e2, q2), (e1, q3), (e2, q1), (e1, q2), (e2, q3).
+ * (e1, q1), (e2, q2), (e1, q3), (e2, q1), (e1, q2), (e2, q3). @n
+ * @n
+ * To use this distributor add @xlink{query-distributor} element with type @xlink_complex{query-distributor-round-robin} in @xlink{scenario} block.
  *
  * @param <Q> Query type
  * @param <E> Endpoint type
