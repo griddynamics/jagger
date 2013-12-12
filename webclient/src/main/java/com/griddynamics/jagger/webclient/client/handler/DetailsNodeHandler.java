@@ -27,8 +27,10 @@ public class DetailsNodeHandler extends TreeAwareHandler<DetailsNode> {
         }
 
         Set<PlotNameDto> sessionScopePlotNames = new HashSet<PlotNameDto>();
-        for (SessionPlotNode plotNode: detailsNode.getSessionScopePlotsNode().getPlots()) {
-            sessionScopePlotNames.add(plotNode.getPlotNameDto());
+        if (detailsNode.getSessionScopePlotsNode() != null) {
+            for (SessionPlotNode plotNode: detailsNode.getSessionScopePlotsNode().getPlots()) {
+                sessionScopePlotNames.add(plotNode.getPlotNameDto());
+            }
         }
 
         if (Tree.CheckState.CHECKED.equals(event.getChecked())) {
