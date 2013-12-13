@@ -225,8 +225,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
             }
             final GeneralNodeInfo generalNodeInfo = SerializationUtils.fromString(reader.iterator().next().toString());
 
-            //???
-            System.out.println(generalNodeInfo.toString());
+            log.debug(generalNodeInfo.toString());
 
             getHibernateTemplate().execute(new HibernateCallback<Void>() {
                 @Override
