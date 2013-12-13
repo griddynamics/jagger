@@ -84,6 +84,7 @@ public class ExchangeClient {
     }
 
     public PackResponse exchange() throws Throwable {
+        log.debug("- S T A R T  C Y C L E ---------------------------------------------------------");
         log.debug("Exchange requested from agent {}", nodeContext.getId());
         Pack out = packExchanger.retrieve();
         log.debug("Going to send pack {} from agent {}", out, nodeContext.getId());

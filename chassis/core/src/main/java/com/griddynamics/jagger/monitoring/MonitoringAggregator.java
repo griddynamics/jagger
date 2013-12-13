@@ -22,14 +22,12 @@ package com.griddynamics.jagger.monitoring;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
-import com.griddynamics.jagger.agent.model.MonitoringParameter;
-import com.griddynamics.jagger.agent.model.MonitoringParameterLevel;
-import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
+import com.griddynamics.jagger.agent.model.*;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.diagnostics.thread.sampling.ProfileDTO;
 import com.griddynamics.jagger.diagnostics.thread.sampling.RuntimeGraph;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.NodeInfoEntity;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
@@ -166,6 +164,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
             });
 
             saveProfilers(sessionId, taskId);
+            saveAgentNodesInfo(sessionId, taskId);
 
         } catch (Exception e) {
             log.error("Error during log processing", e);
@@ -200,6 +199,38 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                         session.persist(new ProfilingSuT(prefix + runtimeGraphEntry.getKey(), sessionId,
                                 getTaskData(taskId, sessionId), context));
                     }
+                    session.flush();
+                    return null;
+                }
+            });
+        }
+    }
+
+    private void saveAgentNodesInfo(final String sessionId, final String taskId) throws IOException {
+        String dir;
+        dir = sessionId + "/" + taskId + "/" + MonitorProcess.NODE_INFO_MARKER;
+
+        Set<String> fileNameList = fileStorage.getFileNameList(dir);
+        if (fileNameList.isEmpty()) {
+            log.debug("Directory {} is empty.", dir);
+            return;
+        }
+        for (final String fileName : fileNameList) {
+            LogReader.FileReader reader;
+            try {
+                reader = logReader.read(fileName, Object.class);
+            } catch (IllegalArgumentException e) {
+                log.warn(e.getMessage(), e);
+                return;
+            }
+            final GeneralNodeInfo generalNodeInfo = SerializationUtils.fromString(reader.iterator().next().toString());
+
+            log.debug(generalNodeInfo.toString());
+
+            getHibernateTemplate().execute(new HibernateCallback<Void>() {
+                @Override
+                public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                    session.persist(new NodeInfoEntity(sessionId,generalNodeInfo));
                     session.flush();
                     return null;
                 }

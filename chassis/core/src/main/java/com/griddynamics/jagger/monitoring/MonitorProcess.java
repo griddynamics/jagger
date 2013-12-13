@@ -21,10 +21,7 @@
 package com.griddynamics.jagger.monitoring;
 
 import com.google.common.base.Throwables;
-import com.griddynamics.jagger.agent.model.GetCollectedProfileFromSuT;
-import com.griddynamics.jagger.agent.model.GetSystemInfo;
-import com.griddynamics.jagger.agent.model.ManageCollectionProfileFromSuT;
-import com.griddynamics.jagger.agent.model.SystemInfo;
+import com.griddynamics.jagger.agent.model.*;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.diagnostics.thread.sampling.ProfileDTO;
 import com.griddynamics.jagger.exception.TechnicalException;
@@ -51,6 +48,7 @@ import static com.griddynamics.jagger.agent.model.ManageCollectionProfileFromSuT
  */
 public class MonitorProcess extends LogProcessor implements NodeProcess<MonitoringStatus> {
     public static final String PROFILER_MARKER = "PROFILER";
+    public static final String NODE_INFO_MARKER = "NODE_INFO";
 
     private static final Logger log = LoggerFactory.getLogger(MonitorProcess.class);
 
@@ -98,6 +96,22 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
                 try {
                     VoidResult voidResult = remote.runSyncWithTimeout(new ManageCollectionProfileFromSuT(sessionId,
                             ManageHotSpotMethodsFromSuT.START_POLLING, profilerPollingInterval), Coordination.<ManageCollectionProfileFromSuT>doNothing(), ttl);
+
+                    if (!voidResult.hasException()) {
+                        try {
+                            GeneralNodeInfo generalNodeInfo = remote.runSyncWithTimeout(new GetGeneralNodeInfo(sessionId),
+                                    Coordination.<GetGeneralNodeInfo>doNothing(), ttl);
+                            generalNodeInfo.setParentNodeId(nodeContext.getId());
+                            log.debug("got node info from agent {} from kernel {}", agentId, nodeContext.getId());
+                            logWriter.log(sessionId, taskId + "/" + NODE_INFO_MARKER, agentId.getIdentifier(), SerializationUtils.toString(generalNodeInfo));
+                            log.debug("node info {} received from agent {} and has been written to FileStorage", generalNodeInfo, agentId);
+                            logWriter.flush();
+                            log.debug("flushing performed on kernel {}", nodeContext.getId());
+                        } catch (Throwable e) {
+                            log.error("Get node info failed for agent " + agentId + "\n" + Throwables.getStackTraceAsString(e));
+                        }
+                    }
+
                     while (alive) {
                         long startTime = System.currentTimeMillis();
                         log.debug("try getting GetSystemInfo on kernel {} from {}", nodeContext.getId(), agentId);
