@@ -46,7 +46,7 @@ public class AgentWorker extends ConfigurableWorker {
     private static final Logger log = LoggerFactory.getLogger(AgentWorker.class);
 
     private MonitoringInfoService monitoringInfoService;
-    private GeneralInfoCollector generalInfoService;
+    private GeneralInfoCollector generalInfoService = new GeneralInfoCollector();
     private Profiler profiler;
     private final Agent agent;
 
@@ -215,10 +215,6 @@ public class AgentWorker extends ConfigurableWorker {
 
     public void setMonitoringInfoService(MonitoringInfoService monitoringInfoService) {
         this.monitoringInfoService = monitoringInfoService;
-    }
-
-    public void setGeneralInfoService(GeneralInfoCollector generalInfoService) {
-        this.generalInfoService = generalInfoService;
     }
 
     @Required

@@ -33,11 +33,7 @@ import static com.griddynamics.jagger.util.Units.bytesToMiB;
 public class GeneralInfoCollector {
     private static final Logger log = LoggerFactory.getLogger(GeneralInfoCollector.class);
 
-    private Sigar sigar;
-
-    public void setSigar(Sigar sigar) {
-        this.sigar = sigar;
-    }
+    private Sigar sigar = new Sigar();
 
     public GeneralNodeInfo getSystemInfo() {
         long startTime = System.currentTimeMillis();
