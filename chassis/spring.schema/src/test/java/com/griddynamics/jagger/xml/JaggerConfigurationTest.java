@@ -75,7 +75,7 @@ public class JaggerConfigurationTest {
     public void conf1ListTest(){
         Configuration config1 = (Configuration) ctx.getBean("config1");
 
-        Assert.assertEquals(config1.getSessionExecutionListeners().size(), 3);
+        Assert.assertEquals(config1.getSessionExecutionListeners().size(), 4);
         checkListOnNull(config1.getSessionExecutionListeners());
 
         Assert.assertEquals(config1.getDistributionListeners().size(), 8);
@@ -87,7 +87,7 @@ public class JaggerConfigurationTest {
     public void conf2ListTest(){
         Configuration config2 = (Configuration) ctx.getBean("config2");
 
-        Assert.assertEquals(config2.getSessionExecutionListeners().size(), 2);
+        Assert.assertEquals(config2.getSessionExecutionListeners().size(), 3);
         checkListOnNull(config2.getSessionExecutionListeners());
 
         Assert.assertEquals(7, config2.getDistributionListeners().size());

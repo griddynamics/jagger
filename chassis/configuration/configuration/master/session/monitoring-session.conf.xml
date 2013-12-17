@@ -30,6 +30,7 @@
             <list>
                 <ref bean="basicSessionCollector"/>
                 <ref bean="basicAggregator"/>
+                <ref bean="generalNodeInfoAggregator"/>
             </list>
         </property>
         <property name="taskExecutionListeners">

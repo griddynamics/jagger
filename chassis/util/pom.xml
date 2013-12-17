@@ -35,6 +35,11 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <properties>
+        <sigar.version>1.6.3.82</sigar.version>
+        <sigar.native.libs.dest>${project.build.directory}/lib/native</sigar.native.libs.dest>
+    </properties>
+
     <dependencies>
 
         <!-- Third-party dependencies -->
@@ -75,5 +80,71 @@
             <groupId>trove</groupId>
             <artifactId>trove</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.hyperic</groupId>
+            <artifactId>sigar</artifactId>
+            <version>${sigar.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hyperic</groupId>
+            <artifactId>sigar-dist</artifactId>
+            <version>${sigar.version}</version>
+            <type>zip</type>
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-native-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/native.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.hyperic</groupId>
+                                    <artifactId>sigar-dist</artifactId>
+                                    <version>${sigar.version}</version>
+                                    <type>zip</type>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${sigar.native.libs.dest}</outputDirectory>
+                            <includes>hyperic-sigar-1.6.3/sigar-bin/lib/*.*</includes>
+                            <excludes>hyperic-sigar-1.6.3/sigar-bin/lib/*.jar</excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
 </project>

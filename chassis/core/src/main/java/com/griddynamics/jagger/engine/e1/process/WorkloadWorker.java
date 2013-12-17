@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.griddynamics.jagger.agent.model.GetGeneralNodeInfo;
 import com.griddynamics.jagger.coordinator.CommandExecutor;
 import com.griddynamics.jagger.coordinator.ConfigurableWorker;
 import com.griddynamics.jagger.coordinator.NodeContext;
@@ -33,10 +34,7 @@ import com.griddynamics.jagger.engine.e1.scenario.CalibrationInfoCollector;
 import com.griddynamics.jagger.invoker.Scenario;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
-import com.griddynamics.jagger.util.ExceptionLogger;
-import com.griddynamics.jagger.util.Futures;
-import com.griddynamics.jagger.util.Pair;
-import com.griddynamics.jagger.util.TimeoutsConfiguration;
+import com.griddynamics.jagger.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -53,6 +51,8 @@ import java.util.concurrent.Executors;
 public class WorkloadWorker extends ConfigurableWorker {
     private static final Logger log = LoggerFactory.getLogger(WorkloadWorker.class);
     private TimeoutsConfiguration timeoutsConfiguration;
+
+    private GeneralInfoCollector generalInfoCollector = new GeneralInfoCollector();
 
     private Map<String, WorkloadProcess> processes = Maps.newConcurrentMap();
     private Map<String, Integer> pools = Maps.newConcurrentMap();
@@ -198,6 +198,23 @@ public class WorkloadWorker extends ConfigurableWorker {
                 logWriter.flush();
                 return true;
             }
+        });
+
+        onCommandReceived(GetGeneralNodeInfo.class).execute(
+            new CommandExecutor<GetGeneralNodeInfo, GeneralNodeInfo>() {
+                @Override
+                public Qualifier<GetGeneralNodeInfo> getQualifier() {
+                    return Qualifier.of(GetGeneralNodeInfo.class);
+                }
+
+                @Override
+                public GeneralNodeInfo execute(GetGeneralNodeInfo command, NodeContext nodeContext) {
+                    long startTime = System.currentTimeMillis();
+                    log.debug("start GetGeneralNodeInfo on kernel {}", nodeContext.getId());
+                    GeneralNodeInfo generalNodeInfo = generalInfoCollector.getGeneralNodeInfo();
+                    log.debug("finish GetGeneralNodeInfo on kernel {} time {} ms", nodeContext.getId(), System.currentTimeMillis() - startTime);
+                    return generalNodeInfo;
+           }
         });
 
     }

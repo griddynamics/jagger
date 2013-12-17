@@ -24,10 +24,12 @@ import com.google.common.collect.Sets;
 import com.griddynamics.jagger.agent.Agent;
 import com.griddynamics.jagger.agent.AgentStarter;
 import com.griddynamics.jagger.agent.Profiler;
+import com.griddynamics.jagger.util.GeneralInfoCollector;
 import com.griddynamics.jagger.agent.model.*;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.diagnostics.thread.sampling.ProfileDTO;
 import com.griddynamics.jagger.diagnostics.thread.sampling.RuntimeGraph;
+import com.griddynamics.jagger.util.GeneralNodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -45,6 +47,7 @@ public class AgentWorker extends ConfigurableWorker {
     private static final Logger log = LoggerFactory.getLogger(AgentWorker.class);
 
     private MonitoringInfoService monitoringInfoService;
+    private GeneralInfoCollector generalInfoCollector = new GeneralInfoCollector();
     private Profiler profiler;
     private final Agent agent;
 
@@ -181,6 +184,23 @@ public class AgentWorker extends ConfigurableWorker {
                 }
 
         );
+        onCommandReceived(GetGeneralNodeInfo.class).execute(
+                new CommandExecutor<GetGeneralNodeInfo, GeneralNodeInfo>() {
+            @Override
+            public Qualifier<GetGeneralNodeInfo> getQualifier() {
+                return Qualifier.of(GetGeneralNodeInfo.class);
+            }
+
+            @Override
+            public GeneralNodeInfo execute(GetGeneralNodeInfo command, NodeContext nodeContext) {
+                long startTime = System.currentTimeMillis();
+                log.debug("start GetGeneralNodeInfo on agent {}", nodeContext.getId());
+                GeneralNodeInfo generalNodeInfo = generalInfoCollector.getGeneralNodeInfo();
+                log.debug("finish GetGeneralNodeInfo on agent {} time {} ms", nodeContext.getId(), System.currentTimeMillis() - startTime);
+                return generalNodeInfo;
+            }
+        });
+
     }
 
     private ArrayList<SystemInfo> getSystemInfo() {

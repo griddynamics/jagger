@@ -75,12 +75,13 @@ public class XMLConstants {
     public static final String BASIC_COLLECTOR = "basicSessionCollector";
     public static final String WORKLOAD_COLLECTOR = "e1MasterCollector";
     public static final String BASIC_AGGREGATOR = "basicAggregator";
+    public static final String GENERAL_NODE_INFO_AGGREGATOR = "generalNodeInfoAggregator";
     public static final String WORKLOAD_AGGREGATOR = "e1ScenarioAggregator";
     public static final String MONITORING_AGGREGATOR = "monitoringAggregator";
     public static final String DURATION_LOG_PROCESSOR = "durationLogProcessor";
     public static final String METRIC_LOG_PROCESSOR = "metricLogProcessor";
     //don't change the order!!! will not works
-    public static final List<String> STANDARD_SESSION_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, BASIC_AGGREGATOR);
+    public static final List<String> STANDARD_SESSION_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, BASIC_AGGREGATOR, GENERAL_NODE_INFO_AGGREGATOR);
     public static final List<String> STANDARD_TASK_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, WORKLOAD_COLLECTOR, BASIC_AGGREGATOR, WORKLOAD_AGGREGATOR, MONITORING_AGGREGATOR, METRIC_LOG_PROCESSOR);
 
     public static final String WORKLOAD_LISTENERS_ELEMENT = "info-collectors";

@@ -104,4 +104,15 @@
         <property name="globalPercentilesKeys" ref="standardPercentilesGlobal"/>
     </bean>
 
+    <bean id="generalNodeInfoAggregator" class="com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="coordinator" ref="coordinator"/>
+        <property name="nodeCollectInfoTime" ref="nodeCollectInfoTimeTimeout"/>
+    </bean>
+
+    <bean id="nodeCollectInfoTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${chassis.master.collect.node.info.awaittime}"/>
+        <property name="name"  value="chassis.master.collect.node.info.awaittime=30000"/>
+    </bean>
+
 </beans>
