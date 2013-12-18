@@ -979,7 +979,6 @@
             <xsd:documentation>
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:attribute name="displayName" type="xsd:string" use="optional"/>
     </xsd:complexType>
 
     <xsd:complexType name="metricAbstract" abstract="true">

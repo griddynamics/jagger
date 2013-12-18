@@ -19,6 +19,12 @@ public class ExtendedHibDaoSupport extends HibernateDaoSupport {
      * @return if CollectorDescription was found return it, otherwise persist new one and return
      */
     public CollectorDescription getCollectorDescription (String name, String displayName) {
+
+        // to avoid storing same strings
+        if (name.equals(displayName)) {
+            displayName = null;
+        }
+
         CollectorDescription description = fetchCollectorDescription(name, displayName);
         if (description == null) {
             description = new CollectorDescription(name, displayName);
@@ -32,6 +38,7 @@ public class ExtendedHibDaoSupport extends HibernateDaoSupport {
     }
 
     private CollectorDescription fetchCollectorDescription (final String name, final String displayName) {
+
         return getHibernateTemplate().execute(new HibernateCallback<CollectorDescription>() {
             @Override
             public CollectorDescription doInHibernate(Session session) throws HibernateException, SQLException {

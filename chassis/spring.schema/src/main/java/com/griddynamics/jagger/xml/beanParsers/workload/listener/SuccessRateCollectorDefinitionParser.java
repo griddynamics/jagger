@@ -34,10 +34,10 @@ public class SuccessRateCollectorDefinitionParser extends AbstractCollectorDefin
     }
 
     @Override
-    protected Collection<MetricAggregatorProviderWrapper> getAggregators() {
-        Collection<MetricAggregatorProviderWrapper> result = new ArrayList<MetricAggregatorProviderWrapper>(1);
-        result.add(MetricAggregatorProviderWrapper.of(new SuccessRateAggregatorProvider()));
-        result.add(MetricAggregatorProviderWrapper.of(new SuccessRateFailsAggregatorProvider()));
+    protected Collection<MetricAggregatorProvider> getAggregators() {
+        Collection<MetricAggregatorProvider> result = new ArrayList<MetricAggregatorProvider>(1);
+        result.add(new SuccessRateAggregatorProvider());
+        result.add(new SuccessRateFailsAggregatorProvider());
 
         return result;
     }

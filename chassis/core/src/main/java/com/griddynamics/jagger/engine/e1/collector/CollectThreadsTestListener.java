@@ -20,7 +20,7 @@ public class CollectThreadsTestListener extends AbstractServicesAwareProvider<Te
         getMetricService().createMetric(new MetricDescription(metricId)
                                                 .plotData(true)
                                                 .showSummary(true)
-                                                .addAggregator(MetricAggregatorProviderWrapper.of(new AvgMetricAggregatorProvider())));
+                                                .addAggregator(new AvgMetricAggregatorProvider()));
     }
 
     @Override

@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator;
 
 import com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider;
+import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -30,10 +31,15 @@ import org.w3c.dom.Element;
  *         Date: 06.08.13
  */
 
-public class AvgMetricAggregatorDefinitionParser extends AbstractMetricAggregatorDefinitionParser {
+public class AvgMetricAggregatorDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
-    protected Object getMetricAggregatorProvider(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        return BeanDefinitionBuilder.genericBeanDefinition(AvgMetricAggregatorProvider.class).getBeanDefinition();
+    protected Class getBeanClass(Element element) {
+        return AvgMetricAggregatorProvider.class;
+    }
+
+    @Override
+    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        //nothing to do
     }
 }

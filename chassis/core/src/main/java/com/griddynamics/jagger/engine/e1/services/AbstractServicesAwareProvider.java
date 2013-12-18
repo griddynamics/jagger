@@ -38,5 +38,6 @@ public abstract class AbstractServicesAwareProvider<T> implements NodeSideInitia
      * @n
      * @par Details: If you would like to execute some actions, before objects will be provided, override this method
      * @details */
-    protected abstract void init();
+    protected void init(){
+    };
 }

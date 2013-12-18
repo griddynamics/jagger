@@ -21,13 +21,11 @@ package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
 import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
+import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 import java.util.Collection;
@@ -62,7 +60,7 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
             saveSummary = Boolean.valueOf(element.getAttribute(XMLConstants.SAVE_SUMMARY));
         }
 
-        List aggregators = parseAggregators(element, parserContext, builder.getBeanDefinition());
+        List aggregators = CustomBeanDefinitionParser.parseCustomListElement(element, parserContext, builder.getBeanDefinition());
 
         if (aggregators.size() == 0) {
             aggregators.addAll(getAggregators());
@@ -91,24 +89,7 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
 
     }
 
-    /**
-     * To avoid default parsing of elements with "ref" attribute
-     * @return List of MetricAggregatorProviderWrapper bean definitions.
-     */
-    protected List parseAggregators(Element element, ParserContext parserContext, BeanDefinition bean) {
-
-        List<Element> elements = DomUtils.getChildElements(element);
-
-        ManagedList result = new ManagedList();
-        if (elements != null && !elements.isEmpty()){
-            for (Element el : elements){
-                result.add(parserContext.getDelegate().parsePropertySubElement(el, bean));
-            }
-        }
-        return result;
-    }
-
-    protected abstract Collection<MetricAggregatorProviderWrapper> getAggregators();
+    protected abstract Collection<MetricAggregatorProvider> getAggregators();
 
     protected String getDefaultCollectorName(){
         return XMLConstants.DEFAULT_METRIC_NAME;
