@@ -20,6 +20,7 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Maps;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.CollectorDescription;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
@@ -101,17 +102,21 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
         String sessionId = getSessionIdProvider().getSessionId();
         List<MetricDetails> metricDetails= getHibernateTemplate().find(
                     "select m from MetricDetails m where m.taskData.sessionId=?", sessionId);
-        Map<String, Map<String, List<MetricDetails>>> aggregatedByTasks = Maps.newLinkedHashMap();
+        Map<String, Map<CollectorDescription, List<MetricDetails>>> aggregatedByTasks = Maps.newLinkedHashMap();
         for (MetricDetails detail : metricDetails) {
-            Map<String, List<MetricDetails>> byTaskId = aggregatedByTasks.get(detail.getTaskData().getTaskId());
+            Map<CollectorDescription, List<MetricDetails>> byTaskId = aggregatedByTasks.get(detail.getTaskData().getTaskId());
             if (byTaskId == null) {
                 byTaskId = Maps.newLinkedHashMap();
                 aggregatedByTasks.put(detail.getTaskData().getTaskId(), byTaskId);
             }
-            List<MetricDetails> taskData = byTaskId.get(detail.getMetric());
+            CollectorDescription displayName = detail.getDescription();
+            if (displayName == null) {
+                displayName = new CollectorDescription(detail.getMetric());
+            }
+            List<MetricDetails> taskData = byTaskId.get(displayName);
             if (taskData == null) {
                 taskData = new LinkedList<MetricDetails>();
-                byTaskId.put(detail.getMetric(), taskData);
+                byTaskId.put(displayName, taskData);
             }
             taskData.add(detail);
         }
@@ -122,9 +127,9 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
                 taskPlot = new MetricPlotDTOs();
                 taskPlots.put(taskId, taskPlot);
             }
-            for (String metricName : aggregatedByTasks.get(taskId).keySet()) {
+            for (CollectorDescription metricName : aggregatedByTasks.get(taskId).keySet()) {
                 List<MetricDetails> taskStats = aggregatedByTasks.get(taskId).get(metricName);
-                    XYSeries plotEntry = new XYSeries(metricName);
+                    XYSeries plotEntry = new XYSeries(metricName.getDisplay());
                     for (MetricDetails stat : taskStats) {
                         plotEntry.add(stat.getTime(), stat.getValue());
                     }
@@ -133,8 +138,8 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
                     Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(plotCollection, null);
                     plotCollection = pair.getSecond();
                     JFreeChart chartMetric = ChartHelper.createXYChart(null, plotCollection,
-                            "Time (" + pair.getFirst() + ")", metricName, 2, 2, ChartHelper.ColorTheme.LIGHT);
-                taskPlot.addPlot(new MetricPlotDTO(metricName, new JCommonDrawableRenderer(chartMetric)));
+                            "Time (" + pair.getFirst() + ")", metricName.getDisplay(), 2, 2, ChartHelper.ColorTheme.LIGHT);
+                taskPlot.addPlot(new MetricPlotDTO(metricName.getDisplay(), new JCommonDrawableRenderer(chartMetric)));
             }
         }
         return taskPlots;

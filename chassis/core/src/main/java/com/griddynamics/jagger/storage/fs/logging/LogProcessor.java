@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ import java.util.List;
  * @author Alexey Kiselyov
  *         Date: 25.07.11
  */
-public class LogProcessor extends HibernateDaoSupport {
+public class LogProcessor extends ExtendedHibDaoSupport {
 
     private static final Logger log = LoggerFactory.getLogger(LogProcessor.class);
 

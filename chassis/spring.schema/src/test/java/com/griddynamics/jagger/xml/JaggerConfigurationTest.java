@@ -2,9 +2,7 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.agent.model.JmxMetricGroup;
-import com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider;
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
-import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
+import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
@@ -143,6 +141,43 @@ public class JaggerConfigurationTest {
         Assert.assertEquals("OperatingSystem", metric.getGroupName());
         Assert.assertEquals(1, metric.getAttributes().length);
         Assert.assertEquals("MaxFileDescriptorCount", metric.getAttributes()[0]);
+    }
+
+    @Test
+    public void validatorsNotNullDisplayName() throws Exception {
+        ValidatorProvider vp = (ValidatorProvider) ctx.getBean("validator1");
+        Assert.assertEquals("DISPLAY_NAME", vp.getDisplayName());
+    }
+
+    @Test
+    public void validatorsNullDisplayName() throws Exception {
+        ValidatorProvider vp = (ValidatorProvider) ctx.getBean("validator2");
+        Assert.assertNull(vp.getDisplayName());
+    }
+
+    @Test
+    public void validatorsEmptyDisplayName() throws Exception {
+        ValidatorProvider vp = (ValidatorProvider) ctx.getBean("validator3");
+        // we do not want to store empty strings, and then check every time so it should be null.
+        Assert.assertNull(vp.getDisplayName());
+    }
+
+    @Test
+    public void metricNotNullDisplayName() throws Exception {
+        ContextAware ca = (ContextAware)ctx.getBean("metric2");
+        Assert.assertEquals("DISPLAY_NAME", ca.getMetricDescriptions().getDisplayName());
+    }
+
+    @Test
+    public void metricNullDisplayName() throws Exception {
+        ContextAware ca = (ContextAware)ctx.getBean("metric3");
+        Assert.assertNull(ca.getMetricDescriptions().getDisplayName());
+    }
+
+    @Test
+    public void metricEmptyDisplayName() throws Exception {
+        ContextAware ca = (ContextAware)ctx.getBean("metric4");
+        Assert.assertNull(ca.getMetricDescriptions().getDisplayName());
     }
 
     private void checkListOnNull(List list){

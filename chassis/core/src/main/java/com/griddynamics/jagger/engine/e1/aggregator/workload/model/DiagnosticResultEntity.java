@@ -27,6 +27,7 @@ public class DiagnosticResultEntity {
 
     private Long id;
     private String name;
+    private CollectorDescription description;
     private Double total;
     private WorkloadData workloadData;
 
@@ -49,13 +50,21 @@ public class DiagnosticResultEntity {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getName() {
+    public void setDescription(CollectorDescription description) {
+        this.description = description;
+    }
 
-        return name;
+    @ManyToOne
+    public CollectorDescription getDescription() {
+        return description;
     }
 
     public Double getTotal() {

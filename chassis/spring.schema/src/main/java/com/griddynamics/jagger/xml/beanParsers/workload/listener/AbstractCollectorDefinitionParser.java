@@ -74,6 +74,8 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
             name = XMLConstants.DEFAULT_METRIC_NAME;
         }
 
+        String displayName = element.getAttribute(XMLConstants.DISPLAY_NAME);
+
         builder.addPropertyValue(XMLConstants.NAME, name);
 
         BeanDefinitionBuilder metricDescription = BeanDefinitionBuilder.genericBeanDefinition(MetricDescription.class);
@@ -81,6 +83,7 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
         metricDescription.addPropertyValue(XMLConstants.NEED_PLOT_DATA, plotData);
         metricDescription.addPropertyValue(XMLConstants.NEED_SAVE_SUMMARY, saveSummary);
         metricDescription.addPropertyValue(XMLConstants.AGGREGATORS, aggregators);
+        metricDescription.addPropertyValue(XMLConstants.DISPLAY_NAME, displayName.isEmpty() ? null : displayName);
 
         builder.addPropertyValue(XMLConstants.METRIC_DESCRIPTION, metricDescription.getBeanDefinition());
 

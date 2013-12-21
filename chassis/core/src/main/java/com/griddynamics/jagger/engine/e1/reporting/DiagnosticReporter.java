@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Lists;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.CollectorDescription;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -77,7 +78,10 @@ public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
     }
 
     private DiagnosticResult convert(DiagnosticResultEntity entity) {
-        String name  = entity.getName();
+
+        CollectorDescription description = entity.getDescription();
+        String name = description != null ? description.getDisplay() : entity.getName();
+
         Double total = entity.getTotal();
 
         DiagnosticResult result = new DiagnosticResult();

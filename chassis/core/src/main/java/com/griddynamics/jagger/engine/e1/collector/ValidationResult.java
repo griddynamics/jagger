@@ -20,21 +20,32 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.CollectorDescription;
 import java.io.Serializable;
 
 public class ValidationResult implements Serializable {
     private final String name;
+    private final CollectorDescription description;
     private final int invoked;
     private final int failed;
 
     public static ValidationResult create(String name, int invoked, int failed) {
-        return new ValidationResult(name, invoked, failed);
+        return create(name, null, invoked, failed);
     }
 
-    private ValidationResult(String name, int invoked, int failed) {
+    public static ValidationResult create(String name, String displayName, int invoked, int failed) {
+        return new ValidationResult(name, displayName, invoked, failed);
+    }
+
+    private ValidationResult(String name, String displayName, int invoked, int failed) {
         this.name = name;
+        this.description = new CollectorDescription(name, displayName);
         this.invoked = invoked;
         this.failed = failed;
+    }
+
+    public CollectorDescription getDescription() {
+        return description;
     }
 
     public String getName() {
