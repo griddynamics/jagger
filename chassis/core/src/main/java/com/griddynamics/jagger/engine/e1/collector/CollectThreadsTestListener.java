@@ -1,8 +1,9 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.test.TestInfo;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
-import com.griddynamics.jagger.engine.e1.services.AbstractServicesAwareProvider;
+import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,7 +12,7 @@ import com.griddynamics.jagger.engine.e1.services.AbstractServicesAwareProvider;
  * Time: 4:34 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CollectThreadsTestListener extends AbstractServicesAwareProvider<TestListener>{
+public class CollectThreadsTestListener extends ServicesAware implements Provider<TestListener> {
 
     private String metricId = "Jagger.Threads";
 

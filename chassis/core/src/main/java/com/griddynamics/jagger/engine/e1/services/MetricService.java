@@ -13,7 +13,7 @@ public interface MetricService extends JaggerService{
      * @n
      *
      * @param metricDescription - describes how to store metric */
-    boolean createMetric(MetricDescription metricDescription);
+    void createMetric(MetricDescription metricDescription);
 
     /** Saves metric value
      * @author Gribov Kirill

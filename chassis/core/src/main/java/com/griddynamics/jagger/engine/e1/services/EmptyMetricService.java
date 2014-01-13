@@ -15,26 +15,30 @@ public class EmptyMetricService implements MetricService {
 
     private static Logger log = LoggerFactory.getLogger(EmptyMetricService.class);
 
+    private JaggerEnvironment jaggerEnvironment;
+
+    public EmptyMetricService(JaggerEnvironment jaggerEnvironment) {
+        this.jaggerEnvironment = jaggerEnvironment;
+    }
 
     @Override
-    public boolean createMetric(MetricDescription metricDescription) {
-        log.warn("Can't create metric with id {}. Action is not allowed here!", metricDescription);
-        return false;
+    public void createMetric(MetricDescription metricDescription) {
+        log.warn("Can't create metric with id {}. MetricService is not supported in {}", metricDescription.getMetricId(), jaggerEnvironment);
     }
 
     @Override
     public void saveValue(String metricId, Number value) {
-        log.warn("Can't save metric value with id {}. Action is not allowed here!", metricId);
+        log.warn("Can't save metric value with id {}. MetricService is not supported in {}", metricId, jaggerEnvironment);
     }
 
     @Override
     public void saveValue(String metricId, Number value, long timeStamp) {
-        log.warn("Can't save metric value with id {}. Action is not allowed here!", metricId);
+        log.warn("Can't save metric value with id {}. MetricService is not supported in {}", metricId, jaggerEnvironment);
     }
 
     @Override
     public void flush() {
-        log.warn("Can't to do flush. Action is not allowed here!");
+        log.warn("Can't to do flush. MetricService is not supported in {}", jaggerEnvironment);
     }
 
     @Override

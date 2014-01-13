@@ -8,5 +8,18 @@ package com.griddynamics.jagger.engine.e1.services;
  * To change this template use File | Settings | File Templates.
  */
 public enum JaggerEnvironment {
-    TEST, TEST_GROUP, TEST_SUITE;
+    TEST("TestListener"),
+    TEST_GROUP("TestGroupListener"),
+    TEST_SUITE("TestSuiteListener");
+
+    private String name;
+
+    JaggerEnvironment(String name){
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

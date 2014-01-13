@@ -3,16 +3,14 @@ package com.griddynamics.jagger.engine.e1.services;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.Provider;
 
-/** Abstract type of Provider, that gives user an access to Jagger services
+/** An abstract class, that gives user an access to Jagger services
  * @author Gribov Kirill
  * @n
  * @par Details:
- * @details If you would like to provide new objects and have an access to jagger services - extend this class.
+ * @details If you would like to have an access to jagger services - extend this class.
  * @n
- *
- * @param <T> - type of element, that will be provided
  * */
-public abstract class AbstractServicesAwareProvider<T> implements ServicesInitializable, Provider<T> {
+public abstract class ServicesAware implements ServicesInitializable {
 
     private MetricService metricService;
     private SessionInfoService sessionInfoService;
@@ -68,12 +66,12 @@ public abstract class AbstractServicesAwareProvider<T> implements ServicesInitia
     }
 
     private void initTestGroupServices(String sessionId, String taskId, NodeContext context){
-        metricService = new EmptyMetricService();
+        metricService = new EmptyMetricService(JaggerEnvironment.TEST_GROUP);
         sessionInfoService = new DefaultSessionInfoService(context);
     }
 
     private void initTestSuiteServices(String sessionId, String taskId, NodeContext context){
-        metricService = new EmptyMetricService();
+        metricService = new EmptyMetricService(JaggerEnvironment.TEST_SUITE);
         sessionInfoService = new DefaultSessionInfoService(context);
     }
 }

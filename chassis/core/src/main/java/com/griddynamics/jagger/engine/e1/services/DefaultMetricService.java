@@ -30,15 +30,13 @@ public class DefaultMetricService implements MetricService {
     }
 
     @Override
-    public boolean createMetric(MetricDescription metricDescription) {
+    public void createMetric(MetricDescription metricDescription) {
         KeyValueStorage storage = context.getService(KeyValueStorage.class);
 
         storage.put(Namespace.of(sessionId, taskId, "metricDescription"),
                     metricDescription.getMetricId(),
                     metricDescription
         );
-
-        return true;
     }
 
     @Override
