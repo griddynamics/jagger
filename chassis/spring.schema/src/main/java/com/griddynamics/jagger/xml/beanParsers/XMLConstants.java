@@ -156,6 +156,7 @@ public class XMLConstants {
     public static final String DESCRIPTION = "description";
     public static final String PAIR_SUPPLIER_FACTORY = "pairSupplierFactory";
     public static final String RANDOM_SEED = "randomSeed";
+    public static final String DISPLAY_NAME = "displayName";
 
     public static final String PLOT_DATA = "plotData";
     public static final String SAVE_SUMMARY = "saveSummary";

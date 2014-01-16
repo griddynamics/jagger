@@ -21,16 +21,22 @@ public class Validator extends KernelSideObject implements Flushable{
     private static final Logger log = LoggerFactory.getLogger(Validator.class);
 
     private ResponseValidator validator;
+    private String displayName;
     private int invoked = 0;
     private int failed = 0;
 
-    public Validator(String taskId, String sessionId, NodeContext kernelContext, ResponseValidator validator) {
+    public Validator(String taskId, String sessionId, NodeContext kernelContext, ResponseValidator validator, String displayName) {
         super(taskId, sessionId, kernelContext);
         this.validator = validator;
+        this.displayName = displayName;
     }
 
     public String getName() {
         return validator.getName();
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public boolean validate(Object query, Object endpoint, Object result, long duration) {
@@ -61,7 +67,7 @@ public class Validator extends KernelSideObject implements Flushable{
 
         KeyValueStorage keyValueStorage = kernelContext.getService(KeyValueStorage.class);
 
-        keyValueStorage.put(namespace, RESULT, ValidationResult.create(validator.getName(), invoked, failed));
+        keyValueStorage.put(namespace, RESULT, ValidationResult.create(validator.getName(), displayName, invoked, failed));
 
         log.debug("invoked {} failed {}", invoked, failed);
     }

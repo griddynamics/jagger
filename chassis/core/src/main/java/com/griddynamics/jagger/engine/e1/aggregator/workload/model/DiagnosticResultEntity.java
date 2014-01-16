@@ -30,6 +30,8 @@ public class DiagnosticResultEntity {
     private Double total;
     private WorkloadData workloadData;
 
+    private CollectorDescription collectorDescription;
+
     @Id
     @GeneratedValue
     public Long getId() {
@@ -66,4 +68,12 @@ public class DiagnosticResultEntity {
         this.total = total;
     }
 
+    @OneToOne
+    public CollectorDescription getCollectorDescription() {
+        return collectorDescription;
+    }
+
+    public void setCollectorDescription(CollectorDescription collectorDescription) {
+        this.collectorDescription = collectorDescription;
+    }
 }

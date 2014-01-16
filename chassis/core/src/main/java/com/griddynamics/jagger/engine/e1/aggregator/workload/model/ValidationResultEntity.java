@@ -31,6 +31,7 @@ public class ValidationResultEntity {
     private String validator;
     private Integer total;
     private Integer failed;
+    private String displayName;
 
     @Id
     @GeneratedValue
@@ -73,5 +74,13 @@ public class ValidationResultEntity {
 
     public void setFailed(Integer failed) {
         this.failed = failed;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

@@ -52,11 +52,14 @@ public class MetricDetails {
     @ManyToOne
     private TaskData taskData;
 
-    public MetricDetails(long time, String metric, Double value, TaskData taskData) {
+    @ManyToOne
+    private CollectorDescription collectorDescription;
+
+
+    public MetricDetails(long time, Double value, CollectorDescription collectorDescription) {
         this.time = time;
-        this.metric = metric;
         this.value = value;
-        this.taskData = taskData;
+        this.collectorDescription = collectorDescription;
     }
 
     public MetricDetails() {
@@ -100,5 +103,13 @@ public class MetricDetails {
 
     public void setTaskData(TaskData taskData) {
         this.taskData = taskData;
+    }
+
+    public CollectorDescription getCollectorDescription() {
+        return collectorDescription;
+    }
+
+    public void setCollectorDescription(CollectorDescription collectorDescription) {
+        this.collectorDescription = collectorDescription;
     }
 }

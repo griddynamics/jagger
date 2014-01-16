@@ -33,7 +33,6 @@ import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
-import com.griddynamics.jagger.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -91,7 +90,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         double totalSqrDuration = 0;
         Integer failed = 0;
         Integer invoked = 0;
-        Map<String, Pair<Integer, Integer>> validationResults = Maps.newHashMap();
+        Map<String, ValidationResult> validationResults = Maps.newHashMap();
         Map<String, Double> diagnosticResults = Maps.newHashMap();
         for (String kernelId : kernels) {
             KernelProcessor kernelProcessor = new KernelProcessor(taskNamespace, totalDuration, totalSqrDuration, failed, invoked, validationResults, diagnosticResults, kernelId).process();
@@ -138,7 +137,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         persistValues(sessionId, taskId, workloadTask, clock, clockValue, termination, startTime, endTime, kernels, totalDuration, failed, invoked, validationResults, diagnosticResults, avgLatency, stdDevLatency, throughput, successRate);
     }
 
-    private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination, Long startTime, Long endTime, Collection<String> kernels, double totalDuration, Integer failed, Integer invoked, Map<String, Pair<Integer, Integer>> validationResults, Map<String, Double> diagnosticResults, double avgLatency, double stdDevLatency, double throughput, double successRate) {
+    private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination, Long startTime, Long endTime, Collection<String> kernels, double totalDuration, Integer failed, Integer invoked, Map<String, ValidationResult> validationResults, Map<String, Double> diagnosticResults, double avgLatency, double stdDevLatency, double throughput, double successRate) {
         String parentId = workloadTask.getParentTaskId();
 
         WorkloadDetails workloadDetails = getScenarioData(workloadTask);
@@ -173,12 +172,13 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
 
         getHibernateTemplate().persist(workloadTaskData);
 
-        for (Map.Entry<String, Pair<Integer, Integer>> entry : validationResults.entrySet()) {
+        for (Map.Entry<String, ValidationResult> entry : validationResults.entrySet()) {
             ValidationResultEntity entity = new ValidationResultEntity();
             entity.setWorkloadData(testData);
             entity.setValidator(entry.getKey());
-            entity.setTotal(entry.getValue().getFirst());
-            entity.setFailed(entry.getValue().getSecond());
+            entity.setDisplayName(entry.getValue().getDisplayName());
+            entity.setTotal(entry.getValue().getInvoked());
+            entity.setFailed(entry.getValue().getFailed());
 
             getHibernateTemplate().persist(entity);
         }
@@ -219,11 +219,11 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         private double totalSqrDuration;
         private Integer failed;
         private Integer invoked;
-        private Map<String, Pair<Integer, Integer>> validationResults;
+        private Map<String, ValidationResult> validationResults;
         private Map<String, Double> diagnosticResults;
         private String kernelId;
 
-        public KernelProcessor(Namespace taskNamespace, double totalDuration, double totalSqrDuration, Integer failed, Integer invoked, Map<String, Pair<Integer, Integer>> validationResults, Map<String, Double> diagnosticResults,String kernelId) {
+        public KernelProcessor(Namespace taskNamespace, double totalDuration, double totalSqrDuration, Integer failed, Integer invoked, Map<String, ValidationResult> validationResults, Map<String, Double> diagnosticResults,String kernelId) {
             this.taskNamespace = taskNamespace;
             this.totalDuration = totalDuration;
             this.totalSqrDuration = totalSqrDuration;
@@ -296,12 +296,17 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
             @SuppressWarnings("unchecked")
             Collection<ValidationResult> validation = (Collection) keyValueStorage.fetchAll(validationNamespace, RESULT);
             for (ValidationResult validationResult : validation) {
-                Pair<Integer, Integer> stat = validationResults.get(validationResult.getName());
+                ValidationResult stat = validationResults.get(validationResult.getName());
                 if (stat == null) {
-                    validationResults.put(validationResult.getName(), Pair.of(validationResult.getInvoked(), validationResult.getFailed()));
+                    validationResults.put(validationResult.getName(), validationResult);
                 } else {
-                    validationResults.put(validationResult.getName(), Pair.of(stat.getFirst() + validationResult.getInvoked(),
-                            stat.getSecond() + validationResult.getFailed()));
+                    ValidationResult newVResult = ValidationResult.create(
+                            stat.getName(),
+                            stat.getDisplayName(),
+                            stat.getInvoked() + validationResult.getInvoked(),
+                            stat.getFailed() + validationResult.getFailed()
+                    );
+                    validationResults.put(validationResult.getName(), newVResult);
                 }
             }
 
