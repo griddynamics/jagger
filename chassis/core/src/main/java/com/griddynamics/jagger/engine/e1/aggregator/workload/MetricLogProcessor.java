@@ -224,9 +224,9 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     String aggregatorDisplayNameSuffix = nameAggregator.getName();
                     String aggregatorIdSuffix = createIdFromDisplayName(aggregatorDisplayNameSuffix);
 
-                    String displayName = (metricDescription.getDisplayName() == null ? metricDescription.getMetricId() + aggregatorDisplayNameSuffix:
+                    String displayName = (metricDescription.getDisplayName() == null ? metricDescription.getMetricId() :
                     metricDescription.getDisplayName()) + aggregatorDisplayNameSuffix;
-                    String metricId = metricDescription.getMetricId() + aggregatorIdSuffix;
+                    String metricId = metricDescription.getMetricId() + '-' + aggregatorIdSuffix;
 
                     CollectorDescription collectorDescription = persistCollectorDescription(metricId, displayName);
 

@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.webclient.client.dto;
 
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -16,6 +15,12 @@ public class PlotNameDto extends PlotName {
     public PlotNameDto(TaskDataDto test, String plotName) {
         this.test = test;
         this.plotName = plotName;
+    }
+
+    public PlotNameDto(TaskDataDto test, String plotName, String displayName) {
+        this.test = test;
+        this.plotName = plotName;
+        this.displayName = displayName;
     }
 
     public long getTaskId() {
