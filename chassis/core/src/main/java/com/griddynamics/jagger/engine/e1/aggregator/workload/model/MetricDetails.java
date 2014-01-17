@@ -112,4 +112,11 @@ public class MetricDetails {
     public void setCollectorDescription(CollectorDescription collectorDescription) {
         this.collectorDescription = collectorDescription;
     }
+
+    public String getDisplay() {
+        if (collectorDescription != null) {
+            return collectorDescription.getDisplay();
+        }
+        return metric;
+    }
 }

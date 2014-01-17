@@ -26,15 +26,17 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class ValidationResultEntity {
+    @Id
+    @GeneratedValue
     private Long id;
+
+    @ManyToOne
     private WorkloadData workloadData;
     private String validator;
     private Integer total;
     private Integer failed;
     private String displayName;
 
-    @Id
-    @GeneratedValue
     public Long getId() {
         return id;
     }
@@ -43,7 +45,6 @@ public class ValidationResultEntity {
         this.id = id;
     }
 
-    @ManyToOne
     public WorkloadData getWorkloadData() {
         return workloadData;
     }
@@ -82,5 +83,9 @@ public class ValidationResultEntity {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getDisplay() {
+        return displayName == null ? validator : displayName;
     }
 }

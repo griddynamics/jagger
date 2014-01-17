@@ -25,20 +25,21 @@ import javax.persistence.*;
 @Entity
 public class DiagnosticResultEntity {
 
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private Double total;
+    @ManyToOne
     private WorkloadData workloadData;
 
+    @OneToOne
     private CollectorDescription collectorDescription;
 
-    @Id
-    @GeneratedValue
     public Long getId() {
         return id;
     }
 
-    @ManyToOne
     public WorkloadData getWorkloadData() {
         return workloadData;
     }
@@ -68,12 +69,18 @@ public class DiagnosticResultEntity {
         this.total = total;
     }
 
-    @OneToOne
     public CollectorDescription getCollectorDescription() {
         return collectorDescription;
     }
 
     public void setCollectorDescription(CollectorDescription collectorDescription) {
         this.collectorDescription = collectorDescription;
+    }
+
+    public String getDisplay () {
+        if (collectorDescription != null) {
+            return collectorDescription.getDisplay();
+        }
+        return name;
     }
 }

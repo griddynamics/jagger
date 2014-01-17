@@ -102,22 +102,44 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
 
     public Map<String, MetricPlotDTOs> createTaskPlots() {
         String sessionId = getSessionIdProvider().getSessionId();
+
+        // check new model
         List<MetricDetails> metricDetails= getHibernateTemplate().find(
+                    "select m from MetricDetails m where m.collectorDescription.taskData.sessionId=?", sessionId);
+
+        if (metricDetails == null || metricDetails.isEmpty()) {
+
+            // check old model
+            metricDetails= getHibernateTemplate().find(
                     "select m from MetricDetails m where m.taskData.sessionId=?", sessionId);
+        }
+
         Map<String, Map<String, List<MetricDetails>>> aggregatedByTasks = Maps.newLinkedHashMap();
         for (MetricDetails detail : metricDetails) {
-            Map<String, List<MetricDetails>> byTaskId = aggregatedByTasks.get(detail.getTaskData().getTaskId());
+
+            String taskId;
+            String metricId;
+            if (detail.getCollectorDescription() == null) {
+                taskId = detail.getTaskData().getTaskId();
+                metricId = detail.getMetric();
+            } else {
+                taskId = detail.getCollectorDescription().getTaskData().getTaskId();
+                metricId = detail.getCollectorDescription().getName();
+            }
+
+            Map<String, List<MetricDetails>> byTaskId = aggregatedByTasks.get(taskId);
             if (byTaskId == null) {
                 byTaskId = Maps.newLinkedHashMap();
-                aggregatedByTasks.put(detail.getTaskData().getTaskId(), byTaskId);
+                aggregatedByTasks.put(taskId, byTaskId);
             }
-            List<MetricDetails> taskData = byTaskId.get(detail.getMetric());
+            List<MetricDetails> taskData = byTaskId.get(metricId);
             if (taskData == null) {
                 taskData = new LinkedList<MetricDetails>();
-                byTaskId.put(detail.getMetric(), taskData);
+                byTaskId.put(metricId, taskData);
             }
             taskData.add(detail);
         }
+
         Map<String, MetricPlotDTOs> taskPlots = Maps.newHashMap();
         for (String taskId : aggregatedByTasks.keySet()) {
             MetricPlotDTOs taskPlot = taskPlots.get(taskId);
@@ -127,7 +149,11 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
             }
             for (String metricName : aggregatedByTasks.get(taskId).keySet()) {
                 List<MetricDetails> taskStats = aggregatedByTasks.get(taskId).get(metricName);
-                    XYSeries plotEntry = new XYSeries(metricName);
+                MetricDetails firstEntry = taskStats.get(0);
+                String displayName = firstEntry.getCollectorDescription() == null ?
+                        firstEntry.getMetric() : firstEntry.getCollectorDescription().getDisplay();
+
+                    XYSeries plotEntry = new XYSeries(displayName);
                     for (MetricDetails stat : taskStats) {
                         plotEntry.add(stat.getTime(), stat.getValue());
                     }
@@ -136,8 +162,8 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
                     Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(plotCollection, null);
                     plotCollection = pair.getSecond();
                     JFreeChart chartMetric = ChartHelper.createXYChart(null, plotCollection,
-                            "Time (" + pair.getFirst() + ")", metricName, 2, 2, ChartHelper.ColorTheme.LIGHT);
-                taskPlot.addPlot(new MetricPlotDTO(metricName, new JCommonDrawableRenderer(chartMetric)));
+                            "Time (" + pair.getFirst() + ")", displayName, 2, 2, ChartHelper.ColorTheme.LIGHT);
+                taskPlot.addPlot(new MetricPlotDTO(displayName, new JCommonDrawableRenderer(chartMetric)));
             }
         }
         return taskPlots;
