@@ -99,13 +99,10 @@ public class CommonDataProviderImpl implements CommonDataProvider {
 
         Set<MetricNameDto> metrics = new HashSet<MetricNameDto>();
 
-        System.out.println("task_id : " + tests.getTaskName() + " : " + tests.getIds());
-
         // check new model
         List<CollectorDescription> collectorDescriptions = entityManager.createQuery("select c from CollectorDescription c where c.taskData.id in (:ids)")
                 .setParameter("ids", tests.getIds()).getResultList();
 
-        System.out.println("colDescrs size : " + collectorDescriptions.size());
         for (CollectorDescription name : collectorDescriptions){
             if (name == null) continue;
 
@@ -515,7 +512,6 @@ public class CommonDataProviderImpl implements CommonDataProvider {
         }
 
         log.info("For sessions {} was loaded {} tasks for {} ms", new Object[]{sessionIds, result.size(), System.currentTimeMillis() - timestamp});
-        System.out.println(result);
         return result;
     }
 }

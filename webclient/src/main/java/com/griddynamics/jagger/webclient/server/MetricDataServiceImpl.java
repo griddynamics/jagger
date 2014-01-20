@@ -120,8 +120,7 @@ public class MetricDataServiceImpl implements MetricDataService {
             }else{
                 //custom metric
 
-// -----------------------------CHECK_NEW_MODEL------------------------------
-
+                // check new model
                 List<Object[]> metrics = entityManager.createQuery("select metric, metric.collectorDescription.taskData.sessionId " +
                         "from DiagnosticResultEntity as metric " +
                         "where metric.collectorDescription.name=:name " +
@@ -129,7 +128,7 @@ public class MetricDataServiceImpl implements MetricDataService {
                         "in (select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))")
                         .setParameter("ids", metricName.getTests().getIds()).setParameter("name", metricName.getName()).getResultList();
 
-// ---------------------------------OLD_WAY-----------------------------------------
+                // check old model
                 metrics.addAll(
                         entityManager.createQuery("select metric, metric.workloadData.sessionId " +
                                 "from DiagnosticResultEntity as metric " +
@@ -176,8 +175,6 @@ public class MetricDataServiceImpl implements MetricDataService {
                         dto.getValues().add(value);
                     }
                 }
-
-// -------------------------------------------------
             }
         }
         dto.setPlotSeriesDtos(generatePlotSeriesDto(dto));

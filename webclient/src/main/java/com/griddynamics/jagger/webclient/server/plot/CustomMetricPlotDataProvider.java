@@ -58,40 +58,38 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
 
     public List<PlotNameDto> getPlotNames(TaskDataDto taskDataDto){
 
-        List<PlotNameDto> result;
+        List<PlotNameDto> result = new ArrayList<PlotNameDto>();
 
         // check new model
         List<CollectorDescription> collectorDescriptions = entityManager.createQuery("select d.collectorDescription from DiagnosticResultEntity d where d.collectorDescription.taskData.id in (:ids)")
                 .setParameter("ids", taskDataDto.getIds()).getResultList();
 
-        if (!collectorDescriptions.isEmpty()) {
-            result = new ArrayList<PlotNameDto>(collectorDescriptions.size());
 
-            for (CollectorDescription collectorDescription : collectorDescriptions){
+        for (CollectorDescription collectorDescription : collectorDescriptions){
 
-                Long count = (Long)entityManager.createQuery("select count(id) FROM MetricDetails where collectorDescription=:description")
-                        .setParameter("description", collectorDescription)
-                        .getSingleResult();
+            Long count = (Long)entityManager.createQuery("select count(id) FROM MetricDetails where collectorDescription=:description")
+                    .setParameter("description", collectorDescription)
+                    .getSingleResult();
 
-                if (count > 0)
-                    result.add(new PlotNameDto(taskDataDto, collectorDescription.getName(), collectorDescription.getDisplayName()));
-            }
-        } else {
+            if (count > 0)
+                result.add(new PlotNameDto(taskDataDto, collectorDescription.getName(), collectorDescription.getDisplayName()));
+        }
 
-            // check old model
-            List<String> plotNames = entityManager.createNativeQuery("select metricDetails.metric from MetricDetails metricDetails " +
-                                                                     "where taskData_id in (:ids) " +
-                                                                     "group by metricDetails.metric")
-                                        .setParameter("ids", taskDataDto.getIds())
-                                        .getResultList();
-            if (plotNames.isEmpty())
-                return Collections.emptyList();
+        // check old model
+        List<String> plotNames = entityManager.createNativeQuery("select metricDetails.metric from MetricDetails metricDetails " +
+                                                                 "where taskData_id in (:ids) " +
+                                                                 "group by metricDetails.metric")
+                                    .setParameter("ids", taskDataDto.getIds())
+                                    .getResultList();
+        if (plotNames.isEmpty())
+            return result;
 
-            result = new ArrayList<PlotNameDto>(plotNames.size());
-
-            for (String plotName : plotNames){
-                if (plotName != null)
-                result.add(new PlotNameDto(taskDataDto, plotName));
+        for (String plotName : plotNames){
+            if (plotName != null) {
+                PlotNameDto plotNameDto = new PlotNameDto(taskDataDto, plotName);
+                if (result.contains(plotNameDto))
+                    continue;
+                result.add(plotNameDto);
             }
         }
 
@@ -129,8 +127,6 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
             return Collections.emptyList();
 
         String displayName = metricValues.get(0).getDisplay();
-
-        System.out.println("displayName = " + displayName);
 
         Multimap<Long, MetricDetails> metrics = ArrayListMultimap.create(taskId.size(), metricValues.size());
         List<PlotDatasetDto> plots = new ArrayList<PlotDatasetDto>();
