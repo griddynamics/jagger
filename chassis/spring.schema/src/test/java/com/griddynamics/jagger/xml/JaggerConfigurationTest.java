@@ -2,11 +2,8 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.agent.model.JmxMetricGroup;
-import com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider;
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
-import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
-import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
+import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -144,6 +141,22 @@ public class JaggerConfigurationTest {
         Assert.assertEquals(1, metric.getAttributes().length);
         Assert.assertEquals("MaxFileDescriptorCount", metric.getAttributes()[0]);
     }
+
+    @Test
+    public void metricDisplayNameTest() throws Exception {
+        MetricCollectorProvider mcp = (MetricCollectorProvider) ctx.getBean("metric-with-display-name");
+        Assert.assertEquals("NOT_NULL_METRIC", mcp.getMetricDescriptions().getDisplayName());
+
+        mcp = (MetricCollectorProvider) ctx.getBean("metric1");
+        Assert.assertNull(mcp.getMetricDescriptions().getDisplayName());
+    }
+
+    @Test
+    public void validatorDisplayNameTest() throws Exception {
+        ValidatorProvider vp = (ValidatorProvider) ctx.getBean("validator-with-display-name");
+        Assert.assertEquals("NOT_NULL_VALIDATOR", vp.getDisplayName());
+    }
+
 
     private void checkListOnNull(List list){
         for (Object o : list){
