@@ -685,7 +685,6 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/QueryPoolLoadBalancer.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/PairSupplierFactoryLoadBalancer.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/OneByOneLoadBalancer.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/CompositeValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ConsistencyValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/NotNullResponseValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SimpleMetricCalculator.java \
@@ -697,8 +696,20 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCollectorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateAggregatorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateFailsAggregatorProvider.java
-
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateFailsAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/JaggerService.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/MetricService.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/SessionInfoService.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricDescription.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/test/TestListener.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testsuite/TestSuiteListener.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/TestGroupListener.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/CollectThreadsTestListener.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/test/TestInfo.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testsuite/TestSuiteInfo.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/TestGroupInfo.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/Provider.java
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -761,7 +772,10 @@ EXCLUDE_SYMBOLS        =
 #EXAMPLE_PATH           = ./archetype-examples/
 EXAMPLE_PATH           = ./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \
                          ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/ \
-                         ./test/jagger-test/src/main/resources/configuration/master/session/
+                         ./test/jagger-test/src/main/resources/configuration/master/session/ \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
+                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestListener.java \
+                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestSuiteListener.java
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp

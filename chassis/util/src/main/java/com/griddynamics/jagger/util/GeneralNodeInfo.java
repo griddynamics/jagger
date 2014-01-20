@@ -144,6 +144,7 @@ public class GeneralNodeInfo implements Serializable{
                 ", cpuMHz=" + cpuMHz +
                 ", cpuTotalCores=" + cpuTotalCores +
                 ", cpuTotalSockets=" + cpuTotalSockets +
+                ", properties=" + properties +
                 '}';
     }
 }

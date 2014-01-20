@@ -8,27 +8,19 @@ import com.griddynamics.jagger.coordinator.NodeContext;
  * @par Details:
  * @details If you would like to have an access to jagger services - extend this class.
  * @n
- * */
+ */
 public abstract class ServicesAware implements ServicesInitializable {
 
     private MetricService metricService;
     private SessionInfoService sessionInfoService;
 
-    /** Returns MetricService
-     * @author Gribov Kirill
-     * @n
-     * @par Details:
-     * @details Returns metric service for current test
+    /** Gives access to @ref MetricService
      *@return metric service */
     protected MetricService getMetricService(){
         return metricService;
     }
 
-    /** Returns SessionInfoService
-     * @author Gribov Kirill
-     * @n
-     * @par Details:
-     * @details Returns sessionInfo service for current test
+    /** Gives access to @ref SessionInfoService
      *@return sessionInfo service */
     protected SessionInfoService getSessionInfoService(){
         return sessionInfoService;
@@ -36,17 +28,26 @@ public abstract class ServicesAware implements ServicesInitializable {
 
     @Override
     public final void initServices(String sessionId, String taskId, NodeContext context, JaggerPlace environment){
+
+        /* begin: following section is used for docu generation - listeners to services relation */
+
+        /* Services available for test listener */
         if (environment.equals(JaggerPlace.TEST_LISTENER)){
-            initTestServices(sessionId, taskId, context);
+            metricService       = new DefaultMetricService(sessionId, taskId, context);         /* Available */
+            sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
         }
-
+        /* Services available for test group listener */
         if (environment.equals(JaggerPlace.TEST_GROUP_LISTENER)){
-            initTestGroupServices(sessionId, taskId, context);
+            metricService       = new EmptyMetricService(JaggerPlace.TEST_GROUP_LISTENER);      /* NOT AVAILABLE */
+            sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
+        }
+        /* Services available for test suite listener */
+        if (environment.equals(JaggerPlace.TEST_SUITE_LISTENER)){
+            metricService       = new EmptyMetricService(JaggerPlace.TEST_SUITE_LISTENER);      /* NOT AVAILABLE */
+            sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
         }
 
-        if (environment.equals(JaggerPlace.TEST_SUITE_LISTENER)){
-            initTestSuiteServices(sessionId, taskId, context);
-        }
+        /* end: following section is used for docu generation - listeners to services relation */
 
         init();
     }
@@ -54,23 +55,8 @@ public abstract class ServicesAware implements ServicesInitializable {
     /** User action, that will be executed before at least one object will be provided.
      * @author Gribov Kirill
      * @n
-     * @par Details: If you would like to execute some actions, before objects will be provided, override this method
-     * @details */
+     * @par Details
+     * @details If you would like to execute some actions, before objects will be provided, override this method */
     protected void init(){
     };
-
-    private void initTestServices(String sessionId, String taskId, NodeContext context){
-        metricService = new DefaultMetricService(sessionId, taskId, context);
-        sessionInfoService = new DefaultSessionInfoService(context);
-    }
-
-    private void initTestGroupServices(String sessionId, String taskId, NodeContext context){
-        metricService = new EmptyMetricService(JaggerPlace.TEST_GROUP_LISTENER);
-        sessionInfoService = new DefaultSessionInfoService(context);
-    }
-
-    private void initTestSuiteServices(String sessionId, String taskId, NodeContext context){
-        metricService = new EmptyMetricService(JaggerPlace.TEST_SUITE_LISTENER);
-        sessionInfoService = new DefaultSessionInfoService(context);
-    }
 }

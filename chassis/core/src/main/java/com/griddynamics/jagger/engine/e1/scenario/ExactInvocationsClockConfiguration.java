@@ -1,13 +1,6 @@
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.collect.Maps;
-import com.griddynamics.jagger.coordinator.NodeId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import com.griddynamics.jagger.util.Parser;
 
 public class ExactInvocationsClockConfiguration implements WorkloadClockConfiguration {
 
@@ -17,7 +10,13 @@ public class ExactInvocationsClockConfiguration implements WorkloadClockConfigur
 
     private int delay;
 
+    private String period;
+
     private int tickInterval = 1000;
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
 
     public void setTickInterval(int tickInterval) {
         this.tickInterval = tickInterval;
@@ -43,6 +42,10 @@ public class ExactInvocationsClockConfiguration implements WorkloadClockConfigur
         return tickInterval;
     }
 
+    public String getPeriod() {
+        return period;
+    }
+
     public int getDelay() {
         return delay;
     }
@@ -57,6 +60,6 @@ public class ExactInvocationsClockConfiguration implements WorkloadClockConfigur
 
     @Override
     public WorkloadClock getClock() {
-        return new ExactInvocationsClock(samplesCount, threadCount, delay, tickInterval);
+        return new ExactInvocationsClock(samplesCount, threadCount, delay, tickInterval, Parser.parseTimeMillis(period));
     }
 }

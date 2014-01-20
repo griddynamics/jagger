@@ -12,10 +12,6 @@ package com.griddynamics.jagger.engine.e1;
 public interface Provider<T> {
 
     /** Provides new object
-     * @author Gribov Kirill
-     * @n
-     * @par Details:
-     * @details
      *@return new T instance*/
     T provide();
 }

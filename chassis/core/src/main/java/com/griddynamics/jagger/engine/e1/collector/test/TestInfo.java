@@ -27,10 +27,7 @@ public class TestInfo {
         this.sessionId = sessionId;
     }
 
-    /** Returns current test
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns current test */
     public WorkloadTask getTest() {
         return test;
     }
@@ -39,10 +36,7 @@ public class TestInfo {
         this.test = test;
     }
 
-    /** Returns current number of threads, that Jagger use to generate load
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns current number of threads, used by Jagger to generate load */
     public int getThreads() {
         return threads;
     }
@@ -51,10 +45,7 @@ public class TestInfo {
         this.threads = threads;
     }
 
-    /** Returns total number of completed samples (all responses from SUT)
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns total number of completed samples (all responses from SUT) */
     public int getSamples() {
         return samples;
     }
@@ -63,10 +54,7 @@ public class TestInfo {
         this.samples = samples;
     }
 
-    /** Returns total number of started samples (invokes)
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns total number of started samples (invokes) */
     public int getStartedSamples() {
         return startedSamples;
     }
@@ -75,10 +63,7 @@ public class TestInfo {
         this.startedSamples = startedSamples;
     }
 
-    /** Returns test duration
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns test duration */
     public long getDuration() {
         return duration;
     }
@@ -87,10 +72,7 @@ public class TestInfo {
         this.duration = duration;
     }
 
-    /** Returns session id
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns session id */
     public String getSessionId() {
         return sessionId;
     }

@@ -23,18 +23,13 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-       default-lazy-init="true">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- begin: following section is used for docu generation - metric calculator -->
-    <bean id="responseSize" class="${package}.calculator.ResponseSize"/>
-    <!-- end: following section is used for docu generation - metric calculator -->
-
-    <!-- begin: following section is used for docu generation - custom collector -->
-    <bean id="successRateCollector" class="${package}.provider.ProviderOfExampleSuccessRateCollector"/>
-    <!-- end: following section is used for docu generation - custom collector -->
+    <!-- begin: following section is used for docu generation - listener usage -->
+    <bean id="listenerTestSuite" class="${package}.listener.ProviderOfTestSuiteListener"/>
+    <!-- end: following section is used for docu generation - listener usage -->
+    <bean id="listenerTest" class="${package}.listener.ProviderOfTestListener"/>
 
 </beans>

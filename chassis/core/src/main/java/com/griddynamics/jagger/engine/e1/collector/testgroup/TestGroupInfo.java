@@ -23,10 +23,7 @@ public class TestGroupInfo {
         this.sessionId = sessionId;
     }
 
-    /** Returns current test-group
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns full information about current test-group */
     public CompositeTask getTestGroup() {
         return testGroup;
     }
@@ -35,10 +32,7 @@ public class TestGroupInfo {
         this.testGroup = testGroup;
     }
 
-    /** Returns test-group duration
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns test-group execution duration */
     public long getDuration() {
         return duration;
     }
@@ -47,10 +41,7 @@ public class TestGroupInfo {
         this.duration = duration;
     }
 
-    /** Returns session id
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns session id */
     public String getSessionId() {
         return sessionId;
     }

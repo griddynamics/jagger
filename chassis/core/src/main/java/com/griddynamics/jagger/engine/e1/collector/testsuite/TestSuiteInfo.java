@@ -6,13 +6,13 @@ import com.griddynamics.jagger.util.GeneralNodeInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kirilkadurilka
- * Date: 12/12/13
- * Time: 12:10 PM
- * To change this template use File | Settings | File Templates.
- */
+/** Class, which contains some information about test suite execution
+ * @author Gribov Kirill
+ * @n
+ * @par Details:
+ * @details
+ * @n
+ * */
 public class TestSuiteInfo {
     private String sessionId;
     private Map<NodeId,GeneralNodeInfo> generalNodeInfo = new HashMap<NodeId,GeneralNodeInfo>();
@@ -24,10 +24,7 @@ public class TestSuiteInfo {
         this.generalNodeInfo = generalNodeInfo;
     }
 
-    /** Returns test-suite duration
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns test-suite duration */
     public long getDuration() {
         return duration;
     }
@@ -36,10 +33,7 @@ public class TestSuiteInfo {
         this.duration = duration;
     }
 
-    /** Returns session id
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns session id */
     public String getSessionId() {
         return sessionId;
     }
@@ -48,10 +42,7 @@ public class TestSuiteInfo {
         this.sessionId = sessionId;
     }
 
-    /** Returns information about nodes where jagger kernels and agents are running
-     * @author Gribov Kirill
-     * @n
-     * */
+    /** Returns information about nodes where jagger kernels and agents are running */
     public Map<NodeId, GeneralNodeInfo> getGeneralNodeInfo() { return generalNodeInfo; }
 
     public void setGeneralNodeInfo(Map<NodeId, GeneralNodeInfo> generalNodeInfo) { this.generalNodeInfo = generalNodeInfo; }

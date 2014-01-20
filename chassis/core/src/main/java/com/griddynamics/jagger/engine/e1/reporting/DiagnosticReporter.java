@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -28,7 +27,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.*;
 
 public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
     private static final Logger log = LoggerFactory.getLogger(DiagnosticReporter.class);
@@ -79,12 +78,18 @@ public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
             return null;
         }
 
+        TreeSet<DiagnosticResult> treeSet = new TreeSet<DiagnosticResult>(new Comparator<DiagnosticResult>() {
+            @Override
+            public int compare(DiagnosticResult o1, DiagnosticResult o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
 
-        List<DiagnosticResult> result = Lists.newLinkedList();
         for (DiagnosticResultEntity entity : diagnosticResults) {
-            result.add(convert(entity));
+            treeSet.add(convert(entity));
         }
-        return new JRBeanCollectionDataSource(result);
+
+        return new JRBeanCollectionDataSource(treeSet);
     }
 
     private DiagnosticResult convert(DiagnosticResultEntity entity) {

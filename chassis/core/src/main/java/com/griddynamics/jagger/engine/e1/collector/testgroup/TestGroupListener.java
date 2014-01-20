@@ -5,30 +5,25 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/** Listener, that executes before and after test-group execution.
+/** Listener, executed before and after test-group execution.
  * @author Gribov Kirill
  * @n
  * @par Details:
  * @details
  * @n
- *
- * @ingroup */
+ * @ingroup Main_Listeners_Base_group */
 public interface TestGroupListener {
 
     /** Executes before test-group starts
-     * @author Gribov Kirill
-     * @n
-     *
      * @param infoStart - describes test-group start information */
     void onStart(TestGroupInfo infoStart);
 
     /** Executes after test-group stops
-     * @author Gribov Kirill
-     * @n
-     *
      * @param infoStop - describes test-group stop information */
     void onStop(TestGroupInfo infoStop);
 
+    /** Class is used by Jagger for sequential execution of several listeners @n
+     *  Not required for custom test listeners */
     public static class Composer implements TestGroupListener{
         private static Logger log = LoggerFactory.getLogger(Composer.class);
 

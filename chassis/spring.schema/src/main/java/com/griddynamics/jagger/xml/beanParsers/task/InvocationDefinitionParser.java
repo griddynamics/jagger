@@ -1,12 +1,9 @@
 package com.griddynamics.jagger.xml.beanParsers.task;
 
-import com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClock;
 import com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration;
-import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -25,6 +22,11 @@ public class InvocationDefinitionParser extends CustomBeanDefinitionParser {
         }
         if (element.getAttribute(XMLConstants.DELAY).isEmpty()){
             builder.addPropertyValue(XMLConstants.DELAY, 0);
+        }
+        if (element.getAttribute(XMLConstants.PERIOD).isEmpty()){
+            builder.addPropertyValue(XMLConstants.PERIOD, -1);
+        } else {
+            builder.addPropertyValue(XMLConstants.PERIOD, element.getAttribute(XMLConstants.PERIOD));
         }
     }
 

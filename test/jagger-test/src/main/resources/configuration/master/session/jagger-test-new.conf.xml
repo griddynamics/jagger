@@ -206,6 +206,47 @@
                 </test-group>
 
 
+            <!--Invocation-->
+
+                <test-group id="sleep-service-50ms-1-invocations">
+                    <test testDescription="sleep-service-50ms">
+                        <load xsi:type="load-invocation" exactcount="1" threads="1"/>
+                        <termination xsi:type="termination-iterations" iterations="1"/>
+                    </test>
+                </test-group>
+
+                <test-group id="sleep-service-50ms-100-invocations-5-threads">
+                    <test testDescription="sleep-service-50ms">
+                        <load xsi:type="load-invocation" exactcount="100" threads="5"/>
+                        <termination xsi:type="termination-iterations" iterations="100"/>
+                    </test>
+                </test-group>
+
+            <!--Periodic-->
+
+                <test-group id="sleep-service-50ms-1-invocations-5s-period">
+                    <test testDescription="sleep-service-50ms">
+                        <load xsi:type="load-invocation" exactcount="1" threads="1" period="5s"/>
+                        <termination xsi:type="termination-iterations" iterations="5"/>
+                    </test>
+                </test-group>
+
+                <test-group id="sleep-service-50ms-10-invocations-5-threads-5s-period">
+                    <test testDescription="sleep-service-50ms">
+                        <load xsi:type="load-invocation" exactcount="10" threads="5" period="5s"/>
+                        <termination xsi:type="termination-duration" duration="30s"/>
+                    </test>
+                </test-group>
+
+            <!--Period less then invocation time-->
+                <test-group id="sleep-service-50ms-10-invocations-1-thread-5s-period-1000-delay">
+                    <test testDescription="sleep-service-50ms">
+                        <load xsi:type="load-invocation" exactcount="10" threads="1" period="5s" delay="1000"/>
+                        <termination xsi:type="termination-duration" duration="30s"/>
+                    </test>
+                </test-group>
+
+
             <!--pulse-->
 
                 <test-group id="pulse-service-30000-500-10-threads-5-min">

@@ -21,11 +21,14 @@ public class ExactInvocationsClock implements WorkloadClock {
 
     private int tickInterval;
 
-    public ExactInvocationsClock(int samplesCount, int threadCount, int delay, int tickInterval) {
+    private long period;
+
+    public ExactInvocationsClock(int samplesCount, int threadCount, int delay, int tickInterval, long period) {
         this.samplesCount = samplesCount;
         this.threadCount  = threadCount;
         this.delay        = delay;
         this.tickInterval = tickInterval;
+        this.period = period;
     }
 
     @Override
@@ -38,29 +41,54 @@ public class ExactInvocationsClock implements WorkloadClock {
         return result;
     }
 
+    private long startTime = 0;
+
     @Override
     public void tick(WorkloadExecutionStatus status, WorkloadAdjuster adjuster) {
         log.debug("Going to perform tick with status {}", status);
 
-        int samplesLeft = samplesCount - samplesSubmitted;
+        if (isPeriodic()) {
+
+            long currentTime = System.currentTimeMillis();
+            if (startTime == 0) {
+                startTime = currentTime - period;
+            }
+            long difference = currentTime - startTime;
+            if(difference >= period) {
+                if (status.getTotalSamples() < samplesSubmitted) {
+                    log.warn("Can not create such load with {} invocations with {} ms period", samplesCount, period);
+                }
+                startTime = startTime + period;
+                sendSamples(samplesCount, status, adjuster);
+            }
+        } else {
+
+            int samplesLeft = samplesCount - samplesSubmitted;
+            sendSamples(samplesLeft, status, adjuster);
+        }
+    }
+
+
+    private void sendSamples(int samplesLeft, WorkloadExecutionStatus status, WorkloadAdjuster adjuster) {
+
         if (samplesLeft <= 0) {
             return;
         }
 
         Set<NodeId> nodes = status.getNodes();
         int nodesSize = nodes.size();
-        int threadsForOneNode =  threadCount / nodesSize;
-        int threadsResidue = threadCount % nodesSize;
+        int threadsForOneNode =  threadCount / nodesSize;                      // how many threads should be distributed for one node(kernel)
+        int threadsResidue = threadCount % nodesSize;                          // residue of threads
 
-        int samplesForOneThread = samplesLeft / threadCount;
+        int samplesForOneThread = samplesLeft / threadCount;                   //how many samples should be distributed for ont thread
 
-        int samplesResidueByThreads = samplesLeft % threadCount;
-        int additionalSamplesForOneNode = samplesResidueByThreads / nodesSize;
-        int samplesResidue = samplesResidueByThreads % nodesSize;
+        int samplesResidueByThreads = samplesLeft % threadCount;               // residue samples of threads
+        int additionalSamplesForOneNode = samplesResidueByThreads / nodesSize; // how many samples should be added for each node(kernel)
+        int samplesResidue = samplesResidueByThreads % nodesSize;              // residue samples of nodes
 
         int s = 0;
         for (NodeId node : nodes) {
-            int curSamples = 0;
+            int curSamples = status.getSamples(node);
             int curThreads = threadsForOneNode;
             if (threadsResidue > 0) {
                 curThreads ++;
@@ -77,6 +105,10 @@ public class ExactInvocationsClock implements WorkloadClock {
             s += curSamples;
         }
         samplesSubmitted = s;
+    }
+
+    private boolean isPeriodic() {
+        return period != -1;
     }
 
     @Override
