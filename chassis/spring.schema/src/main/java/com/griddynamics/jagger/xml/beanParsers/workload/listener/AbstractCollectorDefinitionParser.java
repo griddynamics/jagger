@@ -76,11 +76,14 @@ public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBe
 
         builder.addPropertyValue(XMLConstants.NAME, name);
 
+        String displayName = element.getAttribute(XMLConstants.DISPLAY_NAME);
+
         BeanDefinitionBuilder metricDescription = BeanDefinitionBuilder.genericBeanDefinition(MetricDescription.class);
         metricDescription.addConstructorArgValue(name);
         metricDescription.addPropertyValue(XMLConstants.NEED_PLOT_DATA, plotData);
         metricDescription.addPropertyValue(XMLConstants.NEED_SAVE_SUMMARY, saveSummary);
         metricDescription.addPropertyValue(XMLConstants.AGGREGATORS, aggregators);
+        metricDescription.addPropertyValue(XMLConstants.DISPLAY_NAME, displayName.isEmpty() ? null : displayName);
 
         builder.addPropertyValue(XMLConstants.METRIC_DESCRIPTION, metricDescription.getBeanDefinition());
 

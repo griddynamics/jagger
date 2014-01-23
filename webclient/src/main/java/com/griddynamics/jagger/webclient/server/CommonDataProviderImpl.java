@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.webclient.server;
 
 import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.CollectorDescription;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile;
 import com.griddynamics.jagger.monitoring.reporting.GroupKey;
 import com.griddynamics.jagger.util.Pair;
@@ -95,22 +96,30 @@ public class CommonDataProviderImpl implements CommonDataProvider {
     }
 
     public Set<MetricNameDto> getCustomMetricsNames(TaskDataDto tests){
-        Set<MetricNameDto> metrics;
 
+        Set<MetricNameDto> metrics = new HashSet<MetricNameDto>();
+
+        // check new model
+        List<CollectorDescription> collectorDescriptions = entityManager.createQuery("select c from CollectorDescription c where c.taskData.id in (:ids)")
+                .setParameter("ids", tests.getIds()).getResultList();
+
+        for (CollectorDescription name : collectorDescriptions){
+            if (name == null) continue;
+
+            MetricNameDto metric = new MetricNameDto();
+            metric.setTests(tests);
+            metric.setName(name.getName());
+            metric.setDisplayName(name.getDisplayName());
+
+            metrics.add(metric);
+        }
+        // check old model
         List<String> metricNames = entityManager.createNativeQuery("select metric.name from DiagnosticResultEntity as metric " +
                 "where metric.workloadData_id in " +
                 "(select workloadData.id from WorkloadData as workloadData " +
                 "inner join (select id, taskId, sessionId from TaskData where id in (:ids)) as taskData on " +
                 "workloadData.taskId=taskData.taskId and workloadData.sessionId=taskData.sessionId)")
                 .setParameter("ids", tests.getIds()).getResultList();
-
-        List<String> validatorNames = entityManager.createNativeQuery("select metric.validator from ValidationResultEntity as metric " +
-                "where metric.workloadData_id in " +
-                "(select workloadData.id from WorkloadData as workloadData " +
-                "inner join (select id, taskId, sessionId from TaskData where id in (:ids)) as taskData on " +
-                "workloadData.taskId=taskData.taskId and workloadData.sessionId=taskData.sessionId)")
-                .setParameter("ids", tests.getIds()).getResultList();
-        metrics = new HashSet<MetricNameDto>(metricNames.size()+validatorNames.size());
 
         for (String name : metricNames){
             if (name == null) continue;
@@ -119,17 +128,36 @@ public class CommonDataProviderImpl implements CommonDataProvider {
             metric.setTests(tests);
             metric.setName(name);
 
+            if (metrics.contains(metric)) {
+                continue;
+            }
             metrics.add(metric);
         }
 
-        for (String name : validatorNames){
+        List<Object[]> validatorNames = entityManager.createNativeQuery("select metric.validator, metric.displayName from ValidationResultEntity as metric " +
+                "where metric.workloadData_id in " +
+                "(select workloadData.id from WorkloadData as workloadData " +
+                "inner join (select id, taskId, sessionId from TaskData where id in (:ids)) as taskData on " +
+                "workloadData.taskId=taskData.taskId and workloadData.sessionId=taskData.sessionId)")
+                .setParameter("ids", tests.getIds()).getResultList();
+
+        for (Object[] name : validatorNames){
             if (name == null) continue;
 
             MetricNameDto validator = new MetricNameDto();
             validator.setTests(tests);
-            validator.setName(name);
+            validator.setName((String)name[0]);
+            validator.setDisplayName((String)name[1]);
 
-            metrics.add(validator);
+            if (metrics.contains(validator)) {
+                if (validator.getDisplayName() != null) {
+                    metrics.remove(validator);
+                    metrics.add(validator);
+                }
+            } else {
+
+                metrics.add(validator);
+            }
         }
 
         return metrics;

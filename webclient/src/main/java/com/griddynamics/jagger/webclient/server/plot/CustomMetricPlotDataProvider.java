@@ -3,6 +3,7 @@ package com.griddynamics.jagger.webclient.server.plot;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.CollectorDescription;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
 import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.server.ColorCodeGenerator;
@@ -35,9 +36,19 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
 
 
     public boolean isAvailable(String plotName) {
-        BigInteger count = (BigInteger)entityManager.createNativeQuery("select count(id) FROM MetricDetails where metric=:plotName")
+
+        // check new model
+        Number count = (Long)entityManager.createQuery("select count(id) FROM MetricDetails where collectorDescription.name=:plotName")
+                .setParameter("plotName", plotName)
+                .getSingleResult();
+
+        if (count.intValue() == 0) {
+            // check old model
+            count = (BigInteger)entityManager.createNativeQuery("select count(id) FROM MetricDetails where metric=:plotName")
                             .setParameter("plotName", plotName)
                             .getSingleResult();
+
+        }
 
         if (count.intValue() > 0)
             return true;
@@ -46,19 +57,40 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
     }
 
     public List<PlotNameDto> getPlotNames(TaskDataDto taskDataDto){
+
+        List<PlotNameDto> result = new ArrayList<PlotNameDto>();
+
+        // check new model
+        List<CollectorDescription> collectorDescriptions = entityManager.createQuery("select d.collectorDescription from DiagnosticResultEntity d where d.collectorDescription.taskData.id in (:ids)")
+                .setParameter("ids", taskDataDto.getIds()).getResultList();
+
+
+        for (CollectorDescription collectorDescription : collectorDescriptions){
+
+            Long count = (Long)entityManager.createQuery("select count(id) FROM MetricDetails where collectorDescription=:description")
+                    .setParameter("description", collectorDescription)
+                    .getSingleResult();
+
+            if (count > 0)
+                result.add(new PlotNameDto(taskDataDto, collectorDescription.getName(), collectorDescription.getDisplayName()));
+        }
+
+        // check old model
         List<String> plotNames = entityManager.createNativeQuery("select metricDetails.metric from MetricDetails metricDetails " +
                                                                  "where taskData_id in (:ids) " +
                                                                  "group by metricDetails.metric")
                                     .setParameter("ids", taskDataDto.getIds())
                                     .getResultList();
         if (plotNames.isEmpty())
-            return Collections.emptyList();
-
-        ArrayList<PlotNameDto> result = new ArrayList<PlotNameDto>(plotNames.size());
+            return result;
 
         for (String plotName : plotNames){
-            if (plotName != null)
-            result.add(new PlotNameDto(taskDataDto, plotName));
+            if (plotName != null) {
+                PlotNameDto plotNameDto = new PlotNameDto(taskDataDto, plotName);
+                if (result.contains(plotNameDto))
+                    continue;
+                result.add(plotNameDto);
+            }
         }
 
         return result;
@@ -71,21 +103,40 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
 
     @Override
     public List<PlotSeriesDto> getPlotData(Set<Long> taskId, String plotName) {
-        List<MetricDetails> metricValues = entityManager.createNativeQuery("select * from MetricDetails metrics " +
-                                                                           "where metrics.metric=:plotName and metrics.taskData_id in (:taskIds)",
-                                                                            MetricDetails.class)
-                                            .setParameter("taskIds", taskId)
-                                            .setParameter("plotName", plotName)
-                                            .getResultList();
+
+        // check new model
+        List<MetricDetails> metricValues = entityManager.createQuery("select metrics from MetricDetails metrics " +
+                "where metrics.collectorDescription.name=:plotName and metrics.collectorDescription.taskData.id in (:taskIds)",
+                MetricDetails.class)
+                .setParameter("taskIds", taskId)
+                .setParameter("plotName", plotName)
+                .getResultList();
+
+
+        // check old model
+        metricValues.addAll(
+                entityManager.createNativeQuery("select * from MetricDetails metrics " +
+                                                                       "where metrics.metric=:plotName and metrics.taskData_id in (:taskIds)",
+                                                                        MetricDetails.class)
+                                        .setParameter("taskIds", taskId)
+                                        .setParameter("plotName", plotName)
+                                        .getResultList()
+        );
 
         if (metricValues.isEmpty())
             return Collections.emptyList();
+
+        String displayName = metricValues.get(0).getDisplay();
 
         Multimap<Long, MetricDetails> metrics = ArrayListMultimap.create(taskId.size(), metricValues.size());
         List<PlotDatasetDto> plots = new ArrayList<PlotDatasetDto>();
 
         for (MetricDetails metricDetails : metricValues){
-            metrics.put(metricDetails.getTaskData().getId(), metricDetails);
+            if (metricDetails.getCollectorDescription() == null)
+                metrics.put(metricDetails.getTaskData().getId(), metricDetails);
+            else {
+                metrics.put(metricDetails.getCollectorDescription().getTaskData().getId(), metricDetails);
+            }
         }
 
         for (Long id : metrics.keySet()){
@@ -94,15 +145,20 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
             TaskData taskData = null;
 
             for (MetricDetails metricDetails : taskMetrics){
-                if (taskData == null) taskData = metricDetails.getTaskData();
+                if (taskData == null) {
+                    if (metricDetails.getCollectorDescription() == null)
+                        taskData = metricDetails.getTaskData();
+                    else
+                        taskData = metricDetails.getCollectorDescription().getTaskData();
+                }
                 points.add(new PointDto(metricDetails.getTime() / 1000D, metricDetails.getValue()));
             }
 
-            PlotDatasetDto plotDatasetDto = new PlotDatasetDto(points, legendProvider.generatePlotLegend(taskData.getSessionId(), plotName, true), ColorCodeGenerator.getHexColorCode());
+            PlotDatasetDto plotDatasetDto = new PlotDatasetDto(points, legendProvider.generatePlotLegend(taskData.getSessionId(), displayName, true), ColorCodeGenerator.getHexColorCode());
             plots.add(plotDatasetDto);
         }
 
-        PlotSeriesDto plotSeriesDto = new PlotSeriesDto(plots, "Time, sec", "", legendProvider.getPlotHeader(taskId, plotName));
+        PlotSeriesDto plotSeriesDto = new PlotSeriesDto(plots, "Time, sec", "", legendProvider.getPlotHeader(taskId, displayName));
 
         return Arrays.asList(plotSeriesDto);
     }

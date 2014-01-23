@@ -119,12 +119,24 @@ public class MetricDataServiceImpl implements MetricDataService {
                 }
             }else{
                 //custom metric
-                List<Object[]> metrics = entityManager.createQuery("select metric, metric.workloadData.sessionId " +
-                                                                   "from DiagnosticResultEntity as metric " +
-                                                                   "where metric.name=:name " +
-                                                                            "and (metric.workloadData.taskId, metric.workloadData.sessionId) " +
-                                                                                "in (select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))")
-                                                                   .setParameter("ids", metricName.getTests().getIds()).setParameter("name", metricName.getName()).getResultList();
+
+                // check new model
+                List<Object[]> metrics = entityManager.createQuery("select metric, metric.collectorDescription.taskData.sessionId " +
+                        "from DiagnosticResultEntity as metric " +
+                        "where metric.collectorDescription.name=:name " +
+                        "and (metric.collectorDescription.taskData.taskId, metric.collectorDescription.taskData.sessionId) " +
+                        "in (select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))")
+                        .setParameter("ids", metricName.getTests().getIds()).setParameter("name", metricName.getName()).getResultList();
+
+                // check old model
+                metrics.addAll(
+                        entityManager.createQuery("select metric, metric.workloadData.sessionId " +
+                                "from DiagnosticResultEntity as metric " +
+                                "where metric.name=:name " +
+                                "and (metric.workloadData.taskId, metric.workloadData.sessionId) " +
+                                "in (select taskData.taskId, taskData.sessionId from TaskData as taskData where taskData.id in (:ids))")
+                                .setParameter("ids", metricName.getTests().getIds()).setParameter("name", metricName.getName()).getResultList()
+                );
 
                 if (!metrics.isEmpty()){
                     for (Object[] mas : metrics){
@@ -202,7 +214,7 @@ public class MetricDataServiceImpl implements MetricDataService {
                 yMinimum = temp;
         }
 
-        String legend = metricDto.getMetricName().getName();
+        String legend = metricDto.getMetricName().getDisplay();
         if (standardMetrics.containsKey(legend)) {
             legend = standardMetrics.get(legend).getSecond();
         }
@@ -215,12 +227,12 @@ public class MetricDataServiceImpl implements MetricDataService {
         StringBuilder headerBuilder = new StringBuilder();
         headerBuilder.append(metricDto.getMetricName().getTests().getTaskName()).
                 append(", ").
-                append(metricDto.getMetricName().getName());
+                append(metricDto.getMetricName().getDisplay());
 
         PlotSeriesDto psd = new PlotSeriesDto(
                 Arrays.asList(pdd),
                 "Sessions" ,
-                metricDto.getMetricName().getName(),
+                metricDto.getMetricName().getDisplay(),
                 headerBuilder.toString()
         );
 

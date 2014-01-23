@@ -89,6 +89,7 @@ public class MetricNameDto implements Serializable {
         return "MetricNameDto{" +
                 "tests=" + tests +
                 ", name='" + name + '\'' +
+                ",displayName'" + displayName + '\'' +
                 '}';
     }
 }

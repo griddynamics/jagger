@@ -742,6 +742,12 @@
     <xsd:complexType name="workloadCollectorAbstract" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="basicType">
+                <xsd:attribute name="displayName" type="xsd:string" use="optional">
+                    <xsd:annotation><xsd:documentation>
+                        Display name of metric.
+                        If set - metric will appear in pdf/webUI with name equals to this attribute (plus aggregator.getName()).
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

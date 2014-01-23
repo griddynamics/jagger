@@ -1,7 +1,10 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.listener;
 
 import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
@@ -15,5 +18,12 @@ public abstract class AbstractValidatorDefinitionParser extends AbstractSimpleBe
     @Override
     protected Class getBeanClass(Element element) {
         return ValidatorProvider.class;
+    }
+
+    @Override
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+
+        String displayName = element.getAttribute(XMLConstants.DISPLAY_NAME);
+        builder.addPropertyValue(XMLConstants.DISPLAY_NAME, displayName.isEmpty() ? null : displayName);
     }
 }

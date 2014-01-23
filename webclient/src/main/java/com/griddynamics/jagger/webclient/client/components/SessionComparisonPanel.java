@@ -290,14 +290,13 @@ public class SessionComparisonPanel extends VerticalPanel{
 
         String descriptionString = record.get(TEST_DESCRIPTION);
         String testNameString = record.get(TEST_NAME);
-        String metricName = record.get(NAME);
 
         if (descriptionString == null || testNameString == null)
             return;
 
         TreeItem testItem = getTestItem(descriptionString, testNameString);
         for (TreeItem rec : treeStore.getChildren(testItem)) {
-            if (rec.get(NAME).equals(metricName)) {
+            if (rec.getKey().equals(record.getKey())) {
                 return;
             }
         }
@@ -316,15 +315,19 @@ public class SessionComparisonPanel extends VerticalPanel{
 
         String description = metric.getMetricName().getTests().getDescription();
         String testName = metric.getMetricName().getTests().getTaskName();
-        String metricName = metric.getMetricName().getName();
+        String key = getItemKey(metric.getMetricName());
 
         TreeItem testItem = getTestItem(description, testName);
         for (TreeItem item : treeStore.getChildren(testItem)) {
-            if (metricName.equals(item.get(NAME))) {
+            if (item.getKey().equals(key)) {
                 removeWithParent(item);
                 return;
             }
         }
+    }
+
+    private String getItemKey(MetricNameDto metricName) {
+        return metricName.getTests().getDescription() + metricName.getTests().getTaskName() + metricName.getName();
     }
 
     private void removeWithParent(TreeItem toRemove) {
@@ -467,8 +470,8 @@ public class SessionComparisonPanel extends VerticalPanel{
         public TreeItem(MetricDto metricDto) {
 
             MetricNameDto metricName = metricDto.getMetricName();
-            this.key = metricName.getTests().getDescription() + metricName.getTests().getTaskName() + metricName.getName();
-            put(NAME, metricName.getName());
+            this.key = getItemKey(metricName);
+            put(NAME, metricName.getDisplay());
             put(TEST_DESCRIPTION, metricName.getTests().getDescription());
             put(TEST_NAME, metricName.getTests().getTaskName());
 

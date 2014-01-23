@@ -57,10 +57,21 @@ public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
     @Override
     public JRDataSource getDataSource(String key) {
         String sessionId = getSessionIdProvider().getSessionId();
-        @SuppressWarnings("unchecked")
-        List<DiagnosticResultEntity> diagnosticResults = getHibernateTemplate().find(
-                "select v from DiagnosticResultEntity v where v.workloadData.taskId=? and v.workloadData.sessionId=?",
+
+        List<DiagnosticResultEntity> diagnosticResults;
+
+        // check new model
+        diagnosticResults = getHibernateTemplate().find(
+                "select d from DiagnosticResultEntity d where d.collectorDescription.taskData.taskId=? and d.collectorDescription.taskData.sessionId=?",
                 key, sessionId);
+
+        if (diagnosticResults == null || diagnosticResults.isEmpty()) {
+
+            // check old model
+            diagnosticResults = getHibernateTemplate().find(
+                    "select v from DiagnosticResultEntity v where v.workloadData.taskId=? and v.workloadData.sessionId=?",
+                    key, sessionId);
+        }
 
         if (diagnosticResults == null || diagnosticResults.isEmpty()) {
             log.info("Diagnostic info for task id " + key + "] not found");
@@ -82,7 +93,7 @@ public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
     }
 
     private DiagnosticResult convert(DiagnosticResultEntity entity) {
-        String name  = entity.getName();
+        String name  = entity.getDisplay();
         Double total = entity.getTotal();
 
         DiagnosticResult result = new DiagnosticResult();
