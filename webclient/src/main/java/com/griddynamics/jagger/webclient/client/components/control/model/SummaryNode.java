@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.webclient.client.components.control.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,6 +23,9 @@ public class SummaryNode extends AbstractIdentifyNode {
     }
 
     public List<TestNode> getTests() {
+        if (tests == null) {
+            return Collections.EMPTY_LIST;
+        }
         return tests;
     }
 
