@@ -64,6 +64,35 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
         return result;
     }
 
+    public List<PlotNameDto> getPlotNames(List<TaskDataDto> taskDataDtos){
+
+        Set<Long> testIds = new HashSet<Long>();
+        for (TaskDataDto tdd : taskDataDtos) {
+            testIds.addAll(tdd.getIds());
+        }
+        List<Object[]> plotNames = entityManager.createNativeQuery("select metricDetails.metric, metricDetails.taskData_id from MetricDetails metricDetails " +
+                "where metricDetails.taskData_id in (:ids) " +
+                "group by metricDetails.metric")
+                .setParameter("ids", testIds)
+                .getResultList();
+        if (plotNames.isEmpty())
+            return Collections.emptyList();
+
+        ArrayList<PlotNameDto> result = new ArrayList<PlotNameDto>(plotNames.size());
+
+        for (Object[] plotName : plotNames){
+            if (plotName != null) {
+                for (TaskDataDto tdd : taskDataDtos) {
+                    if (tdd.getIds().contains(((BigInteger)plotName[1]).longValue())) {
+                        result.add(new PlotNameDto(tdd, (String)plotName[0]));
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     @Override
     public List<PlotSeriesDto> getPlotData(long taskId, String plotName) {
         return getPlotData(new HashSet<Long>(Arrays.asList(taskId)), plotName);

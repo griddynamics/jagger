@@ -10,7 +10,7 @@ public class ExactInvocationsClockConfiguration implements WorkloadClockConfigur
 
     private int delay;
 
-    private String period;
+    private String period = "-1";
 
     private int tickInterval = 1000;
 

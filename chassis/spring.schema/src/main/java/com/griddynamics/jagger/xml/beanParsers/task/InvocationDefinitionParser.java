@@ -23,9 +23,7 @@ public class InvocationDefinitionParser extends CustomBeanDefinitionParser {
         if (element.getAttribute(XMLConstants.DELAY).isEmpty()){
             builder.addPropertyValue(XMLConstants.DELAY, 0);
         }
-        if (element.getAttribute(XMLConstants.PERIOD).isEmpty()){
-            builder.addPropertyValue(XMLConstants.PERIOD, -1);
-        } else {
+        if (!element.getAttribute(XMLConstants.PERIOD).isEmpty()){
             builder.addPropertyValue(XMLConstants.PERIOD, element.getAttribute(XMLConstants.PERIOD));
         }
     }

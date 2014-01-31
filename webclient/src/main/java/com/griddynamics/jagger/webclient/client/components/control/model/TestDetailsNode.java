@@ -3,6 +3,7 @@ package com.griddynamics.jagger.webclient.client.components.control.model;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,6 +21,10 @@ public class TestDetailsNode extends AbstractIdentifyNode {
     private List<MonitoringPlotNode> monitoringPlots;
 
     public List<MonitoringPlotNode> getMonitoringPlots() {
+
+        if (monitoringPlots == null) {
+            return Collections.EMPTY_LIST;
+        }
         return monitoringPlots;
     }
 

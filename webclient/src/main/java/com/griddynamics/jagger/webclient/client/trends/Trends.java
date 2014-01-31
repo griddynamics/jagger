@@ -138,12 +138,18 @@ public class Trends extends DefaultActivity {
 
         for (TaskDataDto taskDataDto : tests){
             TestsMetrics testsMetrics = new TestsMetrics(taskDataDto.getTaskName(), new HashSet<String>(), new HashSet<String>());
+
+            TestNode testNode = controlTree.findTestNode(taskDataDto);
+            if (testNode == null) continue;
+            Set<MetricNameDto> metricsNames = controlTree.getCheckedMetrics(testNode);
+
+            if (metricsNames.size() < testNode.getMetrics().size()) {
+                for (MetricNameDto mnd : metricsNames) {
+                    testsMetrics.getMetrics().add(mnd.getName());
+                }
+            }
             testsMetricses.add(testsMetrics);
             map.put(taskDataDto.getTaskName(), testsMetrics);
-        }
-
-        for (MetricNameDto metricNameDto : metrics){
-            map.get(metricNameDto.getTests().getTaskName()).getMetrics().add(metricNameDto.getName());
         }
 
         for (Map.Entry<String, List<String>> entry : trends.entrySet()) {
@@ -374,7 +380,7 @@ public class Trends extends DefaultActivity {
         setupControlTree();
     }
 
-    private final Widget NO_SESSION_CHOSEN = new Label("Choose at least One session (temp string)");
+    private final Widget NO_SESSION_CHOSEN = new Label("Choose at least One session");
 
     private void setupControlTree() {
 
@@ -934,11 +940,13 @@ public class Trends extends DefaultActivity {
                         } else {
                             controlTree.onMetricsTab();
                         }
+                        enableControl();
 
                     } else {
                         updateControlTree(result);
+                        enableControl();
                     }
-                    enableControl();
+
                 }
 
             });
@@ -957,10 +965,11 @@ public class Trends extends DefaultActivity {
                 for (MonitoringSessionScopePlotNode monitoringSessionScopePlotNode : sessionScopePlotsNode.getPlots()) {
                     if (place.getSessionTrends().contains(monitoringSessionScopePlotNode.getDisplayName())) {
                         tempTree.setCheckedWithParent(monitoringSessionScopePlotNode);
+                        tempTree.setExpanded(sessionScopePlotsNode, true, false);
                     } else {
                         for (SessionPlotNode plotNode: monitoringSessionScopePlotNode.getPlots()) {
                             if (place.getSessionTrends().contains(plotNode.getPlotNameDto().getPlotName())) {
-                                tempTree.setCheckedWithParent(plotNode);
+                                tempTree.setCheckedExpandedWithParent(plotNode);
                             }
                         }
                     }
@@ -974,14 +983,21 @@ public class Trends extends DefaultActivity {
                     new ExceptionPanel("could not find Test with test name \'" + testsMetrics.getTestName() + "\' for summary");
                     continue;
                 } else {
-                    for (MetricNode metricNode : testNode.getMetrics()) {
-                        if (testsMetrics.getMetrics().contains(metricNode.getMetricName().getName())) {
-                            tempTree.setCheckedWithParent(metricNode);
-                            needTestInfo = true;
+
+                    if (testsMetrics.getMetrics().isEmpty()) {
+                        // check all metrics
+                        tempTree.setCheckedExpandedWithParent(testNode);
+                    } else {
+                        tempTree.setExpanded(testNode, true);
+                        for (MetricNode metricNode : testNode.getMetrics()) {
+                            if (testsMetrics.getMetrics().contains(metricNode.getMetricName().getName())) {
+                                tempTree.setCheckedWithParent(metricNode);
+                                needTestInfo = true;
+                            }
                         }
-                    }
-                    if (needTestInfo) {
-                        tempTree.setCheckedWithParent(testNode.getTestInfo());
+                        if (needTestInfo) {
+                            tempTree.setCheckedWithParent(testNode.getTestInfo());
+                        }
                     }
                 }
 
@@ -991,16 +1007,17 @@ public class Trends extends DefaultActivity {
                 } else {
                     for (PlotNode plotNode : testDetailsNode.getPlots()) {
                         if (testsMetrics.getTrends().contains(plotNode.getPlotName().getPlotName())) {
-                            tempTree.setCheckedWithParent(plotNode);
+                            tempTree.setCheckedExpandedWithParent(plotNode);
                         }
                     }
                     for (MonitoringPlotNode monitoringPlotNode : testDetailsNode.getMonitoringPlots()) {
                         if (testsMetrics.getTrends().contains(monitoringPlotNode.getDisplayName())) {
                             tempTree.setCheckedWithParent(monitoringPlotNode);
+                            tempTree.setExpanded(testDetailsNode, true, false);
                         } else {
                             for (PlotNode plotNode: monitoringPlotNode.getPlots()) {
                                 if (testsMetrics.getTrends().contains(plotNode.getPlotName().getPlotName())) {
-                                    tempTree.setCheckedWithParent(plotNode);
+                                    tempTree.setCheckedExpandedWithParent(plotNode);
                                 }
                             }
                         }
@@ -1100,15 +1117,14 @@ public class Trends extends DefaultActivity {
             fetchSessionScopePlots();
             fetchPlotsForTests();
 
-            enableControl();
         }
 
         private void fetchSessionScopePlots() {
-            sessionScopePlotFetcher.fetchPlots(controlTree.getCheckedSessionScopePlots(), false);
+            sessionScopePlotFetcher.fetchPlots(controlTree.getCheckedSessionScopePlots(), true);
         }
 
         private void fetchPlotsForTests() {
-            testPlotFetcher.fetchPlots(controlTree.getCheckedPlots(), false);
+            testPlotFetcher.fetchPlots(controlTree.getCheckedPlots(), true);
         }
 
         private void fetchMetricsForTests(List<TestNode> testNodes) {

@@ -69,6 +69,13 @@
 
     <bean id="controlTreeCreatorService" class="com.griddynamics.jagger.webclient.server.ControlTreeCreatorServiceImpl" >
         <property name="databaseFetcher" ref="databaseFetcher" />
+        <property name="threadPool" ref="executorService"/>
+    </bean>
+
+    <bean id="executorService" class="java.util.concurrent.Executors"
+          factory-method="newFixedThreadPool"
+          destroy-method="shutdownNow">
+        <constructor-arg value="10"/>
     </bean>
 
     <bean id="databaseFetcher" class="com.griddynamics.jagger.webclient.server.CommonDataProviderImpl">
