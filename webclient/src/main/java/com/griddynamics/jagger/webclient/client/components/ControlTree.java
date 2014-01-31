@@ -168,6 +168,7 @@ public class ControlTree<C> extends Tree <AbstractIdentifyNode, C> {
 
     public void setCheckedExpandedWithParent (AbstractIdentifyNode item) {
         setChecked(item, Tree.CheckState.CHECKED);
+        checkSubTree(item, Tree.CheckState.CHECKED);
         checkParent(item);
         setExpanded(item, true, false);
     }
@@ -251,6 +252,35 @@ public class ControlTree<C> extends Tree <AbstractIdentifyNode, C> {
             }
         }
         return resultSet;
+    }
+
+
+    /**
+     * @param testNode /
+     * @return MetricNameDto from 'TestNode' test
+     */
+    public Set<MetricNameDto> getCheckedMetrics(TestNode testNode) {
+
+        Set<MetricNameDto> resultSet = new HashSet<MetricNameDto>();
+            for (MetricNode metricNode : testNode.getMetrics()) {
+                if (isChecked(metricNode)) {
+                    resultSet.add(metricNode.getMetricName());
+                }
+            }
+        return resultSet;
+    }
+
+
+    public TestNode findTestNode(TaskDataDto taskDataDto) {
+
+        for (TestNode test : rootNode.getSummary().getTests()) {
+            if (test.getTaskDataDto().equals(taskDataDto)) {
+                return test;
+            }
+        }
+
+        new ExceptionPanel("can not find TestNode with: " + taskDataDto);
+        return null;
     }
 
 

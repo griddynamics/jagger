@@ -2,15 +2,15 @@ package com.griddynamics.jagger.webclient.server;
 
 import com.griddynamics.jagger.webclient.client.ControlTreeCreatorService;
 import com.griddynamics.jagger.webclient.client.components.control.model.*;
-import com.griddynamics.jagger.webclient.client.data.MetricRankingProvider;
-import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
-import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static com.griddynamics.jagger.webclient.client.mvp.NameTokens.*;
 
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,8 +23,16 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
 
     CommonDataProvider databaseFetcher;
 
+    // todo: implement same idea for fetching plots/summary data
+    // to implement parallel fetching data for control tree
+    private ExecutorService threadPool;
+
     public void setDatabaseFetcher(CommonDataProvider databaseFetcher) {
         this.databaseFetcher = databaseFetcher;
+    }
+
+    public void setThreadPool(ExecutorService threadPool) {
+        this.threadPool = threadPool;
     }
 
     @Override
@@ -39,27 +47,27 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
     public RootNode getControlTreeForSessions(Set<String> sessionIds) throws RuntimeException {
 
         try {
+
+            long temp = System.currentTimeMillis();
+
             RootNode rootNode = new RootNode();
-            SummaryNode sn = new SummaryNode(CONTROL_SUMMARY_TRENDS, CONTROL_SUMMARY_TRENDS);
-            SessionInfoNode sin = new SessionInfoNode(SESSION_INFO, SESSION_INFO);
-            sin.setSessionInfoList(getSessionInfoLeafList(sessionIds));
-            sn.setSessionInfo(sin);
-            sn.setTests(getSummaryTaskNodeList(sessionIds));
-            rootNode.setSummary(sn);
 
-            DetailsNode dn = new DetailsNode(CONTROL_METRICS, CONTROL_METRICS);
+            List<TaskDataDto> taskList = fetchTaskDatas(sessionIds);
 
-            if (sessionIds.size() == 1) {
-                SessionScopePlotsNode sspn = new SessionScopePlotsNode(SESSION_SCOPE_PLOTS, SESSION_SCOPE_PLOTS);
-                sspn.setPlots(getSessionScopePlotNames(sessionIds));
-                if (!sspn.getPlots().isEmpty()) {
-                    dn.setSessionScopePlotsNode(sspn);
-                }
-            }
+            Future<SummaryNode> summaryFuture = threadPool.submit(new SummaryNodeFetcherTread(sessionIds, taskList));
+            Future<DetailsNode> detailsNodeFuture = threadPool.submit(new DetailsNodeFetcherTread(sessionIds, taskList));
+            Future<SessionScopePlotsNode> sessionScopePlotsNodeFuture = threadPool.submit(new SessionScopePlotsNodeFetcherThread(sessionIds));
 
-            dn.setTests(getDetailsTaskNodeList(sessionIds));
+            SummaryNode summaryNode = summaryFuture.get();
+            DetailsNode detailsNode = detailsNodeFuture.get();
+            SessionScopePlotsNode sessionScopePlotsNode = sessionScopePlotsNodeFuture.get();
 
-            rootNode.setDetailsNode(dn);
+            detailsNode.setSessionScopePlotsNode(sessionScopePlotsNode);
+
+            rootNode.setSummary(summaryNode);
+            rootNode.setDetailsNode(detailsNode);
+
+            log.info("Total time fetching all data for control tree : {} ms", (System.currentTimeMillis() - temp));
 
             return rootNode;
         } catch (Throwable th) {
@@ -69,36 +77,76 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
         }
     }
 
-    private List<TestDetailsNode> getDetailsTaskNodeList(Set<String> sessionIds) {
+    private List<TaskDataDto> fetchTaskDatas(Set<String> sessionIds) {
+        long temp = System.currentTimeMillis();
+        List<TaskDataDto> tddos = databaseFetcher.getTaskDataForSessions(sessionIds);
+        log.debug("load tests : {} for summary with {} ms", tddos, System.currentTimeMillis() - temp);
+        return tddos;
+    }
+
+    private List<TestDetailsNode> getDetailsTaskNodeList(final Set<String> sessionIds, final List<TaskDataDto> taskList) {
         List<TestDetailsNode> taskDataDtoList = new ArrayList<TestDetailsNode>();
-        for (final TaskDataDto tdd : databaseFetcher.getTaskDataForSessions(sessionIds)) {
-            TestDetailsNode testNode = new TestDetailsNode();
-            testNode.setId(METRICS_PREFIX + tdd.getTaskName());
-            testNode.setTaskDataDto(tdd);
 
-            testNode.setPlots(getPlotNames(sessionIds, tdd));
-            testNode.setMonitoringPlots(getMonitoringPlots(sessionIds, tdd));
+        try {
+            Future<Map<TaskDataDto, List<PlotNode>>> metricsPlotsMapFuture = threadPool.submit(
+                new Callable<Map<TaskDataDto, List<PlotNode>>>() {
+                    @Override
+                    public Map<TaskDataDto, List<PlotNode>> call() throws Exception {
+                        return getTestPlotsMap(sessionIds, taskList);
+                    }
+                }
+            );
 
-            taskDataDtoList.add(testNode);
+            Future<Map<TaskDataDto, List<MonitoringPlotNode>>> monitoringPlotsMapFuture = threadPool.submit(
+                    new Callable<Map<TaskDataDto, List<MonitoringPlotNode>>>() {
+                        @Override
+                        public Map<TaskDataDto, List<MonitoringPlotNode>> call() throws Exception {
+                            return getMonitoringPlots(sessionIds, taskList);
+                        }
+                    }
+            );
+
+            Map<TaskDataDto, List<PlotNode>> map = metricsPlotsMapFuture.get();
+            Map<TaskDataDto, List<MonitoringPlotNode>> monitoringMap = monitoringPlotsMapFuture.get();
+
+            for (TaskDataDto tdd : map.keySet()) {
+                TestDetailsNode testNode = new TestDetailsNode();
+                testNode.setId(METRICS_PREFIX + tdd.getTaskName());
+                testNode.setTaskDataDto(tdd);
+
+                testNode.setPlots(map.get(tdd));
+
+                testNode.setMonitoringPlots(monitoringMap.get(tdd));
+
+                taskDataDtoList.add(testNode);
+            }
+
+            return taskDataDtoList;
+
+        } catch (Exception e) {
+            log.error("Exception occurs while fetching plotNames for sessions {}, and tests {}", sessionIds, taskList);
+            throw new RuntimeException(e);
         }
+    }
 
-        return taskDataDtoList;
+    private Map<TaskDataDto, List<PlotNode>> getTestPlotsMap(Set<String> sessionIds, List<TaskDataDto> taskList) {
+        return databaseFetcher.getTestPlotsMap(sessionIds, taskList);
     }
 
     private List<MonitoringSessionScopePlotNode> getSessionScopePlotNames(Set<String> sessionIds) {
-        return databaseFetcher.getMonitoringPlotNodes(sessionIds);
+        return databaseFetcher.getMonitoringPlotNodesNew(sessionIds);
     }
 
-    private List<TestNode> getSummaryTaskNodeList(Set<String> sessionIds) {
+    private List<TestNode> getSummaryTaskNodeList(List<TaskDataDto> tasks) {
 
         List<TestNode> taskDataDtoList = new ArrayList<TestNode>();
-        for (final TaskDataDto tdd : databaseFetcher.getTaskDataForSessions(sessionIds)) {
+
+        Map<TaskDataDto, List<MetricNode>> map = getTestMetricsMap(tasks);
+        for (TaskDataDto tdd : map.keySet()) {
             TestNode testNode = new TestNode();
             testNode.setId(SUMMARY_PREFIX + tdd.getTaskName());
             testNode.setTaskDataDto(tdd);
-
-            testNode.setMetrics(getMetricNodeList(tdd));
-
+            testNode.setMetrics(map.get(tdd));
             TestInfoNode tin = new TestInfoNode(tdd.getTaskName() + TEST_INFO, TEST_INFO);
             tin.setTestInfoList(getTestInfoNamesList(tdd));
             testNode.setTestInfo(tin);
@@ -109,47 +157,85 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
         return taskDataDtoList;
     }
 
+    private Map<TaskDataDto, List<MetricNode>> getTestMetricsMap(List<TaskDataDto> tddos) {
+        return databaseFetcher.getTestMetricsMap(tddos, threadPool);
+    }
+
+
     private List<TestInfoLeaf> getTestInfoNamesList(TaskDataDto task) {
         return Collections.EMPTY_LIST;
     }
 
-    private List<PlotNode> getPlotNames(Set<String> sessionIds, TaskDataDto tdd) {
 
-        List<PlotNode> result = new ArrayList<PlotNode>();
-        for (PlotNameDto mnd : databaseFetcher.getPlotNames(sessionIds, tdd)) {
-            PlotNode mn = new PlotNode();
-            mn.setId(METRICS_PREFIX + tdd.getTaskName() + mnd.getPlotName());
-            mn.setDisplayName(mnd.getDisplay());
-            mn.setPlotName(mnd);
-            result.add(mn);
-        }
-        MetricRankingProvider.sortPlotNodes(result);
-        return result;
+    private Map<TaskDataDto, List<MonitoringPlotNode>> getMonitoringPlots(Set<String> sessionIds, List<TaskDataDto> tdds) {
+
+        return databaseFetcher.getMonitoringPlotNodes(sessionIds, tdds);
     }
 
-    private List<MonitoringPlotNode> getMonitoringPlots(Set<String> sessionIds, TaskDataDto tdd) {
-
-        return databaseFetcher.getMonitoringPlotNodes(sessionIds, tdd);
-    }
-
-    private List<MetricNode> getMetricNodeList(TaskDataDto dto) {
-        List<MetricNode> result = new ArrayList<MetricNode>();
-        Set<TaskDataDto> dtos = new HashSet<TaskDataDto>(1);
-        dtos.add(dto);
-
-        for (MetricNameDto metricName: databaseFetcher.getMetricNames(dtos)) {
-            MetricNode mn = new MetricNode();
-            mn.setMetricName(metricName);
-            mn.setId(SUMMARY_PREFIX + dto.getTaskName() + metricName.getName());
-            mn.setDisplayName(metricName.getDisplay());
-            result.add(mn);
-        }
-        MetricRankingProvider.sortMetricNodes(result);
-        return result;
-    }
 
     private List<SessionInfoLeaf> getSessionInfoLeafList(Set<String> sessionIds) {
         return Collections.EMPTY_LIST;
+    }
+
+    public class SummaryNodeFetcherTread
+            implements Callable<SummaryNode> {
+        private Set<String> sessionIds;
+        private List<TaskDataDto> taskList;
+        public SummaryNodeFetcherTread(Set<String> sessionIds, List<TaskDataDto> taskList) {
+            this.sessionIds = sessionIds;
+            this.taskList = taskList;
+        }
+
+        public SummaryNode call() {
+            SummaryNode sn = new SummaryNode(CONTROL_SUMMARY_TRENDS, CONTROL_SUMMARY_TRENDS);
+            SessionInfoNode sin = new SessionInfoNode(SESSION_INFO, SESSION_INFO);
+            sin.setSessionInfoList(getSessionInfoLeafList(sessionIds));
+            sn.setSessionInfo(sin);
+            if (!taskList.isEmpty()) {
+                sn.setTests(getSummaryTaskNodeList(taskList));
+            }
+            return sn;
+        }
+    }
+
+    public class DetailsNodeFetcherTread
+            implements Callable<DetailsNode> {
+        private Set<String> sessionIds;
+        private List<TaskDataDto> taskList;
+        public DetailsNodeFetcherTread(Set<String> sessionIds, List<TaskDataDto> taskList) {
+            this.sessionIds = sessionIds;
+            this.taskList = taskList;
+        }
+
+        public DetailsNode call() {
+            DetailsNode dn = new DetailsNode(CONTROL_METRICS, CONTROL_METRICS);
+            if (!taskList.isEmpty()) {
+                dn.setTests(getDetailsTaskNodeList(sessionIds, taskList));
+            }
+            return dn;
+        }
+    }
+
+    public class SessionScopePlotsNodeFetcherThread
+            implements Callable<SessionScopePlotsNode> {
+
+        private Set<String> sessionIds;
+
+        public SessionScopePlotsNodeFetcherThread(Set<String> sessionIds) {
+            this.sessionIds = sessionIds;
+        }
+
+        @Override
+        public SessionScopePlotsNode call() throws Exception {
+            if (sessionIds.size() == 1) {
+                SessionScopePlotsNode sspn = new SessionScopePlotsNode(SESSION_SCOPE_PLOTS, SESSION_SCOPE_PLOTS);
+                sspn.setPlots(getSessionScopePlotNames(sessionIds));
+                if (!sspn.getPlots().isEmpty()) {
+                    return sspn;
+                }
+            }
+            return null;
+        }
     }
 
 }
