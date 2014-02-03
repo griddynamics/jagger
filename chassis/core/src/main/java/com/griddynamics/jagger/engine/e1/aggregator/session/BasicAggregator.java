@@ -157,8 +157,8 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
                 log.error("Cannot add new tag", e);
             }
         }
-
-        sessionTagList.addAll(getHibernateTemplate().findByNamedParam("select tags from TagEntity as tags " +
+        if (!metaDataStorage.getSessionTags().isEmpty())
+            sessionTagList.addAll(getHibernateTemplate().findByNamedParam("select tags from TagEntity as tags " +
                 "where tags.name in (:sTagsName)", "sTagsName", metaDataStorage.getSessionTags()));
 
         if (!sessionTagList.isEmpty()) {
