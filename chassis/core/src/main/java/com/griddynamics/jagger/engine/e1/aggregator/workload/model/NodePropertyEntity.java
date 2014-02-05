@@ -33,6 +33,8 @@ public class NodePropertyEntity {
         this.nodeInfoEntity = nodeInfoEntity;
     }
 
+    public NodePropertyEntity() {}
+
     public Long getId() {
         return id;
     }

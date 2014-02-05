@@ -32,6 +32,7 @@ import com.google.gwt.view.client.*;
 import com.griddynamics.jagger.webclient.client.*;
 import com.griddynamics.jagger.webclient.client.components.*;
 import com.griddynamics.jagger.webclient.client.components.ControlTree;
+import com.griddynamics.jagger.webclient.client.components.NodesPanel;
 import com.griddynamics.jagger.webclient.client.components.control.CheckHandlerMap;
 import com.griddynamics.jagger.webclient.client.components.control.SimpleNodeValueProvider;
 import com.griddynamics.jagger.webclient.client.components.control.model.*;
@@ -84,6 +85,9 @@ public class Trends extends DefaultActivity {
 
     @UiField
     SummaryPanel summaryPanel;
+
+    @UiField
+    NodesPanel nodesPanel;
 
     @UiField
     TextBox sessionIdsTextBox;
@@ -487,6 +491,8 @@ public class Trends extends DefaultActivity {
                         break;
                     case 2:
                         onMetricsTabSelected();
+                    case 3:
+                        onBoxesTabSelected();
                     default:
                 }
             }
@@ -536,13 +542,25 @@ public class Trends extends DefaultActivity {
         }
     }
 
+    private boolean needRefreshBoxes = false;
+    private void onBoxesTabSelected() {
+        mainTabPanel.forceLayout();
+        controlTree.onSummaryTrendsTab();
+        if (needRefreshBoxes) {
+            nodesPanel.getBoxesTablePanel().refresh();
+            needRefreshBoxes = false;
+        }
+    }
+
     private void chooseTab(String token) {
         if (NameTokens.SUMMARY.equals(token)) {
             mainTabPanel.selectTab(0);
         } else if (NameTokens.TRENDS.equals(token)) {
             mainTabPanel.selectTab(1);
-        } else {
+        } else if (NameTokens.METRICS.equals(token)) {
             mainTabPanel.selectTab(2);
+        } else {
+            mainTabPanel.selectTab(3);
         }
     }
 
@@ -879,6 +897,17 @@ public class Trends extends DefaultActivity {
             chosenPlots.clear();
             summaryPanel.updateSessions(selected);
             needRefresh = mainTabPanel.getSelectedIndex() != 0;
+
+            // Update boxes info only when session was changed
+            NodesPanel.CheckUpdateResult needToUpdate = nodesPanel.doYouNeedToUpdate(selected);
+            if (needToUpdate.isNeedToUpdate() == true) {
+                if (needToUpdate.getSessionId() == -1)
+                    nodesPanel.cleanBoxes();
+                else {
+                    nodeInfoFetcher.fetchNodeInfo(needToUpdate.getSessionId());
+                    needRefreshBoxes = true;
+                }
+            }
 
             CheckHandlerMap.setMetricFetcher(metricFetcher);
             CheckHandlerMap.setTestPlotFetcher(testPlotFetcher);
@@ -1500,4 +1529,24 @@ public class Trends extends DefaultActivity {
 
     }
 
+    private NodeInfoFetcher nodeInfoFetcher = new NodeInfoFetcher();
+
+    public class NodeInfoFetcher
+    {
+        public void fetchNodeInfo(long sessionId) {
+            final long localSessionId = sessionId;
+            NodeInfoService.Async.getInstance().getNodeInfo(String.valueOf(localSessionId), new AsyncCallback<List<NodeInfoDto>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    caught.printStackTrace();
+                    new ExceptionPanel(place, caught.getMessage());
+                }
+
+                @Override
+                public void onSuccess(List<NodeInfoDto> result) {
+                    nodesPanel.updateBoxes(localSessionId,result);
+                }
+            });
+        }
+    }
 }

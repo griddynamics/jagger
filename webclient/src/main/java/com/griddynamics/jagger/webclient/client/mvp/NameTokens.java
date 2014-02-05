@@ -17,6 +17,8 @@ public class NameTokens {
 
     public static final String METRICS = "metrics";
 
+    public static final String BOXES = "boxes";
+
     public static final String CONTROL_SUMMARY_TRENDS = "Summary & Trends";
     public static final String CONTROL_METRICS = "Metrics";
     public static final String SESSION_INFO = "Session Info";

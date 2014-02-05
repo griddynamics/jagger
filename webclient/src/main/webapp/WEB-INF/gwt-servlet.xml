@@ -51,6 +51,7 @@
                 <entry key="/SessionDataService" value-ref="sessionDataService"/>
                 <entry key="/MetricDataService" value-ref="metricDataService"/>
                 <entry key="/ControlTreeCreatorService" value-ref="controlTreeCreatorService"/>
+                <entry key="/NodeInfoService" value-ref="nodeInfoService"/>
             </map>
         </property>
     </bean>
@@ -152,6 +153,9 @@
             </map>
         </constructor-arg>
     </bean>
+
+    <!--===========Node Info Data Provider===========-->
+    <bean id="nodeInfoService" class="com.griddynamics.jagger.webclient.server.NodeInfoServiceImpl"/>
 
     <util:map id="standardMetrics" key-type="java.lang.String">
         <entry key="Throughput">
