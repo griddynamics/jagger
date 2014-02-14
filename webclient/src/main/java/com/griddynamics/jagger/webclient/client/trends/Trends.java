@@ -897,6 +897,7 @@ public class Trends extends DefaultActivity {
             summaryPanel.updateSessions(selected, webClientProperties);
             needRefresh = mainTabPanel.getSelectedIndex() != 0;
 
+            CheckHandlerMap.setTestInfoFetcher(testInfoFetcher);
             CheckHandlerMap.setMetricFetcher(metricFetcher);
             CheckHandlerMap.setTestPlotFetcher(testPlotFetcher);
             CheckHandlerMap.setSessionScopePlotFetcher(sessionScopePlotFetcher);
@@ -1147,7 +1148,7 @@ public class Trends extends DefaultActivity {
         private void fetchMetricsForTests(List<TestNode> testNodes) {
             for (TestNode testNode : testNodes) {
                 if (controlTree.isChecked(testNode.getTestInfo())) {
-                    summaryPanel.getSessionComparisonPanel().addTestInfo(testNode.getTaskDataDto());
+                    testInfoFetcher.fetchTestInfo(testNode.getTaskDataDto(), false);
                 }
             }
             metricFetcher.fetchMetrics(controlTree.getCheckedMetrics(), false);
@@ -1185,6 +1186,35 @@ public class Trends extends DefaultActivity {
             for (AbstractIdentifyNode child : node.getChildren()) {
                 addToStore(store, child, node);
             }
+        }
+    }
+
+
+    /**
+     * make server calls to fetch testInfo
+     */
+    private TestInfoFetcher testInfoFetcher = new TestInfoFetcher();
+
+
+    public class TestInfoFetcher {
+        public void fetchTestInfo(final TaskDataDto taskDataDto, final boolean enableTree) {
+
+            SessionDataService.Async.getInstance().getTestInfo(taskDataDto, new AsyncCallback<Map<String, TestInfoDto>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    caught.printStackTrace();
+                    new ExceptionPanel(place, caught.getMessage());
+                    if (enableTree)
+                        enableControl();
+                }
+
+                @Override
+                public void onSuccess(Map<String, TestInfoDto> result) {
+                    summaryPanel.getSessionComparisonPanel().addTestInfo(taskDataDto, result);
+                    if (enableTree)
+                        enableControl();
+                }
+            });
         }
     }
 

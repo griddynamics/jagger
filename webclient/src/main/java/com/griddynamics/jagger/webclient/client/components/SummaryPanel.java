@@ -57,12 +57,6 @@ public class SummaryPanel extends Composite {
         active = chosenSessions;
     }
 
-    public void updateTests(Collection<TaskDataDto> tests) {
-        if (sessionComparisonPanel != null) { // imposible
-            sessionComparisonPanel.updateTests(tests);
-        }
-    }
-
     public Set<String> getSessionIds(){
         HashSet<String> ids = new HashSet<String>(active.size());
         for (SessionDataDto session : active){

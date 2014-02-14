@@ -84,6 +84,7 @@
         <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
         <property name="workloadPlotGroups" ref="workloadPlotGroups"/>
         <property name="standardMetrics" ref="standardMetrics"/>
+        <property name="showOnlyMatchedTests" value="${show.matched.tests.only:true}"/>
     </bean>
 
 
