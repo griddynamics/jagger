@@ -154,22 +154,34 @@ public class Trends extends DefaultActivity {
                 sessionsToTestsMap.put(sessionIds, taskList);
             }
         }
+        if (!selectedSessionIds.isEmpty()) {
+            sessionsToTestsMap.put(selectedSessionIds, null);
+        }
 
         List<LinkFragment> linkFragments = new ArrayList<LinkFragment>();
-        if (!selectedSessionIds.isEmpty()) {
-            LinkFragment linkFragment = new LinkFragment();
-            linkFragment.setSelectedSessionIds(selectedSessionIds);
-            linkFragments.add(linkFragment);
-        }
-        // here we got map like [[sessionId1, sessionId2]:{taskDataDto1, taskDataDto3};[sessionId1, sessionId5]:{taskDataDto2}]
 
         for (Map.Entry<Set<String>, List<TaskDataDto>> sessionsToTestsEntry : sessionsToTestsMap.entrySet()) {
 
-            Map<String, List<String>> trends = getTestTrendsMap(controlTree.getRootNode().getDetailsNode().getTests());
-
             List<TaskDataDto> tests = sessionsToTestsEntry.getValue();
 
-            Set<String> sessionsIds = sessionsToTestsEntry.getKey();
+            LinkFragment linkFragment = new LinkFragment();
+
+            if (sessionModel.getSelectedSet().size() == 1) {
+                Set<String> sessionScopePlots = new HashSet<String>();
+                for (String plotName : getLinkRepresentationForSessionScopePlots(controlTree.getRootNode().getDetailsNode().getSessionScopePlotsNode())) {
+                    sessionScopePlots.add(plotName);
+                }
+                linkFragment.setSessionTrends(sessionScopePlots);
+            }
+
+            if (tests == null) { // this is fragment with no tests chosen
+                linkFragment.setSelectedSessionIds(sessionsToTestsEntry.getKey());
+                linkFragments.add(linkFragment);
+                continue;
+            }
+
+            Map<String, List<String>> trends = getTestTrendsMap(controlTree.getRootNode().getDetailsNode().getTests(), tests);
+
             HashSet<TestsMetrics> testsMetricses = new HashSet<TestsMetrics>(tests.size());
             HashMap<String, TestsMetrics> map = new HashMap<String, TestsMetrics>(tests.size());
 
@@ -192,21 +204,11 @@ public class Trends extends DefaultActivity {
             for (Map.Entry<String, List<String>> entry : trends.entrySet()) {
                 map.get(entry.getKey()).getTrends().addAll(entry.getValue());
             }
-            LinkFragment linkFragment = new LinkFragment();
 
             linkFragment.setSelectedSessionIds(sessionsToTestsEntry.getKey());
             linkFragment.setSelectedTestsMetrics(testsMetricses);
 
-            if (sessionModel.getSelectedSet().size() == 1) {
-                Set<String> sessionScopePlots = new HashSet<String>();
-                for (String plotName : getLinkRepresentationForSessionScopePlots(controlTree.getRootNode().getDetailsNode().getSessionScopePlotsNode())) {
-                    sessionScopePlots.add(plotName);
-                }
-                linkFragment.setSessionTrends(sessionScopePlots);
-            }
-
             linkFragments.add(linkFragment);
-
         }
 
         TrendsPlace newPlace = new TrendsPlace(
@@ -247,29 +249,32 @@ public class Trends extends DefaultActivity {
 
     }
 
-    private Map<String, List<String>> getTestTrendsMap(List<TestDetailsNode> tests) {
+    private Map<String, List<String>> getTestTrendsMap(List<TestDetailsNode> tests, List<TaskDataDto> taskDataDtos) {
         Map<String, List<String>> resultMap = new LinkedHashMap<String, List<String>>();
 
         for (TestDetailsNode test : tests) {
             if (controlTree.isChosen(test)) {
-                List<String> trends = new ArrayList<String>();
-                for (PlotNode plotNode : test.getPlots()) {
-                    if (controlTree.isChecked(plotNode)) {
-                        trends.add(plotNode.getPlotName().getPlotName());
+                if (taskDataDtos.contains(test.getTaskDataDto())) {
+
+                    List<String> trends = new ArrayList<String>();
+                    for (PlotNode plotNode : test.getPlots()) {
+                        if (controlTree.isChecked(plotNode)) {
+                            trends.add(plotNode.getPlotName().getPlotName());
+                        }
                     }
-                }
-                for (MonitoringPlotNode monitoringPlotNode : test.getMonitoringPlots()) {
-                    if (controlTree.isChecked(monitoringPlotNode)) {
-                        trends.add(monitoringPlotNode.getDisplayName());
-                    } else if (controlTree.isChosen(monitoringPlotNode)) {
-                        for (PlotNode plotNode : monitoringPlotNode.getPlots()) {
-                            if (controlTree.isChecked(plotNode)) {
-                                trends.add(plotNode.getPlotName().getPlotName());
+                    for (MonitoringPlotNode monitoringPlotNode : test.getMonitoringPlots()) {
+                        if (controlTree.isChecked(monitoringPlotNode)) {
+                            trends.add(monitoringPlotNode.getDisplayName());
+                        } else if (controlTree.isChosen(monitoringPlotNode)) {
+                            for (PlotNode plotNode : monitoringPlotNode.getPlots()) {
+                                if (controlTree.isChecked(plotNode)) {
+                                    trends.add(plotNode.getPlotName().getPlotName());
+                                }
                             }
                         }
                     }
+                    resultMap.put(test.getTaskDataDto().getTaskName(), trends);
                 }
-                resultMap.put(test.getTaskDataDto().getTaskName()+test.hashCode(), trends);
             }
         }
 
@@ -293,6 +298,7 @@ public class Trends extends DefaultActivity {
                 }
             }
         }
+        System.out.println("getLinkRepresentationForSessionScopePlots(SessionScopePlotsNode sessionScopePlotsNode): " + result);
         return result;
     }
 
