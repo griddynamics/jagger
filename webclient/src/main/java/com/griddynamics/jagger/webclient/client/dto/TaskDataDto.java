@@ -10,6 +10,7 @@ import java.util.Set;
  */
 public class TaskDataDto implements Serializable {
     private Set<Long> ids;
+    private Set<String> sessionIds;
     private String taskName;
     private String description;
     private String TerminationStrategy;
@@ -46,14 +47,25 @@ public class TaskDataDto implements Serializable {
         return taskName;
     }
 
+    public Set<String> getSessionIds() {
+        return sessionIds;
+    }
+
+    public void setSessionIds(Set<String> sessionIds) {
+        this.sessionIds = sessionIds;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TaskDataDto)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         TaskDataDto that = (TaskDataDto) o;
 
-        if (ids != null ? !ids.equals(that.ids) : that.ids != null) return false;
+        if (Clock != null ? !Clock.equals(that.Clock) : that.Clock != null) return false;
+        if (TerminationStrategy != null ? !TerminationStrategy.equals(that.TerminationStrategy) : that.TerminationStrategy != null)
+            return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (taskName != null ? !taskName.equals(that.taskName) : that.taskName != null) return false;
 
         return true;
@@ -61,8 +73,10 @@ public class TaskDataDto implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = ids != null ? ids.hashCode() : 0;
-        result = 31 * result + (taskName != null ? taskName.hashCode() : 0);
+        int result = taskName != null ? taskName.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (TerminationStrategy != null ? TerminationStrategy.hashCode() : 0);
+        result = 31 * result + (Clock != null ? Clock.hashCode() : 0);
         return result;
     }
 

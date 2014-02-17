@@ -15,7 +15,7 @@ public class TestNodeHandler extends TreeAwareHandler<TestNode> {
     public void onCheckChange(CheckChangeEvent<TestNode> event) {
 
         if (Tree.CheckState.CHECKED.equals(event.getChecked())) {
-            sessionComparisonPanel.addTestInfo(event.getItem().getTaskDataDto());
+            testInfoFetcher.fetchTestInfo(event.getItem().getTaskDataDto(), false);
         } else {
             sessionComparisonPanel.removeTestInfo(event.getItem().getTaskDataDto());
         }

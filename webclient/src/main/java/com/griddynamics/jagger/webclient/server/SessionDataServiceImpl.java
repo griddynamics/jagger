@@ -4,6 +4,8 @@ import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
 import com.griddynamics.jagger.webclient.client.SessionDataService;
 import com.griddynamics.jagger.webclient.client.dto.PagedSessionDataDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
+import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
+import com.griddynamics.jagger.webclient.client.dto.TestInfoDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +76,7 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
         long timestamp = System.currentTimeMillis();
 
-        SessionDataDto sessionDataDto = null;
+        SessionDataDto sessionDataDto;
         try {
             SessionData sessionData = (SessionData) entityManager.createQuery("select sd from SessionData as sd where sd.sessionId = (:sessionId)").setParameter("sessionId", sessionId).getSingleResult();
 
@@ -202,5 +204,32 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
         }
 
         return new PagedSessionDataDto(sessionDataDtoList, (int) totalSize);
+    }
+
+    @Override
+    public Map<String, TestInfoDto> getTestInfo(TaskDataDto taskDataDto) throws RuntimeException {
+
+        long temp = System.currentTimeMillis();
+        @SuppressWarnings("all")
+        List<Object[]> objectsList = (List<Object[]>)entityManager.createQuery(
+                "select wtd.sessionId, wtd.clock, wtd.clockValue, wtd.termination from WorkloadTaskData wtd " +
+                "   where (sessionId, taskId) in (" +
+                "       select td.sessionId, taskId from TaskData td where id in (:taskDataIds)" +
+                "                                 )")
+                .setParameter("taskDataIds", taskDataDto.getIds())
+                .getResultList();
+        log.debug("Time spent for testInfo fetching for test {} : {}ms", new Object[]{taskDataDto.toString(), System.currentTimeMillis() - temp});
+
+        Map<String, TestInfoDto> resultMap = new HashMap<String, TestInfoDto>(objectsList.size());
+
+        for (Object[] objects : objectsList) {
+            String clock = objects[1] + " (" + objects[2] + ')';
+            TestInfoDto testInfo = new TestInfoDto();
+            testInfo.setClock(clock);
+            testInfo.setTermination((String)objects[3]);
+            resultMap.put((String)objects[0], testInfo);
+        }
+
+        return resultMap;
     }
 }

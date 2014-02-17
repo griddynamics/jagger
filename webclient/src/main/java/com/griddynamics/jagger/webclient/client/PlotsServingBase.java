@@ -31,7 +31,7 @@ public abstract class PlotsServingBase {
     }
 
     protected String generateMetricPlotId(MetricNameDto plotNameDto) {
-        return "" + plotNameDto.getTests().getTaskName() + "#metric-scope-plot-" + plotNameDto.getName().toLowerCase().replaceAll("\\s+", "-");
+        return "" + plotNameDto.getTests().getDescription() + plotNameDto.getTests().getTaskName() + plotNameDto.getTests().getSessionIds() + "#metric-scope-plot-" + plotNameDto.getName().toLowerCase().replaceAll("\\s+", "-");
     }
 
     protected boolean isSessionScopePlotId(String domId) {

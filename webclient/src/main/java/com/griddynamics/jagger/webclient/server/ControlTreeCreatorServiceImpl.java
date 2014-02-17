@@ -112,7 +112,8 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
 
             for (TaskDataDto tdd : map.keySet()) {
                 TestDetailsNode testNode = new TestDetailsNode();
-                testNode.setId(METRICS_PREFIX + tdd.getTaskName());
+                // todo: it should be confirable in future task about matching strategy.
+                testNode.setId(METRICS_PREFIX + tdd.hashCode());
                 testNode.setTaskDataDto(tdd);
 
                 List<PlotNode> plotList = map.get(tdd);
@@ -152,12 +153,13 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
         Map<TaskDataDto, List<MetricNode>> map = getTestMetricsMap(tasks);
         for (TaskDataDto tdd : map.keySet()) {
             TestNode testNode = new TestNode();
-            testNode.setId(SUMMARY_PREFIX + tdd.getTaskName());
+            // todo: it should be confirable in future task about matching strategy.
+            testNode.setId(SUMMARY_PREFIX + tdd.hashCode());
             testNode.setTaskDataDto(tdd);
             List<MetricNode> metricNodeList = map.get(tdd);
             MetricRankingProvider.sortPlotNodes(metricNodeList);
             testNode.setMetrics(metricNodeList);
-            TestInfoNode tin = new TestInfoNode(tdd.getTaskName() + TEST_INFO, TEST_INFO);
+            TestInfoNode tin = new TestInfoNode(TEST_INFO + testNode.getId(), TEST_INFO);
             tin.setTestInfoList(getTestInfoNamesList(tdd));
             testNode.setTestInfo(tin);
 
