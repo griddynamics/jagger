@@ -93,6 +93,7 @@
     <bean id="commonDataService" class="com.griddynamics.jagger.webclient.server.CommonDataServiceImpl">
         <property name="userCommentAvailable" value="${user.comment.available:false}"/>
         <property name="userCommentMaxLength" value="${user.comment.max.length:1000}"/>
+        <property name="tagsAvailable" value="${tags.available:false}"/>
     </bean>
 
     <!-- @deprecated another conception of control since jagger 1.2.2-m3
@@ -159,9 +160,6 @@
             </map>
         </constructor-arg>
     </bean>
-
-    <!--===========Node Info Data Provider===========-->
-    <bean id="nodeInfoService" class="com.griddynamics.jagger.webclient.server.NodeInfoServiceImpl"/>
 
     <util:map id="standardMetrics" key-type="java.lang.String">
         <entry key="Throughput">

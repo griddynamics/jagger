@@ -235,6 +235,22 @@ input[type="text"] {
     font-size: 14px;
 }
 
+.abstractWindow {
+    font-size: 14px;
+}
+
+.descriptionPanel{
+    background: #ffffff;
+    border: #ffffff;
+    font-weight: bold;
+    font: normal 11px arial;
+    resize: none;
+}
+
+.textAreaPanel{
+    resize: none;
+}
+
 .gwt-DialogBox .Caption {
     padding: 4px 8px 4px 4px;
     cursor: default;

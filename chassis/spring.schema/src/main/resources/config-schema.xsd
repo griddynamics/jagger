@@ -770,7 +770,6 @@
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
                     <xsd:element name="metric" type="metricAbstract" maxOccurs="unbounded"/>
                     <xsd:element name="validator" type="validatorAbstract" maxOccurs="unbounded"/>
-                    <xsd:element name="listener-invocation" type="listenerInvocationAbstract" maxOccurs="unbounded"/>
                 </xsd:choice>
             </xsd:extension>
         </xsd:complexContent>
@@ -785,42 +784,6 @@
                         If set - metric will appear in pdf/webUI with name equals to this attribute (plus aggregator.getName()).
                     </xsd:documentation></xsd:annotation>
                 </xsd:attribute>
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
-    <!--**********************-->
-    <!-- Invocation listeners -->
-    <!--**********************-->
-
-    <xsd:complexType name="listenerInvocationAbstract" abstract="true">
-        <xsd:annotation><xsd:documentation>
-            Abstract type for listener-invoke element. Listener help you to handle invocation actions(onStart, onSuccess, onFail).
-        </xsd:documentation></xsd:annotation>
-        <xsd:complexContent>
-            <xsd:extension base="workloadCollectorAbstract">
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
-    <xsd:complexType name="listener-invocation-not-null-response">
-        <xsd:annotation><xsd:documentation>
-            A type of invocation listener, which count not null responses.
-        </xsd:documentation></xsd:annotation>
-        <xsd:complexContent>
-            <xsd:extension base="listenerInvocationAbstract">
-            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
-    <xsd:complexType name="listener-invocation-ref">
-        <xsd:annotation><xsd:documentation>
-            A reference to custom listener. Create Provider bean, which provides objects of InvocationListener type.
-            Now you can set id of this bean as attribute 'ref'.
-        </xsd:documentation></xsd:annotation>
-        <xsd:complexContent>
-            <xsd:extension base="listenerInvocationAbstract">
-                <xsd:attribute name="ref" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
