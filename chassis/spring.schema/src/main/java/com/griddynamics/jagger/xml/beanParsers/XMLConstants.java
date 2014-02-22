@@ -88,11 +88,13 @@ public class XMLConstants {
     public static final String INFORMATION_COLLECTOR = "informationCollector";
     public static final String DIAGNOSTIC_COLLECTOR = "diagnosticCollector";
     public static final String THREADS_AVG_COLLECTOR = "threadsAvg";
+    public static final String DISPLAY_NAME = "displayName";
 
     public static final String LISTENERS = "listeners";
     public static final String TEST_LISTENERS = "listeners-test";
     public static final String TEST_GROUP_LISTENERS = "listeners-test-group";
     public static final String TEST_SUITE_LISTENERS = "listeners-test-suite";
+    public static final String INVOCATION_LISTENER = "listener-invocation";
     public static final String TEST_GROUP_DECISION_MAKER_LISTENERS = "listeners-test-group-decision-maker";
     public static final String DECISION_MAKER_LISTENERS = "testGroupDecisionMakerListeners";
 
@@ -159,7 +161,6 @@ public class XMLConstants {
     public static final String PAIR_SUPPLIER_FACTORY = "pairSupplierFactory";
     public static final String RANDOM_SEED = "randomSeed";
     public static final String PERIOD = "period";
-    public static final String DISPLAY_NAME = "displayName";
 
     public static final String PLOT_DATA = "plotData";
     public static final String SAVE_SUMMARY = "saveSummary";

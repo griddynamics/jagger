@@ -38,6 +38,9 @@ public class TestDescriptionDefinitionParser extends CustomBeanDefinitionParser 
         ManagedList validators = new ManagedList();
         validators.setMergeEnabled(true);
 
+        ManagedList listeners = new ManagedList();
+        listeners.setMergeEnabled(true);
+
         ManagedList standardCollectors = new ManagedList();
 
         //add user's metrics and validators
@@ -50,6 +53,10 @@ public class TestDescriptionDefinitionParser extends CustomBeanDefinitionParser 
             List<Element> validatorsElements = DomUtils.getChildElementsByTagName(listenersGroup, XMLConstants.VALIDATOR);
             if (validatorsElements != null && !validatorsElements.isEmpty())
                 validators.addAll(parseCustomElements(validatorsElements, parserContext, builder.getBeanDefinition()));
+
+            List<Element> listenersElements = DomUtils.getChildElementsByTagName(listenersGroup, XMLConstants.INVOCATION_LISTENER);
+            if (listenersElements != null && !listenersElements.isEmpty())
+                listeners.addAll(parseCustomElements(listenersElements, parserContext, builder.getBeanDefinition()));
         }
 
         for (String standardCollector : XMLConstants.STANDARD_WORKLOAD_LISTENERS){
@@ -59,6 +66,7 @@ public class TestDescriptionDefinitionParser extends CustomBeanDefinitionParser 
         builder.addPropertyValue(XMLConstants.VALIDATORS, validators);
         builder.addPropertyValue(XMLConstants.STANDARD_COLLECTORS, standardCollectors);
         builder.addPropertyValue(XMLConstants.METRICS, metrics);
+        builder.addPropertyValue(XMLConstants.LISTENERS, listeners);
 
         //add scenario
         Element scenarioElement = DomUtils.getChildElementByTagName(element, XMLConstants.SCENARIO);

@@ -23,6 +23,7 @@ package com.griddynamics.jagger.engine.e1.scenario;
 import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.*;
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.CompositableTask;
@@ -42,6 +43,7 @@ public class WorkloadTask implements CompositableTask {
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
     private List<KernelSideObjectProvider<Validator>> validators = Lists.newLinkedList();
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors = Lists.newLinkedList();
+    private List<Provider<InvocationListener<Object, Object, Object>>> listeners = Lists.newLinkedList();
     private WorkloadClockConfiguration clockConfiguration;
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
     private String parentTaskId;
@@ -135,6 +137,14 @@ public class WorkloadTask implements CompositableTask {
         this.validators = validators;
     }
 
+    public List<Provider<InvocationListener<Object, Object, Object>>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<InvocationListener<Object, Object, Object>>> listeners) {
+        this.listeners = listeners;
+    }
+
     public WorkloadTask copy() {
         WorkloadTask task = new WorkloadTask();
         task.setNumber(number);
@@ -142,6 +152,7 @@ public class WorkloadTask implements CompositableTask {
         task.setVersion(version);
         task.setValidators(validators);
         task.setCollectors(collectors);
+        task.setListeners(listeners);
         task.setScenarioFactory(scenarioFactory);
         task.setClockConfiguration(clockConfiguration);
         task.setTerminateStrategyConfiguration(terminateStrategyConfiguration);
@@ -185,6 +196,7 @@ public class WorkloadTask implements CompositableTask {
                 "   name                            = '" + name + "\',\n" +
                 "   version                         = '" + version + "\',\n" +
                 "   scenarioFactory                 = " + scenarioFactory + ",\n" +
+                "   listeners                       = " + listeners + ",\n" +
                 "   collectors                      = " + collectors + ",\n" +
                 "   clockConfiguration              = " + clockConfiguration + ",\n" +
                 "   terminateStrategyConfiguration  = " + terminateStrategyConfiguration + ",\n" +

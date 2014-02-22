@@ -21,7 +21,9 @@
 package com.griddynamics.jagger.engine.e1.process;
 
 import com.griddynamics.jagger.coordinator.Command;
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -34,6 +36,7 @@ public class StartWorkloadProcess implements Command<String> {
     private ScenarioContext scenarioContext;
     private List<KernelSideObjectProvider<Validator>> validators;
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors;
+    private List<Provider<InvocationListener<Object, Object, Object>>> listeners;
     private int poolSize;
 
     public static StartWorkloadProcess create(String sessionId, ScenarioContext scenarioContext, int poolSize) {
@@ -87,6 +90,14 @@ public class StartWorkloadProcess implements Command<String> {
         this.validators = validators;
     }
 
+    public List<Provider<InvocationListener<Object, Object, Object>>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<InvocationListener<Object, Object, Object>>> listeners) {
+        this.listeners = listeners;
+    }
+
     public String getTaskId() {
         return scenarioContext.getTaskId();
     }
@@ -102,6 +113,7 @@ public class StartWorkloadProcess implements Command<String> {
                 ", sessionId='" + sessionId + '\'' +
                 ", scenarioContext=" + scenarioContext +
                 ", collectors=" + collectors +
+                ", listeners=" + listeners +
                 ", poolSize=" + poolSize +
                 '}';
     }

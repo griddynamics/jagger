@@ -10,6 +10,10 @@ import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.reporting.ReportingService;
+import com.griddynamics.jagger.user.TestGroupConfiguration;
+import com.griddynamics.jagger.xml.stubs.xml.ExampleDecisionMakerListener;
+import com.griddynamics.jagger.xml.stubs.xml.ExampleTestGroupListener;
+import com.griddynamics.jagger.xml.stubs.xml.ExampleTestListener;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
 import org.testng.annotations.BeforeClass;
@@ -157,7 +161,29 @@ public class JaggerConfigurationTest {
         Assert.assertEquals("NOT_NULL_VALIDATOR", vp.getDisplayName());
     }
 
+    @Test
+    public void testGroupListenerTest() {
+        ArrayList<TestGroupConfiguration> suitConfiguration = (ArrayList)ctx.getBean("test-plan-1");
+       Assert.assertEquals(1, suitConfiguration.get(1).getListeners().size());
+        Assert.assertEquals(11,((ExampleTestGroupListener)suitConfiguration.
+                get(1).
+                getListeners().
+                get(0)).
+                getTestValue());
 
+    }
+
+    @Test
+    public void decisionMakerListenerTest() {
+        ArrayList<TestGroupConfiguration> suitConfiguration = (ArrayList)ctx.getBean("test-plan-1");
+        Assert.assertEquals(2, suitConfiguration.get(0).getTestGroupDecisionMakerListeners().size());
+        Assert.assertEquals(15,((ExampleDecisionMakerListener)suitConfiguration.
+                get(0).
+                getTestGroupDecisionMakerListeners().
+                get(0)).
+                getTestValue());
+
+    }
     private void checkListOnNull(List list){
         for (Object o : list){
             Assert.assertNotNull(o);

@@ -68,6 +68,8 @@ public interface JaggerResources extends ClientBundle {
 
         String summaryPanel();
 
+        String nodesPanel();
+
         String zoomLabel();
 
         String zoomPanel();

@@ -82,6 +82,7 @@
 
     <bean id="jmxAgentImpl" class="com.griddynamics.jagger.agent.impl.JMXSystemUnderTestImpl" init-method="init"
           lazy-init="true">
+        <property name="urlFormat" value="${jmx.url.format}"/>
         <property name="jmxServices" value="${jmx.services}"/>
         <property name="name" value="#{agentConfig.getName()}"/>
     </bean>

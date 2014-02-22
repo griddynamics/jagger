@@ -8,6 +8,7 @@ package com.griddynamics.jagger.engine.e1.services;
  * To change this template use File | Settings | File Templates.
  */
 public enum JaggerPlace {
+    INVOCATION_LISTENER("InvocationListener"),
     TEST_LISTENER("TestListener"),
     TEST_GROUP_LISTENER("TestGroupListener"),
     TEST_SUITE_LISTENER("TestSuiteListener"),

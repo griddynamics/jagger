@@ -18,8 +18,8 @@ import java.util.List;
 public interface TestGroupDecisionMakerListener {
 
     /** Executes after test-group information aggregates in the database.
-     * @param testInfo - describes test-group information */
-    void onDecisionMaking(TestGroupInfo testInfo);
+     * @param decisionMakerInfo - describes test-group information */
+    void onDecisionMaking(DecisionMakerInfo decisionMakerInfo);
 
     /** Class is used by Jagger for sequential execution of several listeners @n
      *  Not required for custom test-group decision maker listeners */
@@ -33,10 +33,10 @@ public interface TestGroupDecisionMakerListener {
         }
 
         @Override
-        public void onDecisionMaking(TestGroupInfo testGroupInfo) {
+        public void onDecisionMaking(DecisionMakerInfo decisionMakerInfo) {
             for (TestGroupDecisionMakerListener listener : listenerList){
                 try{
-                    listener.onDecisionMaking(testGroupInfo);
+                    listener.onDecisionMaking(decisionMakerInfo);
                 }catch (RuntimeException ex){
                     log.error("Failed to call on start in {} test-group-listener", listener.toString(), ex);
                 }

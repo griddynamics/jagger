@@ -91,11 +91,11 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @dotfile jagger_test_flow.dot "Simplified test execution sequence"
 /// @n
 /// @details Main components of test flow :
-/// @li endpoint – where to apply test
-/// @li query – what request to provide during test
-/// @li distributor – how to combine endpoints and queries
-/// @li invoker – how to transfer query to endpoint
-/// @li collector – how to collect data
+/// @li endpoint - where to apply test
+/// @li query - what request to provide during test
+/// @li distributor - how to combine endpoints and queries
+/// @li invoker - how to transfer query to endpoint
+/// @li collector - how to collect data
 /// @n
 ///
 /// To see full test suite execution sequence click here @ref Main_Test_Suite_Flow_group

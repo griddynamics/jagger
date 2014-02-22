@@ -6,6 +6,7 @@ import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.DecisionMakerInfo;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.TestGroupDecisionMakerListener;
 import com.griddynamics.jagger.master.configuration.Task;
 
@@ -39,8 +40,8 @@ public class DecisionMakerDistributionListener implements DistributionListener {
                     nodeContext,
                     JaggerPlace.TEST_GROUP_DECISION_MAKER_LISTENER));
 
-            TestGroupInfo testGroupInfo = new TestGroupInfo((CompositeTask)task, sessionId);
-            decisionMakerListener.onDecisionMaking(testGroupInfo);
+            DecisionMakerInfo decisionMakerInfo = new DecisionMakerInfo();
+            decisionMakerListener.onDecisionMaking(decisionMakerInfo);
         }
     }
 }

@@ -50,6 +50,7 @@
 
             <metric xsi:type="metric-not-null-response" plotData="true"/>
 
+            <listener-invocation xsi:type="listener-invocation-not-null-response"/>
         </info-collectors>
 
         <scenario  xsi:type="scenario-query-pool">

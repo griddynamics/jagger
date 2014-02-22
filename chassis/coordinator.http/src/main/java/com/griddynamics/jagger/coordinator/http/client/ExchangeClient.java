@@ -131,7 +131,7 @@ public class ExchangeClient {
                     "\nurl: " + url + "\nobj: " + obj.toString());
             throw Throwables.propagate(e);
         } catch (IOException e) {
-            log.error("Exception during HTTP request execution", e);
+            log.error("Exception during HTTP request execution "+e.toString());
             throw e;
         } finally {
             try {

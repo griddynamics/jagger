@@ -23,6 +23,7 @@ package com.griddynamics.jagger.engine.e1.process;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.Flushable;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.invoker.Invokers;
@@ -110,6 +111,7 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         private Executor executor = NewThreadExecutor.INSTANCE;
         private ImmutableList.Builder<ScenarioCollector<?, ?, ?>> collectors = ImmutableList.builder();
         private ImmutableList.Builder<Validator> validators = ImmutableList.builder();
+        private ImmutableList.Builder<InvocationListener> listeners = ImmutableList.builder();
 
         private WorkloadServiceBuilder(Scenario<Object, Object, Object> scenario) {
             this.scenario = scenario;
@@ -130,6 +132,11 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
             return this;
         }
 
+        public WorkloadServiceBuilder addListeners(List<InvocationListener<?, ?, ?>> listeners) {
+            this.listeners.addAll(listeners);
+            return this;
+        }
+
         public WorkloadServiceBuilder useExecutor(Executor executor) {
             this.executor = executor;
             return this;
@@ -138,24 +145,27 @@ public abstract class WorkloadService extends AbstractExecutionThreadService {
         public WorkloadService buildInfiniteService() {
             ImmutableList<ScenarioCollector<?, ?, ?>> collectorsList = collectors.build();
             ImmutableList<Validator> validatorList = validators.build();
+            ImmutableList<InvocationListener> listenersList = listeners.build();
 
-            scenario.setListener(Invokers.validateListener(validatorList, (Iterable) collectorsList));
+            scenario.setInvocationListener(Invokers.validateListener(validatorList, (Iterable) collectorsList, (List)listenersList));
             return new InfiniteWorkloadService(Invokers.mergeFlushElements(validatorList, collectorsList));
         }
 
         public WorkloadService buildServiceWithPredefinedSamples(final int samples) {
             ImmutableList<ScenarioCollector<?, ?, ?>> collectorsList = collectors.build();
             ImmutableList<Validator> validatorList = validators.build();
+            ImmutableList<InvocationListener> listenersList = listeners.build();
 
-            scenario.setListener(Invokers.validateListener(validatorList, (Iterable) collectorsList));
+            scenario.setInvocationListener(Invokers.validateListener(validatorList, (Iterable) collectorsList, (List)listenersList));
             return new PredefinedSamplesWorkloadService(Invokers.mergeFlushElements(validatorList, collectorsList), samples);
         }
 
         public WorkloadService buildServiceWithSharedSamplesCount(final AtomicInteger samples) {
             ImmutableList<ScenarioCollector<?, ?, ?>> collectorsList = collectors.build();
             ImmutableList<Validator> validatorList = validators.build();
+            ImmutableList<InvocationListener> listenersList = listeners.build();
 
-            scenario.setListener(Invokers.validateListener(validatorList, (Iterable) collectorsList));
+            scenario.setInvocationListener(Invokers.validateListener(validatorList, (Iterable) collectorsList, (List)listenersList));
             return new SharedSamplesCountWorkloadService(Invokers.mergeFlushElements(validatorList, collectorsList), samples);
         }
 

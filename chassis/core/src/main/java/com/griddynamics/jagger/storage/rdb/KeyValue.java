@@ -20,11 +20,7 @@
 
 package com.griddynamics.jagger.storage.rdb;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.*;
 
 @Entity
 public class KeyValue {
@@ -36,7 +32,7 @@ public class KeyValue {
 	private byte[] data;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return id;
 	}

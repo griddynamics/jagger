@@ -28,58 +28,59 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+//rebuild scenario conception
 public class SimpleScenarioTest {
     private SimpleScenario<Integer, Integer, Integer> scenario;
     private Invoker<Integer, Integer, Integer> invoker;
     private LoadInvocationListener<Integer, Integer, Integer> listener;
     private SystemClock clock;
 
-    @BeforeMethod
-    public void setUp() throws Exception {
-        invoker = mock(Invoker.class);
-        clock = mock(SystemClock.class);
-        scenario = SimpleScenario.create(invoker, 1, 2, clock);
-        listener = mock(LoadInvocationListener.class);
-        scenario.setListener(listener);
-    }
-
-    @Test
-    public void shouldInvokeInvokerWhileDoingTransaction() throws Exception {
-        scenario.doTransaction();
-
-        verify(invoker).invoke(1, 2);
-    }
-
-    @Test
-    public void shouldInvokeListenerWhenSuccessfullyInvoked() throws Exception {
-        when(clock.currentTimeMillis()).thenReturn(1L, 5L);
-        when(invoker.invoke(1, 2)).thenReturn(3);
-
-        scenario.doTransaction();
-
-        verify(listener).onStart(1, 2);
-        verify(listener).onSuccess(1, 2, 3, 4);
-    }
-
-    @Test
-    public void shouldInvokeListenerWhenFailed() throws Exception {
-        InvocationException exception = new InvocationException();
-        when(invoker.invoke(1, 2)).thenThrow(exception);
-
-        scenario.doTransaction();
-
-        verify(listener).onStart(1, 2);
-        verify(listener).onFail(1, 2, exception);
-    }
-
-    @Test
-    public void shouldInvokeListenerWhenErrorOccurred() throws Exception {
-        RuntimeException error = new RuntimeException();
-        when(invoker.invoke(1, 2)).thenThrow(error);
-
-        scenario.doTransaction();
-
-        verify(listener).onStart(1, 2);
-        verify(listener).onError(1, 2, error);
-    }
+//    @BeforeMethod
+//    public void setUp() throws Exception {
+//        invoker = mock(Invoker.class);
+//        clock = mock(SystemClock.class);
+//        scenario = SimpleScenario.create(invoker, 1, 2, clock);
+//        listener = mock(LoadInvocationListener.class);
+//        scenario.setListener(listener);
+//    }
+//
+//    @Test
+//    public void shouldInvokeInvokerWhileDoingTransaction() throws Exception {
+//        scenario.doTransaction();
+//
+//        verify(invoker).invoke(1, 2);
+//    }
+//
+//    @Test
+//    public void shouldInvokeListenerWhenSuccessfullyInvoked() throws Exception {
+//        when(clock.currentTimeMillis()).thenReturn(1L, 5L);
+//        when(invoker.invoke(1, 2)).thenReturn(3);
+//
+//        scenario.doTransaction();
+//
+//        verify(listener).onStart(1, 2);
+//        verify(listener).onSuccess(1, 2, 3, 4);
+//    }
+//
+//    @Test
+//    public void shouldInvokeListenerWhenFailed() throws Exception {
+//        InvocationException exception = new InvocationException();
+//        when(invoker.invoke(1, 2)).thenThrow(exception);
+//
+//        scenario.doTransaction();
+//
+//        verify(listener).onStart(1, 2);
+//        verify(listener).onFail(1, 2, exception);
+//    }
+//
+//    @Test
+//    public void shouldInvokeListenerWhenErrorOccurred() throws Exception {
+//        RuntimeException error = new RuntimeException();
+//        when(invoker.invoke(1, 2)).thenThrow(error);
+//
+//        scenario.doTransaction();
+//
+//        verify(listener).onStart(1, 2);
+//        verify(listener).onError(1, 2, error);
+//    }
 }

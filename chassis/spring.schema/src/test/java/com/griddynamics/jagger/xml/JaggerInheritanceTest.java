@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created with IntelliJ IDEA.
@@ -90,6 +89,7 @@ public class JaggerInheritanceTest {
         Assert.assertEquals(description.getValidators().size(), 2);
         Assert.assertEquals(description.getStandardCollectors().size(), XMLConstants.STANDARD_WORKLOAD_LISTENERS.size());
         Assert.assertEquals(description.getMetrics().size(), 2);
+        Assert.assertEquals(description.getListeners().size(), 2);
 
         //check validators queue
         List< KernelSideObjectProvider<Validator>> validators = description.getValidators();

@@ -48,10 +48,10 @@ public class RemoteMultiThreadInfoProvider implements ThreadInfoProvider {
     private static final Logger log = LoggerFactory.getLogger(RemoteMultiThreadInfoProvider.class);
 
     private String jmxServices;
+    private String urlFormat;
+
     private Map<String, JMXConnector> connector = Maps.newConcurrentMap();
-
     private Map<String, MBeanServerConnection> mbs = Maps.newConcurrentMap();
-
 
     @Override
     public Set<String> getIdentifiersSuT() {
@@ -84,6 +84,10 @@ public class RemoteMultiThreadInfoProvider implements ThreadInfoProvider {
         return result;
     }
 
+    public void setUrlFormat(String urlFormat) {
+        this.urlFormat = urlFormat;
+    }
+
     public String getJmxServices() {
         return jmxServices;
     }
@@ -109,7 +113,7 @@ public class RemoteMultiThreadInfoProvider implements ThreadInfoProvider {
             }
             this.jmxServices = jmxServices;
 
-            connector = AgentUtils.getJMXConnectors(AgentUtils.splitServices(this.jmxServices), "");
+            connector = AgentUtils.getJMXConnectors(AgentUtils.splitServices(this.jmxServices), "", urlFormat);
             mbs = AgentUtils.getMBeanConnections(connector);
 
         } catch (MalformedURLException e) {

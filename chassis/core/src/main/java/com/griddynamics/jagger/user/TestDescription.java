@@ -1,6 +1,8 @@
 package com.griddynamics.jagger.user;
 
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.*;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 
@@ -20,6 +22,7 @@ public class TestDescription {
 
     private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> metrics;
     private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> standardCollectors;
+    private List<Provider<InvocationListener<Object, Object, Object>>> listeners;
 
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
     private Calibrator calibrator = new OneNodeCalibrator();
@@ -91,6 +94,13 @@ public class TestDescription {
         this.name = name;
     }
 
+    public List<Provider<InvocationListener<Object, Object, Object>>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<InvocationListener<Object, Object, Object>>> listeners) {
+        this.listeners = listeners;
+    }
 
     public WorkloadTask generatePrototype(){
         WorkloadTask prototype = new WorkloadTask();
@@ -100,6 +110,7 @@ public class TestDescription {
         prototype.setName(name);
         prototype.setVersion(version);
         prototype.setValidators(validators);
+        prototype.setListeners(listeners);
 
         List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> allMetrics = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>>(metrics.size()+ standardCollectors.size());
         allMetrics.addAll(standardCollectors);

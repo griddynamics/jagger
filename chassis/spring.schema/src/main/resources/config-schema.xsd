@@ -393,7 +393,7 @@
 
     <xsd:complexType name="listenersTestGroupDecisionMakerType">
         <xsd:annotation><xsd:documentation>
-            A list of listener-test-group  elements, which give you an ability to execute some actions on decision making
+            A list of listener-test-group-decision-maker elements, which give you an ability to execute some actions on decision making
         </xsd:documentation></xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="identifiedType">

@@ -54,6 +54,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     private AgentContext context;
     private String jmxServices;
     private String name;
+    private String urlFormat;
     private Map<String, MBeanServerConnection> connections = Maps.newHashMap();
 
     public void setJmxServices(String jmxServices) {
@@ -66,6 +67,10 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setUrlFormat(String urlFormat) {
+        this.urlFormat = urlFormat;
     }
 
     @Override
@@ -104,7 +109,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     public void init() {
         try {
             connections = AgentUtils.getMBeanConnections(
-                    AgentUtils.getJMXConnectors(AgentUtils.splitServices(jmxServices), name + " collect from jmx port ")
+                    AgentUtils.getJMXConnectors(AgentUtils.splitServices(jmxServices), name + " collect from jmx port ", urlFormat)
             );
         } catch (IOException e) {
             log.error("Error during JMX initializing", e);

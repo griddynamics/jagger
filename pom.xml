@@ -43,7 +43,6 @@
         <module>diagnostics</module>
         <module>chassis/</module>
         <module>distribution</module>
-        <module>facade</module>
         <module>webclient</module>
         <module>archetype</module>
         <module>test/jagger-test</module>
@@ -63,6 +62,7 @@
     </issueManagement>
 
     <repositories>
+        <!--need for Sigar library. See monitoring POM-->
         <repository>
             <id>jboss-third-party</id>
             <layout>default</layout>
@@ -72,35 +72,6 @@
             </snapshots>
             <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
         </repository>
-        <repository>
-            <id>jboss-java-net</id>
-            <layout>default</layout>
-            <name>jboss java.net repo</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/java.net-m2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>snmp4j</id>
-            <layout>default</layout>
-            <name>snmp4j repo</name>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <url>https://server.oosnmp.net/dist/release/</url>
-        </repository>
-        <repository>
-            <id>smartclient</id>
-            <name>smartclient.com</name>
-            <url>http://www.smartclient.com/maven2</url>
-        </repository>
-        <repository>
-	    <id>openr66</id>
-            <name>openr66</name>
-            <url>http://openr66.free.fr/maven2</url>
-            <layout>default</layout>
-    </repository>
     </repositories>
 
     <distributionManagement>
@@ -486,19 +457,6 @@
                 <artifactId>gwt-user</artifactId>
                 <version>2.4.0</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-dev</artifactId>
-                <version>2.4.0</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.smartgwt</groupId>
-                <artifactId>smartgwt</artifactId>
-                <version>2.5</version>
             </dependency>
 
             <dependency>

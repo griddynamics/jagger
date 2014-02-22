@@ -89,6 +89,12 @@
                         <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotPanel"/>
                     </g:ScrollPanel>
                 </g:tab>
+                <g:tab>
+                    <g:header> <b>Nodes</b> </g:header>
+                    <g:ScrollPanel>
+                        <custom:NodesPanel addStyleNames="{res.css.nodesPanel}" ui:field="nodesPanel"/>
+                    </g:ScrollPanel>
+                </g:tab>
             </g:TabLayoutPanel>
         </g:center>
     </g:SplitLayoutPanel>

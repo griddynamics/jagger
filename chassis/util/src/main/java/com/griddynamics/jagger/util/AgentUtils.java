@@ -21,8 +21,6 @@
 package com.griddynamics.jagger.util;
 
 import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
@@ -35,16 +33,11 @@ import java.util.Map;
  * @author Nikolay Musienko
  *         Date: 13.08.13
  */
-
 public class AgentUtils {
-
-    private final static Logger log = LoggerFactory.getLogger(AgentUtils.class);
-
-    private static final String JMX_URL_TEMPLATE = "service:jmx:rmi:///jndi/rmi://%s/jmxrmi";
 
     private static final String JMX_SERVICE_SEPARATOR = ",";
 
-    public static Map<String, JMXConnector> getJMXConnectors(final String[] jmxServices, final String name) throws IOException {
+    public static Map<String, JMXConnector> getJMXConnectors(final String[] jmxServices, final String name, final String urlFormat) throws IOException {
         Map<String, JMXConnector> connectors = Maps.newHashMap();
         JMXConnector connector;
         for (String service : jmxServices) {
@@ -61,15 +54,15 @@ public class AgentUtils {
                     host = service.substring(0, start_prefix);
                 }
             }
-                connector = JMXConnectorFactory.connect(new JMXServiceURL(String.format(JMX_URL_TEMPLATE, host)));
-                connectors.put(prefix + name + host, connector);
+            connector = JMXConnectorFactory.connect(new JMXServiceURL(String.format(urlFormat, host)));
+            connectors.put(prefix + name + host, connector);
         }
         return connectors;
     }
 
-    public static Map<String, MBeanServerConnection> getMBeanConnections (final Map<String, JMXConnector> connectors) throws IOException {
+    public static Map<String, MBeanServerConnection> getMBeanConnections(final Map<String, JMXConnector> connectors) throws IOException {
         Map<String, MBeanServerConnection> mBeanConnections = Maps.newConcurrentMap();
-        for (String service: connectors.keySet()) {
+        for (String service : connectors.keySet()) {
             mBeanConnections.put(service, connectors.get(service).getMBeanServerConnection());
         }
         return mBeanConnections;

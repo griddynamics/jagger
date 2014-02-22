@@ -19,14 +19,17 @@ public class ProviderUtil {
         List<T> result = new ArrayList<T>(providers.size());
 
         for (Provider<T> provider : providers){
-            if (provider instanceof ServicesInitializable){
-                ServicesInitializable nodeSideInitializable = (ServicesInitializable)provider;
-                nodeSideInitializable.initServices(sessionId, taskId, context, environment);
-            }
-
+            injectContext(provider, sessionId, taskId, context, environment);
             result.add(provider.provide());
         }
 
         return result;
+    }
+
+    public static <T>void injectContext(Provider<T> provider, String sessionId, String taskId, NodeContext context, JaggerPlace environment){
+        if (provider instanceof ServicesInitializable){
+            ServicesInitializable nodeSideInitializable = (ServicesInitializable)provider;
+            nodeSideInitializable.initServices(sessionId, taskId, context, environment);
+        }
     }
 }

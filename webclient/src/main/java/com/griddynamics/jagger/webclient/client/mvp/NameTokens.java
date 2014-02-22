@@ -12,10 +12,9 @@ public class NameTokens {
     }
 
     public static final String SUMMARY = "summary";
-
     public static final String TRENDS = "trends";
-
     public static final String METRICS = "metrics";
+    public static final String NODES = "nodes";
 
     public static final String CONTROL_SUMMARY_TRENDS = "Summary & Trends";
     public static final String CONTROL_METRICS = "Metrics";
