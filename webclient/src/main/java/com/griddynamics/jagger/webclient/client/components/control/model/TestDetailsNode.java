@@ -12,16 +12,17 @@ import java.util.List;
  * Date: 11/27/13
  */
 
-public class TestDetailsNode extends AbstractIdentifyNode {
+public class TestDetailsNode extends MetricGroupNode<PlotNode> {
 
     private TaskDataDto taskDataDto;
-
-    private List<PlotNode> plots;
-
     private List<MonitoringPlotNode> monitoringPlots;
 
-    public List<MonitoringPlotNode> getMonitoringPlots() {
+    public TestDetailsNode(MetricGroupNode that) {
+        super(that);
+    }
+    public TestDetailsNode() {}
 
+    public List<MonitoringPlotNode> getMonitoringPlots() {
         if (monitoringPlots == null) {
             return Collections.EMPTY_LIST;
         }
@@ -40,14 +41,6 @@ public class TestDetailsNode extends AbstractIdentifyNode {
         this.taskDataDto = taskDataDto;
     }
 
-    public List<PlotNode> getPlots() {
-        return plots;
-    }
-
-    public void setPlots(List<PlotNode> plots) {
-        this.plots = plots;
-    }
-
     @Override
     public String getDisplayName() {
         return taskDataDto.getTaskName();
@@ -56,7 +49,7 @@ public class TestDetailsNode extends AbstractIdentifyNode {
     @Override
     public List<? extends AbstractIdentifyNode> getChildren() {
         ArrayList<AbstractIdentifyNode> result = new ArrayList<AbstractIdentifyNode>();
-        if (plots != null) result.addAll(plots);
+        result.addAll(super.getChildren());
         if (monitoringPlots != null) result.addAll(monitoringPlots);
         return result;
     }

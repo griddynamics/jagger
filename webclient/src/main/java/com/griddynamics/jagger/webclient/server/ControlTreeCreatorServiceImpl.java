@@ -4,14 +4,16 @@ import com.griddynamics.jagger.webclient.client.ControlTreeCreatorService;
 import com.griddynamics.jagger.webclient.client.components.control.model.*;
 import com.griddynamics.jagger.webclient.client.data.MetricRankingProvider;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
+import com.griddynamics.jagger.webclient.client.mvp.NameTokens;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.griddynamics.jagger.webclient.client.mvp.NameTokens.*;
 
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
+import static com.griddynamics.jagger.webclient.client.mvp.NameTokens.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -111,14 +113,15 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
             Map<TaskDataDto, List<MonitoringPlotNode>> monitoringMap = monitoringPlotsMapFuture.get();
 
             for (TaskDataDto tdd : map.keySet()) {
-                TestDetailsNode testNode = new TestDetailsNode();
-                testNode.setId(METRICS_PREFIX + tdd.getTaskName());
+                // rules to create test tree view
+                String rootId = METRICS_PREFIX + tdd.getTaskName();
+                TreeViewGroupRule testNodeRule = TreeViewGroupRuleProvider.provide(rootId, rootId);
+                // tree with metrics distributed by groups
+                NameTokens.FilterOptions filterBy = NameTokens.FilterOptions.BY_DISPLAY_NAME;
+                MetricGroupNode<PlotNode> testDetailsNodeBase = testNodeRule.filter(filterBy,null,map.get(tdd));
+                // full test details node
+                TestDetailsNode testNode = new TestDetailsNode(testDetailsNodeBase);
                 testNode.setTaskDataDto(tdd);
-
-                List<PlotNode> plotList = map.get(tdd);
-                MetricRankingProvider.sortPlotNodes(plotList);
-                testNode.setPlots(plotList);
-
                 if (!monitoringMap.isEmpty()) {
                     List<MonitoringPlotNode> monitoringPlotNodeList = monitoringMap.get(tdd);
                     MetricRankingProvider.sortPlotNodes(monitoringPlotNodeList);
@@ -151,12 +154,15 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
 
         Map<TaskDataDto, List<MetricNode>> map = getTestMetricsMap(tasks);
         for (TaskDataDto tdd : map.keySet()) {
-            TestNode testNode = new TestNode();
-            testNode.setId(SUMMARY_PREFIX + tdd.getTaskName());
+            // rules to create test tree view
+            String rootId = SUMMARY_PREFIX + tdd.getTaskName();
+            TreeViewGroupRule testNodeRule = TreeViewGroupRuleProvider.provide(rootId, rootId);
+            // tree with metrics distributed by groups
+            NameTokens.FilterOptions filterBy = NameTokens.FilterOptions.BY_DISPLAY_NAME;
+            MetricGroupNode<MetricNode> testNodeBase = testNodeRule.filter(filterBy,null,map.get(tdd));
+            // full test node with info data
+            TestNode testNode = new TestNode(testNodeBase);
             testNode.setTaskDataDto(tdd);
-            List<MetricNode> metricNodeList = map.get(tdd);
-            MetricRankingProvider.sortPlotNodes(metricNodeList);
-            testNode.setMetrics(metricNodeList);
             TestInfoNode tin = new TestInfoNode(tdd.getTaskName() + TEST_INFO, TEST_INFO);
             tin.setTestInfoList(getTestInfoNamesList(tdd));
             testNode.setTestInfo(tin);

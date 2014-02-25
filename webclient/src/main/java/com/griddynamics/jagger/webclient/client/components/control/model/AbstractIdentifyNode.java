@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class AbstractIdentifyNode implements Serializable {
 
     /**
-     * id in tree - uniq for all nodes
+     * id in tree - unique for all nodes
      */
     protected String id;
 
@@ -21,10 +21,12 @@ public abstract class AbstractIdentifyNode implements Serializable {
     protected String displayName;
 
     public AbstractIdentifyNode() {}
-
     public AbstractIdentifyNode(String id, String displayName) {
         this.id = id;
         this.displayName = displayName;
+    }
+    public AbstractIdentifyNode(AbstractIdentifyNode that) {
+        this(that.getId(),that.getDisplayName());
     }
 
     public String getId() {

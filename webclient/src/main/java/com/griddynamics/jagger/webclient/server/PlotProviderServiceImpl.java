@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import java.util.*;
 
-import static com.griddynamics.jagger.webclient.client.mvp.NameTokens.*;
+import static com.griddynamics.jagger.webclient.client.mvp.NameTokens.AGENT_NAME_SEPARATOR;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -53,18 +53,18 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     //===========================
 
     @Override
-    public List<PlotSeriesDto> getPlotData(long taskId, PlotNameDto plotName) {
+    public List<PlotSeriesDto> getPlotData(long taskId, MetricNameDto plotName) {
         long timestamp = System.currentTimeMillis();
-        log.debug("getPlotData was invoked with taskId={} and plotName={}", taskId, plotName);
+        log.debug("getPlotData was invoked with taskId={} and metricName={}", taskId, plotName);
 
         PlotDataProvider plotDataProvider = findPlotDataProvider(plotName);
 
         List<PlotSeriesDto> plotSeriesDto;
         try {
             plotSeriesDto = plotDataProvider.getPlotData(taskId, plotName);
-            log.info("getPlotData(): {}", getFormattedLogMessage(plotSeriesDto, "" + taskId, plotName.getPlotName(), System.currentTimeMillis() - timestamp));
+            log.info("getPlotData(): {}", getFormattedLogMessage(plotSeriesDto, "" + taskId, plotName.getMetricName(), System.currentTimeMillis() - timestamp));
         } catch (Exception e) {
-            log.error("Error is occurred during plot data loading for taskId=" + taskId + ", plotName=" + plotName, e);
+            log.error("Error is occurred during plot data loading for taskId=" + taskId + ", metricName=" + plotName, e);
             throw new RuntimeException(e);
         }
 
@@ -72,18 +72,18 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     }
 
     @Override
-    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, PlotNameDto plotName) {
+    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, MetricNameDto plotName) {
         long timestamp = System.currentTimeMillis();
-        log.debug("getPlotData was invoked with taskIds={} and plotName={}", taskIds, plotName);
+        log.debug("getPlotData was invoked with taskIds={} and metricName={}", taskIds, plotName);
 
         PlotDataProvider plotDataProvider = findPlotDataProvider(plotName);
 
         List<PlotSeriesDto> plotSeriesDtoList;
         try {
             plotSeriesDtoList = plotDataProvider.getPlotData(taskIds, plotName);
-            log.info("getPlotData(): {}", getFormattedLogMessage(plotSeriesDtoList, "" + taskIds, plotName.getPlotName(), System.currentTimeMillis() - timestamp));
+            log.info("getPlotData(): {}", getFormattedLogMessage(plotSeriesDtoList, "" + taskIds, plotName.getMetricName(), System.currentTimeMillis() - timestamp));
         } catch (Exception e) {
-            log.error("Error is occurred during plot data loading for taskIds=" + taskIds + ", plotName=" + plotName, e);
+            log.error("Error is occurred during plot data loading for taskIds=" + taskIds + ", metricName=" + plotName, e);
             throw new RuntimeException(e);
         }
 
@@ -91,10 +91,10 @@ public class PlotProviderServiceImpl implements PlotProviderService {
     }
 
     @Override
-    public Map<PlotNameDto, List<PlotSeriesDto>> getPlotDatas(Set<PlotNameDto> plots) throws IllegalArgumentException{
-        Map<PlotNameDto,List<PlotSeriesDto>> result = new LinkedHashMap<PlotNameDto, List<PlotSeriesDto>>(plots.size());
+    public Map<MetricNameDto, List<PlotSeriesDto>> getPlotDatas(Set<MetricNameDto> plots) throws IllegalArgumentException{
+        Map<MetricNameDto,List<PlotSeriesDto>> result = new LinkedHashMap<MetricNameDto, List<PlotSeriesDto>>(plots.size());
         // todo : fetch metrics  plots in one query
-        for (PlotNameDto plot : plots){
+        for (MetricNameDto plot : plots){
             result.put(plot, getPlotData(plot.getTaskIds(), plot));
         }
         return result;
@@ -107,19 +107,19 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         Map<SessionPlotNameDto, List<PlotSeriesDto>> resultMap = new HashMap<SessionPlotNameDto, List<PlotSeriesDto>>();
 
         for(SessionPlotNameDto plotName : plotNames) {
-            log.debug("getPlotData was invoked with sessionId={} and plotName={}", sessionId, plotName);
+            log.debug("getPlotData was invoked with sessionId={} and metricName={}", sessionId, plotName);
             List<PlotSeriesDto> plotSeriesDtoList;
 
             SessionScopePlotDataProvider plotDataProvider = (SessionScopePlotDataProvider) findPlotDataProvider(plotName);
             if (plotDataProvider == null) {
-                log.warn("getPlotData was invoked with unsupported plotName={}", plotName);
+                log.warn("getPlotData was invoked with unsupported metricName={}", plotName);
                 throw new UnsupportedOperationException("Plot type " + plotName + " doesn't supported");
             }
 
 
             try {
-                plotSeriesDtoList = plotDataProvider.getPlotData(sessionId, plotName.getPlotName());
-                log.info("getSessionScopePlotData(): {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName.getPlotName(), System.currentTimeMillis() - timestamp));
+                plotSeriesDtoList = plotDataProvider.getPlotData(sessionId, plotName.getMetricName());
+                log.info("getSessionScopePlotData(): {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName.getMetricName(), System.currentTimeMillis() - timestamp));
                 for (PlotSeriesDto plotSeriesDto : plotSeriesDtoList) {
                     for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
                         List<PointDto> pointDtoList = compressingProcessor.process(plotDatasetDto.getPlotData());
@@ -127,10 +127,10 @@ public class PlotProviderServiceImpl implements PlotProviderService {
                         plotDatasetDto.getPlotData().addAll(pointDtoList);
                     }
                 }
-                log.info("getSessionScopePlotData() after compressing: {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName.getPlotName(), System.currentTimeMillis() - timestamp));
+                log.info("getSessionScopePlotData() after compressing: {}", getFormattedLogMessage(plotSeriesDtoList, sessionId, plotName.getMetricName(), System.currentTimeMillis() - timestamp));
             } catch (Exception e) {
                 System.err.println(e);
-                log.error("Error is occurred during plot data loading for sessionId=" + sessionId + ", plotName=" + plotName, e);
+                log.error("Error is occurred during plot data loading for sessionId=" + sessionId + ", metricName=" + plotName, e);
                 throw new RuntimeException(e);
             }
             resultMap.put(plotName, plotSeriesDtoList);
@@ -171,12 +171,12 @@ public class PlotProviderServiceImpl implements PlotProviderService {
         return logBuilder.toString();
     }
 
-    private PlotDataProvider findPlotDataProvider(PlotName plotName) {
-        PlotDataProvider plotDataProvider = workloadPlotDataProviders.get(plotName.getPlotName());
+    private PlotDataProvider findPlotDataProvider(MetricName plotName) {
+        PlotDataProvider plotDataProvider = workloadPlotDataProviders.get(plotName.getMetricName());
         if (plotDataProvider == null) {
             // any ideas ?
-            if (plotName.getPlotName().contains(AGENT_NAME_SEPARATOR)) {
-                String temp = plotName.getPlotName().substring(0, plotName.getPlotName().indexOf(AGENT_NAME_SEPARATOR));
+            if (plotName.getMetricName().contains(AGENT_NAME_SEPARATOR)) {
+                String temp = plotName.getMetricName().substring(0, plotName.getMetricName().indexOf(AGENT_NAME_SEPARATOR));
                 plotDataProvider = monitoringPlotDataProviders.get(temp);
             }
         }

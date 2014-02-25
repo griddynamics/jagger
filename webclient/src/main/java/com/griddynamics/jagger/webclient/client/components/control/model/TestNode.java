@@ -10,12 +10,16 @@ import java.util.List;
  * User: amikryukov
  * Date: 11/26/13
  */
-public class TestNode extends AbstractIdentifyNode {
+public class TestNode extends MetricGroupNode<MetricNode> {
 
     private TaskDataDto taskDataDto;
 
-    private List<MetricNode> metrics;
     private TestInfoNode testInfo;
+
+    public TestNode(MetricGroupNode that) {
+        super(that);
+    }
+    public TestNode() {}
 
     @Override
     public String toString() {
@@ -28,14 +32,6 @@ public class TestNode extends AbstractIdentifyNode {
 
     public void setTaskDataDto(TaskDataDto taskDataDto) {
         this.taskDataDto = taskDataDto;
-    }
-
-    public List<MetricNode> getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(List<MetricNode> metrics) {
-        this.metrics = metrics;
     }
 
     public TestInfoNode getTestInfo() {
@@ -55,7 +51,7 @@ public class TestNode extends AbstractIdentifyNode {
     public List<? extends AbstractIdentifyNode> getChildren() {
         ArrayList<AbstractIdentifyNode> result = new ArrayList<AbstractIdentifyNode>();
         if (testInfo != null) result.add(testInfo);
-        result.addAll(metrics);
+        result.addAll(super.getChildren());
         return result;
     }
 }

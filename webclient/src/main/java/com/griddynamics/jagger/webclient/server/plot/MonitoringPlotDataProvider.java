@@ -19,8 +19,7 @@ import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import static com.griddynamics.jagger.webclient.client.mvp.NameTokens.*;
+import static com.griddynamics.jagger.webclient.client.mvp.NameTokens.AGENT_NAME_SEPARATOR;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -69,7 +68,7 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
      * @see PlotSeriesDto
      */
     @Override
-    public List<PlotSeriesDto> getPlotData(long taskId, PlotNameDto plotName) {
+    public List<PlotSeriesDto> getPlotData(long taskId, MetricNameDto plotName) {
         Set<Long> taskIds = new HashSet<Long>();
         taskIds.add(taskId);
         return getPlotData(taskIds, plotName);
@@ -154,12 +153,12 @@ public class MonitoringPlotDataProvider implements PlotDataProvider, SessionScop
     }
 
     @Override
-    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, PlotNameDto plotName) {
+    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, MetricNameDto plotName) {
         checkNotNull(taskIds, "taskIds is null");
         checkArgument(!taskIds.isEmpty(), "taskIds is empty");
         checkNotNull(plotName, "plotName is null");
 
-        String metricId =  plotName.getPlotName();
+        String metricId =  plotName.getMetricName();
         String monitoringKey = metricId.substring(0, metricId.indexOf(AGENT_NAME_SEPARATOR));
         String agentIdentifier = metricId.substring(metricId.indexOf(AGENT_NAME_SEPARATOR) + AGENT_NAME_SEPARATOR.length());
 

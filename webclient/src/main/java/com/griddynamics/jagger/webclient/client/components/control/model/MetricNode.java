@@ -12,20 +12,20 @@ import java.util.List;
  */
 public class MetricNode extends AbstractIdentifyNode {
 
-    private MetricNameDto metricName;
+    private MetricNameDto metricNameDto;
 
-    public MetricNode (MetricNameDto metricName) {
-        this.metricName = metricName;
+    public MetricNode (MetricNameDto metricNameDto) {
+        this.metricNameDto = metricNameDto;
     }
 
     public MetricNode() {}
 
-    public MetricNameDto getMetricName() {
-        return metricName;
+    public MetricNameDto getMetricNameDto() {
+        return metricNameDto;
     }
 
-    public void setMetricName(MetricNameDto metricName) {
-        this.metricName = metricName;
+    public void setMetricNameDto(MetricNameDto metricNameDto) {
+        this.metricNameDto = metricNameDto;
     }
 
     @Override

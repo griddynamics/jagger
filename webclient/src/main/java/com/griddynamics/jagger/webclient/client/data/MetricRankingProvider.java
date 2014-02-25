@@ -2,10 +2,12 @@ package com.griddynamics.jagger.webclient.client.data;
 
 import com.google.gwt.regexp.shared.RegExp;
 import com.griddynamics.jagger.webclient.client.components.control.model.AbstractIdentifyNode;
-import com.griddynamics.jagger.webclient.client.components.control.model.MetricNode;
 import com.griddynamics.jagger.webclient.client.dto.MetricDto;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,15 +49,6 @@ public class MetricRankingProvider {
         return 0;
     }
 
-    public static void sortMetricNodes(List<MetricNode> list){
-        Collections.sort(list, new Comparator<MetricNode>() {
-            @Override
-            public int compare(MetricNode o, MetricNode o2) {
-                return MetricRankingProvider.compare(o.getMetricName().getDisplay(), o2.getMetricName().getDisplay());
-            }
-        });
-    }
-
     public static void sortPlotNodes(List<? extends AbstractIdentifyNode> list){
         Collections.sort(list, new Comparator<AbstractIdentifyNode>() {
             @Override
@@ -69,7 +62,7 @@ public class MetricRankingProvider {
         Collections.sort(list, new Comparator<MetricDto>() {
             @Override
             public int compare(MetricDto metricDto, MetricDto metricDto2) {
-                return MetricRankingProvider.compare(metricDto.getMetricName().getDisplay(), metricDto2.getMetricName().getDisplay());
+                return MetricRankingProvider.compare(metricDto.getMetricName().getMetricDisplayName(), metricDto2.getMetricName().getMetricDisplayName());
             }
         });
     }

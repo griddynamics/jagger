@@ -28,6 +28,7 @@ public class CheckHandlerMap {
                 put(TestInfoNode.class, new TestInfoNodeHandler());
                 put(TestInfoLeaf.class, new TestInfoLeafHandler());
                 put(MetricNode.class, new MetricNodeHandler());
+                put(MetricGroupNode.class, new MetricGroupNodeHandler());
 
                 put(DetailsNode.class, new DetailsNodeHandler());
                 put(SessionScopePlotsNode.class, new SessionScopePlotsNodeHandler());

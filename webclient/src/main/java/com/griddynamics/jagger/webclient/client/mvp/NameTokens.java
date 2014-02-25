@@ -29,7 +29,7 @@ public class NameTokens {
     public static final String MONITORING_PREFIX = "mon-";
 
     /**
-     * used to separate monitoring plot name and agent id in PolNameDto.plotName/SessionNameDto.plotName
+     * used to separate monitoring plot name and agent id in MetricNameDto.metricName/SessionNameDto.metricName
      * note: '|' == '%7C' in while link processing
      */
     public static final String AGENT_NAME_SEPARATOR = "|";
@@ -42,5 +42,10 @@ public class NameTokens {
 
     public static String trends() {
         return TRENDS;
+    }
+
+    public static enum FilterOptions {
+        BY_ID,
+        BY_DISPLAY_NAME
     }
 }

@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.webclient.client.handler;
 
 import com.griddynamics.jagger.webclient.client.components.control.model.*;
-import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
+import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionPlotNameDto;
 import com.sencha.gxt.widget.core.client.event.CheckChangeEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
@@ -19,14 +19,14 @@ public class DetailsNodeHandler extends TreeAwareHandler<DetailsNode> {
 
         DetailsNode detailsNode = event.getItem();
 
-        Set<PlotNameDto> testScopePlotNames = new HashSet<PlotNameDto>();
+        Set<MetricNameDto> testScopePlotNames = new HashSet<MetricNameDto>();
         for (TestDetailsNode test: detailsNode.getTests()) {
-            for (PlotNode plotNode: test.getPlots()) {
-                testScopePlotNames.add(plotNode.getPlotName());
+            for (PlotNode plotNode: test.getMetrics()) {
+                testScopePlotNames.add(plotNode.getMetricNameDto());
             }
             for (MonitoringPlotNode monitoringPlotNode: test.getMonitoringPlots()) {
                 for (PlotNode mPlotNode : monitoringPlotNode.getPlots()) {
-                    testScopePlotNames.add(mPlotNode.getPlotName());
+                    testScopePlotNames.add(mPlotNode.getMetricNameDto());
                 }
             }
         }
