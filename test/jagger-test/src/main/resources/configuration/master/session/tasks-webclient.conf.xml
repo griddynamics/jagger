@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or any later version.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<beans:beans
+        xmlns="http://www.griddynamics.com/schema/jagger"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation=
+                "
+        http://www.griddynamics.com/schema/jagger
+        http://www.griddynamics.com/schema/jagger.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"
+        >
+
+    <beans:import resource="../provider/object-creators.conf.xml" />
+    <beans:import resource="../metric/calculatorsAndAggregators.conf.xml" />
+
+    <beans:bean id="baseUrlEndpointProvider" class="java.util.LinkedList">
+        <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('')}"/>
+    </beans:bean>
+
+
+    <!-- Start Page -->
+
+    <beans:bean id="startPageQuery" class="invokers.SeleniumQuery">
+        <beans:property name="query" value="/"/>
+        <beans:property name="attend" value=".GCJH2ABCG"/>   <!--class of element in SessionDataGrid-->
+        <beans:property name="wayToLookFor">
+            <beans:bean name="invokers.SeleniumQuery$HowToLookFor.BY_CLASS" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+        </beans:property>
+    </beans:bean>
+
+
+    <beans:bean id="queryProviderStartPage" class="java.util.ArrayList">
+        <beans:constructor-arg>
+            <beans:list>
+                <beans:ref bean="startPageQuery"/>
+            </beans:list>
+        </beans:constructor-arg>
+    </beans:bean>
+
+    <test-description id="getWebclientStartPage" name="getStartPageNN" version="1">
+
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <!--Standard metrics-->
+            <metric xsi:type="metric-success-rate" plotData="true" saveSummary="true"/>
+
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool">
+
+            <query-distributor xsi:type="query-distributor-round-robin" />
+
+            <invoker xsi:type="invoker-class" class="invokers.SeleniumGuruInvoker"/>
+
+            <endpoint-provider xsi:type="endpoint-provider-ref" ref="baseUrlEndpointProvider"/>
+
+            <query-provider xsi:type="query-provider-ref" ref="queryProviderStartPage"/>
+        </scenario>
+
+    </test-description>
+
+
+    <!-- Sessions Chosen -->
+
+    <beans:bean id="sessionsChosenQuery" class="invokers.SeleniumQuery">
+        <beans:property name="query" value="/#summary?sessions=(ids=2037,2038))"/>
+        <beans:property name="attend" value=".GCJH2ABKQB"/>   <!--class of element in control tree-->
+        <beans:property name="wayToLookFor">
+            <beans:bean name="invokers.SeleniumQuery$HowToLookFor.BY_CLASS" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+        </beans:property>
+    </beans:bean>
+
+
+    <beans:bean id="queryProviderSessionChosen" class="java.util.ArrayList">
+        <beans:constructor-arg>
+            <beans:list>
+                <beans:ref bean="sessionsChosenQuery"/>
+            </beans:list>
+        </beans:constructor-arg>
+    </beans:bean>
+
+    <test-description id="getWebclientChosenSessions" name="getChosenSessions" version="1">
+
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <!--Standard metrics-->
+            <metric xsi:type="metric-success-rate" plotData="true" saveSummary="true"/>
+
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool">
+
+            <query-distributor xsi:type="query-distributor-round-robin" />
+
+            <invoker xsi:type="invoker-class" class="invokers.SeleniumGuruInvoker"/>
+
+            <endpoint-provider xsi:type="endpoint-provider-ref" ref="baseUrlEndpointProvider"/>
+
+            <query-provider xsi:type="query-provider-ref" ref="queryProviderSessionChosen"/>
+
+        </scenario>
+
+    </test-description>
+
+
+    <!-- Chosen Summary -->
+
+    <beans:bean id="summaryChosenQuery" class="invokers.SeleniumQuery">
+        <beans:property name="query" value="/#trends?sessions=(ids=2038,2037)&amp;tests=(name=getCategoryTreeViaCatalogPoweredByApollo-25-user),(name=getCategoryTreeViaCatalog-25-user),(name=getCategoryTreeViaCatalogPoweredByApollo-25-user-long),(name=getCategoryTreeViaCatalog-25-user-long)"/>
+        <beans:property name="attend" value="canvas"/>   <!--tag of element responsible for plot !! attention to anchor in query !! -->
+        <beans:property name="wayToLookFor">
+            <beans:bean name="invokers.SeleniumQuery$HowToLookFor.BY_TAG" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+        </beans:property>
+    </beans:bean>
+
+
+    <beans:bean id="queryProviderSummaryChosen" class="java.util.ArrayList">
+        <beans:constructor-arg>
+            <beans:list>
+                <beans:ref bean="summaryChosenQuery"/>
+            </beans:list>
+        </beans:constructor-arg>
+    </beans:bean>
+
+    <test-description id="getWebclientChosenSummary" name="getChosenSummary" version="1">
+
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <!--Standard metrics-->
+            <metric xsi:type="metric-success-rate" plotData="true" saveSummary="true"/>
+
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool">
+
+            <query-distributor xsi:type="query-distributor-round-robin" />
+
+            <invoker xsi:type="invoker-class" class="invokers.SeleniumGuruInvoker"/>
+
+            <endpoint-provider xsi:type="endpoint-provider-ref" ref="baseUrlEndpointProvider"/>
+
+            <query-provider xsi:type="query-provider-ref" ref="queryProviderSummaryChosen"/>
+
+        </scenario>
+
+    </test-description>
+
+
+    <!-- Chosen SessionScope Plots -->
+
+    <beans:bean id="plotsChosenQuery" class="invokers.SeleniumQuery">
+        <beans:property name="query" value="/#metrics?sessions=(ids=2038&amp;trends=CPU%20Load%20Average)"/>
+        <beans:property name="attend" value="canvas"/>   <!--tag of element responsible for plot !! attention to anchor in query !! -->
+        <beans:property name="wayToLookFor">
+            <beans:bean name="invokers.SeleniumQuery$HowToLookFor.BY_TAG" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean" />
+        </beans:property>
+    </beans:bean>
+
+
+    <beans:bean id="queryProviderPlotsChosen" class="java.util.ArrayList">
+        <beans:constructor-arg>
+            <beans:list>
+                <beans:ref bean="plotsChosenQuery"/>
+            </beans:list>
+        </beans:constructor-arg>
+    </beans:bean>
+
+
+    <test-description id="getWebclientChosenPlots" name="getChosenSummary" version="1">
+
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <!--Standard metrics-->
+            <metric xsi:type="metric-success-rate" plotData="true" saveSummary="true"/>
+
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool">
+
+            <query-distributor xsi:type="query-distributor-round-robin" />
+
+            <invoker xsi:type="invoker-class" class="invokers.SeleniumGuruInvoker"/>
+
+            <endpoint-provider xsi:type="endpoint-provider-ref" ref="baseUrlEndpointProvider"/>
+
+            <query-provider xsi:type="query-provider-ref" ref="queryProviderPlotsChosen"/>
+
+        </scenario>
+
+    </test-description>
+
+</beans:beans>

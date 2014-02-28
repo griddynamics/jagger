@@ -54,6 +54,22 @@
             <classifier>full</classifier>
             <version>${version}</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-htmlunit-driver</artifactId>
+            <version>2.10.0</version>
+
+
+        </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-support</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
