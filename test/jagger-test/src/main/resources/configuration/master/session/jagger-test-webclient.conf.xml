@@ -48,30 +48,30 @@
 
             <!-- Get Started Page -->
 
-            <test-group id="get-started-page-test-htmlunit">
-                <test testDescription="getWebclientStartPage">
-                    <load xsi:type="load-invocation" exactcount="2" threads="1"/>
-                    <termination xsi:type="termination-iterations" iterations="2" maxDuration="10m"/>
-                </test>
-            </test-group>
+            <!--<test-group id="get-started-page-test-htmlunit">-->
+                <!--<test testDescription="getWebclientStartPage">-->
+                    <!--<load xsi:type="load-invocation" exactcount="2" threads="1"/>-->
+                    <!--<termination xsi:type="termination-iterations" iterations="2" maxDuration="10m"/>-->
+                <!--</test>-->
+            <!--</test-group>-->
 
 
             <!-- Get Page with chosen sessions -->
 
-            <test-group id="get-chosen-sessions-test-htmlunit">
-                <test testDescription="getWebclientChosenSessions">
-                    <load xsi:type="load-invocation" exactcount="2" threads="1"/>
-                    <termination xsi:type="termination-iterations" iterations="2" maxDuration="10m"/>
-                </test>
-            </test-group>
+            <!--<test-group id="get-chosen-sessions-test-htmlunit">-->
+                <!--<test testDescription="getWebclientChosenSessions">-->
+                    <!--<load xsi:type="load-invocation" exactcount="2" threads="1"/>-->
+                    <!--<termination xsi:type="termination-iterations" iterations="2" maxDuration="10m"/>-->
+                <!--</test>-->
+            <!--</test-group>-->
 
 
             <!-- Get Page with chosen Summary (only summary) -->
 
             <test-group id="get-chosen-summary-test-htmlunit">
                 <test testDescription="getWebclientChosenSummary">
-                    <load xsi:type="load-invocation" exactcount="2" threads="1"/>
-                    <termination xsi:type="termination-iterations" iterations="2" maxDuration="10m"/>
+                    <load xsi:type="load-threads" count="1" />
+                    <termination xsi:type="termination-duration" duration="2m"/>
                 </test>
             </test-group>
 
@@ -80,8 +80,8 @@
 
             <test-group id="get-chosen-plots-test-htmlunit">
                 <test testDescription="getWebclientChosenPlots">
-                    <load xsi:type="load-invocation" exactcount="2" threads="1"/>
-                    <termination xsi:type="termination-iterations" iterations="2" maxDuration="10m"/>
+                    <load xsi:type="load-threads" count="1" />
+                    <termination xsi:type="termination-duration" duration="2m"/>
                 </test>
             </test-group>
 
