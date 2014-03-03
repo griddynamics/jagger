@@ -109,7 +109,7 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
         totalSize = (Long) entityManager.createQuery("select count(sessionData.id) from SessionData as sessionData").getSingleResult();
 
         try {
-            if (commonDataService.isUserCommentStoreAvailable()) {
+            if (commonDataService.getWebClientProperties().isUserCommentStoreAvailable()) {
                 sessionDataDtoList = getAllWithMetaData(start, length);
             } else {
                 sessionDataDtoList = getAllNoMetaData(start, length);
@@ -193,7 +193,7 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
             String userComment = null;
 
-            if (commonDataService.isUserCommentStoreAvailable()) {
+            if (commonDataService.getWebClientProperties().isUserCommentStoreAvailable()) {
                 try {
                     userComment = (String)entityManager.createQuery(
                         "select smd.userComment from SessionMetaDataEntity as smd where smd.sessionData.sessionId=:sessionId")
@@ -250,7 +250,7 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
             }
             Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
 
-            if (commonDataService.isUserCommentStoreAvailable()) {
+            if (commonDataService.getWebClientProperties().isUserCommentStoreAvailable()) {
                 List<Object[]> userComments = entityManager.createQuery(
                         "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
                         .setParameter("sessionDataList", sessionDataList)
@@ -308,7 +308,7 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
             Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
 
-            if (commonDataService.isUserCommentStoreAvailable()) {
+            if (commonDataService.getWebClientProperties().isUserCommentStoreAvailable()) {
 
                 List<Object[]> userComments = entityManager.createQuery(
                         "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")

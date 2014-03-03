@@ -93,5 +93,11 @@ public interface JaggerResources extends ClientBundle {
         String controlFont();
 
         String userCommentBox();
+
+        String descriptionPanel();
+
+        String abstractWindow();
+
+        String textAreaPanel();
     }
 }

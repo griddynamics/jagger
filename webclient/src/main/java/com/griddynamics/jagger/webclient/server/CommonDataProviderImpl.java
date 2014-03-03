@@ -6,6 +6,7 @@ import com.griddynamics.jagger.monitoring.reporting.GroupKey;
 import com.griddynamics.jagger.util.Pair;
 import com.griddynamics.jagger.webclient.client.components.control.model.*;
 import com.griddynamics.jagger.webclient.client.data.MetricRankingProvider;
+import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionPlotNameDto;
@@ -35,15 +36,11 @@ public class CommonDataProviderImpl implements CommonDataProvider {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private boolean showOnlyMatchedTests = true;
+    private WebClientProperties webClientProperties;
 
     @PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
-    }
-
-    public void setShowOnlyMatchedTests(boolean showOnlyMatchedTests) {
-        this.showOnlyMatchedTests = showOnlyMatchedTests;
     }
 
     private CustomMetricPlotDataProvider customMetricPlotDataProvider;
@@ -772,53 +769,53 @@ public class CommonDataProviderImpl implements CommonDataProvider {
         long timestamp = System.currentTimeMillis();
 
         int havingCount = 0;
-        if (showOnlyMatchedTests) {
+        if (webClientProperties.isShowOnlyMatchedTests()) {
             havingCount = sessionIds.size();
         }
 
         List<Object[]> list = entityManager.createNativeQuery
                 (
                         "select taskData.id, commonTests.name, commonTests.description, taskData.taskId , commonTests.clock, commonTests.clockValue, commonTests.termination, taskData.sessionId" +
-                        " from "+
-                        "( "+
-                            "select test.name, test.description, test.version, test.sessionId, test.taskId, test.clock, test.clockValue, test.termination from " +
-                            "( "+
+                                " from " +
+                                "( " +
+                                "select test.name, test.description, test.version, test.sessionId, test.taskId, test.clock, test.clockValue, test.termination from " +
+                                "( " +
                                 "select " +
                                 "l.*, s.name, s.description, s.version " +
-                                "from "+
-                                "(select * from WorkloadTaskData where sessionId in (:sessions)) as l "+
-                                "left outer join "+
-                                "(select * from WorkloadDetails) as s "+
-                                "on l.scenario_id=s.id "+
-                            ") as test " +
-                            "inner join " +
-                            "( " +
-                                "select t.* from "+
-                                "( "+
-                                    "select " +
-                                    "l.*, s.name, s.description, s.version " +
-                                    "from "+
-                                    "(select * from WorkloadTaskData where sessionId in (:sessions)) as l "+
-                                    "left outer join "+
-                                    "(select * from WorkloadDetails) as s "+
-                                    "on l.scenario_id=s.id " +
-                                ") as t "+
-                                "group by "+
-                                "t.termination, t.clock, t.clockValue, t.name, t.description, t.version "+
+                                "from " +
+                                "(select * from WorkloadTaskData where sessionId in (:sessions)) as l " +
+                                "left outer join " +
+                                "(select * from WorkloadDetails) as s " +
+                                "on l.scenario_id=s.id " +
+                                ") as test " +
+                                "inner join " +
+                                "( " +
+                                "select t.* from " +
+                                "( " +
+                                "select " +
+                                "l.*, s.name, s.description, s.version " +
+                                "from " +
+                                "(select * from WorkloadTaskData where sessionId in (:sessions)) as l " +
+                                "left outer join " +
+                                "(select * from WorkloadDetails) as s " +
+                                "on l.scenario_id=s.id " +
+                                ") as t " +
+                                "group by " +
+                                "t.termination, t.clock, t.clockValue, t.name, t.description, t.version " +
                                 "having count(t.id)>=" + havingCount +
-                            ") as testArch " +
-                            "on "+
-                            "test.clock=testArch.clock and "+
-                            "test.clockValue=testArch.clockValue and "+
-                            "test.termination=testArch.termination and "+
-                            "test.name=testArch.name and "+
-                            "test.version=testArch.version "+
-                        ") as commonTests "+
-                        "left outer join "+
-                        "(select * from TaskData where sessionId in (:sessions)) as taskData "+
-                        "on "+
-                        "commonTests.sessionId=taskData.sessionId and "+
-                        "commonTests.taskId=taskData.taskId "
+                                ") as testArch " +
+                                "on " +
+                                "test.clock=testArch.clock and " +
+                                "test.clockValue=testArch.clockValue and " +
+                                "test.termination=testArch.termination and " +
+                                "test.name=testArch.name and " +
+                                "test.version=testArch.version " +
+                                ") as commonTests " +
+                                "left outer join " +
+                                "(select * from TaskData where sessionId in (:sessions)) as taskData " +
+                                "on " +
+                                "commonTests.sessionId=taskData.sessionId and " +
+                                "commonTests.taskId=taskData.taskId "
                 )
                 .setParameter("sessions", sessionIds)
                 .getResultList();
@@ -883,5 +880,13 @@ public class CommonDataProviderImpl implements CommonDataProvider {
 
         log.info("For sessions {} was loaded {} tasks for {} ms", new Object[]{sessionIds, result.size(), System.currentTimeMillis() - timestamp});
         return result;
+    }
+
+    public WebClientProperties getWebClientProperties() {
+        return webClientProperties;
+    }
+
+    public void setWebClientProperties(WebClientProperties webClientProperties) {
+        this.webClientProperties = webClientProperties;
     }
 }
