@@ -154,8 +154,6 @@ public class TaskDataServiceImpl /*extends RemoteServiceServlet*/ implements Tas
                 mapIds.put(key, (oldValue==null ? 0 : oldValue)+taskIdInt);
             }else{
                 TaskDataDto taskDataDto = new TaskDataDto(id.longValue(), name, description);
-                taskDataDto.setClock(clock);
-                taskDataDto.setTerminationStrategy(termination);
                 //merge
                 if (map.containsKey(name)){
                     taskDataDto.getIds().addAll(map.get(name).getIds());

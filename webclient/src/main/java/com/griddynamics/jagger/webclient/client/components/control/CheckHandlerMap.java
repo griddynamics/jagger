@@ -43,6 +43,12 @@ public class CheckHandlerMap {
     }
 
 
+    public static void setTestInfoFetcher(Trends.TestInfoFetcher testInfoFetcher) {
+        for (TreeAwareHandler tah : handlers.values()) {
+            tah.setTestInfoFetcher(testInfoFetcher);
+        }
+    }
+
     public static void setMetricFetcher(Trends.MetricFetcher metricFetcher) {
         for (TreeAwareHandler tah : handlers.values()) {
             tah.setMetricFetcher(metricFetcher);

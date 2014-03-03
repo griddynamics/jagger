@@ -4,7 +4,7 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
 import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
 import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
@@ -27,12 +27,14 @@ import java.util.*;
  * Time: 12:30
  * Panel that contains table of metrics in comparison mod (multiple session selected)
  */
+
 public class SessionComparisonPanel extends VerticalPanel{
 
     private final String TEST_DESCRIPTION = "testDescription";
     private final String TEST_NAME = "testName";
     // property to render in Metric column
     private final String NAME = "name";
+    @SuppressWarnings("all")
     private final String METRIC = "Metric";
     private final String SESSION_HEADER = "Session ";
     private final String SESSION_INFO_ID = "sessionInfo";
@@ -40,6 +42,8 @@ public class SessionComparisonPanel extends VerticalPanel{
     private final String COMMENT = "Comment";
     @SuppressWarnings("all")
     private final String USER_COMMENT = "User Comment";
+    @SuppressWarnings("all")
+    private final String SESSION_TAGS = "Tags";
     @SuppressWarnings("all")
     private final int MIN_COLUMN_WIDTH = 200;
     @SuppressWarnings("all")
@@ -58,9 +62,9 @@ public class SessionComparisonPanel extends VerticalPanel{
     private final double METRIC_COLUMN_WIDTH_FACTOR = 1.5;
 
     private final UserCommentBox userCommentBox;
+    private final TagBox tagBox;
 
     private Set<SessionDataDto> chosenSessions;
-    private Collection<TaskDataDto> chosenTests;
 
     private final String WHITE_SPACE_NORMAL = "white-space: normal";
 
@@ -76,6 +80,9 @@ public class SessionComparisonPanel extends VerticalPanel{
 
     private WebClientProperties webClientProperties;
 
+    private List<TagDto> allTags;
+    private HashMap<String,ArrayList<TagDto>> sessionTags;
+
     public HashMap<MetricNameDto, MetricDto> getCachedMetrics() {
         return cache;
     }
@@ -84,11 +91,13 @@ public class SessionComparisonPanel extends VerticalPanel{
         setWidth(ONE_HUNDRED_PERCENTS);
         setHeight(ONE_HUNDRED_PERCENTS);
         this.chosenSessions = chosenSessions;
-        this.chosenTests = new ArrayList<TaskDataDto>();
         this.webClientProperties = webClientProperties;
-        init(chosenSessions, width);
+        init(this.chosenSessions, width);
         userCommentBox = new UserCommentBox(webClientProperties.getUserCommentMaxLength());
         userCommentBox.setTreeGrid(treeGrid);
+        tagBox = new TagBox();
+        tagBox.setTreeGrid(treeGrid);
+        allTags();
     }
 
 
@@ -173,22 +182,50 @@ public class SessionComparisonPanel extends VerticalPanel{
             }
         });
 
-        if (webClientProperties.isUserCommentAvailable()) {
+        if (webClientProperties.isUserCommentEditAvailable()) {
             treeGrid.addCellDoubleClickHandler(new CellDoubleClickEvent.CellDoubleClickHandler() {
                 @Override
                 public void onCellClick(CellDoubleClickEvent event) {
                     TreeItem item = treeGrid.findNode(treeGrid.getTreeView().getRow(event.getRowIndex())).getModel();
                     if (item.getKey().equals(USER_COMMENT) && event.getCellIndex() > 0) {
                         String sessionId = treeGrid.getColumnModel().getColumn(event.getCellIndex()).getHeader().asString();
+                        String sessionData_id = sessionId.substring(sessionId.indexOf(' ') + 1);
+                        SessionDataDto currentSession = null;
+                        for (SessionDataDto sessionDataDto : SessionComparisonPanel.this.chosenSessions){
+                            if (sessionDataDto.getSessionId().equals(sessionData_id)) {
+                                currentSession = sessionDataDto;
+                                break;
+                            }
+                        }
+
                         userCommentBox.popUp(
-                                sessionId,
+                                currentSession,
                                 item.get(sessionId),
                                 item
                             );
                     }
+
                 }
             });
         }
+
+        if (webClientProperties.isTagsAvailable()) {
+            treeGrid.addCellDoubleClickHandler(new CellDoubleClickEvent.CellDoubleClickHandler() {
+                @Override
+                public void onCellClick(CellDoubleClickEvent event) {
+                    TreeItem item = treeGrid.findNode(treeGrid.getTreeView().getRow(event.getRowIndex())).getModel();
+
+                    if (item.getKey().equals(SESSION_TAGS) && event.getCellIndex() > 0) {
+                        String sessionId = treeGrid.getColumnModel().getColumn(event.getCellIndex()).getHeader().asString();
+                        if (sessionTags.get(sessionId)==null)
+                            sessionTags.put(sessionId,new ArrayList<TagDto>());
+                        tagBox.popUp(sessionId,
+                                item,allTags, sessionTags.get(sessionId));
+                    }
+                }
+            });
+        }
+
 
         add(treeGrid);
     }
@@ -211,13 +248,52 @@ public class SessionComparisonPanel extends VerticalPanel{
     public void addSessionInfo() {
         TreeItem sessionInfo = new TreeItem(SESSION_INFO_ID);
         sessionInfo.put(NAME, "Session Info");
-        // sessionInfo always on top
         treeStore.insert(0, sessionInfo);
 
-        addCommentRecord(chosenSessions, sessionInfo);
-        addUserCommentRecord(chosenSessions, sessionInfo);
-        addStartEndTimeRecords(chosenSessions, sessionInfo);
-        addAdditionalRecords(chosenSessions, sessionInfo);
+        TreeItem itemActiveKernels = new TreeItem(ACTIVE_KERNELS);
+        TreeItem itemTaskExecuted = new TreeItem(TASKS_EXECUTED);
+        TreeItem itemTaskFailed = new TreeItem(TASKS_FAILED);
+        TreeItem itemDateStart = new TreeItem(START_DATE);
+        TreeItem itemDateEnd = new TreeItem(END_DATE);
+        TreeItem itemComment = new TreeItem(COMMENT);
+        TreeItem itemUserComment = new TreeItem(USER_COMMENT);
+        TreeItem itemTags = new TreeItem(SESSION_TAGS);
+
+        itemActiveKernels.put(NAME, ACTIVE_KERNELS);
+        itemTaskExecuted.put(NAME, TASKS_EXECUTED);
+        itemTaskFailed.put(NAME, TASKS_FAILED);
+        itemDateStart.put(NAME, START_DATE);
+        itemDateEnd.put(NAME, END_DATE);
+        itemComment.put(NAME, COMMENT);
+        if (webClientProperties.isUserCommentStoreAvailable())
+            itemUserComment.put(NAME, USER_COMMENT);
+        itemTags.put(NAME, SESSION_TAGS);
+
+        for (SessionDataDto session : chosenSessions) {
+            itemActiveKernels.put(SESSION_HEADER + session.getSessionId(), session.getActiveKernelsCount() + "");
+            itemTaskExecuted.put(SESSION_HEADER + session.getSessionId(), session.getTasksExecuted() + "");
+            itemTaskFailed.put(SESSION_HEADER + session.getSessionId(), session.getTasksFailed() + "");
+            itemDateStart.put(SESSION_HEADER + session.getSessionId(), session.getStartDate());
+            itemDateEnd.put(SESSION_HEADER + session.getSessionId(), session.getEndDate());
+            itemComment.put(SESSION_HEADER + session.getSessionId(), session.getComment());
+            if (webClientProperties.isUserCommentStoreAvailable()){
+                String userComment = session.getUserComment() == null ? "" : session.getUserComment();
+                itemUserComment.put(SESSION_HEADER + session.getSessionId(), userComment);
+            }
+            // Add nothing for test. Later it will be taken from SessionDataDto.
+            itemTags.put(SESSION_HEADER + session.getSessionId(), "");
+        }
+        treeStore.add(sessionInfo,itemComment);
+        if (webClientProperties.isUserCommentStoreAvailable())
+            treeStore.add(sessionInfo,itemUserComment);
+        treeStore.add(sessionInfo,itemTags);
+        treeStore.add(sessionInfo,itemDateStart);
+        treeStore.add(sessionInfo,itemDateEnd);
+
+        treeStore.add(sessionInfo,itemActiveKernels);
+        treeStore.add(sessionInfo,itemTaskExecuted);
+        treeStore.add(sessionInfo,itemTaskFailed);
+
     }
 
     public void removeSessionInfo() {
@@ -226,65 +302,9 @@ public class SessionComparisonPanel extends VerticalPanel{
             treeStore.remove(sessionInfo);
     }
 
-    private void addAdditionalRecords(Set<SessionDataDto> chosenSessions, TreeItem parent) {
-        TreeItem item = new TreeItem(ACTIVE_KERNELS);
-        item.put(NAME, ACTIVE_KERNELS);
-        for (SessionDataDto session : chosenSessions) {
-            item.put(SESSION_HEADER + session.getSessionId(), session.getActiveKernelsCount() + "");
-        }
-        treeStore.add(parent, item);
-
-        item = new TreeItem(TASKS_EXECUTED);
-        item.put(NAME, TASKS_EXECUTED);
-        for (SessionDataDto session : chosenSessions) {
-            item.put(SESSION_HEADER + session.getSessionId(), session.getTasksExecuted() + "");
-        }
-        treeStore.add(parent, item);
-
-        item = new TreeItem(TASKS_FAILED);
-        item.put(NAME, TASKS_FAILED);
-        for (SessionDataDto session : chosenSessions) {
-            item.put(SESSION_HEADER + session.getSessionId(), session.getTasksFailed() + "");
-        }
-        treeStore.add(parent, item);
-    }
-
-    private void addStartEndTimeRecords(Set<SessionDataDto> chosenSessions, TreeItem parent) {
-        TreeItem date = new TreeItem(START_DATE);
-        date.put(NAME, START_DATE);
-        for (SessionDataDto session : chosenSessions) {
-            date.put(SESSION_HEADER + session.getSessionId(), session.getStartDate());
-        }
-        treeStore.add(parent, date);
-
-        date = new TreeItem(END_DATE);
-        date.put(NAME, END_DATE);
-        for (SessionDataDto session : chosenSessions) {
-            date.put(SESSION_HEADER + session.getSessionId(), session.getEndDate());
-        }
-        treeStore.add(parent, date);
-    }
-
-    private void addCommentRecord(Set<SessionDataDto> chosenSessions, TreeItem parent) {
-
-        TreeItem comment = new TreeItem(COMMENT);
-        comment.put(NAME, COMMENT);
-        for (SessionDataDto session : chosenSessions) {
-            comment.put(SESSION_HEADER + session.getSessionId(), session.getComment());
-        }
-        treeStore.add(parent, comment);
-
-    }
-
-    private void addUserCommentRecord(Set<SessionDataDto> chosenSessions, TreeItem parent) {
-
-        TreeItem comment = new TreeItem(USER_COMMENT);
-        comment.put(NAME, USER_COMMENT);
-        for (SessionDataDto session : chosenSessions) {
-            // Add nothing for test. Later it will be taken from SessionDataDto.
-            comment.put(SESSION_HEADER + session.getSessionId(), "");
-        }
-        treeStore.add(parent, comment);
+    private void allTags() {
+        sessionTags = new HashMap<String,ArrayList<TagDto>>();
+        allTags = new ArrayList<TagDto>();
     }
 
 
@@ -316,7 +336,7 @@ public class SessionComparisonPanel extends VerticalPanel{
 
         cache.put(metricDto.getMetricName(), metricDto);
         TreeItem record = new TreeItem(metricDto);
-        addItemToStore(record);
+        addItemToStore(record, metricDto);
     }
 
 
@@ -326,21 +346,15 @@ public class SessionComparisonPanel extends VerticalPanel{
         }
     }
 
-    private void addItemToStore(TreeItem record) {
+    private void addItemToStore(TreeItem record, MetricDto metricDto) {
 
-        String descriptionString = record.get(TEST_DESCRIPTION);
-        String testNameString = record.get(TEST_NAME);
-
-        if (descriptionString == null || testNameString == null)
-            return;
-
-        TreeItem testItem = getTestItem(descriptionString, testNameString);
-        for (TreeItem rec : treeStore.getChildren(testItem)) {
+        TreeItem taskItem = getTestItem(metricDto.getMetricName().getTest());
+        for (TreeItem rec : treeStore.getChildren(taskItem)) {
             if (rec.getKey().equals(record.getKey())) {
                 return;
             }
         }
-        treeStore.add(testItem, record);
+        treeStore.add(taskItem, record);
     }
 
 
@@ -353,11 +367,9 @@ public class SessionComparisonPanel extends VerticalPanel{
 
     private void removeRecord(MetricDto metric) {
 
-        String description = metric.getMetricName().getTest().getDescription();
-        String testName = metric.getMetricName().getTest().getTaskName();
-        String key = getItemKey(metric.getMetricName());
+        TreeItem testItem = getTestItem(metric.getMetricName().getTest());
+        String key = testItem.getKey() + metric.getMetricName().getMetricName();
 
-        TreeItem testItem = getTestItem(description, testName);
         for (TreeItem item : treeStore.getChildren(testItem)) {
             if (item.getKey().equals(key)) {
                 removeWithParent(item);
@@ -378,93 +390,78 @@ public class SessionComparisonPanel extends VerticalPanel{
         }
     }
 
-    public void updateTests(Collection<TaskDataDto> tests) {
 
-        List<TaskDataDto> newTests = new ArrayList<TaskDataDto>();
-        for (TaskDataDto test : tests) {
-            if (!chosenTests.contains(test)) {
-                newTests.add(test);
-            }
-        }
+    public void addTestInfo(TaskDataDto test, Map<String, TestInfoDto> testInfoMap) {
 
-        for (TaskDataDto task : this.chosenTests) {
-            if (!tests.contains(task)) {
-                removeTaskSubTree(task);
-            }
-        }
-        for (TaskDataDto test : newTests) {
-            addTestInfo(test);
-        }
-        chosenTests = tests;
-    }
+        TreeItem testItem = getTestItem(test);
 
-    private void removeTaskSubTree(TaskDataDto test) {
-        treeStore.remove(getTestItem(test.getDescription(), test.getTaskName()));
-        TreeItem description = getTestDescriptionItem(test.getDescription());
-        if (!treeStore.hasChildren(description)) {
-            treeStore.remove(description);
-        }
-    }
-
-    public void addTestInfo(TaskDataDto test) {
-        TreeItem testItem = getTestItem(test.getDescription(), test.getTaskName());
-
-        String testInfoId = test.getDescription() + test.getTaskName() + TEST_INFO;
+        String testInfoId = testItem.getKey() + TEST_INFO;
         if (treeStore.findModelWithKey(testInfoId) != null) {
             return;
         }
 
+        String testItemName = getTestItemName(test);
         TreeItem testInfo = new TreeItem(testInfoId);
         testInfo.put(NAME, TEST_INFO);
         testInfo.put(TEST_DESCRIPTION, test.getDescription());
-        testInfo.put(TEST_NAME, test.getTaskName());
+        testInfo.put(TEST_NAME, testItemName);
         treeStore.insert(testItem, 0 , testInfo);
 
         TreeItem clock = new TreeItem(testItem.getKey() + "Clock");
         clock.put(NAME, "Clock");
         clock.put(TEST_DESCRIPTION, test.getDescription());
-        clock.put(TEST_NAME, test.getTaskName());
+        clock.put(TEST_NAME, testItemName);
         clock.put(TEST_INFO, TEST_INFO);
         for (SessionDataDto session : chosenSessions) {
-            clock.put(SESSION_HEADER + session.getSessionId(), test.getClock());
+            if (testInfoMap.get(session.getSessionId()) != null)
+                clock.put(SESSION_HEADER + session.getSessionId(), testInfoMap.get(session.getSessionId()).getClock());
         }
         treeStore.add(testInfo, clock);
 
         TreeItem termination = new TreeItem(testItem.getKey() + "Termination");
         termination.put(NAME, "Termination");
         termination.put(TEST_DESCRIPTION, test.getDescription());
-        termination.put(TEST_NAME, test.getTaskName());
+        termination.put(TEST_NAME, testItemName);
         termination.put(TEST_INFO, TEST_INFO);
         for (SessionDataDto session : chosenSessions) {
-            termination.put(SESSION_HEADER + session.getSessionId(), test.getTerminationStrategy());
+            if (testInfoMap.get(session.getSessionId()) != null)
+                termination.put(SESSION_HEADER + session.getSessionId(), testInfoMap.get(session.getSessionId()).getTermination());
         }
         treeStore.add(testInfo, termination);
     }
 
     public void removeTestInfo(TaskDataDto test) {
 
-        TreeItem testItem = getTestItem(test.getDescription(), test.getTaskName());
+        String id = getTestItemId(test);
+        TreeItem testItem = treeStore.findModelWithKey(id);
+        if (testItem == null) {
+            return;
+        }
         TreeItem testInfo = treeStore.getFirstChild(testItem);
         if (testInfo != null && TEST_INFO.equals(testInfo.get(NAME)))
             removeWithParent(testInfo);
-
-        if (treeStore.getChildCount(testItem) == 0) {
-            removeWithParent(testItem);
-        }
     }
 
-    private TreeItem getTestItem(String descriptionStr, String taskNameStr) {
-        TreeItem description = getTestDescriptionItem(descriptionStr);
-        for (TreeItem item : treeStore.getChildren(description)) {
-            if (taskNameStr.equals(item.get(NAME))) {
-                return item;
-            }
+
+    private TreeItem getTestItem(TaskDataDto tdd) {
+
+        String key = getTestItemId(tdd);
+        TreeItem taskItem = treeStore.findModelWithKey(key);
+        if (taskItem != null) {
+            return taskItem;
         }
-        TreeItem taskName = new TreeItem(descriptionStr + taskNameStr);
-        taskName.put(NAME, taskNameStr);
-        taskName.put(TEST_DESCRIPTION, descriptionStr);
-        treeStore.add(description, taskName);
-        return taskName;
+
+        TreeItem description = getTestDescriptionItem(tdd.getDescription());
+
+        taskItem = new TreeItem(key);
+        taskItem.put(NAME, getTestItemName(tdd));
+        taskItem.put(TEST_DESCRIPTION, tdd.getDescription());
+        treeStore.add(description, taskItem);
+        return taskItem;
+    }
+
+    private String getTestItemName(TaskDataDto tdd) {
+        return tdd.getTaskName() + " from sessions: " + tdd.getSessionIds();
     }
 
     private TreeItem getTestDescriptionItem(String descriptionStr) {
@@ -478,6 +475,25 @@ public class SessionComparisonPanel extends VerticalPanel{
         treeStore.add(description);
         return description;
     }
+
+
+    private String getTestItemId(TaskDataDto tdd) {
+        StringBuilder sessionIds = new StringBuilder();
+        for (String id : tdd.getSessionIds()) {
+            sessionIds.append(id);
+        }
+        return tdd.getDescription() + tdd.getTaskName() + sessionIds.toString();
+    }
+
+    private TreeItem getTestDescriptionItemIfExists(String descriptionStr) {
+        for (TreeItem item : treeStore.getRootItems()) {
+            if (descriptionStr.equals(item.get(NAME))) {
+                return item;
+            }
+        }
+        return null;
+    }
+
 
     private class NoIconsTreeGrid extends TreeGrid<TreeItem> {
 
@@ -494,7 +510,7 @@ public class SessionComparisonPanel extends VerticalPanel{
 
     public class TreeItem extends HashMap<String, String> {
 
-        String key;
+        protected String key;
 
         private String getKey() {
             return key;
@@ -530,13 +546,19 @@ public class SessionComparisonPanel extends VerticalPanel{
 
         @Override
         public String getValue(TreeItem object) {
-
-            if (webClientProperties.isUserCommentAvailable()) {
+            String penImageResource = "<img src=\"" + JaggerResources.INSTANCE.getPencilImage().getSafeUri().asString() + "\" height=\"15\" width=\"15\">"
+                    + "<ins font-size='10px'>double click to edit</ins><br><br>";
+            String toShow;
+            if (webClientProperties.isUserCommentEditAvailable()) {
                 if (object.get(NAME).equals(USER_COMMENT) && !field.equals(NAME)) {
-                    String toShow = object.get(field).replaceAll("\n", "<br>");
-                    return "<img src=\"" + JaggerResources.INSTANCE.getPencilImage().getSafeUri().asString() + "\" height=\"15\" width=\"15\">"
-                            + "<ins font-size='10px'>double click to edit</ins><br><br>"
-                            + toShow;
+                    toShow = object.get(field).replaceAll("\n", "<br>");
+                    return penImageResource+toShow;
+                }
+            }
+            if (webClientProperties.isTagsAvailable()) {
+                if (object.get(NAME).equals(SESSION_TAGS) && !field.equals(NAME)) {
+                    toShow = object.get(field).replaceAll("\n", "<br>");
+                    return penImageResource+toShow;
                 }
             }
             return object.get(field);

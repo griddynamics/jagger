@@ -228,7 +228,9 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     MetricDescriptionEntity metricDescriptionEntity = persistMetricDescription(metricId, displayName);
 
                     long currentInterval = aggregationInfo.getMinTime() + intervalSize;
-                    long time = 0;
+                    long time = intervalSize;
+
+                    long extendedInterval = intervalSize;
 
                     try {
                         fileReader = logReader.read(path, MetricLogEntry.class);
@@ -242,16 +244,18 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                         // we leave interval
                                         // we have some info in interval aggregator
                                         // we need to save it
-                                        statistics.add(new MetricPointEntity(time, aggregated.doubleValue(), metricDescriptionEntity));
+                                        statistics.add(new MetricPointEntity(time - extendedInterval / 2, aggregated.doubleValue(), metricDescriptionEntity));
                                         intervalAggregator.reset();
 
                                         // go for the next interval
+                                        extendedInterval = intervalSize;
                                         time += intervalSize;
                                         currentInterval += intervalSize;
                                     }else{
                                         // current interval is empty
                                         // we will extend it
                                         while (logEntry.getTime() > currentInterval){
+                                            extendedInterval += intervalSize;
                                             time += intervalSize;
                                             currentInterval += intervalSize;
                                         }
@@ -266,7 +270,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         if (metricDescription.getPlotData()) {
                             Number aggregated = intervalAggregator.getAggregated();
                             if (aggregated != null){
-                                statistics.add(new MetricPointEntity(time, aggregated.doubleValue(), metricDescriptionEntity));
+                                statistics.add(new MetricPointEntity(time - extendedInterval / 2, aggregated.doubleValue(), metricDescriptionEntity));
                                 intervalAggregator.reset();
                             }
                         }

@@ -47,6 +47,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Aggregates monitoring information.
@@ -120,6 +121,8 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
             }
 
             long currentInterval = aggregationInfo.getMinTime() + intervalSize;
+            AtomicLong extendedInterval = new AtomicLong(intervalSize);
+
             final Map<NodeId, Map<MonitoringParameter, Double>> sumByIntervalAgent = Maps.newHashMap();
             final Map<NodeId, Map<MonitoringParameter, Long>> countByIntervalAgent = Maps.newHashMap();
             final Map<String, Map<MonitoringParameter, Double>> sumByIntervalSuT = Maps.newHashMap();
@@ -134,7 +137,7 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                 try{
                     currentInterval = processLogEntry(sessionId, aggregationInfo, intervalSize, taskData, currentInterval,
                             sumByIntervalAgent, countByIntervalAgent, sumByIntervalSuT, countByIntervalSuT, avgStatisticsByAgent,
-                            avgStatisticsBySuT, logEntry);
+                            avgStatisticsBySuT, logEntry, extendedInterval);
                 } catch (ClassCastException e){
                     //HotFix for hessian de/serialization problem
                     log.error("Deserialization problem: {}", e);
@@ -143,9 +146,9 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
 
             fileReader.close();
 
-            finalizeIntervalSysInfo(sessionId, taskData, currentInterval - aggregationInfo.getMinTime(),
+            finalizeIntervalSysInfo(sessionId, taskData, currentInterval - aggregationInfo.getMinTime() - extendedInterval.get() / 2,
                     sumByIntervalAgent, countByIntervalAgent, avgStatisticsByAgent);
-            finalizeIntervalSysUT(sessionId, taskData, currentInterval - aggregationInfo.getMinTime(),
+            finalizeIntervalSysUT(sessionId, taskData, currentInterval - aggregationInfo.getMinTime() - extendedInterval.get() / 2,
                     sumByIntervalSuT, countByIntervalSuT, avgStatisticsBySuT);
 
             differentiateRelativeParameters(avgStatisticsByAgent);
@@ -216,17 +219,25 @@ public class MonitoringAggregator extends LogProcessor implements DistributionLi
                                  Map<String, Map<MonitoringParameter, Long>> countByIntervalSuT,
                                  ListMultimap<MonitoringStream, MonitoringStatistics> avgStatisticsByAgent,
                                  ListMultimap<MonitoringStream, MonitoringStatistics> avgStatisticsBySuT,
-                                 MonitoringLogEntry logEntry) {
+                                 MonitoringLogEntry logEntry, AtomicLong extendedInterval) {
         while (logEntry.getTime() > currentInterval) {
-            finalizeIntervalSysInfo(sessionId, taskData, currentInterval - aggregationInfo.getMinTime(),
-                    sumByIntervalAgent, countByIntervalAgent, avgStatisticsByAgent);
-            finalizeIntervalSysUT(sessionId, taskData, currentInterval - aggregationInfo.getMinTime(),
-                    sumByIntervalSuT, countByIntervalSuT, avgStatisticsBySuT);
-            sumByIntervalAgent.clear();
-            countByIntervalAgent.clear();
-            sumByIntervalSuT.clear();
-            countByIntervalSuT.clear();
+            if (!countByIntervalAgent.isEmpty() || !countByIntervalSuT.isEmpty()) {
+
+                long time = currentInterval - aggregationInfo.getMinTime() + extendedInterval.get() / 2;
+                finalizeIntervalSysInfo(sessionId, taskData,
+                        time,
+                        sumByIntervalAgent, countByIntervalAgent, avgStatisticsByAgent);
+                finalizeIntervalSysUT(sessionId, taskData,
+                        time,
+                        sumByIntervalSuT, countByIntervalSuT, avgStatisticsBySuT);
+                sumByIntervalAgent.clear();
+                countByIntervalAgent.clear();
+                sumByIntervalSuT.clear();
+                countByIntervalSuT.clear();
+                extendedInterval.set(0);
+            }
             currentInterval += intervalSize;
+            extendedInterval.addAndGet(intervalSize);
         }
         Map<String, SystemUnderTestInfo> sysUnderTest = logEntry.getSystemInfo().getSysUnderTest();
         if (sysUnderTest != null) {

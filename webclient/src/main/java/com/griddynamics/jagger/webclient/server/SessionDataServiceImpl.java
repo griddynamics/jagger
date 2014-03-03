@@ -4,12 +4,12 @@ import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
 import com.griddynamics.jagger.webclient.client.SessionDataService;
 import com.griddynamics.jagger.webclient.client.dto.PagedSessionDataDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
+import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
+import com.griddynamics.jagger.webclient.client.dto.TestInfoDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
+import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -23,12 +23,79 @@ import static com.google.common.base.Preconditions.*;
 public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements SessionDataService {
     private static final Logger log = LoggerFactory.getLogger(SessionDataServiceImpl.class);
     private static final String dateFormat = "yyyy-MM-dd HH:mm:ss";
+    private final DateFormat dateFormatter = new SimpleDateFormat(dateFormat);
 
+    private CommonDataServiceImpl commonDataService;
     private EntityManager entityManager;
 
     @PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        // have it's own Entity manager to store data.
+        this.entityManager = entityManager.getEntityManagerFactory().createEntityManager();
+    }
+
+    public void setCommonDataService(CommonDataServiceImpl commonDataService) {
+        this.commonDataService = commonDataService;
+    }
+
+    @Override
+    public synchronized void saveUserComment(Long sessionData_id, String userComment) throws RuntimeException {
+
+        Number number = (Number)entityManager.createQuery(
+                "select count(*) from SessionMetaDataEntity as sm where sm.sessionData.id=:sessionData_id")
+                .setParameter("sessionData_id", sessionData_id)
+                .getSingleResult();
+
+        if (number.intValue() == 0) {
+            // create new SessionMetaInfo
+
+            // do not save empty comments
+            if (userComment.isEmpty()) {
+                return;
+            }
+
+            try {
+                entityManager.getTransaction().begin();
+                entityManager.createNativeQuery(
+                        "insert into SessionMetaDataEntity (userComment, sessionData_id) " +
+                                "values (:userComment, :sessionData_id)")
+                        .setParameter("userComment", userComment)
+                        .setParameter("sessionData_id", sessionData_id)
+                        .executeUpdate();
+
+            } finally {
+                entityManager.getTransaction().commit();
+            }
+        } else {
+            // update/delete
+
+            if (userComment.isEmpty()) {
+                // delete
+                try {
+                    entityManager.getTransaction().begin();
+                    entityManager.createQuery(
+                            "delete SessionMetaDataEntity where sessionData.id=:sessionData_id")
+                            .setParameter("sessionData_id", sessionData_id)
+                            .executeUpdate();
+                } finally {
+                    entityManager.getTransaction().commit();
+                }
+            } else {
+
+                // update
+                try {
+                    entityManager.getTransaction().begin();
+                    entityManager.createNativeQuery(
+                            "update SessionMetaDataEntity smd set smd.userComment=:userComment " +
+                                    "where smd.sessionData_id=:sessionData_id")
+                            .setParameter("userComment", userComment)
+                            .setParameter("sessionData_id", sessionData_id)
+                            .executeUpdate();
+                } finally {
+                    entityManager.getTransaction().commit();
+                }
+            }
+        }
     }
 
     @Override
@@ -38,34 +105,80 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
         long timestamp = System.currentTimeMillis();
         long totalSize;
-        List<SessionDataDto> sessionDataDtoList;
+        List<SessionDataDto> sessionDataDtoList ;
         totalSize = (Long) entityManager.createQuery("select count(sessionData.id) from SessionData as sessionData").getSingleResult();
 
-        @SuppressWarnings("unchecked")
-        List<SessionData> sessionDataList = (List<SessionData>)
-                entityManager.createQuery("select sd from SessionData as sd order by sd.startTime asc").setFirstResult(start).setMaxResults(length).getResultList();
-
-        if (sessionDataList == null) {
-            return new PagedSessionDataDto(Collections.<SessionDataDto>emptyList(), 0);
+        try {
+            if (commonDataService.getWebClientProperties().isUserCommentStoreAvailable()) {
+                sessionDataDtoList = getAllWithMetaData(start, length);
+            } else {
+                sessionDataDtoList = getAllNoMetaData(start, length);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
-        sessionDataDtoList = new ArrayList<SessionDataDto>(sessionDataList.size());
-        DateFormat dateFormatter = new SimpleDateFormat(dateFormat);
-        for (SessionData sessionData : sessionDataList) {
-            sessionDataDtoList.add(new SessionDataDto(
-                    sessionData.getSessionId(),
-                    dateFormatter.format(sessionData.getStartTime()),
-                    dateFormatter.format(sessionData.getEndTime()),
-                    sessionData.getActiveKernels(),
-                    sessionData.getTaskExecuted(),
-                    sessionData.getTaskFailed(),
-                    HTMLFormatter.format(sessionData.getComment()))
-            );
+        if (sessionDataDtoList.isEmpty()) {
+            return new PagedSessionDataDto(Collections.<SessionDataDto>emptyList(), 0);
         }
 
         log.info("There was loaded {} sessions data from {} for {} ms", new Object[]{sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp});
 
         return new PagedSessionDataDto(sessionDataDtoList, (int) totalSize);
+    }
+
+
+    private List<SessionDataDto> getAllNoMetaData(int start, int length) {
+
+        @SuppressWarnings("unchecked")
+        List<SessionData> sessionDataList = (List<SessionData>)
+                entityManager.createQuery("select sd from SessionData as sd order by sd.startTime asc").setFirstResult(start).setMaxResults(length).getResultList();
+
+        if (sessionDataList == null || sessionDataList.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<SessionDataDto> sessionDataDtoList = new ArrayList<SessionDataDto>(sessionDataList.size());
+
+        for (SessionData sessionData : sessionDataList) {
+            sessionDataDtoList.add(createSessionDataDto(sessionData, null));
+        }
+
+        return sessionDataDtoList;
+    }
+
+    private List<SessionDataDto> getAllWithMetaData(int start, int length) {
+
+        @SuppressWarnings("unchecked")
+        List<SessionData> sessionDataList = (List<SessionData>)
+                entityManager.createQuery("select sd from SessionData as sd order by sd.startTime asc").setFirstResult(start).setMaxResults(length).getResultList();
+
+        if (sessionDataList.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
+
+        List<Object[]> userComments = entityManager.createQuery(
+                "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
+                .setParameter("sessionDataList", sessionDataList)
+                .getResultList();
+
+        if (!userComments.isEmpty()) {
+            userCommentMap = new HashMap<Long, String>(userComments.size());
+            for (Object[] objects : userComments) {
+                userCommentMap.put((Long)objects[0], (String)objects[1]);
+            }
+        }
+
+        List<SessionDataDto> sessionDataDtoList = new ArrayList<SessionDataDto>(sessionDataList.size());
+
+        for (SessionData sessionData : sessionDataList) {
+            sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId())));
+        }
+
+        return sessionDataDtoList;
     }
 
     @Override
@@ -74,20 +187,26 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
         long timestamp = System.currentTimeMillis();
 
-        SessionDataDto sessionDataDto = null;
+        SessionDataDto sessionDataDto;
         try {
             SessionData sessionData = (SessionData) entityManager.createQuery("select sd from SessionData as sd where sd.sessionId = (:sessionId)").setParameter("sessionId", sessionId).getSingleResult();
 
-            DateFormat dateFormatter = new SimpleDateFormat(dateFormat);
-            sessionDataDto = new SessionDataDto(
-                    sessionData.getSessionId(),
-                    dateFormatter.format(sessionData.getStartTime()),
-                    dateFormatter.format(sessionData.getEndTime()),
-                    sessionData.getActiveKernels(),
-                    sessionData.getTaskExecuted(),
-                    sessionData.getTaskFailed(),
-                    HTMLFormatter.format(sessionData.getComment())
-            );
+            String userComment = null;
+
+            if (commonDataService.getWebClientProperties().isUserCommentStoreAvailable()) {
+                try {
+                    userComment = (String)entityManager.createQuery(
+                        "select smd.userComment from SessionMetaDataEntity as smd where smd.sessionData.sessionId=:sessionId")
+                        .setParameter("sessionId", sessionId)
+                        .getSingleResult();
+                } catch (NoResultException e) {
+                    // no user comment for this session
+                } catch (PersistenceException e) {
+                    log.warn("Could not fetch data from SessionMetaDataEntity", e);
+                }
+            }
+
+            sessionDataDto = createSessionDataDto(sessionData, userComment);
             log.info("There was loaded session data with id {} for {} ms", sessionId, System.currentTimeMillis() - timestamp);
         } catch (NoResultException e) {
             log.info("No session data was found for session ID=" + sessionId, e);
@@ -126,22 +245,28 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
                             .setMaxResults(length)
                             .getResultList();
 
-            if (sessionDataList == null) {
+            if (sessionDataList.isEmpty()) {
                 return new PagedSessionDataDto(Collections.<SessionDataDto>emptyList(), 0);
+            }
+            Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
+
+            if (commonDataService.getWebClientProperties().isUserCommentStoreAvailable()) {
+                List<Object[]> userComments = entityManager.createQuery(
+                        "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
+                        .setParameter("sessionDataList", sessionDataList)
+                        .getResultList();
+
+                if (!userComments.isEmpty()) {
+                    userCommentMap = new HashMap<Long, String>(userComments.size());
+                    for (Object[] objects : userComments) {
+                        userCommentMap.put((Long)objects[0], (String)objects[1]);
+                    }
+                }
             }
 
             sessionDataDtoList = new ArrayList<SessionDataDto>(sessionDataList.size());
-            DateFormat dateFormatter = new SimpleDateFormat(dateFormat);
             for (SessionData sessionData : sessionDataList) {
-                sessionDataDtoList.add(new SessionDataDto(
-                        sessionData.getSessionId(),
-                        dateFormatter.format(sessionData.getStartTime()),
-                        dateFormatter.format(sessionData.getEndTime()),
-                        sessionData.getActiveKernels(),
-                        sessionData.getTaskExecuted(),
-                        sessionData.getTaskFailed(),
-                        HTMLFormatter.format(sessionData.getComment()))
-                );
+                sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId())));
             }
 
             log.info("There was loaded {} sessions data from {} for {} ms", new Object[]{sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp});
@@ -177,22 +302,30 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
                             .setMaxResults(length)
                             .getResultList();
 
-            if (sessionDataList == null) {
+            if (sessionDataList.isEmpty()) {
                 return new PagedSessionDataDto(Collections.<SessionDataDto>emptyList(), 0);
             }
 
+            Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
+
+            if (commonDataService.getWebClientProperties().isUserCommentStoreAvailable()) {
+
+                List<Object[]> userComments = entityManager.createQuery(
+                        "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
+                        .setParameter("sessionDataList", sessionDataList)
+                        .getResultList();
+
+                if (!userComments.isEmpty()) {
+                    userCommentMap = new HashMap<Long, String>(userComments.size());
+                    for (Object[] objects : userComments) {
+                        userCommentMap.put((Long)objects[0], (String)objects[1]);
+                    }
+                }
+            }
+
             sessionDataDtoList = new ArrayList<SessionDataDto>(sessionDataList.size());
-            DateFormat dateFormatter = new SimpleDateFormat(dateFormat);
             for (SessionData sessionData : sessionDataList) {
-                sessionDataDtoList.add(new SessionDataDto(
-                        sessionData.getSessionId(),
-                        dateFormatter.format(sessionData.getStartTime()),
-                        dateFormatter.format(sessionData.getEndTime()),
-                        sessionData.getActiveKernels(),
-                        sessionData.getTaskExecuted(),
-                        sessionData.getTaskFailed(),
-                        HTMLFormatter.format(sessionData.getComment()))
-                );
+                sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId())));
             }
 
             log.info("There was loaded {} sessions data from {} for {} ms", new Object[]{sessionDataDtoList.size(), totalSize, System.currentTimeMillis() - timestamp});
@@ -202,5 +335,47 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
         }
 
         return new PagedSessionDataDto(sessionDataDtoList, (int) totalSize);
+    }
+
+
+
+    private SessionDataDto createSessionDataDto(SessionData sessionData, String userComment) {
+        return new SessionDataDto(
+                sessionData.getId(),
+                sessionData.getSessionId(),
+                dateFormatter.format(sessionData.getStartTime()),
+                dateFormatter.format(sessionData.getEndTime()),
+                sessionData.getActiveKernels(),
+                sessionData.getTaskExecuted(),
+                sessionData.getTaskFailed(),
+                HTMLFormatter.format(sessionData.getComment()),
+                userComment);
+    }
+
+    @Override
+    public Map<String, TestInfoDto> getTestInfo(TaskDataDto taskDataDto) throws RuntimeException {
+
+        long temp = System.currentTimeMillis();
+        @SuppressWarnings("all")
+        List<Object[]> objectsList = (List<Object[]>)entityManager.createQuery(
+                "select wtd.sessionId, wtd.clock, wtd.clockValue, wtd.termination from WorkloadTaskData wtd " +
+                "   where (sessionId, taskId) in (" +
+                "       select td.sessionId, taskId from TaskData td where id in (:taskDataIds)" +
+                "                                 )")
+                .setParameter("taskDataIds", taskDataDto.getIds())
+                .getResultList();
+        log.debug("Time spent for testInfo fetching for test {} : {}ms", new Object[]{taskDataDto.toString(), System.currentTimeMillis() - temp});
+
+        Map<String, TestInfoDto> resultMap = new HashMap<String, TestInfoDto>(objectsList.size());
+
+        for (Object[] objects : objectsList) {
+            String clock = objects[1] + " (" + objects[2] + ')';
+            TestInfoDto testInfo = new TestInfoDto();
+            testInfo.setClock(clock);
+            testInfo.setTermination((String)objects[3]);
+            resultMap.put((String)objects[0], testInfo);
+        }
+
+        return resultMap;
     }
 }

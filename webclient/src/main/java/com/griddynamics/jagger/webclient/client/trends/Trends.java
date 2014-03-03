@@ -135,39 +135,96 @@ public class Trends extends DefaultActivity {
     @UiHandler("getHyperlink")
     void getHyperlink(ClickEvent event){
         MultiSelectionModel<SessionDataDto> sessionModel = (MultiSelectionModel)sessionsDataGrid.getSelectionModel();
-
-        Set<SessionDataDto> sessions = sessionModel.getSelectedSet();
-
-        Set<TaskDataDto> tests = controlTree.getSelectedTests();
-
-        Map<String, List<String>> trends = getTestTrendsMap(controlTree.getRootNode().getDetailsNode().getTests());
-
-        HashSet<String> sessionsIds = new HashSet<String>();
-        HashSet<TestsMetrics> testsMetricses = new HashSet<TestsMetrics>(tests.size());
-        HashMap<String, TestsMetrics> map = new HashMap<String, TestsMetrics>(tests.size());
-
-        for (SessionDataDto session : sessions){
-            sessionsIds.add(session.getSessionId());
+        if (sessionModel.getSelectedSet().isEmpty()) {
+            return;
         }
 
-        for (TaskDataDto taskDataDto : tests){
-            TestsMetrics testsMetrics = new TestsMetrics(taskDataDto.getTaskName(), new HashSet<String>(), new HashSet<String>());
+        Set<String> selectedSessionIds = new HashSet<String>();
+        for (SessionDataDto sessionDataDto : sessionModel.getSelectedSet()) {
+            selectedSessionIds.add(sessionDataDto.getSessionId());
+        }
 
-            TestNode testNode = controlTree.findTestNode(taskDataDto);
-            if (testNode == null) continue;
-            Set<MetricNameDto> metricsNames = controlTree.getCheckedMetrics(testNode);
+        Set<TaskDataDto> allSelectedTests = controlTree.getSelectedTests();
 
-            if (metricsNames.size() < testNode.getMetrics().size()) {
-                for (MetricNameDto mnd : metricsNames) {
-                    testsMetrics.getMetrics().add(mnd.getMetricName());
+
+        Map<Set<String>, List<TaskDataDto>> sessionsToTestsMap = new TreeMap<Set<String>, List<TaskDataDto>>(
+            new Comparator<Set<String>>() {
+                @Override
+                public int compare(Set<String> o1, Set<String> o2) {
+                    boolean c1 = o1.containsAll(o2);
+                    boolean c2 = o2.containsAll(o1);
+                    if (c1 && c2) return 0;
+                    if (c1) return -1;
+                    return 1;
                 }
+            });
+
+        for (TaskDataDto taskDataDto : allSelectedTests) {
+            Set<String> sessionIds = taskDataDto.getSessionIds();
+            selectedSessionIds.removeAll(sessionIds);
+            if (sessionsToTestsMap.containsKey(sessionIds)) {
+                sessionsToTestsMap.get(sessionIds).add(taskDataDto);
+            } else {
+                List<TaskDataDto> taskList = new ArrayList<TaskDataDto>();
+                taskList.add(taskDataDto);
+                sessionsToTestsMap.put(sessionIds, taskList);
             }
-            testsMetricses.add(testsMetrics);
-            map.put(taskDataDto.getTaskName(), testsMetrics);
+        }
+        if (!selectedSessionIds.isEmpty()) {
+            sessionsToTestsMap.put(selectedSessionIds, null);
         }
 
-        for (Map.Entry<String, List<String>> entry : trends.entrySet()) {
-            map.get(entry.getKey()).getTrends().addAll(entry.getValue());
+        List<LinkFragment> linkFragments = new ArrayList<LinkFragment>();
+
+        for (Map.Entry<Set<String>, List<TaskDataDto>> sessionsToTestsEntry : sessionsToTestsMap.entrySet()) {
+
+            List<TaskDataDto> tests = sessionsToTestsEntry.getValue();
+
+            LinkFragment linkFragment = new LinkFragment();
+
+            if (sessionModel.getSelectedSet().size() == 1) {
+                Set<String> sessionScopePlots = new HashSet<String>();
+                for (String plotName : getLinkRepresentationForSessionScopePlots(controlTree.getRootNode().getDetailsNode().getSessionScopePlotsNode())) {
+                    sessionScopePlots.add(plotName);
+                }
+                linkFragment.setSessionTrends(sessionScopePlots);
+            }
+
+            if (tests == null) { // this is fragment with no tests chosen
+                linkFragment.setSelectedSessionIds(sessionsToTestsEntry.getKey());
+                linkFragments.add(linkFragment);
+                continue;
+            }
+
+            Map<String, List<String>> trends = getTestTrendsMap(controlTree.getRootNode().getDetailsNode().getTests(), tests);
+
+            HashSet<TestsMetrics> testsMetricses = new HashSet<TestsMetrics>(tests.size());
+            HashMap<String, TestsMetrics> map = new HashMap<String, TestsMetrics>(tests.size());
+
+            for (TaskDataDto taskDataDto : tests){
+                TestsMetrics testsMetrics = new TestsMetrics(taskDataDto.getTaskName(), new HashSet<String>(), new HashSet<String>());
+
+                TestNode testNode = controlTree.findTestNode(taskDataDto);
+                if (testNode == null) continue;
+                Set<MetricNameDto> metricsNames = controlTree.getCheckedMetrics(testNode);
+
+                if (metricsNames.size() < testNode.getMetrics().size()) {
+                    for (MetricNameDto mnd : metricsNames) {
+                        testsMetrics.getMetrics().add(mnd.getMetricName());
+                    }
+                }
+                testsMetricses.add(testsMetrics);
+                map.put(taskDataDto.getTaskName(), testsMetrics);
+            }
+
+            for (Map.Entry<String, List<String>> entry : trends.entrySet()) {
+                map.get(entry.getKey()).getTrends().addAll(entry.getValue());
+            }
+
+            linkFragment.setSelectedSessionIds(sessionsToTestsEntry.getKey());
+            linkFragment.setSelectedTestsMetrics(testsMetricses);
+
+            linkFragments.add(linkFragment);
         }
 
         TrendsPlace newPlace = new TrendsPlace(
@@ -175,14 +232,7 @@ public class Trends extends DefaultActivity {
                         mainTabPanel.getSelectedIndex() == tabTrends.getTabIndex() ? tabTrends.getTabName() : tabMetrics.getTabName()
         );
 
-        newPlace.setSelectedSessionIds(sessionsIds);
-        newPlace.setSelectedTestsMetrics(testsMetricses);
-
-        Set<String> sessionScopePlots = new HashSet<String>();
-        for (String plotName : getLinkRepresentationForSessionScopePlots(controlTree.getRootNode().getDetailsNode().getSessionScopePlotsNode())) {
-            sessionScopePlots.add(plotName);
-        }
-        newPlace.setSessionTrends(sessionScopePlots);
+        newPlace.setLinkFragments(linkFragments);
 
         String linkText = Window.Location.getHost() + Window.Location.getPath() + Window.Location.getQueryString() +
                 "#" + new JaggerPlaceHistoryMapper().getToken(newPlace);
@@ -215,29 +265,32 @@ public class Trends extends DefaultActivity {
 
     }
 
-    private Map<String, List<String>> getTestTrendsMap(List<TestDetailsNode> tests) {
+    private Map<String, List<String>> getTestTrendsMap(List<TestDetailsNode> tests, List<TaskDataDto> taskDataDtos) {
         Map<String, List<String>> resultMap = new LinkedHashMap<String, List<String>>();
 
         for (TestDetailsNode test : tests) {
             if (controlTree.isChosen(test)) {
-                List<String> trends = new ArrayList<String>();
-                for (PlotNode plotNode : test.getMetrics()) {
-                    if (controlTree.isChecked(plotNode)) {
-                        trends.add(plotNode.getMetricNameDto().getMetricName());
+                if (taskDataDtos.contains(test.getTaskDataDto())) {
+
+                    List<String> trends = new ArrayList<String>();
+                    for (PlotNode plotNode : test.getMetrics()) {
+                        if (controlTree.isChecked(plotNode)) {
+                            trends.add(plotNode.getMetricNameDto().getMetricName());
+                        }
                     }
-                }
-                for (MonitoringPlotNode monitoringPlotNode : test.getMonitoringPlots()) {
-                    if (controlTree.isChecked(monitoringPlotNode)) {
-                        trends.add(monitoringPlotNode.getDisplayName());
-                    } else if (controlTree.isChosen(monitoringPlotNode)) {
-                        for (PlotNode plotNode : monitoringPlotNode.getPlots()) {
-                            if (controlTree.isChecked(plotNode)) {
-                                trends.add(plotNode.getMetricNameDto().getMetricName());
+                    for (MonitoringPlotNode monitoringPlotNode : test.getMonitoringPlots()) {
+                        if (controlTree.isChecked(monitoringPlotNode)) {
+                            trends.add(monitoringPlotNode.getDisplayName());
+                        } else if (controlTree.isChosen(monitoringPlotNode)) {
+                            for (PlotNode plotNode : monitoringPlotNode.getPlots()) {
+                                if (controlTree.isChecked(plotNode)) {
+                                    trends.add(plotNode.getMetricNameDto().getMetricName());
+                                }
                             }
                         }
                     }
+                    resultMap.put(test.getTaskDataDto().getTaskName(), trends);
                 }
-                resultMap.put(test.getTaskDataDto().getTaskName(), trends);
             }
         }
 
@@ -942,6 +995,7 @@ public class Trends extends DefaultActivity {
             if (mainTabPanel.getSelectedIndex() == tabNodes.getTabIndex())
                 nodesPanel.getNodeInfo();
 
+            CheckHandlerMap.setTestInfoFetcher(testInfoFetcher);
             CheckHandlerMap.setMetricFetcher(metricFetcher);
             CheckHandlerMap.setTestPlotFetcher(testPlotFetcher);
             CheckHandlerMap.setSessionScopePlotFetcher(sessionScopePlotFetcher);
@@ -1038,48 +1092,51 @@ public class Trends extends DefaultActivity {
                 }
             }
 
-            for (TestsMetrics testsMetrics : place.getSelectedTestsMetrics()) {
-                TestNode testNode = getTestNodeByName(testsMetrics.getTestName(), result);
-                boolean needTestInfo = false;
-                if (testNode == null) { // have not find appropriate TestNode
-                    new ExceptionPanel("could not find Test with test name \'" + testsMetrics.getTestName() + "\' for summary");
-                    continue;
-                } else {
 
-                    if (testsMetrics.getMetrics().isEmpty()) {
-                        // check all metrics
-                        tempTree.setCheckedExpandedWithParent(testNode);
+            for (LinkFragment linkFragment : place.getLinkFragments()) {
+                for (TestsMetrics testsMetrics : linkFragment.getSelectedTestsMetrics()) {
+                    TestNode testNode = getTestNodeByNameAndSessionIds(testsMetrics.getTestName(), linkFragment.getSelectedSessionIds(), result);
+                    boolean needTestInfo = false;
+                    if (testNode == null) { // have not find appropriate TestNode
+                        new ExceptionPanel("could not find Test with test name \'" + testsMetrics.getTestName() + "\' for summary");
+                        continue;
                     } else {
-                        tempTree.setExpanded(testNode, true);
-                        for (MetricNode metricNode : testNode.getMetrics()) {
-                            if (testsMetrics.getMetrics().contains(metricNode.getMetricNameDto().getMetricName())) {
-                                tempTree.setCheckedExpandedWithParent(metricNode);
-                                needTestInfo = true;
+
+                        if (testsMetrics.getMetrics().isEmpty()) {
+                            // check all metrics
+                            tempTree.setCheckedExpandedWithParent(testNode);
+                        } else {
+                            tempTree.setExpanded(testNode, true);
+                            for (MetricNode metricNode : testNode.getMetrics()) {
+                                if (testsMetrics.getMetrics().contains(metricNode.getMetricNameDto().getMetricName())) {
+                                    tempTree.setCheckedWithParent(metricNode);
+                                    needTestInfo = true;
+                                }
+                            }
+                            if (needTestInfo) {
+                                tempTree.setCheckedWithParent(testNode.getTestInfo());
                             }
                         }
-                        if (needTestInfo) {
-                            tempTree.setCheckedWithParent(testNode.getTestInfo());
-                        }
                     }
-                }
 
-                TestDetailsNode testDetailsNode = getTestDetailsNodeByName(testsMetrics.getTestName(), result);
-                if (testDetailsNode == null) { // have not find appropriate TestDetailNode
-                    new ExceptionPanel("could not find Test with test name \'" + testsMetrics.getTestName() + "\' for details");
-                } else {
-                    for (PlotNode plotNode : testDetailsNode.getMetrics()) {
-                        if (testsMetrics.getTrends().contains(plotNode.getMetricNameDto().getMetricName())) {
-                            tempTree.setCheckedExpandedWithParent(plotNode);
+                    TestDetailsNode testDetailsNode = getTestDetailsNodeByNameAndSessionIds(testsMetrics.getTestName(), linkFragment.getSelectedSessionIds(), result);
+                    if (testDetailsNode == null) { // have not find appropriate TestDetailNode
+                        new ExceptionPanel("could not find Test with test name \'" + testsMetrics.getTestName() + "\' for details");
+                    } else {
+                        for (PlotNode plotNode : testDetailsNode.getMetrics()) {
+                            if (testsMetrics.getTrends().contains(plotNode.getMetricNameDto().getMetricName())) {
+                                tempTree.setCheckedExpandedWithParent(plotNode);
+                            }
                         }
-                    }
-                    for (MonitoringPlotNode monitoringPlotNode : testDetailsNode.getMonitoringPlots()) {
-                        if (testsMetrics.getTrends().contains(monitoringPlotNode.getDisplayName())) {
-                            tempTree.setCheckedWithParent(monitoringPlotNode);
-                            tempTree.setExpanded(testDetailsNode, true, false);
-                        } else {
-                            for (PlotNode plotNode: monitoringPlotNode.getPlots()) {
-                                if (testsMetrics.getTrends().contains(plotNode.getMetricNameDto().getMetricName())) {
-                                    tempTree.setCheckedExpandedWithParent(plotNode);
+                        for (MonitoringPlotNode monitoringPlotNode : testDetailsNode.getMonitoringPlots()) {
+                            if (testsMetrics.getTrends().contains(monitoringPlotNode.getDisplayName())) {
+                                tempTree.setCheckedWithParent(monitoringPlotNode);
+                                tempTree.setExpanded(testDetailsNode, true, false);
+                            } else {
+                                for (PlotNode plotNode: monitoringPlotNode.getPlots()) {
+                                    if (testsMetrics.getTrends().contains(plotNode.getMetricNameDto().getMetricName())) {
+                                        tempTree.setCheckedExpandedWithParent(plotNode);
+                                    }
                                 }
                             }
                         }
@@ -1108,13 +1165,16 @@ public class Trends extends DefaultActivity {
 
         /**
          * @param testName name of the test
+         * @param selectedSessionIds session ids of chosen test
          * @return null if no Test found
          */
-        public TestNode getTestNodeByName(String testName, RootNode rootNode) {
-
+        private TestNode getTestNodeByNameAndSessionIds(String testName, Set<String> selectedSessionIds, RootNode rootNode) {
             for (TestNode testNode : rootNode.getSummary().getTests()) {
-                if (testNode.getId().equals(NameTokens.SUMMARY_PREFIX + testName))
-                    return testNode;
+                if (testNode.getDisplayName().equals(testName)) {
+                    if (testNode.getTaskDataDto().getSessionIds().containsAll(selectedSessionIds)
+                            && selectedSessionIds.containsAll(testNode.getTaskDataDto().getSessionIds()))
+                        return testNode;
+                }
             }
             return null;
         }
@@ -1124,11 +1184,14 @@ public class Trends extends DefaultActivity {
          * @param testName name of the test
          * @return null if no Test found
          */
-        public TestDetailsNode getTestDetailsNodeByName(String testName, RootNode rootNode) {
+        public TestDetailsNode getTestDetailsNodeByNameAndSessionIds(String testName, Set<String> selectedSessionIds, RootNode rootNode) {
 
             for (TestDetailsNode testNode : rootNode.getDetailsNode().getTests()) {
-                if (testNode.getId().equals(NameTokens.METRICS_PREFIX + testName))
-                    return testNode;
+                if (testNode.getDisplayName().equals(testName)) {
+                    if (testNode.getTaskDataDto().getSessionIds().containsAll(selectedSessionIds)
+                            && selectedSessionIds.containsAll(testNode.getTaskDataDto().getSessionIds()))
+                        return testNode;
+                }
             }
             return null;
         }
@@ -1192,7 +1255,7 @@ public class Trends extends DefaultActivity {
         private void fetchMetricsForTests(List<TestNode> testNodes) {
             for (TestNode testNode : testNodes) {
                 if (controlTree.isChecked(testNode.getTestInfo())) {
-                    summaryPanel.getSessionComparisonPanel().addTestInfo(testNode.getTaskDataDto());
+                    testInfoFetcher.fetchTestInfo(testNode.getTaskDataDto(), false);
                 }
             }
             metricFetcher.fetchMetrics(controlTree.getCheckedMetrics(), false);
@@ -1230,6 +1293,35 @@ public class Trends extends DefaultActivity {
             for (AbstractIdentifyNode child : node.getChildren()) {
                 addToStore(store, child, node);
             }
+        }
+    }
+
+
+    /**
+     * make server calls to fetch testInfo
+     */
+    private TestInfoFetcher testInfoFetcher = new TestInfoFetcher();
+
+
+    public class TestInfoFetcher {
+        public void fetchTestInfo(final TaskDataDto taskDataDto, final boolean enableTree) {
+
+            SessionDataService.Async.getInstance().getTestInfo(taskDataDto, new AsyncCallback<Map<String, TestInfoDto>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    caught.printStackTrace();
+                    new ExceptionPanel(place, caught.getMessage());
+                    if (enableTree)
+                        enableControl();
+                }
+
+                @Override
+                public void onSuccess(Map<String, TestInfoDto> result) {
+                    summaryPanel.getSessionComparisonPanel().addTestInfo(taskDataDto, result);
+                    if (enableTree)
+                        enableControl();
+                }
+            });
         }
     }
 

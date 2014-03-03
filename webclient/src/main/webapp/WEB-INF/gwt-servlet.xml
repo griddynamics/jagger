@@ -85,15 +85,27 @@
         <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
         <property name="workloadPlotGroups" ref="workloadPlotGroups"/>
         <property name="standardMetrics" ref="standardMetrics"/>
+        <property name="webClientProperties" ref="webClientProperties"/>
     </bean>
 
 
-    <bean id="sessionDataService" class="com.griddynamics.jagger.webclient.server.SessionDataServiceImpl"/>
+    <bean id="sessionDataService" class="com.griddynamics.jagger.webclient.server.SessionDataServiceImpl">
+        <property name="commonDataService" ref="commonDataService"/>
+    </bean>
 
     <bean id="commonDataService" class="com.griddynamics.jagger.webclient.server.CommonDataServiceImpl">
-        <property name="userCommentAvailable" value="${user.comment.available:false}"/>
-        <property name="userCommentMaxLength" value="${user.comment.max.length:1000}"/>
+        <property name="commonDataProvider" ref="databaseFetcher"/>
+        <property name="webClientProperties" ref="webClientProperties"/>
     </bean>
+
+    <bean id="webClientProperties" class="com.griddynamics.jagger.webclient.client.data.WebClientProperties">
+        <property name="userCommentEditAvailable" value="${webui.user.comment.available}"/>
+        <property name="userCommentMaxLength" value="${webui.user.comment.max.length}"/>
+        <property name="tagsAvailable" value="${webui.tags.available}"/>
+        <property name="showOnlyMatchedTests" value="${webui.show.matched.tests.only:true}"/>
+    </bean>
+
+
 
     <!-- @deprecated another conception of control since jagger 1.2.2-m3
     <bean id="taskDataService" class="com.griddynamics.jagger.webclient.server.TaskDataServiceImpl"/>

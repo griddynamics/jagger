@@ -27,4 +27,6 @@ public interface CommonDataProvider {
     Map<TaskDataDto,List<MetricNode>> getTestMetricsMap(List<TaskDataDto> tddos, ExecutorService threadPool);
 
     Map<TaskDataDto,List<PlotNode>> getTestPlotsMap(Set<String> sessionIds, List<TaskDataDto> taskList);
+
+    boolean checkIfUserCommentStorageAvailable();
 }

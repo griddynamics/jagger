@@ -6,6 +6,7 @@ import com.griddynamics.jagger.monitoring.reporting.GroupKey;
 import com.griddynamics.jagger.util.Pair;
 import com.griddynamics.jagger.webclient.client.components.control.model.*;
 import com.griddynamics.jagger.webclient.client.data.MetricRankingProvider;
+import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionPlotNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
@@ -35,6 +36,8 @@ public class CommonDataProviderImpl implements CommonDataProvider {
     private EntityManager entityManager;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+
+    private WebClientProperties webClientProperties;
 
     @PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
@@ -552,6 +555,21 @@ public class CommonDataProviderImpl implements CommonDataProvider {
         return result;
     }
 
+    @Override
+    public boolean checkIfUserCommentStorageAvailable() {
+
+        try {
+            entityManager.createQuery(
+                    "select count(sm) from SessionMetaDataEntity sm")
+                    .getSingleResult();
+            return true;
+        } catch (Exception e) {
+            log.warn("Could not access SessionMetaDataTable", e);
+        }
+
+        return false;
+    }
+
 
     private List<MonitoringSessionScopePlotNode> getMonitoringPlotNamesNew(Set<String> sessionIds) {
 
@@ -652,7 +670,7 @@ public class CommonDataProviderImpl implements CommonDataProvider {
                     PlotNode plotNode = new PlotNode();
                     plotNode.setMetricNameDto(new MetricNameDto(tdd, monitoringKey + AGENT_NAME_SEPARATOR + identy));
                     plotNode.setDisplayName(identy);
-                    String id = METRICS_PREFIX + tdd.getTaskName() + monitoringKey + identy;
+                    String id = METRICS_PREFIX + tdd.hashCode() + monitoringKey + identy;
                     plotNode.setId(id);
 
                     boolean present = false;
@@ -667,7 +685,7 @@ public class CommonDataProviderImpl implements CommonDataProvider {
 
                     if (!present) {
                         MonitoringPlotNode monitoringPlotNode = new MonitoringPlotNode();
-                        monitoringPlotNode.setId(MONITORING_PREFIX + tdd.getTaskName() + monitoringKey);
+                        monitoringPlotNode.setId(MONITORING_PREFIX + tdd.hashCode() + monitoringKey);
                         monitoringPlotNode.setDisplayName(monitoringKey);
                         resultMap.get(tdd).add(monitoringPlotNode);
                         monitoringPlotNode.setPlots(new ArrayList<PlotNode>());
@@ -752,52 +770,58 @@ public class CommonDataProviderImpl implements CommonDataProvider {
     public List<TaskDataDto> getTaskDataForSessions(Set<String> sessionIds) {
 
         long timestamp = System.currentTimeMillis();
+
+        int havingCount = 0;
+        if (webClientProperties.isShowOnlyMatchedTests()) {
+            havingCount = sessionIds.size();
+        }
+
         List<Object[]> list = entityManager.createNativeQuery
                 (
-                        "select taskData.id, commonTests.name, commonTests.description, taskData.taskId , commonTests.clock, commonTests.clockValue, commonTests.termination" +
-                                " from "+
-                                "( "+
+                        "select taskData.id, commonTests.name, commonTests.description, taskData.taskId , commonTests.clock, commonTests.clockValue, commonTests.termination, taskData.sessionId" +
+                                " from " +
+                                "( " +
                                 "select test.name, test.description, test.version, test.sessionId, test.taskId, test.clock, test.clockValue, test.termination from " +
-                                "( "+
+                                "( " +
                                 "select " +
                                 "l.*, s.name, s.description, s.version " +
-                                "from "+
-                                "(select * from WorkloadTaskData where sessionId in (:sessions)) as l "+
-                                "left outer join "+
-                                "(select * from WorkloadDetails) as s "+
-                                "on l.scenario_id=s.id "+
+                                "from " +
+                                "(select * from WorkloadTaskData where sessionId in (:sessions)) as l " +
+                                "left outer join " +
+                                "(select * from WorkloadDetails) as s " +
+                                "on l.scenario_id=s.id " +
                                 ") as test " +
                                 "inner join " +
                                 "( " +
-                                "select t.* from "+
-                                "( "+
+                                "select t.* from " +
+                                "( " +
                                 "select " +
                                 "l.*, s.name, s.description, s.version " +
-                                "from "+
-                                "(select * from WorkloadTaskData where sessionId in (:sessions)) as l "+
-                                "left outer join "+
-                                "(select * from WorkloadDetails) as s "+
+                                "from " +
+                                "(select * from WorkloadTaskData where sessionId in (:sessions)) as l " +
+                                "left outer join " +
+                                "(select * from WorkloadDetails) as s " +
                                 "on l.scenario_id=s.id " +
-                                ") as t "+
-                                "group by "+
-                                "t.termination, t.clock, t.clockValue, t.name, t.version "+
-                                "having count(t.id)>=:sessionCount" +
-
+                                ") as t " +
+                                "group by " +
+                                "t.termination, t.clock, t.clockValue, t.name, t.description, t.version " +
+                                "having count(t.id)>=" + havingCount +
                                 ") as testArch " +
-                                "on "+
-                                "test.clock=testArch.clock and "+
-                                "test.clockValue=testArch.clockValue and "+
-                                "test.termination=testArch.termination and "+
-                                "test.name=testArch.name and "+
-                                "test.version=testArch.version "+
-                                ") as commonTests "+
-                                "left outer join "+
-                                "(select * from TaskData where sessionId in (:sessions)) as taskData "+
-                                "on "+
-                                "commonTests.sessionId=taskData.sessionId and "+
+                                "on " +
+                                "test.clock=testArch.clock and " +
+                                "test.clockValue=testArch.clockValue and " +
+                                "test.termination=testArch.termination and " +
+                                "test.name=testArch.name and " +
+                                "test.version=testArch.version " +
+                                ") as commonTests " +
+                                "left outer join " +
+                                "(select * from TaskData where sessionId in (:sessions)) as taskData " +
+                                "on " +
+                                "commonTests.sessionId=taskData.sessionId and " +
                                 "commonTests.taskId=taskData.taskId "
-                ).setParameter("sessions", sessionIds)
-                .setParameter("sessionCount", (long) sessionIds.size()).getResultList();
+                )
+                .setParameter("sessions", sessionIds)
+                .getResultList();
 
         //group tests by description
         HashMap<String, TaskDataDto> map = new HashMap<String, TaskDataDto>(list.size());
@@ -807,27 +831,30 @@ public class CommonDataProviderImpl implements CommonDataProvider {
             String name = (String) testData[1];
             String description = (String) testData[2];
             String taskId = (String)testData[3];
-            String clock = testData[4] + " (" + testData[5] + ")";
+
+            // we need clock , and termination here is tool of matching test.
+            String clock = (String)testData[4];
+            Integer clockValue = (Integer)testData[5];
             String termination = (String) testData[6];
 
+            String sessionId = (String) testData[7];
 
             int taskIdInt = Integer.parseInt(taskId.substring(5));
-            String key = description+name;
+
+            // todo: it should be configurable in future (task about matching strategy).
+            String key = description+name+termination+clock+clockValue;
             if (map.containsKey(key)){
                 map.get(key).getIds().add(id.longValue());
+                map.get(key).getSessionIds().add(sessionId);
 
                 Integer oldValue = mapIds.get(key);
                 mapIds.put(key, (oldValue==null ? 0 : oldValue)+taskIdInt);
             }else{
                 TaskDataDto taskDataDto = new TaskDataDto(id.longValue(), name, description);
-                taskDataDto.setClock(clock);
-                taskDataDto.setTerminationStrategy(termination);
-                //merge
-                if (map.containsKey(name)){
-                    taskDataDto.getIds().addAll(map.get(name).getIds());
+                Set<String> sessionIdList = new HashSet<String>();
+                sessionIdList.add(sessionId);
+                taskDataDto.setSessionIds(sessionIdList);
 
-                    taskIdInt = taskIdInt + mapIds.get(name);
-                }
                 map.put(key, taskDataDto);
                 mapIds.put(key, taskIdInt);
             }
@@ -846,9 +873,7 @@ public class CommonDataProviderImpl implements CommonDataProvider {
 
         for (String key : map.keySet()){
             TaskDataDto taskDataDto = map.get(key);
-            if (taskDataDto.getIds().size() == sessionIds.size()){
-                priorityQueue.add(new Object[]{mapIds.get(key), taskDataDto});
-            }
+            priorityQueue.add(new Object[]{mapIds.get(key), taskDataDto});
         }
 
         ArrayList<TaskDataDto> result = new ArrayList<TaskDataDto>(priorityQueue.size());
@@ -858,5 +883,13 @@ public class CommonDataProviderImpl implements CommonDataProvider {
 
         log.info("For sessions {} was loaded {} tasks for {} ms", new Object[]{sessionIds, result.size(), System.currentTimeMillis() - timestamp});
         return result;
+    }
+
+    public WebClientProperties getWebClientProperties() {
+        return webClientProperties;
+    }
+
+    public void setWebClientProperties(WebClientProperties webClientProperties) {
+        this.webClientProperties = webClientProperties;
     }
 }

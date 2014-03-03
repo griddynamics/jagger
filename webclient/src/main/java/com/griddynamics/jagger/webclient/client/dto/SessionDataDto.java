@@ -8,12 +8,14 @@ import java.io.Serializable;
  */
 public class SessionDataDto implements Serializable {
     private String comment;
+    private String userComment;
     private String sessionId;
     private String startDate;
     private String endDate;
     private int activeKernelsCount;
     private int tasksExecuted;
     private int tasksFailed;
+    private Long id;
 
     public SessionDataDto() {
     }
@@ -30,6 +32,18 @@ public class SessionDataDto implements Serializable {
         this.tasksExecuted = tasksExecuted;
         this.tasksFailed = tasksFailed;
         this.comment = comment;
+    }
+
+    public SessionDataDto(Long id,String sessionId, String startDate, String endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed, String comment, String userComment) {
+        this.id = id;
+        this.sessionId = sessionId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.activeKernelsCount = activeKernelsCount;
+        this.tasksExecuted = tasksExecuted;
+        this.tasksFailed = tasksFailed;
+        this.comment = comment;
+        this.userComment = userComment;
     }
 
     public String getName() {
@@ -68,6 +82,22 @@ public class SessionDataDto implements Serializable {
         this.comment = comment;
     }
 
+    public String getUserComment() {
+        return userComment;
+    }
+
+    public void setUserComment(String userComment) {
+        this.userComment = userComment;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,6 +124,8 @@ public class SessionDataDto implements Serializable {
                 ", activeKernelsCount=" + activeKernelsCount +
                 ", tasksExecuted=" + tasksExecuted +
                 ", tasksFailed=" + tasksFailed +
+                ", comment=" + comment +
+                ", userComment=" + userComment +
                 '}';
     }
 }

@@ -16,7 +16,7 @@ public class TestInfoNodeHandler extends TreeAwareHandler<TestInfoNode> {
         TestNode testNode = (TestNode)tree.getStore().getParent(event.getItem());
 
         if (Tree.CheckState.CHECKED.equals(event.getChecked())) {
-            sessionComparisonPanel.addTestInfo(testNode.getTaskDataDto());
+            testInfoFetcher.fetchTestInfo(testNode.getTaskDataDto(), true);
         } else {
             sessionComparisonPanel.removeTestInfo(testNode.getTaskDataDto());
         }

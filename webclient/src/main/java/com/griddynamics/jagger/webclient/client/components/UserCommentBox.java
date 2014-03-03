@@ -3,10 +3,15 @@ package com.griddynamics.jagger.webclient.client.components;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import com.griddynamics.jagger.webclient.client.SessionDataService;
+import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 import com.sencha.gxt.core.client.GXT;
 import com.sencha.gxt.core.client.util.Margins;
@@ -15,17 +20,11 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.treegrid.TreeGrid;
 
 
-public class UserCommentBox extends DialogBox {
+public class UserCommentBox extends AbstractWindow {
 
     private int maxlength = 250;
-    private int height = 600;
-    private int width = 400;
-
-    private final int PIXELS_BETWEEN_BUTTONS = 10;
 
     private VerticalPanel vp;
-    private TextButton saveButton;
-    private TextButton cancelButton;
     private TextArea textArea;
 
     private TreeGrid<SessionComparisonPanel.TreeItem> treeGrid;
@@ -61,26 +60,29 @@ public class UserCommentBox extends DialogBox {
     }
 
     public UserCommentBox(int maxlength) {
-
+        super();
+        defaultButtonInitialization();
         this.maxlength = maxlength;
-        addStyleName(JaggerResources.INSTANCE.css().userCommentBox());
-
         setTitle("User Comment");
-        vp = new VerticalPanel();
-        textArea = new FeaturedTextArea();
-        textArea.setPixelSize(height, width);
-        textArea.getElement().setAttribute("maxlength", String.valueOf(maxlength));
-        setGlassEnabled(true);
-        setPopupPosition(300, 100);
 
-        HorizontalPanel remainCharsPanel = new HorizontalPanel();
-        remainCharsPanel.setWidth("100%");
-        remainCharsPanel.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-        remainCharsPanel.setSpacing(5);
+        vp = new VerticalPanel();
+        vp.setPixelSize(width,height);
+
+        textArea = new FeaturedTextArea();
+        textArea.addStyleName(JaggerResources.INSTANCE.css().textAreaPanel());
+        textArea.setPixelSize(width, 440);
+        textArea.getElement().setAttribute("maxlength", String.valueOf(maxlength));
+
+
         remainingCharsLabel = new Label(String.valueOf(maxlength));
         remainingCharsLabel.getElement().getStyle().setFontSize(12, Style.Unit.PX);
-        remainingCharsLabel.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+
+        HorizontalPanel remainCharsPanel = new HorizontalPanel();
+        remainCharsPanel.setSpacing(5);
+        remainCharsPanel.setWidth("100%");
+        remainCharsPanel.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
         remainCharsPanel.add(remainingCharsLabel);
+
 
         textArea.addKeyPressHandler(new KeyPressHandler()
         {
@@ -88,7 +90,6 @@ public class UserCommentBox extends DialogBox {
             public void onKeyPress(KeyPressEvent event){
                 onTextAreaContentChanged();
             }
-
         });
         textArea.addKeyDownHandler(new KeyDownHandler() {
             @Override
@@ -108,46 +109,45 @@ public class UserCommentBox extends DialogBox {
                 onTextAreaContentChanged();
             }
         });
+        vp.add(textArea);
+        DockPanel dp = new DockPanel();
+        dp.setPixelSize(width,60);
+        dp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+        dp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-        saveButton = new TextButton("Save");
-        saveButton.addSelectHandler(new SelectEvent.SelectHandler() {
+        dp.add(getDefaultButtonBar(), DockPanel.EAST);
+        dp.add(new Label(""), DockPanel.CENTER);
+        dp.add(remainCharsPanel, DockPanel.WEST);
+
+        vp.add(dp);
+        setAutoHideEnabled(true);
+
+        add(vp);
+    }
+
+    @Override
+    protected void onCancelButtonClick(){
+        hide();
+    }
+
+    @Override
+    protected void onSaveButtonClick(){
+        final String resultComment = textArea.getText().trim();
+        SessionDataService.Async.getInstance().saveUserComment(currentSessionDataDto.getId(), resultComment, new AsyncCallback<Void>() {
             @Override
-            public void onSelect(SelectEvent event) {
-                // ask some service to save comment
-                currentTreeItem.put(getText(), textArea.getText());
+            public void onFailure(Throwable caught) {
+                new ExceptionPanel("Fail to save data : " + caught.getMessage());
+                hide();
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                currentSessionDataDto.setUserComment(resultComment);
+                currentTreeItem.put(getText(), resultComment);
                 treeGrid.getTreeView().refresh(false);
                 hide();
             }
         });
-        saveButton.setPixelSize(60, 22);
-        saveButton.getElement().setMargins(new Margins(0, 0, 0, 0));
-        cancelButton = new TextButton("Cancel");
-        cancelButton.addSelectHandler(new SelectEvent.SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                // ask some service to save comment
-                hide();
-            }
-        });
-        cancelButton.setPixelSize(60, 22);
-        cancelButton.getElement().setMargins(new Margins(0, 0, 0, PIXELS_BETWEEN_BUTTONS));
-        vp.add(textArea);
-        DockPanel dp = new DockPanel();
-        dp.setWidth("100%");
-        dp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-        dp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-
-        HorizontalPanel hp = new HorizontalPanel();
-        hp.setSpacing(5);
-        hp.add(saveButton);
-        hp.add(cancelButton);
-
-        dp.add(hp, DockPanel.EAST);
-        dp.add(new Label(""), DockPanel.CENTER);
-        dp.add(remainCharsPanel, DockPanel.WEST);
-        vp.add(dp);
-        setAutoHideEnabled(true);
-        add(vp);
     }
 
     public void setTreeGrid(TreeGrid<SessionComparisonPanel.TreeItem> treeGrid) {
@@ -168,14 +168,17 @@ public class UserCommentBox extends DialogBox {
         }
 
         int charsRemaining = maxlength - counter;
-        remainingCharsLabel.setText("" + charsRemaining);
+        remainingCharsLabel.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+        remainingCharsLabel.setText(Integer.toString(charsRemaining));
     }
 
     private SessionComparisonPanel.TreeItem currentTreeItem;
+    private SessionDataDto currentSessionDataDto;
 
-    public void popUp(String sessionId, String userComment, SessionComparisonPanel.TreeItem item) {
+    public void popUp(SessionDataDto sessionDataDto, String userComment, SessionComparisonPanel.TreeItem item) {
         currentTreeItem = item;
-        setText(sessionId);
+        currentSessionDataDto = sessionDataDto;
+        setText("Session " + sessionDataDto.getSessionId());
         textArea.setText(userComment);
         onTextAreaContentChanged();
         show();

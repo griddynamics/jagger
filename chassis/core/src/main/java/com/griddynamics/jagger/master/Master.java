@@ -150,7 +150,7 @@ public class Master implements Runnable {
         }
 
         String sessionId = sessionIdProvider.getSessionId();
-        String sessionComment = sessionIdProvider.getSessionComment();
+        metaDataStorage.setComment(sessionIdProvider.getSessionComment());
 
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();
         allNodes.putAll(NodeType.MASTER, coordinator.getAvailableNodes(NodeType.MASTER));

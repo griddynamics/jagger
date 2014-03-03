@@ -19,7 +19,7 @@ public class SummaryNodeHandler extends TreeAwareHandler<SummaryNode> {
         if (Tree.CheckState.CHECKED.equals(event.getChecked())) {
             sessionComparisonPanel.addSessionInfo();
             for (TestNode testNode : summaryNode.getTests()) {
-                sessionComparisonPanel.addTestInfo(testNode.getTaskDataDto());
+                testInfoFetcher.fetchTestInfo(testNode.getTaskDataDto(), false);
             }
         } else {
             sessionComparisonPanel.removeSessionInfo();
