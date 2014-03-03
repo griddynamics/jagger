@@ -2,8 +2,9 @@ package com.griddynamics.jagger.engine.e1.services;
 
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TagEntity;
 
-import java.util.*;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 
@@ -26,15 +27,22 @@ public class SessionMetaDataStorage {
     }
 
     public SessionMetaDataStorage(String commentDefaultValue){
+        if (commentDefaultValue == null){
+            commentDefaultValue = "";
+        }
         sessionComment = new StringBuilder(commentDefaultValue);
     }
 
     public synchronized void setComment(String comment){
-        sessionComment = new StringBuilder(comment);
+        if (comment != null){
+            sessionComment = new StringBuilder(comment);
+        }
     }
 
     public synchronized void appendToComment(String toComment){
-        sessionComment.append(toComment);
+        if (toComment != null){
+            sessionComment.append(toComment);
+        }
     }
 
     public synchronized String getComment(){
@@ -46,7 +54,9 @@ public class SessionMetaDataStorage {
     }
 
     public synchronized void addSessionTag(String sessionTagName){
-        sessionTags.add(sessionTagName);
+        if (sessionTagName != null){
+            sessionTags.add(sessionTagName);
+        }
     }
 
     public synchronized List<TagEntity> getTagsForSaveOrUpdate() {

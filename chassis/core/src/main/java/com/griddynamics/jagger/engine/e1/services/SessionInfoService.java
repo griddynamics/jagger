@@ -18,13 +18,13 @@ public interface SessionInfoService extends JaggerService{
      *@return session comment */
     String getComment();
 
-    /** Set new session comment
+    /** Set new session comment. Null value will be ignored.
      * @author Gribov Kirill
      * @n
      * @param comment - new session comment */
     void setComment(String comment);
 
-    /** Append string to current session comment
+    /** Append string to current session comment. Null value will be ignored.
      * @author Gribov Kirill
      * @n
      * @param st - string to append */

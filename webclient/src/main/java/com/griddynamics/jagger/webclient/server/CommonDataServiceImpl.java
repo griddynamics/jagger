@@ -2,29 +2,31 @@ package com.griddynamics.jagger.webclient.server;
 
 import com.griddynamics.jagger.webclient.client.CommonDataService;
 import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
-import org.springframework.beans.factory.annotation.Required;
 
 public class CommonDataServiceImpl implements CommonDataService {
 
-    private boolean userCommentAvailable;
-    private int userCommentMaxLength;
+    private CommonDataProvider commonDataProvider;
+    private WebClientProperties webClientProperties;
 
-    @Required
-    public void setUserCommentAvailable(boolean userCommentAvailable) {
-        this.userCommentAvailable = userCommentAvailable;
-    }
-
-    @Required
-    public void setUserCommentMaxLength(int userCommentMaxLength) {
-        this.userCommentMaxLength = userCommentMaxLength;
+    public void setWebClientProperties(WebClientProperties webClientProperties) {
+        this.webClientProperties = webClientProperties;
+        checkIfUserCommentAvailable();
     }
 
     @Override
     public WebClientProperties getWebClientProperties() {
-        WebClientProperties webClientProperties = new WebClientProperties();
-
-        webClientProperties.setUserCommentAvailable(userCommentAvailable);
-        webClientProperties.setUserCommentMaxLength(userCommentMaxLength);
         return webClientProperties;
+    }
+
+    private void checkIfUserCommentAvailable() {
+        webClientProperties.setUserCommentStoreAvailable(commonDataProvider.checkIfUserCommentStorageAvailable());
+    }
+
+    public CommonDataProvider getCommonDataProvider() {
+        return commonDataProvider;
+    }
+
+    public void setCommonDataProvider(CommonDataProvider commonDataProvider) {
+        this.commonDataProvider = commonDataProvider;
     }
 }

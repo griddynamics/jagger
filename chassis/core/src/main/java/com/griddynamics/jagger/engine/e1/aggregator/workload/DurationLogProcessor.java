@@ -22,7 +22,6 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
@@ -31,6 +30,7 @@ import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.storage.fs.logging.*;
 import com.griddynamics.jagger.util.statistics.StatisticsCalculator;
 import org.hibernate.HibernateException;
@@ -163,8 +163,10 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
         public StatisticsGenerator generate() throws IOException {
             statistics = new ArrayList<TimeInvocationStatistics>();
 
+            // starting point is aagregationInfo.getMinTime()
             long currentInterval = aggregationInfo.getMinTime() + intervalSize;
-            long time = 0;
+            // starting point is 0
+            long time = intervalSize;
             int currentCount = 0;
             int extendedInterval = intervalSize;
             StatisticsCalculator windowStatisticsCalculator = new StatisticsCalculator();
@@ -184,7 +186,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
 
                         if (currentCount > 0) {
                             double throughput = (double) currentCount * 1000 / extendedInterval;
-                            statistics.add(assembleInvocationStatistics(time, windowStatisticsCalculator, throughput, taskData));
+                            statistics.add(assembleInvocationStatistics(time - extendedInterval / 2, windowStatisticsCalculator, throughput, taskData));
                             currentCount = 0;
                             extendedInterval = 0;
                             windowStatisticsCalculator.reset();
@@ -205,7 +207,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
 
             if (currentCount > 0) {
                 double throughput = (double) currentCount * 1000 / intervalSize;
-                statistics.add(assembleInvocationStatistics(time, windowStatisticsCalculator, throughput, taskData));
+                statistics.add(assembleInvocationStatistics(time - extendedInterval / 2, windowStatisticsCalculator, throughput, taskData));
             }
 
             workloadProcessDescriptiveStatistics = assembleDescriptiveScenarioStatistics(globalStatisticsCalculator, taskData);

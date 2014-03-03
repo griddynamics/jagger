@@ -21,15 +21,17 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.*;
-import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDescriptionEntity;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricPointEntity;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricSummaryEntity;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
 import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.master.configuration.Task;
-import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
+import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.storage.FileStorage;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
@@ -44,7 +46,10 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Set;
 
 
 /**
@@ -228,7 +233,9 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     MetricDescriptionEntity metricDescriptionEntity = persistMetricDescription(metricId, displayName);
 
                     long currentInterval = aggregationInfo.getMinTime() + intervalSize;
-                    long time = 0;
+                    long time = intervalSize;
+
+                    long extendedInterval = intervalSize;
 
                     try {
                         fileReader = logReader.read(path, MetricLogEntry.class);
@@ -242,16 +249,18 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                         // we leave interval
                                         // we have some info in interval aggregator
                                         // we need to save it
-                                        statistics.add(new MetricPointEntity(time, aggregated.doubleValue(), metricDescriptionEntity));
+                                        statistics.add(new MetricPointEntity(time - extendedInterval / 2, aggregated.doubleValue(), metricDescriptionEntity));
                                         intervalAggregator.reset();
 
                                         // go for the next interval
+                                        extendedInterval = intervalSize;
                                         time += intervalSize;
                                         currentInterval += intervalSize;
                                     }else{
                                         // current interval is empty
                                         // we will extend it
                                         while (logEntry.getTime() > currentInterval){
+                                            extendedInterval += intervalSize;
                                             time += intervalSize;
                                             currentInterval += intervalSize;
                                         }
@@ -266,7 +275,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         if (metricDescription.getPlotData()) {
                             Number aggregated = intervalAggregator.getAggregated();
                             if (aggregated != null){
-                                statistics.add(new MetricPointEntity(time, aggregated.doubleValue(), metricDescriptionEntity));
+                                statistics.add(new MetricPointEntity(time - extendedInterval / 2, aggregated.doubleValue(), metricDescriptionEntity));
                                 intervalAggregator.reset();
                             }
                         }

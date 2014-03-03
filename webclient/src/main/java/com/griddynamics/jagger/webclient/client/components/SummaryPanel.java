@@ -3,14 +3,18 @@ package com.griddynamics.jagger.webclient.client.components;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
 import com.griddynamics.jagger.webclient.client.dto.MetricDto;
 import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
-import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -55,12 +59,6 @@ public class SummaryPanel extends Composite {
             pane.clear();
         }
         active = chosenSessions;
-    }
-
-    public void updateTests(Collection<TaskDataDto> tests) {
-        if (sessionComparisonPanel != null) { // imposible
-            sessionComparisonPanel.updateTests(tests);
-        }
     }
 
     public Set<String> getSessionIds(){
