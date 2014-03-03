@@ -25,7 +25,6 @@ public class NodesPanel extends Composite {
     @UiField
     VerticalPanel pane;
 
-    private NodesTablePanel nodesTablePanel;
     private Set<String > currentSessionIds = new HashSet<String>();
     private Label noDataLabel;
     private boolean enableShowNodeInfo = false;

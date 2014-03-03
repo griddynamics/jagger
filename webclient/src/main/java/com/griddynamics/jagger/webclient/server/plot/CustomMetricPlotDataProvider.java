@@ -39,7 +39,7 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
     }
 
 
-    public List<PlotNameDto> getPlotNames(TaskDataDto taskDataDto){
+    public List<MetricNameDto> getPlotNames(TaskDataDto taskDataDto){
         List<String> plotNames = entityManager.createNativeQuery("select metricDetails.metric from MetricDetails metricDetails " +
                                                                  "where taskData_id in (:ids) " +
                                                                  "group by metricDetails.metric")
@@ -48,20 +48,20 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
         if (plotNames.isEmpty())
             return Collections.emptyList();
 
-        ArrayList<PlotNameDto> result = new ArrayList<PlotNameDto>(plotNames.size());
+        ArrayList<MetricNameDto> result = new ArrayList<MetricNameDto>(plotNames.size());
 
         for (String plotName : plotNames){
             if (plotName != null)
-            result.add(new PlotNameDto(taskDataDto, plotName));
+            result.add(new MetricNameDto(taskDataDto, plotName));
         }
 
         return result;
     }
 
-    public Set<PlotNameDto> getPlotNames(List<TaskDataDto> taskDataDtos){
+    public Set<MetricNameDto> getPlotNames(List<TaskDataDto> taskDataDtos){
 
         long temp = System.currentTimeMillis();
-        Set<PlotNameDto> result = new HashSet<PlotNameDto>();
+        Set<MetricNameDto> result = new HashSet<MetricNameDto>();
 
         result.addAll(getPlotNamesNewModel(taskDataDtos));
 
@@ -73,7 +73,7 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
     }
 
 
-    public Set<PlotNameDto> getPlotNamesOldModel(List<TaskDataDto> taskDataDtos){
+    public Set<MetricNameDto> getPlotNamesOldModel(List<TaskDataDto> taskDataDtos){
 
         Set<Long> testIds = new HashSet<Long>();
         for (TaskDataDto tdd : taskDataDtos) {
@@ -92,13 +92,13 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
             return Collections.EMPTY_SET;
         }
 
-        Set<PlotNameDto> result = new HashSet<PlotNameDto>(plotNames.size());
+        Set<MetricNameDto> result = new HashSet<MetricNameDto>(plotNames.size());
 
         for (Object[] plotName : plotNames){
             if (plotName != null) {
                 for (TaskDataDto tdd : taskDataDtos) {
                     if (tdd.getIds().contains(((BigInteger)plotName[1]).longValue())) {
-                        result.add(new PlotNameDto(tdd, (String)plotName[0]));
+                        result.add(new MetricNameDto(tdd, (String)plotName[0]));
                     }
                 }
             }
@@ -108,7 +108,7 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
     }
 
 
-    public Set<PlotNameDto> getPlotNamesNewModel(List<TaskDataDto> taskDataDtos){
+    public Set<MetricNameDto> getPlotNamesNewModel(List<TaskDataDto> taskDataDtos){
 
         try {
             Set<Long> testIds = new HashSet<Long>();
@@ -127,13 +127,13 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
                 return Collections.EMPTY_SET;
             }
 
-            Set<PlotNameDto> result = new HashSet<PlotNameDto>(plotNamesNew.size());
+            Set<MetricNameDto> result = new HashSet<MetricNameDto>(plotNamesNew.size());
 
             for (Object[] plotName : plotNamesNew){
                 if (plotName != null) {
                     for (TaskDataDto tdd : taskDataDtos) {
                         if (tdd.getIds().contains((Long)plotName[2])) {
-                            result.add(new PlotNameDto(tdd, (String)plotName[0], (String)plotName[1]));
+                            result.add(new MetricNameDto(tdd, (String)plotName[0], (String)plotName[1]));
                         }
                     }
                 }
@@ -148,15 +148,15 @@ public class CustomMetricPlotDataProvider implements PlotDataProvider{
     }
 
     @Override
-    public List<PlotSeriesDto> getPlotData(long taskId, PlotNameDto plotName) {
+    public List<PlotSeriesDto> getPlotData(long taskId, MetricNameDto plotName) {
         return getPlotData(new HashSet<Long>(Arrays.asList(taskId)), plotName);
     }
 
     @Override
-    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, PlotNameDto plotNameDto) {
+    public List<PlotSeriesDto> getPlotData(Set<Long> taskIds, MetricNameDto metricNameDto) {
 
-        String plotName = plotNameDto.getPlotName();
-        String displayName = plotNameDto.getDisplay();
+        String plotName = metricNameDto.getMetricName();
+        String displayName = metricNameDto.getMetricDisplayName();
 
         long temp = System.currentTimeMillis();
 

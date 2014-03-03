@@ -6,7 +6,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.view.client.*;
-import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
+import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 
@@ -23,24 +23,24 @@ public class TaskDataTreeViewModel implements TreeViewModel {
     private static final TaskDataDto NO_TASKS_DUMMY_NODE = new TaskDataDto(-1, "Select at least one session and one test", "");
 
     private final ListDataProvider<TaskDataDto> taskDataProvider = new ListDataProvider<TaskDataDto>();
-    private final MultiSelectionModel<PlotNameDto> selectionModel;
-    private final Cell<PlotNameDto> plotNameCell;
-    private final Map<TaskDataDto, AbstractDataProvider<PlotNameDto>> plotNameDataProviders = new HashMap<TaskDataDto, AbstractDataProvider<PlotNameDto>>();
-    private final DefaultSelectionEventManager<PlotNameDto> selectionManager =
+    private final MultiSelectionModel<MetricNameDto> selectionModel;
+    private final Cell<MetricNameDto> plotNameCell;
+    private final Map<TaskDataDto, AbstractDataProvider<MetricNameDto>> plotNameDataProviders = new HashMap<TaskDataDto, AbstractDataProvider<MetricNameDto>>();
+    private final DefaultSelectionEventManager<MetricNameDto> selectionManager =
             DefaultSelectionEventManager.createCheckboxManager();
 
     private final JaggerResources resources;
 
     //==========Constructors
 
-    public TaskDataTreeViewModel(final MultiSelectionModel<PlotNameDto> selectionModel, final JaggerResources resources) {
+    public TaskDataTreeViewModel(final MultiSelectionModel<MetricNameDto> selectionModel, final JaggerResources resources) {
         this.selectionModel = selectionModel;
         this.resources = resources;
         clear();
 
         // Construct a composite cell for plots that includes a checkbox.
-        List<HasCell<PlotNameDto, ?>> hasCells = new ArrayList<HasCell<PlotNameDto, ?>>();
-        hasCells.add(new HasCell<PlotNameDto, Boolean>() {
+        List<HasCell<MetricNameDto, ?>> hasCells = new ArrayList<HasCell<MetricNameDto, ?>>();
+        hasCells.add(new HasCell<MetricNameDto, Boolean>() {
             private CheckboxCell cell = new CheckboxCell(true, false);
 
             @Override
@@ -49,36 +49,36 @@ public class TaskDataTreeViewModel implements TreeViewModel {
             }
 
             @Override
-            public FieldUpdater<PlotNameDto, Boolean> getFieldUpdater() {
+            public FieldUpdater<MetricNameDto, Boolean> getFieldUpdater() {
                 return null;
             }
 
             @Override
-            public Boolean getValue(PlotNameDto object) {
+            public Boolean getValue(MetricNameDto object) {
                 return selectionModel.isSelected(object);
             }
         });
-        hasCells.add(new HasCell<PlotNameDto, PlotNameDto>() {
+        hasCells.add(new HasCell<MetricNameDto, MetricNameDto>() {
             private PlotNameCell cell = new PlotNameCell(resources.getPlotImage());
 
             @Override
-            public Cell<PlotNameDto> getCell() {
+            public Cell<MetricNameDto> getCell() {
                 return cell;
             }
 
             @Override
-            public FieldUpdater<PlotNameDto, PlotNameDto> getFieldUpdater() {
+            public FieldUpdater<MetricNameDto, MetricNameDto> getFieldUpdater() {
                 return null;
             }
 
             @Override
-            public PlotNameDto getValue(PlotNameDto object) {
+            public MetricNameDto getValue(MetricNameDto object) {
                 return object;
             }
         });
-        plotNameCell = new CompositeCell<PlotNameDto>(hasCells) {
+        plotNameCell = new CompositeCell<MetricNameDto>(hasCells) {
             @Override
-            public void render(Context context, PlotNameDto value, SafeHtmlBuilder sb) {
+            public void render(Context context, MetricNameDto value, SafeHtmlBuilder sb) {
                 sb.appendHtmlConstant("<table><tbody><tr>");
                 super.render(context, value, sb);
                 sb.appendHtmlConstant("</tr></tbody></table>");
@@ -91,8 +91,8 @@ public class TaskDataTreeViewModel implements TreeViewModel {
             }
 
             @Override
-            protected <X> void render(Context context, PlotNameDto value,
-                                      SafeHtmlBuilder sb, HasCell<PlotNameDto, X> hasCell) {
+            protected <X> void render(Context context, MetricNameDto value,
+                                      SafeHtmlBuilder sb, HasCell<MetricNameDto, X> hasCell) {
                 Cell<X> cell = hasCell.getCell();
                 sb.appendHtmlConstant("<td>");
                 cell.render(context, hasCell.getValue(value), sb);
@@ -113,7 +113,7 @@ public class TaskDataTreeViewModel implements TreeViewModel {
                 return null;
             }
 
-            return new DefaultNodeInfo<PlotNameDto>(
+            return new DefaultNodeInfo<MetricNameDto>(
                     getPlotNameDataProvider(taskDataDto),
                     plotNameCell,
                     selectionModel,
@@ -127,7 +127,7 @@ public class TaskDataTreeViewModel implements TreeViewModel {
 
     @Override
     public boolean isLeaf(Object value) {
-        return value instanceof PlotNameDto;
+        return value instanceof MetricNameDto;
     }
 
     //==========Getters
@@ -149,7 +149,7 @@ public class TaskDataTreeViewModel implements TreeViewModel {
         }
     }
 
-    public AbstractDataProvider<PlotNameDto> getPlotNameDataProvider(TaskDataDto taskDataDto) {
+    public AbstractDataProvider<MetricNameDto> getPlotNameDataProvider(TaskDataDto taskDataDto) {
         if (taskDataDto == null) {
             return null;
         }
@@ -157,11 +157,11 @@ public class TaskDataTreeViewModel implements TreeViewModel {
         return plotNameDataProviders.get(taskDataDto);
     }
 
-    public Map<TaskDataDto, AbstractDataProvider<PlotNameDto>> getPlotNameDataProviders() {
+    public Map<TaskDataDto, AbstractDataProvider<MetricNameDto>> getPlotNameDataProviders() {
         return plotNameDataProviders;
     }
 
-    public MultiSelectionModel<PlotNameDto> getSelectionModel() {
+    public MultiSelectionModel<MetricNameDto> getSelectionModel() {
         return selectionModel;
     }
 
@@ -188,7 +188,7 @@ public class TaskDataTreeViewModel implements TreeViewModel {
         }
     }
 
-    private static class PlotNameCell extends AbstractCell<PlotNameDto> {
+    private static class PlotNameCell extends AbstractCell<MetricNameDto> {
 
         private final String imageHtml;
 
@@ -197,7 +197,7 @@ public class TaskDataTreeViewModel implements TreeViewModel {
         }
 
         @Override
-        public void render(Context context, PlotNameDto value, SafeHtmlBuilder sb) {
+        public void render(Context context, MetricNameDto value, SafeHtmlBuilder sb) {
             if (value == null) {
                 return;
             }
@@ -205,7 +205,7 @@ public class TaskDataTreeViewModel implements TreeViewModel {
             sb.appendHtmlConstant("<table><tr><td>");
             sb.appendHtmlConstant(imageHtml);
             sb.appendHtmlConstant("</td><td>");
-            sb.appendEscaped(value.getPlotName());
+            sb.appendEscaped(value.getMetricName());
             sb.appendHtmlConstant("</td></tr></table>");
         }
     }

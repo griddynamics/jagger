@@ -10,20 +10,20 @@ import java.util.List;
  * Date: 12/4/13
  */
 public class SessionPlotNode extends AbstractIdentifyNode {
-    private SessionPlotNameDto plotNameDto;
+    private SessionPlotNameDto metricNameDto;
 
     public SessionPlotNode (SessionPlotNameDto metricName) {
-        this.plotNameDto = metricName;
+        this.metricNameDto = metricName;
     }
 
     public SessionPlotNode() {}
 
     public SessionPlotNameDto getPlotNameDto() {
-        return plotNameDto;
+        return metricNameDto;
     }
 
-    public void setPlotNameDto(SessionPlotNameDto plotNameDto) {
-        this.plotNameDto = plotNameDto;
+    public void setPlotNameDto(SessionPlotNameDto metricNameDto) {
+        this.metricNameDto = metricNameDto;
     }
 
     @Override

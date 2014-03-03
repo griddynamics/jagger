@@ -3,12 +3,7 @@ package com.griddynamics.jagger.webclient.server;
 import com.griddynamics.jagger.util.Pair;
 import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.webclient.client.MetricDataService;
-import com.griddynamics.jagger.webclient.client.dto.MetricDto;
-import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
-import com.griddynamics.jagger.webclient.client.dto.MetricValueDto;
-import com.griddynamics.jagger.webclient.client.dto.PlotDatasetDto;
-import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
-import com.griddynamics.jagger.webclient.client.dto.PointDto;
+import com.griddynamics.jagger.webclient.client.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -60,12 +55,12 @@ public class MetricDataServiceImpl implements MetricDataService {
         dto.setValues(new HashSet<MetricValueDto>());
         dto.setMetricName(metricName);
 
-        if ("Duration".equals(metricName.getName())) {
+        if ("Duration".equals(metricName.getMetricName())) {
             List<Object[]> result = entityManager.createNativeQuery("select workload.sessionId, workload.endTime, workload.startTime " +
                     "from WorkloadData as workload inner join (select taskId, sessionId from TaskData where id in (:ids)) as taskData "+
             "on workload.taskId=taskData.taskId and " +
                     "workload.sessionId=taskData.sessionId ")
-            .setParameter("ids", metricName.getTests().getIds()).getResultList();
+            .setParameter("ids", metricName.getTest().getIds()).getResultList();
 
             for (Object [] entry : result) {
                 MetricValueDto value = new MetricValueDto();
@@ -79,14 +74,14 @@ public class MetricDataServiceImpl implements MetricDataService {
                 dto.getValues().add(value);
             }
         }
-        else if (standardMetrics.containsKey(metricName.getName())){
+        else if (standardMetrics.containsKey(metricName.getMetricName())){
             //it is a standard metric
-            List<Object[]> result = entityManager.createNativeQuery("select workload."+standardMetrics.get(metricName.getName()).getFirst()+", workload.sessionId "+
+            List<Object[]> result = entityManager.createNativeQuery("select workload."+standardMetrics.get(metricName.getMetricName()).getFirst()+", workload.sessionId "+
                                                                     "from WorkloadTaskData as workload " +
                                                                     "inner join (select taskId, sessionId from TaskData where id in (:ids)) as taskData "+
                                                                     "on workload.taskId=taskData.taskId and " +
                                                                        "workload.sessionId=taskData.sessionId ")
-                                                                    .setParameter("ids", metricName.getTests().getIds()).getResultList();
+                                                                    .setParameter("ids", metricName.getTest().getIds()).getResultList();
 
             for (Object[] temp : result){
                 String metricValue = temp[0].toString();
@@ -99,14 +94,14 @@ public class MetricDataServiceImpl implements MetricDataService {
                 dto.getValues().add(value);
             }
         }else{
-            if (metricName.getName().matches("Latency .+ %")){
+            if (metricName.getMetricName().matches("Latency .+ %")){
                 //it is a latency metric
-                Double latencyKey = Double.parseDouble(metricName.getName().split(" ")[1]);
+                Double latencyKey = Double.parseDouble(metricName.getMetricName().split(" ")[1]);
                 List<Object[]> latency = entityManager.createQuery("select s.percentileValue, s.workloadProcessDescriptiveStatistics.taskData.id, s.workloadProcessDescriptiveStatistics.taskData.sessionId " +
                                                                         "from  WorkloadProcessLatencyPercentile as s " +
                                                                    "where s.workloadProcessDescriptiveStatistics.taskData.id in (:taskIds) " +
                                                                           "and s.percentileKey=:latencyKey ")
-                        .setParameter("taskIds", metricName.getTests().getIds())
+                        .setParameter("taskIds", metricName.getTest().getIds())
                         .setParameter("latencyKey", latencyKey)
                         .getResultList();
                 for (Object[] temp : latency){
@@ -121,10 +116,10 @@ public class MetricDataServiceImpl implements MetricDataService {
 
 
                 //check old model (before jagger 1.2.4)
-                List<Object[]> metrics = getCustomMetricsDataOldModel(metricName.getTests().getIds(), metricName.getName());
+                List<Object[]> metrics = getCustomMetricsDataOldModel(metricName.getTest().getIds(), metricName.getMetricName());
 
                 // check new model
-                metrics.addAll(getCustomMetricsDataNewModel(metricName.getTests().getIds(), metricName.getName()));
+                metrics.addAll(getCustomMetricsDataNewModel(metricName.getTest().getIds(), metricName.getMetricName()));
 
                 if (!metrics.isEmpty()){
                     for (Object[] mas : metrics){
@@ -144,8 +139,8 @@ public class MetricDataServiceImpl implements MetricDataService {
                                     "      select td.taskId, td.sessionId from TaskData td where td.id in (:ids)" +
                                     "  ) as selected on wd.sessionId=selected.sessionId and wd.taskId=selected.taskId" +
                                     ") as selected on vr.workloadData_id=selected.id and vr.validator=:name")
-                            .setParameter("ids", metricName.getTests().getIds())
-                            .setParameter("name", metricName.getName())
+                            .setParameter("ids", metricName.getTest().getIds())
+                            .setParameter("name", metricName.getMetricName())
                             .getResultList();
                     for (Object[] mas : validators){
 
@@ -245,7 +240,7 @@ public class MetricDataServiceImpl implements MetricDataService {
                 yMinimum = temp;
         }
 
-        String legend = metricDto.getMetricName().getName();
+        String legend = metricDto.getMetricName().getMetricName();
         if (standardMetrics.containsKey(legend)) {
             legend = standardMetrics.get(legend).getSecond();
         }
@@ -256,14 +251,14 @@ public class MetricDataServiceImpl implements MetricDataService {
         );
 
         StringBuilder headerBuilder = new StringBuilder();
-        headerBuilder.append(metricDto.getMetricName().getTests().getTaskName()).
+        headerBuilder.append(metricDto.getMetricName().getTest().getTaskName()).
                 append(", ").
-                append(metricDto.getMetricName().getName());
+                append(metricDto.getMetricName().getMetricName());
 
         PlotSeriesDto psd = new PlotSeriesDto(
                 Arrays.asList(pdd),
                 "Sessions" ,
-                metricDto.getMetricName().getName(),
+                metricDto.getMetricName().getMetricName(),
                 headerBuilder.toString()
         );
 
