@@ -58,7 +58,8 @@
         </beans:constructor-arg>
     </beans:bean>
 
-    <test-description id="getWebclientStartPage" name="getStartPageNN" version="1">
+
+    <test-description id="getWebclientAbstract" name="getWebclientAbstract" version="1">
 
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
@@ -67,6 +68,11 @@
             <metric xsi:type="metric-success-rate" plotData="true" saveSummary="true"/>
 
         </info-collectors>
+
+    </test-description>
+
+
+    <test-description id="getWebclientStartPage" name="getStartPageNN" version="1" parent="getWebclientAbstract">
 
         <scenario  xsi:type="scenario-query-pool">
 
@@ -101,15 +107,7 @@
         </beans:constructor-arg>
     </beans:bean>
 
-    <test-description id="getWebclientChosenSessions" name="getChosenSessions" version="1">
-
-        <info-collectors>
-            <validator xsi:type="validator-not-null-response"/>
-
-            <!--Standard metrics-->
-            <metric xsi:type="metric-success-rate" plotData="true" saveSummary="true"/>
-
-        </info-collectors>
+    <test-description id="getWebclientChosenSessions" name="getChosenSessions" version="1" parent="getWebclientAbstract">
 
         <scenario  xsi:type="scenario-query-pool">
 
@@ -145,15 +143,7 @@
         </beans:constructor-arg>
     </beans:bean>
 
-    <test-description id="getWebclientChosenSummary" name="getChosenSummary" version="1">
-
-        <info-collectors>
-            <validator xsi:type="validator-not-null-response"/>
-
-            <!--Standard metrics-->
-            <metric xsi:type="metric-success-rate" plotData="true" saveSummary="true"/>
-
-        </info-collectors>
+    <test-description id="getWebclientChosenSummary" name="getChosenSummary" version="1" parent="getWebclientAbstract">
 
         <scenario  xsi:type="scenario-query-pool">
 
@@ -190,15 +180,7 @@
     </beans:bean>
 
 
-    <test-description id="getWebclientChosenPlots" name="getChosenSummary" version="1">
-
-        <info-collectors>
-            <validator xsi:type="validator-not-null-response"/>
-
-            <!--Standard metrics-->
-            <metric xsi:type="metric-success-rate" plotData="true" saveSummary="true"/>
-
-        </info-collectors>
+    <test-description id="getWebclientChosenPlots" name="getChosenSummary" version="1" parent="getWebclientAbstract">
 
         <scenario  xsi:type="scenario-query-pool">
 
