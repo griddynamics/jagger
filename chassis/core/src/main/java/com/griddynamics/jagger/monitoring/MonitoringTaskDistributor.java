@@ -63,7 +63,7 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
                     MonitoringTerminationStrategy terminationStrategy = task.getTerminationStrategy().get();
 
                     monitoringController =
-                            new MonitoringController(sessionId, taskId, availableNodes, coordinator, remotes.keySet(), ttl);
+                            new MonitoringController(sessionId, task.getParentTaskId(), availableNodes, coordinator, remotes.keySet(), ttl);
                     monitoringController.startMonitoring();
 
                     while (true) {

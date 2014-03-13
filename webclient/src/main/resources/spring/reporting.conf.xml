@@ -87,8 +87,6 @@
                     <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
                         <value>CPU_STATE_SYSTEM_PERC</value>
                         <value>CPU_STATE_USER_PERC</value>
-                        <value>CPU_STATE_IDLE_PERC</value>
-                        <value>CPU_STATE_IDLE_WAIT</value>
                     </list>
                 </entry>
 

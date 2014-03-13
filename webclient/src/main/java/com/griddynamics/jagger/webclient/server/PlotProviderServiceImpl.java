@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Required;
 
 import java.util.*;
 
+import static com.griddynamics.jagger.util.AgentUtils.AGENT_NAME_SEPARATOR;
+
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 5/30/12

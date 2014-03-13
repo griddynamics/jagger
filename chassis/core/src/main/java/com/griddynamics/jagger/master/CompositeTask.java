@@ -39,6 +39,7 @@ public class CompositeTask implements Task {
     private List<Provider<TestGroupListener>> listeners = ImmutableList.of();
     private List<Provider<TestGroupDecisionMakerListener>> decisionMakerListeners = ImmutableList.of();
     private int number;
+    private String name;
 
     public List<CompositableTask> getLeading() {
         return leading;
@@ -74,7 +75,7 @@ public class CompositeTask implements Task {
 
     @Override
     public String getTaskName() {
-        return "Composite task";
+        return name;
     }
 
     @Override
@@ -84,5 +85,9 @@ public class CompositeTask implements Task {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

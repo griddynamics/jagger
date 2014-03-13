@@ -116,6 +116,7 @@
         <property name="distributorRegistry" ref="distributorRegistry"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
         <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
+        <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
     </bean>
 
     <bean id="conditions" class="com.griddynamics.jagger.master.Conditions">

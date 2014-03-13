@@ -56,9 +56,7 @@
         <property name="ttl" ref="monitoringWorkerTimeout"/>
     </bean>
 
-    <bean id="loggingMonitoringProcessor" class="com.griddynamics.jagger.monitoring.LoggingMonitoringProcessor">
-        <property name="logWriter" ref="bufferedLogWriter"/>
-    </bean>
+    <bean id="loggingMonitoringProcessor" class="com.griddynamics.jagger.monitoring.LoggingMonitoringProcessor"/>
 
     <bean id="monitoringExecutor" class="com.griddynamics.jagger.util.ConfigurableExecutor">
         <property name="corePoolSize" value="${chassis.monitoring.executor.pool.core}"/>

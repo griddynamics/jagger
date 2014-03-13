@@ -36,24 +36,4 @@ public class TagDto implements Serializable {
     public void setDescription(String tagDescription) {
         this.description = tagDescription;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TagDto tagDto = (TagDto) o;
-
-        if (!description.equals(tagDto.description)) return false;
-        if (!name.equals(tagDto.name)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + description.hashCode();
-        return result;
-    }
 }

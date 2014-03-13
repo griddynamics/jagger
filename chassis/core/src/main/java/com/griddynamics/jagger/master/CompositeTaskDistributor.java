@@ -31,6 +31,7 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
+import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
@@ -55,6 +56,7 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
     private DistributorRegistry distributorRegistry;
     private TaskIdProvider taskIdProvider;
+    private TaskExecutionStatusProvider taskExecutionStatusProvider;
 
     public void setDistributorRegistry(DistributorRegistry distributorRegistry) {
         this.distributorRegistry = distributorRegistry;
@@ -67,6 +69,10 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
     @Required
     public void setTimeoutsConfiguration(TimeoutsConfiguration timeoutsConfiguration) {
         this.timeoutsConfiguration = timeoutsConfiguration;
+    }
+
+    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
+        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
     }
 
     @Override
@@ -127,6 +133,8 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
                 testGroupInfo.setDuration(System.currentTimeMillis() - startTime);
                 compositeTestGroupListener.onStop(testGroupInfo);
+
+                taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
             }
 
             private int activeLeadingTasks() {

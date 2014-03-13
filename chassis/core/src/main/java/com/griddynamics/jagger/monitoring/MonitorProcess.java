@@ -108,7 +108,7 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
                             log.debug("GetSystemInfo got on kernel {} from {} time {} ms",
                                     new Object[]{nodeContext.getId(), agentId, System.currentTimeMillis() - startTime});
                             for (SystemInfo systemInfo : info) {
-                                monitoringProcessor.process(sessionId, taskId, agentId, systemInfo);
+                                monitoringProcessor.process(sessionId, taskId, agentId, nodeContext, systemInfo);
                             }
                             log.debug("monitoring logged to file storage on kernel {}", nodeContext.getId());
                         } catch (Throwable e) {

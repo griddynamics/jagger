@@ -28,12 +28,6 @@ public class NameTokens {
 
     public static final String MONITORING_PREFIX = "mon-";
 
-    /**
-     * used to separate monitoring plot name and agent id in MetricNameDto.metricName/SessionNameDto.metricName
-     * note: '|' == '%7C' in while link processing
-     */
-    public static final String AGENT_NAME_SEPARATOR = "|";
-
     public static String EMPTY = "";
 
     public static String summary() {

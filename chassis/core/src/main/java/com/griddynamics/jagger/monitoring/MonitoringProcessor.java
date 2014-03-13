@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.monitoring;
 
 import com.griddynamics.jagger.agent.model.SystemInfo;
+import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 
 /**
@@ -29,5 +30,5 @@ import com.griddynamics.jagger.coordinator.NodeId;
  * @author Mairbek Khadikov
  */
 public interface MonitoringProcessor {
-    void process(String sessionId, String taskId, NodeId agentId, SystemInfo systemInfo);
+    void process(String sessionId, String taskId, NodeId agentId, NodeContext nodeContext, SystemInfo systemInfo);
 }

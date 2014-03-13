@@ -32,6 +32,7 @@ import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
 import com.griddynamics.jagger.master.configuration.SessionListener;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.monitoring.MonitoringTask;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import org.hibernate.HibernateException;
@@ -134,6 +135,10 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
     @Override
     public void onTaskDistributionCompleted(String sessionId, String taskId, Task task) {
+        if (task instanceof MonitoringTask){
+            return;
+        }
+
         log.debug("onTaskFinished invoked {} {}", sessionId, taskId);
         persistData(sessionId, taskId, task);
     }

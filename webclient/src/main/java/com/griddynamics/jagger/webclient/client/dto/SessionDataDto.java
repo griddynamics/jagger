@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.webclient.client.dto;
 
 import java.io.Serializable;
-import java.util.List;
+
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 5/29/12
@@ -16,7 +16,6 @@ public class SessionDataDto implements Serializable {
     private int tasksExecuted;
     private int tasksFailed;
     private Long id;
-    private List<TagDto> tags;
 
     public SessionDataDto() {
     }
@@ -35,7 +34,7 @@ public class SessionDataDto implements Serializable {
         this.comment = comment;
     }
 
-    public SessionDataDto(Long id,String sessionId, String startDate, String endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed, String comment, String userComment, List<TagDto> tags) {
+    public SessionDataDto(Long id,String sessionId, String startDate, String endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed, String comment, String userComment) {
         this.id = id;
         this.sessionId = sessionId;
         this.startDate = startDate;
@@ -45,15 +44,6 @@ public class SessionDataDto implements Serializable {
         this.tasksFailed = tasksFailed;
         this.comment = comment;
         this.userComment = userComment;
-        this.tags = tags;
-    }
-
-    public List<TagDto> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<TagDto> tags) {
-        this.tags = tags;
     }
 
     public String getName() {
@@ -127,9 +117,6 @@ public class SessionDataDto implements Serializable {
 
     @Override
     public String toString() {
-        String tagStr="";
-        for (TagDto tagDto : tags)
-            tagStr+=tagDto.getName()+" ";
         return "SessionDataDto{" +
                 "name='" + getName() + '\'' +
                 ", startDate=" + startDate +
@@ -139,7 +126,6 @@ public class SessionDataDto implements Serializable {
                 ", tasksFailed=" + tasksFailed +
                 ", comment=" + comment +
                 ", userComment=" + userComment +
-                ", tags="+ tagStr +
                 '}';
     }
 }

@@ -38,7 +38,7 @@ public abstract class ServicesAware implements ServicesInitializable {
         }
         /* Services available for test group listener */
         if (environment.equals(JaggerPlace.TEST_GROUP_LISTENER)){
-            metricService       = new EmptyMetricService(JaggerPlace.TEST_GROUP_LISTENER);      /* NOT AVAILABLE */
+            metricService       = new DefaultMetricService(sessionId, taskId, context);         /* Available */
             sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
         }
         /* Services available for test suite listener */

@@ -85,6 +85,7 @@ public class TestGroupConfiguration {
         compositeTask.setNumber(number);
         compositeTask.setListeners(listeners);
         compositeTask.setDecisionMakerListeners(testGroupDecisionMakerListeners);
+        compositeTask.setName(id+"-group");
 
         for (TestConfiguration testConfig : tests) {
             testConfig.setTestGroupName(id);

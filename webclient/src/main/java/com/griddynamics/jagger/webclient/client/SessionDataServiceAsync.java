@@ -3,12 +3,10 @@ package com.griddynamics.jagger.webclient.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.griddynamics.jagger.webclient.client.dto.PagedSessionDataDto;
 import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
-import com.griddynamics.jagger.webclient.client.dto.TagDto;
 import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.dto.TestInfoDto;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,8 +24,4 @@ public interface SessionDataServiceAsync {
     void getBySessionIds(int start, int length, Set<String> sessionIds, AsyncCallback<PagedSessionDataDto> async);
 
     void saveUserComment(Long sessionData_id, String userComment, AsyncCallback<Void> async);
-
-    void saveTags(Long sessionData_id, List<TagDto> tags, AsyncCallback<Void> async);
-
-    void getAllTags(AsyncCallback<List<TagDto>> async);
 }
