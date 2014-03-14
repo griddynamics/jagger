@@ -24,6 +24,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.*;
 import com.griddynamics.jagger.util.AgentUtils;
+import com.griddynamics.jagger.util.TimeUtils;
+import com.griddynamics.jagger.util.Timeout;
 import com.sun.management.UnixOperatingSystemMXBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     private String jmxServices;
     private String name;
     private String urlFormat;
+    private Timeout jmxConnectionTimeout = new Timeout(300, "JmxConnectionTimeout");
     private Map<String, MBeanServerConnection> connections = Maps.newHashMap();
 
     public void setJmxServices(String jmxServices) {
@@ -71,6 +74,10 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
 
     public void setUrlFormat(String urlFormat) {
         this.urlFormat = urlFormat;
+    }
+
+    public void setJmxConnectionTimeout(Timeout jmxConnectionTimeout) {
+        this.jmxConnectionTimeout = jmxConnectionTimeout;
     }
 
     @Override
@@ -107,12 +114,17 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     }
 
     public void init() {
-        try {
-            connections = AgentUtils.getMBeanConnections(
-                    AgentUtils.getJMXConnectors(AgentUtils.splitServices(jmxServices), name + " collect from jmx port ", urlFormat)
-            );
-        } catch (IOException e) {
-            log.error("Error during JMX initializing", e);
+        Date date = new Date();
+        long initialTime = date.getTime();
+        while (jmxConnectionTimeout.getValue() > (date.getTime() - initialTime)) {
+            try {
+                connections = AgentUtils.getMBeanConnections(
+                        AgentUtils.getJMXConnectors(AgentUtils.splitServices(jmxServices), name + " collect from jmx port ", urlFormat));
+                break;
+            } catch (IOException e) {
+                log.error("Error during JMX initializing", e);
+                TimeUtils.sleepMillis(3000);
+            }
         }
         if (connections.size() == 0) {
             // TODO: replace it with specific exception for such situations when it is created.
