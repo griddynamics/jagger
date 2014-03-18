@@ -114,9 +114,8 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     }
 
     public void init() {
-        Date date = new Date();
-        long initialTime = date.getTime();
-        while (jmxConnectionTimeout.getValue() > (date.getTime() - initialTime)) {
+        long initialTime = System.currentTimeMillis();
+        while (jmxConnectionTimeout.getValue() > (System.currentTimeMillis() - initialTime)) {
             try {
                 connections = AgentUtils.getMBeanConnections(
                         AgentUtils.getJMXConnectors(AgentUtils.splitServices(jmxServices), name + " collect from jmx port ", urlFormat));
