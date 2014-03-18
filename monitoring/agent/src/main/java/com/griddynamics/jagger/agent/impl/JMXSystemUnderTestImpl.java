@@ -58,6 +58,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
     private String name;
     private String urlFormat;
     private Timeout jmxConnectionTimeout = new Timeout(300, "JmxConnectionTimeout");
+    private Timeout jmxConnectionRetryDelay = new Timeout(3000, "JmxConnectionRetryDelay");
     private Map<String, MBeanServerConnection> connections = Maps.newHashMap();
 
     public void setJmxServices(String jmxServices) {
@@ -78,6 +79,10 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
 
     public void setJmxConnectionTimeout(Timeout jmxConnectionTimeout) {
         this.jmxConnectionTimeout = jmxConnectionTimeout;
+    }
+
+    public void setJmxConnectionRetryDelay(Timeout jmxConnectionRetryDelay) {
+        this.jmxConnectionRetryDelay = jmxConnectionRetryDelay;
     }
 
     @Override
@@ -122,7 +127,7 @@ public class JMXSystemUnderTestImpl implements SystemUnderTestService {
                 break;
             } catch (IOException e) {
                 log.error("Error during JMX initializing", e);
-                TimeUtils.sleepMillis(3000);
+                TimeUtils.sleepMillis(jmxConnectionRetryDelay.getValue());
             }
         }
         if (connections.size() == 0) {
