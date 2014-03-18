@@ -238,6 +238,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     long extendedInterval = intervalSize;
 
                     try {
+                        // todo refactor to read file once  but not for every aggregator
                         fileReader = logReader.read(path, MetricLogEntry.class);
                         for (MetricLogEntry logEntry : fileReader) {
                             log.debug("Log entry {} time", logEntry.getTime());
