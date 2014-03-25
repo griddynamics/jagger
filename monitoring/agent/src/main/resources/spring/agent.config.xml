@@ -85,6 +85,8 @@
         <property name="urlFormat" value="${jmx.url.format}"/>
         <property name="jmxServices" value="${jmx.services}"/>
         <property name="name" value="#{agentConfig.getName()}"/>
+        <property name="jmxConnectionTimeout" ref="jmxConnectionTimeout"/>
+        <property name="jmxConnectionRetryDelay" ref="jmxConnectionRetryDelay"/>
     </bean>
 
     <!--bean id="jvmSnmpCollector" class="com.griddynamics.jagger.agent.impl.SNMPProvider">
@@ -132,6 +134,16 @@
     <bean id="monitoringServiceTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${jmx.monitoring.timeout}"/>
         <property name="name"  value="jmx.monitoring.timeout"/>
+    </bean>
+
+    <bean id="jmxConnectionTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${jmx.connection.timeout}"/>
+        <property name="name"  value="jmx.connection.timeout"/>
+    </bean>
+
+    <bean id="jmxConnectionRetryDelay" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${jmx.connection.retry.delay}"/>
+        <property name="name"  value="jmx.connection.retry.delay"/>
     </bean>
 
     <bean id="defaultExchanger" class="com.griddynamics.jagger.coordinator.http.DefaultPackExchanger">
