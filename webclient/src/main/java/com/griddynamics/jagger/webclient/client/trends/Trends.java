@@ -994,6 +994,18 @@ public class Trends extends DefaultActivity {
         plotGroupPanel.getElement().setId(id);
 
         for (PlotSeriesDto plotSeriesDto : plotSeriesDtoList) {
+
+            // Sort lines by legend
+            Collections.sort(plotSeriesDto.getPlotSeries(), new Comparator<PlotDatasetDto>() {
+                @Override
+                public int compare(PlotDatasetDto o1, PlotDatasetDto o2) {
+                    String param1 = o1.getLegend();
+                    String param2 = o2.getLegend();
+                    int res = String.CASE_INSENSITIVE_ORDER.compare(param1,param2);
+                    return (res != 0) ? res : param1.compareTo(param2);
+                }
+            });
+
             Markings markings = null;
             if (plotSeriesDto.getMarkingSeries() != null) {
                 markings = new Markings();

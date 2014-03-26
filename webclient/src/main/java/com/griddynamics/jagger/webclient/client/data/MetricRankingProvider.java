@@ -30,7 +30,9 @@ public class MetricRankingProvider {
         Comparable o1Rank = getRank(o1);
         Comparable o2Rank = getRank(o2);
         if (o1Rank.compareTo(0)==0 && o2Rank.compareTo(0)==0){
-            return o1.compareTo(o2);
+            // display names, not matched to pattern above
+            int res = String.CASE_INSENSITIVE_ORDER.compare(o1,o2);
+            return (res != 0) ? res : o1.compareTo(o2);
         }
         if (o1Rank.compareTo(o2Rank)==0){
             return o1.compareTo(o2);
