@@ -131,6 +131,7 @@
                 <entry key="testGeneralContainer">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.TestGeneralReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/test-general-container.jrxml"/>
+                        <property name="sessionScopeAvailable" value="${chassis.engine.e1.reporting.session.scope.available}"/>
                     </bean>
                 </entry>
 

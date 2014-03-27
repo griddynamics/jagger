@@ -36,6 +36,8 @@ import java.util.Set;
  * User: dkotlyarov
  */
 public class TestGeneralReporter extends AbstractReportProvider {
+    private boolean sessionScopeAvailable;
+
     public static class TestDetailsDTO {
         private String testId;
         private String testName;
@@ -57,11 +59,22 @@ public class TestGeneralReporter extends AbstractReportProvider {
         }
     }
 
+    public boolean isSessionScopeAvailable() {
+        return sessionScopeAvailable;
+    }
+
+    public void setSessionScopeAvailable(boolean sessionScopeAvailable) {
+        this.sessionScopeAvailable = sessionScopeAvailable;
+    }
+
     @Override
     public JRDataSource getDataSource() {
-        SystemUnderTestPlotsGeneralProvider plotsGeneralProvider = (SystemUnderTestPlotsGeneralProvider) getContext().getMappedProvider("sysUTPlotsGeneral");
-
         List<TestDetailsDTO> result = new ArrayList<TestDetailsDTO>();
+        //if a session scope is disable we return a bean with an empty collection
+        if (!sessionScopeAvailable)
+            return new JRBeanCollectionDataSource(result);
+
+        SystemUnderTestPlotsGeneralProvider plotsGeneralProvider = (SystemUnderTestPlotsGeneralProvider) getContext().getMappedProvider("sysUTPlotsGeneral");
         Set<String> boxIdentifiers = plotsGeneralProvider.getStatistics().findBoxIdentifiers();
         Set<String> sutUrls = plotsGeneralProvider.getStatistics().findSutUrls();
         for (GroupKey groupName : plotsGeneralProvider.getPlotGroups().getPlotGroups().keySet()) {
