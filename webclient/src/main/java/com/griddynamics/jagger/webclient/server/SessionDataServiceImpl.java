@@ -378,6 +378,8 @@ public class SessionDataServiceImpl /*extends RemoteServiceServlet*/ implements 
 
     @Override
     public PagedSessionDataDto getBySessionTagsName(int start, int length, Set<String> sessionTagNames) {
+        if (!commonDataService.getWebClientProperties().isTagsStoreAvailable())
+            return new PagedSessionDataDto(Collections.EMPTY_LIST, 0);
         checkArgument(start >= 0, "start is negative");
         checkArgument(length >= 0, "length is negative");
         checkNotNull(sessionTagNames, "sessionTagNames is null");
