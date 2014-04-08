@@ -7,7 +7,7 @@ import ca.nanometrics.gflot.client.jsni.Plot;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.griddynamics.jagger.webclient.client.dto.MarkingDto;
+import com.griddynamics.jagger.dbapi.dto.MarkingDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

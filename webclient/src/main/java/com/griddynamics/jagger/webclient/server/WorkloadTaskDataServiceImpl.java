@@ -1,9 +1,9 @@
 package com.griddynamics.jagger.webclient.server;
 
+import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.model.*;
 import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.webclient.client.WorkloadTaskDataService;
-import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.dto.WorkloadTaskDataDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

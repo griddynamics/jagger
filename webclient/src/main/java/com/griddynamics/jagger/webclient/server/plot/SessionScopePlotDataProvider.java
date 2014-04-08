@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.webclient.server.plot;
 
-import com.griddynamics.jagger.webclient.client.dto.PlotSeriesDto;
+
+import com.griddynamics.jagger.dbapi.dto.PlotSeriesDto;
 
 import java.util.List;
 

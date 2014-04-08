@@ -2,7 +2,7 @@ package com.griddynamics.jagger.webclient.client.components.control;
 
 import com.griddynamics.jagger.webclient.client.components.ControlTree;
 import com.griddynamics.jagger.webclient.client.components.SessionComparisonPanel;
-import com.griddynamics.jagger.webclient.client.components.control.model.*;
+import com.griddynamics.jagger.dbapi.model.*;
 import com.griddynamics.jagger.webclient.client.handler.*;
 import com.griddynamics.jagger.webclient.client.trends.Trends;
 

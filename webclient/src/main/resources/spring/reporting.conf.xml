@@ -34,7 +34,7 @@
                             <constructor-arg index="0" value="Throughput"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.webclient.server.DefaultWorkloadParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters">
                         <value>THROUGHPUT</value>
                     </list>
                 </entry>
@@ -45,7 +45,7 @@
                             <constructor-arg index="0" value="Latency"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.webclient.server.DefaultWorkloadParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters">
                         <value>LATENCY</value>
                         <value>LATENCY_STD_DEV</value>
                     </list>
@@ -57,7 +57,7 @@
                             <constructor-arg index="0" value="Time Latency Percentile"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.webclient.server.DefaultWorkloadParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters">
                         <value>TIME_LATENCY_PERCENTILE_40</value>
                         <value>TIME_LATENCY_PERCENTILE_50</value>
                         <value>TIME_LATENCY_PERCENTILE_60</value>

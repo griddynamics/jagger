@@ -4,7 +4,7 @@ package com.griddynamics.jagger.webclient.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
+import com.griddynamics.jagger.dbapi.model.WebClientProperties;
 
 import java.util.Map;
 import java.util.Set;

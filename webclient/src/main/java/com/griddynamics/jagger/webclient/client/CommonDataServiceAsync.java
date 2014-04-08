@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.webclient.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
+import com.griddynamics.jagger.dbapi.model.WebClientProperties;
 
 import java.util.Map;
 import java.util.Set;

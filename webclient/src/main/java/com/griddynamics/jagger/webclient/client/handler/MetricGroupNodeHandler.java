@@ -1,8 +1,8 @@
 package com.griddynamics.jagger.webclient.client.handler;
 
-import com.griddynamics.jagger.webclient.client.components.control.model.MetricGroupNode;
-import com.griddynamics.jagger.webclient.client.components.control.model.MetricNode;
-import com.griddynamics.jagger.webclient.client.components.control.model.PlotNode;
+import com.griddynamics.jagger.dbapi.model.MetricGroupNode;
+import com.griddynamics.jagger.dbapi.model.MetricNode;
+import com.griddynamics.jagger.dbapi.model.PlotNode;
 import com.sencha.gxt.widget.core.client.event.CheckChangeEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 

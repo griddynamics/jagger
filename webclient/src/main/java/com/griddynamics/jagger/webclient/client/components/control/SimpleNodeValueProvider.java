@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.webclient.client.components.control;
 
-import com.griddynamics.jagger.webclient.client.components.control.model.AbstractIdentifyNode;
+import com.griddynamics.jagger.dbapi.model.AbstractIdentifyNode;
 import com.sencha.gxt.core.client.ValueProvider;
 
 /**

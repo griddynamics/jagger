@@ -48,6 +48,7 @@
         <module>test/jagger-test</module>
         <module>test/test-target</module>
         <module>archetype-examples</module>
+        <module>dbapi</module>
     </modules>
 
     <scm>

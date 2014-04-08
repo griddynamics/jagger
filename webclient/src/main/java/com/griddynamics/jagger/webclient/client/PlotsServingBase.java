@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.webclient.client;
 
-import com.griddynamics.jagger.webclient.client.components.control.model.MetricNode;
-import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
+import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
+import com.griddynamics.jagger.dbapi.model.MetricNode;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
