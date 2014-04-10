@@ -21,11 +21,11 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadDetails;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.dbapi.entity.ValidationResultEntity;
+import com.griddynamics.jagger.dbapi.entity.DiagnosticResultEntity;
+import com.griddynamics.jagger.dbapi.entity.WorkloadData;
+import com.griddynamics.jagger.dbapi.entity.WorkloadDetails;
+import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.collector.DiagnosticResult;
 import com.griddynamics.jagger.engine.e1.collector.ValidationResult;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
@@ -44,7 +44,7 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 
 /**
  * Aggregates recorded e1 scenario data from key-value storage to relational
- * table. See {@link com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData} for table structure.
+ * table. See {@link com.griddynamics.jagger.dbapi.entity.WorkloadTaskData} for table structure.
  *
  * @author Mairbek Khadikov
  */

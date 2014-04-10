@@ -24,6 +24,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.Futures;
 import com.griddynamics.jagger.agent.model.*;
+import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
 import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.util.Timeout;
 import org.slf4j.Logger;

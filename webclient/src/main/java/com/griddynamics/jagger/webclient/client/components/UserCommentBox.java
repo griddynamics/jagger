@@ -9,7 +9,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import com.griddynamics.jagger.webclient.client.SessionDataService;
-import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
+import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 import com.sencha.gxt.core.client.GXT;
 import com.sencha.gxt.widget.core.client.treegrid.TreeGrid;

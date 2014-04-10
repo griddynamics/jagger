@@ -20,9 +20,9 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.griddynamics.jagger.agent.model.MonitoringParameter;
-import com.griddynamics.jagger.monitoring.MonitoringParameterBean;
-import com.griddynamics.jagger.monitoring.reporting.GroupKey;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameterBean;
+import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.monitoring.reporting.SystemUnderTestPlotsGeneralProvider;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;

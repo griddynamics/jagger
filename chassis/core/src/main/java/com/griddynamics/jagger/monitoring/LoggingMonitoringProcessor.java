@@ -22,7 +22,7 @@ package com.griddynamics.jagger.monitoring;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.griddynamics.jagger.agent.model.MonitoringParameter;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
 import com.griddynamics.jagger.agent.model.SystemInfo;
 import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
 import com.griddynamics.jagger.coordinator.NodeContext;

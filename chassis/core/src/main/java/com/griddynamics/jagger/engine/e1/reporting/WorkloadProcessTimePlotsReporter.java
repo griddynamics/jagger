@@ -21,9 +21,9 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.Percentile;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeLatencyPercentile;
+import com.griddynamics.jagger.dbapi.entity.Percentile;
+import com.griddynamics.jagger.dbapi.entity.TimeInvocationStatistics;
+import com.griddynamics.jagger.dbapi.entity.TimeLatencyPercentile;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
 import com.griddynamics.jagger.util.Pair;

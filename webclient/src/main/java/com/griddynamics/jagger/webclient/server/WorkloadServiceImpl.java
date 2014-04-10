@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.webclient.server;
 
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadDetails;
+import com.griddynamics.jagger.dbapi.entity.WorkloadDetails;
 import com.griddynamics.jagger.webclient.client.WorkloadService;
 import com.griddynamics.jagger.webclient.client.dto.WorkloadDetailsDto;
 import org.slf4j.Logger;

@@ -20,10 +20,10 @@
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDescriptionEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricPointEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricSummaryEntity;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity;
+import com.griddynamics.jagger.dbapi.entity.MetricPointEntity;
+import com.griddynamics.jagger.dbapi.entity.MetricSummaryEntity;
 import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.CompositeTask;

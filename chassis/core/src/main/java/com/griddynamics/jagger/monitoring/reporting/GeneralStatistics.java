@@ -20,8 +20,8 @@
 
 package com.griddynamics.jagger.monitoring.reporting;
 
-import com.griddynamics.jagger.agent.model.MonitoringParameter;
-import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
+import com.griddynamics.jagger.dbapi.entity.MonitoringStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

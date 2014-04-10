@@ -24,7 +24,7 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.*;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.master.AbstractDistributor;
 import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.util.TimeUtils;

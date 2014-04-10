@@ -20,7 +20,7 @@
 package com.griddynamics.jagger.monitoring.reporting;
 
 import com.google.common.collect.Lists;
-import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
+import com.griddynamics.jagger.dbapi.entity.PerformedMonitoring;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;

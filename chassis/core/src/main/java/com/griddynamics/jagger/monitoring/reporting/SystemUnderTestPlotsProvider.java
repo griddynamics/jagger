@@ -21,15 +21,13 @@
 package com.griddynamics.jagger.monitoring.reporting;
 
 import com.google.common.collect.*;
-import com.griddynamics.jagger.agent.model.*;
-import com.griddynamics.jagger.monitoring.MonitoringParameterBean;
-import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
-import com.griddynamics.jagger.reporting.MappedReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
+import com.griddynamics.jagger.dbapi.parameter.GroupKey;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameterBean;
+import com.griddynamics.jagger.dbapi.entity.MonitoringStatistics;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
 import com.griddynamics.jagger.util.Pair;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
@@ -39,8 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 

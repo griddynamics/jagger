@@ -23,9 +23,9 @@ package com.griddynamics.jagger.engine.e1.aggregator.session;
 import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TagEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.dbapi.entity.SessionData;
+import com.griddynamics.jagger.dbapi.entity.TagEntity;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
@@ -51,8 +51,8 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 
 /**
  * Aggregates generic session/task data from key-value storage and stores to
- * relation structure. See {@link com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData},
- * {@link com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData} for table structure.
+ * relation structure. See {@link com.griddynamics.jagger.dbapi.entity.SessionData},
+ * {@link com.griddynamics.jagger.dbapi.entity.TaskData} for table structure.
  *
  * @author Mairbek Khadikov
  */

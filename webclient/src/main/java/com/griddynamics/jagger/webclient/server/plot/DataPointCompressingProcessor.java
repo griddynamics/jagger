@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.webclient.server.plot;
 
+import com.griddynamics.jagger.dbapi.dto.PointDto;
 import com.griddynamics.jagger.util.Pair;
-import com.griddynamics.jagger.webclient.client.dto.PointDto;
 
 import java.util.*;
 

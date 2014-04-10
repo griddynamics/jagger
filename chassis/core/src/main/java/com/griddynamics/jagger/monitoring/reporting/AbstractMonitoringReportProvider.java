@@ -20,8 +20,8 @@
 package com.griddynamics.jagger.monitoring.reporting;
 
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
-import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
+import com.griddynamics.jagger.dbapi.entity.WorkloadData;
+import com.griddynamics.jagger.dbapi.entity.PerformedMonitoring;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 

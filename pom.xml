@@ -39,6 +39,7 @@
     </properties>
 
     <modules>
+        <module>dbapi</module>
         <module>monitoring/agent</module>
         <module>diagnostics</module>
         <module>chassis/</module>
@@ -166,6 +167,11 @@
                 <version>${version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.griddynamics.jagger</groupId>
+                <artifactId>dbapi</artifactId>
+                <version>${version}</version>
+            </dependency>
             <!-- Third-party dependencies -->
 
             <dependency>

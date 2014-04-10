@@ -1,0 +1,7 @@
+/target/
+/.idea/
+/*.iml
+/*.ipr
+/*.iws
+/*.log
+/*.patch

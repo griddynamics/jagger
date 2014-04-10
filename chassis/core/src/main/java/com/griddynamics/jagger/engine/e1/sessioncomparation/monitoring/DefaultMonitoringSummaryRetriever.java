@@ -20,7 +20,7 @@
 
 package com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring;
 
-import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
+import com.griddynamics.jagger.dbapi.entity.MonitoringStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;

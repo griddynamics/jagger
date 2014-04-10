@@ -30,6 +30,10 @@
 
     <context:annotation-config/>
 
+    <!--/////////////////////////-->
+    <!--////WebUI settings///////-->
+    <!--/////////////////////////-->
+
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true" />
         <property name="ignoreUnresolvablePlaceholders" value="true" />
@@ -58,51 +62,48 @@
         </property>
     </bean>
 
-    <bean id="dataPointCompressingProcessor" class="com.griddynamics.jagger.webclient.server.plot.DataPointCompressingProcessor">
-        <constructor-arg index="0" value="${plot.data.compressing.threshold}"/>
-        <constructor-arg index="1" value="${plot.data.compressing.minCountForProcessing}"/>
+    <bean id="plotProviderService" class="com.griddynamics.jagger.webclient.server.PlotProviderServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
     </bean>
 
+    <bean id="sessionDataService" class="com.griddynamics.jagger.webclient.server.SessionDataServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
+    </bean>
+
+    <bean id="metricDataService" class="com.griddynamics.jagger.webclient.server.MetricDataServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
+    </bean>
 
     <bean id="controlTreeCreatorService" class="com.griddynamics.jagger.webclient.server.ControlTreeCreatorServiceImpl" >
-        <property name="databaseFetcher" ref="databaseFetcher" />
-        <property name="threadPool" ref="executorService"/>
-        <property name="treeViewGroupRuleProvider" ref="ruleProvider_TreeViewGroup"/>
-        <property name="treeViewGroupMetricsToNodeRuleProvider" ref="ruleProvider_TreeViewGroupMetricsToNode"/>
-        <property name="defaultMonitoringParams" ref="monitoringPlotGroups"/>
+        <property name="databaseService" ref="databaseService"/>
     </bean>
+
+    <bean id="nodeInfoService" class="com.griddynamics.jagger.webclient.server.NodeInfoServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
+    </bean>
+
+    <bean id="commonDataService" class="com.griddynamics.jagger.webclient.server.CommonDataServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
+    </bean>
+
+    <bean id="testInfoService" class="com.griddynamics.jagger.webclient.server.TestInfoServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
+    </bean>
+
+    <!--/////////////////////////-->
+    <!--/////////////////////////-->
+    <!--/////////////////////////-->
 
     <bean id="executorService" class="java.util.concurrent.Executors"
           factory-method="newCachedThreadPool"
           destroy-method="shutdownNow">
     </bean>
 
-    <bean id="fetchUtil" class="com.griddynamics.jagger.webclient.server.fetch.FetchUtil"/>
+    <bean id="fetchUtil" class="com.griddynamics.jagger.dbapi.util.FetchUtil"/>
 
-    <bean id="databaseFetcher" class="com.griddynamics.jagger.webclient.server.CommonDataProviderImpl">
-        <property name="customMetricPlotNameProvider" ref="customMetricPlotNameProvider"/>
-        <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
-        <property name="workloadPlotGroups" ref="workloadPlotGroups"/>
-        <property name="standardMetricNameDtoList" ref="standardMetricNameDtoList"/>
-        <property name="webClientProperties" ref="webClientProperties"/>
-        <property name="fetchUtil" ref="fetchUtil"/>
-    </bean>
+    <bean id= "dataSaverService" class="com.griddynamics.jagger.dbapi.DataSaverServiceImpl"/>
 
-
-    <bean id="sessionDataService" class="com.griddynamics.jagger.webclient.server.SessionDataServiceImpl">
-        <property name="commonDataService" ref="commonDataService"/>
-        <property name="dataSaverService" ref="dataSaverService"/>
-    </bean>
-
-    <bean id= "dataSaverService" class="com.griddynamics.jagger.webclient.server.DataSaverServiceImpl"/>
-
-    <bean id="testInfoService" class="com.griddynamics.jagger.webclient.server.TestInfoServiceImpl"/>
-
-    <bean id="commonDataService" class="com.griddynamics.jagger.webclient.server.CommonDataServiceImpl">
-        <property name="commonDataProvider" ref="databaseFetcher"/>
-    </bean>
-
-    <bean id="webClientProperties" class="com.griddynamics.jagger.webclient.client.data.WebClientProperties">
+    <bean id="webClientProperties" class="com.griddynamics.jagger.dbapi.model.WebClientProperties">
         <property name="userCommentEditAvailable" value="${webui.user.comment.available:true}"/>
         <property name="userCommentMaxLength" value="${webui.user.comment.max.length:1000}"/>
         <property name="tagsAvailable" value="${webui.tags.available:true}"/>
@@ -110,10 +111,10 @@
     </bean>
 
     <!--==========Control tree creation rules==========-->
-    <bean id="ruleProvider_TreeViewGroupMetricsToNode" class="com.griddynamics.jagger.webclient.server.rules.TreeViewGroupMetricsToNodeRuleProvider">
+    <bean id="ruleProvider_TreeViewGroupMetricsToNode" class="com.griddynamics.jagger.dbapi.model.rules.TreeViewGroupMetricsToNodeRuleProvider">
         <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
     </bean>
-    <bean id="ruleProvider_TreeViewGroup" class="com.griddynamics.jagger.webclient.server.rules.TreeViewGroupRuleProvider">
+    <bean id="ruleProvider_TreeViewGroup" class="com.griddynamics.jagger.dbapi.model.rules.TreeViewGroupRuleProvider">
         <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
     </bean>
 
@@ -125,13 +126,24 @@
     <bean id="workloadTaskDataService" class="com.griddynamics.jagger.webclient.server.WorkloadTaskDataServiceImpl"/>
     -->
 
-    <!--=======Fetching plots=========-->
+    <bean id="databaseService" class="com.griddynamics.jagger.dbapi.DatabaseServiceImpl">
+        <property name="threadPool" ref="executorService"/>
 
-    <bean id="plotProviderService" class="com.griddynamics.jagger.webclient.server.PlotProviderServiceImpl">
-        <property name="compressingProcessor" ref="dataPointCompressingProcessor"/>
-        <property name="monitoringPlotDataProvider" ref="monitoringPlotDataProvider"/>
+        <property name="standardMetricNameDtoList" ref="standardMetricNameDtoList"/>
+        <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
+        <property name="workloadPlotGroups" ref="workloadPlotGroups"/>
+
+        <property name="customMetricPlotNameProvider" ref="customMetricPlotNameProvider"/>
+        <property name="customMetricNameProvider" ref="customMetricNameProvider"/>
+        <property name="standardMetricNameProvider" ref="standardMetricNameProvider"/>
+
+        <property name="sessionInfoServiceImpl" ref="sessionInfoService"/>
+
+        <property name="treeViewGroupRuleProvider" ref="ruleProvider_TreeViewGroup"/>
+        <property name="treeViewGroupMetricsToNodeRuleProvider" ref="ruleProvider_TreeViewGroupMetricsToNode"/>
 
         <property name="legendProvider" ref="legendProvider"/>
+        <property name="webClientProperties" ref="webClientProperties"/>
 
         <property name="throughputMetricPlotFetcher" ref="throughputMetricPlotFetcher"/>
         <property name="latencyMetricPlotFetcher" ref="latencyMetricPlotFetcher"/>
@@ -140,104 +152,109 @@
         <property name="customTestGroupMetricPlotFetcher" ref="customTestGroupMetricPlotFetcher"/>
         <property name="monitoringMetricPlotFetcher" ref="monitoringMetricPlotFetcher"/>
 
-        <property name="threadPool" ref="executorService"/>
-    </bean>
-
-    <bean id="throughputMetricPlotFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.ThroughputMetricPlotFetcher">
-        <property name="legendProvider" ref="legendProvider"/>
-        <property name="threadPool" ref="executorService"/>
-    </bean>
-
-    <bean id="latencyMetricPlotFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.LatencyMetricPlotFetcher">
-        <property name="legendProvider" ref="legendProvider"/>
-        <property name="threadPool" ref="executorService"/>
-    </bean>
-
-    <bean id="timeLatencyPersentileMetricPlotFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.TimeLatencyPercentileMetricPlotFetcher">
-        <property name="legendProvider" ref="legendProvider"/>
-        <property name="threadPool" ref="executorService"/>
-    </bean>
-
-    <bean id="customMetricPlotFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.CustomMetricPlotFetcher">
-        <property name="legendProvider" ref="legendProvider"/>
-        <property name="threadPool" ref="executorService"/>
-    </bean>
-
-    <bean id="customTestGroupMetricPlotFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.CustomTestGroupMetricPlotFetcher">
-        <property name="legendProvider" ref="legendProvider"/>
-        <property name="threadPool" ref="executorService"/>
-        <property name="fetchUtil" ref="fetchUtil"/>
-    </bean>
-
-    <bean id="monitoringMetricPlotFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.MonitoringMetricPlotFetcher" init-method="init">
-        <property name="legendProvider" ref="legendProvider"/>
-        <property name="threadPool" ref="executorService"/>
-        <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
-    </bean>
-
-
-
-    <!--=======Fetching data for Summary table=========-->
-
-    <bean id="metricDataService" class="com.griddynamics.jagger.webclient.server.MetricDataServiceImpl">
         <property name="standardMetricSummaryFetcher" ref="standardMetricSummaryFetcher"/>
         <property name="durationMetricSummaryFetcher" ref="durationMetricSummaryFetcher"/>
         <property name="customMetricSummaryFetcher" ref="customMetricSummaryFetcher"/>
         <property name="customTestGroupMetricSummaryFetcher" ref="customTestGroupMetricSummaryFetcher"/>
         <property name="latencyMetricDataFetcher" ref="latencyMetricSummaryFetcher"/>
         <property name="validatorSummaryFetcher" ref="validatorSummaryFetcher"/>
+    </bean>
+
+    <!--=======Fetching session data=========-->
+    <bean id="sessionInfoService" class="com.griddynamics.jagger.dbapi.provider.SessionInfoProviderImpl">
+        <property name="dataSaverService" ref="dataSaverService"/>
+        <property name="webClientProperties" ref="webClientProperties"/>
+    </bean>
+
+    <!--=======Fetching data for plots=========-->
+
+    <bean id="throughputMetricPlotFetcher" class="com.griddynamics.jagger.dbapi.fetcher.ThroughputMetricPlotFetcher">
+        <property name="legendProvider" ref="legendProvider"/>
         <property name="threadPool" ref="executorService"/>
     </bean>
 
-    <bean id="standardMetricSummaryFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.StandardMetricSummaryFetcher">
+    <bean id="latencyMetricPlotFetcher" class="com.griddynamics.jagger.dbapi.fetcher.LatencyMetricPlotFetcher">
+        <property name="legendProvider" ref="legendProvider"/>
+        <property name="threadPool" ref="executorService"/>
+    </bean>
+
+    <bean id="timeLatencyPersentileMetricPlotFetcher" class="com.griddynamics.jagger.dbapi.fetcher.TimeLatencyPercentileMetricPlotFetcher">
+        <property name="legendProvider" ref="legendProvider"/>
+        <property name="threadPool" ref="executorService"/>
+    </bean>
+
+    <bean id="customMetricPlotFetcher" class="com.griddynamics.jagger.dbapi.fetcher.CustomMetricPlotFetcher">
+        <property name="legendProvider" ref="legendProvider"/>
+        <property name="threadPool" ref="executorService"/>
+    </bean>
+
+    <bean id="customTestGroupMetricPlotFetcher" class="com.griddynamics.jagger.dbapi.fetcher.CustomTestGroupMetricPlotFetcher">
+        <property name="legendProvider" ref="legendProvider"/>
+        <property name="threadPool" ref="executorService"/>
+        <property name="fetchUtil" ref="fetchUtil"/>
+    </bean>
+
+    <bean id="monitoringMetricPlotFetcher" class="com.griddynamics.jagger.dbapi.fetcher.MonitoringMetricPlotFetcher" init-method="init">
+        <property name="legendProvider" ref="legendProvider"/>
+        <property name="threadPool" ref="executorService"/>
+        <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
+    </bean>
+
+    <!--=======Fetching data for Summary table=========-->
+
+    <bean id="standardMetricSummaryFetcher" class="com.griddynamics.jagger.dbapi.fetcher.StandardMetricSummaryFetcher">
         <property name="threadPool" ref="executorService"/>
         <property name="maxSizeOfBatch" value="10000"/> <!-- optional. default value = 10000 -->
     </bean>
 
-    <bean id="durationMetricSummaryFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.DurationMetricSummaryFetcher">
+    <bean id="durationMetricSummaryFetcher" class="com.griddynamics.jagger.dbapi.fetcher.DurationMetricSummaryFetcher">
         <property name="threadPool" ref="executorService"/>
     </bean>
 
-    <bean id="latencyMetricSummaryFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.LatencyMetricSummaryFetcher">
+    <bean id="latencyMetricSummaryFetcher" class="com.griddynamics.jagger.dbapi.fetcher.LatencyMetricSummaryFetcher">
         <property name="threadPool" ref="executorService"/>
     </bean>
 
-    <bean id="customMetricSummaryFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.CustomMetricSummaryFetcher">
+    <bean id="customMetricSummaryFetcher" class="com.griddynamics.jagger.dbapi.fetcher.CustomMetricSummaryFetcher">
         <property name="threadPool" ref="executorService"/>
     </bean>
 
-    <bean id="customTestGroupMetricSummaryFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.CustomTestGroupMetricSummaryFetcher">
+    <bean id="customTestGroupMetricSummaryFetcher" class="com.griddynamics.jagger.dbapi.fetcher.CustomTestGroupMetricSummaryFetcher">
         <property name="threadPool" ref="executorService"/>
         <property name="fetchUtil" ref="fetchUtil"/>
     </bean>
 
-    <bean id="validatorSummaryFetcher" class="com.griddynamics.jagger.webclient.server.fetch.implementation.ValidatorSummaryFetcher">
+    <bean id="validatorSummaryFetcher" class="com.griddynamics.jagger.dbapi.fetcher.ValidatorSummaryFetcher">
         <property name="threadPool" ref="executorService"/>
     </bean>
 
-
-
     <!--==========Legend Provider==========-->
-    <bean id="legendProvider" class="com.griddynamics.jagger.webclient.server.LegendProvider"/>
+    <bean id="legendProvider" class="com.griddynamics.jagger.dbapi.util.LegendProvider"/>
 
-    <!--==========Workload Plot Data Providers-->
+    <!--==========Name Providers-->
 
-    <bean id="customMetricPlotNameProvider" class="com.griddynamics.jagger.webclient.server.plot.CustomMetricPlotNameProvider">
+    <bean id="customMetricPlotNameProvider" class="com.griddynamics.jagger.dbapi.provider.CustomMetricPlotNameProvider">
         <property name="fetchUtil" ref="fetchUtil"/>
         <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
     </bean>
 
-    <!--===========Monitoring Plot Data Providers===========-->
-    <bean id="monitoringPlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.MonitoringPlotDataProvider">
-        <constructor-arg index="0" ref="monitoringPlotGroups"/>
-        <property name="legendProvider" ref="legendProvider"/>
-        <property name="renderTaskBoundaries" value="${plot.rendering.taskBoundariesEnabled}"/>
+    <bean id="customMetricNameProvider" class="com.griddynamics.jagger.dbapi.provider.CustomMetricNameProvider">
+        <property name="fetchUtil" ref="fetchUtil"/>
+        <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
     </bean>
 
-    <!--===========Node Info Data Provider===========-->
-    <bean id="nodeInfoService" class="com.griddynamics.jagger.webclient.server.NodeInfoServiceImpl"/>
+    <bean id="standardMetricNameProvider" class="com.griddynamics.jagger.dbapi.provider.StandardMetricNameProvider">
+    </bean>
 
-    <bean id="throughputMetricNameDto" class="com.griddynamics.jagger.webclient.client.dto.MetricNameDto">
+    <!--===========Monitoring Plot Data Providers===========-->
+    <!--Deprecated. @TODO - remove it (?) -->
+    <!--<bean id="monitoringPlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.MonitoringPlotDataProvider">-->
+        <!--<constructor-arg index="0" ref="monitoringPlotGroups"/>-->
+        <!--<property name="legendProvider" ref="legendProvider"/>-->
+        <!--<property name="renderTaskBoundaries" value="${plot.rendering.taskBoundariesEnabled}"/>-->
+    <!--</bean>-->
+
+    <bean id="throughputMetricNameDto" class="com.griddynamics.jagger.dbapi.dto.MetricNameDto">
         <property name="metricName" value="throughput"/>
         <property name="metricDisplayName" value="Throughput, tps"/>
         <property name="origin"  value="STANDARD_METRICS"/>
@@ -248,7 +265,7 @@
         </property>
 
     </bean>
-    <bean id="latencyMetricNameDto" class="com.griddynamics.jagger.webclient.client.dto.MetricNameDto">
+    <bean id="latencyMetricNameDto" class="com.griddynamics.jagger.dbapi.dto.MetricNameDto">
         <property name="metricName" value="avgLatency"/>
         <property name="metricDisplayName" value="Latency, sec"/>
         <property name="origin"  value="STANDARD_METRICS"/>
@@ -258,7 +275,7 @@
             </list>
         </property>
     </bean>
-    <bean id="durationMetricNameDto" class="com.griddynamics.jagger.webclient.client.dto.MetricNameDto">
+    <bean id="durationMetricNameDto" class="com.griddynamics.jagger.dbapi.dto.MetricNameDto">
         <property name="metricName" value="duration"/>
         <property name="metricDisplayName" value="Duration, sec"/>
         <property name="origin"  value="DURATION"/>
@@ -268,7 +285,7 @@
             </list>
         </property>
     </bean>
-    <bean id="successRateMetricNameDto" class="com.griddynamics.jagger.webclient.client.dto.MetricNameDto">
+    <bean id="successRateMetricNameDto" class="com.griddynamics.jagger.dbapi.dto.MetricNameDto">
         <property name="metricName" value="successRate"/>
         <property name="metricDisplayName" value="Success rate"/>
         <property name="origin"  value="STANDARD_METRICS"/>
@@ -278,7 +295,7 @@
             </list>
         </property>
     </bean>
-    <bean id="samplesMetricNameDto" class="com.griddynamics.jagger.webclient.client.dto.MetricNameDto">
+    <bean id="samplesMetricNameDto" class="com.griddynamics.jagger.dbapi.dto.MetricNameDto">
         <property name="metricName" value="samples"/>
         <property name="metricDisplayName" value="Iterations, samples"/>
         <property name="origin"  value="STANDARD_METRICS"/>

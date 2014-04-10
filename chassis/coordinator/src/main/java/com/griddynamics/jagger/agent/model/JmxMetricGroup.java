@@ -21,6 +21,8 @@
 package com.griddynamics.jagger.agent.model;
 
 import com.google.common.collect.Lists;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameterImpl;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameterLevel;
 
 import javax.management.ObjectName;
 import java.util.ArrayList;

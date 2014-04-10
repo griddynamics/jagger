@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.webclient.server;
 
+import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.TaskDataService;
-import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

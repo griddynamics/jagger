@@ -3,8 +3,8 @@ package com.griddynamics.jagger.webclient.client.callback;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.view.client.MultiSelectionModel;
+import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
-import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
 
 import java.util.List;
 import java.util.Set;

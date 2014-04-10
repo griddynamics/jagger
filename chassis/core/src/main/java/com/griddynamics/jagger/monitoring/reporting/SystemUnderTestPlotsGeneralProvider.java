@@ -21,9 +21,10 @@
 package com.griddynamics.jagger.monitoring.reporting;
 
 import com.google.common.collect.Lists;
-import com.griddynamics.jagger.agent.model.MonitoringParameter;
-import com.griddynamics.jagger.monitoring.MonitoringParameterBean;
-import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
+import com.griddynamics.jagger.dbapi.parameter.GroupKey;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameterBean;
+import com.griddynamics.jagger.dbapi.entity.MonitoringStatistics;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
 import com.griddynamics.jagger.util.Pair;
 import net.sf.jasperreports.engine.JRDataSource;

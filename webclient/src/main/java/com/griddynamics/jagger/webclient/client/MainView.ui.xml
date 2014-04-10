@@ -2,7 +2,7 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
     <ui:with type="com.griddynamics.jagger.webclient.client.resources.JaggerResources" field="res"/>
-    <ui:with type="com.griddynamics.jagger.webclient.client.mvp.NameTokens" field="tokens" />
+    <ui:with type="com.griddynamics.jagger.dbapi.model.NameTokens" field="tokens" />
 
     <g:DockLayoutPanel unit="EM" addStyleNames="{res.css.mainPanel}">
 

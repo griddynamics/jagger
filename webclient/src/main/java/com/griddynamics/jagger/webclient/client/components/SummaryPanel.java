@@ -6,10 +6,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
-import com.griddynamics.jagger.webclient.client.dto.MetricDto;
-import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
-import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
+import com.griddynamics.jagger.dbapi.dto.MetricDto;
+import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
+import com.griddynamics.jagger.dbapi.model.WebClientProperties;
+import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
 
 import java.util.Collections;
 import java.util.HashMap;

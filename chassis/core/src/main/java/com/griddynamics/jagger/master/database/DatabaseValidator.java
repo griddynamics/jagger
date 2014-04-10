@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.master.database;
 
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
+import com.griddynamics.jagger.dbapi.entity.MetricDetails;
 import org.hibernate.*;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;

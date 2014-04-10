@@ -4,10 +4,10 @@ import com.griddynamics.jagger.dbapi.entity.MetricEntity;
 import com.griddynamics.jagger.dbapi.entity.MetricValueEntity;
 import com.griddynamics.jagger.dbapi.entity.SessionEntity;
 import com.griddynamics.jagger.dbapi.entity.TestEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.dbapi.entity.SessionData;
+import com.griddynamics.jagger.dbapi.entity.DiagnosticResultEntity;
+import com.griddynamics.jagger.dbapi.entity.MetricDetails;
+import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.util.*;

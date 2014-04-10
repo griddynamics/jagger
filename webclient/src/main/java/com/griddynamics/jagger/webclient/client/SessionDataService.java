@@ -4,8 +4,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.griddynamics.jagger.webclient.client.dto.PagedSessionDataDto;
-import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
-import com.griddynamics.jagger.webclient.client.dto.TagDto;
+import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
+import com.griddynamics.jagger.dbapi.dto.TagDto;
 
 import java.util.Date;
 import java.util.Set;

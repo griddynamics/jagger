@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.webclient.client.handler;
 
-import com.griddynamics.jagger.webclient.client.components.control.model.MetricNode;
+import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.sencha.gxt.widget.core.client.event.CheckChangeEvent;
 
 /**

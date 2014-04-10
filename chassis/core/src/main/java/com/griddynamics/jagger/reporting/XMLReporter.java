@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.reporting;
 
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
+import com.griddynamics.jagger.dbapi.entity.SessionData;
 import com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter;
 import com.griddynamics.jagger.engine.e1.reporting.SessionStatusReporter;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict;

@@ -2,11 +2,11 @@ package com.griddynamics.jagger.webclient.client.components;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiConstructor;
+import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
+import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.webclient.client.components.control.CheckHandlerMap;
-import com.griddynamics.jagger.webclient.client.components.control.model.*;
-import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
-import com.griddynamics.jagger.webclient.client.dto.SessionPlotNameDto;
-import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
+import com.griddynamics.jagger.dbapi.model.*;
+import com.griddynamics.jagger.dbapi.dto.SessionPlotNameDto;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.event.BeforeCheckChangeEvent;

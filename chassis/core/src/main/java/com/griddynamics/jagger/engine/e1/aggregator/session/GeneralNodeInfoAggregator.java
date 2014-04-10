@@ -21,23 +21,12 @@
 package com.griddynamics.jagger.engine.e1.aggregator.session;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.agent.model.GetGeneralNodeInfo;
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.NodeInfoEntity;
-import com.griddynamics.jagger.master.DistributionListener;
-import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
-import com.griddynamics.jagger.master.configuration.SessionExecutionListener;
-import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
-import com.griddynamics.jagger.master.configuration.SessionListener;
-import com.griddynamics.jagger.master.configuration.Task;
-import com.griddynamics.jagger.storage.KeyValueStorage;
-import com.griddynamics.jagger.storage.Namespace;
+import com.griddynamics.jagger.dbapi.entity.NodeInfoEntity;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
 import com.griddynamics.jagger.util.Timeout;
 import org.hibernate.HibernateException;
@@ -50,8 +39,6 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.sql.SQLException;
 import java.util.*;
-
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 
 /** Collects information about environment on all nodes and saves to DB
  * @author Dmitry Latnikov

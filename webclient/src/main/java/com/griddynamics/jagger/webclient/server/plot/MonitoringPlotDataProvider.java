@@ -1,16 +1,16 @@
 package com.griddynamics.jagger.webclient.server.plot;
 
-import com.griddynamics.jagger.agent.model.DefaultMonitoringParameters;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
-import com.griddynamics.jagger.monitoring.model.MonitoringStatistics;
-import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
-import com.griddynamics.jagger.monitoring.reporting.GroupKey;
+import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
+import com.griddynamics.jagger.dbapi.dto.*;
+import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
+import com.griddynamics.jagger.dbapi.util.LegendProvider;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.dbapi.entity.WorkloadData;
+import com.griddynamics.jagger.dbapi.entity.MonitoringStatistics;
+import com.griddynamics.jagger.dbapi.entity.PerformedMonitoring;
+import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
-import com.griddynamics.jagger.webclient.client.dto.*;
-import com.griddynamics.jagger.webclient.server.ColorCodeGenerator;
-import com.griddynamics.jagger.webclient.server.DataProcessingUtil;
-import com.griddynamics.jagger.webclient.server.LegendProvider;
+import com.griddynamics.jagger.dbapi.util.ColorCodeGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
