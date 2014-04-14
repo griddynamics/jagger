@@ -35,7 +35,7 @@
         <targetJdkVersion>1.6</targetJdkVersion>
         <targetJdk>${JAVA_HOME}</targetJdk>
 
-        <spring.version>3.0.5.RELEASE</spring.version>
+        <spring.version>3.1.4.RELEASE</spring.version>
     </properties>
 
     <modules>

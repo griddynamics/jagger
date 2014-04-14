@@ -53,6 +53,7 @@
                 <include>*com.griddynamics.jagger:chassis.invokers</include>
                 <include>*com.griddynamics.jagger:chassis.spring.schema</include>
                 <include>*com.griddynamics.jagger:chassis.providers</include>
+                <include>*com.griddynamics.jagger:dbapi</include>
             </includes>
         </dependencySet>
 
