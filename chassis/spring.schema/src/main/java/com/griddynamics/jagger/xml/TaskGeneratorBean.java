@@ -1,9 +1,7 @@
 package com.griddynamics.jagger.xml;
 
-import com.griddynamics.jagger.master.configuration.UserTaskGenerator;
 import com.griddynamics.jagger.user.TestSuitConfiguration;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 
 /**

@@ -27,6 +27,8 @@ import com.griddynamics.jagger.monitoring.InfiniteDuration;
 import com.griddynamics.jagger.monitoring.MonitoringTask;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import org.simpleframework.xml.core.Persister;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -41,7 +43,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * User: dkotlyarov
  */
+//???
+//    delete me
 public class UserTaskGenerator implements ApplicationContextAware {
+
+    private final static Logger log= LoggerFactory.getLogger(UserTaskGenerator.class);
+
     private ProcessingConfig config;
     private ApplicationContext applicationContext;
     private boolean monitoringEnable = false;
