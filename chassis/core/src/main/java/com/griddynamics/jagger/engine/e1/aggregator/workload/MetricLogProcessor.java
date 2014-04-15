@@ -214,6 +214,8 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             for (MetricAggregatorProvider entry: metricDescription.getAggregators()) {
                 MetricAggregator overallMetricAggregator = null;
                 MetricAggregator intervalAggregator = null;
+                // null if no normalizing intervals set
+                Long normalizeByInterval =  metricDescription.getNormalizeByIntervals().get(entry);
 
                 if (metricDescription.getShowSummary())
                     overallMetricAggregator= entry.provide();
@@ -252,7 +254,11 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                         // we leave interval
                                         // we have some info in interval aggregator
                                         // we need to save it
-                                        statistics.add(new MetricPointEntity(time - extendedInterval / 2, aggregated.doubleValue(), metricDescriptionEntity));
+                                        double value = aggregated.doubleValue();
+                                        if (normalizeByInterval != null) {
+                                            value = value * normalizeByInterval * 1d / extendedInterval;
+                                        }
+                                        statistics.add(new MetricPointEntity(time - extendedInterval / 2, value, metricDescriptionEntity));
                                         intervalAggregator.reset();
 
                                         // go for the next interval
@@ -278,13 +284,22 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         if (metricDescription.getPlotData()) {
                             Number aggregated = intervalAggregator.getAggregated();
                             if (aggregated != null){
-                                statistics.add(new MetricPointEntity(time - extendedInterval / 2, aggregated.doubleValue(), metricDescriptionEntity));
+                                double value = aggregated.doubleValue();
+                                if (normalizeByInterval != null) {
+                                    value = value * normalizeByInterval * 1d / extendedInterval;
+                                }
+                                statistics.add(new MetricPointEntity(time - extendedInterval / 2, value, metricDescriptionEntity));
                                 intervalAggregator.reset();
                             }
                         }
 
-                        if (metricDescription.getShowSummary())
-                            persistAggregatedMetricValue(overallMetricAggregator.getAggregated(), metricDescriptionEntity);
+                        if (metricDescription.getShowSummary()) {
+                            double value = overallMetricAggregator.getAggregated().doubleValue();
+                            if (normalizeByInterval != null) {
+                                value = value * normalizeByInterval * 1d / time;
+                            }
+                            persistAggregatedMetricValue(value, metricDescriptionEntity);
+                        }
 
                     }
                     finally {

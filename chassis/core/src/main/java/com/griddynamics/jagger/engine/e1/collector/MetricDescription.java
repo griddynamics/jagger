@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 
 import java.io.Serializable;
@@ -16,6 +18,7 @@ public class MetricDescription implements Serializable{
     protected boolean showSummary = true;
     protected boolean plotData;
     protected List<MetricAggregatorProvider> aggregators = Lists.newArrayList();
+    protected BiMap<MetricAggregatorProvider, Long> normalizeByIntervals = HashBiMap.create();
 
     /** Constructor
      * @param metricId - main ID of the metric. Metric will be stored under this ID in DB */
@@ -102,12 +105,29 @@ public class MetricDescription implements Serializable{
         return this;
     }
 
+    /**
+     * @return Map that maps Aggregators with it's intervalSizes to normalize */
+    public BiMap<MetricAggregatorProvider, Long> getNormalizeByIntervals() {
+        return normalizeByIntervals;
+    }
+
     /** Append new aggregator to list of metric aggregator
      * @param aggregator - aggregators that will be applied to this metric during result processing. @n
      *                     You can use Jagger built in aggregators @ref Main_Aggregators_group or custom aggregator
      * @return this MetricDescription */
     public MetricDescription addAggregator(MetricAggregatorProvider aggregator){
         aggregators.add(aggregator);
+        return this;
+    }
+
+    /** Append new aggregator to list of metric aggregator with interval of time to normalize plot data.
+     * @param aggregator - aggregators that will be applied to this metric during result processing. @n
+     *                     You can use Jagger built in aggregators @ref Main_Aggregators_group or custom aggregator
+     * @param normalizeByInterval - interval of time of aggregation.
+     * @return this MetricDescription */
+    public MetricDescription addAggregator(MetricAggregatorProvider aggregator, long normalizeByInterval){
+        aggregators.add(aggregator);
+        normalizeByIntervals.put(aggregator, normalizeByInterval);
         return this;
     }
 }
