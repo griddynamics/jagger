@@ -11,10 +11,13 @@ public class NameTokens {
     protected NameTokens() {
     }
 
+    // todo: as long as next 5 Strings uses only in webclient module propose to move them into webclient module
     public static final String SUMMARY = "summary";
     public static final String TRENDS = "trends";
     public static final String METRICS = "metrics";
     public static final String NODES = "nodes";
+    // *** demo
+    public static final String DEMO = "demo";
 
     public static final String CONTROL_SUMMARY_TRENDS = "Summary & Trends";
     public static final String CONTROL_METRICS = "Metrics";

@@ -115,6 +115,12 @@
                         <custom:NodesPanel addStyleNames="{res.css.nodesPanel}" ui:field="nodesPanel"/>
                     </g:ScrollPanel>
                 </g:tab>
+                <g:tab>
+                    <g:header>
+                        <b>Midi Demo</b>
+                    </g:header>
+                    <custom:DemoPanel ui:field="demoPanel"/>
+                </g:tab>
             </g:TabLayoutPanel>
         </g:center>
     </g:SplitLayoutPanel>

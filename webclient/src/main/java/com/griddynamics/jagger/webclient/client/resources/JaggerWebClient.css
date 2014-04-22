@@ -280,3 +280,15 @@ input[type="text"] {
     cursor: default;
     font-size: 14px;
 }
+
+.getDemoStyle1 {
+    background: #ffffcc;
+}
+
+.getDemoStyle2 {
+    background: #e1e4ff;
+}
+
+.stub {
+    background: #ffffff;
+}
