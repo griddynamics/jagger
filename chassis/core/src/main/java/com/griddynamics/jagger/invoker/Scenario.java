@@ -42,7 +42,7 @@ public abstract class Scenario<Q, R, E> {
         return listener;
     }
 
-    // from 1.2.4 all listeners are wrapped in loadInvocationListener
+    // from 1.2.4 all listeners are wrapped in invocationListener
     @Deprecated
     public void setListener(LoadInvocationListener<Q, R, E> listener) {
         checkNotNull(listener);

@@ -1189,6 +1189,92 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:complexType name="invoker-steps">
+        <xsd:annotation><xsd:documentation>
+            A kind of invoker, which let you to execute a complex invocation.
+            Complex invocation is a list of invocations, which executes one by one. You can attach InvocationListener's to every invocation.
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="invokerAbstract">
+                <xsd:choice>
+                    <xsd:element name="step" type="invokerStepAbstract" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="invokerStepAbstract" abstract="true">
+        <xsd:annotation><xsd:documentation>
+            Abstract step type
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="step-custom">
+        <xsd:annotation><xsd:documentation>
+            Contains invoker, listeners-invocation and query-processor.
+            If there is no query-processor, step will pass the same query and endpoint for next step
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="invokerStepAbstract">
+                <xsd:all>
+                    <xsd:element name="invoker" type="invokerAbstract" minOccurs="1"/>
+                    <xsd:element name="query-processor" type="queryProcessorAbstract" minOccurs="0"/>
+                    <xsd:element name="listeners-invocation" type="listenersInvocation" minOccurs="0"/>
+                </xsd:all>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="step-apache-http">
+        <xsd:annotation><xsd:documentation>
+            An implementation of step-custom, where invoker is invoker-apache-http
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="invokerStepAbstract">
+                <xsd:all>
+                    <xsd:element name="query-processor" type="queryProcessorAbstract" minOccurs="1"/>
+                    <xsd:element name="listeners-invocation" type="listenersInvocation" minOccurs="0"/>
+                </xsd:all>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="listenersInvocation">
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+                <xsd:choice>
+                    <xsd:element name="listener-invocation" type="listenerInvocationAbstract" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="queryProcessorAbstract" abstract="true">
+        <xsd:annotation><xsd:documentation>
+            Abstract query-processor type
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="basicType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="query-processor-ref">
+        <xsd:annotation><xsd:documentation>
+            Set reference to provider, which provide your custom QueryProcessor
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="queryProcessorAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <!--*****************-->
     <!-- Query providers -->
     <!--*****************-->

@@ -28,7 +28,7 @@ package com.griddynamics.jagger.invoker;
 public class CompositeLogLoadInvocationListener<Q, R, E>
         implements LoadInvocationListener<Q, R, E> {
 
-    private LoadInvocationLogger loggerListener = LoadInvocationLogger.<Q, R, E>create();
+    private LoadInvocationLogger<Q, R, E> loggerListener = LoadInvocationLogger.create();
 
     private final Iterable<LoadInvocationListener<Q, R, E>> listeners;
 

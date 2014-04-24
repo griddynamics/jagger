@@ -3,8 +3,6 @@ package com.griddynamics.jagger.master;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
-import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo;
-import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.DecisionMakerInfo;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.TestGroupDecisionMakerListener;
@@ -34,7 +32,7 @@ public class DecisionMakerDistributionListener implements DistributionListener {
     @Override
     public void onTaskDistributionCompleted(String sessionId, String taskId, Task task) {
         if (task instanceof CompositeTask) {
-            TestGroupDecisionMakerListener decisionMakerListener = TestGroupDecisionMakerListener.Composer.compose(ProviderUtil.provideElements(((CompositeTask) task).getDecisionMakerListeners(),
+            TestGroupDecisionMakerListener decisionMakerListener = TestGroupDecisionMakerListener.Composer.compose(ProviderUtil.provideElementsAndInjectContext(((CompositeTask) task).getDecisionMakerListeners(),
                     sessionId,
                     taskId,
                     nodeContext,

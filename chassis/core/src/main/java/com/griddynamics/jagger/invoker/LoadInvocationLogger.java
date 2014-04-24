@@ -55,7 +55,7 @@ public class LoadInvocationLogger<Q, R, E> implements LoadInvocationListener<Q, 
 
     @Override
     public void onFail(Q query, E endpoint, InvocationException e) {
-        log.warn("Invocation failed on {} error {} \n{}", new Object[] {endpoint, e.getMessage(), Throwables.getStackTraceAsString(e)});
+        log.warn("Invocation failed on {} error {}", new Object[] {endpoint, e.getMessage()});
     }
 
     @Override

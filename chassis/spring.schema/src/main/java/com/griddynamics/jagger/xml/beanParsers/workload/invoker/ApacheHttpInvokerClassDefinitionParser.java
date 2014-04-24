@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 public class ApacheHttpInvokerClassDefinitionParser extends InvokerClassDefinitionParser {
 
     @Override
-    public BeanDefinition parse(Element element, ParserContext parserContext) {
-        return getClassNameBeanDefinition(ApacheHttpInvoker.class);
+    protected String getInvokerClass() {
+        return ApacheHttpInvoker.class.getCanonicalName();
     }
 }

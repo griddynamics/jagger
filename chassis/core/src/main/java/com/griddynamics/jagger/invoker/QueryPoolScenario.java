@@ -56,8 +56,13 @@ public class QueryPoolScenario<Q, R, E> extends Scenario<Q, R, E> {
 
     }
 
-    private Invoker<Q, Nothing, E> invoker() {
-        return Invokers.listenableInvoker(this.invoker, getInvocationListener(), systemClock);
+    private Invoker<Q, R, E> cachedListenableInvoker;
+
+    private Invoker<Q, R, E> invoker() {
+        if (cachedListenableInvoker == null){
+            cachedListenableInvoker = Invokers.listenableInvoker(this.invoker, getInvocationListener(), systemClock);
+        }
+        return cachedListenableInvoker;
     }
 
     @Override

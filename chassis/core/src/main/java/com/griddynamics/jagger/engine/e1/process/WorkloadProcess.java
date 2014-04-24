@@ -81,6 +81,8 @@ public class WorkloadProcess implements NodeProcess<WorkloadStatus> {
     }
 
     public void start() {
+        ProviderUtil.injectContext(command.getScenarioFactory(), sessionId, command.getTaskId(), context, JaggerPlace.INVOCATION_LISTENER);
+
         threads = Lists.newLinkedList();
         delay = command.getScenarioContext().getWorkloadConfiguration().getDelay();
 

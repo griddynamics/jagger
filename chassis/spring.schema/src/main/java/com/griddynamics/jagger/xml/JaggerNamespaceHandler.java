@@ -12,10 +12,7 @@ import com.griddynamics.jagger.xml.beanParsers.workload.TestDescriptionDefinitio
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.OneByOneBalancerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.RoundRobinBalancerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.calibration.DefaultCalibratorDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ApacheHttpInvokerClassDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.invoker.*;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.*;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.*;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.CsvProviderDefinitionParser;
@@ -90,6 +87,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("metric-success-rate", new SuccessRateCollectorDefinitionParser());
 
         //listener
+        registerBeanDefinitionParser("listeners-invocation", listCustomDefinitionParser);
         registerBeanDefinitionParser("listener-invocation", findTypeParser);
         registerBeanDefinitionParser("listener-invocation-not-null-response", new NotNullInvocationListenerDefinitionParser());
 
@@ -114,6 +112,12 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("invoker-apache-http", new ApacheHttpInvokerClassDefinitionParser());
         registerBeanDefinitionParser("invoker-soap", new SoapInvokerClassDefinitionParser());
         registerBeanDefinitionParser("invoker-class", new ClassInvokerDefinitionParser());
+
+        registerBeanDefinitionParser("invoker-steps", new InvokerStepsDefinitionParser());
+        registerBeanDefinitionParser("step",  findTypeParser);
+        registerBeanDefinitionParser("step-custom", new CustomInvokerStepDefinitionParser());
+        registerBeanDefinitionParser("step-apache-http", new ApacheHttpInvokerStepDefinitionParser());
+        registerBeanDefinitionParser("query-processor", findTypeParser);
 
         //endpointProvider
         registerBeanDefinitionParser("endpoint-provider", findTypeParser);

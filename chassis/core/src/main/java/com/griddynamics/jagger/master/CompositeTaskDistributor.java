@@ -100,11 +100,11 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
             @Override
             protected void run() throws Exception {
 
-                TestGroupListener compositeTestGroupListener = TestGroupListener.Composer.compose(ProviderUtil.provideElements(task.getListeners(),
-                                                                                                                                sessionId,
-                                                                                                                                taskId,
-                                                                                                                                nodeContext,
-                                                                                                                                JaggerPlace.TEST_GROUP_LISTENER));
+                TestGroupListener compositeTestGroupListener = TestGroupListener.Composer.compose(ProviderUtil.provideElementsAndInjectContext(task.getListeners(),
+                                                                                                                                                sessionId,
+                                                                                                                                                taskId,
+                                                                                                                                                nodeContext,
+                                                                                                                                                JaggerPlace.TEST_GROUP_LISTENER));
 
                 TestGroupInfo testGroupInfo = new TestGroupInfo(task, sessionId);
 

@@ -13,23 +13,18 @@ import org.w3c.dom.Element;
  * Time: 1:40 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ClassInvokerDefinitionParser extends CustomBeanDefinitionParser {
+public class ClassInvokerDefinitionParser extends InvokerClassDefinitionParser {
 
     private String className;
-
-    @Override
-    protected Class getBeanClass(Element element) {
-        return String.class;
-    }
-
-    @Override
-    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        builder.addConstructorArgValue(className);
-    }
 
     @Override
     protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         className = element.getAttribute(XMLConstants.CLASS);
         element.removeAttribute(XMLConstants.CLASS);
+    }
+
+    @Override
+    protected String getInvokerClass() {
+        return className;
     }
 }

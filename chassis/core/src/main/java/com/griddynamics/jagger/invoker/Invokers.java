@@ -48,7 +48,7 @@ public class Invokers {
 
     }
 
-    public static <Q, R, E> Invoker<Q, Nothing, E> listenableInvoker(Invoker<Q, R, E> invoker, InvocationListener<Q, R, E> invocationListener, SystemClock clock) {
+    public static <Q, R, E> Invoker<Q, R, E> listenableInvoker(Invoker<Q, R, E> invoker, InvocationListener<Q, R, E> invocationListener, SystemClock clock) {
         return new ListenableInvoker<Q, R, E>(invoker, invocationListener, clock);
     }
 
@@ -132,7 +132,7 @@ public class Invokers {
         }
     }
 
-    private static class ListenableInvoker<Q, R, E> implements Invoker<Q, Nothing, E> {
+    private static class ListenableInvoker<Q, R, E> implements Invoker<Q, R, E> {
         private final Invoker<Q, R, E> invoker;
         private final SystemClock clock;
         private final InvocationListener invocationListener;
@@ -144,13 +144,15 @@ public class Invokers {
         }
 
         @Override
-        public Nothing invoke(Q query, E endpoint) throws InvocationException {
+        public R invoke(Q query, E endpoint) throws InvocationException {
             InvocationInfo<Q, R, E> invocationInfo = new InvocationInfo<Q, R, E>(query, endpoint);
 
             invocationListener.onStart(invocationInfo);
             long before = clock.currentTimeMillis();
+
+            R result = null;
             try {
-                R result = invoker.invoke(query, endpoint);
+                result = invoker.invoke(query, endpoint);
                 long after = clock.currentTimeMillis();
                 long duration = after - before;
                 invocationInfo.setDuration(duration);
@@ -162,7 +164,7 @@ public class Invokers {
             } catch (Throwable throwable) {
                 invocationListener.onError(invocationInfo, throwable);
             }
-            return Nothing.INSTANCE;
+            return result;
         }
     }
 }

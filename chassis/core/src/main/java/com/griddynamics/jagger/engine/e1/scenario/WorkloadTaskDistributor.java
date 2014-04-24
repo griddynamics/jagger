@@ -85,11 +85,11 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
             @Override
             protected void run() throws Exception {
                 //create test-listener
-                TestListener testListener = TestListener.Composer.compose(ProviderUtil.provideElements(task.getTestListeners(),
-                                                                                                        sessionId,
-                                                                                                        taskId,
-                                                                                                        nodeContext,
-                                                                                                        JaggerPlace.TEST_LISTENER));
+                TestListener testListener = TestListener.Composer.compose(ProviderUtil.provideElementsAndInjectContext(task.getTestListeners(),
+                        sessionId,
+                        taskId,
+                        nodeContext,
+                        JaggerPlace.TEST_LISTENER));
 
                 // start time must be initialized after calibration
                 // if start time will not initialize(calibration) - set 0 test duration

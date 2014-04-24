@@ -27,7 +27,7 @@ public class QueryPoolScenarioDefinitionParser extends CustomBeanDefinitionParse
 
         //parse invoker
         Element invokerElement = DomUtils.getChildElementByTagName(element, XMLConstants.INVOKER);
-        setBeanProperty(XMLConstants.INVOKER_CLAZZ, invokerElement, parserContext, builder.getBeanDefinition());
+        setBeanProperty(XMLConstants.INVOKER_WRAPPER, invokerElement, parserContext, builder.getBeanDefinition());
 
         //parse balancer
         Element balancerElement = DomUtils.getChildElementByTagName(element, XMLConstants.QUERY_DISTRIBUTOR);

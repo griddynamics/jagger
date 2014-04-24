@@ -13,9 +13,8 @@ import org.w3c.dom.Element;
  * To change this template use File | Settings | File Templates.
  */
 public class HttpInvokerClassDefinitionParser extends InvokerClassDefinitionParser {
-
     @Override
-    public BeanDefinition parse(Element element, ParserContext parserContext) {
-        return getClassNameBeanDefinition(HttpInvoker.class);
+    protected String getInvokerClass() {
+        return HttpInvoker.class.getCanonicalName();
     }
 }

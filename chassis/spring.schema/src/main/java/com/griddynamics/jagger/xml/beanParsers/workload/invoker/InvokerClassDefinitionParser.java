@@ -1,8 +1,14 @@
 package com.griddynamics.jagger.xml.beanParsers.workload.invoker;
 
+import com.griddynamics.jagger.invoker.InvokerWrapper;
+import com.griddynamics.jagger.invoker.soap.SOAPInvoker;
+import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,11 +17,22 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
  * Time: 4:18 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class InvokerClassDefinitionParser implements BeanDefinitionParser {
+public abstract class InvokerClassDefinitionParser extends CustomBeanDefinitionParser {
 
-    protected BeanDefinition getClassNameBeanDefinition(Class clazz){
-        BeanDefinitionBuilder className = BeanDefinitionBuilder.genericBeanDefinition(String.class);
-        className.addConstructorArgValue(clazz.getCanonicalName());
-        return  className.getBeanDefinition();
+    @Override
+    protected Class getBeanClass(Element element) {
+        return InvokerWrapper.class;
+    }
+
+    @Override
+    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        builder.addPropertyValue(XMLConstants.INVOKER_CLAZZ, getInvokerClass());
+    }
+
+    protected abstract String getInvokerClass();
+
+    @Override
+    protected boolean shouldGenerateId() {
+        return true;
     }
 }

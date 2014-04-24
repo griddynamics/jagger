@@ -30,7 +30,9 @@ import com.griddynamics.jagger.coordinator.CommandExecutor;
 import com.griddynamics.jagger.coordinator.ConfigurableWorker;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.Qualifier;
+import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.scenario.CalibrationInfoCollector;
+import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
 import com.griddynamics.jagger.invoker.Scenario;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
@@ -164,6 +166,7 @@ public class WorkloadWorker extends ConfigurableWorker {
             @Override
             public Boolean execute(PerformCalibration command, NodeContext nodeContext) {
                 ScenarioFactory<Object, Object, Object> scenarioFactory = command.getScenarioFactory();
+                ProviderUtil.injectContext(scenarioFactory, command.getSessionId(), command.getTaskId(), nodeContext, JaggerPlace.INVOCATION_LISTENER);
 
                 Scenario<Object, Object, Object> scenario = scenarioFactory.get(nodeContext);
                 int calibrationSamplesCount = scenarioFactory.getCalibrationSamplesCount();

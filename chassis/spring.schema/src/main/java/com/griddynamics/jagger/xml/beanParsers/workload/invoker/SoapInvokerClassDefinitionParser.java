@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 public class SoapInvokerClassDefinitionParser extends InvokerClassDefinitionParser {
 
     @Override
-    public BeanDefinition parse(Element element, ParserContext parserContext) {
-        return getClassNameBeanDefinition(SOAPInvoker.class);
+    protected String getInvokerClass() {
+        return SOAPInvoker.class.getCanonicalName();
     }
 }

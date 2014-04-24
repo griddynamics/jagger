@@ -21,11 +21,13 @@
 package com.griddynamics.jagger.invoker;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
+import com.griddynamics.jagger.engine.e1.services.ServicesInitializable;
 import com.griddynamics.jagger.util.JavaSystemClock;
 import com.griddynamics.jagger.util.SystemClock;
 
-public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, E> {
-    private Class<Invoker<Q, R, E>> invokerClazz;
+public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, E>, ServicesInitializable {
+    private InvokerWrapper<Q, R, E> invokerWrapper;
     private QueryPoolLoadBalancer<Q, E> loadBalancer;
     private SystemClock systemClock = new JavaSystemClock();
 
@@ -36,19 +38,23 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
 
     @Override
     public Scenario<Q, R, E> get(NodeContext nodeContext) {
-        Invoker<Q, R, E> invoker = nodeContext.getService(invokerClazz);
-        if(invoker == null) {
-            throw new IllegalArgumentException("Service for class + '" + invokerClazz.getCanonicalName()
-            + "' not found!");
-        }
+        Invoker<Q, R, E> invoker = invokerWrapper.getInvoker(nodeContext);
+
         if (endpointProvider!=null) loadBalancer.setEndpointProvider(getEndpointProvider());
         if (queryProvider!=null)    loadBalancer.setQueryProvider(getQueryProvider());
         return new QueryPoolScenario<Q, R, E>(invoker, loadBalancer.provide(), systemClock);
     }
 
-    //@Required
+    public void setInvokerWrapper(InvokerWrapper<Q, R, E> invokerWrapper) {
+        this.invokerWrapper = invokerWrapper;
+    }
+
+    // need for old configuration
+    @Deprecated
     public void setInvokerClazz(Class<Invoker<Q, R, E>> invokerClazz) {
-        this.invokerClazz = invokerClazz;
+        InvokerWrapper<Q, R, E> wrapper = new InvokerWrapper<Q, R, E>();
+        wrapper.setInvokerClazz(invokerClazz);
+        setInvokerWrapper(wrapper);
     }
 
     //@Required
@@ -86,5 +92,10 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
 
     public void setEndpointProvider(Iterable<E> endpointProvider) {
         this.endpointProvider = endpointProvider;
+    }
+
+    @Override
+    public void initServices(String sessionId, String taskId, NodeContext context, JaggerPlace environment) {
+        invokerWrapper.initServices(sessionId, taskId, context, environment);
     }
 }

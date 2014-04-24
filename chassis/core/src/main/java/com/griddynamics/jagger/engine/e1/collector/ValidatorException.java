@@ -28,4 +28,9 @@ public class ValidatorException extends InvocationException {
     public Object getResult() {
         return result;
     }
+
+    @Override
+    public String getMessage() {
+        return "Failed to validate invocation result with validator "+validator.getName();
+    }
 }

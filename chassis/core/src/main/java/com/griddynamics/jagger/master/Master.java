@@ -218,11 +218,11 @@ public class Master implements Runnable {
         try {
             log.info("Configuration launched!!");
 
-            TestSuiteListener testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
-                                                                                                                    sessionId,
-                                                                                                                    "session",
-                                                                                                                    context,
-                                                                                                                    JaggerPlace.TEST_SUITE_LISTENER));
+            TestSuiteListener testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElementsAndInjectContext(configuration.getTestSuiteListeners(),
+                                                                                                                                    sessionId,
+                                                                                                                                    "session",
+                                                                                                                                    context,
+                                                                                                                                    JaggerPlace.TEST_SUITE_LISTENER));
 
             TestSuiteInfo testSuiteInfo = new TestSuiteInfo(sessionId,generalNodeInfo);
             long startTime = System.currentTimeMillis();

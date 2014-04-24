@@ -51,7 +51,7 @@ public class SimpleScenario<Q, R, E> extends Scenario<Q, R, E> {
         invoker().invoke(query, endpoint);
     }
 
-    private Invoker<Q, Nothing, E> invoker() {
+    private Invoker<Q, R, E> invoker() {
         return Invokers.listenableInvoker(this.invoker, getInvocationListener(), systemClock);
     }
 
