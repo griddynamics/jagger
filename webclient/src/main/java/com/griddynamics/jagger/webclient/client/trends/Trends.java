@@ -60,6 +60,8 @@ public class Trends extends DefaultActivity {
     private TabIdentifier tabTrends;
     private TabIdentifier tabMetrics;
     private TabIdentifier tabNodes;
+    // *** demo
+    private TabIdentifier tabDemo;
 
     private TagBox tagFilterBox;
 
@@ -102,6 +104,10 @@ public class Trends extends DefaultActivity {
 
     @UiField
     NodesPanel nodesPanel;
+
+    // ** demo
+    @UiField
+    DemoPanel demoPanel;
 
     TextBox sessionIdsTextBox = new TextBox();
 
@@ -683,11 +689,15 @@ public class Trends extends DefaultActivity {
         final int indexTrends = 1;
         final int indexMetrics = 2;
         final int indexNodes = 3;
+        // *** demo
+        final int indexDemo = 4;
 
         tabSummary = new TabIdentifier(NameTokens.SUMMARY,indexSummary);
         tabTrends = new TabIdentifier(NameTokens.TRENDS,indexTrends);
         tabMetrics = new TabIdentifier(NameTokens.METRICS,indexMetrics);
         tabNodes = new TabIdentifier(NameTokens.NODES,indexNodes);
+        // ***  demo
+        tabDemo = new TabIdentifier(NameTokens.DEMO, indexDemo);
 
         mainTabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
             @Override
@@ -705,6 +715,10 @@ public class Trends extends DefaultActivity {
                         break;
                     case indexNodes:
                         onNodesTabSelected();
+                        break;
+                    // ***  demo
+                    case indexDemo:
+                        onDemoTabSelected();
                     default:
                 }
             }
@@ -760,18 +774,25 @@ public class Trends extends DefaultActivity {
         nodesPanel.getNodeInfo();
     }
 
+    private void onDemoTabSelected() {
+        mainTabPanel.forceLayout();
+        demoPanel.startDemo();
+    }
+
     private void chooseTab(String token) {
-        if (tabSummary.getTabName().equals(token)) {
-            mainTabPanel.selectTab(tabSummary.getTabIndex());
-        } else if (tabTrends.getTabName().equals(token)) {
-            mainTabPanel.selectTab(tabTrends.getTabIndex());
-        } else if (tabMetrics.getTabName().equals(token)) {
-            mainTabPanel.selectTab(tabMetrics.getTabIndex());
-        } else if (tabNodes.getTabName().equals(token)){
-            mainTabPanel.selectTab(tabNodes.getTabIndex());
-        } else {
-            new ExceptionPanel("Unknown tab with name " + token + " selected");
-        }
+        // ***  demo
+        mainTabPanel.selectTab(tabDemo.getTabIndex());
+//        if (tabSummary.getTabName().equals(token)) {
+//            mainTabPanel.selectTab(tabSummary.getTabIndex());
+//        } else if (tabTrends.getTabName().equals(token)) {
+//            mainTabPanel.selectTab(tabTrends.getTabIndex());
+//        } else if (tabMetrics.getTabName().equals(token)) {
+//            mainTabPanel.selectTab(tabMetrics.getTabIndex());
+//        } else if (tabNodes.getTabName().equals(token)){
+//            mainTabPanel.selectTab(tabNodes.getTabIndex());
+//        } else {
+//            new ExceptionPanel("Unknown tab with name " + token + " selected");
+//        }
     }
 
     private void setupSessionDataGrid() {
