@@ -33,18 +33,24 @@
     <field name="metricPlot" class="net.sf.jasperreports.engine.JRRenderable"/>
     <field name="metricName" class="java.lang.String"/>
     <field name="title" class="java.lang.String"/>
+    <field name="groupTitle" class="java.lang.String"/>
     <detail>
-        <band height="200" splitType="Stretch">
+        <band height="260" splitType="Stretch">
             <frame>
-                <reportElement x="0" y="0" width="530" height="200"/>
+                <reportElement x="0" y="0" width="530" height="260"/>
                 <textField>
-                    <reportElement style="Header_Italic" x="0" y="10" width="500" height="20" forecolor="#000000"/>
+                    <reportElement style="Header_Bold" x="0" y="10" width="520" height="15" forecolor="#000000"/>
+                    <textElement textAlignment="Left"/>
+                    <textFieldExpression><![CDATA[$F{groupTitle}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement style="Header_Italic" x="0" y="25" width="520" height="15" forecolor="#000000"/>
                     <textElement textAlignment="Right"/>
                     <textFieldExpression><![CDATA[$F{title}]]></textFieldExpression>
                 </textField>
 
                 <image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" isLazy="true">
-                    <reportElement style="Compact_Header_Bold" x="30" y="20" width="500" height="180" />
+                    <reportElement style="Compact_Header_Bold" x="10" y="40" width="520" height="220" />
                     <imageExpression class="net.sf.jasperreports.engine.JRRenderable">
                         <![CDATA[$F{metricPlot}]]></imageExpression>
                 </image>

@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.webclient.client.dto;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
 
 import java.util.List;
 

@@ -15,6 +15,8 @@ public class ValidatorException extends InvocationException {
     private Object result;
 
     public ValidatorException(ResponseValidator validator, Object result) {
+        super(" validator " + validator.getName() + " failed ");
+
         this.validator = validator;
         this.result = result;
     }

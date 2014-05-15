@@ -21,7 +21,7 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Lists;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity;
+import com.griddynamics.jagger.dbapi.entity.ValidationResultEntity;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;

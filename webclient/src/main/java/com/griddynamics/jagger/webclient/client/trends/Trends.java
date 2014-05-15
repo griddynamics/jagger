@@ -1,8 +1,5 @@
 package com.griddynamics.jagger.webclient.client.trends;
 
-import ca.nanometrics.gflot.client.*;
-import ca.nanometrics.gflot.client.options.*;
-import ca.nanometrics.gflot.client.options.Range;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
@@ -13,6 +10,7 @@ import com.google.gwt.event.logical.shared.*;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.HasDirection;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,18 +24,20 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.*;
+import com.googlecode.gflot.client.*;
+import com.googlecode.gflot.client.options.*;
+import com.griddynamics.jagger.dbapi.dto.*;
+import com.griddynamics.jagger.dbapi.model.*;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
 import com.griddynamics.jagger.webclient.client.*;
 import com.griddynamics.jagger.webclient.client.components.*;
 import com.griddynamics.jagger.webclient.client.components.control.CheckHandlerMap;
 import com.griddynamics.jagger.webclient.client.components.control.SimpleNodeValueProvider;
-import com.griddynamics.jagger.webclient.client.components.control.model.*;
 import com.griddynamics.jagger.webclient.client.data.*;
 import com.griddynamics.jagger.webclient.client.dto.*;
 import com.griddynamics.jagger.webclient.client.handler.ShowCurrentValueHoverListener;
 import com.griddynamics.jagger.webclient.client.handler.ShowTaskDetailsListener;
 import com.griddynamics.jagger.webclient.client.mvp.JaggerPlaceHistoryMapper;
-import com.griddynamics.jagger.webclient.client.mvp.NameTokens;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 import com.griddynamics.jagger.webclient.client.resources.SessionDataGridResources;
 import com.griddynamics.jagger.webclient.client.resources.SessionPagerResources;
@@ -77,7 +77,7 @@ public class Trends extends DefaultActivity {
     TabLayoutPanel mainTabPanel;
 
     @UiField
-    HTMLPanel plotPanel;
+    PlotsPanel plotPanel;
 
     @UiField(provided = true)
     DataGrid<SessionDataDto> sessionsDataGrid;
@@ -92,7 +92,7 @@ public class Trends extends DefaultActivity {
     ScrollPanel scrollPanelMetrics;
 
     @UiField
-    HTMLPanel plotTrendsPanel;
+    PlotsPanel plotTrendsPanel;
 
     @UiField
     ScrollPanel summaryPanelScrollPanel;
@@ -126,8 +126,7 @@ public class Trends extends DefaultActivity {
     private Timer stopTypingSessionIdsTimer;
     private Timer stopTypingSessionTagsTimer;
 
-
-
+    private PlotSaver plotSaver = new PlotSaver();
 
 
     @UiHandler("uncheckSessionsButton")
@@ -485,10 +484,11 @@ public class Trends extends DefaultActivity {
     }
 
     private WebClientProperties webClientProperties = new WebClientProperties();
+    private Map<String,Set<String>> defaultMonitoringParameters = Collections.emptyMap();
 
     public void getPropertiesUpdatePlace(final TrendsPlace place){
 
-        CommonDataService.Async.getInstance().getWebClientProperties(new AsyncCallback<WebClientProperties>() {
+        CommonDataService.Async.getInstance().getWebClientStartProperties(new AsyncCallback<WebClientStartProperties>() {
             @Override
             public void onFailure(Throwable caught) {
                 new ExceptionPanel("Default properties will be used. Exception while properties retrieving: " + caught.getMessage());
@@ -496,27 +496,9 @@ public class Trends extends DefaultActivity {
             }
 
             @Override
-            public void onSuccess(WebClientProperties result) {
-                webClientProperties = result;
-                updatePlace(place);
-            }
-        });
-    }
-
-    private Map<String,Set<String>> defaultMonitoringParameters;
-
-    public void loadDefaultMonitoringParameters(){
-
-        CommonDataService.Async.getInstance().getDefaultMonitoringParameters(new AsyncCallback<Map<String, Set<String>>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                new ExceptionPanel("Failed to get description of default monitoring parameters. Exception while description fetching: " + caught.getMessage());
-                updatePlace(place);
-            }
-
-            @Override
-            public void onSuccess(Map<String, Set<String>> result) {
-                defaultMonitoringParameters = result;
+            public void onSuccess(WebClientStartProperties result) {
+                webClientProperties = result.getWebClientProperties();
+                defaultMonitoringParameters = result.getDefaultMonitoringParameters();
                 updatePlace(place);
             }
         });
@@ -596,6 +578,7 @@ public class Trends extends DefaultActivity {
         label.setHorizontalAlignment(HasHorizontalAlignment.HorizontalAlignmentConstant.startOf(HasDirection.Direction.DEFAULT));
         label.setStylePrimaryName(JaggerResources.INSTANCE.css().centered());
         label.setHeight("100%");
+        NO_SESSION_CHOSEN.setStyleName(JaggerResources.INSTANCE.css().controlFont());
         controlTreePanel.add(NO_SESSION_CHOSEN);
     }
 
@@ -610,41 +593,101 @@ public class Trends extends DefaultActivity {
     }
 
 
-    private SimplePlot createPlot(final String id, Markings markings, String xAxisLabel,
+    private SimplePlot createPlot(PlotsPanel panel, final String id, Markings markings, String xAxisLabel,
                                   double yMinimum, boolean isMetric, final List<String> sessionIds) {
-        PlotOptions plotOptions = new PlotOptions();
-        plotOptions.setZoomOptions(new ZoomOptions().setAmount(1.02));
-        plotOptions.setGlobalSeriesOptions(new GlobalSeriesOptions()
-                .setLineSeriesOptions(new LineSeriesOptions().setLineWidth(1).setShow(true).setFill(0.1))
-                .setPointsOptions(new PointsSeriesOptions().setRadius(1).setShow(true)).setShadowSize(0d));
+        PlotOptions plotOptions = PlotOptions.create();
+        plotOptions.setZoomOptions(ZoomOptions.create().setAmount(1.02));
+        plotOptions.setGlobalSeriesOptions(GlobalSeriesOptions.create()
+                .setLineSeriesOptions(LineSeriesOptions.create().setLineWidth(1).setShow(true).setFill(0.1))
+                .setPointsOptions(PointsSeriesOptions.create().setRadius(1).setShow(true)).setShadowSize(0d));
 
-        plotOptions.setPanOptions(new PanOptions().setInteractive(true));
+        plotOptions.setCanvasEnabled(true);
 
-        if (isMetric) {
-            plotOptions.addXAxisOptions(new AxisOptions().setZoomRange(true).setTickDecimals(0)
-                    .setTickFormatter(new TickFormatter() {
-                        @Override
-                        public String formatTickValue(double tickValue, Axis axis) {
-                            if (tickValue >= 0 && tickValue < sessionIds.size())
-                                return sessionIds.get((int) tickValue);
-                            else
-                                return "";
-                        }
-                    }));
+        FontOptions fontOptions = FontOptions.create()
+                .setSize(11D)
+                .setColor("black");
+
+        AxisOptions xAxisOptions = AxisOptions.create().setZoomRange(true)
+                .setFont(fontOptions);
+
+        if (!panel.isEmpty()) {
+            xAxisOptions.setMaximum(panel.getMaxXAxisValue());
+            xAxisOptions.setMinimum(panel.getMinXAxisValue());
         } else {
-            plotOptions.addXAxisOptions(new AxisOptions().setZoomRange(true).setMinimum(0));
+            xAxisOptions.setMinimum(0);
         }
 
-        plotOptions.addYAxisOptions(new AxisOptions().setZoomRange(false).setMinimum(yMinimum));
+        if (isMetric) {
+            xAxisOptions
+                .setTickDecimals(0)
+                .setTickFormatter(new TickFormatter() {
+                    @Override
+                    public String formatTickValue(double tickValue, Axis axis) {
+                        if (tickValue >= 0 && tickValue < sessionIds.size())
+                            return sessionIds.get((int) tickValue);
+                        else
+                            return "";
+                    }
+                });
+        }
+        plotOptions.addXAxisOptions(xAxisOptions);
 
-        plotOptions.setLegendOptions(new LegendOptions().setNumOfColumns(2));
+        plotOptions.addYAxisOptions(AxisOptions.create()
+                .setFont(fontOptions).setLabelWidth(40).setTickFormatter(new TickFormatter() {
 
+                    private NumberFormat format;
+
+                    @Override
+                    public String formatTickValue(double tickValue, Axis axis) {
+                        // decided to show values as 7 positions only
+
+                        if (tickValue == 0) {
+                            return "0";
+                        }
+
+                        if (format == null) {
+                            double tempDouble = tickValue * 5;
+                            format = calculateNumberFormat(tempDouble);
+                        }
+
+                        return format.format(tickValue).replace('E', 'e');
+                    }
+
+                    private NumberFormat calculateNumberFormat(double tickValue) {
+
+                        if (tickValue > 999999) {
+                            return NumberFormat.getFormat("#.###E0#");
+                        } else if (tickValue > 999) {
+                            return NumberFormat.getFormat("######.#");
+                        } else if (tickValue > 1) {
+                            return NumberFormat.getFormat("###.#####");
+                        } else if (tickValue > 0.00001) {
+                            return NumberFormat.getFormat("#.#####");
+                        }
+
+                        return NumberFormat.getFormat("#.###E0#");
+                    }
+                })
+        .setZoomRange(false).setMinimum(yMinimum));
+
+        plotOptions.setLegendOptions(LegendOptions.create().setPosition(LegendOptions.LegendPosition.NORTH_EAST)
+                .setNumOfColumns(2)
+                .setBackgroundOpacity(0.7)
+                .setLabelFormatter(new LegendOptions.LabelFormatter() {
+                    @Override
+                    public String formatLabel(String s, Series series) {
+                        return "<span style=\"font-size:13px\">" + s + "</span> ";
+                    }
+                }));
+
+
+        plotOptions.setCanvasEnabled(true);
         if (markings == null) {
             // Make the grid hoverable
-            plotOptions.setGridOptions(new GridOptions().setHoverable(true));
+            plotOptions.setGridOptions(GridOptions.create().setHoverable(true));
         } else {
             // Make the grid hoverable and add  markings
-            plotOptions.setGridOptions(new GridOptions().setHoverable(true).setMarkings(markings).setClickable(true));
+            plotOptions.setGridOptions(GridOptions.create().setHoverable(true).setMarkings(markings).setClickable(true));
         }
 
         // create the plot
@@ -747,7 +790,7 @@ public class Trends extends DefaultActivity {
         mainTabPanel.forceLayout();
         controlTree.onMetricsTab();
         for (String plotId : chosenPlots.keySet()) {
-            if (plotPanel.getElementById(plotId) == null) {
+            if (!plotPanel.containsElementWithId(plotId)) {
                 renderPlots(plotPanel, chosenPlots.get(plotId), plotId);
                 scrollPanelMetrics.scrollToBottom();
             }
@@ -1000,12 +1043,11 @@ public class Trends extends DefaultActivity {
         });
     }
 
-    private void renderPlots(HTMLPanel panel, List<PlotSeriesDto> plotSeriesDtoList, String id) {
+    private void renderPlots(PlotsPanel panel, List<PlotSeriesDto> plotSeriesDtoList, String id) {
         renderPlots(panel, plotSeriesDtoList, id, 0, false);
     }
 
-    private void renderPlots(HTMLPanel panel, List<PlotSeriesDto> plotSeriesDtoList, String id, double yMinimum, boolean isMetric) {
-        panel.add(loadIndicator);
+    private void renderPlots(final PlotsPanel panel, List<PlotSeriesDto> plotSeriesDtoList, String id, double yMinimum, boolean isMetric) {
 
         SimplePlot redrawingPlot = null;
 
@@ -1016,10 +1058,10 @@ public class Trends extends DefaultActivity {
         for (PlotSeriesDto plotSeriesDto : plotSeriesDtoList) {
             Markings markings = null;
             if (plotSeriesDto.getMarkingSeries() != null) {
-                markings = new Markings();
+                markings = Markings.create();
                 for (MarkingDto plotDatasetDto : plotSeriesDto.getMarkingSeries()) {
                     double x = plotDatasetDto.getValue();
-                    markings.addMarking(new Marking().setX(new Range(x, x)).setLineWidth(1).setColor(plotDatasetDto.getColor()));
+                    markings.addMarking(Marking.create().setX(com.googlecode.gflot.client.options.Range.create().setFrom(x).setTo(x)).setLineWidth(1).setColor(plotDatasetDto.getColor()));
                 }
 
                 markingsMap.put(id, new TreeSet<MarkingDto>(plotSeriesDto.getMarkingSeries()));
@@ -1035,43 +1077,44 @@ public class Trends extends DefaultActivity {
                         sessionIds.add(String.valueOf((int)pointDto.getX()));
                     }
                 }
-                plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric, sessionIds);
+                plot = createPlot(panel, id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric, sessionIds);
                 plotModel = plot.getModel();
                 redrawingPlot = plot;
                 int iter = 0;
                 for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
-                    SeriesHandler handler = plotModel.addSeries(plotDatasetDto.getLegend(), plotDatasetDto.getColor());
+                    Series se = Series.create().setLabel(plotDatasetDto.getLegend()).setColor(plotDatasetDto.getColor());
+                    SeriesHandler handler = plotModel.addSeries(se);
                     // Populate plot with data
                     for (PointDto pointDto : plotDatasetDto.getPlotData()) {
-                        handler.add(new DataPoint(iter ++, pointDto.getY()));
+                        handler.add(DataPoint.of(iter++, pointDto.getY()));
                     }
                 }
             } else {
-                plot = createPlot(id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric, null);
+                plot = createPlot(panel, id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, isMetric, null);
                 plotModel = plot.getModel();
                 redrawingPlot = plot;
                 for (PlotDatasetDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
-                    SeriesHandler handler = plotModel.addSeries(plotDatasetDto.getLegend(), plotDatasetDto.getColor());
+                    Series se = Series.create().setLabel(plotDatasetDto.getLegend()).setColor(plotDatasetDto.getColor());
+                    SeriesHandler handler = plotModel.addSeries(se);
 
                     // Populate plot with data
                     for (PointDto pointDto : plotDatasetDto.getPlotData()) {
-                        handler.add(new DataPoint(pointDto.getX(), pointDto.getY()));
+                        handler.add(DataPoint.of(pointDto.getX(), pointDto.getY()));
                     }
                 }
             }
 
             // Add X axis label
-            Label xLabel = new Label(plotSeriesDto.getXAxisLabel());
+            final String xAxisLabel = plotSeriesDto.getXAxisLabel();
+            Label xLabel = new Label(xAxisLabel);
             xLabel.addStyleName(getResources().css().xAxisLabel());
 
-            Label plotHeader = new Label(plotSeriesDto.getPlotHeader());
+            final String plotHeaderString = plotSeriesDto.getPlotHeader();
+            Label plotHeader = new Label(plotHeaderString);
             plotHeader.addStyleName(getResources().css().plotHeader());
 
             Label plotLegend = new Label("PLOT LEGEND");
             plotLegend.addStyleName(getResources().css().plotLegend());
-
-            VerticalPanel vp = new VerticalPanel();
-            vp.setWidth("100%");
 
             Label panLeftLabel = new Label();
             panLeftLabel.addStyleName(getResources().css().panLabel());
@@ -1079,7 +1122,7 @@ public class Trends extends DefaultActivity {
             panLeftLabel.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    plot.pan(new Pan().setLeft(-100));
+                    panel.panAllPlots(-100);
                 }
             });
 
@@ -1089,7 +1132,7 @@ public class Trends extends DefaultActivity {
             panRightLabel.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    plot.pan(new Pan().setLeft(100));
+                    panel.panAllPlots(100);
                 }
             });
 
@@ -1098,7 +1141,7 @@ public class Trends extends DefaultActivity {
             zoomInLabel.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    plot.zoom();
+                    panel.zoomIn();
                 }
             });
 
@@ -1107,7 +1150,16 @@ public class Trends extends DefaultActivity {
             zoomOutLabel.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    plot.zoomOut();
+                    panel.zoomOut();
+                }
+            });
+
+            Label saveLabel = new Label("Save");
+            saveLabel.addStyleName(getResources().css().saveLabel());
+            saveLabel.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    plotSaver.saveAsPng(plot, plotHeaderString, xAxisLabel);
                 }
             });
 
@@ -1117,20 +1169,15 @@ public class Trends extends DefaultActivity {
             zoomPanel.add(panRightLabel);
             zoomPanel.add(zoomInLabel);
             zoomPanel.add(zoomOutLabel);
+            zoomPanel.add(saveLabel);
 
-            vp.add(plotHeader);
-            vp.add(zoomPanel);
-            vp.add(plot);
-            vp.add(xLabel);
-            // Will be added if there is need it
-            //vp.add(plotLegend);
+            PlotRepresentation plotRepresentation = new PlotRepresentation(zoomPanel, plot, xLabel);
 
-            plotGroupPanel.add(vp);
+            PlotContainer pc = new PlotContainer(id, plotHeader, plotRepresentation);
 
+            panel.addElement(pc);
         }
-        int loadingId = panel.getWidgetCount() - 1;
-        panel.remove(loadingId);
-        panel.add(plotGroupPanel);
+
 
         // Redraw plot
         if (redrawingPlot != null) {
@@ -1253,7 +1300,7 @@ public class Trends extends DefaultActivity {
 
             tempTree.disableEvents();
 
-            tempTree.setCheckedWithParent(result.getSummary().getSessionInfo());
+            tempTree.setCheckedWithParent(result.getSummaryNode().getSessionInfo());
 
             SessionScopePlotsNode sessionScopePlotsNode = result.getDetailsNode().getSessionScopePlotsNode();
             if (sessionScopePlotsNode != null) {
@@ -1399,7 +1446,7 @@ public class Trends extends DefaultActivity {
          * @return null if no Test found
          */
         private TestNode getTestNodeByNameAndSessionIds(String testName, Set<String> selectedSessionIds, RootNode rootNode) {
-            for (TestNode testNode : rootNode.getSummary().getTests()) {
+            for (TestNode testNode : rootNode.getSummaryNode().getTests()) {
                 if (testNode.getDisplayName().equals(testName)) {
                     if (testNode.getTaskDataDto().getSessionIds().containsAll(selectedSessionIds)
                             && selectedSessionIds.containsAll(testNode.getTaskDataDto().getSessionIds()))
@@ -1464,7 +1511,7 @@ public class Trends extends DefaultActivity {
             disableControl();
 
             RootNode rootNode = controlTree.getRootNode();
-            SummaryNode summaryNode = rootNode.getSummary();
+            SummaryNode summaryNode = rootNode.getSummaryNode();
 
             fetchSessionInfoData(summaryNode.getSessionInfo());
             fetchMetricsForTests(summaryNode.getTests());
@@ -1615,20 +1662,10 @@ public class Trends extends DefaultActivity {
                     if (!selectedMetricsIds.contains(plotId)) {
                         toRemoveFromTable.add(chosenMetrics.get(plotId));
                         chosenMetrics.remove(plotId);
+                        plotTrendsPanel.removeElementById(plotId);
                     }
                 }
-                metricIdsSet = chosenMetrics.keySet();
-                List<Widget> toRemove = new ArrayList<Widget>();
-                for (int i = 0; i < plotTrendsPanel.getWidgetCount(); i ++ ) {
-                    Widget widget = plotTrendsPanel.getWidget(i);
-                    String wId = widget.getElement().getId();
-                    if (!metricIdsSet.contains(wId)) {
-                        toRemove.add(widget);
-                    }
-                }
-                for (Widget widget : toRemove) {
-                    plotTrendsPanel.remove(widget);
-                }
+
                 summaryPanel.getSessionComparisonPanel().removeRecords(toRemoveFromTable);
 
                 if (!notLoaded.isEmpty()) {
@@ -1737,20 +1774,13 @@ public class Trends extends DefaultActivity {
                 return;
             }
 
-            List<Widget> toRemove = new ArrayList<Widget>();
             Set<String> widgetIds = new HashSet<String>();
             for (MetricNode metricNode : metricNodes) {
                 widgetIds.add(generatePlotId(metricNode));
             }
-            for (int i = 0; i < plotPanel.getWidgetCount(); i++) {
-                Widget widget = plotPanel.getWidget(i);
-                String widgetId = widget.getElement().getId();
-                if (widgetIds.contains(widgetId))
-                    toRemove.add(widget);
-            }
-            for (Widget w : toRemove) {
-                plotPanel.remove(w);
-                chosenPlots.remove(w.getElement().getId());
+            for (String elementId : widgetIds) {
+                plotPanel.removeElementById(elementId);
+                chosenPlots.remove(elementId);
             }
         }
     }
@@ -1832,17 +1862,9 @@ public class Trends extends DefaultActivity {
             }
 
             Set<String> widgetIdsToRemove = generateSessionPlotIds(plotNames);
-            List<Widget> toRemove = new ArrayList<Widget>();
-            for (int i = 0; i < plotPanel.getWidgetCount(); i ++) {
-                Widget widget = plotPanel.getWidget(i);
-                String widgetId = widget.getElement().getId();
-                if (widgetIdsToRemove.contains(widgetId)) {
-                    toRemove.add(widget);
-                }
-            }
-            for(Widget widget : toRemove) {
-                plotPanel.remove(widget);
-                chosenPlots.remove(widget.getElement().getId());
+            for(String elementId : widgetIdsToRemove) {
+                plotPanel.removeElementById(elementId);
+                chosenPlots.remove(elementId);
             }
         }
 

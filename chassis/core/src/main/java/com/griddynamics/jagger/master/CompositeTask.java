@@ -23,7 +23,7 @@ package com.griddynamics.jagger.master;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.TestGroupDecisionMakerListener;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
 import com.griddynamics.jagger.master.configuration.Task;
 
 import java.util.List;

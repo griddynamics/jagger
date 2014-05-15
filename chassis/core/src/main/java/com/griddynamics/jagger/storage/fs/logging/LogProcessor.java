@@ -21,8 +21,7 @@
 package com.griddynamics.jagger.storage.fs.logging;
 
 import com.google.common.collect.Lists;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.*;
+import com.griddynamics.jagger.dbapi.entity.*;
 import com.griddynamics.jagger.util.statistics.StatisticsCalculator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

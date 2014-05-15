@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.webclient.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.griddynamics.jagger.webclient.client.dto.NodeInfoPerSessionDto;
+import com.griddynamics.jagger.dbapi.dto.NodeInfoPerSessionDto;
 
 import java.util.List;
 import java.util.Set;

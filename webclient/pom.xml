@@ -82,8 +82,7 @@
         <dependency>
             <groupId>com.googlecode.gflot</groupId>
             <artifactId>gflot</artifactId>
-            <version>2.4.1</version>
-            <scope>provided</scope>
+            <version>3.2.1</version>
         </dependency>
 
         <!--Spring Framework-->
@@ -204,6 +203,12 @@
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.util</artifactId>
+            <version>${version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>dbapi</artifactId>
             <version>${version}</version>
         </dependency>
     </dependencies>

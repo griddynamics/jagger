@@ -1,14 +1,9 @@
 package com.griddynamics.jagger.webclient.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.griddynamics.jagger.webclient.client.data.WebClientProperties;
-
-import java.util.Map;
-import java.util.Set;
+import com.griddynamics.jagger.webclient.client.dto.WebClientStartProperties;
 
 public interface CommonDataServiceAsync {
 
-    void getWebClientProperties(AsyncCallback<WebClientProperties> async);
-
-    void getDefaultMonitoringParameters(AsyncCallback<Map<String,Set<String>>> async);
+    void getWebClientStartProperties(AsyncCallback<WebClientStartProperties> async);
 }

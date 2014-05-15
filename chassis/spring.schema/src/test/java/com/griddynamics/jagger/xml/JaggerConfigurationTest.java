@@ -2,7 +2,9 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.agent.model.JmxMetricGroup;
+import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorSettings;
 import com.griddynamics.jagger.engine.e1.collector.MetricCollectorProvider;
+import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
@@ -11,6 +13,7 @@ import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.user.TestGroupConfiguration;
+import com.griddynamics.jagger.util.TimeUnits;
 import com.griddynamics.jagger.xml.stubs.xml.ExampleDecisionMakerListener;
 import com.griddynamics.jagger.xml.stubs.xml.ExampleTestGroupListener;
 import com.griddynamics.jagger.xml.stubs.xml.ExampleTestListener;
@@ -187,6 +190,32 @@ public class JaggerConfigurationTest {
     private void checkListOnNull(List list){
         for (Object o : list){
             Assert.assertNotNull(o);
+        }
+    }
+
+    @Test
+    public void aggregatorWithNoSettingsTest() {
+
+        MetricCollectorProvider mcp = (MetricCollectorProvider) ctx.getBean("metric-aggregator-with-no-settings");
+        MetricDescription description = mcp.getMetricDescriptions();
+
+        for (MetricAggregatorSettings settings : description.getAggregatorsWithSettings().values()) {
+            Assert.assertEquals(TimeUnits.NONE, settings.getNormalizationBy());
+            Assert.assertEquals(0, settings.getPointCount());
+            Assert.assertEquals(0, settings.getPointInterval());
+        }
+    }
+
+    @Test
+    public void aggregatorWithSettingsTest() {
+
+        MetricCollectorProvider mcp = (MetricCollectorProvider) ctx.getBean("metric-aggregator-with-settings");
+        MetricDescription description = mcp.getMetricDescriptions();
+
+        for (MetricAggregatorSettings settings : description.getAggregatorsWithSettings().values()) {
+            Assert.assertEquals(TimeUnits.MINUTE, settings.getNormalizationBy());
+            Assert.assertEquals(10, settings.getPointCount());
+            Assert.assertEquals(1000, settings.getPointInterval());
         }
     }
 }

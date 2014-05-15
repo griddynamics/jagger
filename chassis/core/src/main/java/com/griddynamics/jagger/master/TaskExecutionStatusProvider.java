@@ -22,7 +22,7 @@ package com.griddynamics.jagger.master;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

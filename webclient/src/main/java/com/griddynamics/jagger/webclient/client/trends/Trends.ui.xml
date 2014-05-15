@@ -82,7 +82,7 @@
             </g:SplitLayoutPanel>
         </g:west>
         <g:center>
-            <g:TabLayoutPanel barHeight="1.5" barUnit="EM" ui:field="mainTabPanel">
+            <g:TabLayoutPanel barHeight="1.5" barUnit="EM" ui:field="mainTabPanel" addStyleNames="{res.css.mainTabPanel}">
                 <g:tab>
                     <g:header>
                         <b>Summary</b>
@@ -96,7 +96,7 @@
                         <b>Trends</b>
                     </g:header>
                     <g:ScrollPanel ui:field="scrollPanelTrends">
-                        <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotTrendsPanel"/>
+                        <custom:PlotsPanel addStyleNames="{res.css.plotPanel}" ui:field="plotTrendsPanel"/>
                     </g:ScrollPanel>
                 </g:tab>
                 <g:tab>
@@ -104,7 +104,7 @@
                         <b>Metrics</b>
                     </g:header>
                     <g:ScrollPanel ui:field="scrollPanelMetrics">
-                        <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotPanel"/>
+                        <custom:PlotsPanel addStyleNames="{res.css.plotPanel}" ui:field="plotPanel"/>
                     </g:ScrollPanel>
                 </g:tab>
                 <g:tab>

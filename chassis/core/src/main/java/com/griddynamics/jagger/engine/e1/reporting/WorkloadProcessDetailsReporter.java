@@ -20,8 +20,8 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile;
+import com.griddynamics.jagger.dbapi.entity.WorkloadProcessDescriptiveStatistics;
+import com.griddynamics.jagger.dbapi.entity.WorkloadProcessLatencyPercentile;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;

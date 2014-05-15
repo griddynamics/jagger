@@ -22,8 +22,8 @@ package com.griddynamics.jagger.engine.e1.reporting;
 
 
 import com.google.common.collect.Lists;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.dbapi.entity.WorkloadData;
+import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
 import net.sf.jasperreports.engine.JRDataSource;

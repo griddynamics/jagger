@@ -21,9 +21,9 @@
 package com.griddynamics.jagger.agent.model;
 
 import com.google.common.collect.Maps;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
 
 import java.io.Serializable;
-import java.lang.management.MemoryUsage;
 import java.util.Map;
 
 /**

@@ -141,6 +141,20 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:simpleType name="time-units">
+        <xsd:annotation><xsd:documentation>
+            Time units that are the values of com.griddynamics.jagger.util.TimeUnits enumeration.
+            Used as metric-aggregator element attribute to define interval of time to normalize to it.
+        </xsd:documentation></xsd:annotation>
+
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NONE" />
+            <xsd:enumeration value="SECOND" />
+            <xsd:enumeration value="MINUTE" />
+            <xsd:enumeration value="HOUR" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
     <!--***********************-->
     <!-- Configuration element -->
     <!--***********************-->
@@ -324,6 +338,7 @@
                     <xsd:element name="load" type="loadAbstract" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="termination" type="terminationAbstract" minOccurs="0" maxOccurs="1"/>
                     <xsd:element name="listeners-test" type="listenersTest" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="limits" type="limitsMetricAbstract" minOccurs="0" maxOccurs="1"/>
                 </xsd:all>
                 <xsd:attribute name="startDelay" type="xsd:string" use="optional"/>
                 <xsd:attribute name="testDescription" type="xsd:string" use="optional"/>
@@ -431,6 +446,16 @@
         <xsd:complexContent>
             <xsd:extension base="listenerTestGroupDecisionMakerAbstract">
                 <xsd:attribute name="ref" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="listener-test-group-decision-maker-basic">
+        <xsd:annotation><xsd:documentation>
+            Basic implementation of listener-test-group-decision-maker will take decision comparing metric values vs limits
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="listenerTestGroupDecisionMakerAbstract">
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -670,16 +695,16 @@
     </xsd:complexType>
 
     <xsd:attributeGroup name="userAttributes">
-        <xsd:attribute name="count" type="xsd:string" use="required"></xsd:attribute>
-        <xsd:attribute name="startCount" type="xsd:string" use="required"></xsd:attribute>
-        <xsd:attribute name="startIn" type="xsd:string" use="required"></xsd:attribute>
-        <xsd:attribute name="startBy" type="xsd:string" use="required"></xsd:attribute>
-        <xsd:attribute name="life" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="count" type="xsd:string" use="required"/>
+        <xsd:attribute name="startCount" type="xsd:string" use="required"/>
+        <xsd:attribute name="startIn" type="xsd:string" use="required"/>
+        <xsd:attribute name="startBy" type="xsd:string" use="required"/>
+        <xsd:attribute name="life" type="xsd:string" use="required"/>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="virtualUserAttributes">
-        <xsd:attribute name="count" type="xsd:string" use="required"></xsd:attribute>
-        <xsd:attribute name="delay" type="xsd:string" use="optional"></xsd:attribute>
+        <xsd:attribute name="count" type="xsd:string" use="required"/>
+        <xsd:attribute name="delay" type="xsd:string" use="optional"/>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="invocationAttributes">
@@ -707,18 +732,18 @@
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="tpsAttributes">
-        <xsd:attribute name="value" type="xsd:string" use="required"></xsd:attribute>
-        <xsd:attribute name="warmUpTime" type="xsd:string" use="optional"></xsd:attribute>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
+        <xsd:attribute name="warmUpTime" type="xsd:string" use="optional"/>
         <xsd:attribute name="maxThreadNumber" type="xsd:string"/>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="iterationsAttributes">
-        <xsd:attribute name="maxDuration" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="iterations" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="maxDuration" type="xsd:string"/>
+        <xsd:attribute name="iterations" type="xsd:string" use="required"/>
     </xsd:attributeGroup>
 
     <xsd:attributeGroup name="durationAttributes">
-        <xsd:attribute name="duration" type="xsd:string" use="required"></xsd:attribute>
+        <xsd:attribute name="duration" type="xsd:string" use="required"/>
     </xsd:attributeGroup>
 
     <!--******************-->
@@ -836,6 +861,185 @@
     </xsd:complexType>
 
     <!--************************-->
+    <!-- Limits                 -->
+    <!--************************-->
+
+    <xsd:element name="limits" type="metricLimitsGroupType">
+        <xsd:annotation><xsd:documentation>
+            List of metric limits, required to make decision based of results of some test.
+            You can define stand alone list of limits and link it to different tests in test configuration
+        </xsd:documentation></xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="metricLimitsGroupType">
+        <xsd:annotation><xsd:documentation>
+            List of metric limits, required to make decision based of results of some test.
+            You can define stand alone list of limits and link it to different tests in test configuration
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedRequiredType">
+                <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element name="limit" type="metricLimitTypeAbstract" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="metricLimitTypeAbstract" abstract="true">
+        <xsd:annotation><xsd:documentation>
+            Metric limit. Defines allowed deviations of some metric from baseline or from reference value.
+            Limits are used by decision maker to take decision whether you test results are ok or not.
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="limit-vs-baseline">
+        <xsd:annotation><xsd:documentation>
+            Metric limit. When decision maker will take decision it will compare metric value with value
+            from baseline session defined by chassis.engine.e1.reporting.session.comparison.baseline.session.id property
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="metricLimitTypeAbstract">
+                <xsd:attribute name="metricName" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Metric name (aka metric Id) - metric we are going to compare
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="limitDescription" type="xsd:string" use="optional">
+                    <xsd:annotation><xsd:documentation>
+                        Description of this limit
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="LWT" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Lower warning threshold - relative value
+                        Result pass when value in range (LWT*ref .. UWT*ref)
+                        Result warning when value in range (LET*ref .. LWT*ref) OR (UWT*ref .. UET*ref)
+                        Result error when value is less than LET*ref OR is greater than UET*ref
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="UWT" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Upper warning threshold - relative value
+                        Result pass when value in range (LWT*ref .. UWT*ref)
+                        Result warning when value in range (LET*ref .. LWT*ref) OR (UWT*ref .. UET*ref)
+                        Result error when value is less than LET*ref OR is greater than UET*ref
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="LET" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Lower error threshold - relative value
+                        Result pass when value in range (LWT*ref .. UWT*ref)
+                        Result warning when value in range (LET*ref .. LWT*ref) OR (UWT*ref .. UET*ref)
+                        Result error when value is less than LET*ref OR is greater than UET*ref
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="UET" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Upper error threshold - relative value
+                        Result pass when value in range (LWT*ref .. UWT*ref)
+                        Result warning when value in range (LET*ref .. LWT*ref) OR (UWT*ref .. UET*ref)
+                        Result error when value is less than LET*ref OR is greater than UET*ref
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="limit-vs-value">
+        <xsd:annotation><xsd:documentation>
+            Metric limit. When decision maker will take decision it will compare metric value with reference value
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="metricLimitTypeAbstract">
+                <xsd:attribute name="metricName" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Metric name (aka metric Id) - metric we are going to compare
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="refValue" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Reference value - absolute value used as reference for comparison
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="limitDescription" type="xsd:string" use="optional">
+                    <xsd:annotation><xsd:documentation>
+                        Description of this limit
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="LWT" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Lower warning threshold - relative value
+                        Result pass when value in range (LWT*ref .. UWT*ref)
+                        Result warning when value in range (LET*ref .. LWT*ref) OR (UWT*ref .. UET*ref)
+                        Result error when value is less than LET*ref OR is greater than UET*ref
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="UWT" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Upper warning threshold - relative value
+                        Result pass when value in range (LWT*ref .. UWT*ref)
+                        Result warning when value in range (LET*ref .. LWT*ref) OR (UWT*ref .. UET*ref)
+                        Result error when value is less than LET*ref OR is greater than UET*ref
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="LET" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Lower error threshold - relative value
+                        Result pass when value in range (LWT*ref .. UWT*ref)
+                        Result warning when value in range (LET*ref .. LWT*ref) OR (UWT*ref .. UET*ref)
+                        Result error when value is less than LET*ref OR is greater than UET*ref
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="UET" type="xsd:string" use="required">
+                    <xsd:annotation><xsd:documentation>
+                        Upper error threshold - relative value
+                        Result pass when value in range (LWT*ref .. UWT*ref)
+                        Result warning when value in range (LET*ref .. LWT*ref) OR (UWT*ref .. UET*ref)
+                        Result error when value is less than LET*ref OR is greater than UET*ref
+                    </xsd:documentation></xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="limitsMetricAbstract" abstract="true">
+        <xsd:annotation><xsd:documentation>
+            Abstract list of metric limits. See available implementations
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="identifiedType">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="limits-ref">
+        <xsd:annotation><xsd:documentation>
+            Reference to the existing list of metric limits.
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="limitsMetricAbstract">
+                <xsd:attribute name="ref" type="xsd:string" use="required"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="limits-group">
+        <xsd:annotation><xsd:documentation>
+            List of metric limits defined directly in test configuration
+        </xsd:documentation></xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="limitsMetricAbstract">
+                <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element name="limit" type="metricLimitTypeAbstract" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+    <!--************************-->
     <!-- Metric collectors types-->
     <!--************************-->
 
@@ -918,6 +1122,24 @@
         <xsd:annotation><xsd:documentation>
             Metric aggregator is a aggregation function for metric.
         </xsd:documentation></xsd:annotation>
+
+        <xsd:attribute name="normalizeBy" type="time-units" use="optional" >
+            <xsd:annotation><xsd:documentation>
+                Tells whether values should be normalized by particular time unit.
+            </xsd:documentation></xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="pointCount" type="xsd:string" use="optional" >
+            <xsd:annotation><xsd:documentation>
+                Describes maximum points count on the plot.
+                !Note that 'pointInterval' attribute has higher priority then 'pointCount'.
+            </xsd:documentation></xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="pointInterval" type="xsd:string" use="optional" >
+            <xsd:annotation><xsd:documentation>
+                Describes aggregation interval size. All values on that interval will be aggregated to one value.
+                !Note that 'pointInterval' attribute has higher priority then 'pointCount'.
+            </xsd:documentation></xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
 
     <xsd:complexType name="metric-aggregator-ref">
@@ -1574,7 +1796,7 @@
         <xsd:complexContent>
             <xsd:extension base="identifiedType">
                 <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element name="extension" type="extensionType"></xsd:element>
+                    <xsd:element name="extension" type="extensionType"/>
                 </xsd:choice>
             </xsd:extension>
         </xsd:complexContent>

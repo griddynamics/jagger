@@ -50,6 +50,11 @@
             <artifactId>diagnostics</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>dbapi</artifactId>
+        </dependency>
+
         <!-- Third-party dependencies -->
 
         <dependency>

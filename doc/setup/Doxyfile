@@ -696,6 +696,7 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCollectorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorSettings.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateAggregatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateFailsAggregatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/AvgMetricAggregatorProvider.java \
@@ -704,6 +705,7 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/CumulativeMetricAggregatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/JaggerService.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/MetricService.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/DataService.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/SessionInfoService.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricDescription.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/test/TestListener.java \
@@ -717,11 +719,17 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/TestGroupInfo.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/Provider.java \
+                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/TimeUnits.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/MetricEntity.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/MetricPlotPointEntity.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/SessionEntity.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/TestEntity.java \
                          ./doc/pages/WebUiUserCommentsAndTags.txt \
                          ./doc/pages/WebUiProperties.txt \
                          ./doc/pages/WebUiOverview.txt \
                          ./doc/pages/WebUiInstallation.txt \
                          ./doc/pages/WebUiMain.txt \
+                         ./doc/pages/JaggerProperties.txt \
                          ./doc/pages/AgentProperties.txt
 
 # This tag can be used to specify the character encoding of the source files
@@ -782,7 +790,6 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-#EXAMPLE_PATH           = ./archetype-examples/
 EXAMPLE_PATH           = ./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \
                          ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/ \
                          ./test/jagger-test/src/main/resources/configuration/master/session/ \
@@ -795,7 +802,8 @@ EXAMPLE_PATH           = ./archetype-examples/src/main/resources/archetype-resou
                          ./webclient/src/main/resources/webclient.properties \
                          ./monitoring/agent/src/main/resources/spring/agent.properties \
                          ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
-                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml
+                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
+                         ./chassis/configuration/configuration/basic/default.environment.properties
 
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the

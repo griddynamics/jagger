@@ -1,9 +1,10 @@
 package com.griddynamics.jagger.xml.stubs.xml;
 
 import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerInfo;
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.DecisionMakerInfo;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.TestGroupDecisionMakerListener;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,8 +22,8 @@ public class ExampleDecisionMakerListener extends ServicesAware implements Provi
         return new TestGroupDecisionMakerListener() {
 
             @Override
-            public void onDecisionMaking(DecisionMakerInfo decisionMakerInfo) {
-
+            public Decision onDecisionMaking(TestGroupDecisionMakerInfo decisionMakerInfo) {
+                return Decision.OK;
             }
 
         };

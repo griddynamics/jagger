@@ -30,11 +30,14 @@
                 <value>spring/root.properties</value>
             </list>
         </property>
-        <property name="priorityResources">
-            <list>
-                <value>spring/priority.properties</value>
-            </list>
-        </property>
+        <property name="priorityResources" ref="allPropertiesFiles"/>
+    </bean>
+    <bean id="userPropertiesFiles" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray">
+        <constructor-arg type="java.lang.String" value="#{systemProperties['test.properties.resolver.test']}"/>
+    </bean>
+    <bean id="allPropertiesFiles" class="org.springframework.util.StringUtils" factory-method="concatenateStringArrays">
+        <constructor-arg index="0" value="spring/priority.properties"/>
+        <constructor-arg index="1" ref="userPropertiesFiles"/>
     </bean>
 
     <bean class="com.griddynamics.jagger.util.PropertiesResolver">
@@ -75,4 +78,11 @@
         <constructor-arg value="${spec-4}"/>
     </bean>
 
+    <bean id="stringF" class="java.lang.String">
+        <constructor-arg value="${a}"/>
+    </bean>
+
+    <bean id="stringG" class="java.lang.String">
+        <constructor-arg value="${b}"/>
+    </bean>
 </beans>

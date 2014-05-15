@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.webclient.client.handler;
 
-import com.griddynamics.jagger.webclient.client.components.control.model.*;
-import com.griddynamics.jagger.webclient.client.dto.SessionPlotNameDto;
+import com.griddynamics.jagger.dbapi.model.*;
+import com.griddynamics.jagger.dbapi.dto.SessionPlotNameDto;
 import com.sencha.gxt.widget.core.client.event.CheckChangeEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 

@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.webclient.client.handler;
 
-import com.griddynamics.jagger.webclient.client.components.control.model.SessionInfoNode;
+import com.griddynamics.jagger.dbapi.model.SessionInfoNode;
 import com.sencha.gxt.widget.core.client.event.CheckChangeEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 

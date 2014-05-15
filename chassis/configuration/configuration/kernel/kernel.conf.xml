@@ -22,6 +22,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="monitoring.metrics.conf.xml"/>
+
     <bean id="kernel" class="com.griddynamics.jagger.kernel.SimpleKernel">
         <constructor-arg ref="coordinator"/>
         <property name="reconnectPeriod" value="${chassis.coordinator.reconnect.period}"/>
@@ -56,7 +58,9 @@
         <property name="ttl" ref="monitoringWorkerTimeout"/>
     </bean>
 
-    <bean id="loggingMonitoringProcessor" class="com.griddynamics.jagger.monitoring.LoggingMonitoringProcessor"/>
+    <bean id="loggingMonitoringProcessor" class="com.griddynamics.jagger.monitoring.LoggingMonitoringProcessor">
+        <property name="monitoringMetricsDescription" ref="monitoringMetricsDescription"/>
+    </bean>
 
     <bean id="monitoringExecutor" class="com.griddynamics.jagger.util.ConfigurableExecutor">
         <property name="corePoolSize" value="${chassis.monitoring.executor.pool.core}"/>

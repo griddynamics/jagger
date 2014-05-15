@@ -9,6 +9,9 @@ import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteInfo;
 import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
+import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
+import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
+import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -17,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.util.Map;
+import java.util.Set;
 
 /* begin: following section is used for docu generation - custom test suite listener */
 public class ProviderOfTestSuiteListener extends ServicesAware implements Provider<TestSuiteListener> {
@@ -83,6 +87,32 @@ public class ProviderOfTestSuiteListener extends ServicesAware implements Provid
                 getSessionInfoService().markSessionWithTag("SERVICE_NAME");
 
                 /* end: following section is used for docu generation - work with session tags */
+
+                /* begin: following section is used for docu generation - access to Jagger results in database */
+
+                // Get information about session
+                // Note: session entity for current session is not available (not saved yet) in database at this point of execution,
+                // while all detailed results like tests and metrics are already saved to database
+                // SessionEntity sessionEntity = getDataService().getSession("1");
+
+                // Get all tests for this session
+                Set<TestEntity> testEntities = getDataService().getTests(testSuiteInfo.getSessionId());
+
+                // Get all metrics for every test
+                Map<TestEntity,Set<MetricEntity>> metricsPerTest = getDataService().getMetricsByTests(testEntities);
+
+                // Get summary values for metrics
+                for (Map.Entry<TestEntity,Set<MetricEntity>> entry : metricsPerTest.entrySet()) {
+                    //System.out.println("\nTest " + entry.getKey().getName() + " from session " + testSuiteInfo.getSessionId());
+                    Map<MetricEntity,Double> metricValues = getDataService().getMetricSummary(entry.getValue());
+                    //System.out.println(String.format("   %-40s   %s","Metric id","Value"));
+                    for (Map.Entry<MetricEntity,Double> valueEntry : metricValues.entrySet()) {
+                        //System.out.println(String.format("   %-40s   %s",valueEntry.getKey().getMetricId(),valueEntry.getValue()));
+                    }
+                }
+
+                /* end: following section is used for docu generation - access to Jagger results in database */
+
             }
         };
 

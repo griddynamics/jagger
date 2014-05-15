@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.user;
 
 import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.scenario.*;
 
@@ -25,6 +26,7 @@ public class TestConfiguration {
     private long startDelay = -1;
     private List<Provider<TestListener>> listeners = Collections.EMPTY_LIST;
     private TestDescription testDescription;
+    private LimitSet limits = null;
 
     public long getStartDelay() {
         return startDelay;
@@ -108,6 +110,7 @@ public class TestConfiguration {
         if (task.getVersion()==null) task.setVersion("0");
         task.setParentTaskId(testGroupName);
         task.setTestListeners(listeners);
+        task.setLimits(limits);
 
         //TODO refactor
         if (clockConfiguration instanceof UserGroupsClockConfiguration) {
@@ -119,5 +122,9 @@ public class TestConfiguration {
         }
         task.setTerminateStrategyConfiguration(terminateStrategyConfiguration);
         return task;
+    }
+
+    public void setLimits(LimitSet limits) {
+        this.limits = limits;
     }
 }

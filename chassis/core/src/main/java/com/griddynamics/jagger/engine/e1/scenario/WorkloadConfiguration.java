@@ -21,6 +21,9 @@
 package com.griddynamics.jagger.engine.e1.scenario;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -30,6 +33,8 @@ import java.io.Serializable;
  * @author Mairbek Khadikov
  */
 public class WorkloadConfiguration implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(WorkloadConfiguration.class);
+
     private final int threads;
     private final int delay;
     private final int samples;
@@ -47,8 +52,14 @@ public class WorkloadConfiguration implements Serializable {
     }
 
     private WorkloadConfiguration(int threads, int delay, int samples) {
-        Preconditions.checkArgument(threads >= 0);
-        Preconditions.checkArgument(delay   >= 0);
+        try {
+            Preconditions.checkArgument(threads >= 0);
+            Preconditions.checkArgument(delay   >= 0);
+        }
+        catch (IllegalArgumentException e) {
+            log.error("Unsupported configuration. threads=" + threads + ", delay=" + delay);
+            throw Throwables.propagate(e);
+        }
 
         this.threads = threads;
         this.delay   = delay;

@@ -20,14 +20,13 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import org.apache.commons.math.util.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionMaker {

@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
+import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.CompositableTask;
@@ -50,6 +51,7 @@ public class WorkloadTask implements CompositableTask {
     private Calibrator calibrator = new OneNodeCalibrator();
     private long startDelay = 0;
     private List<Provider<TestListener>> testListeners = Lists.newLinkedList();
+    private LimitSet limits = null;
 
     public long getStartDelay() {
         return startDelay;
@@ -212,4 +214,13 @@ public class WorkloadTask implements CompositableTask {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public LimitSet getLimits() {
+        return limits;
+    }
+
+    public void setLimits(LimitSet limits) {
+        this.limits = limits;
+    }
+
 }

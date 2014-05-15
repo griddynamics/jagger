@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @author Nikolay Musienko
@@ -48,7 +49,7 @@ public class RumpUpTps  implements DesiredTps {
         if(startTime == -1) {
             startTime = time;
             warmUpTime += time;
-            k = tps.divide(new BigDecimal(warmUpTime - startTime));
+            k = tps.divide(new BigDecimal(warmUpTime - startTime), 10, RoundingMode.CEILING);
         }
         if (time > warmUpTime) {
             return tps;

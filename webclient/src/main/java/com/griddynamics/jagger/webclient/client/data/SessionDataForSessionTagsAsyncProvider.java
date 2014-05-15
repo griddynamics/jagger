@@ -7,7 +7,7 @@ import com.google.gwt.view.client.Range;
 import com.griddynamics.jagger.webclient.client.SessionDataService;
 import com.griddynamics.jagger.webclient.client.components.ExceptionPanel;
 import com.griddynamics.jagger.webclient.client.dto.PagedSessionDataDto;
-import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
+import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
 
 import java.util.Set;
 

@@ -23,6 +23,7 @@ package com.griddynamics.jagger.agent.impl;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.*;
+import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.util.AgentUtils;
 import com.sun.management.UnixOperatingSystemMXBean;
 import org.slf4j.Logger;

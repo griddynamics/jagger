@@ -1,8 +1,9 @@
 package com.griddynamics.jagger.webclient.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.griddynamics.jagger.webclient.client.dto.MetricDto;
-import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
+import com.griddynamics.jagger.dbapi.dto.MetricDto;
+import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
+
 
 import java.util.List;
 

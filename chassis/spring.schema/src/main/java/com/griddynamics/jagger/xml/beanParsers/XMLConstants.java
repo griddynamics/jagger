@@ -76,12 +76,12 @@ public class XMLConstants {
     public static final String WORKLOAD_COLLECTOR = "e1MasterCollector";
     public static final String BASIC_AGGREGATOR = "basicAggregator";
     public static final String WORKLOAD_AGGREGATOR = "e1ScenarioAggregator";
-    public static final String MONITORING_AGGREGATOR = "monitoringAggregator";
     public static final String DURATION_LOG_PROCESSOR = "durationLogProcessor";
     public static final String METRIC_LOG_PROCESSOR = "metricLogProcessor";
+    public static final String PROFILER_LOG_PROCESSOR = "profilerLogProcessor";
     //don't change the order!!! will not works
     public static final List<String> STANDARD_SESSION_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, BASIC_AGGREGATOR);
-    public static final List<String> STANDARD_TASK_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, WORKLOAD_COLLECTOR, BASIC_AGGREGATOR, WORKLOAD_AGGREGATOR, MONITORING_AGGREGATOR, METRIC_LOG_PROCESSOR);
+    public static final List<String> STANDARD_TASK_EXEC_LISTENERS = Arrays.asList(BASIC_COLLECTOR, WORKLOAD_COLLECTOR, BASIC_AGGREGATOR, WORKLOAD_AGGREGATOR, METRIC_LOG_PROCESSOR, PROFILER_LOG_PROCESSOR);
 
     public static final String WORKLOAD_LISTENERS_ELEMENT = "info-collectors";
     public static final String DURATION_COLLECTOR = "durationCollector";
@@ -96,7 +96,6 @@ public class XMLConstants {
     public static final String TEST_SUITE_LISTENERS = "listeners-test-suite";
     public static final String INVOCATION_LISTENER = "listener-invocation";
     public static final String TEST_GROUP_DECISION_MAKER_LISTENERS = "listeners-test-group-decision-maker";
-    public static final String DECISION_MAKER_LISTENERS = "testGroupDecisionMakerListeners";
 
     //don't change the order!!! will not works
     public static final String STANDARD_COLLECTORS = "standardCollectors";
@@ -197,4 +196,22 @@ public class XMLConstants {
     public static final String NEED_SAVE_SUMMARY = "showSummary";
     public static final String METRIC_AGGREGATOR_PROVIDER = "metricAggregatorProvider";
     public static final String METRIC_DESCRIPTION = "metricDescription";
+    public static final String AGGREGATORS_WITH_SETTINGS = "aggregatorsWithSettings";
+    public static final String NORMALIZE_BY = "normalizeBy";
+    public static final String POINT_COUNT = "pointCount";
+    public static final String POINT_INTERVAL = "pointInterval";
+
+    public static final String LIMITS = "limits";
+    public static final String LIMIT = "limit";
+    public static final String LIMIT_METRIC_NAME = "metricName";
+    public static final String LIMIT_DESCRIPTION = "limitDescription";
+    public static final String LIMIT_REFVALUE = "refValue";
+    public static final String LIMIT_LWT_TAG = "LWT";
+    public static final String LIMIT_UWT_TAG = "UWT";
+    public static final String LIMIT_LET_TAG = "LET";
+    public static final String LIMIT_UET_TAG = "UET";
+    public static final String LIMIT_LWT_PROP = "lowerWarningThreshold";
+    public static final String LIMIT_UWT_PROP = "upperWarningThreshold";
+    public static final String LIMIT_LET_PROP = "lowerErrorThreshold";
+    public static final String LIMIT_UET_PROP = "upperErrorThreshold";
 }

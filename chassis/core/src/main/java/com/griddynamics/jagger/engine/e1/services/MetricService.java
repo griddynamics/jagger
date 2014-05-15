@@ -5,6 +5,22 @@ import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 /** Service gives an ability to create and describe metrics, save metric values.
  * @author Gribov Kirill
  * @n
+ * @par Details:
+ * @details Where this service is available you can find in chapter: @ref Main_ListenersAndServices_group @n
+ * @n
+ * @par Example - creating metric:
+ * @dontinclude  ProviderOfTestListener.java
+ * @skip  begin: following section is used for docu generation - example of metric creation
+ * @until end: following section is used for docu generation - example of metric creation
+ * @n
+ * @par Example - saving metric:
+ * @dontinclude  ProviderOfTestListener.java
+ * @skip  begin: following section is used for docu generation - example of metric saving
+ * @until end: following section is used for docu generation - example of metric saving
+ *
+ * @n
+ * Full example code you can find in chapter @ref Main_CustomListenersExamples_group @n
+ * @n
  * @ingroup Main_Services_group */
  public interface MetricService extends JaggerService{
 

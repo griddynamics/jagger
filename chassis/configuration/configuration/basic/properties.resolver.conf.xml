@@ -29,11 +29,16 @@
                 <value>#{systemProperties['jagger.default.environment.properties']}</value>
             </list>
         </property>
-        <property name="priorityResources">
-            <list>
-                <value>#{systemProperties['jagger.environment.properties']}</value>
-            </list>
-        </property>
+        <property name="priorityResources" ref="allPropertiesFiles"/>
+    </bean>
+
+    <bean id="userPropertiesFiles" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray">
+        <constructor-arg type="java.lang.String" value="#{systemProperties['jagger.user.environment.properties']}"/>
+    </bean>
+    <bean id="allPropertiesFiles" class="org.springframework.util.StringUtils" factory-method="concatenateStringArrays">
+        <!--order is important. user properties should come after environment properties and override them-->
+        <constructor-arg index="0" value="#{systemProperties['jagger.environment.properties']}"/>
+        <constructor-arg index="1" ref="userPropertiesFiles"/>
     </bean>
 
     <bean class="com.griddynamics.jagger.util.PropertiesResolver">

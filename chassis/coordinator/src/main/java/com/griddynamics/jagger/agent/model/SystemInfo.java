@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.agent.model;
 
 import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
 
 import java.io.Serializable;
 import java.util.Map;

@@ -24,7 +24,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.JmxMetric;
 import com.griddynamics.jagger.agent.model.JmxMetricGroup;
-import com.griddynamics.jagger.agent.model.MonitoringParameter;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
+import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 
 import java.util.ArrayList;
 import java.util.List;

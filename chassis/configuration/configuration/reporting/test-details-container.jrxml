@@ -32,6 +32,8 @@
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="testId" class="java.lang.String"/>
     <field name="testName" class="java.lang.String"/>
+    <field name="id" class="java.lang.String"/>
+
     <group name="test" isStartNewPage="false">
         <groupExpression><![CDATA[$F{testId}]]></groupExpression>
     </group>
@@ -78,9 +80,9 @@
                     <reportElement positionType="Float" x="0" y="30" width="550" height="10"/>
                     <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
                     <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("metricsResults").getDataSource( $F{testId} )]]></dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("metricsResults").getDataSource( $F{id} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("metricsResults").getReport( $F{testId} )]]></subreportExpression>
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("metricsResults").getReport( $F{id} )]]></subreportExpression>
                 </subreport>
                 <subreport>
                     <reportElement positionType="Float" x="0" y="40" width="550" height="10"/>
@@ -89,14 +91,6 @@
                         <![CDATA[$P{context}.getMappedProvider("testTimePlots").getDataSource( $F{testId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                         <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("testTimePlots").getReport( $F{testId} )]]></subreportExpression>
-                </subreport>
-                <subreport>
-                    <reportElement positionType="Float" x="0" y="50" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
-                    <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("sysUTPlots").getDataSource( $F{testId} )]]></dataSourceExpression>
-                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("sysUTPlots").getReport( $F{testId} )]]></subreportExpression>
                 </subreport>
                 <subreport>
                     <reportElement positionType="Float" x="0" y="60" width="550" height="10"/>

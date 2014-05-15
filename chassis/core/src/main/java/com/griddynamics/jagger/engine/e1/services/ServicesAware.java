@@ -13,6 +13,7 @@ public abstract class ServicesAware implements ServicesInitializable {
 
     private MetricService metricService;
     private SessionInfoService sessionInfoService;
+    private DataService dataService;
 
     /** Gives access to @ref MetricService
      *@return metric service */
@@ -26,6 +27,12 @@ public abstract class ServicesAware implements ServicesInitializable {
         return sessionInfoService;
     }
 
+    /** Gives access to @ref DataService
+     *@return data service */
+    public DataService getDataService() {
+        return dataService;
+    }
+
     @Override
     public final void initServices(String sessionId, String taskId, NodeContext context, JaggerPlace environment){
 
@@ -35,27 +42,32 @@ public abstract class ServicesAware implements ServicesInitializable {
         if (environment.equals(JaggerPlace.TEST_LISTENER)){
             metricService       = new DefaultMetricService(sessionId, taskId, context);         /* Available */
             sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
+            dataService         = new DefaultDataService(context);                              /* Available */
         }
         /* Services available for test group listener */
         if (environment.equals(JaggerPlace.TEST_GROUP_LISTENER)){
             metricService       = new DefaultMetricService(sessionId, taskId, context);         /* Available */
             sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
+            dataService         = new DefaultDataService(context);                              /* Available */
         }
         /* Services available for test suite listener */
         if (environment.equals(JaggerPlace.TEST_SUITE_LISTENER)){
             metricService       = new EmptyMetricService(JaggerPlace.TEST_SUITE_LISTENER);      /* NOT AVAILABLE */
             sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
+            dataService         = new DefaultDataService(context);                              /* Available */
         }
         /* Services available for decision maker listener */
         if (environment.equals(JaggerPlace.TEST_GROUP_DECISION_MAKER_LISTENER)){
             metricService       = new EmptyMetricService(JaggerPlace.TEST_GROUP_DECISION_MAKER_LISTENER);        /* NOT AVAILABLE */
             sessionInfoService  = new DefaultSessionInfoService(context);                                        /* Available */
+            dataService         = new DefaultDataService(context);                                               /* Available */
         }
 
         /* Services available for invocation listener */
         if (environment.equals(JaggerPlace.INVOCATION_LISTENER)){
             metricService       = new DefaultMetricService(sessionId, taskId, context);         /* Available */
             sessionInfoService  = new EmptySessionInfoService(JaggerPlace.INVOCATION_LISTENER); /* NOT AVAILABLE */
+            dataService         = new EmptyDataService(JaggerPlace.INVOCATION_LISTENER);        /* NOT AVAILABLE */
         }
 
         /* end: following section is used for docu generation - listeners to services relation */

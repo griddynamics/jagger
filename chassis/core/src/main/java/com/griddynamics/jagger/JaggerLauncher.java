@@ -62,10 +62,12 @@ public final class JaggerLauncher {
     public static final String EXCLUDE_SUFFIX = ".exclude";
 
     public static final String DEFAULT_ENVIRONMENT_PROPERTIES = "jagger.default.environment.properties";
+    public static final String USER_ENVIRONMENT_PROPERTIES = "jagger.user.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
 
 
     private static final String DEFAULT_ENVIRONMENT_PROPERTIES_LOCATION = "./configuration/basic/default.environment.properties";
+    private static final String DEFAULT_USER_ENVIRONMENT_PROPERTIES_LOCATION = "./configuration/basic/default.user.properties";
 
     private static final Properties environmentProperties = new Properties();
 
@@ -312,11 +314,41 @@ public final class JaggerLauncher {
     }
 
     public static void loadBootProperties(URL directory, String environmentPropertiesLocation, Properties environmentProperties) throws IOException {
+
+        // priorities
+        // low priority (default properties - environment props - user props - system properties) high priority
+
+        // properties from command line - environment properties
         URL bootPropertiesFile = new URL(directory, environmentPropertiesLocation);
         System.setProperty(ENVIRONMENT_PROPERTIES, environmentPropertiesLocation);
         environmentProperties.load(bootPropertiesFile.openStream());
 
-        String defaultBootPropertiesLocation = environmentProperties.getProperty(DEFAULT_ENVIRONMENT_PROPERTIES);
+        // user properties
+        String userBootPropertiesLocationsString = System.getProperty(USER_ENVIRONMENT_PROPERTIES);
+        if (userBootPropertiesLocationsString == null) {
+            userBootPropertiesLocationsString = environmentProperties.getProperty(USER_ENVIRONMENT_PROPERTIES);
+        }
+        if (userBootPropertiesLocationsString == null) {
+            userBootPropertiesLocationsString = DEFAULT_USER_ENVIRONMENT_PROPERTIES_LOCATION;
+        }
+        String[] userBootPropertiesSingleLocations = userBootPropertiesLocationsString.split(",");
+
+        for (String location : userBootPropertiesSingleLocations) {
+            URL userBootPropertiesFile = new URL(directory, location);
+            Properties userBootProperties = new Properties();
+            userBootProperties.load(userBootPropertiesFile.openStream());
+
+            for (String name : userBootProperties.stringPropertyNames()) {
+                // overwrite due to higher priority
+                environmentProperties.setProperty(name, userBootProperties.getProperty(name));
+            }
+        }
+
+        // default properties
+        String defaultBootPropertiesLocation = System.getProperty(DEFAULT_ENVIRONMENT_PROPERTIES);
+        if (defaultBootPropertiesLocation == null) {
+            defaultBootPropertiesLocation = environmentProperties.getProperty(DEFAULT_ENVIRONMENT_PROPERTIES);
+        }
         if(defaultBootPropertiesLocation==null){
             defaultBootPropertiesLocation=DEFAULT_ENVIRONMENT_PROPERTIES_LOCATION;
         }
@@ -324,6 +356,7 @@ public final class JaggerLauncher {
         Properties defaultBootProperties = new Properties();
         defaultBootProperties.load(defaultBootPropertiesFile.openStream());
         for (String name : defaultBootProperties.stringPropertyNames()) {
+            // only append due to low priority
             if (!environmentProperties.containsKey(name)) {
                 environmentProperties.setProperty(name, defaultBootProperties.getProperty(name));
             }
@@ -332,10 +365,12 @@ public final class JaggerLauncher {
         Properties properties = System.getProperties();
         for (Enumeration<String> enumeration = (Enumeration<String>) properties.propertyNames(); enumeration.hasMoreElements(); ) {
             String key = enumeration.nextElement();
+            // overwrite due to higher priority
             environmentProperties.put(key, properties.get(key));
         }
 
         System.setProperty(ENVIRONMENT_PROPERTIES, environmentPropertiesLocation);
+        System.setProperty(USER_ENVIRONMENT_PROPERTIES,userBootPropertiesLocationsString);
         System.setProperty(DEFAULT_ENVIRONMENT_PROPERTIES, defaultBootPropertiesLocation);
     }
 }

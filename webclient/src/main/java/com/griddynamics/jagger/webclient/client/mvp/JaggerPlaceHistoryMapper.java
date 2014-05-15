@@ -2,6 +2,7 @@ package com.griddynamics.jagger.webclient.client.mvp;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.Window;
+import com.griddynamics.jagger.dbapi.model.NameTokens;
 import com.griddynamics.jagger.webclient.client.trends.TrendsPlace;
 
 /**

@@ -22,20 +22,20 @@ package com.griddynamics.jagger.monitoring;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.griddynamics.jagger.agent.model.MonitoringParameter;
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
 import com.griddynamics.jagger.agent.model.SystemInfo;
 import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.CumulativeMetricAggregatorProvider;
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 import com.griddynamics.jagger.engine.e1.services.DefaultMetricService;
 import com.griddynamics.jagger.engine.e1.services.MetricService;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +45,7 @@ import java.util.Map;
  */
 public class LoggingMonitoringProcessor implements MonitoringProcessor {
     private Logger log = LoggerFactory.getLogger(LoggingMonitoringProcessor.class);
+    private Map<String,MetricDescription> monitoringMetricsDescription;
 
     public static final String MONITORING_MARKER = "MONITORING";
 
@@ -86,28 +87,47 @@ public class LoggingMonitoringProcessor implements MonitoringProcessor {
 
             // save value
             String metricId = getMetricId(serviceId, monitoringParameter, agentId);
-            service.saveValue(metricId, value, time);
+            if (metricId != null) {
+                service.saveValue(metricId, value, time);
+            }
         }
     }
 
     // return metric id for current monitoring parameter
+    // return null if we are not planing to save this metric
     private String getMetricId(String serviceId, MonitoringParameter monitoringParameter, String agentId){
         String metricId = MonitoringIdUtils.getMonitoringMetricId(monitoringParameter.getId(), agentId);
 
-        // register metric aggregators
+        // register metric
         if (!createdMetrics.contains(serviceId, metricId)){
-            MetricAggregatorProvider aggregator;
-            if (!monitoringParameter.isCumulativeCounter()){
-                aggregator = new AvgMetricAggregatorProvider();
-            }else{
-                aggregator = new CumulativeMetricAggregatorProvider();
+            MetricDescription metricDescription;
+
+            if (monitoringMetricsDescription.containsKey(monitoringParameter.getId())) {
+                // we will create monitoring metrics with overriding default setup
+                metricDescription = monitoringMetricsDescription.get(monitoringParameter.getId());
+
+                // we will not save this metric
+                if ((!metricDescription.getShowSummary()) && (!metricDescription.getPlotData())) {
+                    return null;
+                }
+
+                metricDescription.setMetricId(metricId);
+            }
+            else {
+                // we will create monitoring metrics with default setup
+                metricDescription = new MetricDescription(metricId);
+
+                if (!monitoringParameter.isCumulativeCounter()){
+                    metricDescription.addAggregator(new AvgMetricAggregatorProvider());
+                }else{
+                    metricDescription.addAggregator(new CumulativeMetricAggregatorProvider());
+                }
+                metricDescription.setPlotData(true);
+                metricDescription.setShowSummary(false);
+                metricDescription.setDisplayName(monitoringParameter.getDescription());
             }
 
-            metricServiceMap.get(serviceId).createMetric(new MetricDescription(metricId)
-                                                                .displayName(monitoringParameter.getDescription())
-                                                                .showSummary(false)
-                                                                .plotData(true).addAggregator(aggregator));
-
+            metricServiceMap.get(serviceId).createMetric(metricDescription);
             createdMetrics.put(serviceId, metricId, true);
         }
 
@@ -117,4 +137,10 @@ public class LoggingMonitoringProcessor implements MonitoringProcessor {
     private String getKey(String sessionId, String taskId){
         return sessionId+taskId;
     }
+
+    @Required
+    public void setMonitoringMetricsDescription(Map<String, MetricDescription> monitoringMetricsDescription) {
+        this.monitoringMetricsDescription = monitoringMetricsDescription;
+    }
+
 }

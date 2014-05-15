@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.FeatureComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
-import com.griddynamics.jagger.monitoring.model.PerformedMonitoring;
+import com.griddynamics.jagger.dbapi.entity.PerformedMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;

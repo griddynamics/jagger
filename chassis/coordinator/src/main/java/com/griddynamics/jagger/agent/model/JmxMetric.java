@@ -20,6 +20,8 @@
 
 package com.griddynamics.jagger.agent.model;
 
+import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
+
 import javax.management.ObjectName;
 
 /**

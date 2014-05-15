@@ -84,8 +84,8 @@
                 <ref bean="basicAggregator"/>
                 <ref bean="e1ScenarioAggregator"/>
                 <ref bean="durationLogProcessor"/>
-                <ref bean="monitoringAggregator"/>
                 <ref bean="metricLogProcessor"/>
+                <ref bean="profilerLogProcessor"/>
             </list>
         </property>
     </bean>

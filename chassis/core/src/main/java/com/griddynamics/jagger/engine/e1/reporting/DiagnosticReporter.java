@@ -20,8 +20,8 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricSummaryEntity;
+import com.griddynamics.jagger.dbapi.entity.DiagnosticResultEntity;
+import com.griddynamics.jagger.dbapi.entity.MetricSummaryEntity;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;

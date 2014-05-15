@@ -2,6 +2,8 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.xml.beanParsers.*;
 import com.griddynamics.jagger.xml.beanParsers.configuration.*;
+import com.griddynamics.jagger.xml.beanParsers.limit.LimitDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.limit.LimitSetDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.JmxMetricsDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringSutDefinitionParser;
@@ -71,8 +73,6 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         //Test-description
         registerBeanDefinitionParser("test-description" , new TestDescriptionDefinitionParser());
 
-        //listeners
-
         //validator
         registerBeanDefinitionParser("validator", findTypeParser);
 
@@ -88,10 +88,6 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("metric-not-null-response", new SimpleMetricDefinitionParser());
         registerBeanDefinitionParser("metric-custom", new CustomMetricDefinitionParser());
         registerBeanDefinitionParser("metric-success-rate", new SuccessRateCollectorDefinitionParser());
-
-        //listener
-        registerBeanDefinitionParser("listener-invocation", findTypeParser);
-        registerBeanDefinitionParser("listener-invocation-not-null-response", new NotNullInvocationListenerDefinitionParser());
 
         //scenario
         registerBeanDefinitionParser("scenario",  findTypeParser);
@@ -167,7 +163,10 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("metric-aggregator-std", new StdDevMetricAggregatorDefinitionParser());
         registerBeanDefinitionParser("metric-aggregator-ref", new RefMetricAggregatorDefinitionParser());
 
+
         //listeners
+        registerBeanDefinitionParser("listener-invocation", findTypeParser);
+        registerBeanDefinitionParser("listener-invocation-not-null-response", new NotNullInvocationListenerDefinitionParser());
 
         registerBeanDefinitionParser("listener-test", findTypeParser);
         registerBeanDefinitionParser("listeners-test", listCustomDefinitionParser);
@@ -181,5 +180,11 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
 
         registerBeanDefinitionParser("listener-test-group-decision-maker", findTypeParser);
         registerBeanDefinitionParser("listeners-test-group-decision-maker", listCustomDefinitionParser);
+        registerBeanDefinitionParser("listener-test-group-decision-maker-basic", new BasicTGDecisionMakerListenerDefinitionParser());
+
+        //limits
+        registerBeanDefinitionParser("limits", new LimitSetDefinitionParser());
+        registerBeanDefinitionParser("limit", new LimitDefinitionParser());
+
     }
 }

@@ -105,5 +105,11 @@ public interface JaggerResources extends ClientBundle {
         String abstractWindow();
 
         String textAreaPanel();
+
+        String dragLabel();
+
+        String saveLabel();
+
+        String mainTabPanel();
     }
 }

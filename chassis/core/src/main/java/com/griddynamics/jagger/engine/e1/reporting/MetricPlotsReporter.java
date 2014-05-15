@@ -19,12 +19,12 @@
  */
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.google.common.collect.Maps;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricPointEntity;
+import com.griddynamics.jagger.dbapi.DatabaseService;
+import com.griddynamics.jagger.dbapi.dto.*;
+import com.griddynamics.jagger.dbapi.model.*;
+import com.griddynamics.jagger.dbapi.util.SessionMatchingSetup;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
-import com.griddynamics.jagger.util.MonitoringIdUtils;
 import com.griddynamics.jagger.util.Pair;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -32,6 +32,8 @@ import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -41,9 +43,17 @@ import java.util.*;
  */
 
 public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
+    private Logger log = LoggerFactory.getLogger(MetricPlotsReporter.class);
 
-    private Map<String, MetricPlotDTOs> plots;
+    private Map<Long, MetricPlotDTOs> plots;
+    private Map<MetricNode, PlotSeriesDto> plotsReal = Collections.EMPTY_MAP;
+
     private String sessionId;
+    private DatabaseService databaseService;
+
+    public void setDatabaseService(DatabaseService databaseService) {
+        this.databaseService = databaseService;
+    }
 
     public static class MetricPlotDTOs {
         private Collection<MetricPlotDTO> metricPlotDTOs;
@@ -74,11 +84,13 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
         private JCommonDrawableRenderer metricPlot;
         private String metricName;
         private String title;
+        private String groupTitle;
 
-        public MetricPlotDTO(String metricName, String title, JCommonDrawableRenderer metricPlot) {
+        public MetricPlotDTO(String metricName, String title, String groupTitle, JCommonDrawableRenderer metricPlot) {
             this.metricPlot = metricPlot;
             this.metricName = metricName;
             this.title = title;
+            this.groupTitle = groupTitle;
         }
 
         public MetricPlotDTO() {
@@ -107,147 +119,104 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
         public void setTitle(String title) {
             this.title = title;
         }
+
+        public String getGroupTitle() {
+            return groupTitle;
+        }
+
+        public void setGroupTitle(String groupTitle) {
+            this.groupTitle = groupTitle;
+        }
+
+
     }
 
     @Override
-    public JRDataSource getDataSource(String testId) {
+    public JRDataSource getDataSource(String id) {
         sessionId = getSessionIdProvider().getSessionId();
-        String testIdParent = getParentId(testId);
 
         if (plots == null) {
-            plots = createTaskPlots();
+            createFromTree();
         }
         if (plots.size() == 0) {
             return null;
         }
-        MetricPlotDTOs result = new MetricPlotDTOs();
-
-        if (plots.containsKey(testId)) {
-            if (plots.get(testId).getMetricPlotDTOs() != null) {
-                plots.get(testId).sortingByMetricName();
-                result.getMetricPlotDTOs().addAll(plots.get(testId).getMetricPlotDTOs());
-            }
-        }
-        if (plots.containsKey(testIdParent)) {
-            if (plots.get(testIdParent).getMetricPlotDTOs() != null) {
-                plots.get(testIdParent).sortingByMetricName();
-                result.getMetricPlotDTOs().addAll(plots.get(testIdParent).getMetricPlotDTOs());
-            }
-        }
+        MetricPlotDTOs result = plots.get(new Long(id));
 
         return new JRBeanCollectionDataSource(Collections.singleton(result));
     }
 
-    private String getParentId(String testId) {
-        return (String) getHibernateTemplate().find("select distinct w.parentId from WorkloadData w where w.taskId=? and w.sessionId=?", testId, sessionId).get(0);
-    }
+    // todo Session scope plots isn't supported by code below (JFG-724)
+    private void createFromTree() {
 
-    private Map<String, MetricPlotDTOs> createTaskPlots() {
-        // check new model
-        List<MetricPointEntity> metricDetails = getHibernateTemplate().find(
-                "select m from MetricPointEntity m where m.metricDescription.taskData.sessionId=?", sessionId);
+        plots = new HashMap<Long, MetricPlotDTOs>();
 
-        if (metricDetails == null || metricDetails.isEmpty()) {
-            return oldWay();
-        } else {
-            return newWay(metricDetails);
+        Set<MetricNode> allMetrics = new HashSet<MetricNode>();
+
+        SessionMatchingSetup sessionMatchingSetup = new SessionMatchingSetup(
+                databaseService.getWebClientProperties().isShowOnlyMatchedTests(),
+                EnumSet.of(SessionMatchingSetup.MatchBy.ALL));
+        RootNode rootNode = databaseService.getControlTreeForSessions(new HashSet<String>(Arrays.asList(sessionId)),sessionMatchingSetup);
+        DetailsNode detailsNode = rootNode.getDetailsNode();
+        if (detailsNode.getChildren().isEmpty())
+            return;
+
+        for (TestDetailsNode testDetailsNode : detailsNode.getTests()) {
+            allMetrics.addAll(testDetailsNode.getMetrics());
+        }
+
+        try {
+            plotsReal = databaseService.getPlotDataByMetricNode(allMetrics);
+        } catch (Exception e) {
+            log.error("Unable to get plots information for metrics");
+        }
+
+        for (TestDetailsNode testDetailsNode : detailsNode.getTests()) {
+            getReport(testDetailsNode, testDetailsNode.getTaskDataDto().getId());
         }
     }
 
-    // create TaskPlots
-    private Map<String, MetricPlotDTOs> newWay(List<MetricPointEntity> metricPoints) {
-        Map<String, Map<String, List<MetricPointEntity>>> aggregatedByTasks = Maps.newLinkedHashMap();
-        for (MetricPointEntity detail : metricPoints) {
-
-            String taskId = detail.getMetricDescription().getTaskData().getTaskId();
-            String metricId = detail.getMetricDescription().getMetricId();
-
-            Map<String, List<MetricPointEntity>> byTaskId = aggregatedByTasks.get(taskId);
-            if (byTaskId == null) {
-                byTaskId = Maps.newLinkedHashMap();
-                aggregatedByTasks.put(taskId, byTaskId);
+    private JCommonDrawableRenderer makePlot(PlotSeriesDto plotSeriesDto) {
+        XYSeriesCollection plotCollection = new XYSeriesCollection();
+        for (PlotDatasetDto datasetDto : plotSeriesDto.getPlotSeries()) {
+            XYSeries plotEntry = new XYSeries(datasetDto.getLegend());
+            for (PointDto point : datasetDto.getPlotData()) {                            // draw one line
+                plotEntry.add(point.getX(), point.getY());
             }
-            List<MetricPointEntity> taskData = byTaskId.get(metricId);
-            if (taskData == null) {
-                taskData = new LinkedList<MetricPointEntity>();
-                byTaskId.put(metricId, taskData);
-            }
-            taskData.add(detail);
+            plotCollection.addSeries(plotEntry);
         }
+        Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(plotCollection, null);
+        plotCollection = pair.getSecond();
 
-        Map<String, MetricPlotDTOs> taskPlots = Maps.newHashMap();
-        for (String taskId : aggregatedByTasks.keySet()) {
-            MetricPlotDTOs taskPlot = taskPlots.get(taskId);
-            if (taskPlot == null) {
-                taskPlot = new MetricPlotDTOs();
-                taskPlots.put(taskId, taskPlot);
-            }
-            for (String metricName : aggregatedByTasks.get(taskId).keySet()) {
-                List<MetricPointEntity> taskStats = aggregatedByTasks.get(taskId).get(metricName);
-                String displayName = taskStats.get(0).getDisplay();
-                String title = displayName;
-
-                MonitoringIdUtils.MonitoringId monitoringId = MonitoringIdUtils.splitMonitoringMetricId(taskStats.get(0).getMetricDescription().getMetricId());
-                if (monitoringId != null) {
-                    title += " on " +  monitoringId.getAgentName();
-                }
-
-                XYSeries plotEntry = new XYSeries(displayName);
-                for (MetricPointEntity stat : taskStats) {
-                    plotEntry.add(stat.getTime(), stat.getValue());
-                }
-                XYSeriesCollection plotCollection = new XYSeriesCollection();
-                plotCollection.addSeries(plotEntry);
-                Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(plotCollection, null);
-                plotCollection = pair.getSecond();
-                JFreeChart chartMetric = ChartHelper.createXYChart(null, plotCollection,
-                        "Time (" + pair.getFirst() + ")", displayName, 2, 2, ChartHelper.ColorTheme.LIGHT);
-                taskPlot.getMetricPlotDTOs().add(new MetricPlotDTO(displayName, title, new JCommonDrawableRenderer(chartMetric)));
-            }
-        }
-        return taskPlots;
+        JFreeChart chartMetric = ChartHelper.createXYChart(null, plotCollection,
+                "Time, sec", null, 2, 2, ChartHelper.ColorTheme.LIGHT);
+        return new JCommonDrawableRenderer(chartMetric);
     }
 
-    // create TaskPlots as before 1.2.4
-    private Map<String, MetricPlotDTOs> oldWay() {
-        List<MetricDetails> metricDetails = getHibernateTemplate().find(
-                "select m from MetricDetails m where m.taskData.sessionId=?", sessionId);
-        Map<String, Map<String, List<MetricDetails>>> aggregatedByTasks = Maps.newLinkedHashMap();
-        for (MetricDetails detail : metricDetails) {
-            Map<String, List<MetricDetails>> byTaskId = aggregatedByTasks.get(detail.getTaskData().getTaskId());
-            if (byTaskId == null) {
-                byTaskId = Maps.newLinkedHashMap();
-                aggregatedByTasks.put(detail.getTaskData().getTaskId(), byTaskId);
+
+    private void getReport(MetricGroupNode metricGroupNode, Long testId) {
+        try {
+
+            if (metricGroupNode.getMetricGroupNodeList() != null) {
+                for (MetricGroupNode metricGroup : (List<MetricGroupNode>) metricGroupNode.getMetricGroupNodeList())
+                    getReport(metricGroup, testId);
             }
-            List<MetricDetails> taskData = byTaskId.get(detail.getMetric());
-            if (taskData == null) {
-                taskData = new LinkedList<MetricDetails>();
-                byTaskId.put(detail.getMetric(), taskData);
-            }
-            taskData.add(detail);
-        }
-        Map<String, MetricPlotDTOs> taskPlots = Maps.newHashMap();
-        for (String taskId : aggregatedByTasks.keySet()) {
-            MetricPlotDTOs taskPlot = taskPlots.get(taskId);
-            if (taskPlot == null) {
-                taskPlot = new MetricPlotDTOs();
-                taskPlots.put(taskId, taskPlot);
-            }
-            for (String metricName : aggregatedByTasks.get(taskId).keySet()) {
-                List<MetricDetails> taskStats = aggregatedByTasks.get(taskId).get(metricName);
-                XYSeries plotEntry = new XYSeries(metricName);
-                for (MetricDetails stat : taskStats) {
-                    plotEntry.add(stat.getTime(), stat.getValue());
+            if (metricGroupNode.getMetricsWithoutChildren() != null) {
+
+                String groupTitle = metricGroupNode.getDisplayName();
+                for (MetricNode node : (List<MetricNode>) metricGroupNode.getMetricsWithoutChildren()) {
+                    if (plotsReal.get(node).getPlotSeries().isEmpty())   {
+                        log.warn("No plot data for "+ node.getDisplayName());
+                        continue;
+                    }
+                    if (!plots.containsKey(testId))
+                        plots.put(testId, new MetricPlotDTOs());
+                    plots.get(testId).getMetricPlotDTOs().add(new MetricPlotDTO(node.getDisplayName(), node.getDisplayName(), groupTitle, makePlot(plotsReal.get(node))));
+                    groupTitle = "";
                 }
-                XYSeriesCollection plotCollection = new XYSeriesCollection();
-                plotCollection.addSeries(plotEntry);
-                Pair<String, XYSeriesCollection> pair = ChartHelper.adjustTime(plotCollection, null);
-                plotCollection = pair.getSecond();
-                JFreeChart chartMetric = ChartHelper.createXYChart(null, plotCollection,
-                        "Time (" + pair.getFirst() + ")", metricName, 2, 2, ChartHelper.ColorTheme.LIGHT);
-                taskPlot.getMetricPlotDTOs().add(new MetricPlotDTO(metricName, null, new JCommonDrawableRenderer(chartMetric)));
             }
+        } catch (Exception e) {
+            log.error("Unable to take plot data for {}", metricGroupNode.getDisplayName());
         }
-        return taskPlots;
     }
 }

@@ -28,7 +28,7 @@ public class TestDefinitionParser extends CustomBeanDefinitionParser {
         builder.addPropertyValue(XMLConstants.TESTS, parseCustomElements(tests, parserContext, builder.getBeanDefinition()));
 
         setBeanProperty(XMLConstants.LISTENERS, DomUtils.getChildElementByTagName(element, XMLConstants.TEST_GROUP_LISTENERS), parserContext, builder.getBeanDefinition());
-        setBeanProperty(XMLConstants.DECISION_MAKER_LISTENERS ,DomUtils.getChildElementByTagName(element,XMLConstants.TEST_GROUP_DECISION_MAKER_LISTENERS),parserContext,builder.getBeanDefinition());
+        setBeanProperty("testGroupDecisionMakerListeners" ,DomUtils.getChildElementByTagName(element,XMLConstants.TEST_GROUP_DECISION_MAKER_LISTENERS),parserContext,builder.getBeanDefinition());
     }
 
     @Override

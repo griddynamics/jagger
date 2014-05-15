@@ -111,18 +111,6 @@
             <frame>
                 <reportElement positionType="Float" x="0" y="0" width="550" height="200"/>
                 <subreport>
-                    <reportElement positionType="Float" x="0" y="120" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
-                    <dataSourceExpression>
-                        <![CDATA[$P{context}.getProvider("testGeneralContainer").getDataSource()]]></dataSourceExpression>
-                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("testGeneralContainer").getReport()]]></subreportExpression>
-                </subreport>
-            </frame>
-
-            <frame>
-                <reportElement positionType="Float" x="0" y="0" width="550" height="200"/>
-                <subreport>
                     <reportElement positionType="Float" x="0" y="140" width="550" height="10"/>
                     <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
                     <dataSourceExpression>
@@ -132,17 +120,6 @@
                 </subreport>
             </frame>
 
-            <frame>
-                <reportElement positionType="Float" x="0" y="0" width="550" height="200"/>
-                <subreport>
-                    <reportElement positionType="Float" x="0" y="160" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
-                    <dataSourceExpression>
-                        <![CDATA[$P{context}.getProvider("monitoringReporter").getDataSource()]]></dataSourceExpression>
-                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("monitoringReporter").getReport()]]></subreportExpression>
-                </subreport>
-            </frame>
 
             <frame>
                 <reportElement positionType="Float" x="0" y="0" width="550" height="200"/>

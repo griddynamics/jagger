@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
+  ~ version 2.1 of the License, or any later version.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <util:map id="monitoringMetricsDescription" key-type="java.lang.String" value-type="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <!--changing names-->
+        <entry key="mon_cpula_1" value-ref="mon_cpula_1_bean"/>
+        <entry key="mon_cpula_5" value-ref="mon_cpula_5_bean"/>
+        <entry key="mon_cpula_15" value-ref="mon_cpula_15_bean"/>
+        <entry key="mon_gc_minor_time" value-ref="mon_gc_minor_time_bean"/>
+        <entry key="mon_gc_major_time" value-ref="mon_gc_major_time_bean"/>
+        <entry key="mon_gc_minor_unit" value-ref="mon_gc_minor_unit_bean"/>
+        <entry key="mon_gc_major_unit" value-ref="mon_gc_major_unit_bean"/>
+
+        <!--just to allow customisation-->
+        <entry key="mon_mem_ram" value-ref="mon_mem_ram_bean"/>
+        <entry key="mon_mem_total" value-ref="mon_mem_total_bean"/>
+        <entry key="mon_mem_used" value-ref="mon_mem_used_bean"/>
+        <entry key="mon_mem_actual_used" value-ref="mon_mem_actual_used_bean"/>
+        <entry key="mon_mem_free_prcnt" value-ref="mon_mem_free_prcnt_bean"/>
+        <entry key="mon_mem_actual_free" value-ref="mon_mem_actual_free_bean"/>
+        <entry key="mon_mem_free" value-ref="mon_mem_free_bean"/>
+
+        <entry key="mon_tcp_est" value-ref="mon_tcp_est_bean"/>
+        <entry key="mon_tcp_listen" value-ref="mon_tcp_listen_bean"/>
+        <entry key="mon_sync_received" value-ref="mon_sync_received_bean"/>
+        <entry key="mon_inbound_total" value-ref="mon_inbound_total_bean"/>
+        <entry key="mon_outbound_total" value-ref="mon_outbound_total_bean"/>
+
+        <entry key="mon_disk_read_bytes" value-ref="mon_disk_read_bytes_bean"/>
+        <entry key="mon_disk_write_bytes" value-ref="mon_disk_write_bytes_bean"/>
+        <entry key="mon_disk_service_time" value-ref="mon_disk_service_time_bean"/>
+        <entry key="mon_disk_queue_size_total" value-ref="mon_disk_queue_size_total_bean"/>
+
+        <entry key="mon_cpu_user" value-ref="mon_cpu_user_bean"/>
+        <entry key="mon_cpu_sys_prcnt" value-ref="mon_cpu_sys_prcnt_bean"/>
+        <entry key="mon_cpu_idle_prcnt" value-ref="mon_cpu_idle_prcnt_bean"/>
+        <entry key="mon_cpu_wait" value-ref="mon_cpu_wait_bean"/>
+        <entry key="mon_cpu_combined" value-ref="mon_cpu_combined_bean"/>
+
+        <entry key="mon_heap_init" value-ref="mon_heap_init_bean"/>
+        <entry key="mon_heap_used" value-ref="mon_heap_used_bean"/>
+        <entry key="mon_heap_committed" value-ref="mon_heap_committed_bean"/>
+        <entry key="mon_heap_max" value-ref="mon_heap_max_bean"/>
+
+        <entry key="mon_nonheap_init" value-ref="mon_nonheap_init_bean"/>
+        <entry key="mon_nonheap_used" value-ref="mon_nonheap_used_bean"/>
+        <entry key="mon_nonheap_committed" value-ref="mon_nonheap_committed_bean"/>
+        <entry key="mon_nonheap_max" value-ref="mon_nonheap_max_bean"/>
+    </util:map>
+
+    <!--monitoring parameters are described by DefaultMonitoringParameters class-->
+    <!--mentioned class is used in many code blocks and should not be changed to guarantee back compatibility-->
+
+    <!--following beans are overriding display names for monitoring parameters-->
+    <bean id="mon_cpula_1_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_cpula_1"/>
+        <property name="plotData" value="${chassis.monitoring.mon_cpula_1.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_cpula_1.showSummary}"/>
+        <property name="displayName" value="CPU load average for 1 minute"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_cpula_1.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_cpula_5_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_cpula_5"/>
+        <property name="plotData" value="${chassis.monitoring.mon_cpula_5.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_cpula_5.showSummary}"/>
+        <property name="displayName" value="CPU load average for 5 minutes"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_cpula_5.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_cpula_15_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_cpula_15"/>
+        <property name="plotData" value="${chassis.monitoring.mon_cpula_15.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_cpula_15.showSummary}"/>
+        <property name="displayName" value="CPU load average for 15 minutes"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_cpula_15.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_gc_minor_time_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_gc_minor_time"/>
+        <property name="plotData" value="${chassis.monitoring.mon_gc_minor_time.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_gc_minor_time.showSummary}"/>
+        <property name="displayName" value="All GC minor time, ms"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="cumulativeAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_gc_minor_time.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_gc_major_time_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_gc_major_time"/>
+        <property name="plotData" value="${chassis.monitoring.mon_gc_major_time.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_gc_major_time.showSummary}"/>
+        <property name="displayName" value="All GC major time, ms"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="cumulativeAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_gc_major_time.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_gc_minor_unit_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_gc_minor_unit"/>
+        <property name="plotData" value="${chassis.monitoring.mon_gc_minor_unit.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_gc_minor_unit.showSummary}"/>
+        <property name="displayName" value="All GC minor count"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="cumulativeAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_gc_minor_unit.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_gc_major_unit_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_gc_major_unit"/>
+        <property name="plotData" value="${chassis.monitoring.mon_gc_major_unit.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_gc_major_unit.showSummary}"/>
+        <property name="displayName" value="All GC major count"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="cumulativeAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_gc_major_unit.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--following beans are created just to allow customization of monitoring metrics-->
+    <bean id="mon_mem_ram_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_mem_ram"/>
+        <property name="plotData" value="${chassis.monitoring.mon_mem_ram.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_mem_ram.showSummary}"/>
+        <property name="displayName" value="RAM, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_mem_ram.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_mem_total_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_mem_total"/>
+        <property name="plotData" value="${chassis.monitoring.mon_mem_total.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_mem_total.showSummary}"/>
+        <property name="displayName" value="Total memory, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_mem_total.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_mem_used_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_mem_used"/>
+        <property name="plotData" value="${chassis.monitoring.mon_mem_used.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_mem_used.showSummary}"/>
+        <property name="displayName" value="Memory used, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_mem_used.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_mem_actual_used_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_mem_actual_used"/>
+        <property name="plotData" value="${chassis.monitoring.mon_mem_actual_used.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_mem_actual_used.showSummary}"/>
+        <property name="displayName" value="Memory actual used, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_mem_actual_used.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_mem_free_prcnt_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_mem_free_prcnt"/>
+        <property name="plotData" value="${chassis.monitoring.mon_mem_free_prcnt.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_mem_free_prcnt.showSummary}"/>
+        <property name="displayName" value="Memory free, %"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_mem_free_prcnt.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_mem_actual_free_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_mem_actual_free"/>
+        <property name="plotData" value="${chassis.monitoring.mon_mem_actual_free.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_mem_actual_free.showSummary}"/>
+        <property name="displayName" value="Memory actual free, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_mem_actual_free.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_mem_free_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_mem_free"/>
+        <property name="plotData" value="${chassis.monitoring.mon_mem_free.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_mem_free.showSummary}"/>
+        <property name="displayName" value="Memory free, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_mem_free.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_tcp_est_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_tcp_est"/>
+        <property name="plotData" value="${chassis.monitoring.mon_tcp_est.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_tcp_est.showSummary}"/>
+        <property name="displayName" value="Tcp established connections, count"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_tcp_est.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_tcp_listen_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_tcp_listen"/>
+        <property name="plotData" value="${chassis.monitoring.mon_tcp_listen.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_tcp_listen.showSummary}"/>
+        <property name="displayName" value="TCP listen, count"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_tcp_listen.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_sync_received_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_sync_received"/>
+        <property name="plotData" value="${chassis.monitoring.mon_sync_received.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_sync_received.showSummary}"/>
+        <property name="displayName" value="TCP synchronized received, count"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_sync_received.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_inbound_total_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_inbound_total"/>
+        <property name="plotData" value="${chassis.monitoring.mon_inbound_total.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_inbound_total.showSummary}"/>
+        <property name="displayName" value="TCP inbound total, KiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="cumulativeAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_inbound_total.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_outbound_total_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_outbound_total"/>
+        <property name="plotData" value="${chassis.monitoring.mon_outbound_total.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_outbound_total.showSummary}"/>
+        <property name="displayName" value="TCP outbound total, KiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="cumulativeAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_outbound_total.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_disk_read_bytes_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_disk_read_bytes"/>
+        <property name="plotData" value="${chassis.monitoring.mon_disk_read_bytes.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_disk_read_bytes.showSummary}"/>
+        <property name="displayName" value="Disks read bytes total, KiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="cumulativeAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_disk_read_bytes.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_disk_write_bytes_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_disk_write_bytes"/>
+        <property name="plotData" value="${chassis.monitoring.mon_disk_write_bytes.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_disk_write_bytes.showSummary}"/>
+        <property name="displayName" value="Disks write bytes total, KiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="cumulativeAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_disk_write_bytes.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_disk_service_time_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_disk_service_time"/>
+        <property name="plotData" value="${chassis.monitoring.mon_disk_service_time.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_disk_service_time.showSummary}"/>
+        <property name="displayName" value="Disks service time"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_disk_service_time.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_disk_queue_size_total_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_disk_queue_size_total"/>
+        <property name="plotData" value="${chassis.monitoring.mon_disk_queue_size_total.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_disk_queue_size_total.showSummary}"/>
+        <property name="displayName" value="Disks queue"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_disk_queue_size_total.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_cpu_user_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_cpu_user"/>
+        <property name="plotData" value="${chassis.monitoring.mon_cpu_user.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_cpu_user.showSummary}"/>
+        <property name="displayName" value="CPU user, %"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_cpu_user.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_cpu_sys_prcnt_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_cpu_sys_prcnt"/>
+        <property name="plotData" value="${chassis.monitoring.mon_cpu_sys_prcnt.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_cpu_sys_prcnt.showSummary}"/>
+        <property name="displayName" value="CPU system, %"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_cpu_sys_prcnt.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_cpu_idle_prcnt_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_cpu_idle_prcnt"/>
+        <property name="plotData" value="${chassis.monitoring.mon_cpu_idle_prcnt.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_cpu_idle_prcnt.showSummary}"/>
+        <property name="displayName" value="CPU idle, %"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_cpu_idle_prcnt.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_cpu_wait_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_cpu_wait"/>
+        <property name="plotData" value="${chassis.monitoring.mon_cpu_wait.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_cpu_wait.showSummary}"/>
+        <property name="displayName" value="CPU wait, %"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_cpu_wait.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_cpu_combined_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_cpu_combined"/>
+        <property name="plotData" value="${chassis.monitoring.mon_cpu_combined.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_cpu_combined.showSummary}"/>
+        <property name="displayName" value="CPU combined, %"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_cpu_combined.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_heap_init_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_heap_init"/>
+        <property name="plotData" value="${chassis.monitoring.mon_heap_init.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_heap_init.showSummary}"/>
+        <property name="displayName" value="Heap init memory"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_heap_init.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_heap_used_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_heap_used"/>
+        <property name="plotData" value="${chassis.monitoring.mon_heap_used.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_heap_used.showSummary}"/>
+        <property name="displayName" value="Heap used memory"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_heap_used.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_heap_committed_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_heap_committed"/>
+        <property name="plotData" value="${chassis.monitoring.mon_heap_committed.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_heap_committed.showSummary}"/>
+        <property name="displayName" value="Heap committed memory, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_heap_committed.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_heap_max_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_heap_max"/>
+        <property name="plotData" value="${chassis.monitoring.mon_heap_max.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_heap_max.showSummary}"/>
+        <property name="displayName" value="Heap max memory, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_heap_max.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_nonheap_init_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_nonheap_init"/>
+        <property name="plotData" value="${chassis.monitoring.mon_nonheap_init.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_nonheap_init.showSummary}"/>
+        <property name="displayName" value="Non heap init memory, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_nonheap_init.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_nonheap_used_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_nonheap_used"/>
+        <property name="plotData" value="${chassis.monitoring.mon_nonheap_used.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_nonheap_used.showSummary}"/>
+        <property name="displayName" value="Non heap used memory, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_nonheap_used.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_nonheap_committed_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_nonheap_committed"/>
+        <property name="plotData" value="${chassis.monitoring.mon_nonheap_committed.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_nonheap_committed.showSummary}"/>
+        <property name="displayName" value="Non heap committed memory, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_nonheap_committed.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+    <bean id="mon_nonheap_max_bean" class="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+        <constructor-arg index="0" type="java.lang.String" value="mon_nonheap_max"/>
+        <property name="plotData" value="${chassis.monitoring.mon_nonheap_max.plotData}"/>
+        <property name="showSummary" value="${chassis.monitoring.mon_nonheap_max.showSummary}"/>
+        <property name="displayName" value="Non heap max memory, MiB"/>
+        <property name="aggregatorsWithSettings">
+            <map>
+                <entry key-ref="averageAggregator" value-ref="normalizationBy_${chassis.monitoring.mon_nonheap_max.normalizationBy}"/>
+            </map>
+        </property>
+    </bean>
+
+    <!--Support beans-->
+    <bean id="averageAggregator" class="com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider" scope="prototype"/>
+    <bean id="cumulativeAggregator" class="com.griddynamics.jagger.engine.e1.collector.CumulativeMetricAggregatorProvider" scope="prototype"/>
+
+    <bean id="normalizationBy_NONE" class="com.griddynamics.jagger.engine.e1.collector.MetricAggregatorSettings" scope="prototype">
+        <property name="normalizationBy" value="NONE"/>
+    </bean>
+    <bean id="normalizationBy_SECOND" class="com.griddynamics.jagger.engine.e1.collector.MetricAggregatorSettings" scope="prototype">
+        <property name="normalizationBy" value="SECOND"/>
+    </bean>
+    <bean id="normalizationBy_MINUTE" class="com.griddynamics.jagger.engine.e1.collector.MetricAggregatorSettings" scope="prototype">
+        <property name="normalizationBy" value="MINUTE"/>
+    </bean>
+    <bean id="normalizationBy_HOUR" class="com.griddynamics.jagger.engine.e1.collector.MetricAggregatorSettings" scope="prototype">
+        <property name="normalizationBy" value="HOUR"/>
+    </bean>
+
+</beans>

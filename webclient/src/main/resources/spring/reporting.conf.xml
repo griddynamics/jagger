@@ -30,22 +30,22 @@
             <map>
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="Throughput"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.webclient.server.DefaultWorkloadParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters">
                         <value>THROUGHPUT</value>
                     </list>
                 </entry>
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="Latency"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.webclient.server.DefaultWorkloadParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters">
                         <value>LATENCY</value>
                         <value>LATENCY_STD_DEV</value>
                     </list>
@@ -53,11 +53,11 @@
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="Time Latency Percentile"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.webclient.server.DefaultWorkloadParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters">
                         <value>TIME_LATENCY_PERCENTILE_40</value>
                         <value>TIME_LATENCY_PERCENTILE_50</value>
                         <value>TIME_LATENCY_PERCENTILE_60</value>
@@ -80,11 +80,11 @@
             <map>
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="CPU Utilization"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>CPU_STATE_SYSTEM_PERC</value>
                         <value>CPU_STATE_USER_PERC</value>
                         <value>CPU_STATE_IDLE_PERC</value>
@@ -94,11 +94,11 @@
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="CPU Load Average"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>CPU_LOAD_AVERAGE_1</value>
                         <value>CPU_LOAD_AVERAGE_5</value>
                         <value>CPU_LOAD_AVERAGE_15</value>
@@ -107,11 +107,11 @@
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="System Memory"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>MEM_TOTAL</value>
                         <value>MEM_USED</value>
                         <value>MEM_FREE</value>
@@ -122,11 +122,11 @@
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="TCP Connections"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>TCP_LISTEN</value>
                         <value>TCP_ESTABLISHED</value>
                     </list>
@@ -134,11 +134,11 @@
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="TCP Traffic"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>TCP_INBOUND_TOTAL</value>
                         <value>TCP_OUTBOUND_TOTAL</value>
                     </list>
@@ -146,56 +146,56 @@
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="GC major count"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>JMX_GC_MAJOR_UNIT</value>
                     </list>
                 </entry>
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="GC major time"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>JMX_GC_MAJOR_TIME</value>
                     </list>
                 </entry>
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="GC minor count"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>JMX_GC_MINOR_UNIT</value>
                     </list>
                 </entry>
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="GC minor time"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>JMX_GC_MINOR_TIME</value>
                     </list>
                 </entry>
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="Heap Memory"/>
                             <constructor-arg index="1" value="Heap Memory, MiB"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>HEAP_MEMORY_INIT</value>
                         <value>HEAP_MEMORY_USED</value>
                         <value>HEAP_MEMORY_COMMITTED</value>
@@ -205,12 +205,12 @@
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="Non Heap Memory"/>
                             <constructor-arg index="1" value="Non Heap Memory, MiB"/>
                         </bean>
                     </key>
-                    <list value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <list value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>NON_HEAP_MEMORY_INIT</value>
                         <value>NON_HEAP_MEMORY_USED</value>
                         <value>NON_HEAP_MEMORY_COMMITTED</value>
@@ -220,12 +220,12 @@
 
                 <entry>
                     <key>
-                        <bean class="com.griddynamics.jagger.monitoring.reporting.GroupKey">
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0" value="Disks IO"/>
                             <constructor-arg index="1" value="Disks IO, KiB/sec"/>
                         </bean>
                     </key>
-                    <array value-type="com.griddynamics.jagger.agent.model.DefaultMonitoringParameters">
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
                         <value>DISKS_READ_BYTES_TOTAL</value>
                         <value>DISKS_WRITE_BYTES_TOTAL</value>
                     </array>

@@ -25,7 +25,7 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.collector.test.TestInfo;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.process.PollWorkloadProcessStatus;

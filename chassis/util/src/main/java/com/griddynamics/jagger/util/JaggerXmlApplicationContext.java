@@ -60,22 +60,6 @@ public class JaggerXmlApplicationContext extends AbstractXmlApplicationContext {
         return environmentProperties;
     }
 
-    public String getEnvironmentPropertiesLocation() {
-        return environmentProperties.getProperty("jagger.environment.properties");
-    }
-
-    public void setEnvironmentPropertiesLocation(String environmentPropertiesLocation) {
-        this.environmentProperties.setProperty("jagger.environment.properties", environmentPropertiesLocation);
-    }
-
-    public String getDefaultEnvironmentPropertiesLocation() {
-        return environmentProperties.getProperty("jagger.default.environment.properties");
-    }
-
-    public void setDefaultEnvironmentPropertiesLocation(String defaultEnvironmentPropertiesLocation) {
-        this.environmentProperties.setProperty("jagger.default.environment.properties", defaultEnvironmentPropertiesLocation);
-    }
-
     @Override
     protected Resource getResourceByPath(String path) {
         try {

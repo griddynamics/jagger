@@ -71,6 +71,10 @@
         <property name="sessionIdProvider" ref="sessionIdProvider"/>
     </bean>
 
+    <bean id="limitSetConfig" class="com.griddynamics.jagger.engine.e1.collector.limits.LimitSetConfig">
+        <property name="decisionWhenNoMetricForLimit" value="${chassis.decision.maker.with.limits.decisionWhenNoMetricForLimit}"/>
+        <property name="decisionWhenNoBaselineForMetric" value="${chassis.decision.maker.with.limits.decisionWhenNoBaselineForMetric}"/>
+    </bean>
 
     <!-- Monitoring -->
 

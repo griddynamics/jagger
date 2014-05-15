@@ -91,9 +91,12 @@ public class ProviderOfTestListener extends ServicesAware implements Provider<Te
                 }
                 catch (Exception e) {}
 
+                // begin: following section is used for docu generation - example of metric saving
+
                 // Save metric
                 getMetricService().saveValue("internalData",someMetric);
 
+                // end: following section is used for docu generation - example of metric saving
             }
 
             // Method will be executed periodically during test run

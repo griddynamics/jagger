@@ -20,8 +20,8 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="h2KeyValueStorage" class="com.griddynamics.jagger.storage.rdb.HibernateKeyValueStorage">
         <property name="sessionFactory" ref="sessionFactory"/>
@@ -48,24 +48,8 @@
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
-				<prop key="hibernate.dialect">${chassis.storage.hibernate.dialect}</prop>
-				<prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.jdbc.batch_size">${chassis.storage.hibernate.batch_size}</prop>
-                <prop key="hibernate.cache.use_query_cache">false</prop>
-                <prop key="hibernate.cache.use_second_level_cache">false</prop>
-                <prop key="hibernate.id.new_generator_mappings">true</prop>
-            </props>
-		</property>
-		<property name="packagesToScan">
-			<list>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.session.model</value>
-				<value>com.griddynamics.jagger.monitoring.model</value>
-			</list>
-		</property>
+		<property name="hibernateProperties" ref="hibernateProperties"/>
+		<property name="packagesToScan" ref="entityPackages"/>
 		<property name="annotatedClasses">
 			<list>
 				<!--TODO not extensible solution -->
@@ -76,4 +60,27 @@
 		</property>
 	</bean>
 
+    <!-- this bean provides EntityManager in class, which use PersistenceAnnotation -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence"/>
+        <property name="packagesToScan" ref="entityPackages"/>
+        <property name="jpaProperties" ref="hibernateProperties"/>
+    </bean>
+
+    <util:properties id="hibernateProperties">
+        <prop key="hibernate.hbm2ddl.auto">update</prop>
+        <prop key="hibernate.dialect">${chassis.storage.hibernate.dialect}</prop>
+        <prop key="hibernate.show_sql">false</prop>
+        <prop key="hibernate.jdbc.batch_size">${chassis.storage.hibernate.batch_size}</prop>
+        <prop key="hibernate.cache.use_query_cache">false</prop>
+        <prop key="hibernate.cache.use_second_level_cache">false</prop>
+        <prop key="hibernate.id.new_generator_mappings">true</prop>
+    </util:properties>
+
+    <util:list id="entityPackages">
+        <value>com.griddynamics.jagger.dbapi.entity</value>
+    </util:list>
 </beans>

@@ -26,6 +26,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>dbapi</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>

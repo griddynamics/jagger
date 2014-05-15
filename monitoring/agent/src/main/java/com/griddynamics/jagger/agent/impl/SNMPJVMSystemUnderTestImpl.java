@@ -22,6 +22,7 @@ package com.griddynamics.jagger.agent.impl;
 
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.*;
+import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.smi.OID;
@@ -30,7 +31,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.griddynamics.jagger.util.Units.bytesToMiB;
-import static com.griddynamics.jagger.agent.model.DefaultMonitoringParameters.*;
+import static com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters.*;
 
 /**
  * User: dkotlyarov

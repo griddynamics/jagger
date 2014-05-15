@@ -95,6 +95,19 @@
                 <metric-aggregator xsi:type="metric-aggregator-sum"/>
             </metric>
 
+            <!-- Math functions with aggregators with settings -->
+            <metric id="constant1-sum-normalized-1s" xsi:type="metric-custom" calculator="constant" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-sum" normalizeBy="SECOND"/>
+            </metric>
+
+            <metric id="increase1-sum-point-count-10" xsi:type="metric-custom" calculator="alwaysIncrease" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-sum" pointCount="10"/>
+            </metric>
+
+            <metric id="sin1-sum-point-interval-2s" xsi:type="metric-custom" calculator="sin" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-sum" pointInterval="2000"/>
+            </metric>
+
         </info-collectors>
 
         <scenario  xsi:type="scenario-query-pool">

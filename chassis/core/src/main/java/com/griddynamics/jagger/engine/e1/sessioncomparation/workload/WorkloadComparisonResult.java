@@ -19,8 +19,7 @@
  */
 package com.griddynamics.jagger.engine.e1.sessioncomparation.workload;
 
-import com.google.common.base.Objects;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 
 public class WorkloadComparisonResult {
     private final WorkloadTaskData currentData;

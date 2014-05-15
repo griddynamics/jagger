@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * Repository that stores two sets of properties: root properties and regular properties.
- * Toot properties can substituted into regular properties.
+ * Root properties can substituted into regular properties.
  */
 public class PropertiesResolverRegistry implements ApplicationContextAware {
     private static final Logger log = LoggerFactory.getLogger(PropertiesResolverRegistry.class);
@@ -57,10 +57,6 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
         return value;
     }
 
-    public Set<String> getPropertyNames() {
-        return priorityProperties.stringPropertyNames();
-    }
-
     public Properties resolve(String propertiesResourceLocation) {
         Properties rawProperties = new Properties();
         Properties result = new Properties();
@@ -80,7 +76,7 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
         return result;
     }
 
-    public String resolveProperty(String property) {
+    private String resolveProperty(String property) {
         if(property == null) {
             return null;
         }
@@ -109,15 +105,11 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
              setResources(resources, true);
         }
 
-    public void addResources(List<Resource> resources) {
-         setResources(resources, false);
-    }
-
     public void addProperties(Properties properties) {
          mergeProperties(this.properties, properties);
     }
 
-    public void setResources(List<Resource> resources, boolean priority) {
+    private void setResources(List<Resource> resources, boolean priority) {
         Properties base = priority ? priorityProperties : properties;
         try {
             for(Resource resource : resources) {

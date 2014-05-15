@@ -115,14 +115,9 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @li @ref Main_HowToCustomizeDecisionMakers_group
 /// @li @ref Main_HowToCustomizeListeners_group
 
-/// @defgroup Main_Properties_group Jagger properties
+/// @defgroup Main_Properties_group Jagger properties main page
 ///
-/// @details Below is copy of environment.properties file from Jagger archetype. @n
-/// This file contains all configurable Jagger properties. @n
-/// @n
-/// @dontinclude  environment.properties
-/// @skip  begin: following section is used for docu generation - Jagger properties
-/// @until end: following section is used for docu generation - Jagger properties
+/// @details please see @ref JaggerProperties
 
 /* **************** Invokers page *************************  */
 /// @defgroup Main_Invokers_General_group Invokers main page

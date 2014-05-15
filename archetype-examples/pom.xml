@@ -35,6 +35,10 @@
                             <token>jagger.version.placeholder</token>
                             <value>${version}</value>
                         </replacement>
+                        <replacement>
+                            <token>spring.version.placeholder</token>
+                            <value>${spring.version}</value>
+                        </replacement>
                     </replacements>
                 </configuration>
             </plugin>

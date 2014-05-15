@@ -15,6 +15,6 @@ public class CalculatedIntervalSizeProvider implements IntervalSizeProvider {
 
     @Override
     public int getIntervalSize(long minTime, long maxTime) {
-        return (int) ((maxTime - minTime) / intervalsCount);
+        return (int) Math.ceil((1d * maxTime - minTime) / intervalsCount);
     }
 }

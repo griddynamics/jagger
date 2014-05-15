@@ -113,6 +113,12 @@
 
     <metric id="metric1" xsi:type="metric-not-null-response"/>
 
+    <!-- metric-aggregator`s settings -->
+    <metric id="metric-aggregator-with-no-settings" xsi:type="metric-not-null-response"/>
+    <metric id="metric-aggregator-with-settings" xsi:type="metric-not-null-response">
+        <metric-aggregator xsi:type="metric-aggregator-sum" normalizeBy="MINUTE" pointCount="10" pointInterval="1000"/>
+    </metric>
+
     <!-- test displayName attribute -->
     <metric id="metric-with-display-name" xsi:type="metric-not-null-response" displayName="NOT_NULL_METRIC"/>
     <validator id="validator-with-display-name" xsi:type="validator-not-null-response" displayName="NOT_NULL_VALIDATOR"/>

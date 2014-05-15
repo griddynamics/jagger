@@ -109,14 +109,11 @@
         <property name="globalPercentilesKeys" ref="standardPercentilesGlobal"/>
     </bean>
 
-    <bean id="monitoringAggregator" class="com.griddynamics.jagger.monitoring.MonitoringAggregator">
+    <bean id="profilerLogProcessor" class="com.griddynamics.jagger.engine.e1.aggregator.workload.ProfilerLogProcessor">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="fileStorage" ref="fileStorage"/>
-        <property name="intervalSizeProvider" ref="metricIntervalSizeProvider_${chassis.engine.e1.reporting.task.type}"/>
-
         <property name="logReader"  ref="bufferedLogReader"/>
 
-        <property name="logAggregator" ref="chronologyLogAggregator"/>
         <property name="timeWindowPercentilesKeys" ref="standardPercentilesTimeSeries"/>
         <property name="globalPercentilesKeys" ref="standardPercentilesGlobal"/>
     </bean>

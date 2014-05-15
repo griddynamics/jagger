@@ -60,6 +60,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>dbapi</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
         </dependency>
@@ -237,5 +242,12 @@
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.0</version>
+        </dependency>
+
     </dependencies>
 </project>
