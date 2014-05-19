@@ -43,11 +43,7 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
 
     private int sessionLimit=50;
 
-    private static SessionIdProvider sessionIdProvider;
-
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
-    }
+    private String sessionId;
 
     public int getHibernateBatchSize() {
         return hibernateBatchSize;
@@ -78,6 +74,12 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
 
     @Override
     public void initialize() {
+    }
+
+    @Override
+    public void setSessionId(String sessionId) {
+        this.sessionId=sessionId;
+
     }
 
     @Override
@@ -180,7 +182,7 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
         keyvalue.setNamespace(namespace.toString());
         keyvalue.setKey(key);
         keyvalue.setData(SerializationUtils.serialize(value));
-        keyvalue.setSessionId(sessionIdProvider.getSessionId());
+        keyvalue.setSessionId(sessionId);
         return keyvalue;
     }
 }

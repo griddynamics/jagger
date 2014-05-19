@@ -165,6 +165,9 @@ public class Master implements Runnable {
         }
 
         String sessionId = sessionIdProvider.getSessionId();
+
+        keyValueStorage.setSessionId(sessionId);
+
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
 
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();

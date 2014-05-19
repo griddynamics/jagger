@@ -26,7 +26,6 @@
 
     <bean id="h2KeyValueStorage" class="com.griddynamics.jagger.storage.rdb.HibernateKeyValueStorage">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="sessionIdProvider" ref="sessionIdProvider"/>
         <property name="hibernateBatchSize" value="${chassis.storage.hibernate.batch_size}"/>
         <property name="sessionLimit" value="${chassis.storage.temporary.data.session.count}"/>
     </bean>

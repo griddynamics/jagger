@@ -33,6 +33,7 @@ import com.griddynamics.jagger.coordinator.Qualifier;
 import com.griddynamics.jagger.engine.e1.scenario.CalibrationInfoCollector;
 import com.griddynamics.jagger.invoker.Scenario;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
+import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.*;
 import org.slf4j.Logger;
@@ -77,7 +78,9 @@ public class WorkloadWorker extends ConfigurableWorker {
             }
 
             public String execute(StartWorkloadProcess command, NodeContext nodeContext) {
+
                 log.debug("Processing command {}", command);
+                nodeContext.getService(KeyValueStorage.class).setSessionId(command.getSessionId());
                 int poolSize = command.getPoolSize();
 
                 if (poolSize < command.getThreads()) {
