@@ -6,11 +6,11 @@ import java.io.Serializable;
 
 public class TaskDecisionDto implements Serializable {
 
-    private Long taskId;
+    private Long id;
     private Decision decision;
 
-    public TaskDecisionDto(Long taskId, Decision decision) {
-        this.taskId = taskId;
+    public TaskDecisionDto(Long id, Decision decision) {
+        this.id = id;
         this.decision = decision;
     }
 
@@ -24,12 +24,12 @@ public class TaskDecisionDto implements Serializable {
         this.decision = decision;
     }
 
-    public Long getTaskId() {
-        return taskId;
+    public Long getId() {
+        return id;
     }
 
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

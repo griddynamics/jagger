@@ -188,6 +188,7 @@
 
                 <entry key="profiler">
                     <bean class="com.griddynamics.jagger.diagnostics.reporting.ProfileReporter" parent="abstractReportProviderBean">
+                        <property name="databaseService" ref="databaseService"/>
                         <property name="enable" value="${chassis.conditions.monitoring.enable}"/>
                         <property name="template" value="configuration/reporting/profile-reporting.jrxml"/>
 

@@ -2,17 +2,13 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:custom="urn:import:com.griddynamics.jagger.webclient.client.components">
     <ui:with type="com.griddynamics.jagger.webclient.client.resources.JaggerResources" field="res"/>
-    <g:DockLayoutPanel addStyleNames="{res.css.plotPanel}">
+    <g:DockLayoutPanel>
         <g:north size="30">
-            <g:HorizontalPanel height="100%">
-                <custom:PlotButtonsPanel ui:field="plotButtonsPanel"/>
-            </g:HorizontalPanel>
+             <custom:PlotButtonsPanel height="100%" ui:field="plotButtonsPanel"/>
         </g:north>
         <g:center height="100%">
-            <g:ScrollPanel ui:field="scrollPanelMetrics">
-                <g:FlowPanel >
+            <g:ScrollPanel ui:field="scrollPanelMetrics" addStyleNames="{res.css.overflowYScroll}">
                     <custom:DynamicLayoutPanel ui:field="layoutPanel" width="100%" height="100%"/>
-                </g:FlowPanel>
             </g:ScrollPanel>
         </g:center>
     </g:DockLayoutPanel>

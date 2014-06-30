@@ -2,7 +2,11 @@ body {
     background: url(bg-body.jpg);
     color: #555555;
     font-family: Arial, sans-serif;
-    font-size: small;
+    font-size: 13px;
     margin: 8px;
 }
 
+body, table td, select {
+    font-family: Arial Unicode MS, Arial, sans-serif;
+    font-size: 13px;
+}

@@ -91,9 +91,6 @@
     border-radius: 5px;
 }
 
-.plotPanel {
-    margin: 5px;
-}
 
 .xAxisLabel {
     text-align: center;
@@ -294,7 +291,6 @@ input[type="text"] {
 
 .dragLabel {
     background: #d0e4f6;
-    height: 20px;
     width: 100%;
 }
 
@@ -321,6 +317,21 @@ input[type="text"] {
 
 .plotSettingsMenu {
 
+}
+
+.legendPanel {
+    background: rgba(240, 240, 240, 0.50);
+
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+}
+
+.padding2px {
+    padding: 2px;
+}
+
+.overflowYScroll {
+    overflow-y: scroll !important;
 }
 
 .plotButtonsPanel {

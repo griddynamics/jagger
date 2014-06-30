@@ -591,6 +591,7 @@ public class Trends extends DefaultActivity {
         }
 
         if (isMetric) {
+            // todo : JFG-803 simplify trends plotting mechanism
             xAxisOptions
                 .setTickDecimals(0)
                 .setTickFormatter(new TickFormatter() {
@@ -632,16 +633,7 @@ public class Trends extends DefaultActivity {
         }
         plotOptions.addYAxisOptions(yAxisOptions);
 
-        plotOptions.setLegendOptions(LegendOptions.create().setPosition(LegendOptions.LegendPosition.NORTH_EAST)
-                .setNumOfColumns(2)
-                .setBackgroundOpacity(0.7)
-                .setLabelFormatter(new LegendOptions.LabelFormatter() {
-                    @Override
-                    public String formatLabel(String s, Series series) {
-                        return "<span style=\"font-size:13px\">" + s + "</span> ";
-                    }
-                }));
-
+        plotOptions.setLegendOptions(LegendOptions.create().setShow(false));
 
         plotOptions.setCanvasEnabled(true);
         if (markings == null) {
@@ -1030,54 +1022,42 @@ public class Trends extends DefaultActivity {
         }
 
         final SimplePlot plot;
-        PlotModel plotModel;
+        List<Integer> trendSessionIds = null;
         if (isTrend) {
             // Trends plot panel
 
-            List<Integer> sessionIds = new ArrayList<Integer>();
+            // todo : JFG-803 simplify trends plotting mechanism
+            trendSessionIds = new ArrayList<Integer>();
+            double yMin = Double.MAX_VALUE;
             for (PlotSingleDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
                 // find all sessions in plot
                 for (PointDto pointDto : plotDatasetDto.getPlotData()) {
-                    int sId = (int)pointDto.getX();
-                    if (!sessionIds.contains(sId)) {
-                        sessionIds.add(sId);
+                    int sId = (int) pointDto.getX();
+                    if (!trendSessionIds.contains(sId)) {
+                        trendSessionIds.add(sId);
+                    }
+                    if (pointDto.getY() < yMin) {
+                        yMin = pointDto.getY();
                     }
                 }
             }
-            Collections.sort(sessionIds);
-            double yMinimum = getMinY(plotSeriesDto);
-            plot = createPlot(panel, id, markings, plotSeriesDto.getXAxisLabel(), yMinimum, true, sessionIds);
-            plotModel = plot.getModel();
-            for (PlotSingleDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
-                Series se = Series.create().setLabel(plotDatasetDto.getLegend()).setColor(plotDatasetDto.getColor());
-                SeriesHandler handler = plotModel.addSeries(se);
-                // Populate plot with data
-                for (PointDto pointDto : plotDatasetDto.getPlotData()) {
-                    handler.add(DataPoint.of(sessionIds.indexOf((int) pointDto.getX()), pointDto.getY()));
-                }
-            }
+            Collections.sort(trendSessionIds);
+            plot = createPlot(panel, id, markings, plotSeriesDto.getXAxisLabel(), yMin, true, trendSessionIds);
         } else {
-            // Metrics plot panel
-
             plot = createPlot(panel, id, markings, plotSeriesDto.getXAxisLabel(), null, false, null);
-            plotModel = plot.getModel();
-            for (PlotSingleDto plotDatasetDto : plotSeriesDto.getPlotSeries()) {
-                Series se = Series.create().setLabel(plotDatasetDto.getLegend()).setColor(plotDatasetDto.getColor());
-                SeriesHandler handler = plotModel.addSeries(se);
-                // Populate plot with data
-                for (PointDto pointDto : plotDatasetDto.getPlotData()) {
-                    handler.add(DataPoint.of(pointDto.getX(), pointDto.getY()));
-                }
-            }
         }
+
+        LegendTree legendTree = new LegendTree(plot, panel, trendSessionIds);
+        MetricGroupNode<LegendNode> inTree = plotSeriesDto.getLegendTree();
+
+        translateIntoTree(inTree, legendTree);
+
+        // All lines checked by default
+        legendTree.checkAll();
+
 
         // Add X axis label
         final String xAxisLabel = plotSeriesDto.getXAxisLabel();
-        Label xLabel = new Label(xAxisLabel);
-        xLabel.addStyleName(getResources().css().xAxisLabel());
-
-        Label plotLegend = new Label("PLOT LEGEND");
-        plotLegend.addStyleName(getResources().css().plotLegend());
 
         Label zoomInLabel = new Label("Zoom In");
         zoomInLabel.addStyleName(getResources().css().zoomLabel());
@@ -1112,10 +1092,51 @@ public class Trends extends DefaultActivity {
         zoomPanel.add(zoomOutLabel);
         zoomPanel.add(zoomBack);
 
-        PlotRepresentation plotRepresentation = new PlotRepresentation(metricNode, zoomPanel, plot, xLabel);
+
+        PlotRepresentation plotRepresentation = new PlotRepresentation(metricNode, zoomPanel, plot, legendTree, xAxisLabel);
         PlotContainer pc = new PlotContainer(id, plotSeriesDto.getPlotHeader(), plotRepresentation, plotSaver);
 
         panel.addElement(pc);
+    }
+
+
+    /**
+     * Populate Tree tree with data.
+     * @param inTree model of tree with data
+     * @param tree tree that will be populated with data
+     */
+    private void translateIntoTree(
+            AbstractIdentifyNode inTree,
+            AbstractTree<AbstractIdentifyNode, ?> tree) {
+
+        TreeStore<AbstractIdentifyNode> ll = tree.getStore();
+
+        for (AbstractIdentifyNode ln : inTree.getChildren()) {
+            addToStore(ll, ln);
+        }
+    }
+
+
+    private void addToStore(TreeStore<AbstractIdentifyNode> store, AbstractIdentifyNode node) {
+        store.add(node);
+
+        for (AbstractIdentifyNode child : node.getChildren()) {
+            addToStore(store, child, node);
+        }
+    }
+
+    private void addToStore(TreeStore<AbstractIdentifyNode> store, AbstractIdentifyNode node, AbstractIdentifyNode parent) {
+        store.add(parent, node);
+        for (AbstractIdentifyNode child : node.getChildren()) {
+
+            try {
+                addToStore(store, child, node);
+            }
+            catch (AssertionError e) {
+                new ExceptionPanel(place, "Was not able to insert node with id '" + child.getId() + "' and name '"
+                        + child.getDisplayName() + "' into control tree. Id is already in use. Error message:\n" + e.getMessage());
+            }
+        }
     }
 
 
@@ -1464,33 +1485,9 @@ public class Trends extends DefaultActivity {
             ControlTree<String> newTree = new ControlTree<String>(temporaryStore, new SimpleNodeValueProvider());
             setupControlTree(newTree);
 
-            for (AbstractIdentifyNode node : result.getChildren()) {
-                addToStore(temporaryStore, node);
-            }
+            translateIntoTree(result, newTree);
 
-           return newTree;
-        }
-
-        private void addToStore(TreeStore<AbstractIdentifyNode> store, AbstractIdentifyNode node) {
-            store.add(node);
-
-            for (AbstractIdentifyNode child : node.getChildren()) {
-                addToStore(store, child, node);
-            }
-        }
-
-        private void addToStore(TreeStore<AbstractIdentifyNode> store, AbstractIdentifyNode node, AbstractIdentifyNode parent) {
-            store.add(parent, node);
-            for (AbstractIdentifyNode child : node.getChildren()) {
-
-                try {
-                    addToStore(store, child, node);
-                }
-                catch (AssertionError e) {
-                    new ExceptionPanel(place, "Was not able to insert node with id '" + child.getId() + "' and name '"
-                            + child.getDisplayName() + "' into control tree. Id is already in use. Error message:\n" + e.getMessage());
-                }
-            }
+            return newTree;
         }
     }
 
@@ -1566,12 +1563,17 @@ public class Trends extends DefaultActivity {
 
                 List<SummaryIntegratedDto> toRemoveFromTable = new ArrayList<SummaryIntegratedDto>();
                 // Remove plots from display which were unchecked
-                Set<MetricNode> metricIdsSet = new HashSet<MetricNode>(chosenMetrics.keySet());
-                for (MetricNode metricNode : metricIdsSet) {
+                Set<MetricNode> metricNodesToRemove = new HashSet<MetricNode>();
+                for (MetricNode metricNode : chosenMetrics.keySet()) {
                     if (!selectedMetricsIds.contains(metricNode.getId())) {
                         toRemoveFromTable.add(chosenMetrics.get(metricNode));
+                        metricNodesToRemove.add(metricNode);
+                    }
+                }
+                if (!metricNodesToRemove.isEmpty()) {
+                    plotTrendsPanel.removeByMetricNodes(metricNodesToRemove);
+                    for (MetricNode metricNode : metricNodesToRemove) {
                         chosenMetrics.remove(metricNode);
-                        plotTrendsPanel.removeByMetricNode(metricNode);
                     }
                 }
 
@@ -1672,8 +1674,8 @@ public class Trends extends DefaultActivity {
          */
         public void removePlots(Set<MetricNode> metricNodes) {
 
+            plotPanel.removeByMetricNodes(metricNodes);
             for (MetricNode metricNode : metricNodes) {
-                plotPanel.removeByMetricNode(metricNode);
                 chosenPlots.remove(metricNode);
             }
         }

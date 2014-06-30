@@ -8,7 +8,7 @@ import java.util.List;
 public class MetricGroupNode<M extends MetricNode> extends AbstractIdentifyNode {
 
     private List<M> metrics = null;
-    private List<MetricGroupNode> metricGroupNodeList = null;
+    private List<MetricGroupNode<M>> metricGroupNodeList = null;
 
     public MetricGroupNode(MetricGroupNode<M> that) {
         super(that);
@@ -20,7 +20,7 @@ public class MetricGroupNode<M extends MetricNode> extends AbstractIdentifyNode 
     }
     public MetricGroupNode() {}
 
-    public void setMetricGroupNodeList(List<MetricGroupNode> metricGroupNodeList) {
+    public void setMetricGroupNodeList(List<MetricGroupNode<M>> metricGroupNodeList) {
         this.metricGroupNodeList = metricGroupNodeList;
     }
 
@@ -31,7 +31,7 @@ public class MetricGroupNode<M extends MetricNode> extends AbstractIdentifyNode 
     public List<M> getMetricsWithoutChildren() {
         return metrics;
     }
-    public List<MetricGroupNode> getMetricGroupNodeList() {
+    public List<MetricGroupNode<M>> getMetricGroupNodeList() {
         return metricGroupNodeList;
     }
 
@@ -44,7 +44,7 @@ public class MetricGroupNode<M extends MetricNode> extends AbstractIdentifyNode 
         }
 
         if (metricGroupNodeList != null) {
-            for (MetricGroupNode metricGroupNode : metricGroupNodeList) {
+            for (MetricGroupNode<M> metricGroupNode : metricGroupNodeList) {
                 List<M> metricNodeList = metricGroupNode.getMetrics();
                 if (metricNodeList != null) {
                     allMetrics.addAll(metricNodeList);

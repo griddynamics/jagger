@@ -23,6 +23,7 @@ package com.griddynamics.jagger.diagnostics.reporting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.MethodElement;
+import com.griddynamics.jagger.dbapi.DatabaseService;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.diagnostics.thread.sampling.InvocationProfile;
 import com.griddynamics.jagger.diagnostics.thread.sampling.MethodProfile;
@@ -37,6 +38,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.awt.*;
 import java.util.*;
@@ -57,6 +59,7 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
     private int callGraphImageHeight;
     private boolean renderGraph;
     private Map<String, List<SysUnderTestDTO>> sysUnderTests;
+    private DatabaseService databaseService;
 
     @Override
     public void clearCache() {
@@ -126,7 +129,13 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
         loadMonitoringMap();
 
         List<SysUnderTestDTO> data = null;
-        String taskId = getTaskIdById(id);
+        String taskId = null;
+
+        Long longId = Long.valueOf(id);
+        Map<Long,TaskData> taskDataMap = databaseService.getTaskData(Arrays.asList(longId));
+        if (taskDataMap.keySet().contains(longId)) {
+            taskId = taskDataMap.get(longId).getTaskId();
+        }
 
         if (taskId != null) {
 
@@ -301,17 +310,9 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
         return dto;
     }
 
-    private String getTaskIdById(String id) {
-        //todo JFG-722 We should delete all queries from reporting-part jagger
-
-        @SuppressWarnings("unchecked")
-        List<TaskData> taskDataList = getHibernateTemplate().find("from TaskData t where t.id=?",Long.valueOf(id));
-
-        if(taskDataList.size()==1){
-            return taskDataList.get(0).getTaskId();
-        } else{
-            log.warn("TaskData list has unexpected size: {} while size of 1 was expected",taskDataList.size());
-        }
-        return null;
+    @Required
+    public void setDatabaseService(DatabaseService databaseService) {
+        this.databaseService = databaseService;
     }
+
 }

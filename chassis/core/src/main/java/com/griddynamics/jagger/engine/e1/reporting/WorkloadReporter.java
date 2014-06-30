@@ -33,10 +33,8 @@ import org.springframework.beans.factory.annotation.Required;
 
 import java.awt.*;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class WorkloadReporter extends AbstractReportProvider {
     private SummaryReporter summaryReporter;
@@ -97,7 +95,15 @@ public class WorkloadReporter extends AbstractReportProvider {
                 testStatus = testExecutionStatus;
             }
 
-            // ??? todo JFG_779 add decision per test based on limits comparison. This decision should influence test status in report
+            // Limits based decision
+            Decision testDecisionBasedOLimits = testEntity.getDecision();
+            if (testDecisionBasedOLimits != null) {
+                if (testDecisionBasedOLimits.ordinal() > testStatus.ordinal()) {
+                    testStatusComment = "Status is based on comparison of summary values to limits";
+                    testStatus = testDecisionBasedOLimits;
+                }
+
+            }
 
             reportData.setStatusImage(statusImageProvider.getImageByDecision(testStatus));
             reportData.setScenarioName(testEntity.getName() + "\n\n\n" + testStatusComment);

@@ -6,12 +6,10 @@ import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.dto.TestInfoDto;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.util.Decision;
-import com.griddynamics.jagger.util.Pair;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
-import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -149,5 +147,35 @@ public class FetchUtil {
 
         return resultMap;
     }
+
+    /** Returns task data, corresponding to defined pair of taskIs and sessionId
+     * @param taskId - TaskData taskId
+     * @param sessionId - session id
+     * @return TaskData for selected params
+     */
+    public TaskData getTaskData(String taskId, String sessionId) {
+        return (TaskData) entityManager.createQuery("select t from TaskData t where sessionId=(:sessionId) and taskId=(:taskId)")
+                        .setParameter("sessionId", sessionId)
+                        .setParameter("taskId", taskId).
+                        getSingleResult();
+    }
+
+    /** Returns task data, corresponding to TaskData ids
+     * @param ids - TaskData ids
+     * @return map <TaskData id, TaskData>
+     */
+    public Map<Long, TaskData> getTaskData(Collection<Long> ids) {
+        List<TaskData> taskDataList = (List<TaskData>) entityManager.createQuery("select t from TaskData t where id in (:ids)")
+                                        .setParameter("ids", ids).
+                                        getResultList();
+
+        Map<Long, TaskData> result = new HashMap<Long, TaskData>();
+        for (TaskData taskData : taskDataList) {
+            result.put(taskData.getId(), taskData);
+        }
+
+        return result;
+    }
+
 
 }

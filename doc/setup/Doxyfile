@@ -722,6 +722,7 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/Provider.java \
                          ./chassis/util/src/main/java/com/griddynamics/jagger/util/TimeUnits.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/MetricEntity.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/MetricSummaryValueEntity.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/MetricPlotPointEntity.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/SessionEntity.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/TestEntity.java \

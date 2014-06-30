@@ -97,21 +97,17 @@
                     <g:header>
                         <b>Trends</b>
                     </g:header>
-                    <g:DockLayoutPanel>
-                        <g:center>
-                            <custom:PlotsPanel ui:field="plotTrendsPanel"/>
-                        </g:center>
-                    </g:DockLayoutPanel>
+
+                    <custom:PlotsPanel ui:field="plotTrendsPanel"/>
+
                 </g:tab>
                 <g:tab>
                     <g:header>
                         <b>Metrics</b>
                     </g:header>
-                    <g:DockLayoutPanel>
-                        <g:center>
-                            <custom:PlotsPanel ui:field="plotPanel"/>
-                        </g:center>
-                    </g:DockLayoutPanel>
+
+                    <custom:PlotsPanel ui:field="plotPanel"/>
+
                 </g:tab>
                 <g:tab>
                     <g:header>

@@ -43,10 +43,10 @@ public class PlotSaver {
             ImageElement imageElement = ImageElement.as(plot.getImage().getElement());
 
             // Width of plot image
-            int plotWidth = imageElement.getWidth();
+            int plotWidth = plot.getOffsetWidth();
 
             // Height of plot image
-            int plotHeight = imageElement.getHeight();
+            int plotHeight = plot.getOffsetHeight();
 
             // Font size of text in pixels
             int fontSize = 13;

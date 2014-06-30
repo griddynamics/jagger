@@ -50,10 +50,10 @@ public class TreeViewGroupRule extends Rule{
         result.setId(id);
 
         // first ask all children to filter
-        List<MetricGroupNode> metricGroupNodeListFromChildren = new ArrayList<MetricGroupNode>();
+        List<MetricGroupNode<M>> metricGroupNodeListFromChildren = new ArrayList<MetricGroupNode<M>>();
         if (children != null) {
             for (TreeViewGroupRule child : children) {
-                MetricGroupNode childResult = child.filter(id,metricNodeList);
+                MetricGroupNode<M> childResult = child.filter(id,metricNodeList);
                 if (childResult != null) {
                     metricGroupNodeListFromChildren.add(childResult);
                 }

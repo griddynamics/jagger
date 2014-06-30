@@ -11,29 +11,17 @@ import com.griddynamics.jagger.util.Decision;
  * Gribov Kirill
  */
 public class TestEntity {
-    /** Test id (aka task id) - unique id of this test */
     private Long id;
-
-    /** Test name in format [test group name] [test name] */
     private String name;
-
-    /** Test description */
     private String description;
 
     /** Description of the load for this test */
     private String load;
-
-    /** Description of the termination strategy for this test */
     private String terminationStrategy;
-
-    /** Start date of the test */
     private String startDate;
-
-    /** Index of test group where this test belongs */
     private Integer testGroupIndex;
-
-    /** Status of execution of this test. FATAL when test failed during execution (f.e. due to some workload configuration timeout) */
     private Decision testExecutionStatus;
+    private Decision decision;
 
     /** Get test name in format [test group name] [test name] */
     public String getName() {
@@ -98,13 +86,22 @@ public class TestEntity {
         this.testGroupIndex = testGroupIndex;
     }
 
-    /** Get status of this test execution */
+    /** Get status of execution of this test. FATAL when test failed during execution (f.e. due to some workload configuration timeout) */
     public Decision getTestExecutionStatus() {
         return testExecutionStatus;
     }
 
     public void setTestExecutionStatus(Decision testExecutionStatus) {
         this.testExecutionStatus = testExecutionStatus;
+    }
+
+    /** Get decision per test if limits based decision maker was used during this test */
+    public Decision getDecision() {
+        return decision;
+    }
+
+    public void setDecision(Decision decision) {
+        this.decision = decision;
     }
 
     @Override
@@ -114,6 +111,7 @@ public class TestEntity {
 
         TestEntity that = (TestEntity) o;
 
+        if (decision != that.decision) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (load != null ? !load.equals(that.load) : that.load != null) return false;
@@ -138,6 +136,7 @@ public class TestEntity {
         result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + (testGroupIndex != null ? testGroupIndex.hashCode() : 0);
         result = 31 * result + (testExecutionStatus != null ? testExecutionStatus.hashCode() : 0);
+        result = 31 * result + (decision != null ? decision.hashCode() : 0);
         return result;
     }
 
@@ -152,6 +151,7 @@ public class TestEntity {
                 ", startDate='" + startDate + '\'' +
                 ", testGroupIndex=" + testGroupIndex +
                 ", testExecutionStatus=" + testExecutionStatus +
+                ", decision=" + decision +
                 '}';
     }
 }

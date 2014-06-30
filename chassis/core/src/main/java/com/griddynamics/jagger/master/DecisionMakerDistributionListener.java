@@ -159,7 +159,10 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
 
             if (decisionsPerTest.size() > 0) {
                 // Save decisions per metric if there were any
-                saveDecisionsForMetrics(sessionId, taskId, decisionsPerTest);
+                saveDecisionsForMetrics(dataService, sessionId, taskId, decisionsPerTest);
+
+                // Save decisions per test
+                saveDecisionsForTests(dataService, decisionsPerTest);
 
                 // Call test group decision maker listener with basic or customer code
                 List<Provider<TestGroupDecisionMakerListener>> providers = ((CompositeTask) task).getDecisionMakerListeners();
@@ -183,7 +186,7 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
 
                 // Save decisions per test group
                 log.info("\n\nDecision for test group {} - {}\n",task.getTaskName(),decisionPerTestGroup);
-                saveDecisionsForTestGroup(sessionId, taskId, decisionPerTestGroup);
+                saveDecisionsForTestGroup(dataService, sessionId, taskId, decisionPerTestGroup);
             }
         }
     }
@@ -349,7 +352,7 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
         return new DecisionPerLimit(limit,decisionsPerMetric,decisionPerLimit);
     }
 
-    private void saveDecisionsForMetrics(String sessionId, String testGroupTaskId, Collection<DecisionPerTest> decisionsPerTest) {
+    private void saveDecisionsForMetrics(DefaultDataService defaultDataService, String sessionId, String testGroupTaskId, Collection<DecisionPerTest> decisionsPerTest) {
 
         final List<DecisionPerMetricEntity> decisionPerMetricEntityList = new ArrayList<DecisionPerMetricEntity>();
 
@@ -370,7 +373,7 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
                     // metric description belongs to parent (test-group) of the test
                     if (metricDescriptionEntity == null) {
                         if (testGroupId == null) {
-                            testGroupId = getTestGroupId(testGroupTaskId,sessionId);
+                            testGroupId = defaultDataService.getDatabaseService().getTaskData(testGroupTaskId,sessionId).getId();
                             metricDescriptionEntitiesPerTestGroup = getMetricDescriptionEntitiesPerTest(testGroupId);
                         }
                         metricDescriptionEntity = findMetricDescriptionByMetricId(metricId, metricDescriptionEntitiesPerTestGroup);
@@ -403,8 +406,8 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
 
     }
 
-    private void saveDecisionsForTestGroup(String sessionId, String testGroupTaskId, Decision decisionsPerTestGroup) {
-        TaskData taskData = getTaskData(testGroupTaskId,sessionId);
+    private void saveDecisionsForTestGroup(DefaultDataService defaultDataService, String sessionId, String testGroupTaskId, Decision decisionsPerTestGroup) {
+        TaskData taskData = defaultDataService.getDatabaseService().getTaskData(testGroupTaskId,sessionId);
         final DecisionPerTaskEntity decisionPerTaskEntity = new DecisionPerTaskEntity(taskData,decisionsPerTestGroup.toString());
 
         getHibernateTemplate().execute(new HibernateCallback<Void>() {
@@ -418,20 +421,25 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
 
     }
 
-    private TaskData getTaskData(final String taskId, final String sessionId) {
-        return getHibernateTemplate().execute(new HibernateCallback<TaskData>() {
+    private void saveDecisionsForTests(DefaultDataService defaultDataService, final Collection<DecisionPerTest> decisionsPerTest) {
+        Set<Long> testIds = new HashSet<Long>();
+        for (DecisionPerTest decisionPerTest : decisionsPerTest) {
+            testIds.add(decisionPerTest.getTestEntity().getId());
+        }
+        final Map<Long, TaskData> idsToTaskData = defaultDataService.getDatabaseService().getTaskData(testIds);
+
+        getHibernateTemplate().execute(new HibernateCallback<Void>() {
             @Override
-            public TaskData doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                return (TaskData) session.createQuery("select t from TaskData t where sessionId=? and taskId=?")
-                        .setParameter(0, sessionId)
-                        .setParameter(1, taskId)
-                        .uniqueResult();
+            public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                for (DecisionPerTest decisionPerTest : decisionsPerTest) {
+                    session.persist(new DecisionPerTaskEntity(idsToTaskData.get(decisionPerTest.getTestEntity().getId()),
+                            decisionPerTest.getDecisionPerTest().toString()));
+                }
+                session.flush();
+                return null;
             }
         });
-    }
 
-    private Long getTestGroupId(final String taskId, final String sessionId) {
-        return getTaskData(taskId, sessionId).getId();
     }
 
     private MetricDescriptionEntity findMetricDescriptionByMetricId (String metricId, Collection<MetricDescriptionEntity> metricDescriptionEntities) {

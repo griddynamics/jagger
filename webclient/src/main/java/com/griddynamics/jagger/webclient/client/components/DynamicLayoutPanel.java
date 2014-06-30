@@ -1,19 +1,31 @@
 package com.griddynamics.jagger.webclient.client.components;
 
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.*;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Panel that allows to represent child elements with one or two columns
  * @param <M> Type of child widgets. To make control from outside more comfortably */
-public class DynamicLayoutPanel<M extends Widget> extends VerticalPanel {
+public class DynamicLayoutPanel<M extends Widget> extends VerticalLayoutContainer {
 
     private Layout layout = Layout.ONE_COLUMN;
+
+    private double childHeight = 150;
+
+    // additional height space for child
+    private double additionalHeightForChild = 0;
+
+    public void setChildHeight(double childHeight) {
+        this.childHeight = childHeight;
+    }
+    public void setAdditionalHeightForChild(double additionalHeightForChild) {
+        this.additionalHeightForChild = additionalHeightForChild;
+    }
 
     public Layout getLayout() {
         return layout;
@@ -42,7 +54,7 @@ public class DynamicLayoutPanel<M extends Widget> extends VerticalPanel {
 
         List<M> widgets = new ArrayList<M>();
         for (int i = 0; i < getWidgetCount(); i++) {
-            HorizontalPanel hp = (HorizontalPanel) getWidget(i);
+            LayoutPanel hp = (LayoutPanel) getWidget(i);
             for (int j = 0; j < hp.getWidgetCount(); j++) {
                 Widget widget = hp.getWidget(j);
                 if (widget != stub) {
@@ -76,12 +88,10 @@ public class DynamicLayoutPanel<M extends Widget> extends VerticalPanel {
      * Add child widget that will take all width of DynamicLayoutPanel
      * @param widget - child widget */
     private void addChildOneColumn(M widget) {
-        HorizontalPanel newHp = new HorizontalPanel();
-        newHp.setHorizontalAlignment(ALIGN_CENTER);
-        newHp.setWidth("100%");
+        LayoutPanel newHp = new LayoutPanel();
+        newHp.setHeight(String.valueOf(childHeight + additionalHeightForChild) + "px");
+
         newHp.add(widget);
-        newHp.setCellWidth(widget, "100%");
-        newHp.setSpacing(1);
         this.add(newHp);
     }
 
@@ -92,59 +102,63 @@ public class DynamicLayoutPanel<M extends Widget> extends VerticalPanel {
 
         int totalCount = this.getWidgetCount();
         if (totalCount != 0) {
-            HorizontalPanel hp = (HorizontalPanel) getWidget(totalCount - 1); // get last horizontal Panel
+            LayoutPanel hp = (LayoutPanel) getWidget(totalCount - 1); // get last layout Panel
             if (hp.getWidgetCount() == 2 && stub == hp.getWidget(1)) {
                 hp.remove(stub);
                 hp.add(widget);
-                hp.setCellWidth(widget, "50%");
+                hp.setWidgetLeftRight(widget, 50, Style.Unit.PCT, 0, Style.Unit.PCT);
                 return;
             }
         }
 
-        HorizontalPanel newHp = new HorizontalPanel();
-        newHp.setHorizontalAlignment(ALIGN_CENTER);
-        newHp.setWidth("100%");
+        LayoutPanel newHp = new LayoutPanel();
+        newHp.setHeight(String.valueOf(childHeight + additionalHeightForChild) + "px");
+
         newHp.add(widget);
-        newHp.setCellWidth(widget, "50%");
+        newHp.setWidgetLeftRight(widget, 0, Style.Unit.PCT, 50, Style.Unit.PCT);
         newHp.add(stub);
-        newHp.setCellWidth(stub, "50%");
-        newHp.setSpacing(1);
+        newHp.setWidgetLeftRight(stub, 50, Style.Unit.PCT, 0, Style.Unit.PCT);
         this.add(newHp);
     }
 
 
+
     /**
-     * Set height for all children
-     * @param plotContainerHeight - height to set */
-    public void changeChildrenHeight(String plotContainerHeight) {
+     * Set childHeight for all children
+     * @param plotContainerHeight - childHeight to set */
+    public void changeChildrenHeight(double plotContainerHeight) {
+        childHeight = plotContainerHeight;
         for (int i = 0; i < getWidgetCount(); i ++) {
-            HorizontalPanel hp = (HorizontalPanel) getWidget(i);
+            LayoutPanel hp = (LayoutPanel) getWidget(i);
+            hp.setHeight(String.valueOf(plotContainerHeight + additionalHeightForChild) + "px");
             for (int j = 0; j < hp.getWidgetCount(); j ++) {
                 Widget widget = hp.getWidget(j);
-                widget.setHeight(plotContainerHeight);
+                widget.setHeight(plotContainerHeight + "px");
             }
         }
     }
 
     /**
-     * @param id id of widget to remove (id of plot container) */
+     * @param ids ids of widget to remove (ids of plot container) */
     @SuppressWarnings("unchecked")
-    public void removeChild(String id) {
+    public void removeChildren(Collection<String> ids) {
         if (layout == Layout.ONE_COLUMN) {
-            for (int i = 0; i < getWidgetCount(); i ++) {
-                HorizontalPanel hp = (HorizontalPanel) getWidget(i);
-                if (id.equals(hp.getWidget(0).getElement().getId())) {
-                    remove(i);
-                    return;
+            for (String id : ids) {
+                for (int i = 0; i < getWidgetCount(); i ++) {
+                    LayoutPanel hp = (LayoutPanel) getWidget(i);
+                    if (id.equals(hp.getWidget(0).getElement().getId())) {
+                        remove(i);
+                        break;
+                    }
                 }
             }
         } else {
             List<M> containers = new ArrayList<M>();
             for (int i = 0; i < getWidgetCount(); i ++) {
-                HorizontalPanel hp = (HorizontalPanel) getWidget(i);
+                LayoutPanel hp = (LayoutPanel) getWidget(i);
                 for (int j = 0; j < hp.getWidgetCount(); j++) {
                     Widget widget = hp.getWidget(j);
-                    if (!id.equals(widget.getElement().getId()) && widget != stub) {
+                    if (!ids.contains(widget.getElement().getId()) && widget != stub) {
                         // only widgets with type M can appear here, except stub.
                         containers.add((M)widget);
                     }
@@ -164,7 +178,7 @@ public class DynamicLayoutPanel<M extends Widget> extends VerticalPanel {
     public boolean containsElementWithId(String plotId) {
 
         for (int i = 0; i < getWidgetCount(); i ++) {
-            HorizontalPanel hp = (HorizontalPanel) getWidget(i);
+            LayoutPanel hp = (LayoutPanel) getWidget(i);
             for (int j = 0; j < hp.getWidgetCount(); j++) {
                 if (plotId.equals(hp.getWidget(j).getElement().getId())) {
                     return true;
@@ -183,7 +197,7 @@ public class DynamicLayoutPanel<M extends Widget> extends VerticalPanel {
 
         List<M> result = new ArrayList<M>();
         for (int i = 0; i < getWidgetCount(); i ++) {
-            HorizontalPanel hp = (HorizontalPanel) getWidget(i);
+            LayoutPanel hp = (LayoutPanel) getWidget(i);
             for (int j = 0; j < hp.getWidgetCount(); j++) {
                 Widget widget = hp.getWidget(j);
                 if (widget != stub) {
@@ -204,7 +218,7 @@ public class DynamicLayoutPanel<M extends Widget> extends VerticalPanel {
         if (getWidgetCount() == 0)
             return null;
 
-        HorizontalPanel hp = (HorizontalPanel) getWidget(0);
+        LayoutPanel hp = (LayoutPanel) getWidget(0);
         // only widgets with type M can appear here
         return (M) hp.getWidget(0);
     }

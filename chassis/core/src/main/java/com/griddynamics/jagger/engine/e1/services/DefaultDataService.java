@@ -125,8 +125,19 @@ public class DefaultDataService implements DataService {
             return Collections.emptyMap();
         }
 
+        // basic
         List<TaskDataDto> taskDataDtoList = databaseService.getTaskDataForSessions(new HashSet<String>(sessionIds),sessionMatchingSetup);
+        // info
         Map<TaskDataDto,Map<String,TestInfoDto>> testInfoMap = databaseService.getTestInfoByTaskDataDto(taskDataDtoList);
+        // decision
+        Set<Long> ids = new HashSet<Long>();
+        for (TaskDataDto taskDataDto : taskDataDtoList) {
+            ids.addAll(taskDataDto.getIds());
+        }
+        Map<Long, TaskDecisionDto> idToDecisionPerTest = new HashMap<Long, TaskDecisionDto>();
+        for (TaskDecisionDto taskDecisionDto : databaseService.getDecisionsPerTask(ids)) {
+            idToDecisionPerTest.put(taskDecisionDto.getId(),taskDecisionDto);
+        }
 
         Map<String, Set<TestEntity>> result = new HashMap<String, Set<TestEntity>>();
 
@@ -149,6 +160,10 @@ public class DefaultDataService implements DataService {
                         testEntity.setStartDate(testInfoDto.getFormattedStartTime());
                         testEntity.setTestGroupIndex(testInfoDto.getNumber());
                         testEntity.setTestExecutionStatus(testInfoDto.getStatus());
+                    }
+
+                    if (idToDecisionPerTest.containsKey(testId)) {
+                        testEntity.setDecision(idToDecisionPerTest.get(testId).getDecision());
                     }
 
                     if (result.containsKey(sessionId)){
@@ -372,6 +387,10 @@ public class DefaultDataService implements DataService {
         }
 
         return result;
+    }
+
+    public DatabaseService getDatabaseService() {
+        return databaseService;
     }
 
     @Override

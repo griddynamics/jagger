@@ -2,6 +2,7 @@ package com.griddynamics.jagger.dbapi;
 
 
 import com.griddynamics.jagger.dbapi.dto.*;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.dbapi.model.WebClientProperties;
 import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.griddynamics.jagger.dbapi.model.RootNode;
@@ -104,5 +105,18 @@ public interface DatabaseService {
      * @return map <sessionId, decision> of decisions
      */
     Map<String,Decision> getDecisionsPerSession(Set<String> sessionIds);
+
+    /** Returns task data, corresponding to defined pair of taskIs and sessionId
+     * @param taskId - TaskData taskId
+     * @param sessionId - session id
+     * @return TaskData for selected params
+     */
+    TaskData getTaskData(String taskId, String sessionId);
+
+    /** Returns task data, corresponding to TaskData ids
+     * @param ids - TaskData ids
+     * @return map <TaskData id, TaskData>
+     */
+    Map<Long, TaskData> getTaskData(Collection<Long> ids);
 
 }
