@@ -2,9 +2,9 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:custom="urn:import:com.griddynamics.jagger.webclient.client.components">
     <ui:with type="com.griddynamics.jagger.webclient.client.resources.JaggerResources" field="res"/>
-    <g:DockLayoutPanel addStyleNames="{res.css.plotPanel}">
-        <g:north size="20">
-            <custom:SummaryButtonsPanel ui:field="summaryButtonsPanel" height="100%"/>
+    <g:DockLayoutPanel addStyleNames="{res.css.summaryPanel}">
+        <g:north size="30">
+            <custom:SummaryButtonsPanel ui:field="summaryButtonsPanel"/>
         </g:north>
         <g:center height="100%">
             <g:ScrollPanel ui:field="scrollPanel">

@@ -87,7 +87,11 @@
                     <g:header>
                         <b>Summary</b>
                     </g:header>
-                    <custom:SummaryPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
+                    <g:DockLayoutPanel>
+                        <g:center>
+                            <custom:SummaryPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
+                        </g:center>
+                    </g:DockLayoutPanel>
                 </g:tab>
                 <g:tab>
                     <g:header>

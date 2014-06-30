@@ -1,9 +1,9 @@
 package com.griddynamics.jagger.webclient.client.components;
 
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
@@ -12,42 +12,27 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
  */
 public class SummaryButtonsPanel extends HorizontalPanel {
     private SummaryPanel summaryPanel;
+    private TextButton menuButton = new TextButton("Additional options");
 
-    Menu summaryMenu = new Menu();
+    private Menu summaryMenu = new Menu();
+    private MenuItem dummyMenuItem = new MenuItem("Dummy item.");
 
     public void setupButtonPanel(SummaryPanel summaryPanel) {
         if (this.summaryPanel == null) {
             this.summaryPanel = summaryPanel;
-            this.addStyleName(JaggerResources.INSTANCE.css().summaryPanelMenuLabel());
 
-            MenuItem dummyMenuItem = new MenuItem("Dummy item.");
+            this.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+            this.setVerticalAlignment(ALIGN_MIDDLE);
+
             dummyMenuItem.setEnabled(false);
             summaryMenu.add(dummyMenuItem);
-
-            final Image settingsImageButton = new Image(JaggerResources.INSTANCE.getGearImage().getSafeUri());
-            settingsImageButton.addStyleName(JaggerResources.INSTANCE.css().pointer());
-            settingsImageButton.addClickHandler(new ClickHandler() {
+            menuButton.addSelectHandler(new SelectEvent.SelectHandler() {
                 @Override
-                public void onClick(ClickEvent event) {
-                    summaryMenu.show(settingsImageButton);
+                public void onSelect(SelectEvent selectEvent) {
+                    summaryMenu.show(menuButton);
                 }
             });
-            settingsImageButton.addMouseOverHandler(new MouseOverHandler() {
-                @Override
-                public void onMouseOver(MouseOverEvent event) {
-                    settingsImageButton.setUrl(JaggerResources.INSTANCE.getGearBlueImage().getSafeUri());
-                }
-            });
-            settingsImageButton.addMouseOutHandler(new MouseOutHandler() {
-                @Override
-                public void onMouseOut(MouseOutEvent event) {
-                    settingsImageButton.setUrl(JaggerResources.INSTANCE.getGearImage().getSafeUri());
-                }
-            });
-
-            this.add(new HorizontalPanel());
-            this.add(settingsImageButton);
-            this.setCellWidth(settingsImageButton, "20px");
+            this.add(menuButton);
         }
     }
 }
