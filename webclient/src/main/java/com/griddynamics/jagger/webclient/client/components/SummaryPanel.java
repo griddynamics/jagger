@@ -3,9 +3,7 @@ package com.griddynamics.jagger.webclient.client.components;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.griddynamics.jagger.dbapi.dto.SummaryIntegratedDto;
 import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.griddynamics.jagger.dbapi.model.WebClientProperties;
@@ -25,10 +23,21 @@ public class SummaryPanel extends Composite {
     interface SummaryPanelUiBinder extends UiBinder<Widget, SummaryPanel> {
     }
 
+    public void scrollDown() {
+        this.scrollPanel.scrollToBottom();
+    }
+
     private static SummaryPanelUiBinder ourUiBinder = GWT.create(SummaryPanelUiBinder.class);
 
     @UiField
     VerticalPanel pane;
+
+    @UiField
+    ScrollPanel scrollPanel;
+
+    @UiField
+    /* Menu bar to control summary panel */
+    SummaryButtonsPanel summaryButtonsPanel;
 
     private SessionComparisonPanel sessionComparisonPanel;
 
@@ -36,6 +45,7 @@ public class SummaryPanel extends Composite {
 
     public SummaryPanel() {
         initWidget(ourUiBinder.createAndBindUi(this));
+        summaryButtonsPanel.setupButtonPanel(this);
     }
 
     public HashMap<MetricNode, SummaryIntegratedDto> getCachedMetrics() {

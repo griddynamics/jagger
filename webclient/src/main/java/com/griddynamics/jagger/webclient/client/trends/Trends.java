@@ -90,9 +90,6 @@ public class Trends extends DefaultActivity {
     PlotsPanel plotTrendsPanel;
 
     @UiField
-    ScrollPanel summaryPanelScrollPanel;
-
-    @UiField
     SummaryPanel summaryPanel;
 
     @UiField
@@ -1608,7 +1605,7 @@ public class Trends extends DefaultActivity {
         private void renderMetrics(Map<MetricNode, SummaryIntegratedDto> loaded) {
             summaryPanel.getSessionComparisonPanel().addMetricRecords(loaded);
             renderMetricPlots(loaded);
-            summaryPanelScrollPanel.scrollToBottom();
+            summaryPanel.scrollDown();
         }
 
         private void renderMetricPlots(Map<MetricNode, SummaryIntegratedDto> result) {
