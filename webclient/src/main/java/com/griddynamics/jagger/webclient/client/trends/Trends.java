@@ -613,18 +613,15 @@ public class Trends extends DefaultActivity {
                 .setFont(fontOptions).setLabelWidth(40).setTickFormatter(new TickFormatter() {
 
                     private NumberFormat format;
+                    private String numberFormat;
 
                     @Override
                     public String formatTickValue(double tickValue, Axis axis) {
-                        // decided to show values as 7 positions only
 
-                        if (tickValue == 0) {
-                            return "0";
-                        }
-
-                        if (format == null) {
-                            double tempDouble = tickValue * 5;
-                            format = NumberFormat.getFormat(NumberFormatCalculator.getNumberFormat(tempDouble));
+                        String numberFormat = NumberFormatCalculator.getNumberFormat(tickValue);
+                        if (this.numberFormat == null || !this.numberFormat.equals(numberFormat)) {
+                            this.numberFormat = numberFormat;
+                            format = NumberFormat.getFormat(numberFormat);
                         }
 
                         return format.format(tickValue).replace('E', 'e');

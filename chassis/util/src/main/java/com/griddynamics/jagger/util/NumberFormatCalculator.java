@@ -33,6 +33,8 @@ public class NumberFormatCalculator {
             return "###.#####";
         } else if (value > 0.00001) {
             return "#.#####";
+        } else if (value == 0) {
+            return "#";
         }
 
         return "#.###E0#";
