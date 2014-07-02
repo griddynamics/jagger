@@ -22,6 +22,8 @@ package com.griddynamics.jagger.util;
 
 public class NumberFormatCalculator {
 
+    private static final double EPSILON  = 0.00000001;
+
     public static String getNumberFormat(double value) {
         value = Math.abs(value);
 
@@ -33,7 +35,7 @@ public class NumberFormatCalculator {
             return "###.#####";
         } else if (value > 0.00001) {
             return "#.#####";
-        } else if (value == 0) {
+        } else if (value < EPSILON) {
             return "#";
         }
 
