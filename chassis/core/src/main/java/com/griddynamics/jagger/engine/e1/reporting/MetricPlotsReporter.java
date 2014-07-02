@@ -34,6 +34,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.util.*;
 
@@ -51,6 +52,7 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
     private String sessionId;
     private DatabaseService databaseService;
 
+    @Required
     public void setDatabaseService(DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
@@ -128,7 +130,6 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
             this.groupTitle = groupTitle;
         }
 
-
     }
 
     @Override
@@ -146,7 +147,6 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
         return new JRBeanCollectionDataSource(Collections.singleton(result));
     }
 
-    // todo Session scope plots isn't supported by code below (JFG-724)
     private void createFromTree() {
 
         plots = new HashMap<Long, MetricPlotDTOs>();
@@ -174,9 +174,10 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
         for (TestDetailsNode testDetailsNode : detailsNode.getTests()) {
             getReport(testDetailsNode, testDetailsNode.getTaskDataDto().getId());
         }
+
     }
 
-    private JCommonDrawableRenderer makePlot(PlotIntegratedDto plotIntegratedDto) {
+    public static JCommonDrawableRenderer makePlot(PlotIntegratedDto plotIntegratedDto) {
         XYSeriesCollection plotCollection = new XYSeriesCollection();
         for (PlotSingleDto datasetDto : plotIntegratedDto.getPlotSeries()) {
             XYSeries plotEntry = new XYSeries(datasetDto.getLegend());

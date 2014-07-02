@@ -127,6 +127,13 @@
                     </bean>
                 </entry>
 
+                <entry key="sessionScopePlotsReporter">
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionScopePlotsReporter" parent="abstractReportProviderBean">
+                        <property name="template" value="configuration/reporting/session-scope-plots-report.jrxml"/>
+                        <property name="databaseService" ref="databaseService"/>
+                    </bean>
+                </entry>
+
                 <entry key="testDetailsContainer">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.TestDetailsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/test-details-container.jrxml"/>
