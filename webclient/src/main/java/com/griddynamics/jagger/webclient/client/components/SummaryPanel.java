@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.webclient.client.components;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -46,11 +47,11 @@ public class SummaryPanel extends Composite {
         return sessionComparisonPanel;
     }
 
-    public void updateSessions(Set<SessionDataDto> chosenSessions, WebClientProperties webClientProperties){
+    public void updateSessions(Set<SessionDataDto> chosenSessions, WebClientProperties webClientProperties, DateTimeFormat dateFormatter) {
         if (chosenSessions.size() > 0){
             //show sessions comparison
             pane.clear();
-            sessionComparisonPanel = new SessionComparisonPanel(chosenSessions, pane.getOffsetWidth(), webClientProperties);
+            sessionComparisonPanel = new SessionComparisonPanel(chosenSessions, pane.getOffsetWidth(), webClientProperties, dateFormatter);
             pane.add(sessionComparisonPanel);
         }else{
             pane.clear();

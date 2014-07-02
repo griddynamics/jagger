@@ -152,8 +152,13 @@
 /// <i> Standard metrics </i> and <i> validators </i> will be compared to limits and influence decision, but not highlighted @n
 /// @n
 /// To switch off highlighting - set following property to false: @n
+/// Web client: @n
 /// @dontinclude  webclient.properties
 /// @skipline webui.enable.decisions.per.metric.highlighting
+///
+/// PDF report: @n
+/// @dontinclude  environment.properties
+/// @skipline report.enable.decisions.per.metric.highlighting
 /// @n
 /// Back to @ref section_dm_overview @n
 /// @n

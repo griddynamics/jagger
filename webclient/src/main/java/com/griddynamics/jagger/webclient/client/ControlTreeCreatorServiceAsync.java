@@ -6,7 +6,7 @@ import com.griddynamics.jagger.dbapi.model.RootNode;
 import java.util.Set;
 
 public interface ControlTreeCreatorServiceAsync {
-    void getControlTreeForSession(String sessionId, AsyncCallback<RootNode> async);
+    void getControlTreeForSession(String sessionId, boolean isShowOnlyMatchedTests, AsyncCallback<RootNode> async);
 
-    void getControlTreeForSessions(Set<String> sessionIds, AsyncCallback<RootNode> async) throws RuntimeException;
+    void getControlTreeForSessions(Set<String> sessionIds, boolean isShowOnlyMatchedTests, AsyncCallback<RootNode> async) throws RuntimeException;
 }

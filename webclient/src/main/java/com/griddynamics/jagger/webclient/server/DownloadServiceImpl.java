@@ -54,8 +54,8 @@ public class DownloadServiceImpl implements DownloadService {
                 plot = plotsMap.get(metricNode);
             } else {
                 // processing trends plots
-
-                Map<MetricNode, SummaryIntegratedDto> map = metricDataService.getMetrics(metricNodeSet);
+                // second param in getMetrics is false because we don't need decisions for metrics in CsvFile
+                Map<MetricNode, SummaryIntegratedDto> map = metricDataService.getMetrics(metricNodeSet, false);
 
                 SummaryIntegratedDto summaryInDto = map.get(metricNode);
                 if (summaryInDto == null) {

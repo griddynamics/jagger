@@ -28,8 +28,8 @@ import com.googlecode.gflot.client.*;
 import com.googlecode.gflot.client.options.*;
 import com.griddynamics.jagger.dbapi.dto.*;
 import com.griddynamics.jagger.dbapi.model.*;
+import com.griddynamics.jagger.util.FormatCalculator;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
-import com.griddynamics.jagger.util.NumberFormatCalculator;
 import com.griddynamics.jagger.webclient.client.*;
 import com.griddynamics.jagger.webclient.client.components.*;
 import com.griddynamics.jagger.webclient.client.components.control.CheckHandlerMap;
@@ -68,6 +68,7 @@ public class Trends extends DefaultActivity {
     private boolean allTagsLoadComplete = true;
     private Set<String> tagNames = new HashSet<String>();
 
+    private DateTimeFormat dateFormatter = DateTimeFormat.getFormat(FormatCalculator.DATE_FORMAT);
 
     private static TrendsUiBinder uiBinder = GWT.create(TrendsUiBinder.class);
 
@@ -618,7 +619,7 @@ public class Trends extends DefaultActivity {
                     @Override
                     public String formatTickValue(double tickValue, Axis axis) {
 
-                        String numberFormat = NumberFormatCalculator.getNumberFormat(tickValue);
+                        String numberFormat = FormatCalculator.getNumberFormat(tickValue);
                         if (this.numberFormat == null || !this.numberFormat.equals(numberFormat)) {
                             this.numberFormat = numberFormat;
                             format = NumberFormat.getFormat(numberFormat);
@@ -828,7 +829,7 @@ public class Trends extends DefaultActivity {
 
             @Override
             public String getValue(SessionDataDto object) {
-                return object.getStartDate();
+                return dateFormatter.format(object.getStartDate());
             }
         };
         sessionsDataGrid.addColumn(startDateColumn, "Start Date");
@@ -844,7 +845,7 @@ public class Trends extends DefaultActivity {
 
             @Override
             public String getValue(SessionDataDto object) {
-                return object.getEndDate();
+                return dateFormatter.format(object.getEndDate());
             }
         };
         sessionsDataGrid.addColumn(endDateColumn, "End Date");
@@ -1166,7 +1167,7 @@ public class Trends extends DefaultActivity {
             //Refresh summary
             chosenMetrics.clear();
             chosenPlots.clear();
-            summaryPanel.updateSessions(selected, webClientProperties);
+            summaryPanel.updateSessions(selected, webClientProperties, dateFormatter);
             needRefresh = mainTabPanel.getSelectedIndex() != tabSummary.getTabIndex();
             // Reset node info and remember selected sessions
             // Fetch info when on Nodes tab
@@ -1208,7 +1209,9 @@ public class Trends extends DefaultActivity {
             });
 
             disableControl();
-            ControlTreeCreatorService.Async.getInstance().getControlTreeForSessions(sessionIds, new AsyncCallback<RootNode>() {
+            ControlTreeCreatorService.Async.getInstance().getControlTreeForSessions(sessionIds,
+                webClientProperties.isShowOnlyMatchedTests(),
+                new AsyncCallback<RootNode>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     caught.printStackTrace();
@@ -1581,7 +1584,8 @@ public class Trends extends DefaultActivity {
 
                 if (!notLoaded.isEmpty()) {
                     disableControl();
-                    MetricDataService.Async.getInstance().getMetrics(notLoaded, new AsyncCallback<Map<MetricNode, SummaryIntegratedDto>>() {
+                    MetricDataService.Async.getInstance().getMetrics(notLoaded, webClientProperties.isEnableDecisionsPerMetricHighlighting(),
+                        new AsyncCallback<Map<MetricNode, SummaryIntegratedDto>>() {
                         @Override
                         public void onFailure(Throwable caught) {
                             caught.printStackTrace();

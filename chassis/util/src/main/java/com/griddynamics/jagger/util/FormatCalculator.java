@@ -20,7 +20,9 @@
 
 package com.griddynamics.jagger.util;
 
-public class NumberFormatCalculator {
+public class FormatCalculator {
+
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private static final double EPSILON  = 0.00000001;
 

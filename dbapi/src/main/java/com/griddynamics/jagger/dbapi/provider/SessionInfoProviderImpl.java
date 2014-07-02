@@ -7,7 +7,6 @@ import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
 import com.griddynamics.jagger.dbapi.dto.TagDto;
 import com.griddynamics.jagger.dbapi.entity.SessionData;
 import com.griddynamics.jagger.dbapi.entity.TagEntity;
-import com.griddynamics.jagger.dbapi.model.WebClientProperties;
 import com.griddynamics.jagger.dbapi.util.HTMLFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +15,6 @@ import org.springframework.beans.factory.annotation.Required;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -28,21 +25,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class SessionInfoProviderImpl implements SessionInfoProvider {
     private static final Logger log = LoggerFactory.getLogger(SessionInfoProviderImpl.class);
-    private static final String dateFormat = "yyyy-MM-dd HH:mm:ss";
-    private final DateFormat dateFormatter = new SimpleDateFormat(dateFormat);
 
     private EntityManager entityManager;
-    private WebClientProperties webClientProperties;
     private DataSaverService dataSaverService;
+
+    private boolean isUserCommentStorageAvailable = false;
+    private boolean isTagsStorageAvailable = false;
+
+
+    public void setIsUserCommentStorageAvailable(Boolean isUserCommentStorageAvailable) {
+        this.isUserCommentStorageAvailable = isUserCommentStorageAvailable;
+    }
+
+    public void setIsTagsStorageAvailable(Boolean isTagsStorageAvailable) {
+        this.isTagsStorageAvailable = isTagsStorageAvailable;
+    }
 
     @PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
-    }
-
-    @Required
-    public void setWebClientProperties(WebClientProperties webClientProperties) {
-        this.webClientProperties = webClientProperties;
     }
 
     @Required
@@ -53,7 +54,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
     public List<TagDto> getAllTags() {
 
         List<TagDto> allTags = new ArrayList<TagDto>();
-        if (webClientProperties.isTagsStoreAvailable()) {
+        if (isTagsStorageAvailable) {
             List<TagEntity> tags = entityManager.createQuery("select te from TagEntity as te").getResultList();
 
             if (!tags.isEmpty()) {
@@ -91,7 +92,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
     }
 
     public Long getTotalSizeByTags(Set<String> sessionTagNames){
-        if (webClientProperties.isTagsStoreAvailable()) {
+        if (isTagsStorageAvailable) {
             return ((BigInteger) entityManager.createNativeQuery("select count(distinct ste.sessions_id) from SessionTagEntity as ste where ste.tags_name in (:sessionTagNames)")
                                                 .setParameter("sessionTagNames", new ArrayList<String>(sessionTagNames))
                                                 .getSingleResult()).longValue();
@@ -158,7 +159,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         }
 
         Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
-        if (webClientProperties.isUserCommentStoreAvailable()) {
+        if (isUserCommentStorageAvailable) {
             List<Object[]> userComments = entityManager.createQuery(
                     "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
                     .setParameter("sessionDataList", sessionDataList)
@@ -173,7 +174,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
         }
         Multimap<Long, TagDto> tagMap = HashMultimap.create();
-        if (webClientProperties.isTagsStoreAvailable()) {
+        if (isTagsStorageAvailable) {
             List<Object[]> sessionTags = entityManager.createNativeQuery("select a.sessions_id, a.tags_name, te.description " +
                     "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name from SessionTagEntity as ste where ste.sessions_id in (:sessionIds)) as a " +
                     "where a.tags_name=te.name")
@@ -223,7 +224,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             }
             Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
 
-            if (webClientProperties.isUserCommentStoreAvailable()) {
+            if (isUserCommentStorageAvailable) {
                 List<Object[]> userComments = entityManager.createQuery(
                         "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
                         .setParameter("sessionDataList", sessionDataList)
@@ -238,7 +239,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             }
             Multimap<Long, TagDto> tagMap = HashMultimap.create();
 
-            if (webClientProperties.isTagsStoreAvailable()) {
+            if (isTagsStorageAvailable) {
                 List<Object[]> sessionTags = entityManager.createNativeQuery("select a.sessions_id, a.tags_name, te.description " +
                         "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name from SessionTagEntity as ste where ste.sessions_id in (:sessionIds)) as a " +
                         "where a.tags_name=te.name")
@@ -288,7 +289,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
             Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
 
-            if (webClientProperties.isUserCommentStoreAvailable()) {
+            if (isUserCommentStorageAvailable) {
 
                 List<Object[]> userComments = entityManager.createQuery(
                         "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
@@ -310,7 +311,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             }
 
 
-            if (webClientProperties.isTagsStoreAvailable()) {
+            if (isTagsStorageAvailable) {
                 List<Object[]> sessionTags = entityManager.createNativeQuery("select a.sessions_id, a.tags_name, te.description " +
                         "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name from SessionTagEntity as ste where ste.sessions_id in (:ids)) as a " +
                         "where a.tags_name=te.name")
@@ -336,8 +337,9 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
     }
 
     public List<SessionDataDto> getBySessionTagsName(int start, int length, Set<String> sessionTagNames) {
-        if (!webClientProperties.isTagsStoreAvailable())
+        if (!isTagsStorageAvailable) {
             return Collections.<SessionDataDto>emptyList();
+        }
 
         checkArgument(start >= 0, "start is negative");
         checkArgument(length >= 0, "length is negative");
@@ -374,7 +376,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
             Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
 
-            if (webClientProperties.isUserCommentStoreAvailable()) {
+            if (isUserCommentStorageAvailable) {
 
                 List<Object[]> userComments = entityManager.createQuery(
                         "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd where smd.sessionData in (:sessionDataList)")
@@ -390,7 +392,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             }
             Map<Long, ArrayList<TagDto>> tagMap = Collections.EMPTY_MAP;
 
-            if (webClientProperties.isTagsStoreAvailable()) {
+            if (isTagsStorageAvailable) {
                 List<Object[]> sessionTags = entityManager.createNativeQuery("select a.sessions_id, a.tags_name, te.description " +
                         "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name from SessionTagEntity as ste where ste.sessions_id in (:sessionIds)) as a " +
                         "where a.tags_name=te.name")
@@ -425,8 +427,8 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         return new SessionDataDto(
                 sessionData.getId(),
                 sessionData.getSessionId(),
-                dateFormatter.format(sessionData.getStartTime()),
-                dateFormatter.format(sessionData.getEndTime()),
+                sessionData.getStartTime(),
+                sessionData.getEndTime(),
                 sessionData.getActiveKernels(),
                 sessionData.getTaskExecuted(),
                 sessionData.getTaskFailed(),

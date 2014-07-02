@@ -3,7 +3,6 @@ package com.griddynamics.jagger.dbapi;
 
 import com.griddynamics.jagger.dbapi.dto.*;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
-import com.griddynamics.jagger.dbapi.model.WebClientProperties;
 import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.griddynamics.jagger.dbapi.model.RootNode;
 import com.griddynamics.jagger.dbapi.provider.SessionInfoProvider;
@@ -38,12 +37,12 @@ public interface DatabaseService {
     /** Returns map <metricNode, plot values> for specific metric nodes from control tree
      * @param metricNodes - set of metric nodes
      * @return plot values for metric nodes */
-    Map<MetricNode, SummaryIntegratedDto> getSummaryByMetricNodes(Set<MetricNode> metricNodes) throws IllegalArgumentException;
+     Map<MetricNode, SummaryIntegratedDto> getSummaryByMetricNodes(Set<MetricNode> metricNodes, boolean isEnableDecisionsPerMetricFetching);
 
     /** Returns summary values for current metrics
      * @param metricNames - metric names
      * @return list of summary values */
-    Map<MetricNameDto, SummarySingleDto> getSummaryByMetricNameDto(Set<MetricNameDto> metricNames);
+    Map<MetricNameDto, SummarySingleDto> getSummaryByMetricNameDto(Set<MetricNameDto> metricNames, boolean isEnableDecisionsPerMetricFetching);
 
     /** Returns test info for specified tests
      * @param taskDataDtos - selected tests
@@ -62,10 +61,6 @@ public interface DatabaseService {
 
     /** Returns default monitoring parameters. See class DefaultMonitoringParameters */
     Map<String,Set<String>> getDefaultMonitoringParameters();
-
-    /** Returns dbapi properties
-     * @return properties */
-    WebClientProperties getWebClientProperties();
 
     /** Returns SessionInfoProvider, which contains information about sessions
      * @return SessionInfoProvider */
@@ -105,6 +100,16 @@ public interface DatabaseService {
      * @return map <sessionId, decision> of decisions
      */
     Map<String,Decision> getDecisionsPerSession(Set<String> sessionIds);
+
+    /** Checks the possibility of storing user comments
+     * @return true if it is possible to store user comments and false otherwise
+     */
+    public boolean checkIfUserCommentStorageAvailable();
+
+    /** Checks the possibility of storing tags
+     * @return true if it is possible to store tags and false otherwise
+     */
+    public boolean checkIfTagsStorageAvailable();
 
     /** Returns task data, corresponding to defined pair of taskIs and sessionId
      * @param taskId - TaskData taskId

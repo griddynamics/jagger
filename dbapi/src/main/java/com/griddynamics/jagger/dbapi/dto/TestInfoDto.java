@@ -36,14 +36,6 @@ public class TestInfoDto implements Serializable {
         this.clock = clock;
     }
 
-    public String getFormattedStartTime() {
-        return startTime.toString();
-    }
-
-    public String getFormattedEndTime() {
-        return endTime.toString();
-    }
-
     public Date getStartTime() {
         return startTime;
     }

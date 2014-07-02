@@ -22,7 +22,6 @@ package com.griddynamics.jagger.util;
 
 import com.griddynamics.jagger.exception.TechnicalException;
 import org.joda.time.Period;
-import org.joda.time.format.PeriodFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 

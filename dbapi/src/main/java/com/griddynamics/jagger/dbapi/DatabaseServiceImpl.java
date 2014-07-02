@@ -41,8 +41,6 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     private EntityManager entityManager;
 
-    private WebClientProperties webClientProperties;
-
     private ExecutorService threadPool;
     private LegendProvider legendProvider;
 
@@ -162,17 +160,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Required
-    public void setWebClientProperties(WebClientProperties webClientProperties) {
-        this.webClientProperties = webClientProperties;
-        this.webClientProperties.setUserCommentStoreAvailable(checkIfUserCommentStorageAvailable());
-        this.webClientProperties.setTagsStoreAvailable(checkIfTagsStorageAvailable());
-    }
-
-    public WebClientProperties getWebClientProperties() {
-        return webClientProperties;
-    }
-
-    @Required
     public void setStandardMetricSummaryFetcher(StandardMetricSummaryFetcher standardMetricSummaryFetcher) {
         this.standardMetricSummaryFetcher = standardMetricSummaryFetcher;
     }
@@ -220,6 +207,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Required
     public void setSessionInfoServiceImpl(SessionInfoProviderImpl sessionInfoServiceImpl) {
         this.sessionInfoServiceImpl = sessionInfoServiceImpl;
+        this.sessionInfoServiceImpl.setIsTagsStorageAvailable(checkIfTagsStorageAvailable());
+        this.sessionInfoServiceImpl.setIsUserCommentStorageAvailable(checkIfUserCommentStorageAvailable());
     }
 
     @Required
@@ -493,7 +482,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     //===========================
 
     @Override
-    public Map<MetricNode, SummaryIntegratedDto> getSummaryByMetricNodes(Set<MetricNode> metricNodes) {
+    public Map<MetricNode, SummaryIntegratedDto> getSummaryByMetricNodes(Set<MetricNode> metricNodes, boolean isEnableDecisionsPerMetricFetching) {
 
         if (metricNodes.isEmpty()) {
             return Collections.emptyMap();
@@ -502,7 +491,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         long temp = System.currentTimeMillis();
         Set<MetricNameDto> metricNameDtoSet = MetricNameUtil.getMetricNameDtoSet(metricNodes);
 
-        Collection<SummarySingleDto> allMetricDto = getSummaryByMetricNameDto(metricNameDtoSet).values();
+        Collection<SummarySingleDto> allMetricDto = getSummaryByMetricNameDto(metricNameDtoSet, isEnableDecisionsPerMetricFetching).values();
 
         // filter results by MetricNode
         Multimap<MetricNode, SummarySingleDto> tempMap =  ArrayListMultimap.create();
@@ -540,7 +529,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
 
     @Override
-    public Map<MetricNameDto, SummarySingleDto> getSummaryByMetricNameDto(Set<MetricNameDto> metricNames) {
+    public Map<MetricNameDto, SummarySingleDto> getSummaryByMetricNameDto(Set<MetricNameDto> metricNames, boolean isEnableDecisionsPerMetricFetching) {
 
         long temp = System.currentTimeMillis();
         Set<SummarySingleDto> result = new HashSet<SummarySingleDto>(metricNames.size());
@@ -603,7 +592,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         }
 
         // Find what decisions were taken for metrics
-        if (webClientProperties.isEnableDecisionsPerMetricHighlighting()) {
+        if (isEnableDecisionsPerMetricFetching) {
             Map<MetricNameDto,Map<String,Decision>> metricDecisions = getDecisionsPerMetric(new HashSet<MetricNameDto>(metricNames));
             if (!metricDecisions.isEmpty()) {
                 for (SummarySingleDto metricDto : result) {
@@ -1115,8 +1104,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         return result;
     }
 
-    private boolean checkIfUserCommentStorageAvailable() {
-
+    public boolean checkIfUserCommentStorageAvailable() {
         try {
             // even if table is empty we can set user comments
             entityManager.createQuery(
@@ -1126,21 +1114,18 @@ public class DatabaseServiceImpl implements DatabaseService {
         } catch (Exception e) {
             log.warn("Could not access SessionMetaDataTable", e);
         }
-
         return false;
     }
 
-    private boolean checkIfTagsStorageAvailable() {
-
+    public boolean checkIfTagsStorageAvailable() {
         try {
             entityManager.createQuery(
-                    "select 1 from TagEntity")
-                    .getSingleResult();
-            return true;
+                        "select 1 from TagEntity")
+                        .getSingleResult();
+                return true;
         } catch (Exception e) {
             log.warn("Could not access TagEntity table");
         }
-
         return false;
     }
 

@@ -23,15 +23,15 @@ public class ControlTreeCreatorServiceImpl implements ControlTreeCreatorService 
     }
 
     @Override
-    public RootNode getControlTreeForSession(String sessionId) throws RuntimeException {
-        return getControlTreeForSessions(new HashSet<String>(Arrays.asList(sessionId)));
+    public RootNode getControlTreeForSession(String sessionId, boolean isShowOnlyMatchedTests) throws RuntimeException {
+        return getControlTreeForSessions(new HashSet<String>(Arrays.asList(sessionId)), isShowOnlyMatchedTests);
     }
 
     @Override
-    public RootNode getControlTreeForSessions(Set<String> sessionIds) throws RuntimeException {
+    public RootNode getControlTreeForSessions(Set<String> sessionIds, boolean isShowOnlyMatchedTests) throws RuntimeException {
 
         SessionMatchingSetup sessionMatchingSetup = new SessionMatchingSetup(
-                databaseService.getWebClientProperties().isShowOnlyMatchedTests(),
+                isShowOnlyMatchedTests,
                 EnumSet.of(SessionMatchingSetup.MatchBy.ALL));
 
         return databaseService.getControlTreeForSessions(sessionIds,sessionMatchingSetup);

@@ -154,7 +154,7 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
         Set<MetricNode> allMetrics = new HashSet<MetricNode>();
 
         SessionMatchingSetup sessionMatchingSetup = new SessionMatchingSetup(
-                databaseService.getWebClientProperties().isShowOnlyMatchedTests(),
+                true,
                 EnumSet.of(SessionMatchingSetup.MatchBy.ALL));
         RootNode rootNode = databaseService.getControlTreeForSessions(new HashSet<String>(Arrays.asList(sessionId)),sessionMatchingSetup);
         DetailsNode detailsNode = rootNode.getDetailsNode();

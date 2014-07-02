@@ -6,6 +6,6 @@
         <include name="**/MonitoringIdUtils.java"/>
         <include name="**/Decision.java"/>
         <include name="**/MetricNamesRankingProvider.java"/>
-        <include name="**/NumberFormatCalculator.java"/>
+        <include name="**/FormatCalculator.java"/>
     </source>
 </module>
