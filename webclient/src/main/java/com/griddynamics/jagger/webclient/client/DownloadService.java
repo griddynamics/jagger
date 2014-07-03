@@ -4,7 +4,9 @@ package com.griddynamics.jagger.webclient.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.griddynamics.jagger.dbapi.model.MetricNode;
+import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
+
+import java.util.List;
 
 
 @RemoteServiceRelativePath("rpc/DownloadService")
@@ -20,8 +22,10 @@ public interface DownloadService extends RemoteService {
 
     /**
      * Creates csv file representing plot on server side and send back key for created file
-     * @param metricNode metricNode wich plot should be represented
+     * @param lines that should be represented in csv file
+     * @param plotHeader file key will be created with plotHeader
+     * @param xAxisLabel x axis label for lines
      * @return key of created file
      * @throws RuntimeException */
-    public String createPlotCsvFile(MetricNode metricNode) throws RuntimeException;
+    public String createPlotCsvFile(List<PlotSingleDto> lines, String plotHeader, String xAxisLabel) throws RuntimeException;
 }

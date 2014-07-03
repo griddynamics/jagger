@@ -12,8 +12,18 @@ public class MetricGroupNode<M extends MetricNode> extends AbstractIdentifyNode 
 
     public MetricGroupNode(MetricGroupNode<M> that) {
         super(that);
-        this.metrics = that.getMetricsWithoutChildren();
-        this.metricGroupNodeList = that.getMetricGroupNodeList();
+
+        if (that.getMetricsWithoutChildren() != null) {
+            this.metrics = new ArrayList<M>(that.getMetricsWithoutChildren());
+        }
+
+        if (that.getMetricGroupNodeList() != null) {
+
+            this.metricGroupNodeList = new ArrayList<MetricGroupNode<M>>(that.getMetricGroupNodeList().size());
+            for (MetricGroupNode<M> group : that.getMetricGroupNodeList()) {
+                this.metricGroupNodeList.add(new MetricGroupNode<M>(group));
+            }
+        }
     }
     public MetricGroupNode(String displayName) {
         this.displayName = displayName;

@@ -19,7 +19,7 @@
  */
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
+import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
@@ -29,33 +29,46 @@ import org.springframework.beans.factory.annotation.Required;
 import java.util.*;
 
 /**
- * @author Nikolay Musienko
- *         Date: 19.03.13
+ * @author Mark Novozhilov
+ *         Date: 26.06.2014
  */
 
-public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
-    private Logger log = LoggerFactory.getLogger(MetricPlotsReporter.class);
+public class SessionScopePlotsReporter extends AbstractReportProvider {
+    private Logger log = LoggerFactory.getLogger(SessionScopePlotsReporter.class);
 
     private PlotsReporter plotsReporter;
+
+    private SummaryReporter summaryReporter;
 
     @Required
     public void setPlotsReporter(PlotsReporter plotsReporter) {
         this.plotsReporter = plotsReporter;
     }
 
+    @Required
+    public void setSummaryReporter(SummaryReporter summaryReporter) {
+        this.summaryReporter = summaryReporter;
+    }
 
     @Override
-    public JRDataSource getDataSource(String id) {
+    public JRDataSource getDataSource() {
+
         String sessionId = getSessionIdProvider().getSessionId();
 
-        Map<Long, PlotsReporter.MetricPlotDTOs> testIdToPlotsMap = plotsReporter.getTestIdToPlotsMap(sessionId);
+        int numberOfTestGroup = summaryReporter.getNumberOfTestGroups(sessionId);
+        if (numberOfTestGroup < 2) {
+            if (numberOfTestGroup == 0) {
+                log.error("No test groups were fetched for {} session.", sessionId);
+            } else {
+                log.info("There is one test group in current {} session. Skipping session scope plots fetching.", sessionId);
+            }
 
-        Long testId = Long.valueOf(id);
-        if (!testIdToPlotsMap.containsKey(testId)) {
-            log.warn("No metrics plot data found for test with id {}", testId);
             return new JRBeanCollectionDataSource(Collections.emptyList());
         }
 
-        return new JRBeanCollectionDataSource(Collections.singleton(testIdToPlotsMap.get(testId)));
+        PlotsReporter.MetricPlotDTOs sessionScopePlots = plotsReporter.getSessionScopePlots(sessionId);
+
+        return new JRBeanCollectionDataSource(Collections.singleton(sessionScopePlots));
+
     }
 }

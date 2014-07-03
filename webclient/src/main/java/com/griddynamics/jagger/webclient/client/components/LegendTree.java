@@ -17,6 +17,7 @@ import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -157,6 +158,21 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
             plot.getOptions().getXAxisOptions().setMinimum(minXVisible).setMaximum(maxXVisible);
             plot.redraw();
         }
+    }
+
+
+    /**
+     * Returns list of checked lines
+     * @return list of PlotSingleDto objects
+     */
+    public List<PlotSingleDto> getListOfSelectedLines() {
+        List<PlotSingleDto> result = new ArrayList<PlotSingleDto>();
+        for (AbstractIdentifyNode node : store.getAll()) {
+            if ( (isChecked(node)) && (node instanceof LegendNode) ) {
+                result.add(((LegendNode) node).getLine());
+            }
+        }
+        return result;
     }
 
 

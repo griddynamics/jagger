@@ -127,6 +127,14 @@
                     </bean>
                 </entry>
 
+                <entry key="sessionScopePlotsReporter">
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionScopePlotsReporter" parent="abstractReportProviderBean">
+                        <property name="template" value="configuration/reporting/session-scope-plots-report.jrxml"/>
+                        <property name="plotsReporter" ref="plotsReporter"/>
+                        <property name="summaryReporter" ref="summaryReporter"/>
+                    </bean>
+                </entry>
+
                 <entry key="testDetailsContainer">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.TestDetailsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/test-details-container.jrxml"/>
@@ -182,7 +190,7 @@
                 <entry key="metricsResults">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.MetricPlotsReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/metrics-report.jrxml"/>
-                        <property name="databaseService" ref="databaseService"/>
+                        <property name="plotsReporter" ref="plotsReporter"/>
                     </bean>
                 </entry>
 
@@ -203,10 +211,6 @@
 
             </map>
         </property>
-    </bean>
-
-    <bean id="webClientProperties" class="com.griddynamics.jagger.dbapi.model.WebClientProperties">
-        <property name="enableDecisionsPerMetricHighlighting" value="${webui.enable.decisions.per.metric.highlighting:true}"/>
     </bean>
 
     <bean id="reportingContext" class="com.griddynamics.jagger.reporting.ReportingContext">
@@ -233,6 +237,11 @@
     <bean id= "dataSaverService" class="com.griddynamics.jagger.dbapi.DataSaverServiceImpl"/>
 
     <bean id="summaryReporter" class="com.griddynamics.jagger.engine.e1.reporting.SummaryReporter">
+        <property name="databaseService" ref="databaseService"/>
+        <property name="metricHighlighting" value="${report.enable.decisions.per.metric.highlighting:true}"/>
+    </bean>
+    
+    <bean id="plotsReporter" class="com.griddynamics.jagger.engine.e1.reporting.PlotsReporter">
         <property name="databaseService" ref="databaseService"/>
     </bean>
 
@@ -263,7 +272,6 @@
         <property name="treeViewGroupMetricsToNodeRuleProvider" ref="ruleProvider_TreeViewGroupMetricsToNode"/>
 
         <property name="legendProvider" ref="legendProvider"/>
-        <property name="webClientProperties" ref="webClientProperties"/>
 
         <property name="throughputMetricPlotFetcher" ref="throughputMetricPlotFetcher"/>
         <property name="latencyMetricPlotFetcher" ref="latencyMetricPlotFetcher"/>
@@ -287,7 +295,6 @@
     <!--=======Fetching session data=========-->
     <bean id="sessionInfoService" class="com.griddynamics.jagger.dbapi.provider.SessionInfoProviderImpl">
         <property name="dataSaverService" ref="dataSaverService"/>
-        <property name="webClientProperties" ref="webClientProperties"/>
     </bean>
 
     <!--=======Fetching data for plots=========-->

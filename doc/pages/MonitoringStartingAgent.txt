@@ -14,8 +14,8 @@
 /// @b Agent - stand alone client application, started on SUT site to collect monitoring metrics. Agent will connect to @n
 /// Jagger server node (COORDINATION_SERVER), register there, post collected data and follow commands, received from server. @n
 /// @n
-/// @section section_mon_server_setup Server setup
-/// To make server ready for agent(s) connection set properties in corresponding `environment.properties` file @n
+/// @section section_mon_server_setup Jagger server setup
+/// To make Jagger server ready for agent(s) connection set properties in corresponding `environment.properties` file @n
 /// @code
 /// chassis.conditions.monitoring.enable=true
 /// chassis.conditions.min.agents.count=2

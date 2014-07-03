@@ -4,8 +4,10 @@ import com.griddynamics.jagger.dbapi.model.MetricGroupNode;
 import com.griddynamics.jagger.dbapi.model.LegendNode;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Represents plot with multiple lines
@@ -15,12 +17,10 @@ import java.util.Collections;
  * @since 5/31/12
  */
 public class PlotIntegratedDto implements Serializable {
-    private Collection<PlotSingleDto> plotSeries = Collections.emptyList();
     private Collection<MarkingDto> markingSeries = Collections.emptyList();
     private String xAxisLabel;
     private String yAxisLabel;
     private String plotHeader;
-    private double yAxisMin;
 
     private MetricGroupNode<LegendNode> legendTree;
 
@@ -28,31 +28,57 @@ public class PlotIntegratedDto implements Serializable {
         return legendTree;
     }
 
-    public void setLegendTree(MetricGroupNode<LegendNode> legendTree) {
+    private PlotIntegratedDto() {
+    }
+
+    public PlotIntegratedDto(MetricGroupNode<LegendNode> legendTree, String xAxisLabel, String yAxisLabel, String plotHeader) {
         this.legendTree = legendTree;
-    }
-
-    public PlotIntegratedDto() {
-    }
-
-    public PlotIntegratedDto(Collection<PlotSingleDto> plotSeries, String xAxisLabel, String yAxisLabel, String plotHeader) {
-        this.plotSeries = plotSeries;
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
         this.plotHeader = plotHeader;
     }
 
-    public PlotIntegratedDto(Collection<PlotSingleDto> plotSeries, String xAxisLabel, String yAxisLabel, String plotHeader, Collection<MarkingDto> markingSeries) {
-        this.plotSeries = plotSeries;
+    public PlotIntegratedDto(MetricGroupNode<LegendNode> legendTree, String xAxisLabel, String yAxisLabel, String plotHeader, Collection<MarkingDto> markingSeries) {
+        this.legendTree = legendTree;
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
         this.plotHeader = plotHeader;
         this.markingSeries = markingSeries;
     }
 
+    /**
+     * get list of lines */
     public Collection<PlotSingleDto> getPlotSeries() {
+        if (legendTree == null) {
+            return Collections.emptyList();
+        }
+
+        List<PlotSingleDto> plotSeries = new ArrayList<PlotSingleDto>();
+        readLinesFromLegendTree(legendTree, plotSeries);
         return plotSeries;
     }
+
+    /**
+     * populate list with lines
+     *
+     * @param legendTree tree to populate list
+     * @param plotSeries list that would be populated
+     */
+    private void readLinesFromLegendTree(MetricGroupNode<LegendNode> legendTree, List<PlotSingleDto> plotSeries) {
+
+        if (legendTree.getMetricGroupNodeList() != null) {
+            for (MetricGroupNode<LegendNode> group : legendTree.getMetricGroupNodeList()) {
+                readLinesFromLegendTree(group, plotSeries);
+            }
+        }
+
+        if (legendTree.getMetricsWithoutChildren() != null) {
+            for (LegendNode node : legendTree.getMetricsWithoutChildren()) {
+                plotSeries.add(node.getLine());
+            }
+        }
+    }
+
 
     public String getXAxisLabel() {
         return xAxisLabel;
@@ -70,18 +96,10 @@ public class PlotIntegratedDto implements Serializable {
         return markingSeries;
     }
 
-    public double getYAxisMin() {
-        return yAxisMin;
-    }
-
-    public void setYAxisMin(double yAxisMin) {
-        this.yAxisMin = yAxisMin;
-    }
-
     @Override
     public String toString() {
         return "PlotIntegratedDto{" +
-                "plotSeries=" + plotSeries +
+                "legendTree=" + legendTree +
                 ", markingSeries=" + markingSeries +
                 ", xAxisLabel='" + xAxisLabel + '\'' +
                 ", yAxisLabel='" + yAxisLabel + '\'' +

@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.webclient.client.components;
 
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -93,7 +94,15 @@ public class SessionComparisonPanel extends VerticalPanel {
         return cache;
     }
 
-    public SessionComparisonPanel(Set<SessionDataDto> chosenSessions, int width, WebClientProperties webClientProperties) {
+    private final DateTimeFormat dateFormatter;
+
+    public SessionComparisonPanel(
+            Set<SessionDataDto> chosenSessions,
+            int width,
+            WebClientProperties webClientProperties,
+            DateTimeFormat dateFormatter) {
+
+        this.dateFormatter = dateFormatter;
         setWidth(ONE_HUNDRED_PERCENTS);
         setHeight(ONE_HUNDRED_PERCENTS);
         this.chosenSessions = chosenSessions;
@@ -280,8 +289,8 @@ public class SessionComparisonPanel extends VerticalPanel {
             itemActiveKernels.put(SESSION_HEADER + session.getSessionId(), session.getActiveKernelsCount() + "");
             itemTaskExecuted.put(SESSION_HEADER + session.getSessionId(), session.getTasksExecuted() + "");
             itemTaskFailed.put(SESSION_HEADER + session.getSessionId(), session.getTasksFailed() + "");
-            itemDateStart.put(SESSION_HEADER + session.getSessionId(), session.getStartDate());
-            itemDateEnd.put(SESSION_HEADER + session.getSessionId(), session.getEndDate());
+            itemDateStart.put(SESSION_HEADER + session.getSessionId(), dateFormatter.format(session.getStartDate()));
+            itemDateEnd.put(SESSION_HEADER + session.getSessionId(), dateFormatter.format(session.getEndDate()));
             itemComment.put(SESSION_HEADER + session.getSessionId(), session.getComment());
             if (webClientProperties.isUserCommentStoreAvailable()) {
                 String userComment = session.getUserComment() == null ? "" : session.getUserComment();
@@ -477,8 +486,10 @@ public class SessionComparisonPanel extends VerticalPanel {
         startTime.put(TEST_NAME, testItemName);
         startTime.put(TEST_INFO, TEST_INFO);
         for (SessionDataDto session : chosenSessions) {
-            if (testInfoMap.get(session.getSessionId()) != null)
-                startTime.put(SESSION_HEADER + session.getSessionId(), testInfoMap.get(session.getSessionId()).getFormattedStartTime());
+            if (testInfoMap.get(session.getSessionId()) != null) {
+                Date date = testInfoMap.get(session.getSessionId()).getStartTime();
+                startTime.put(SESSION_HEADER + session.getSessionId(), dateFormatter.format(date));
+            }
         }
         treeStore.add(testInfo, startTime);
     }

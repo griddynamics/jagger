@@ -64,9 +64,6 @@
     </bean>
 
     <bean id="downloadService" class="com.griddynamics.jagger.webclient.server.DownloadServiceImpl">
-
-        <property name="plotProviderService" ref="plotProviderService"/>
-        <property name="metricDataService" ref="metricDataService"/>
         <property name="fileStorage" ref="fileStore"/>
     </bean>
 
@@ -92,6 +89,7 @@
 
     <bean id="commonDataService" class="com.griddynamics.jagger.webclient.server.CommonDataServiceImpl">
         <property name="databaseService" ref="databaseService"/>
+        <property name="webClientProperties" ref="webClientProperties"/>
     </bean>
 
     <bean id="testInfoService" class="com.griddynamics.jagger.webclient.server.TestInfoServiceImpl">
@@ -147,7 +145,6 @@
         <property name="treeViewGroupMetricsToNodeRuleProvider" ref="ruleProvider_TreeViewGroupMetricsToNode"/>
 
         <property name="legendProvider" ref="legendProvider"/>
-        <property name="webClientProperties" ref="webClientProperties"/>
 
         <property name="throughputMetricPlotFetcher" ref="throughputMetricPlotFetcher"/>
         <property name="latencyMetricPlotFetcher" ref="latencyMetricPlotFetcher"/>
@@ -171,7 +168,6 @@
     <!--=======Fetching session data=========-->
     <bean id="sessionInfoService" class="com.griddynamics.jagger.dbapi.provider.SessionInfoProviderImpl">
         <property name="dataSaverService" ref="dataSaverService"/>
-        <property name="webClientProperties" ref="webClientProperties"/>
     </bean>
 
     <!--=======Fetching data for plots=========-->

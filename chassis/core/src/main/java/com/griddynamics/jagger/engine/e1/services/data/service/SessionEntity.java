@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.services.data.service;
 
+import java.util.Date;
+
 /** Class is a model of session
  *
  * @details
@@ -17,10 +19,10 @@ public class SessionEntity {
     private String comment;
 
     /** Start time */
-    private String startDate;
+    private Date startDate;
 
     /** Stop time */
-    private String endDate;
+    private Date endDate;
 
     /** Number of kernels used for workload generation */
     private Integer kernels;
@@ -44,20 +46,20 @@ public class SessionEntity {
     }
 
     /** Get start time */
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
     /** Get stop time */
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

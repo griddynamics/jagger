@@ -4,13 +4,16 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.*;
-import com.griddynamics.jagger.dbapi.model.MetricNode;
+import com.griddynamics.jagger.dbapi.dto.PlotIntegratedDto;
+import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 import com.sencha.gxt.dnd.core.client.*;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
+
+import java.util.List;
 
 /**
  * Draggable container that holds plot representation */
@@ -193,9 +196,12 @@ public class PlotContainer extends  VerticalLayoutContainer {
         menuItem.addSelectionHandler(new SelectionHandler<Item>() {
             @Override
             public void onSelection(SelectionEvent<Item> event) {
-                MetricNode mn = plotRepresentation.getMetricNode();
 
-                FileDownLoader.downloadPlotInCsv(mn);
+                LegendTree legendTree = plotRepresentation.getLegendTree();
+
+                PlotIntegratedDto pid = plotRepresentation.getPlotIntegratedDto();
+                List<PlotSingleDto> checkedLines = legendTree.getListOfSelectedLines();
+                FileDownLoader.downloadPlotInCsv(checkedLines, pid.getPlotHeader(), pid.getXAxisLabel());
             }
         });
 

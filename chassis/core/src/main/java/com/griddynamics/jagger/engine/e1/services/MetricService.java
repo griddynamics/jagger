@@ -7,6 +7,8 @@ import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
  * @n
  * @par Details:
  * @details Where this service is available you can find in chapter: @ref Main_ListenersAndServices_group @n
+ * Below is example of creating metric with metric service. @ref com.griddynamics.jagger.engine.e1.collector.MetricDescription "MetricDescription" is used to setup how metric will be
+ * aggregated and stored @n
  * @n
  * @par Example - creating metric:
  * @dontinclude  ProviderOfTestListener.java

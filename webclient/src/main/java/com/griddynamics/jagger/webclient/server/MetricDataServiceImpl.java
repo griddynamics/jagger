@@ -25,7 +25,7 @@ public class MetricDataServiceImpl implements MetricDataService {
     }
 
     @Override
-    public Map<MetricNode, SummaryIntegratedDto> getMetrics(Set<MetricNode> metricNodes) throws RuntimeException {
-        return databaseService.getSummaryByMetricNodes(metricNodes);
+    public Map<MetricNode, SummaryIntegratedDto> getMetrics(Set<MetricNode> metricNodes, boolean isEnableDecisionsPerMetricFetching) throws RuntimeException {
+        return databaseService.getSummaryByMetricNodes(metricNodes, isEnableDecisionsPerMetricFetching);
     }
 }

@@ -11,9 +11,9 @@ import java.util.Set;
 public interface ControlTreeCreatorService extends RemoteService {
 
     @Deprecated
-    RootNode getControlTreeForSession(String sessionId) throws RuntimeException;
+    RootNode getControlTreeForSession(String sessionId, boolean isShowOnlyMatchedTests) throws RuntimeException;
 
-    RootNode getControlTreeForSessions(Set<String> sessionIds) throws RuntimeException;
+    RootNode getControlTreeForSessions(Set<String> sessionIds, boolean isShowOnlyMatchedTests) throws RuntimeException;
 
     public static class Async {
         private static final ControlTreeCreatorServiceAsync ourInstance = (ControlTreeCreatorServiceAsync) GWT.create(ControlTreeCreatorService.class);

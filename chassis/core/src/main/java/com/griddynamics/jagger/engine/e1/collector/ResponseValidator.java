@@ -96,10 +96,17 @@ public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 /// @par Example of collectors setup in XML:
 /// Following XML code should be included in @xlink{test-description} section @n
 /// Order of collectors execution is the same as order of their declaration in XML @n
-/// If @xlink{test-description} has @xlink{test-description,parent}, collectors from @xlink{test-description,parent} will be executed first
+/// If @xlink{test-description} has @xlink{test-description,parent}, collectors from @xlink{test-description,parent} will be executed first @n
+///
+/// Simple example: @n
 /// @dontinclude  defaults.conf.xml
 /// @skip  begin: following section is used for docu generation - metric calculator usage
 /// @until end: following section is used for docu generation - metric calculator usage
+///
+/// Example with additional setting for aggregation: @n
+/// @dontinclude  tasks-new.conf.xml
+/// @skip  begin: following section is used for docu generation - metrics with aggregators
+/// @until end: following section is used for docu generation - metrics with aggregators
 ///
 /// @par Info collector XML elements
 /// @xlink_complex{metricAbstract} - what metrics can be used in information collector XML element. See <b> 'Sub Types' </b> section of man page @n

@@ -157,7 +157,7 @@ public class DefaultDataService implements DataService {
                         TestInfoDto testInfoDto = testInfoMap.get(taskDataDto).entrySet().iterator().next().getValue();
                         testEntity.setLoad(testInfoDto.getClock());
                         testEntity.setTerminationStrategy(testInfoDto.getTermination());
-                        testEntity.setStartDate(testInfoDto.getFormattedStartTime());
+                        testEntity.setStartDate(testInfoDto.getStartTime());
                         testEntity.setTestGroupIndex(testInfoDto.getNumber());
                         testEntity.setTestExecutionStatus(testInfoDto.getStatus());
                     }
@@ -338,7 +338,7 @@ public class DefaultDataService implements DataService {
             }
         }
 
-        Collection<SummarySingleDto> metricDtoList = databaseService.getSummaryByMetricNameDto(metricNameDtoSet).values();
+        Collection<SummarySingleDto> metricDtoList = databaseService.getSummaryByMetricNameDto(metricNameDtoSet, true).values();
 
         Map<MetricEntity,MetricSummaryValueEntity> result = new HashMap<MetricEntity,MetricSummaryValueEntity>();
         for (SummarySingleDto metricDto : metricDtoList) {

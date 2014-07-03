@@ -2,6 +2,8 @@ package com.griddynamics.jagger.engine.e1.services.data.service;
 
 import com.griddynamics.jagger.util.Decision;
 
+import java.util.Date;
+
 /** Class is a model of test
  *
  * @details
@@ -18,7 +20,7 @@ public class TestEntity {
     /** Description of the load for this test */
     private String load;
     private String terminationStrategy;
-    private String startDate;
+    private Date startDate;
     private Integer testGroupIndex;
     private Decision testExecutionStatus;
     private Decision decision;
@@ -69,11 +71,11 @@ public class TestEntity {
     }
 
     /** Get start date */
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 

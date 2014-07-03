@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.user.client.ui.*;
 import com.googlecode.gflot.client.Pan;
 import com.googlecode.gflot.client.SimplePlot;
+import com.griddynamics.jagger.dbapi.dto.PlotIntegratedDto;
 import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.griddynamics.jagger.webclient.client.resources.JaggerResources;
 
@@ -22,6 +23,9 @@ public class PlotRepresentation extends LayoutPanel {
     private MetricNode metricNode;
 
     private MyScroll scrollbar;
+
+    // model of plot
+    private PlotIntegratedDto plotIntegratedDto;
 
     private LegendTree legendTree;
     private LegendState legendState = LegendState.DEFAULT;
@@ -52,11 +56,19 @@ public class PlotRepresentation extends LayoutPanel {
      * Range to scroll to */
     private double maxRange = 1;
 
-    public PlotRepresentation(MetricNode metricNode, FlowPanel zoomPanel, SimplePlot simplePlot, LegendTree legendTree, String xLabelString) {
+    public PlotRepresentation(
+            MetricNode metricNode,
+            FlowPanel zoomPanel,
+            SimplePlot simplePlot,
+            LegendTree legendTree,
+            String xLabelString,
+            PlotIntegratedDto plotIntegratedDto) {
         super();
         this.setWidth("100%");
         this.zoomPanel = zoomPanel;
         this.zoomPanel.setHeight(ZOOM_PANEL_HEIGHT + "px");
+
+        this.plotIntegratedDto = plotIntegratedDto;
 
         legendLabel = new Label(legendState.getMessage());
         legendLabel.setStyleName(JaggerResources.INSTANCE.css().zoomLabel());
@@ -149,6 +161,16 @@ public class PlotRepresentation extends LayoutPanel {
     public Label getxLabel() {
         return xLabel;
     }
+
+    public PlotIntegratedDto getPlotIntegratedDto() {
+        return plotIntegratedDto;
+    }
+
+
+    public LegendTree getLegendTree() {
+        return legendTree;
+    }
+
 
     public MetricNode getMetricNode() {
         return metricNode;

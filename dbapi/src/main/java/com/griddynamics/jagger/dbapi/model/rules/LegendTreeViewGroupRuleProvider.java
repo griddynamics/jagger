@@ -3,6 +3,7 @@ package com.griddynamics.jagger.dbapi.model.rules;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Provides TreeGroupRule with predefined groups.
@@ -17,7 +18,7 @@ public class LegendTreeViewGroupRuleProvider {
 
         for (String legendGroup: legendGroups) {
 
-            String regex = String.format(idFormatRegex, legendGroup);
+            String regex = String.format(idFormatRegex, Pattern.quote(legendGroup));
             firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, legendGroup, legendGroup, regex));
         }
 

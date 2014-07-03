@@ -79,9 +79,16 @@ public interface MetricAggregator<C extends Number> {
 /// So you are applying averaging aggregator that takes average value for every 5 points from raw data and saves it to DB as single value. @n
 ///
 /// @par Example of aggregators setup in XML:
+///
+/// Simple example: @n
 /// @dontinclude  tasks-new.conf.xml
 /// @skip  begin: following section is used for docu generation - standard aggregator usage
 /// @until end: following section is used for docu generation - standard aggregator usage
+///
+/// Example with additional setting for aggregation: @n
+/// @dontinclude  tasks-new.conf.xml
+/// @skip  begin: following section is used for docu generation - metrics with aggregators
+/// @until end: following section is used for docu generation - metrics with aggregators
 ///
 /// @par Aggregators XML elements
 /// @xlink_complex{metricAggregatorAbstract} - what aggregators can be used in XML elements. See <b> 'Sub Types' </b> section of man page @n
