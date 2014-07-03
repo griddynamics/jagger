@@ -24,8 +24,6 @@ public class FormatCalculator {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    private static final double EPSILON  = 0.00000001;
-
     public static String getNumberFormat(double value) {
         value = Math.abs(value);
 
@@ -37,7 +35,7 @@ public class FormatCalculator {
             return "###.#####";
         } else if (value > 0.00001) {
             return "#.#####";
-        } else if (value < EPSILON) {
+        } else if (Double.compare(value, 0D) == 0) {
             return "#";
         }
 
