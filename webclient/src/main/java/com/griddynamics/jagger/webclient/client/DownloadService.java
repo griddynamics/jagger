@@ -28,4 +28,6 @@ public interface DownloadService extends RemoteService {
      * @return key of created file
      * @throws RuntimeException */
     public String createPlotCsvFile(List<PlotSingleDto> lines, String plotHeader, String xAxisLabel) throws RuntimeException;
+
+    public String createSummaryTableScvFile(List<List<String>> summaryTableData) throws RuntimeException;
 }

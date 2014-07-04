@@ -8,4 +8,5 @@ import java.util.List;
 public interface DownloadServiceAsync {
 
     void createPlotCsvFile(List<PlotSingleDto> lines, String plotHeader, String xAxisLabel, AsyncCallback<String> async);
+    void createSummaryTableScvFile(List<List<String>> summaryTableData, AsyncCallback<String> async);
 }

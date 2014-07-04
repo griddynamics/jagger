@@ -90,6 +90,14 @@ public class SessionComparisonPanel extends VerticalPanel {
 
     private boolean allTagsLoadComplete = false;
 
+    public Set<SessionDataDto> getChosenSessions() {
+        return chosenSessions;
+    }
+
+    public TreeStore<TreeItem> getTreeStore() {
+        return treeStore;
+    }
+
     public HashMap<MetricNode, SummaryIntegratedDto> getCachedMetrics() {
         return cache;
     }

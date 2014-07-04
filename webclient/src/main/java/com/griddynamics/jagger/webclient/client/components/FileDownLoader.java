@@ -35,4 +35,20 @@ public class FileDownLoader {
             }
         });
     }
+
+    public static void downloadSummaryTableInCsv(final List<List<String>> summaryTableData) {
+        DownloadService.Async.getInstance().createSummaryTableScvFile(summaryTableData, new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                new ExceptionPanel("Failed to create cvs file for " + summaryTableData + " :\n" + caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                String url = GWT.getHostPageBaseURL() + DOWNLOAD_SERVLET_PATH + "?fileKey=" + result;
+
+                Window.Location.assign(url);
+            }
+        });
+    }
 }
