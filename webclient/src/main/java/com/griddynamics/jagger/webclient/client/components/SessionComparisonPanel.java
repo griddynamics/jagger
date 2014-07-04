@@ -90,13 +90,9 @@ public class SessionComparisonPanel extends VerticalPanel {
 
     private boolean allTagsLoadComplete = false;
 
-    public Set<SessionDataDto> getChosenSessions() {
-        return chosenSessions;
-    }
+    private List<List<String>> summaryTableAsList;
 
-    public TreeStore<TreeItem> getTreeStore() {
-        return treeStore;
-    }
+    private List<String> sessionNames;
 
     public HashMap<MetricNode, SummaryIntegratedDto> getCachedMetrics() {
         return cache;
@@ -514,6 +510,99 @@ public class SessionComparisonPanel extends VerticalPanel {
             removeWithParent(testInfo);
     }
 
+    public List<List<String>> getSummaryTableAsList() {
+        System.out.println(treeStore);
+        summaryTableAsList = new ArrayList<List<String>>();
+        sessionNames = new ArrayList<String>();
+        for (SessionDataDto sdDto : chosenSessions) {
+            sessionNames.add(sdDto.getName());
+        }
+        List<String> sessions = new ArrayList<String>(sessionNames);
+        sessions.add(0, "");
+        summaryTableAsList.add(sessions);
+        for (TreeItem rootItem : treeStore.getRootItems()) {
+            collectInfoFromTree(rootItem);
+        }
+        return summaryTableAsList;
+    }
+
+    private void collectInfoFromTree(TreeItem aChild) {
+        parseTableRow(aChild);
+        if (treeStore.hasChildren(aChild)) {
+            for (TreeItem treeItem: treeStore.getChildren(aChild)) {
+                collectInfoFromTree(treeItem);
+            }
+        }
+    }
+
+    private void parseTableRow(TreeItem aRow) {
+        List<String> result = new ArrayList<String>();
+        String aName = aRow.get(NAME);
+        // test results
+        if (aRow.containsKey(TEST_DESCRIPTION)) {
+            result.addAll(getTestInfo(aRow, aName));
+        }
+        //Session Info results OR test description value
+        else {
+            result.addAll(getSessionInfo(aRow, aName));
+        }
+        summaryTableAsList.add(result);
+    }
+
+    private List<String> fillTestLabels(String testLabel, String aName) {
+        List<String> result = new ArrayList<String>();
+        result.add(testLabel);
+        for (int i = 0; i < sessionNames.size(); i++) {
+            result.add(aName);
+        }
+        return result;
+    }
+
+    private List<String> getSessionInfo(TreeItem aRow, String aName) {
+        if (aName.equals("Session Info")) {
+            return new ArrayList<String>(Arrays.asList(new String[]{aName}));
+        }
+        else {
+            if (aRow.size() == 1) {
+                summaryTableAsList.add(Arrays.asList(new String[]{""}));
+                return fillTestLabels("Test description", aName);
+            }
+            else {
+                List<String> result = new ArrayList<String>();
+                result.add(aName);
+                for (String sessionName : sessionNames) {
+                    result.add(clearHtmlTags(aRow.get(sessionName)));
+                }
+                return result;
+            }
+        }
+    }
+
+    private List<String> getTestInfo(SessionComparisonPanel.TreeItem aRow, String aName) {
+        if (aName.equals(TEST_INFO)) {
+            return new ArrayList<String>(Arrays.asList(new String[]{aName}));
+        }
+        List<String> result = new ArrayList<String>();
+        if (aRow.size() == 2) {
+            return fillTestLabels("Test name", aName);
+        }
+        result.add(aName);
+        for (String sessionName : sessionNames) {
+            result.add(clearHtmlTags(aRow.get(sessionName)));
+        }
+        return result;
+    }
+
+    private String clearHtmlTags(String input) {
+        if (input == null) {
+            return "";
+        }
+        String result = input.replaceAll("<br>", " ");
+        if (result.contains("<p title=")) {
+            result = result.substring(result.indexOf("\">") + 2, result.indexOf("</"));
+        }
+        return result;
+    }
 
     private TreeItem getTestItem(TaskDataDto tdd) {
 
