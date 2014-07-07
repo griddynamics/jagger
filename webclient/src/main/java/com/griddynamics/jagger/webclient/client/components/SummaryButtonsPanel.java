@@ -10,6 +10,8 @@ import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
+import java.util.List;
+
 /**
  * Class that holds menu bar for SummaryPanel
  */
@@ -42,10 +44,14 @@ public class SummaryButtonsPanel extends HorizontalPanel {
         downloadTxtMenuItem.addSelectionHandler(new SelectionHandler<Item>() {
             @Override
             public void onSelection(SelectionEvent<Item> itemSelectionEvent) {
-                summaryPanel.getSessionComparisonPanel().getSummaryTableAsList();
-//                collectInfoFromTree();
-//                FileDownLoader.downloadSummaryTableInCsv(summaryPanel.getSessionComparisonPanel().getSummaryTableAsList());
-//                System.out.println(summaryTableAsList);
+                try {
+                    List<List<String>> summaryTable = summaryPanel.getSessionComparisonPanel().getSummaryTableAsList();
+                    if (summaryTable.size() > 1) {
+                        FileDownLoader.downloadSummaryTableInCsv(summaryTable);
+                    }
+                }
+                //if the session is not selected getSessionComparisonPanel() returns null
+                catch (NullPointerException e) { }
             }
         });
         return downloadTxtMenuItem;

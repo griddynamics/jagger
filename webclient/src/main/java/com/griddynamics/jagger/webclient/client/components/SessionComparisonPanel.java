@@ -100,6 +100,14 @@ public class SessionComparisonPanel extends VerticalPanel {
 
     private final DateTimeFormat dateFormatter;
 
+    //sort sessions by number sessionId
+    private SortedSet<SessionDataDto> sortedSessionsSet = new TreeSet<SessionDataDto>(new Comparator<SessionDataDto>() {
+        @Override
+        public int compare(SessionDataDto o, SessionDataDto o2) {
+            return (Long.parseLong(o.getSessionId()) - Long.parseLong(o2.getSessionId())) > 0 ? 1 : -1;
+        }
+    });
+
     public SessionComparisonPanel(
             Set<SessionDataDto> chosenSessions,
             int width,
@@ -129,13 +137,8 @@ public class SessionComparisonPanel extends VerticalPanel {
         List<ColumnConfig<TreeItem, ?>> columns = new ArrayList<ColumnConfig<TreeItem, ?>>();
 
         //sort sessions by number sessionId
-        SortedSet<SessionDataDto> sortedSet = new TreeSet<SessionDataDto>(new Comparator<SessionDataDto>() {
-            @Override
-            public int compare(SessionDataDto o, SessionDataDto o2) {
-                return (Long.parseLong(o.getSessionId()) - Long.parseLong(o2.getSessionId())) > 0 ? 1 : -1;
-            }
-        });
-        sortedSet.addAll(chosenSessions);
+        sortedSessionsSet.clear();
+        sortedSessionsSet.addAll(chosenSessions);
 
         ColumnConfig<TreeItem, String> nameColumn =
                 new ColumnConfig<TreeItem, String>(new MapValueProvider(NAME), (int) (colWidth * METRIC_COLUMN_WIDTH_FACTOR));
@@ -144,7 +147,7 @@ public class SessionComparisonPanel extends VerticalPanel {
         nameColumn.setMenuDisabled(true);
         columns.add(nameColumn);
 
-        for (SessionDataDto session : sortedSet) {
+        for (SessionDataDto session : sortedSessionsSet) {
             ColumnConfig<TreeItem, String> column = new ColumnConfig<TreeItem, String>(
                     new MapValueProvider(SESSION_HEADER + session.getSessionId())
             );
@@ -511,10 +514,11 @@ public class SessionComparisonPanel extends VerticalPanel {
     }
 
     public List<List<String>> getSummaryTableAsList() {
-        System.out.println(treeStore);
         summaryTableAsList = new ArrayList<List<String>>();
         sessionNames = new ArrayList<String>();
-        for (SessionDataDto sdDto : chosenSessions) {
+        sortedSessionsSet.clear();
+        sortedSessionsSet.addAll(chosenSessions);
+        for (SessionDataDto sdDto : sortedSessionsSet) {
             sessionNames.add(sdDto.getName());
         }
         List<String> sessions = new ArrayList<String>(sessionNames);
@@ -540,11 +544,11 @@ public class SessionComparisonPanel extends VerticalPanel {
         String aName = aRow.get(NAME);
         // test results
         if (aRow.containsKey(TEST_DESCRIPTION)) {
-            result.addAll(getTestInfo(aRow, aName));
+            result.addAll(collectTestInfo(aRow, aName));
         }
         //Session Info results OR test description value
         else {
-            result.addAll(getSessionInfo(aRow, aName));
+            result.addAll(collectSessionInfo(aRow, aName));
         }
         summaryTableAsList.add(result);
     }
@@ -558,7 +562,7 @@ public class SessionComparisonPanel extends VerticalPanel {
         return result;
     }
 
-    private List<String> getSessionInfo(TreeItem aRow, String aName) {
+    private List<String> collectSessionInfo(TreeItem aRow, String aName) {
         if (aName.equals("Session Info")) {
             return new ArrayList<String>(Arrays.asList(new String[]{aName}));
         }
@@ -578,7 +582,7 @@ public class SessionComparisonPanel extends VerticalPanel {
         }
     }
 
-    private List<String> getTestInfo(SessionComparisonPanel.TreeItem aRow, String aName) {
+    private List<String> collectTestInfo(SessionComparisonPanel.TreeItem aRow, String aName) {
         if (aName.equals(TEST_INFO)) {
             return new ArrayList<String>(Arrays.asList(new String[]{aName}));
         }
