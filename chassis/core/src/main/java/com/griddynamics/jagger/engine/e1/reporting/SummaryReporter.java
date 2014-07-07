@@ -46,6 +46,7 @@ public class SummaryReporter {
     private Map<String, List<SummaryDto>> validatorsMap = new HashMap<String, List<SummaryDto>>();
     private Map<TestEntity, Map<MetricEntity, MetricSummaryValueEntity>> standardMetricsMap = new HashMap<TestEntity, Map<MetricEntity, MetricSummaryValueEntity>>();
     private DateFormat dateFormatter = new SimpleDateFormat(FormatCalculator.DATE_FORMAT);
+    private int numberOfTestGroups;
     private boolean isMetricHighlighting;
 
     @Required
@@ -97,13 +98,7 @@ public class SummaryReporter {
 
         getData(sessionId);
 
-        Set<Integer> testGroupsIndexes = new HashSet<Integer>();
-
-        for (TestEntity testEntity : metricsPerTest.keySet()) {
-            testGroupsIndexes.add(testEntity.getTestGroupIndex());
-        }
-
-        return testGroupsIndexes.size();
+        return numberOfTestGroups;
     }
 
     private void getData(String sessionId) {
@@ -132,6 +127,12 @@ public class SummaryReporter {
             DataService dataService = new DefaultDataService(databaseService);
             Set<TestEntity> testEntities = dataService.getTests(sessionId);
             metricsPerTest = dataService.getMetricsByTests(testEntities);
+
+            Set<Long> testIds = new HashSet<Long>();
+            for (TestEntity testEntity : testEntities) {
+                testIds.add(testEntity.getId());
+            }
+            numberOfTestGroups = databaseService.getTestGroupIdsByTestIds(testIds).keySet().size();
 
             for (Map.Entry<TestEntity, Set<MetricEntity>> entry : metricsPerTest.entrySet()) {
                 List<SummaryDto> summaryList = new ArrayList<SummaryDto>();
