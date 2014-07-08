@@ -50,7 +50,4 @@ public class StandardMetricsNamesUtil {
     public static String getLatencyMetricName(double latencyKey) {
         return "Latency " + latencyKey + " %";
     }
-
-    // ?? temporary prefix
-    public static final String TEMPORARY_PREFIX = "m-";
 }

@@ -219,15 +219,15 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             StatisticsCalculator globalStatisticsCalculator = new StatisticsCalculator();
 
             MetricDescriptionEntity throughputDescription = persistMetricDescription(
-                    StandardMetricsNamesUtil.TEMPORARY_PREFIX + StandardMetricsNamesUtil.THROUGHPUT_ID,
+                    StandardMetricsNamesUtil.THROUGHPUT_ID,
                     StandardMetricsNamesUtil.THROUGHPUT_TPS,
                     taskData);
 
             MetricDescriptionEntity latencyDescription = persistMetricDescription(
-                    StandardMetricsNamesUtil.TEMPORARY_PREFIX + StandardMetricsNamesUtil.LATENCY_ID, StandardMetricsNamesUtil.LATENCY_SEC, taskData);
+                    StandardMetricsNamesUtil.LATENCY_ID, StandardMetricsNamesUtil.LATENCY_SEC, taskData);
 
             MetricDescriptionEntity latencyStdDevDescription = persistMetricDescription(
-                    StandardMetricsNamesUtil.TEMPORARY_PREFIX + StandardMetricsNamesUtil.LATENCY_STD_DEV_ID,
+                    StandardMetricsNamesUtil.LATENCY_STD_DEV_ID,
                     StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC,
                     taskData);
 
@@ -239,7 +239,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                 percentileMap.put(
                         percentileKey,
                         persistMetricDescription(
-                            StandardMetricsNamesUtil.TEMPORARY_PREFIX + metricStr
+                            metricStr
                           , metricStr
                           , taskData
                         )

@@ -6,6 +6,8 @@ import com.griddynamics.jagger.dbapi.dto.SummarySingleDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import com.griddynamics.jagger.util.TimeUtils;
 
 import javax.persistence.PersistenceException;
 import java.text.DecimalFormat;
@@ -68,7 +70,11 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
             if (mas[0] == null) continue;
 
             SummaryMetricValueDto value = new SummaryMetricValueDto();
-            value.setValue(new DecimalFormat("0.0###", new DecimalFormatSymbols(Locale.ENGLISH)).format(mas[0]));
+            value.setValue(new DecimalFormat("0.######", new DecimalFormatSymbols(Locale.ENGLISH)).format(mas[0]));
+
+            if (StandardMetricsNamesUtil.DURATION_ID.equals(metricId)) {
+                value.setValueRepresentation(TimeUtils.formatDuration(((Number)mas[0]).longValue() * 1000));
+            }
 
             value.setSessionId(Long.parseLong((String)mas[1]));
             metricDto.getValues().add(value);

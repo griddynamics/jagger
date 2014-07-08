@@ -72,6 +72,7 @@ public class MetricNameDto extends MetricName {
         MetricNameDto that = (MetricNameDto) o;
 
         if (metricName != null ? !metricName.equals(that.metricName) : that.metricName != null) return false;
+        if (origin != null ? !origin.equals(that.origin) : that.origin != null) return false;
         if (test != null ? !test.equals(that.test) : that.test != null) return false;
 
         return true;

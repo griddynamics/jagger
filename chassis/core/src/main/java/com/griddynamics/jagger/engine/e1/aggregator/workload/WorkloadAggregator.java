@@ -31,7 +31,6 @@ import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
-import com.griddynamics.jagger.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -175,30 +174,30 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         workloadTaskData.setStdDevLatency(BigDecimal.valueOf(stdDevLatency));
 
         MetricDescriptionEntity successRateDescription = persistMetricDescription(
-                StandardMetricsNamesUtil.TEMPORARY_PREFIX + StandardMetricsNamesUtil.SUCCESS_RATE_ID,
+                StandardMetricsNamesUtil.SUCCESS_RATE_ID,
                 StandardMetricsNamesUtil.SUCCESS_RATE,
                 taskData);
         persistAggregatedMetricValue(successRate, successRateDescription);
 
 
         MetricDescriptionEntity samplesDescription = persistMetricDescription(
-                StandardMetricsNamesUtil.TEMPORARY_PREFIX + StandardMetricsNamesUtil.ITERATION_SAMPLES_ID,
+                StandardMetricsNamesUtil.ITERATION_SAMPLES_ID,
                 StandardMetricsNamesUtil.ITERATIONS_SAMPLES,
                 taskData);
         persistAggregatedMetricValue(invoked, samplesDescription);
 
 
         MetricDescriptionEntity failuresDescription = persistMetricDescription(
-                StandardMetricsNamesUtil.TEMPORARY_PREFIX + StandardMetricsNamesUtil.FAIL_COUNT_ID,
+                StandardMetricsNamesUtil.FAIL_COUNT_ID,
                 StandardMetricsNamesUtil.FAIL_COUNT,
                 taskData);
         persistAggregatedMetricValue(failed, failuresDescription);
 
         MetricDescriptionEntity durationDescription = persistMetricDescription(
-                StandardMetricsNamesUtil.TEMPORARY_PREFIX + StandardMetricsNamesUtil.DURATION_ID,
+                StandardMetricsNamesUtil.DURATION_ID,
                 StandardMetricsNamesUtil.DURATION_SEC,
                 taskData);
-        persistAggregatedMetricValue((endTime - startTime) / 1000, durationDescription);
+        persistAggregatedMetricValue(Math.rint((endTime - startTime) / 1000D), durationDescription);
 
         getHibernateTemplate().persist(workloadTaskData);
 
