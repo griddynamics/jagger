@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
+import com.griddynamics.jagger.dbapi.dto.SummaryTableDto;
 import com.griddynamics.jagger.webclient.client.DownloadService;
 
 import java.util.List;
@@ -36,11 +37,11 @@ public class FileDownLoader {
         });
     }
 
-    public static void downloadSummaryTableInCsv(final List<List<String>> summaryTableData) {
-        DownloadService.Async.getInstance().createSummaryTableScvFile(summaryTableData, new AsyncCallback<String>() {
+    public static void downloadSummaryTableInCsv(final SummaryTableDto summaryTableDto) {
+        DownloadService.Async.getInstance().createSummaryTableScvFile(summaryTableDto, new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
-                new ExceptionPanel("Failed to create cvs file for " + summaryTableData + " :\n" + caught.getMessage());
+                new ExceptionPanel("Failed to create cvs file for " + summaryTableDto + " :\n" + caught.getMessage());
             }
 
             @Override

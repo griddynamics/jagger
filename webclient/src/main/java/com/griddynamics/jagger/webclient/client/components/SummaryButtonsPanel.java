@@ -4,6 +4,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.griddynamics.jagger.dbapi.dto.SummaryTableDto;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
@@ -45,9 +46,9 @@ public class SummaryButtonsPanel extends HorizontalPanel {
             @Override
             public void onSelection(SelectionEvent<Item> itemSelectionEvent) {
                 try {
-                    List<List<String>> summaryTable = summaryPanel.getSessionComparisonPanel().getSummaryTableAsList();
-                    if (summaryTable.size() > 1) {
-                        FileDownLoader.downloadSummaryTableInCsv(summaryTable);
+                    SummaryTableDto summaryTableDto = summaryPanel.getSessionComparisonPanel().getSummaryTableAsList();
+                    if (summaryTableDto.getTableData().size() > 1) {
+                        FileDownLoader.downloadSummaryTableInCsv(summaryTableDto);
                     }
                 }
                 //if the session is not selected getSessionComparisonPanel() returns null
