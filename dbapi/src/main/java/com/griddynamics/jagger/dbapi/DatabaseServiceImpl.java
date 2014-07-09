@@ -341,7 +341,10 @@ public class DatabaseServiceImpl implements DatabaseService {
             metricNodeList.addAll(entry.getValue());
             if (entry.getValue().size() > 1) {
                 for (MetricNode mn : entry.getValue()) {
-                    mn.setDisplayName(LegendProvider.parseSessionId(mn.getDisplayName()));
+                    String sessionId = LegendProvider.parseSessionId(mn.getDisplayName());
+                    if (sessionId  != null) {
+                        mn.setDisplayName(sessionId);
+                    }
                 }
                 legendGroups.add(entry.getKey());
             }
