@@ -51,12 +51,20 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
 
         // Create rules to combine standard metrics together
 
+        // Throughput
+        String regex = "^" + StandardMetricsNamesUtil.THROUGHPUT_ID + "$";
+        result.add(new TreeViewGroupMetricsToNodeRule(
+                Rule.By.ID,
+                StandardMetricsNamesUtil.THROUGHPUT + "_id",
+                StandardMetricsNamesUtil.THROUGHPUT,
+                regex));
+
         // Latency
-        String regex = "^(" + StandardMetricsNamesUtil.LATENCY_ID + "|" +
+        regex = "^(" + StandardMetricsNamesUtil.LATENCY_ID + "|" +
                 StandardMetricsNamesUtil.LATENCY_STD_DEV_ID + ")$";
         result.add(new TreeViewGroupMetricsToNodeRule(
                 Rule.By.ID,
-                StandardMetricsNamesUtil.LATENCY_ID + StandardMetricsNamesUtil.LATENCY_STD_DEV_ID,
+                StandardMetricsNamesUtil.LATENCY + "_id",
                 StandardMetricsNamesUtil.LATENCY,
                 regex));
 

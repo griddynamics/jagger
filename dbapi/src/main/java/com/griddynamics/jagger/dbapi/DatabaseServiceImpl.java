@@ -7,7 +7,6 @@ import com.griddynamics.jagger.dbapi.entity.*;
 import com.griddynamics.jagger.dbapi.fetcher.*;
 import com.griddynamics.jagger.dbapi.model.rules.*;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
-import com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.dbapi.provider.*;
 import com.griddynamics.jagger.dbapi.util.*;
@@ -44,23 +43,22 @@ public class DatabaseServiceImpl implements DatabaseService {
     private ExecutorService threadPool;
     private LegendProvider legendProvider;
 
-    private Map<GroupKey, DefaultWorkloadParameters[]> workloadPlotGroups;
     private Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups;
     private List<MetricNameDto> standardMetricNameDtoList;
     private Map<String,Set<String>> defaultMonitoringParams = new HashMap<String, Set<String>>();
 
-    private CustomMetricPlotNameProvider customMetricPlotNameProvider;
-    private CustomMetricNameProvider customMetricNameProvider;
-    private LatencyMetricNameProvider latencyMetricNameProvider;
-    private ValidatorNamesProvider validatorNamesProvider;
+    private StandardMetricNameProvider standardMetricPlotNameProvider;
+    private MetricPlotNameProvider customMetricPlotNameProvider;
+    private MetricNameProvider customMetricNameProvider;
+    private MetricNameProvider latencyMetricNameProvider;
+    private MetricNameProvider validatorNamesProvider;
     private SessionInfoProviderImpl sessionInfoServiceImpl;
 
     private TreeViewGroupRuleProvider treeViewGroupRuleProvider;
     private LegendTreeViewGroupRuleProvider legendTreeViewGroupRuleProvider;
     private TreeViewGroupMetricsToNodeRuleProvider treeViewGroupMetricsToNodeRuleProvider;
 
-    private ThroughputMetricPlotFetcher throughputMetricPlotFetcher;
-    private LatencyMetricPlotFetcher latencyMetricPlotFetcher;
+    private StandardMetricPlotFetcher standardMetricPlotFetcher;
     private TimeLatencyPercentileMetricPlotFetcher timeLatencyPercentileMetricPlotFetcher;
     private CustomMetricPlotFetcher customMetricPlotFetcher;
     private CustomTestGroupMetricPlotFetcher customTestGroupMetricPlotFetcher;
@@ -95,8 +93,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Required
-    public void setWorkloadPlotGroups(Map<GroupKey, DefaultWorkloadParameters[]> workloadPlotGroups) {
-        this.workloadPlotGroups = workloadPlotGroups;
+    public void setStandardMetricPlotNameProvider(StandardMetricNameProvider standardMetricPlotNameProvider) {
+        this.standardMetricPlotNameProvider = standardMetricPlotNameProvider;
     }
 
     @Required
@@ -120,13 +118,8 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Required
-    public void setThroughputMetricPlotFetcher(ThroughputMetricPlotFetcher throughputMetricPlotFetcher) {
-        this.throughputMetricPlotFetcher = throughputMetricPlotFetcher;
-    }
-
-    @Required
-    public void setLatencyMetricPlotFetcher(LatencyMetricPlotFetcher latencyMetricPlotFetcher) {
-        this.latencyMetricPlotFetcher = latencyMetricPlotFetcher;
+    public void setStandardMetricPlotFetcher(StandardMetricPlotFetcher standardMetricPlotFetcher) {
+        this.standardMetricPlotFetcher = standardMetricPlotFetcher;
     }
 
     @Required
@@ -386,14 +379,11 @@ public class DatabaseServiceImpl implements DatabaseService {
                 case MONITORING:
                     fetchMap.put(monitoringMetricPlotFetcher, metricNameDto);
                     break;
-                case LATENCY:
-                    fetchMap.put(latencyMetricPlotFetcher, metricNameDto);
+                case THROUGHPUT_LATENCY:
+                    fetchMap.put(standardMetricPlotFetcher, metricNameDto);
                     break;
                 case LATENCY_PERCENTILE:
                     fetchMap.put(timeLatencyPercentileMetricPlotFetcher, metricNameDto);
-                    break;
-                case THROUGHPUT:
-                    fetchMap.put(throughputMetricPlotFetcher, metricNameDto);
                     break;
                 case SESSION_SCOPE_MONITORING:
                     fetchMap.put(sessionScopeMonitoringMetricPlotFetcher, metricNameDto);
@@ -803,17 +793,11 @@ public class DatabaseServiceImpl implements DatabaseService {
         List<MetricNameDto> metricNameDtoList = new ArrayList<MetricNameDto>();
         try {
 
-            Set<TaskDataDto> tasksWithWorkload = getTasksWithWorkloadStatistics(taskList);
-            for (TaskDataDto taskDataDto : tasksWithWorkload) {
-                for (Map.Entry<GroupKey, DefaultWorkloadParameters[]> monitoringPlot : workloadPlotGroups.entrySet()) {
-                    MetricNameDto metricNameDto = new MetricNameDto(taskDataDto, monitoringPlot.getKey().getUpperName());
-                    metricNameDto.setOrigin(monitoringPlot.getValue()[0].getOrigin());
-                    metricNameDtoList.add(metricNameDto);
-                }
-            }
+            Set<MetricNameDto> standardMetrics = standardMetricPlotNameProvider.getPlotNames(taskList);
 
             Set<MetricNameDto> customMetrics = customMetricPlotNameProvider.getPlotNames(taskList);
 
+            metricNameDtoList.addAll(standardMetrics);
             metricNameDtoList.addAll(customMetrics);
 
             log.debug("For sessions {} are available these plots: {}", sessionIds, metricNameDtoList);

@@ -90,8 +90,7 @@ public class MetricNameDto extends MetricName {
         UNKNOWN,                      /* default value - will produce errors during fetching */
         METRIC,                       /* custom metric */
         TEST_GROUP_METRIC,            /* custom test-group metric */
-        LATENCY,
-        THROUGHPUT,
+        THROUGHPUT_LATENCY,           /* standard metrics from TimeInvocationStatistics */
         LATENCY_PERCENTILE,
         DURATION,
         STANDARD_METRICS,             /* success rate, iterations, etc */

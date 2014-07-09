@@ -1,50 +1,19 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
-import com.griddynamics.jagger.dbapi.util.ColorCodeGenerator;
-import com.griddynamics.jagger.dbapi.dto.PointDto;
-import com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters;
-import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
+import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 
 import java.util.*;
 
-public class TimeLatencyPercentileMetricPlotFetcher extends StandardMetricPlotFetcher<TimeLatencyPercentileMetricPlotFetcher.LatencyPercentileRawData> {
+public class TimeLatencyPercentileMetricPlotFetcher extends AbstractMetricPlotFetcher {
 
     @Override
-    protected Iterable<? extends PlotSingleDto> assemble(Collection<LatencyPercentileRawData> rawData) {
+    protected Collection<MetricRawData> getAllRawData(List<MetricNameDto> metricNames) {
 
-        List<PlotSingleDto> plotDatasetDtoList = new ArrayList<PlotSingleDto>();
-        Map<Double, List<PointDto>> percentiles = new TreeMap<Double, List<PointDto>>();
-
-        String sessionId = rawData.iterator().next().getSessionId();
-        double previousPercentileValue = 0.0;
-
-        for (LatencyPercentileRawData raw : rawData) {
-            if (!percentiles.containsKey(raw.getPercentileKey())) {
-                percentiles.put(raw.getPercentileKey(), new ArrayList<PointDto>(rawData.size()));
-            }
-            List<PointDto> list = percentiles.get(raw.getPercentileKey());
-
-            double x = DataProcessingUtil.round(raw.getTime() / 1000.0D);
-            double y = DataProcessingUtil.round((raw.getPercentileValue() - previousPercentileValue) / 1000);
-            list.add(new PointDto(x, y));
-
-            previousPercentileValue = y;
+        Set<Long> taskIds = new HashSet<Long>();
+        for (MetricNameDto mnd : metricNames) {
+            taskIds.addAll(mnd.getTaskIds());
         }
-        int colorId = 0;
-        for (Map.Entry<Double, List<PointDto>> entry : percentiles.entrySet()) {
-            DefaultWorkloadParameters parameter = DefaultWorkloadParameters.fromDescription(entry.getKey().toString());
-            String description = (parameter == null ? entry.getKey().toString() : parameter.getDescription());
-            String legend = legendProvider.generatePlotLegend(sessionId, description, true);
-            plotDatasetDtoList.add(new PlotSingleDto(entry.getValue(), legend, ColorCodeGenerator.getHexColorCode(String.valueOf(colorId++), sessionId)));
-        }
-
-        return plotDatasetDtoList;
-
-    }
-
-    @Override
-    protected List<LatencyPercentileRawData> findRawDataByTaskData(Set<Long> taskIds) {
 
         @SuppressWarnings("all")
         List<Object[]> rawDataList =  entityManager.createQuery(
@@ -52,7 +21,7 @@ public class TimeLatencyPercentileMetricPlotFetcher extends StandardMetricPlotFe
                         "inner join ps.timeInvocationStatistics as tis where tis.taskData.id in (:taskIds)")
                 .setParameter("taskIds", taskIds).getResultList();
 
-        List<LatencyPercentileRawData> resultList = new ArrayList<LatencyPercentileRawData>(rawDataList.size());
+        List<MetricRawData> resultList = new ArrayList<MetricRawData>(rawDataList.size());
 
         for (Object[] objects : rawDataList) {
 
@@ -62,49 +31,9 @@ public class TimeLatencyPercentileMetricPlotFetcher extends StandardMetricPlotFe
             Double percentileKey = (Double) objects[1];
             Double percentileValue = (Double) objects[2];
 
-            resultList.add(new LatencyPercentileRawData(sessionId, taskDataId, time, percentileKey, percentileValue));
+            resultList.add(new MetricRawData(sessionId, taskDataId, StandardMetricsNamesUtil.getLatencyMetricName(percentileKey), time, percentileValue));
         }
 
         return resultList;
-
-    }
-
-
-    public static class LatencyPercentileRawData implements StandardMetricPlotFetcher.StandardMetricRawData {
-
-        private String sessionId;
-        private Long taskDataId;
-        private Long time;
-        private Double percentileKey;
-        private Double percentileValue;
-
-        public LatencyPercentileRawData(String sessionId, Long taskDataId, Long time, Double percentileKey, Double percentileValue) {
-            this.sessionId = sessionId;
-            this.taskDataId = taskDataId;
-            this.time = time;
-            this.percentileKey = percentileKey;
-            this.percentileValue = percentileValue;
-        }
-
-        @Override
-        public Long getTaskDataId() {
-            return taskDataId;
-        }
-
-        public String getSessionId() {
-            return sessionId;
-        }
-
-        public Long getTime() {
-            return time;
-        }
-
-        public Double getPercentileKey() {
-            return percentileKey;
-        }
-
-        public Double getPercentileValue() {
-            return percentileValue;
-        }
     }
 }

@@ -30,6 +30,7 @@ import com.griddynamics.jagger.dbapi.dto.*;
 import com.griddynamics.jagger.dbapi.model.*;
 import com.griddynamics.jagger.util.FormatCalculator;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import com.griddynamics.jagger.webclient.client.*;
 import com.griddynamics.jagger.webclient.client.components.*;
 import com.griddynamics.jagger.webclient.client.components.control.CheckHandlerMap;
@@ -298,6 +299,9 @@ public class Trends extends DefaultActivity {
                     List<String> trends = new ArrayList<String>();
                     List<String> trendsMonitoring = new ArrayList<String>();
                     for (PlotNode plotNode : test.getMetrics()) {
+                        if (!controlTree.isChosen(plotNode)) {
+                            continue;
+                        }
 
                         // temporary work around to make URL shorter starts here
                         // it groups metricNameDtoId|agentName id to old monitoringId|agentName
@@ -329,7 +333,24 @@ public class Trends extends DefaultActivity {
                                 }
                             }
                         }
-                        // temporary work around to make URL shorter ends here
+                        // temporary workaround for standard metrics for back compatibility
+                        String metricNameForCheck = plotNode.getMetricNameDtoList().get(0).getMetricName();
+                        if (StandardMetricsNamesUtil.THROUGHPUT_ID.equals(metricNameForCheck)) {
+                            trends.add(StandardMetricsNamesUtil.THROUGHPUT);
+                            continue;
+                        }
+
+                        if (StandardMetricsNamesUtil.LATENCY_ID.equals(metricNameForCheck)
+                                || StandardMetricsNamesUtil.LATENCY_STD_DEV_ID.equals(metricNameForCheck)) {
+                            trends.add(StandardMetricsNamesUtil.LATENCY);
+                            continue;
+                        }
+
+                        if (metricNameForCheck.matches(StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX)) {
+                            trends.add(StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE);
+                            continue;
+                        }
+                        // temporary work arounds to make URL shorter ends here
 
                         // this is correct way, but is has very long URL
                         if (controlTree.isChecked(plotNode)) {
@@ -1352,6 +1373,14 @@ public class Trends extends DefaultActivity {
                             for (MetricNameDto metricNameDto : plotNode.getMetricNameDtoList()) {
                                 if (testsMetrics.getTrends().contains(metricNameDto.getMetricName())) {
                                     tempTree.setCheckedExpandedWithParent(plotNode);
+                                } else {
+                                    if (metricNameDto.getMetricNameSynonyms() != null) {
+                                        for (String syn : metricNameDto.getMetricNameSynonyms()) {
+                                            if (testsMetrics.getTrends().contains(syn)) {
+                                                tempTree.setCheckedExpandedWithParent(plotNode);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

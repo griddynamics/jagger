@@ -40,7 +40,7 @@ public abstract class AbstractMetricPlotFetcher extends PlotsDbMetricDataFetcher
 
         for (MetricRawData rawData : allRawData) {
             String metricId = rawData.getMetricId();
-            Long taskId = rawData.getWorkloadTaskDataId();
+            Long taskId = rawData.getTaskDataId();
             taskIdMetricIdRawMap.get(taskId).put(metricId, rawData);
         }
 
@@ -127,25 +127,36 @@ public abstract class AbstractMetricPlotFetcher extends PlotsDbMetricDataFetcher
     public static class MetricRawData {
 
         private String metricId;
-        private Long workloadTaskDataId;
+        private Long taskDataId;
         private String sessionId;
         private Long time;
         private Double value;
+
+        public MetricRawData() {
+        }
+
+        public MetricRawData( String sessionId, Long taskDataId, String metricId, Long time, Double value) {
+            this.metricId = metricId;
+            this.taskDataId = taskDataId;
+            this.sessionId = sessionId;
+            this.time = time;
+            this.value = value;
+        }
 
         public void setMetricId(String metricId) {
             this.metricId = metricId;
         }
 
-        public void setWorkloadTaskDataId(Long workloadTaskDataId) {
-            this.workloadTaskDataId = workloadTaskDataId;
+        public void setTaskDataId(Long taskDataId) {
+            this.taskDataId = taskDataId;
         }
 
         public String getMetricId() {
             return metricId;
         }
 
-        public Long getWorkloadTaskDataId() {
-            return workloadTaskDataId;
+        public Long getTaskDataId() {
+            return taskDataId;
         }
 
         public String getSessionId() {
