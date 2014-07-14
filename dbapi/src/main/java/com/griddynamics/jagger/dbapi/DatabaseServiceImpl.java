@@ -733,14 +733,18 @@ public class DatabaseServiceImpl implements DatabaseService {
 
             // trick to avoid adding standard metrics as standard metrics and as custom metrics at one time
             Set<MetricNameDto> customMetrics = customMetricNamesFuture.get();
-            boolean addStandardMetricsFromWorkloadTaskData = true;
+            int numberOfStandardMetrics = 0;
             for (MetricNameDto mnd: customMetrics) {
                 if (standardMetricNameProvider.getStandardMetricIds().contains(mnd.getMetricName())) {
-                    addStandardMetricsFromWorkloadTaskData = false;
-                    break;
+                    numberOfStandardMetrics ++;
                 }
             }
-            if (addStandardMetricsFromWorkloadTaskData) {
+            // different task ids
+            Set<Long> taskIds = new HashSet<Long>();
+            for (TaskDataDto tdd : tddos) {
+                taskIds.addAll(tdd.getIds());
+            }
+            if (numberOfStandardMetrics < taskIds.size() * standardMetricNameProvider.getStandardMetricIds().size()) {
                 list.addAll(standardMetricNameProvider.getMetricNames(tddos));
             }
 
