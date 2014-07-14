@@ -146,8 +146,6 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             }
 
             StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSize, taskData).generate();
-            final Collection<TimeInvocationStatistics> statistics = statisticsGenerator.getStatistics();
-            final WorkloadProcessDescriptiveStatistics workloadProcessDescriptiveStatistics = statisticsGenerator.getWorkloadProcessDescriptiveStatistics();
             final Collection<MetricPointEntity> newStatistics = statisticsGenerator.getNewStatistics();
 
             log.info("BEGIN: Save to data base " + dir);
@@ -159,10 +157,6 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                         session.persist(point);
                     }
 
-                    for (TimeInvocationStatistics stat : statistics) {
-                        session.persist(stat);
-                    }
-                    session.persist(workloadProcessDescriptiveStatistics);
                     session.flush();
                     return null;
                 }
@@ -180,8 +174,6 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
         private AggregationInfo aggregationInfo;
         private int intervalSize;
         private TaskData taskData;
-        private Collection<TimeInvocationStatistics> statistics;
-        private WorkloadProcessDescriptiveStatistics workloadProcessDescriptiveStatistics;
         private Collection<MetricPointEntity> newStatistics;
 
         public StatisticsGenerator(String path, AggregationInfo aggregationInfo, int intervalSize, TaskData taskData) {
@@ -191,22 +183,12 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             this.taskData = taskData;
         }
 
-        public Collection<TimeInvocationStatistics> getStatistics() {
-            return statistics;
-        }
-
-        public WorkloadProcessDescriptiveStatistics getWorkloadProcessDescriptiveStatistics() {
-            return workloadProcessDescriptiveStatistics;
-        }
-
         public Collection<MetricPointEntity> getNewStatistics() {
             return newStatistics;
         }
 
         public StatisticsGenerator generate() throws IOException {
-            statistics = new ArrayList<TimeInvocationStatistics>();
             newStatistics = new ArrayList<MetricPointEntity>();
-
 
             // starting point is aagregationInfo.getMinTime()
             long currentInterval = aggregationInfo.getMinTime() + intervalSize;
@@ -262,7 +244,6 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                             double throughput = (double) currentCount * 1000 / extendedInterval;
                             long currentTime = time - extendedInterval / 2;
                             TimeInvocationStatistics tis = assembleInvocationStatistics(currentTime, windowStatisticsCalculator, throughput, taskData);
-                            statistics.add(tis);
                             newStatistics.add(new MetricPointEntity(currentTime, tis.getThroughput(), throughputDescription));
                             newStatistics.add(new MetricPointEntity(currentTime, tis.getLatency(), latencyDescription));
                             newStatistics.add(new MetricPointEntity(currentTime, tis.getLatencyStdDev(), latencyStdDevDescription));
@@ -297,13 +278,13 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                 double throughput = (double) currentCount * 1000 / intervalSize;
                 long currentTime = time - extendedInterval / 2;
                 TimeInvocationStatistics tis = assembleInvocationStatistics(currentTime, windowStatisticsCalculator, throughput, taskData);
-                statistics.add(tis);
                 newStatistics.add(new MetricPointEntity(currentTime, tis.getThroughput(), throughputDescription));
                 newStatistics.add(new MetricPointEntity(currentTime, tis.getLatency(), latencyDescription));
                 newStatistics.add(new MetricPointEntity(currentTime, tis.getLatencyStdDev(), latencyStdDevDescription));
             }
 
-            workloadProcessDescriptiveStatistics = assembleDescriptiveScenarioStatistics(globalStatisticsCalculator, taskData);
+            WorkloadProcessDescriptiveStatistics workloadProcessDescriptiveStatistics =
+                    assembleDescriptiveScenarioStatistics(globalStatisticsCalculator, taskData);
             for (WorkloadProcessLatencyPercentile pp : workloadProcessDescriptiveStatistics.getPercentiles()) {
                 persistAggregatedMetricValue(Math.rint(pp.getPercentileValue()) / 1000D, percentileMap.get(pp.getPercentileKey()));
             }
