@@ -156,7 +156,7 @@ public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> ex
                 Multimap<Number, AbstractMetricPlotFetcher.MetricRawData> multimap = TreeMultimap.create(numberComparator, metricRawDataComparator);
                 lines.put(metricId, multimap);
             }
-            lines.get(metricId).put(metricRawData.getWorkloadTaskDataId(), metricRawData);
+            lines.get(metricId).put(metricRawData.getTaskDataId(), metricRawData);
         }
         return lines;
     }

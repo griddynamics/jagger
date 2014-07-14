@@ -72,6 +72,7 @@ public class MetricNameDto extends MetricName {
         MetricNameDto that = (MetricNameDto) o;
 
         if (metricName != null ? !metricName.equals(that.metricName) : that.metricName != null) return false;
+        if (origin != null ? !origin.equals(that.origin) : that.origin != null) return false;
         if (test != null ? !test.equals(that.test) : that.test != null) return false;
 
         return true;
@@ -89,8 +90,7 @@ public class MetricNameDto extends MetricName {
         UNKNOWN,                      /* default value - will produce errors during fetching */
         METRIC,                       /* custom metric */
         TEST_GROUP_METRIC,            /* custom test-group metric */
-        LATENCY,
-        THROUGHPUT,
+        THROUGHPUT_LATENCY,           /* standard metrics from TimeInvocationStatistics */
         LATENCY_PERCENTILE,
         DURATION,
         STANDARD_METRICS,             /* success rate, iterations, etc */

@@ -29,7 +29,13 @@ public class MetricRankingProvider extends MetricNamesRankingProvider {
         Collections.sort(list, new Comparator<SummarySingleDto>() {
             @Override
             public int compare(SummarySingleDto metricDto, SummarySingleDto metricDto2) {
-                return MetricRankingProvider.compare(metricDto.getMetricName().getMetricDisplayName(), metricDto2.getMetricName().getMetricDisplayName());
+                String displayName1 = metricDto.getMetricName().getMetricDisplayName();
+                String displayName2 = metricDto2.getMetricName().getMetricDisplayName();
+                if (!displayName1.equals(displayName2)) {
+                    return MetricRankingProvider.compare(metricDto.getMetricName().getMetricDisplayName(), metricDto2.getMetricName().getMetricDisplayName());
+                } else {
+                    return metricDto2.getMetricName().getOrigin().ordinal() - metricDto.getMetricName().getOrigin().ordinal();
+                }
             }
         });
     }

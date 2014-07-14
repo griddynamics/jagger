@@ -21,11 +21,7 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.dbapi.entity.ValidationResultEntity;
-import com.griddynamics.jagger.dbapi.entity.DiagnosticResultEntity;
-import com.griddynamics.jagger.dbapi.entity.WorkloadData;
-import com.griddynamics.jagger.dbapi.entity.WorkloadDetails;
-import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
+import com.griddynamics.jagger.dbapi.entity.*;
 import com.griddynamics.jagger.engine.e1.collector.DiagnosticResult;
 import com.griddynamics.jagger.engine.e1.collector.ValidationResult;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
@@ -33,9 +29,11 @@ import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
+import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -48,11 +46,10 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
  *
  * @author Mairbek Khadikov
  */
-public class WorkloadAggregator extends HibernateDaoSupport implements DistributionListener {
+public class WorkloadAggregator extends LogProcessor implements DistributionListener {
     private final static Logger log = LoggerFactory.getLogger(WorkloadAggregator.class);
 
     private KeyValueStorage keyValueStorage;
-
 
     @Override
     public void onDistributionStarted(String sessionId, String taskId, Task task, Collection<NodeId> capableNodes) {
@@ -140,6 +137,12 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
     private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination, Long startTime, Long endTime, Collection<String> kernels, double totalDuration, Integer failed, Integer invoked, Map<String, ValidationResult> validationResults, Map<String, Double> diagnosticResults, double avgLatency, double stdDevLatency, double throughput, double successRate) {
         String parentId = workloadTask.getParentTaskId();
 
+        TaskData taskData = getTaskData(taskId, sessionId);
+        if (taskData == null) {
+            log.error("TaskData not found by taskId: {}", taskId);
+            return;
+        }
+
         WorkloadDetails workloadDetails = getScenarioData(workloadTask);
 
         WorkloadData testData = new WorkloadData();
@@ -170,6 +173,32 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         workloadTaskData.setAvgLatency(BigDecimal.valueOf(avgLatency));
         workloadTaskData.setStdDevLatency(BigDecimal.valueOf(stdDevLatency));
 
+        MetricDescriptionEntity successRateDescription = persistMetricDescription(
+                StandardMetricsNamesUtil.SUCCESS_RATE_ID,
+                StandardMetricsNamesUtil.SUCCESS_RATE,
+                taskData);
+        persistAggregatedMetricValue(successRate, successRateDescription);
+
+
+        MetricDescriptionEntity samplesDescription = persistMetricDescription(
+                StandardMetricsNamesUtil.ITERATION_SAMPLES_ID,
+                StandardMetricsNamesUtil.ITERATIONS_SAMPLES,
+                taskData);
+        persistAggregatedMetricValue(invoked, samplesDescription);
+
+
+        MetricDescriptionEntity failuresDescription = persistMetricDescription(
+                StandardMetricsNamesUtil.FAIL_COUNT_ID,
+                StandardMetricsNamesUtil.FAIL_COUNT,
+                taskData);
+        persistAggregatedMetricValue(failed, failuresDescription);
+
+        MetricDescriptionEntity durationDescription = persistMetricDescription(
+                StandardMetricsNamesUtil.DURATION_ID,
+                StandardMetricsNamesUtil.DURATION_SEC,
+                taskData);
+        persistAggregatedMetricValue(Math.rint((endTime - startTime) / 1000D), durationDescription);
+
         getHibernateTemplate().persist(workloadTaskData);
 
         for (Map.Entry<String, ValidationResult> entry : validationResults.entrySet()) {
@@ -193,6 +222,7 @@ public class WorkloadAggregator extends HibernateDaoSupport implements Distribut
         }
     }
 
+    @Required
     public void setKeyValueStorage(KeyValueStorage keyValueStorage) {
         this.keyValueStorage = keyValueStorage;
     }

@@ -5,6 +5,7 @@ import com.griddynamics.jagger.dbapi.dto.SummaryMetricValueDto;
 import com.griddynamics.jagger.dbapi.dto.SummarySingleDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 
 import java.util.*;
 
@@ -48,7 +49,7 @@ public class LatencyMetricSummaryFetcher extends DbMetricDataFetcher<SummarySing
             if (metricIdMap == null) {
                 continue;
             }
-            String metricId = MetricNameUtil.getLatencyMetricName((Double)temp[3]);
+            String metricId = StandardMetricsNamesUtil.getLatencyMetricName((Double) temp[3]);
             MetricNameDto metricNameDto = metricIdMap.get(metricId);
             if (metricNameDto == null) {
                 continue;

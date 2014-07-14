@@ -83,7 +83,7 @@ public class MonitoringMetricPlotFetcher extends AbstractMetricPlotFetcher {
             String agentName = raw[4] == null ? (String) raw[5] : (String) raw[4];
             metricRawData.setMetricId(MonitoringIdUtils.getMonitoringMetricId(monitoringName, agentName));
 
-            metricRawData.setWorkloadTaskDataId(((Number) raw[6]).longValue());
+            metricRawData.setTaskDataId(((Number) raw[6]).longValue());
             metricRawData.setSessionId((String)raw[1]);
 
             result.add(metricRawData);

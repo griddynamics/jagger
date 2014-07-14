@@ -62,8 +62,4 @@ public class MetricNameUtil {
 
         return metricNameDtoSet;
     }
-
-    public static String getLatencyMetricName(double latencyKey) {
-        return "Latency " + latencyKey + " %";
-    }
 }

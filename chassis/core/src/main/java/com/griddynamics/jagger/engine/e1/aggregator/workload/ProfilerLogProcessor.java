@@ -21,6 +21,7 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.dbapi.entity.ProfilingSuT;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.diagnostics.thread.sampling.ProfileDTO;
 import com.griddynamics.jagger.diagnostics.thread.sampling.RuntimeGraph;
 import com.griddynamics.jagger.master.CompositeTask;
@@ -90,6 +91,13 @@ public class ProfilerLogProcessor extends LogProcessor implements DistributionLi
             log.debug("Directory {} is empty.", dir);
             return;
         }
+
+        final TaskData taskData = getTaskData(taskId, sessionId);
+        if (taskData == null) {
+            log.error("TaskData not found by taskId: {}", taskId);
+            return;
+        }
+
         for (final String fileName : fileNameList) {
             LogReader.FileReader reader;
             try {
@@ -107,7 +115,7 @@ public class ProfilerLogProcessor extends LogProcessor implements DistributionLi
                     for (Map.Entry<String, RuntimeGraph> runtimeGraphEntry : profileDTO.getRuntimeGraphs().entrySet()) {
                         String context = SerializationUtils.toString(runtimeGraphEntry.getValue());
                         session.persist(new ProfilingSuT(prefix + runtimeGraphEntry.getKey(), sessionId,
-                                getTaskData(taskId, sessionId), context));
+                                taskData, context));
                     }
                     session.flush();
                     return null;

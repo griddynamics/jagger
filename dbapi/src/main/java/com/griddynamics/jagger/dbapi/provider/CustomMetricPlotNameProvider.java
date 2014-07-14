@@ -26,7 +26,7 @@ import java.util.*;
  * Time: 1:45 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CustomMetricPlotNameProvider {
+public class CustomMetricPlotNameProvider implements MetricPlotNameProvider {
 
     Logger log = LoggerFactory.getLogger(CustomMetricPlotNameProvider.class);
 
@@ -50,6 +50,7 @@ public class CustomMetricPlotNameProvider {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }
 
+    @Override
     public Set<MetricNameDto> getPlotNames(List<TaskDataDto> taskDataDtos){
 
         long temp = System.currentTimeMillis();

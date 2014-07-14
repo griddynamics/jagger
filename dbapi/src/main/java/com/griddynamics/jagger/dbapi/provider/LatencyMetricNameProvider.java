@@ -3,7 +3,7 @@ package com.griddynamics.jagger.dbapi.provider;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.dbapi.entity.WorkloadProcessLatencyPercentile;
-import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +54,9 @@ public class LatencyMetricNameProvider implements MetricNameProvider{
 
                     if (tdd.getIds().contains(percentile.getWorkloadProcessDescriptiveStatistics().getTaskData().getId())) {
                         MetricNameDto dto = new MetricNameDto();
-                        dto.setMetricName(MetricNameUtil.getLatencyMetricName(percentile.getPercentileKey()));
-                        dto.setMetricDisplayName(MetricNameUtil.getLatencyMetricName(percentile.getPercentileKey()));
+                        String metricName = StandardMetricsNamesUtil.getLatencyMetricName(percentile.getPercentileKey());
+                        dto.setMetricName(metricName);
+                        dto.setMetricDisplayName(metricName);
                         dto.setTest(tdd);
                         dto.setOrigin(MetricNameDto.Origin.LATENCY_PERCENTILE);
                         latencyNames.add(dto);

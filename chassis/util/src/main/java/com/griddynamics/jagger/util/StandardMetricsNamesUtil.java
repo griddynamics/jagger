@@ -46,4 +46,8 @@ public class StandardMetricsNamesUtil {
     public static final String DURATION_ID = "duration";
     public static final String ITERATION_SAMPLES_ID = "samples";
     //end: following section is used for docu generation - standard metrics ids
+
+    public static String getLatencyMetricName(double latencyKey) {
+        return "Latency " + latencyKey + " %";
+    }
 }

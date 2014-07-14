@@ -1,92 +1,44 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
-import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
-import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
-import com.griddynamics.jagger.util.Pair;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 
 import java.util.*;
 
 
-public abstract class StandardMetricPlotFetcher<T extends StandardMetricPlotFetcher.StandardMetricRawData> extends PlotsDbMetricDataFetcher {
+public class StandardMetricPlotFetcher extends AbstractMetricPlotFetcher {
+
+
     @Override
-    protected Set<Pair<MetricNameDto, List<PlotSingleDto>>> fetchData(List<MetricNameDto> metricNames) {
-        if (metricNames.isEmpty()) {
-            return Collections.emptySet();
-        }
+    protected Collection<MetricRawData> getAllRawData(List<MetricNameDto> metricNames) {
 
-        Set<Pair<MetricNameDto, List<PlotSingleDto>>> resultSet = new HashSet<Pair<MetricNameDto, List<PlotSingleDto>>>(metricNames.size());
         Set<Long> taskIds = new HashSet<Long>();
-        for (MetricNameDto metricNameDto : metricNames) {
-            taskIds.addAll(metricNameDto.getTaskIds());
+        for (MetricNameDto mnd : metricNames) {
+            taskIds.addAll(mnd.getTaskIds());
         }
 
-        List<T> rawAllData = findRawDataByTaskData(taskIds);
+        @SuppressWarnings("all")
+        List<Object[]> rawDataList =  entityManager.createQuery(
+                "select tis.time, tis.latency, tis.latencyStdDev, tis.taskData.id, tis.taskData.sessionId, tis.throughput " +
+                        "from TimeInvocationStatistics as tis where tis.taskData.id in (:taskIds)")
+                .setParameter("taskIds", taskIds)
+                .getResultList();
 
-        if (rawAllData.isEmpty()) {
-            throw new RuntimeException("Could not find plot data for " + metricNames);
+        List<MetricRawData> resultList = new ArrayList<MetricRawData>(rawDataList.size());
+
+        for (Object[] objects : rawDataList) {
+            String sessionId = (String) objects[4];
+            Long taskDataId = (Long) objects[3];
+            Long time = (Long) objects[0];
+            Double latency = (Double) objects[1];
+            Double latencyStdDev = (Double) objects[2];
+            Double throughput = (Double) objects[5];
+
+            resultList.add(new MetricRawData(sessionId, taskDataId, StandardMetricsNamesUtil.LATENCY_ID, time, latency));
+            resultList.add(new MetricRawData(sessionId, taskDataId, StandardMetricsNamesUtil.LATENCY_STD_DEV_ID, time, latencyStdDev));
+            resultList.add(new MetricRawData(sessionId, taskDataId, StandardMetricsNamesUtil.THROUGHPUT_ID, time, throughput));
         }
 
-        Multimap<Long, T> taskIdRawMap = ArrayListMultimap.create();
-        for (T rawData : rawAllData) {
-            Long taskDataId = rawData.getTaskDataId();
-            taskIdRawMap.put(taskDataId, rawData);
-        }
-
-        Multimap<MetricNameDto, PlotSingleDto> metricNamePlotMap = ArrayListMultimap.create();
-
-        Map<Long,  MetricNameDto> mappedMetricNames = MetricNameUtil.getMappedMetricDtosByTaskIds(metricNames);
-
-        for (Long taskDataId : taskIdRawMap.keySet()) {
-
-            MetricNameDto metricName;
-            try {
-                metricName = mappedMetricNames.get(taskDataId);
-            } catch (NullPointerException e) {
-                throw new RuntimeException("cant find metric name dto in MetricNameUtil.getMappedMetricDtos(metricNames) " + metricNames);
-            }
-
-            Collection<T> rawData =  taskIdRawMap.get(taskDataId);
-            if (rawData.isEmpty()) {
-                throw new RuntimeException("no plot data found for TaskDataId : " + taskDataId);
-            }
-            metricNamePlotMap.putAll(metricName, assemble(rawData));
-        }
-
-        for (MetricNameDto metricName : metricNamePlotMap.keySet()) {
-            List<PlotSingleDto> plotDatasetDtoList = new ArrayList<PlotSingleDto>(metricNamePlotMap.get(metricName));
-            resultSet.add(
-                    Pair.of(
-                            metricName,
-                            plotDatasetDtoList
-                    ));
-        }
-
-        return resultSet;
-    }
-
-
-    /**
-     * assemble raw data of one taskDataId
-     * @param rawData never null or empty
-     */
-    protected abstract Iterable<? extends PlotSingleDto> assemble(Collection<T> rawData);
-
-
-    /**
-     * @param taskIds ids of TaskData
-     */
-    protected abstract List<T> findRawDataByTaskData(Set<Long> taskIds);
-
-
-    /**
-     * Interface of Raw data.
-     * It should contain getTaskDataId() method for StandardMetricPlotFetcher logic. Namely one TaskData id -> one curve
-     */
-    public static interface StandardMetricRawData {
-
-        public Long getTaskDataId();
+        return resultList;
     }
 }

@@ -23,7 +23,6 @@ import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity;
 import com.griddynamics.jagger.dbapi.entity.MetricPointEntity;
-import com.griddynamics.jagger.dbapi.entity.MetricSummaryEntity;
 import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.CompositeTask;
@@ -235,7 +234,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     metricDescription.getDisplayName()) + aggregatorDisplayNameSuffix;
                     String metricId = metricDescription.getMetricId() + '-' + aggregatorIdSuffix;
 
-                    MetricDescriptionEntity metricDescriptionEntity = persistMetricDescription(metricId, displayName);
+                    MetricDescriptionEntity metricDescriptionEntity = persistMetricDescription(metricId, displayName, taskData);
 
                     long currentInterval = aggregationInfo.getMinTime() + intervalSize;
                     long time = intervalSize;
@@ -361,17 +360,6 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
         }
 
 
-        private MetricDescriptionEntity persistMetricDescription(String metricId, String displayName) {
-
-            MetricDescriptionEntity metricDescription = new MetricDescriptionEntity();
-            metricDescription.setMetricId(metricId);
-            metricDescription.setDisplayName(displayName);
-            metricDescription.setTaskData(taskData);
-            getHibernateTemplate().persist(metricDescription);
-            return metricDescription;
-        }
-
-
         private MetricDescription fetchDescription(String metricName) {
             Collection<Object> metricDescription = keyValueStorage.fetchAll(
                     Namespace.of(taskData.getSessionId(), taskData.getTaskId(), "metricDescription"),
@@ -384,15 +372,6 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
 
             return (MetricDescription)metricDescription.iterator().next();
         }
-
-        private void persistAggregatedMetricValue(Number value, MetricDescriptionEntity md) {
-            MetricSummaryEntity entity = new MetricSummaryEntity();
-            entity.setTotal(value.doubleValue());
-            entity.setMetricDescription(md);
-
-            getHibernateTemplate().persist(entity);
-        }
-
 
        /**
         * Creates aggregator`s id from aggregator`s displayName.

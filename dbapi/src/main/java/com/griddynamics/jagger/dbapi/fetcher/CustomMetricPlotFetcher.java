@@ -30,7 +30,7 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
         for (Object[] objects : rawData) {
             MetricRawData metricRawData = new MetricRawData();
 
-            metricRawData.setWorkloadTaskDataId(((Number)objects[0]).longValue());
+            metricRawData.setTaskDataId(((Number) objects[0]).longValue());
             metricRawData.setTime((Long)objects[1]);
             metricRawData.setValue((Double)objects[2]);
             metricRawData.setSessionId((String)objects[3]);
