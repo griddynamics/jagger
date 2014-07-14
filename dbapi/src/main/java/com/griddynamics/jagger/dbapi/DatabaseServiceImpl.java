@@ -1361,9 +1361,21 @@ public class DatabaseServiceImpl implements DatabaseService {
         return agentNames;
     }
 
+    /**
+     * Build Tree of nodes according to rules
+     * @param rootId id of root Node
+     * @param agentNames map of monitoring parameter -> agent names
+     * @param metricNodeList list of nodes to build tree
+     * @param groupMetricsToNodes tells whether we should group several Nodes into one node. @n
+     *                            for Summary&Trends tab view - we show standard metrics as separate metric nodes @n
+     *                            for Metrics tab view - we group metrics (metricnameDto) to single metric node @n
+     *                            (example Latency, LatencyStdDev -> Latency) @n
+     * @param <M> Node type that extends MetricNode
+     * @return Tree of nodes
+     */
     private <M extends MetricNode> MetricGroupNode<M> buildTreeAccordingToRules(
-            String rootId, Map<String,
-            Set<String>> agentNames,
+            String rootId,
+            Map<String, Set<String>> agentNames,
             List<M> metricNodeList,
             boolean groupMetricsToNodes) {
 

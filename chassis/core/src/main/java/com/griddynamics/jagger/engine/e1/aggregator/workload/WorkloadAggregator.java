@@ -139,7 +139,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
 
         TaskData taskData = getTaskData(taskId, sessionId);
         if (taskData == null) {
-            log.error("TaskData not found by taskId: {}", taskId);
+            log.error("TaskData not found by sessionId: {} and taskId: {}", sessionId, taskId);
             return;
         }
 

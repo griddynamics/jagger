@@ -155,13 +155,17 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                 @Override
                 public Void doInHibernate(Session session) throws HibernateException, SQLException {
 
+                    // persist standard metrics as custom metric (since version 1.2.6)
                     for (MetricPointEntity point : newStatistics) {
                         session.persist(point);
                     }
 
+                    // persist standard metrics as TimeInvocationStatistics
                     for (TimeInvocationStatistics stat : statistics) {
                         session.persist(stat);
                     }
+
+                    // persist standard metrics as WorkloadProcessDescriptiveStatistics
                     session.persist(workloadProcessDescriptiveStatistics);
                     session.flush();
                     return null;
@@ -224,7 +228,9 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                     taskData);
 
             MetricDescriptionEntity latencyDescription = persistMetricDescription(
-                    StandardMetricsNamesUtil.LATENCY_ID, StandardMetricsNamesUtil.LATENCY_SEC, taskData);
+                    StandardMetricsNamesUtil.LATENCY_ID,
+                    StandardMetricsNamesUtil.LATENCY_SEC,
+                    taskData);
 
             MetricDescriptionEntity latencyStdDevDescription = persistMetricDescription(
                     StandardMetricsNamesUtil.LATENCY_STD_DEV_ID,
@@ -246,6 +252,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                 );
             }
 
+            // collect-aggregate plot data
             LogReader.FileReader<DurationLogEntry> fileReader = null;
             try {
                 fileReader = logReader.read(path, DurationLogEntry.class);
@@ -303,6 +310,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                 newStatistics.add(new MetricPointEntity(currentTime, tis.getLatencyStdDev(), latencyStdDevDescription));
             }
 
+            // persist summary values as custom metrics (since version 1.2.6)
             workloadProcessDescriptiveStatistics = assembleDescriptiveScenarioStatistics(globalStatisticsCalculator, taskData);
             for (WorkloadProcessLatencyPercentile pp : workloadProcessDescriptiveStatistics.getPercentiles()) {
                 persistAggregatedMetricValue(Math.rint(pp.getPercentileValue()) / 1000D, percentileMap.get(pp.getPercentileKey()));

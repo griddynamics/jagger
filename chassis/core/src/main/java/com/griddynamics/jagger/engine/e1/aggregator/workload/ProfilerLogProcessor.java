@@ -94,7 +94,7 @@ public class ProfilerLogProcessor extends LogProcessor implements DistributionLi
 
         final TaskData taskData = getTaskData(taskId, sessionId);
         if (taskData == null) {
-            log.error("TaskData not found by taskId: {}", taskId);
+            log.error("TaskData not found by sessionId: {} and taskId: {}", sessionId, taskId);
             return;
         }
 
