@@ -3,6 +3,7 @@ package com.griddynamics.jagger.dbapi.provider;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -12,6 +13,30 @@ public class StandardMetricNameProvider implements MetricNameProvider, MetricPlo
 
     private EntityManager entityManager;
 
+    private List<MetricNameDto> standardMetricNameDtoList;
+
+    private final List<String> standardMetricIds;
+
+    {
+        standardMetricIds = new ArrayList<String>();
+        standardMetricIds.add(StandardMetricsNamesUtil.THROUGHPUT_ID);
+        standardMetricIds.add(StandardMetricsNamesUtil.LATENCY_ID);
+        standardMetricIds.add(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID);
+        standardMetricIds.add(StandardMetricsNamesUtil.ITERATION_SAMPLES_ID);
+        standardMetricIds.add(StandardMetricsNamesUtil.DURATION_ID);
+        standardMetricIds.add(StandardMetricsNamesUtil.FAIL_COUNT_ID);
+        standardMetricIds.add(StandardMetricsNamesUtil.SUCCESS_RATE_ID);
+    }
+
+    public List<String> getStandardMetricIds() {
+        return standardMetricIds;
+    }
+
+    @Required
+    public void setStandardMetricNameDtoList(List<MetricNameDto> standardMetricNameDtoList) {
+        this.standardMetricNameDtoList = standardMetricNameDtoList;
+    }
+
     @PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -19,7 +44,22 @@ public class StandardMetricNameProvider implements MetricNameProvider, MetricPlo
 
     @Override
     public Set<MetricNameDto> getMetricNames(List<TaskDataDto> tests) {
-        return null;
+
+        Set<MetricNameDto> result = new HashSet<MetricNameDto>();
+
+        for (TaskDataDto taskDataDto : tests) {
+            for (MetricNameDto metricNameDto : standardMetricNameDtoList) {
+                MetricNameDto metric = new MetricNameDto();
+                metric.setMetricName(metricNameDto.getMetricName());
+                metric.setMetricDisplayName(metricNameDto.getMetricDisplayName());
+                metric.setOrigin(metricNameDto.getOrigin());
+                metric.setTest(taskDataDto);
+                metric.setMetricNameSynonyms(metricNameDto.getMetricNameSynonyms());
+                result.add(metric);
+            }
+        }
+
+        return result;
     }
 
 

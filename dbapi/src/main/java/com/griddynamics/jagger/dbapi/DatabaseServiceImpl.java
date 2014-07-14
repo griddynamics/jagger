@@ -44,10 +44,9 @@ public class DatabaseServiceImpl implements DatabaseService {
     private LegendProvider legendProvider;
 
     private Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups;
-    private List<MetricNameDto> standardMetricNameDtoList;
     private Map<String,Set<String>> defaultMonitoringParams = new HashMap<String, Set<String>>();
 
-    private StandardMetricNameProvider standardMetricPlotNameProvider;
+    private StandardMetricNameProvider standardMetricNameProvider;
     private MetricPlotNameProvider customMetricPlotNameProvider;
     private MetricNameProvider customMetricNameProvider;
     private MetricNameProvider latencyMetricNameProvider;
@@ -93,18 +92,13 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Required
-    public void setStandardMetricPlotNameProvider(StandardMetricNameProvider standardMetricPlotNameProvider) {
-        this.standardMetricPlotNameProvider = standardMetricPlotNameProvider;
+    public void setStandardMetricNameProvider(StandardMetricNameProvider standardMetricNameProvider) {
+        this.standardMetricNameProvider = standardMetricNameProvider;
     }
 
     @Required
     public void setCustomMetricPlotNameProvider(CustomMetricPlotNameProvider customMetricPlotNameProvider) {
         this.customMetricPlotNameProvider = customMetricPlotNameProvider;
-    }
-
-    @Required
-    public void setStandardMetricNameDtoList(List<MetricNameDto> standardMetricNameDtoList) {
-        this.standardMetricNameDtoList = standardMetricNameDtoList;
     }
 
     @Required
@@ -703,17 +697,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     private Map<TaskDataDto, List<MetricNode>> getTestMetricsMap(final List<TaskDataDto> tddos) {
         Long time = System.currentTimeMillis();
         List<MetricNameDto> list = new ArrayList<MetricNameDto>();
-        for (TaskDataDto taskDataDto : tddos) {
-            for (MetricNameDto metricNameDto : standardMetricNameDtoList) {
-                MetricNameDto metric = new MetricNameDto();
-                metric.setMetricName(metricNameDto.getMetricName());
-                metric.setMetricDisplayName(metricNameDto.getMetricDisplayName());
-                metric.setOrigin(metricNameDto.getOrigin());
-                metric.setTest(taskDataDto);
-                metric.setMetricNameSynonyms(metricNameDto.getMetricNameSynonyms());
-                list.add(metric);
-            }
-        }
 
         try {
 
@@ -747,8 +730,22 @@ public class DatabaseServiceImpl implements DatabaseService {
                     }
             );
 
+
+            // trick to avoid adding standard metrics as standard metrics and as custom metrics at one time
+            Set<MetricNameDto> customMetrics = customMetricNamesFuture.get();
+            boolean addStandardMetricsFromWorkloadTaskData = true;
+            for (MetricNameDto mnd: customMetrics) {
+                if (standardMetricNameProvider.getStandardMetricIds().contains(mnd.getMetricName())) {
+                    addStandardMetricsFromWorkloadTaskData = false;
+                    break;
+                }
+            }
+            if (addStandardMetricsFromWorkloadTaskData) {
+                list.addAll(standardMetricNameProvider.getMetricNames(tddos));
+            }
+
             list.addAll(latencyMetricNamesFuture.get());
-            list.addAll(customMetricNamesFuture.get());
+            list.addAll(customMetrics);
             list.addAll(validatorsNamesFuture.get());
         } catch (Exception e) {
             log.error("Exception occurs while fetching MetricNames for tests : ", e);
@@ -793,7 +790,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         List<MetricNameDto> metricNameDtoList = new ArrayList<MetricNameDto>();
         try {
 
-            Set<MetricNameDto> standardMetrics = standardMetricPlotNameProvider.getPlotNames(taskList);
+            Set<MetricNameDto> standardMetrics = standardMetricNameProvider.getPlotNames(taskList);
 
             Set<MetricNameDto> customMetrics = customMetricPlotNameProvider.getPlotNames(taskList);
 
