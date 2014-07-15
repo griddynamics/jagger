@@ -10,13 +10,12 @@ import com.griddynamics.jagger.util.TimeUtils;
 import java.math.BigInteger;
 import java.util.*;
 
-// todo Duration standard metric should be added only once for session in summary table JFG-811
 public class DurationMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingleDto> {
 
     @Override
     protected Set<SummarySingleDto> fetchData(List<MetricNameDto> durationMetricNames) {
         if (durationMetricNames.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         Set<Long> taskIds = new HashSet<Long>();
@@ -25,22 +24,34 @@ public class DurationMetricSummaryFetcher extends DbMetricDataFetcher<SummarySin
             taskIds.addAll(metricName.getTaskIds());
         }
 
+        // list of [sessionId, endTime, startTime, taskData_id]
         List<Object[]> result = entityManager.createNativeQuery("select workload.sessionId, workload.endTime, workload.startTime, taskData.id " +
                 "  from WorkloadData as workload join TaskData as taskData on taskData.id in (:ids)" +
                 "    and workload.taskId=taskData.taskId and workload.sessionId=taskData.sessionId")
                 .setParameter("ids", taskIds)
                 .getResultList();
 
+        // needs to determine whether specific task data has duration as custom metric
+        List<BigInteger> taskDataIdsWithDurationDescriptions = (List<BigInteger>) entityManager.createNativeQuery(
+                "select md.taskData_id from MetricDescriptionEntity md where md.taskData_id in (:taskIds) and md.metricId=:durationId")
+                .setParameter("taskIds", taskIds)
+                .setParameter("durationId", StandardMetricsNamesUtil.DURATION_ID + StandardMetricsNamesUtil.STANDARD_METRICS_AS_CUSTOM_SUFFIX)
+                .getResultList();
 
         if (result.isEmpty()) {
             log.warn("Could not find data for {}", durationMetricNames);
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
-        return processDurationDataFromDatabase(result, durationMetricNames);
+        return processDurationDataFromDatabase(result, durationMetricNames, taskDataIdsWithDurationDescriptions);
     }
 
-    private Set<SummarySingleDto> processDurationDataFromDatabase(List<Object[]> rawData, List<MetricNameDto> durationMetricNames) {
+    /**
+     * @param rawData list of arrays as [sessionId, endTime, startTime, taskData_id] */
+    private Set<SummarySingleDto> processDurationDataFromDatabase(
+            List<Object[]> rawData,
+            List<MetricNameDto> durationMetricNames,
+            List<BigInteger> taskDataIdsWithDurationDescriptions) {
 
         Map<Long, Map<String, MetricNameDto>> mappedMetricDtos = MetricNameUtil.getMappedMetricDtos(durationMetricNames);
 
@@ -48,6 +59,12 @@ public class DurationMetricSummaryFetcher extends DbMetricDataFetcher<SummarySin
 
         for (Object[] entry : rawData) {
             BigInteger taskId = (BigInteger) entry[3];
+
+            if (taskDataIdsWithDurationDescriptions.contains(taskId)) {
+                // For this particular test there is standard metric as custom metric
+                continue;
+            }
+
             Map<String, MetricNameDto> metricIdMap = mappedMetricDtos.get(taskId.longValue());
             if (metricIdMap == null) {
                 throw new IllegalArgumentException("unknown task id in mapped metrics : " + taskId.longValue());
