@@ -27,9 +27,6 @@ public class TreeViewGroupRuleProvider {
         "^" + StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC + "$|" +
         "^" + StandardMetricsNamesUtil.LATENCY + "$|" +
         "^" + StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX + "$|" +
-
-        // temporary
-        "^" + StandardMetricsNamesUtil.TEMPORARY_PREFIX + StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX + "$|" +
         "^" + StandardMetricsNamesUtil.ITERATIONS_SAMPLES + "$|" +
         "^" + StandardMetricsNamesUtil.SUCCESS_RATE + "$|" +
         "^" + StandardMetricsNamesUtil.DURATION_SEC + "$|" +

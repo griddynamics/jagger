@@ -341,7 +341,10 @@ public class DatabaseServiceImpl implements DatabaseService {
             metricNodeList.addAll(entry.getValue());
             if (entry.getValue().size() > 1) {
                 for (MetricNode mn : entry.getValue()) {
-                    mn.setDisplayName(LegendProvider.parseSessionId(mn.getDisplayName()));
+                    String sessionId = LegendProvider.parseSessionId(mn.getDisplayName());
+                    if (sessionId  != null) {
+                        mn.setDisplayName(sessionId);
+                    }
                 }
                 legendGroups.add(entry.getKey());
             }
@@ -591,7 +594,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         // Find what decisions were taken for metrics
         if (isEnableDecisionsPerMetricFetching) {
-            Map<MetricNameDto,Map<String,Decision>> metricDecisions = getDecisionsPerMetric(new HashSet<MetricNameDto>(metricNames));
+            Map<MetricNameDto,Map<String,Decision>> metricDecisions = getDecisionsPerMetric(metricNames);
             if (!metricDecisions.isEmpty()) {
                 for (SummarySingleDto metricDto : result) {
                     MetricNameDto metricName = metricDto.getMetricName();
@@ -710,7 +713,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     private Map<TaskDataDto, List<MetricNode>> getTestMetricsMap(final List<TaskDataDto> tddos) {
         Long time = System.currentTimeMillis();
         List<MetricNameDto> list = new ArrayList<MetricNameDto>();
-        for (TaskDataDto taskDataDto : tddos){
+        for (TaskDataDto taskDataDto : tddos) {
             for (MetricNameDto metricNameDto : standardMetricNameDtoList) {
                 MetricNameDto metric = new MetricNameDto();
                 metric.setMetricName(metricNameDto.getMetricName());
@@ -778,8 +781,12 @@ public class DatabaseServiceImpl implements DatabaseService {
                         }
                         MetricNode mn = new MetricNode();
                         String id = NameTokens.SUMMARY_PREFIX + tdd.hashCode() + mnd.getMetricName();
-                        mn.init(id, mnd.getMetricDisplayName(), Arrays.asList(mnd));
-                        result.get(tdd).add(mn);
+                        mn.init(id, mnd.getMetricDisplayName(), new ArrayList<MetricNameDto>(Arrays.asList(mnd)));
+                        if (result.get(tdd).contains(mn)) {
+                            result.get(tdd).get(result.get(tdd).indexOf(mn)).getMetricNameDtoList().add(mnd);
+                        } else {
+                            result.get(tdd).add(mn);
+                        }
                         break;
                     }
                 }
@@ -1561,7 +1568,20 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public Map<MetricNameDto,Map<String,Decision>> getDecisionsPerMetric(Set<MetricNameDto> metricNames) {
+    public Map<MetricNameDto,Map<String,Decision>> getDecisionsPerMetric(Set<MetricNameDto> allMetricNames) {
+
+        Set<MetricNameDto> metricNames = new HashSet<MetricNameDto>();
+        for (MetricNameDto metricNameDto : allMetricNames) {
+
+            // Only metrics with such origins can have Decision
+            switch (metricNameDto.getOrigin()) {
+                case METRIC:
+                case TEST_GROUP_METRIC:
+                case MONITORING:
+                    metricNames.add(metricNameDto);
+                    break;
+            }
+        }
 
         if (metricNames.isEmpty()) {
             return Collections.emptyMap();

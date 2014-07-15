@@ -81,6 +81,6 @@ public class LegendProvider {
         if (legend.startsWith(SESSION_PREFIX)) {
             return legend.substring(legend.indexOf(SESSION_PREFIX), legend.indexOf(LEGEND_DESCRIPTION_SEPARATOR));
         }
-        return "";
+        return null;
     }
 }
