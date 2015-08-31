@@ -26,12 +26,16 @@ import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import com.griddynamics.jagger.util.SerializationUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class HibernateKeyValueStorage extends HibernateDaoSupport implements KeyValueStorage {
@@ -54,7 +58,7 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
 
     @Required
     public void setSessionTempDataCount(int sessionTempDataCount) {
-        if (sessionTempDataCount <0) {
+        if (sessionTempDataCount < 0) {
             log.warn("Session count can't be < 0; chassis.storage.temporary.data.session.count is equal {}.", sessionTempDataCount);
             return;
         }
@@ -113,7 +117,8 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
 
     @Override
     public void deleteAll() {
-        ArrayList<String> sessions = (ArrayList) getHibernateTemplate().find("Select distinct k.sessionId from KeyValue k ORDER by k.sessionId");
+        ArrayList<String> sessions = (ArrayList) getHibernateTemplate().find(
+                "Select distinct k.sessionId from KeyValue k ORDER by k.sessionId");
         if (sessions.size() == 0)
             return;
         if (sessionTempDataCount == 0) {
@@ -121,12 +126,21 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
             getHibernateTemplate().bulkUpdate("delete from KeyValue");
             return;
         }
-        List<String> sessionForDelete = Lists.newArrayList();
-        sessionForDelete.add(sessionId);
+        final List<String> sessionsToDelete = Lists.newArrayList();
+        sessionsToDelete.add(sessionId);
         if (sessions.size() > sessionTempDataCount) {
-            sessionForDelete.addAll(sessions.subList(0, (sessions.size() - 1) - sessionTempDataCount));
+            sessionsToDelete.addAll(sessions.subList(0, (sessions.size() - 1) - sessionTempDataCount));
         }
-        getHibernateTemplate().bulkUpdate("delete from KeyValue where sessionId in (?)", sessionForDelete.toArray());
+        getHibernateTemplate().execute(new HibernateCallback<Void>() {
+            @Override
+            public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                Query query = session.createQuery("delete from KeyValue where sessionId in (:sessionIds)");
+                query.setParameterList("sessionIds", sessionsToDelete);
+                query.executeUpdate();
+                session.flush();
+                return null;
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
