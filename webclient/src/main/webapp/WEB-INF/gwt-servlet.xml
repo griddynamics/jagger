@@ -115,6 +115,7 @@
         <property name="tagsAvailable" value="${webui.tags.available:true}"/>
         <property name="showOnlyMatchedTests" value="${webui.show.matched.tests.only:true}"/>
         <property name="enableDecisionsPerMetricHighlighting" value="${webui.enable.decisions.per.metric.highlighting:true}"/>
+        <property name="combineSynonymsInSummary" value="${webui.combine.synonyms.in.summary:true}"/>
     </bean>
 
     <!--==========Control tree creation rules==========-->

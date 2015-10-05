@@ -36,8 +36,11 @@ public interface DatabaseService {
 
     /** Returns map <metricNode, plot values> for specific metric nodes from control tree
      * @param metricNodes - set of metric nodes
+     * @param isCombineSynonymsInSummaryEnabled combine summary of metrics with synonyms to single (first) MetricNameDto
      * @return plot values for metric nodes */
-     Map<MetricNode, SummaryIntegratedDto> getSummaryByMetricNodes(Set<MetricNode> metricNodes, boolean isEnableDecisionsPerMetricFetching);
+     Map<MetricNode, SummaryIntegratedDto> getSummaryByMetricNodes(Set<MetricNode> metricNodes,
+                                                                 boolean isEnableDecisionsPerMetricFetching,
+                                                                 boolean isCombineSynonymsInSummaryEnabled);
 
     /** Returns summary values for current metrics
      * @param metricNames - metric names

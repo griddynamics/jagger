@@ -48,6 +48,12 @@
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.util</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

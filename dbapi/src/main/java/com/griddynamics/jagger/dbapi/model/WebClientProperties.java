@@ -2,6 +2,9 @@ package com.griddynamics.jagger.dbapi.model;
 
 import java.io.Serializable;
 
+/**
+ * Web Ui properties holder.
+ */
 public class WebClientProperties implements Serializable {
 
     private boolean tagsAvailable = false;
@@ -11,6 +14,7 @@ public class WebClientProperties implements Serializable {
     private boolean showOnlyMatchedTests = true;
     private int userCommentMaxLength = 1000;
     private boolean enableDecisionsPerMetricHighlighting = true;
+    private boolean combineSynonymsInSummary = true;
 
     public boolean isTagsAvailable() {
         return tagsAvailable;
@@ -66,5 +70,16 @@ public class WebClientProperties implements Serializable {
 
     public void setEnableDecisionsPerMetricHighlighting(boolean enableDecisionsPerMetricHighlighting) {
         this.enableDecisionsPerMetricHighlighting = enableDecisionsPerMetricHighlighting;
+    }
+
+    /**
+     * Combine summary/trend values within one MetricNode for synonyms.
+     */
+    public boolean isCombineSynonymsInSummary() {
+        return combineSynonymsInSummary;
+    }
+
+    public void setCombineSynonymsInSummary(boolean combineSynonymsInSummary) {
+        this.combineSynonymsInSummary = combineSynonymsInSummary;
     }
 }
