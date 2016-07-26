@@ -528,6 +528,7 @@
                     <docfilessubdirs>true</docfilessubdirs>
                     <stylesheetfile>jagger-javadoc.css</stylesheetfile>
                     <detectOfflineLinks>false</detectOfflineLinks>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
                 <executions>
                     <execution>
