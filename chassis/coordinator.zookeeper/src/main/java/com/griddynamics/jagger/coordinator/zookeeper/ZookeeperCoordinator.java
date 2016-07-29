@@ -20,21 +20,38 @@
 
 package com.griddynamics.jagger.coordinator.zookeeper;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.griddynamics.jagger.coordinator.*;
+import static com.griddynamics.jagger.coordinator.zookeeper.Zoo.znode;
+
+import com.griddynamics.jagger.coordinator.Command;
+import com.griddynamics.jagger.coordinator.CommandExecutor;
+import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.coordinator.CoordinatorException;
+import com.griddynamics.jagger.coordinator.NodeCommandExecutionListener;
+import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.NodeStatus;
+import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.coordinator.Qualifier;
+import com.griddynamics.jagger.coordinator.RemoteExecutor;
+import com.griddynamics.jagger.coordinator.StatusChangeListener;
+import com.griddynamics.jagger.coordinator.Worker;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static com.griddynamics.jagger.coordinator.zookeeper.Zoo.znode;
 
 public class ZookeeperCoordinator implements Coordinator {
     private static final Logger log = LoggerFactory.getLogger(ZookeeperCoordinator.class);
@@ -66,7 +83,7 @@ public class ZookeeperCoordinator implements Coordinator {
         for (Worker worker : workers) {
             for (CommandExecutor<?, ?> executor : worker.getExecutors()) {
                 Qualifier<?> qualifier = executor.getQualifier();
-                if (qualifiers.contains(qualifier)) {
+                if (qualifiers.contains(qualifier)) { // TODO: it is always true. Doesn't check anything.
                     throw new CoordinatorException("Executor for qualifier " + qualifier + " is already registered");
                 }
 

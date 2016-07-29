@@ -20,15 +20,16 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
+import com.griddynamics.jagger.storage.FileStorage;
+import com.griddynamics.jagger.storage.Namespace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.griddynamics.jagger.storage.FileStorage;
-import com.griddynamics.jagger.storage.Namespace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,19 +50,17 @@ public abstract class BufferedLogWriter implements LogWriter {
     private final Logger log = LoggerFactory.getLogger(BufferedLogWriter.class);
 
     private final int flushSize;
-    private final int bufferSize;
     private final Log FLUSH_LOG = new Log("FLUSH_LOG", null);
 
     private FileStorage fileStorage;
-    private ArrayBlockingQueue<Log> buffer;
-    private Object lock = new Object();
+    private final ArrayBlockingQueue<Log> buffer;
+    private final Object lock = new Object();
     private ExecutorService executor = Executors.newSingleThreadExecutor(
                                                     new ThreadFactoryBuilder().setDaemon(true).build());
 
-    public BufferedLogWriter(int flushSize, int bufferSize, FileStorage fileStorage){
+    public BufferedLogWriter(int flushSize, int bufferSize, FileStorage fileStorage) {
         this.flushSize = flushSize;
         this.fileStorage = fileStorage;
-        this.bufferSize = bufferSize;
 
         buffer = new ArrayBlockingQueue<Log>(bufferSize, false);
         executor.submit(new FlushingWriter());
@@ -72,6 +72,7 @@ public abstract class BufferedLogWriter implements LogWriter {
         log(path, logEntry);
     }
 
+    @Override
     public void log(String path, Serializable logEntry) {
         Preconditions.checkNotNull(logEntry, "Null is not supported");
         try {
@@ -100,56 +101,41 @@ public abstract class BufferedLogWriter implements LogWriter {
 
         @Override
         public void run() {
-            ArrayList<Log> temp = new ArrayList<Log>(flushSize+flushSize/2);
+            List<Log> temp = new ArrayList<Log>(flushSize);
 
             boolean shutdown = false;
 
-            while (!shutdown){
-
+            while (!shutdown) {
                 Multimap<String, Serializable> map = LinkedHashMultimap.create();
                 int size = 0;
-                boolean need_to_flash = false;
-
+                boolean timeToFlush = false;
                 try {
-
-                    while (size < flushSize){
+                    while (size < flushSize && !timeToFlush) {
                         temp.add(buffer.take());
                         size++;
 
-                        size += buffer.drainTo(temp);
-                        need_to_flash = drainToMap(temp, map);
-
-                        if (need_to_flash){
-                            break;
-                        }
+                        size += buffer.drainTo(temp, flushSize - size);
+                        timeToFlush = drainToMap(temp, map);
                     }
-
-
                 } catch (InterruptedException e) {
                     shutdown = true;
-
-                }finally {
-                    writeToFileStorage(map, need_to_flash);
+                } finally {
+                    writeToFileStorage(map, timeToFlush);
                 }
             }
         }
 
-        private boolean drainToMap(Collection<Log> logs, Multimap<String, Serializable> map){
-            boolean need_to_flush = false;
-
-            for (Log current : logs){
-                if (isFlushLog(current)){
-                    need_to_flush = true;
+        private boolean drainToMap(Collection<Log> logs, Multimap<String, Serializable> map) {
+            boolean needToFlush = false;
+            for (Log current : logs) {
+                if (current == FLUSH_LOG) {
+                    needToFlush = true;
                     continue;
                 }
                 map.put(current.getPath(), current.getValue());
             }
             logs.clear();
-            return need_to_flush;
-        }
-
-        private boolean isFlushLog(Log current){
-            return current == FLUSH_LOG;
+            return needToFlush;
         }
 
         private void writeToFileStorage(Multimap<String, Serializable> map, boolean unlockFlush){

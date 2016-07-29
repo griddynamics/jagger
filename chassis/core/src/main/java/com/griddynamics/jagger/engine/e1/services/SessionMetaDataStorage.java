@@ -15,7 +15,7 @@ import java.util.Set;
  * Time: 7:36 PM
  * To change this template use File | Settings | File Templates.
  */
-
+// TODO: all the methods synchronized on the same object but could be separated for better performance.
 public class SessionMetaDataStorage {
 
     private StringBuilder sessionComment;
