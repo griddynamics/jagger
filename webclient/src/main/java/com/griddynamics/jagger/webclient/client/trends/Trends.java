@@ -1605,24 +1605,26 @@ public class Trends extends DefaultActivity {
 
                 if (!notLoaded.isEmpty()) {
                     disableControl();
-                    MetricDataService.Async.getInstance().getMetrics(notLoaded, webClientProperties.isEnableDecisionsPerMetricHighlighting(),
-                        new AsyncCallback<Map<MetricNode, SummaryIntegratedDto>>() {
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            caught.printStackTrace();
-                            new ExceptionPanel(place, caught.getMessage());
-                            if (enableTree)
-                                enableControl();
-                        }
+                    MetricDataService.Async.getInstance().getMetrics(notLoaded,
+                            webClientProperties.isEnableDecisionsPerMetricHighlighting(),
+                            webClientProperties.isCombineSynonymsInSummary(),
+                            new AsyncCallback<Map<MetricNode, SummaryIntegratedDto>>() {
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    caught.printStackTrace();
+                                    new ExceptionPanel(place, caught.getMessage());
+                                    if (enableTree)
+                                        enableControl();
+                                }
 
-                        @Override
-                        public void onSuccess(Map<MetricNode, SummaryIntegratedDto> result) {
-                            loaded.putAll(result);
-                            renderMetrics(loaded);
-                            if (enableTree)
-                                enableControl();
-                        }
-                    });
+                                @Override
+                                public void onSuccess(Map<MetricNode, SummaryIntegratedDto> result) {
+                                    loaded.putAll(result);
+                                    renderMetrics(loaded);
+                                    if (enableTree)
+                                        enableControl();
+                                }
+                            });
                 } else {
                     renderMetrics(loaded);
                 }

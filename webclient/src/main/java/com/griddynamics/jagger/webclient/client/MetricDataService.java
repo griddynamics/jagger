@@ -31,5 +31,7 @@ public interface MetricDataService extends RemoteService {
         }
     }
 
-    public Map<MetricNode, SummaryIntegratedDto> getMetrics(Set<MetricNode> metricNames, boolean isEnableDecisionsPerMetricFetching) throws RuntimeException;
+    public Map<MetricNode, SummaryIntegratedDto> getMetrics(Set<MetricNode> metricNames,
+                                                boolean isEnableDecisionsPerMetricFetching,
+                                                boolean isCombineSynonymsInSummaryEnabled) throws  RuntimeException;
 }

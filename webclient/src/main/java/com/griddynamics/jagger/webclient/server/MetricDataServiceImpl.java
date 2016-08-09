@@ -6,7 +6,8 @@ import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.griddynamics.jagger.webclient.client.MetricDataService;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,7 +26,11 @@ public class MetricDataServiceImpl implements MetricDataService {
     }
 
     @Override
-    public Map<MetricNode, SummaryIntegratedDto> getMetrics(Set<MetricNode> metricNodes, boolean isEnableDecisionsPerMetricFetching) throws RuntimeException {
-        return databaseService.getSummaryByMetricNodes(metricNodes, isEnableDecisionsPerMetricFetching);
+    public Map<MetricNode, SummaryIntegratedDto> getMetrics(Set<MetricNode> metricNodes,
+            boolean isEnableDecisionsPerMetricFetching,
+            boolean isCombineSynonymsInSummaryEnabled) throws  RuntimeException {
+
+        return databaseService.getSummaryByMetricNodes(metricNodes,
+                isEnableDecisionsPerMetricFetching, isCombineSynonymsInSummaryEnabled);
     }
 }

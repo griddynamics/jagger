@@ -11,6 +11,7 @@ import com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.dbapi.provider.*;
 import com.griddynamics.jagger.dbapi.util.*;
+import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.util.Decision;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
 import com.griddynamics.jagger.util.Pair;
@@ -484,7 +485,10 @@ public class DatabaseServiceImpl implements DatabaseService {
     //===========================
 
     @Override
-    public Map<MetricNode, SummaryIntegratedDto> getSummaryByMetricNodes(Set<MetricNode> metricNodes, boolean isEnableDecisionsPerMetricFetching) {
+    public Map<MetricNode, SummaryIntegratedDto> getSummaryByMetricNodes(
+            Set<MetricNode> metricNodes,
+            boolean isEnableDecisionsPerMetricFetching,
+            boolean isCombineSynonymsInSummaryEnabled) {
 
         if (metricNodes.isEmpty()) {
             return Collections.emptyMap();
@@ -511,6 +515,16 @@ public class DatabaseServiceImpl implements DatabaseService {
         for (MetricNode metricNode: tempMap.keySet()) {
 
             List<SummarySingleDto> sumCollection = new ArrayList<SummarySingleDto>(tempMap.get(metricNode));
+
+            if (isCombineSynonymsInSummaryEnabled) {
+                try {
+                    sumCollection = MetricNameUtil.combineSynonyms(sumCollection);
+                } catch (Exception e) {
+                    log.error("Exception while combining synonyms", e);
+                    throw new TechnicalException("Exception while combining synonyms", e);
+                }
+            }
+
             List<PlotSingleDto> plotSingleDtos = new ArrayList<PlotSingleDto>(sumCollection.size());
             MetricRankingProvider.sortMetrics(sumCollection);
 
