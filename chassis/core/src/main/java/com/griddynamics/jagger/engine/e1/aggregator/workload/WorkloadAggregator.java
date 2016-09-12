@@ -19,9 +19,26 @@
  */
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
-import com.google.common.collect.Maps;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.CLOCK;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.CLOCK_VALUE;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.FAILED;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.INVOKED;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.KERNELS;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.RESULT;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TERMINATION;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_DURATION;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_SQR_DURATION;
+
 import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.dbapi.entity.*;
+import com.griddynamics.jagger.dbapi.entity.DiagnosticResultEntity;
+import com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.dbapi.entity.ValidationResultEntity;
+import com.griddynamics.jagger.dbapi.entity.WorkloadData;
+import com.griddynamics.jagger.dbapi.entity.WorkloadDetails;
+import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.collector.DiagnosticResult;
 import com.griddynamics.jagger.engine.e1.collector.ValidationResult;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
@@ -35,10 +52,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.math.BigDecimal;
-import java.util.*;
+import com.google.common.collect.Maps;
 
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Aggregates recorded e1 scenario data from key-value storage to relational
@@ -91,7 +111,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         Long startTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, START_TIME);
         Long endTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, END_TIME);
         double duration = (double) (endTime - startTime) / 1000;
-        log.debug("start {} end {} duration {}", new Object[]{startTime, endTime, duration});
+        log.debug("start {} end {} duration {}", startTime, endTime, duration);
         
         @SuppressWarnings({"unchecked", "rawtypes"})
         Collection<String> kernels = (Collection) keyValueStorage.fetchAll(taskNamespace, KERNELS);
@@ -162,7 +182,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         testData.setSessionId(sessionId);
         testData.setTaskId(taskId);
         testData.setParentId(parentId);
-        testData.setNumber(workloadTask.getNumber());
+        testData.setNumber(workloadTask.getGroupNumber());
         testData.setScenario(workloadDetails);
         testData.setStartTime(new Date(startTime));
         testData.setEndTime(new Date(endTime));
@@ -172,7 +192,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         WorkloadTaskData workloadTaskData = new WorkloadTaskData();
         workloadTaskData.setSessionId(sessionId);
         workloadTaskData.setTaskId(taskId);
-        workloadTaskData.setNumber(workloadTask.getNumber());
+        workloadTaskData.setNumber(workloadTask.getGroupNumber());
         workloadTaskData.setScenario(workloadDetails);
         workloadTaskData.setClock(clock);
         workloadTaskData.setClockValue(clockValue);

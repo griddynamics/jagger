@@ -1,12 +1,14 @@
 package com.griddynamics.jagger.rest;
 
 import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
+import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
+import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.master.CompositeTask;
-import com.griddynamics.jagger.master.SessionIdProvider;
-import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
-import com.griddynamics.jagger.master.TaskIdProvider;
+import com.griddynamics.jagger.master.SessionInfoProvider;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.util.Decision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,9 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -32,8 +37,8 @@ import javax.annotation.Resource;
 @RequestMapping("/master")
 public class MasterRestController {
     
-    @Resource(name = "sessionIdProvider")
-    private SessionIdProvider sessionIdProvider;
+    @Autowired
+    private SessionInfoProvider sessionInfoProvider;
     
     @Resource(name = "${chassis.master.session.configuration.bean.name}")
     private Configuration configuration;
@@ -41,159 +46,115 @@ public class MasterRestController {
     @Value("${chassis.master.session.configuration.bean.name}")
     private String configurationName;
     
-    @Autowired
-    private TaskExecutionStatusProvider taskExecutionStatusProvider;
+    private Map<String, WorkloadTask> nameToTaskMap = Collections.emptyMap();
     
-    @Autowired
-    private TaskIdProvider taskIdProvider;
+    @PostConstruct
+    public void init() {
+        nameToTaskMap = mapTaskToName(configuration.getTasks());
+    }
     
-    private Map<String, Task> nameToTaskMap;
-    
-    @GetMapping(path = "/ping")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>("pong", HttpStatus.OK);
+    @GetMapping(path = "/configuration")
+    public ResponseEntity<TestConfig> getTestConfig() {
+        TestConfig testConfig = new TestConfig();
+        testConfig.name = configurationName;
+        return new ResponseEntity<>(testConfig, HttpStatus.OK);
     }
     
     @GetMapping(path = "/session")
-    public ResponseEntity<SessionInfo> getSessionInfo() {
-        SessionInfo sessionInfo = new SessionInfo();
-        sessionInfo.id = sessionIdProvider.getSessionId();
-        sessionInfo.comment = sessionIdProvider.getSessionComment();
-        sessionInfo.name = sessionIdProvider.getSessionName();
-        sessionInfo.configName = configurationName;
+    public ResponseEntity<SessionEntity> getSession() {
+        SessionEntity sessionEntity = new SessionEntity();
+        sessionEntity.setId(sessionInfoProvider.getSessionId());
+        sessionEntity.setComment(sessionInfoProvider.getSessionComment());
+        sessionEntity.setKernels(sessionInfoProvider.getKernelsCount());
+        if (sessionInfoProvider.getStartTime() > 0) {
+            sessionEntity.setStartDate(new Date(sessionInfoProvider.getStartTime()));
+            if (sessionInfoProvider.getEndTime() > 0) {
+                sessionEntity.setEndDate(new Date(sessionInfoProvider.getEndTime()));
+            }
+        }
         
-        return new ResponseEntity<>(sessionInfo, HttpStatus.OK);
+        return new ResponseEntity<>(sessionEntity, HttpStatus.OK);
     }
     
     @GetMapping(path = "/tests")
-    public ResponseEntity<List<TestInfo>> getTasks() {
-    
-        List<TestInfo> testInfos = Lists.newArrayList();
-        for (Task task : configuration.getTasks()) {
-            testInfos.add(getTestInfoFrom(task));
+    public ResponseEntity<List<TestEntity>> getTasks() {
+        
+        List<TestEntity> testEntities = Lists.newArrayList();
+        for (WorkloadTask task : nameToTaskMap.values()) {
+            testEntities.add(convertFrom(task));
         }
         
-        return new ResponseEntity<>(testInfos, HttpStatus.OK);
+        return new ResponseEntity<>(testEntities, HttpStatus.OK);
     }
     
     @GetMapping(path = "/tests/{name}")
-    public ResponseEntity<TestInfo> getTestInfo(@PathVariable String name) {
+    public ResponseEntity<TestEntity> getTestInfo(@PathVariable String name) {
         
-        if (nameToTaskMap == null) {
-            nameToTaskMap = mapTaskToName(configuration.getTasks());
-        }
-        
-        Task task = nameToTaskMap.get(name);
+        WorkloadTask task = nameToTaskMap.get(name);
         if (task == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(getTestInfoFrom(task), HttpStatus.OK);
+        return new ResponseEntity<>(convertFrom(task), HttpStatus.OK);
     }
     
-    private Map<String, Task> mapTaskToName(List<? extends Task> taskList) {
-        Map<String, Task> nameToTaskMap = Maps.newHashMap();
-        for (Task task : taskList) {
-            nameToTaskMap.put(task.getTaskName(), task);
-            if (task instanceof CompositeTask) {
-                CompositeTask compositeTask = (CompositeTask) task;
-                nameToTaskMap.putAll(mapTaskToName(compositeTask.getLeading()));
-                nameToTaskMap.putAll(mapTaskToName(compositeTask.getAttendant()));
+    private Map<String, WorkloadTask> mapTaskToName(List<? extends Task> tasks) {
+        Map<String, WorkloadTask> nameToTaskMap = Maps.newHashMap();
+        for (Task task : tasks) {
+            if (task instanceof WorkloadTask) {
+                nameToTaskMap.put(task.getName(), (WorkloadTask) task);
+            } else if (task instanceof CompositeTask) {
+                nameToTaskMap.putAll(mapTaskToName(((CompositeTask) task).getLeading()));
+                nameToTaskMap.putAll(mapTaskToName(((CompositeTask) task).getAttendant()));
             }
         }
         
         return nameToTaskMap;
     }
     
-    private TestInfo getTestInfoFrom(Task task) {
-        TestInfo testInfo = new TestInfo();
-        if (task instanceof CompositeTask) {
-            CompositeTask compositeTask = (CompositeTask) task;
-            TestGroupInfo testGroupInfo = new TestGroupInfo();
-            testGroupInfo.leadingTests = Lists.newArrayList();
-            for (Task leadingTask : compositeTask.getLeading()) {
-                testGroupInfo.leadingTests.add(getTestInfoFrom(leadingTask));
-            }
-    
-            testGroupInfo.attendantTests = Lists.newArrayList();
-            for (Task attendantTask : compositeTask.getAttendant()) {
-                testGroupInfo.attendantTests.add(getTestInfoFrom(attendantTask));
-            }
-    
-            testInfo = testGroupInfo;
-        }
-    
-        testInfo.name = task.getTaskName();
-        testInfo.sessionId = sessionIdProvider.getSessionId();
-        if (task.getNumber() > 0) {  // 0 means it wasn't set yet.
-            testInfo.number = task.getNumber();
-            testInfo.id = taskIdProvider.stringify(task.getNumber());
-            testInfo.status = taskExecutionStatusProvider.getStatus(testInfo.id);
-        }
+    private TestEntity convertFrom(WorkloadTask task) {
+        TestEntity testEntity = new TestEntity();
+        testEntity.setName(task.getName());
+        testEntity.setDescription(task.getDescription());
+        testEntity.setTestGroupIndex(task.getGroupNumber());
         
-        return testInfo;
+        testEntity.setStartDate(convertFrom(task.getStartDate()));
+        testEntity.setEndDate(convertFrom(task.getEndDate()));
+        
+        testEntity.setLoad(task.getClock().toString());
+        testEntity.setClockValue(task.getClock().getValue());
+        testEntity.setTerminationStrategy(task.getTerminateStrategyConfiguration().toString());
+        testEntity.setTestExecutionStatus(Decision.FATAL);
+        
+        testEntity.setTestExecutionStatus(convertFrom(task.getStatus()));
+        
+        return testEntity;
     }
     
-    public static class TestGroupInfo extends TestInfo {
-        private List<TestInfo> leadingTests;
-        private List<TestInfo> attendantTests;
+    private Date convertFrom(Long millis) {
+        return millis != null ? new Date(millis) : null;
+    }
+    
+    private Decision convertFrom(TaskData.ExecutionStatus status) {
         
-        public List<TestInfo> getLeadingTests() {
-            return leadingTests;
+        if (status == null) {
+            return null;
         }
         
-        public List<TestInfo> getAttendantTests() {
-            return attendantTests;
+        switch (status) {
+            case SUCCEEDED:
+                return Decision.OK;
+            case FAILED:
+                return Decision.ERROR;
+            default:
+                return null;
         }
     }
     
-    public static class TestInfo {
-        private String id;
-        private String sessionId;
+    public static class TestConfig {
         private String name;
-        private Integer number;
-        private TaskData.ExecutionStatus status;
-        
-        public String getId() {
-            return id;
-        }
-        
-        public String getSessionId() {
-            return sessionId;
-        }
         
         public String getName() {
             return name;
-        }
-        
-        public Integer getNumber() {
-            return number;
-        }
-        
-        public TaskData.ExecutionStatus getStatus() {
-            return status;
-        }
-    }
-    
-    public static class SessionInfo {
-        private String id;
-        private String comment;
-        private String name;
-        private String configName;
-        
-        public String getId() {
-            return id;
-        }
-        
-        public String getComment() {
-            return comment;
-        }
-        
-        public String getName() {
-            return name;
-        }
-    
-        public String getConfigName() {
-            return configName;
         }
     }
 }

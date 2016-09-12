@@ -21,6 +21,5 @@
 package com.griddynamics.jagger.master;
 
 public interface TaskIdProvider {
-	Integer getTaskId();
-	String stringify(Integer taskId);
+	String getTaskId();
 }

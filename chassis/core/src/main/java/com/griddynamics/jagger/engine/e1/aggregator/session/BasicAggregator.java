@@ -35,7 +35,6 @@ import com.griddynamics.jagger.dbapi.entity.TagEntity;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage;
 import com.griddynamics.jagger.master.DistributionListener;
-import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
 import com.griddynamics.jagger.master.configuration.SessionListener;
 import com.griddynamics.jagger.master.configuration.Task;
@@ -69,12 +68,6 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
     private KeyValueStorage keyValueStorage;
     private SessionMetaDataStorage sessionMetaDataStorage;
-
-    TaskExecutionStatusProvider taskExecutionStatusProvider;
-
-    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
-        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
-    }
 
     @Override
     public void onSessionStarted(String sessionId, Multimap<NodeType, NodeId> nodes) {
@@ -154,9 +147,9 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
         TaskData taskData = new TaskData();
         taskData.setTaskId(taskId);
         taskData.setSessionId(sessionId);
-        taskData.setTaskName(task.getTaskName());
-        taskData.setNumber(task.getNumber());
-        taskData.setStatus(taskExecutionStatusProvider.getStatus(taskId));
+        taskData.setTaskName(task.getName());
+        taskData.setNumber(task.getGroupNumber());
+        taskData.setStatus(task.getStatus());
         getHibernateTemplate().persist(taskData);
     }
 
@@ -171,7 +164,7 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
         }
 
         if (!metaDataStorage.getSessionTags().isEmpty()) {
-            Set<TagEntity> sessionTagList = new HashSet<TagEntity>();
+            Set<TagEntity> sessionTagList = new HashSet<>();
             sessionTagList.addAll((Collection<? extends TagEntity>) hibernateTemplate.findByNamedParam("select tags from TagEntity as tags " +
                     "where tags.name in (:sTagsName)", "sTagsName", metaDataStorage.getSessionTags()));
 
@@ -188,5 +181,4 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
                 log.info("No tags for mark session {}", sessionId);
         }
     }
-
 }

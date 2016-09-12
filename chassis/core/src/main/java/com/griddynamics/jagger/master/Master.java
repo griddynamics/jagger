@@ -27,9 +27,9 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.dbapi.DatabaseService;
-import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator;
+import com.griddynamics.jagger.engine.e1.collector.test.AbstractTestListener;
 import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteInfo;
 import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
 import com.griddynamics.jagger.engine.e1.process.Services;
@@ -47,7 +47,6 @@ import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.Futures;
-import com.griddynamics.jagger.util.GeneralNodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -59,8 +58,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.Service;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -74,26 +73,23 @@ import javax.annotation.PostConstruct;
  *
  * @author Alexey Kiselyov
  */
-public class Master implements Runnable {
+public class Master extends SessionInfoAware implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(Master.class);
 
     private Configuration configuration;
     private Coordinator coordinator;
     private DistributorRegistry distributorRegistry;
-    private SessionIdProvider sessionIdProvider;
     private KeyValueStorage keyValueStorage;
     private ReportingService reportingService;
     private long reconnectPeriod;
     private Conditions conditions;
     private ExecutorService executor;
-    private TaskIdProvider taskIdProvider;
-    private TaskExecutionStatusProvider taskExecutionStatusProvider;
     private Map<ManageAgent.ActionProp, Serializable> agentStopManagementProps;
     private MasterTimeoutConfiguration timeoutConfiguration;
     // made volatile just in case somebody will try to access it outside of synchronized block
     private volatile boolean isTerminated = false;
     private CountDownLatch terminateConfigurationLatch  = new CountDownLatch(1);
-    private final WeakHashMap<Service, Object> distributes = new WeakHashMap<Service, Object>();
+    private final WeakHashMap<Service, Object> distributes = new WeakHashMap<>();
     private DynamicPlotGroups dynamicPlotGroups;
     private LogWriter logWriter;
     private LogReader logReader;
@@ -193,25 +189,24 @@ public class Master implements Runnable {
     
         if (!keyValueStorage.isAvailable()) {
             keyValueStorage.initialize();
-            keyValueStorage.setSessionId(sessionIdProvider.getSessionId());
+            keyValueStorage.setSessionId(getSessionId());
         }
     
-        metaDataStorage.setComment(sessionIdProvider.getSessionComment());
+        metaDataStorage.setComment(getSessionInfoProvider().getSessionComment());
     
         if (configuration.getMonitoringConfiguration() != null) {
             dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
             Map<ManageAgent.ActionProp, Serializable>  agentStartManagementProps = Maps.newHashMap();
-        
             agentStartManagementProps.put(
                     ManageAgent.ActionProp.SET_JMX_METRICS, dynamicPlotGroups.getJmxMetrics()
             );
-            processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
+            processAgentManagement(getSessionId(), agentStartManagementProps);
         }
     }
 
     @Override
     public void run() {
-        final String sessionId = sessionIdProvider.getSessionId();
+        final String sessionId = getSessionId();
     
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();
         allNodes.putAll(NodeType.MASTER, coordinator.getAvailableNodes(NodeType.MASTER));
@@ -244,32 +239,29 @@ public class Master implements Runnable {
         } catch (InterruptedException e) {
             log.warn("CountDownLatch await interrupted", e);
         }
-
-        for (SessionExecutionListener listener : configuration.getSessionExecutionListeners()) {
-            listener.onSessionStarted(sessionId, allNodes);
-        }
     
         try {
             Runtime.getRuntime().addShutdownHook(shutdownHook);
-            log.info("Configuration launched!!");
-
-            TestSuiteListener testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
-                                                                                                                    sessionId,
-                                                                                                                    "session",
-                                                                                                                    context,
-                                                                                                                    JaggerPlace.TEST_SUITE_LISTENER));
+    
+            AbstractTestListener.CompositeListener<TestSuiteListener, TestSuiteInfo> compositeListener =
+                    AbstractTestListener.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
+                                                                              sessionId, "session", context,
+                                                                              JaggerPlace.TEST_SUITE_LISTENER
+                    ));
             // collect information about environment on kernel and agent nodes
-            Map<NodeId,GeneralNodeInfo> generalNodeInfo = generalNodeInfoAggregator.getGeneralNodeInfo(sessionId, coordinator);
-            TestSuiteInfo testSuiteInfo = new TestSuiteInfo(sessionId,generalNodeInfo);
-            long startTime = System.currentTimeMillis();
-
-            testSuiteListener.onStart(testSuiteInfo);
+            TestSuiteInfo testSuiteInfo =
+                    new TestSuiteInfo(sessionId, generalNodeInfoAggregator.getGeneralNodeInfo(sessionId, coordinator));
+    
+            log.info("Configuration launched!!");
+            // triggering before listeners
+            for (SessionExecutionListener listener : configuration.getSessionExecutionListeners()) {
+                listener.onSessionStarted(sessionId, allNodes);
+            }
+            compositeListener.onStart(testSuiteInfo);
             // tests execution
             SessionExecutionStatus status = runConfiguration(allNodes, context);
-            testSuiteInfo.setDuration(System.currentTimeMillis() - startTime);
-            log.info("Configuration work finished!!");
-            testSuiteListener.onStop(testSuiteInfo);
-    
+            // triggering after listeners
+            compositeListener.onStop(testSuiteInfo);
             for (SessionExecutionListener listener : configuration.getSessionExecutionListeners()) {
                 if (listener instanceof SessionListener) {
                     ((SessionListener) listener).onSessionExecuted(sessionId, metaDataStorage.getComment(), status);
@@ -277,6 +269,7 @@ public class Master implements Runnable {
                     listener.onSessionExecuted(sessionId, metaDataStorage.getComment());
                 }
             }
+            log.info("Configuration work finished!!");
 
             log.info("Going to generate report");
             if (configuration.getReport() != null) {
@@ -339,10 +332,7 @@ public class Master implements Runnable {
 
         @SuppressWarnings("unchecked")
         TaskDistributor<Task> taskDistributor = (TaskDistributor<Task>) distributorRegistry.getTaskDistributor(task.getClass());
-        task.setNumber(taskIdProvider.getTaskId());
-        String taskId = taskIdProvider.stringify(task.getNumber());
-        taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.QUEUED);
-        Service distribute = taskDistributor.distribute(executor, sessionIdProvider.getSessionId(), taskId, allNodes, coordinator, task, distributionListener(), nodeContext);
+        Service distribute = taskDistributor.distribute(executor, allNodes, coordinator, task, distributionListener(), nodeContext);
         try {
             synchronized (this) {
                 if (isTerminated) { // if it was terminated by shutdown hook
@@ -358,7 +348,8 @@ public class Master implements Runnable {
     }
 
     private DistributionListener distributionListener() {
-        return CompositeDistributionListener.of(Iterables.concat(Arrays.asList(createFlushListener()),
+        return CompositeDistributionListener.of(Iterables.concat(
+                Collections.singletonList(createFlushListener()),
                 configuration.getDistributionListeners()
         ));
     }
@@ -379,10 +370,6 @@ public class Master implements Runnable {
         };
     }
 
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
-    }
-
     public void setKeyValueStorage(KeyValueStorage keyValueStorage) {
         this.keyValueStorage = keyValueStorage;
     }
@@ -395,15 +382,6 @@ public class Master implements Runnable {
         this.executor = executor;
     }
 
-    public void setTaskIdProvider(TaskIdProvider taskIdProvider) {
-        this.taskIdProvider = taskIdProvider;
-    }
-    
-    @Required
-    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
-        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
-    }
-    
     public Map<ManageAgent.ActionProp, Serializable> getAgentStopManagementProps() {
         return agentStopManagementProps;
     }
@@ -439,10 +417,8 @@ public class Master implements Runnable {
                             if (!allNodes.get(nodeType).contains(availableNode)) {
                                 allNodes.get(nodeType).add(availableNode);
                                 nodesCountDowns.get(nodeType).countDown();
-                                log.debug("Node id {} with type {} added. Count left {}", new Object[]{
-                                        availableNode,
-                                        nodeType,
-                                        nodesCountDowns.get(nodeType).getCount()}
+                                log.debug("Node id {} with type {} added. Count left {}", availableNode, nodeType,
+                                          nodesCountDowns.get(nodeType).getCount()
                                 );
                             }
                         }

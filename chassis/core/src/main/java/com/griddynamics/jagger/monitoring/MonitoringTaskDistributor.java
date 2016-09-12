@@ -25,9 +25,7 @@ import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.coordinator.Qualifier;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
-import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.master.AbstractDistributor;
-import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +43,6 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
     private static Logger log = LoggerFactory.getLogger(MonitoringTaskDistributor.class);
     private long ttl;
 
-    private TaskExecutionStatusProvider taskExecutionStatusProvider;
-
     @Override
     protected Set<Qualifier<?>> getQualifiers() {
         Set<Qualifier<?>> qualifiers = Sets.newHashSet();
@@ -57,7 +53,7 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
     }
 
     @Override
-    protected Service performDistribution(final ExecutorService executor, final String sessionId, final String taskId, final MonitoringTask task,
+    protected Service performDistribution(final ExecutorService executor, final MonitoringTask task,
                                           final Map<NodeId, RemoteExecutor> remotes, final Multimap<NodeType, NodeId> availableNodes,
                                           final Coordinator coordinator, final NodeContext nodeContext) {
 
@@ -67,23 +63,22 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
     
                 MonitoringController monitoringController = null;
                 try {
-                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.IN_PROGRESS);
                     MonitoringTerminationStrategy terminationStrategy = task.getTerminationStrategy().get();
 
                     monitoringController =
-                            new MonitoringController(sessionId, task.getParentTaskId(), availableNodes, coordinator, remotes.keySet(), ttl);
+                            new MonitoringController(getSessionId(), task.getParentTaskId(), availableNodes, coordinator, remotes.keySet(), ttl);
                     monitoringController.startMonitoring();
 
                     while (true) {
                         if (!isRunning()) {
-                            log.info("Going to terminate work {}. Requested from outside", task.getTaskName());
+                            log.info("Going to terminate work {}. Requested from outside", task.getName());
                             break;
                         }
 
                         Map<NodeId, MonitoringStatus> status = monitoringController.getStatus();
 
                         if (terminationStrategy.isTerminationRequired(status)) {
-                            log.info("Going to terminate work {}. According to termination strategy",task.getTaskName());
+                            log.info("Going to terminate work {}. According to termination strategy",task.getName());
                             break;
                         }
 
@@ -91,9 +86,7 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
                         TimeUtils.sleepMillis(500);
                     }
 
-                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
                 } catch (Exception e) {
-                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.FAILED);
                     log.error("Monitoring task error: ", e);
                 } finally {
                     if (monitoringController != null) {
@@ -110,10 +103,6 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
             }
 
         };
-    }
-
-    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
-        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
     }
 
     public void setTtl(long ttl) {

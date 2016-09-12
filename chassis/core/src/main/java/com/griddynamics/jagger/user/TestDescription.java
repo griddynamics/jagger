@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 8/23/13
  * Time: 2:35 PM
- * To change this template use File | Settings | File Templates.
  */
 public class TestDescription {
 
@@ -112,7 +110,8 @@ public class TestDescription {
         prototype.setValidators(validators);
         prototype.setListeners(listeners);
 
-        List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> allMetrics = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>>(metrics.size()+ standardCollectors.size());
+        List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> allMetrics =
+                new ArrayList<>(metrics.size() + standardCollectors.size());
         allMetrics.addAll(standardCollectors);
         allMetrics.addAll(metrics);
 
