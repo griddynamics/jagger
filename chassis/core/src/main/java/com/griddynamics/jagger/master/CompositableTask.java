@@ -27,8 +27,15 @@ import com.griddynamics.jagger.master.configuration.Task;
  *
  * @author Mairbek Khadikov
  */
-public interface CompositableTask extends Task {
-    String getParentTaskId();
-
-    void setParentTaskId(String taskId);
+public abstract class CompositableTask extends Task {
+    
+    private String parentTaskId;
+    
+    public String getParentTaskId() {
+        return parentTaskId;
+    }
+    
+    public void setParentTaskId(String parentTaskId) {
+        this.parentTaskId = parentTaskId;
+    }
 }

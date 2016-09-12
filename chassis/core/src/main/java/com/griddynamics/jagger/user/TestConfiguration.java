@@ -4,27 +4,35 @@ import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.scenario.*;
+import com.griddynamics.jagger.master.SessionInfoProvider;
+import com.griddynamics.jagger.master.TaskIdProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created with IntelliJ IDEA.
  * User: evelina
  * Date: 2/16/13
  * Time: 7:18 PM
- * To change this template use File | Settings | File Templates.
  */
 public class TestConfiguration {
+    
+    @Autowired
+    private SessionInfoProvider sessionInfoProvider;
+    
+    @Autowired
+    private TaskIdProvider taskIdProvider;
 
     private WorkloadClockConfiguration clockConfiguration;
     private String id;
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
-    private int number;
-    private String testGroupName;
+    private int groupNumber;
+    private String groupName;
+    private String parentTaskId;
     private long startDelay = -1;
-    private List<Provider<TestListener>> listeners = Collections.EMPTY_LIST;
+    private List<Provider<TestListener>> listeners = Collections.emptyList();
     private TestDescription testDescription;
     private LimitSet limits = null;
 
@@ -35,13 +43,21 @@ public class TestConfiguration {
     public void setStartDelay(long waitBefore) {
         this.startDelay = waitBefore;
     }
-
-    public void setNumber(int number) {
-        this.number = number;
+    
+    public String getParentTaskId() {
+        return parentTaskId;
+    }
+    
+    public void setParentTaskId(String parentTaskId) {
+        this.parentTaskId = parentTaskId;
+    }
+    
+    public void setGroupNumber(int number) {
+        this.groupNumber = number;
     }
 
-    public void setTestGroupName(String testGroupName) {
-        this.testGroupName = testGroupName;
+    public void setGroupName(String testGroupName) {
+        this.groupName = testGroupName;
     }
 
     public TestDescription getTestDescription() {
@@ -90,9 +106,9 @@ public class TestConfiguration {
 
     public String getName() {
         if ("".equals(id)){
-            return testGroupName;
+            return groupName;
         }
-        return String.format("%s [%s]", testGroupName, id);
+        return String.format("%s:%s", groupName, id);
     }
 
     public boolean isAttendant() {
@@ -103,12 +119,15 @@ public class TestConfiguration {
     public WorkloadTask generate(AtomicBoolean shutdown) {
         WorkloadTask task = testDescription.generatePrototype();
         task.setName(getName());
-        task.setNumber(number);
+        task.setGroupNumber(groupNumber);
+        task.setSessionId(sessionInfoProvider.getSessionId());
+        task.setTaskId(taskIdProvider.getTaskId());
+        task.setParentTaskId(parentTaskId);
         if (startDelay > 0) {
             task.setStartDelay(startDelay);
         }
         if (task.getVersion()==null) task.setVersion("0");
-        task.setParentTaskId(testGroupName);
+        
         task.setTestListeners(listeners);
         task.setLimits(limits);
 

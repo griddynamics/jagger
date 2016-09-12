@@ -24,8 +24,8 @@ import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
-import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
+import com.griddynamics.jagger.engine.e1.collector.test.AbstractTestListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
@@ -36,11 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 
 import java.util.Collections;
@@ -51,26 +49,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 /**
  * Responsible for composite task distribution.
  *
  * @author Mairbek Khadikov
  */
-public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> {
+public class CompositeTaskDistributor extends SessionInfoAware implements TaskDistributor<CompositeTask> {
     private static Logger log = LoggerFactory.getLogger(CompositeTaskDistributor.class);
     private TimeoutsConfiguration timeoutsConfiguration;
 
     private DistributorRegistry distributorRegistry;
-    private TaskIdProvider taskIdProvider;
-    private TaskExecutionStatusProvider taskExecutionStatusProvider;
 
     public void setDistributorRegistry(DistributorRegistry distributorRegistry) {
         this.distributorRegistry = distributorRegistry;
-    }
-
-    public void setTaskIdProvider(TaskIdProvider taskIdProvider) {
-        this.taskIdProvider = taskIdProvider;
     }
 
     @Required
@@ -78,55 +71,39 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
         this.timeoutsConfiguration = timeoutsConfiguration;
     }
 
-    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
-        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
-    }
-
     @Override
-    public Service distribute(final ExecutorService executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final CompositeTask task, final DistributionListener listener, final NodeContext nodeContext) {
-        log.debug("Composite task {} with id {} distribute configuration started", task, taskId);
+    public Service distribute(final ExecutorService executor, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final CompositeTask task, final DistributionListener listener, final NodeContext nodeContext) {
+        log.debug("Composite task {} with id {} distribute configuration started", task);
 
-        Function<CompositableTask, Service> convertToRunnable = new Function<CompositableTask, Service>() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public Service apply(CompositableTask task) {
-                TaskDistributor taskDistributor = distributorRegistry.getTaskDistributor(task.getClass());
-                task.setParentTaskId(taskId);
-                task.setNumber(taskIdProvider.getTaskId());
-                String childTaskId = taskIdProvider.stringify(task.getNumber());
-                taskExecutionStatusProvider.setStatus(childTaskId, TaskData.ExecutionStatus.QUEUED);
-                return taskDistributor.distribute(executor, sessionId, childTaskId, availableNodes, coordinator, task, listener, nodeContext);
-            }
+        Function<CompositableTask, Service> convertToRunnable = compositableTask -> {
+            TaskDistributor taskDistributor = distributorRegistry.getTaskDistributor(compositableTask.getClass());
+            return taskDistributor.distribute(executor, availableNodes, coordinator, compositableTask, listener, nodeContext);
         };
 
-        final List<Service> leading = Lists.newLinkedList(Lists.transform(task.getLeading(), convertToRunnable));
-        final List<Service> attendant = Lists.newLinkedList(Lists.transform(task.getAttendant(), convertToRunnable));
+        final List<Service> leading = Lists.newLinkedList(Lists.transform(task.getLeading(), convertToRunnable::apply));
+        final List<Service> attendant = Lists.newLinkedList(Lists.transform(task.getAttendant(),
+                                                                            convertToRunnable::apply
+        ));
 
         Service serviceToExecute = new AbstractDistributionService(executor) {
 
-            final List<Future<State>> leadingTerminateFutures = Lists.newLinkedList();
+            final List<Future<State>> leadingTerminateFutures = Lists.newArrayList();
 
             @Override
             protected void run() throws Exception {
+    
+                AbstractTestListener.CompositeListener<TestGroupListener, TestGroupInfo> compositeListener =
+                        AbstractTestListener.compose(ProviderUtil.provideElements(task.getListeners(), getSessionId(),
+                                                                                  task.getTaskId(), nodeContext,
+                                                                                  JaggerPlace.TEST_GROUP_LISTENER
+                        ));
+                TestGroupInfo testGroupInfo = new TestGroupInfo(task);
                 try {
-                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.IN_PROGRESS);
-                    TestGroupListener compositeTestGroupListener = TestGroupListener.Composer.compose(ProviderUtil
-                                                                                                              .provideElements(
-                                                                                                                      task.getListeners(),
-                                                                                                                      sessionId,
-                                                                                                                      taskId,
-                                                                                                                      nodeContext,
-                                                                                                                      JaggerPlace.TEST_GROUP_LISTENER
-                                                                                                              ));
-                    TestGroupInfo testGroupInfo = new TestGroupInfo(task, sessionId);
-                    compositeTestGroupListener.onStart(testGroupInfo);
+                    compositeListener.onStart(testGroupInfo);
         
-                    long startTime = System.currentTimeMillis();
-        
-                    List<Future<State>> futures = Lists.newLinkedList();
+                    List<Future<State>> futures = Lists.newArrayList();
                     for (Service service : Iterables.concat(leading, attendant)) {
-                        ListenableFuture<State> future = service.start();
-                        futures.add(future);
+                        futures.add(service.start());
                     }
                     for (Future<State> future : futures) {
                         State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
@@ -138,13 +115,10 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
                         }
                         TimeUtils.sleepMillis(500);
                     }
-                    testGroupInfo.setDuration(System.currentTimeMillis() - startTime);
-                    compositeTestGroupListener.onStop(testGroupInfo);
-        
-                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
+                    compositeListener.onStop(testGroupInfo);
                 } catch (Exception e) {
                     log.error("Composite task failure: ", e);
-                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.FAILED);
+                    compositeListener.onFailure(testGroupInfo);
                     throw e;
                 }
             }
@@ -225,6 +199,6 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
             }
         };
 
-        return new ListenableService<CompositeTask>(serviceToExecute, executor, sessionId, taskId, task, listener, Collections.EMPTY_MAP);
+        return new ListenableService<>(serviceToExecute, executor, task, listener, Collections.emptyMap());
     }
 }

@@ -20,14 +20,19 @@
 
 package com.griddynamics.jagger.master.configuration;
 
-import com.griddynamics.jagger.engine.e1.scenario.*;
-import com.griddynamics.jagger.master.CompositableTask;
+import com.griddynamics.jagger.engine.e1.scenario.InfiniteTerminationStrategyConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.TerminateStrategyConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.UserClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.UserTerminateStrategyConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.CompositeTask;
+import com.griddynamics.jagger.master.SessionInfoProvider;
 import com.griddynamics.jagger.monitoring.InfiniteDuration;
 import com.griddynamics.jagger.monitoring.MonitoringTask;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import org.simpleframework.xml.core.Persister;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -42,6 +47,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * User: dkotlyarov
  */
 public class UserTaskGenerator implements ApplicationContextAware {
+    
+    @Autowired
+    private SessionInfoProvider sessionInfoProvider;
+    
     private ProcessingConfig config;
     private ApplicationContext applicationContext;
     private boolean monitoringEnable = false;
@@ -58,9 +67,9 @@ public class UserTaskGenerator implements ApplicationContextAware {
     }
 
     public List<Task> generate() {
-        List<Task> result = new LinkedList<Task>();
+        List<Task> result = new LinkedList<>();
         int number = 0;
-        HashSet<String> names = new HashSet<String>();
+        HashSet<String> names = new HashSet<>();
         if (config == null) {
             config=initConfig();
         }
@@ -68,22 +77,25 @@ public class UserTaskGenerator implements ApplicationContextAware {
             ++number;
 
             CompositeTask compositeTask = new CompositeTask();
-            compositeTask.setLeading(new ArrayList<CompositableTask>());
-            compositeTask.setAttendant(new ArrayList<CompositableTask>());
+            compositeTask.setSessionId(sessionInfoProvider.getSessionId());
+            compositeTask.setGroupNumber(number);
+            compositeTask.setName(testConfig.getName());
+            compositeTask.setLeading(new ArrayList<>());
+            compositeTask.setAttendant(new ArrayList<>());
 
             for (ProcessingConfig.Test.Task taskConfig : testConfig.getTasks()) {
-                String name = String.format("%s [%s]", testConfig.getName(), taskConfig.getName());
+                String name = String.format("%s:%s", compositeTask.getName(), taskConfig.getName());
                 if (!names.contains(name)) {
                     names.add(name);
                     AtomicBoolean shutdown = new AtomicBoolean(false);
                     TerminateStrategyConfiguration terminationStrategy;
                     if (taskConfig.isAttendant()) {
                         terminationStrategy = new InfiniteTerminationStrategyConfiguration();
-                        WorkloadTask workloadTask = createWorklod(number, name, shutdown, taskConfig, terminationStrategy);
+                        WorkloadTask workloadTask = createWorkload(number, name, shutdown, taskConfig, terminationStrategy);
                         compositeTask.getAttendant().add(workloadTask);
                     } else {
                         terminationStrategy = new UserTerminateStrategyConfiguration(testConfig, taskConfig, shutdown);
-                        WorkloadTask workloadTask = createWorklod(number, name, shutdown, taskConfig, terminationStrategy);
+                        WorkloadTask workloadTask = createWorkload(number, name, shutdown, taskConfig, terminationStrategy);
                         compositeTask.getLeading().add(workloadTask);
                     }
                 } else {
@@ -92,7 +104,10 @@ public class UserTaskGenerator implements ApplicationContextAware {
             }
 
             if (monitoringEnable) {
-                MonitoringTask attendantMonitoring = new MonitoringTask(number, testConfig.getName() + " --- monitoring", compositeTask.getTaskName(), new InfiniteDuration());
+                MonitoringTask attendantMonitoring =
+                        new MonitoringTask(number, String.format("%s:monitoring", compositeTask.getName()),
+                                           compositeTask.getTaskId(), new InfiniteDuration()
+                        );
                 compositeTask.getAttendant().add(attendantMonitoring);
             }
             result.add(compositeTask);
@@ -100,10 +115,10 @@ public class UserTaskGenerator implements ApplicationContextAware {
         return result;
     }
 
-    private WorkloadTask createWorklod(int number, String name, AtomicBoolean shutdown, ProcessingConfig.Test.Task taskConfig, TerminateStrategyConfiguration terminationStrategy) {
+    private WorkloadTask createWorkload(int number, String name, AtomicBoolean shutdown, ProcessingConfig.Test.Task taskConfig, TerminateStrategyConfiguration terminationStrategy) {
         WorkloadTask prototype = applicationContext.getBean(taskConfig.getBean(), WorkloadTask.class);
         WorkloadTask workloadTask = prototype.copy();
-        workloadTask.setNumber(number);
+        workloadTask.setGroupNumber(number);
         workloadTask.setName(name);
         workloadTask.setTerminateStrategyConfiguration(terminationStrategy);
         workloadTask.setClockConfiguration(new UserClockConfiguration(1000, taskConfig, shutdown));

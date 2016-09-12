@@ -34,13 +34,11 @@ public class JaasRestController {
 
     @GetMapping(value = "/sessions/{sessionId}")
     SessionEntity getSession(@PathVariable String sessionId) {
-        LOGGER.debug("Input session id: {}", sessionId);
         return dataService.getSession(sessionId);
     }
 
     @GetMapping(value = "/sessions")
     Set<SessionEntity> getSessions(@RequestParam(name = "id", required = false) String[] sessionIds) {
-        LOGGER.debug("Input session ids: {}", sessionIds);
         if (sessionIds == null) {
             sessionIds = new String[0];
         }
@@ -49,28 +47,21 @@ public class JaasRestController {
 
     @GetMapping(value = "/sessions/{sessionId}/tests/{testName}")
     TestEntity getTest(@PathVariable String sessionId, @PathVariable String testName) {
-        LOGGER.debug("Input session id: {}", sessionId);
-        LOGGER.debug("Input test name: {}", testName);
         return dataService.getTestByName(sessionId, testName);
     }
 
     @GetMapping(value = "/sessions/{sessionId}/tests")
     Set<TestEntity> getTests(@PathVariable String sessionId) {
-        LOGGER.debug("Input session id: {}", sessionId);
         return dataService.getTests(sessionId);
     }
 
     @GetMapping(value = "/tests/{testId}/metrics")
     Set<MetricEntity> getMetrics(@PathVariable Long testId) {
-        LOGGER.debug("Input test id: {}", testId);
         return dataService.getMetrics(testId);
     }
 
     @GetMapping(value = "/sessions/{sessionId}/tests/{testName}/metrics")
     Set<MetricEntity> getMetrics(@PathVariable String sessionId, @PathVariable String testName) {
-        LOGGER.debug("Input session id: {}", sessionId);
-        LOGGER.debug("Input test name: {}", testName);
-
         TestEntity testEntity = getTest(sessionId, testName);
         return dataService.getMetrics(testEntity);
     }
@@ -79,9 +70,6 @@ public class JaasRestController {
     Map<MetricEntity, MetricSummaryValueEntity> getMetricsSummary(@PathVariable String sessionId,
                                                                   @PathVariable String testName
     ) {
-        LOGGER.debug("Input session id: {}", sessionId);
-        LOGGER.debug("Input test name: {}", testName);
-
         Set<MetricEntity> metricEntities = getMetrics(sessionId, testName);
         return dataService.getMetricSummary(metricEntities);
     }
@@ -90,9 +78,6 @@ public class JaasRestController {
     Map<MetricEntity, List<MetricPlotPointEntity>> getMetricPlotData(@PathVariable String sessionId,
                                                                      @PathVariable String testName
     ) {
-        LOGGER.debug("Input session id: {}", sessionId);
-        LOGGER.debug("Input test name: {}", testName);
-
         Set<MetricEntity> metricEntities = getMetrics(sessionId, testName);
         return dataService.getMetricPlotData(metricEntities);
     }

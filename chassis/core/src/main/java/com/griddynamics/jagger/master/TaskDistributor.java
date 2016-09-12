@@ -20,13 +20,14 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.master.configuration.Task;
+
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Service;
 
 import java.util.concurrent.ExecutorService;
 
@@ -38,6 +39,6 @@ import java.util.concurrent.ExecutorService;
  */
 public interface TaskDistributor<T extends Task> {
 
-    Service distribute(ExecutorService executor, String sessionId, String taskId, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator, T task, DistributionListener listener, NodeContext context);
+    Service distribute(ExecutorService executor, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator, T task, DistributionListener listener, NodeContext context);
 
 }

@@ -1,52 +1,21 @@
 package com.griddynamics.jagger.engine.e1.collector.testgroup;
 
+import com.griddynamics.jagger.engine.e1.collector.test.TaskBasedTestInfo;
 import com.griddynamics.jagger.master.CompositeTask;
 
-/** Class, which contains some information about test-group execution
+/**
+ * Contains information related to an instance
+ * of {@link com.griddynamics.jagger.master.CompositeTask} class.
+ *
  * @author Gribov Kirill
  * @n
  * @par Details:
  * @details
  * @n
- * */
-public class TestGroupInfo {
-    private CompositeTask testGroup;
-    private String sessionId;
-
-    private long duration;
-
-    public TestGroupInfo(){
-    }
-
-    public TestGroupInfo(CompositeTask testGroup, String sessionId){
-        this.testGroup = testGroup;
-        this.sessionId = sessionId;
-    }
-
-    /** Returns full information about current test-group */
-    public CompositeTask getTestGroup() {
-        return testGroup;
-    }
-
-    public void setTestGroup(CompositeTask testGroup) {
-        this.testGroup = testGroup;
-    }
-
-    /** Returns test-group execution duration */
-    public long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
-
-    /** Returns session id */
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+ */
+public class TestGroupInfo extends TaskBasedTestInfo<CompositeTask> {
+    
+    public TestGroupInfo(CompositeTask testGroup) {
+        super(testGroup);
     }
 }

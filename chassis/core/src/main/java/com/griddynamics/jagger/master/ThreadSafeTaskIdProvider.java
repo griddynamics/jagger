@@ -23,15 +23,10 @@ package com.griddynamics.jagger.master;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadSafeTaskIdProvider implements TaskIdProvider {
-	private AtomicInteger value = new AtomicInteger(0);
+	private final AtomicInteger value = new AtomicInteger(0);
 
 	@Override
-	public Integer getTaskId() {
-		return value.incrementAndGet();
-	}
-	
-	@Override
-	public String stringify(Integer taskId) {
-		return "task-" + taskId;
+	public String getTaskId() {
+		return "task-" + String.valueOf(value.incrementAndGet());
 	}
 }

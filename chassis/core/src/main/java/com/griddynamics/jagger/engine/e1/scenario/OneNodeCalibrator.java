@@ -20,18 +20,17 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.engine.e1.process.PerformCalibration;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
-import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Collects calibration info on the single node.
@@ -52,9 +51,7 @@ public class OneNodeCalibrator implements Calibrator {
         NodeId node = entry.getKey();
         RemoteExecutor remote = entry.getValue();
 
-
         Boolean result = remote.runSyncWithTimeout(PerformCalibration.create(sessionId, taskId, scenarioFactory), Coordination.<PerformCalibration>doNothing(), timeout);
-
         if (result) {
             log.info("Calibration info collected");
         } else {

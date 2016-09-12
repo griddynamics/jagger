@@ -25,12 +25,9 @@
 
 	<bean id="basicSessionCollector" class="com.griddynamics.jagger.engine.e1.collector.BasicSessionCollector">
 		<property name="keyValueStorage" ref="h2KeyValueStorage"/>
-        <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
 	</bean>
 
-	<bean id="e1MasterCollector" class="com.griddynamics.jagger.engine.e1.collector.MasterWorkloadCollector">
-		<property name="keyValueStorage" ref="h2KeyValueStorage"/>
-	</bean>
+	<bean id="e1MasterCollector" class="com.griddynamics.jagger.engine.e1.collector.MasterWorkloadCollector"/>
 
 	<bean id="durationCollector" class="com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider">
         <property name="clazz" value="com.griddynamics.jagger.engine.e1.collector.DurationCollector"/>

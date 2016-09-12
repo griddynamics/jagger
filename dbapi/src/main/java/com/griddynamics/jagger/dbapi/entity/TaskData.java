@@ -91,7 +91,7 @@ public class TaskData {
         this.status = status;
     }
 
-    public static enum ExecutionStatus {
-        SUCCEEDED, FAILED, IN_PROGRESS, QUEUED
+    public enum ExecutionStatus {
+        SUCCEEDED, FAILED, IN_PROGRESS
     }
 }

@@ -1,13 +1,15 @@
 package com.griddynamics.jagger.user;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
-import com.griddynamics.jagger.master.CompositableTask;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.master.CompositeTask;
+import com.griddynamics.jagger.master.SessionInfoProvider;
+import com.griddynamics.jagger.master.TaskIdProvider;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.monitoring.InfiniteDuration;
 import com.griddynamics.jagger.monitoring.MonitoringTask;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,11 +18,17 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TestGroupConfiguration {
+    
+    @Autowired
+    private SessionInfoProvider sessionInfoProvider;
+    
+    @Autowired
+    private TaskIdProvider taskIdProvider;
 
     private String id;
     private List<TestConfiguration> tests;
-    private List<Provider<TestGroupListener>> listeners = Collections.EMPTY_LIST;
-    private List<Provider<TestGroupDecisionMakerListener>> testGroupDecisionMakerListeners = Collections.EMPTY_LIST;
+    private List<Provider<TestGroupListener>> listeners = Collections.emptyList();
+    private List<Provider<TestGroupDecisionMakerListener>> testGroupDecisionMakerListeners = Collections.emptyList();
     private boolean monitoringEnabled;
     private int number;
 
@@ -77,19 +85,23 @@ public class TestGroupConfiguration {
     }
 
     public Task generate() {
-        HashSet<String> names = new HashSet<String>();
+        HashSet<String> names = new HashSet<>();
 
         CompositeTask compositeTask = new CompositeTask();
-        compositeTask.setLeading(new ArrayList<CompositableTask>());
-        compositeTask.setAttendant(new ArrayList<CompositableTask>());
-        compositeTask.setNumber(number);
+        compositeTask.setGroupNumber(number);
+        compositeTask.setTaskId(taskIdProvider.getTaskId());
+        compositeTask.setName(id+"-group");
+        compositeTask.setSessionId(sessionInfoProvider.getSessionId());
+        
+        compositeTask.setLeading(new ArrayList<>());
+        compositeTask.setAttendant(new ArrayList<>());
         compositeTask.setListeners(listeners);
         compositeTask.setDecisionMakerListeners(testGroupDecisionMakerListeners);
-        compositeTask.setName(id+"-group");
 
         for (TestConfiguration testConfig : tests) {
-            testConfig.setTestGroupName(id);
-            testConfig.setNumber(number);
+            testConfig.setGroupName(compositeTask.getName());
+            testConfig.setGroupNumber(number);
+            testConfig.setParentTaskId(compositeTask.getTaskId());
             if (!names.contains(testConfig.getName())) {
                 names.add(testConfig.getName());
                 //TODO figure out if it's really needed
@@ -105,7 +117,12 @@ public class TestGroupConfiguration {
         }
 
         if (monitoringEnabled) {
-            MonitoringTask attendantMonitoring = new MonitoringTask(number, id + " --- monitoring", id, new InfiniteDuration());
+            MonitoringTask attendantMonitoring =
+                    new MonitoringTask(number, String.format("%s:monitoring", compositeTask.getName()),
+                                       compositeTask.getTaskId(), new InfiniteDuration()
+                    );
+            attendantMonitoring.setTaskId(taskIdProvider.getTaskId());
+            attendantMonitoring.setSessionId(sessionInfoProvider.getSessionId());
             compositeTask.getAttendant().add(attendantMonitoring);
         }
         return compositeTask;

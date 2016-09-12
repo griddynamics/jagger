@@ -2,38 +2,24 @@ package com.griddynamics.jagger.engine.e1.collector.test;
 
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 
-/** Class, which contains some information about test execution
+/**
+ * Contains information related to an instance
+ * of {@link com.griddynamics.jagger.engine.e1.scenario.WorkloadTask} class.
+ *
  * @author Gribov Kirill
  * @n
  * @par Details:
  * @details
  * @n
- * */
-public class TestInfo {
-    private WorkloadTask test;
-    private String sessionId;
-
+ */
+public class TestInfo extends TaskBasedTestInfo<WorkloadTask> {
+    
     private int threads;
     private int samples;
     private int startedSamples;
-    private long duration;
-
-
-    public TestInfo(){
-    }
-
-    public TestInfo(WorkloadTask test, String sessionId){
-        this.test = test;
-        this.sessionId = sessionId;
-    }
-
-    /** Returns current test */
-    public WorkloadTask getTest() {
-        return test;
-    }
-
-    public void setTest(WorkloadTask test) {
-        this.test = test;
+    
+    public TestInfo(WorkloadTask test) {
+        super(test);
     }
 
     /** Returns current number of threads, used by Jagger to generate load */
@@ -62,22 +48,10 @@ public class TestInfo {
     public void setStartedSamples(int startedSamples) {
         this.startedSamples = startedSamples;
     }
-
-    /** Returns test duration */
-    public long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
-
-    /** Returns session id */
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    
+    @Override
+    protected void doOnStop() {
+        super.doOnStop();
+        setThreads(0);
     }
 }

@@ -64,3 +64,4 @@ local.properties
 /jagger/
 /test/jagger-test/jagger-test.iml
 /.DS_Store
+**/jaggerworkspace
