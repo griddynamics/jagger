@@ -65,3 +65,4 @@ local.properties
 /test/jagger-test/jagger-test.iml
 /.DS_Store
 **/jaggerworkspace
+**/jaasdb.*

@@ -588,6 +588,7 @@
                         <failOnError>true</failOnError>
                         <xmlOutput>true</xmlOutput>
                         <xmlOutputDirectory>${project.build.directory}/findbugs</xmlOutputDirectory>
+                        <excludeFilterFile>${project.parent.basedir}/findbugs-exclude-filter.xml</excludeFilterFile>
                     </configuration>
                     <executions>
                         <execution>
