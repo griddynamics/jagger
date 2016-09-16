@@ -18,11 +18,10 @@ public class TestSuitConfiguration {
     }
 
     public List<Task> generate() {
-        if (testGroups == null)
-            return null;
+        if (testGroups == null) return null;
 
         int number = 0;
-        List<Task> result = new ArrayList<Task>(testGroups.size());
+        List<Task> result = new ArrayList<>(testGroups.size());
         for (TestGroupConfiguration testGroupConfiguration: testGroups) {
             testGroupConfiguration.setNumber(number++);
             result.add(testGroupConfiguration.generate());

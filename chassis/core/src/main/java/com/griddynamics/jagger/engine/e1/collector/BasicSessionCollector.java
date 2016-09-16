@@ -32,18 +32,23 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TAS
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
-import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
+import com.griddynamics.jagger.master.SessionInfoProvider;
+import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
 import com.griddynamics.jagger.master.configuration.SessionListener;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import java.util.Collection;
+
+import javax.annotation.Resource;
 
 /**
  * Collects basic information on master side. Stores session start/end time,
@@ -54,12 +59,12 @@ import java.util.Collection;
 public class BasicSessionCollector implements SessionListener, DistributionListener {
     private KeyValueStorage keyValueStorage;
     private Integer taskCounter;
-
-    TaskExecutionStatusProvider taskExecutionStatusProvider;
-
-    public void setTaskExecutionStatusProvider(TaskExecutionStatusProvider taskExecutionStatusProvider) {
-        this.taskExecutionStatusProvider = taskExecutionStatusProvider;
-    }
+    
+    @Resource(name = "${chassis.master.session.configuration.bean.name}")
+    private Configuration configuration;
+    
+    @Autowired
+    private SessionInfoProvider sessionInfoProvider;
 
     public void setKeyValueStorage(KeyValueStorage keyValueStorage) {
         this.keyValueStorage = keyValueStorage;
@@ -71,13 +76,17 @@ public class BasicSessionCollector implements SessionListener, DistributionListe
 
         Namespace namespace = Namespace.of(SESSION, sessionId);
         Multimap<String, Object> objectsMap = HashMultimap.create();
-        objectsMap.put(START_TIME, System.currentTimeMillis());
+        
+        sessionInfoProvider.setStartTime(System.currentTimeMillis());
+        objectsMap.put(START_TIME, sessionInfoProvider.getStartTime());
+        
         Collection<NodeId> kernels = nodes.get(NodeType.KERNEL);
+        sessionInfoProvider.setKernelsCount(kernels.size());
         objectsMap.put(KERNELS_COUNT, kernels.size());
-
         for (NodeId nodeId : kernels) {
             objectsMap.put(AVAILABLE_KERNELS, nodeId.toString());
         }
+        
         keyValueStorage.putAll(namespace, objectsMap);
     }
 
@@ -90,18 +99,33 @@ public class BasicSessionCollector implements SessionListener, DistributionListe
     public void onSessionExecuted(String sessionId, String sessionComment, SessionExecutionStatus status) {
         Namespace namespace = Namespace.of(SESSION, sessionId);
         Multimap<String, Object> objectsMap = HashMultimap.create();
-        objectsMap.put(END_TIME, System.currentTimeMillis());
+    
+        sessionInfoProvider.setEndTime(System.currentTimeMillis());
+        objectsMap.put(END_TIME, sessionInfoProvider.getEndTime());
+        
         objectsMap.put(TASK_EXECUTED, taskCounter);
-        Integer failedTasks = taskExecutionStatusProvider.getTaskIdsWithStatus(TaskData.ExecutionStatus.FAILED).size();
+        Integer failedTasks = getTaskCountWithStatus(TaskData.ExecutionStatus.FAILED);
         objectsMap.put(FAILED, failedTasks);
-        if(failedTasks > 0) {
-            if(SessionExecutionStatus.EMPTY.equals(status)){
+        if (failedTasks > 0) {
+            if (SessionExecutionStatus.EMPTY.equals(status)) {
                 status = SessionExecutionStatus.TASK_FAILED;
             }
         }
         objectsMap.put(ERROR_MESSAGE, status.getMessage());
 
         keyValueStorage.putAll(namespace, objectsMap);
+    }
+    
+    private int getTaskCountWithStatus(final TaskData.ExecutionStatus status) {
+        int counter = 0;
+        for (Task task : configuration.getTasks()) {
+            if (task instanceof WorkloadTask) {
+                if (task.getStatus() == status) {
+                    ++counter;
+                }
+            }
+        }
+        return counter;
     }
 
 

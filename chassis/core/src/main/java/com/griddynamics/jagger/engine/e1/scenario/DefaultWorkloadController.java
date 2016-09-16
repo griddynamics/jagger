@@ -20,27 +20,30 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.Command;
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
-import com.griddynamics.jagger.engine.e1.process.*;
+import com.griddynamics.jagger.engine.e1.process.ChangeWorkloadConfiguration;
+import com.griddynamics.jagger.engine.e1.process.PollWorkloadProcessStatus;
+import com.griddynamics.jagger.engine.e1.process.ScenarioContext;
+import com.griddynamics.jagger.engine.e1.process.StartWorkloadProcess;
+import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
+import com.griddynamics.jagger.engine.e1.process.WorkloadStatus;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import java.util.Map;
 import java.util.Set;
 
 public class DefaultWorkloadController implements WorkloadController {
     private static final Logger log = LoggerFactory.getLogger(DefaultWorkloadController.class);
-    private final String sessionId;
-    private final String taskId;
     private final Map<NodeId, RemoteExecutor> remotes;
-    private final Long startTime;
     private final TimeoutsConfiguration timeoutsConfiguration;
     private final WorkloadTask task;
     private Progress progress;
@@ -49,13 +52,10 @@ public class DefaultWorkloadController implements WorkloadController {
     private Map<NodeId, Integer> delays;
     private Map<NodeId, Integer> poolSize;
 
-    public DefaultWorkloadController(String sessionId, String taskId, WorkloadTask task, Map<NodeId, RemoteExecutor> remotes, TimeoutsConfiguration timeoutsConfiguration, Long startTime) {
-        this.sessionId = Preconditions.checkNotNull(sessionId);
-        this.taskId = Preconditions.checkNotNull(taskId);
+    public DefaultWorkloadController(WorkloadTask task, Map<NodeId, RemoteExecutor> remotes, TimeoutsConfiguration timeoutsConfiguration) {
         this.task = Preconditions.checkNotNull(task);
         this.remotes = ImmutableMap.copyOf(remotes);
         this.timeoutsConfiguration = timeoutsConfiguration;
-        this.startTime = startTime;
         progress = Progress.IDLE;
         processes = Maps.newHashMap();
         threads = Maps.newHashMap();
@@ -76,14 +76,18 @@ public class DefaultWorkloadController implements WorkloadController {
 
         for (Map.Entry<NodeId, RemoteExecutor> entry : remotes.entrySet()) {
             Long pollTime = System.currentTimeMillis();
-            Long durationTime = System.currentTimeMillis()-startTime;
+            Long startTime = task.getStartDate();
+            Long durationTime = 0L;
+            if (startTime != null) {
+                durationTime = System.currentTimeMillis() - startTime;
+            }
             NodeId id = entry.getKey();
             RemoteExecutor remote = entry.getValue();
 
             WorkloadStatus status;
             String processId = processes.get(id);
             if (processId != null) {
-                status = remote.runSyncWithTimeout(PollWorkloadProcessStatus.create(sessionId, processId), Coordination.<Command<WorkloadStatus>>doNothing(), timeoutsConfiguration.getWorkloadPollingTimeout());
+                status = remote.runSyncWithTimeout(PollWorkloadProcessStatus.create(task.getSessionId(), processId), Coordination.<Command<WorkloadStatus>>doNothing(), timeoutsConfiguration.getWorkloadPollingTimeout());
             } else {
                 status = new WorkloadStatus(0,0,0);
             }
@@ -91,7 +95,9 @@ public class DefaultWorkloadController implements WorkloadController {
             Integer threadsOnNode = threads.get(id);
             Integer delay = delays.get(id);
 
-            log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}", new Object[]{pollTime, id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay});
+            log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}",
+                      pollTime, id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay
+            );
 
             builder.addNodeInfo(id, status.getCurrentThreadNumber(), status.getStartedSamples(), status.getFinishedSamples(), delay, pollTime, durationTime);
         }
@@ -143,7 +149,7 @@ public class DefaultWorkloadController implements WorkloadController {
             String processId = entry.getValue();
 
             RemoteExecutor executor = remotes.get(id);
-            StopWorkloadProcess stop = StopWorkloadProcess.create(sessionId, processId);
+            StopWorkloadProcess stop = StopWorkloadProcess.create(task.getSessionId(), processId);
 
             log.debug("Going to stop process {} on node {}", processId, id);
             executor.runSyncWithTimeout(stop, Coordination.<Command>doNothing(), timeoutsConfiguration.getWorkloadStopTimeout());
@@ -157,18 +163,18 @@ public class DefaultWorkloadController implements WorkloadController {
     private void changeWorkload(NodeId node, WorkloadConfiguration newConfiguration) {
         String processId = processes.get(node);
         RemoteExecutor remote = remotes.get(node);
-        remote.runSyncWithTimeout(ChangeWorkloadConfiguration.create(sessionId, processId, newConfiguration), Coordination.<Command>doNothing(), timeoutsConfiguration.getWorkloadPollingTimeout());
+        remote.runSyncWithTimeout(ChangeWorkloadConfiguration.create(task.getSessionId(), processId, newConfiguration), Coordination.<Command>doNothing(), timeoutsConfiguration.getWorkloadPollingTimeout());
         threads.put(node, newConfiguration.getThreads());
         delays.put(node, newConfiguration.getDelay());
     }
 
     private void startWorkload(NodeId node, WorkloadConfiguration configuration) {
-        ScenarioContext scenarioContext = new ScenarioContext(taskId, task.getName(), task.getVersion(), configuration);
+        ScenarioContext scenarioContext = new ScenarioContext(task.getTaskId(), task.getName(), task.getVersion(), configuration);
         Integer nodePoolSize = poolSize.get(node);
         if (nodePoolSize == null) {
             nodePoolSize = 1;
         }
-        StartWorkloadProcess start = StartWorkloadProcess.create(sessionId, scenarioContext, nodePoolSize);
+        StartWorkloadProcess start = StartWorkloadProcess.create(task.getSessionId(), scenarioContext, nodePoolSize);
         start.setScenarioFactory(task.getScenarioFactory());
         start.setCollectors(task.getCollectors());
         start.setValidators(task.getValidators());

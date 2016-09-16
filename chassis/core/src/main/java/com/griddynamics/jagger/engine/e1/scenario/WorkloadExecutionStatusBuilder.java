@@ -144,8 +144,8 @@ public class WorkloadExecutionStatusBuilder {
         public String toString() {
             String line = "---------------------------------------------------------------------------------------------------------------------------------------------------\n";
             String format = "|%1$-40s|%2$-20s|%3$-20s|%4$-20s|%5$-20s|%6$-20s|\n";
-            String report = String.format(this.task.getTaskName() + '\n' +
-                    line + format + line, "IDENTIFIER", "THREADS", "STARTED", "SAMPLES", "DELAYS", "DURATION,s");
+            String report = String.format(this.task.getName() + '\n' +
+                                          line + format + line, "IDENTIFIER", "THREADS", "STARTED", "SAMPLES", "DELAYS", "DURATION,s");
             Set<NodeId> nodes = Sets.newHashSet(this.threads.keySet());
             nodes.addAll(this.startedSamples.keySet());
             nodes.addAll(this.delays.keySet());

@@ -20,31 +20,29 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 public class DefaultWorkloadCollectorTest {
     private DefaultWorkloadController controller;
-    private String sessionId;
-    private String taskId;
     private WorkloadTask task;
     private Map<NodeId, RemoteExecutor> remotes;
-    private Long startTime;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        sessionId = "testSession";
-        taskId = "testWorkload";
         task = new WorkloadTask();
+        task.setSessionId("testSession");
+        task.setTaskId("testWorkload");
+        task.setStartDate();
         remotes = Maps.newHashMap();
-        startTime = System.currentTimeMillis();
-        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, TimeoutsConfiguration.getDefaultTimeouts(), startTime);
+        controller = new DefaultWorkloadController(task, remotes, TimeoutsConfiguration.getDefaultTimeouts());
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -54,8 +52,8 @@ public class DefaultWorkloadCollectorTest {
 
     @Test(expectedExceptions = IllegalStateException.class)
     public void shouldFailWhenWorkloadIsStartedSeveralTimes() throws Exception {
-        controller.startWorkload(Maps.<NodeId, Integer>newHashMap());
-        controller.startWorkload(Maps.<NodeId, Integer>newHashMap());
+        controller.startWorkload(Maps.newHashMap());
+        controller.startWorkload(Maps.newHashMap());
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -67,5 +65,4 @@ public class DefaultWorkloadCollectorTest {
     public void shouldFailToAdjustWorkloadTaskNumberBeforeTestsIsStarted() throws Exception {
         controller.adjustConfiguration(NodeId.kernelNode("test"), WorkloadConfiguration.with(1, 0));
     }
-
 }

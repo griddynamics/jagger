@@ -21,54 +21,25 @@ package com.griddynamics.jagger.monitoring;
 
 import com.griddynamics.jagger.master.CompositableTask;
 
-public class MonitoringTask implements CompositableTask {
-    private int number;
-    private String name;
-    private String parentTaskId;
+public class MonitoringTask extends CompositableTask {
     private MonitoringTerminationStrategyConfiguration terminationStrategy;
-
+    
     public MonitoringTask() {
     }
-
-    public MonitoringTask(int number, String name, String parentTaskId, MonitoringTerminationStrategyConfiguration terminationStrategy) {
-        this.number = number;
-        this.name = name;
-        this.parentTaskId = parentTaskId;
+    
+    public MonitoringTask(int groupNumber, String name, String parentTaskId,
+                          MonitoringTerminationStrategyConfiguration terminationStrategy
+    ) {
+        super.setGroupNumber(groupNumber);
+        super.setName(name);
+        super.setParentTaskId(parentTaskId);
         this.terminationStrategy = terminationStrategy;
     }
-
-    @Override
-    public String getParentTaskId() {
-        return parentTaskId;
-    }
-
-    @Override
-    public void setParentTaskId(String taskId) {
-        parentTaskId = taskId;
-    }
-
-    @Override
-    public String getTaskName() {
-        return name;
-    }
-
-    @Override
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    
     public MonitoringTerminationStrategyConfiguration getTerminationStrategy() {
         return terminationStrategy;
     }
-
+    
     public void setTerminationStrategy(MonitoringTerminationStrategyConfiguration terminationStrategy) {
         this.terminationStrategy = terminationStrategy;
     }

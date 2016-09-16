@@ -14,11 +14,9 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 12/10/12
  * Time: 11:21 AM
- * To change this template use File | Settings | File Templates.
  */
 public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
 

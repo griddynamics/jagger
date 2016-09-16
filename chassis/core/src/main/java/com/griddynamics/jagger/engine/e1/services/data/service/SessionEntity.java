@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.services.data.service;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /** Class is a model of session
@@ -19,9 +21,11 @@ public class SessionEntity {
     private String comment;
 
     /** Start time */
+    @JsonFormat(shape=JsonFormat.Shape.STRING)
     private Date startDate;
 
     /** Stop time */
+    @JsonFormat(shape=JsonFormat.Shape.STRING)
     private Date endDate;
 
     /** Number of kernels used for workload generation */

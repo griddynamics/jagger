@@ -20,15 +20,16 @@
 
 package com.griddynamics.jagger.engine.e1.sessioncomparation;
 
-import com.google.common.base.Objects;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.google.common.base.Objects;
+
 public class BaselineSessionProvider {
     public static final String IDENTITY_SESSION = "#IDENTITY";
-
-    private String sessionId;
+    
     private SessionIdProvider sessionIdProvider;
+    private String sessionId;
 
     public String getBaselineSession() {
 
@@ -43,16 +44,16 @@ public class BaselineSessionProvider {
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
-
+    
+    @Required
+    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
+        this.sessionIdProvider = sessionIdProvider;
+    }
+    
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("sessionId", sessionId)
                 .toString();
-    }
-
-    @Required
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
     }
 }

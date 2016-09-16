@@ -20,8 +20,16 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.CLOCK;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.CLOCK_VALUE;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.KERNELS;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.KERNEL_COUNT;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.SCENARIOS;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.SESSION;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TERMINATION;
+
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
@@ -30,10 +38,12 @@ import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import java.util.Collection;
-
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 
 /**
  * Saves generic information about e1 session execution. Such as task execution
@@ -44,8 +54,9 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 public class MasterWorkloadCollector implements DistributionListener {
     private final static Logger log = LoggerFactory.getLogger(MasterWorkloadCollector.class);
 
+    @Autowired
     private KeyValueStorage keyValueStorage;
-
+    
     @Override
     public void onDistributionStarted(String sessionId, String taskId, Task task, Collection<NodeId> capableNodes) {
         log.debug("Going to collect master info");
@@ -59,7 +70,7 @@ public class MasterWorkloadCollector implements DistributionListener {
     @Override
     public void onTaskDistributionCompleted(String sessionId, String taskId, Task task) {
         if (task instanceof WorkloadTask) {
-            keyValueStorage.put(Namespace.of(sessionId, taskId), END_TIME, System.currentTimeMillis());
+            keyValueStorage.put(Namespace.of(sessionId, taskId), END_TIME, task.setEndDate());
         }
     }
 
@@ -69,7 +80,7 @@ public class MasterWorkloadCollector implements DistributionListener {
 
         Namespace scenarioNamespace = Namespace.of(sessionId, taskId);
         Multimap<String, Object> objectsMap = HashMultimap.create();
-        objectsMap.put(START_TIME, System.currentTimeMillis() + workload.getStartDelay());
+        objectsMap.put(START_TIME, workload.setStartDate());
 
         objectsMap.put(CLOCK, workload.getClock().toString());
         objectsMap.put(CLOCK_VALUE, workload.getClock().getValue());
@@ -82,9 +93,5 @@ public class MasterWorkloadCollector implements DistributionListener {
             objectsMap.put(KERNELS, nodeStr);
         }
         keyValueStorage.putAll(scenarioNamespace, objectsMap);
-    }
-
-    public void setKeyValueStorage(KeyValueStorage keyValueStorage) {
-        this.keyValueStorage = keyValueStorage;
     }
 }

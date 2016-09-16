@@ -37,9 +37,7 @@ import java.util.List;
  *
  * @author Mairbek Khadikov
  */
-public class WorkloadTask implements CompositableTask {
-    private int number;
-    private String name;
+public class WorkloadTask extends CompositableTask {
     private String version;
     private String description = "";
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
@@ -48,7 +46,6 @@ public class WorkloadTask implements CompositableTask {
     private List<Provider<InvocationListener<Object, Object, Object>>> listeners = Lists.newLinkedList();
     private WorkloadClockConfiguration clockConfiguration;
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
-    private String parentTaskId;
     private Calibrator calibrator = new OneNodeCalibrator();
     private long startDelay = 0;
     private List<Provider<TestListener>> testListeners = Lists.newLinkedList();
@@ -60,29 +57,6 @@ public class WorkloadTask implements CompositableTask {
 
     public void setStartDelay(long waitBefore) {
         this.startDelay = waitBefore;
-    }
-
-    @Override
-    public String getTaskName() {
-        return name + " " + version;
-    }
-
-    @Override
-    public int getNumber() {
-        return number;
-    }
-    
-    @Override
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getVersion() {
@@ -151,8 +125,11 @@ public class WorkloadTask implements CompositableTask {
 
     public WorkloadTask copy() {
         WorkloadTask task = new WorkloadTask();
-        task.setNumber(number);
-        task.setName(name);
+        task.setGroupNumber(getGroupNumber());
+        task.setStatus(getStatus());
+        task.setTaskId(getTaskId());
+        task.setParentTaskId(getParentTaskId());
+        task.setName(getName());
         task.setVersion(version);
         task.setValidators(validators);
         task.setCollectors(collectors);
@@ -165,17 +142,6 @@ public class WorkloadTask implements CompositableTask {
         task.setDescription(description);
         return task;
     }
-
-    @Override
-    public String getParentTaskId() {
-        return parentTaskId;
-    }
-
-    @Override
-    public void setParentTaskId(String taskId) {
-        this.parentTaskId = taskId;
-    }
-
 
     public Calibrator getCalibrator() {
         return calibrator;
@@ -196,15 +162,15 @@ public class WorkloadTask implements CompositableTask {
     @Override
     public String toString() {
         return "WorkloadTask {\n" +
-                "   number                          = '" + number + "\',\n" +
-                "   name                            = '" + name + "\',\n" +
+                "   groupNumber                          = '" + getGroupNumber() + "\',\n" +
+                "   name                            = '" + getName() + "\',\n" +
                 "   version                         = '" + version + "\',\n" +
                 "   scenarioFactory                 = " + scenarioFactory + ",\n" +
                 "   listeners                       = " + listeners + ",\n" +
                 "   collectors                      = " + collectors + ",\n" +
                 "   clockConfiguration              = " + clockConfiguration + ",\n" +
                 "   terminateStrategyConfiguration  = " + terminateStrategyConfiguration + ",\n" +
-                "   parentTaskId                    = '" + parentTaskId + "',\n" +
+                "   parentTaskId                    = '" + getParentTaskId() + "',\n" +
                 "   startDelay                      = '" + startDelay +
                 "'}";
     }
@@ -224,5 +190,4 @@ public class WorkloadTask implements CompositableTask {
     public void setLimits(LimitSet limits) {
         this.limits = limits;
     }
-
 }
