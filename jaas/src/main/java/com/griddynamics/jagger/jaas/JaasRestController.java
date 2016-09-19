@@ -27,7 +27,7 @@ import java.util.Set;
 @RestController
 public class JaasRestController {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(JaasRestController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JaasRestController.class);
 
     @Autowired
     private DataService dataService;
