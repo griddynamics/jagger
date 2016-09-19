@@ -32,6 +32,7 @@
     </appender>
 
     <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.springframework.orm" level="WARN"/>
     <logger name="org.springframework.context.support" level="WARN"/>
@@ -39,6 +40,7 @@
     <logger name="org.apache.hadoop" level="ERROR"/>
 
     <logger name="com.griddynamics.jagger" level="INFO"/>
+    <logger name="com.griddynamics.jagger.jaas" level="DEBUG"/>
     <logger name="com.griddynamics.jagger.invoker.CircularSupplier" level="WARN"/>
     <logger name="com.griddynamics.jagger.invoker.LoadInvocationLogger" level="WARN"/>
     <logger name="com.griddynamics.jagger.storage.rdb.HibernateKeyValueStorage" level="WARN"/>

@@ -20,16 +20,16 @@
 
 package com.griddynamics.jagger.master.configuration;
 
+import com.griddynamics.jagger.engine.e1.scenario.TerminateStrategyConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
+import com.griddynamics.jagger.exception.ConfigurationException;
+import com.griddynamics.jagger.master.CompositeTask;
+import com.griddynamics.jagger.monitoring.MonitoringTask;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.griddynamics.jagger.engine.e1.scenario.WorkloadClockConfiguration;
-import com.griddynamics.jagger.engine.e1.scenario.TerminateStrategyConfiguration;
-import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
-import com.griddynamics.jagger.exception.ConfigurationException;
-import com.griddynamics.jagger.master.CompositableTask;
-import com.griddynamics.jagger.master.CompositeTask;
-import com.griddynamics.jagger.monitoring.MonitoringTask;
 
 import java.util.List;
 import java.util.Set;
@@ -43,13 +43,13 @@ public class WorkloadTasksGenerator {
     public List<Task> generate() {
         validate();
 
-        List<Task> result = Lists.newLinkedList();
+        List<Task> result = Lists.newArrayList();
         int number = 0;
         for (WorkloadClockConfiguration clock : clocks) {
             for (WorkloadTask prototype : prototypes) {
                 for (TerminateStrategyConfiguration termination : terminations) {
                     WorkloadTask workloadTask = prototype.copy();
-                    workloadTask.setNumber(++number);
+                    workloadTask.setGroupNumber(++number);
                     workloadTask.setName(workloadTask.getName() + "---" + stringOf(termination));
                     workloadTask.setTerminateStrategyConfiguration(termination);
                     workloadTask.setClockConfiguration(clock);
@@ -57,8 +57,8 @@ public class WorkloadTasksGenerator {
                     Task task = workloadTask;
                     if (attendantMonitoring != null) {
                         CompositeTask composite = new CompositeTask();
-                        composite.setLeading(ImmutableList.<CompositableTask>of(workloadTask));
-                        composite.setAttendant(ImmutableList.<CompositableTask>of(attendantMonitoring));
+                        composite.setLeading(ImmutableList.of(workloadTask));
+                        composite.setAttendant(ImmutableList.of(attendantMonitoring));
 
                         task = composite;
                     }

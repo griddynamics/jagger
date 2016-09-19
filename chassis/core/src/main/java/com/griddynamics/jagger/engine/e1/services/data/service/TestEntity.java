@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.services.data.service;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.util.Decision;
 
@@ -22,10 +24,14 @@ public class TestEntity {
     private String load;
     private Integer clockValue;
     private String terminationStrategy;
+    @JsonFormat(shape=JsonFormat.Shape.STRING)
     private Date startDate;
+    @JsonFormat(shape=JsonFormat.Shape.STRING)
     private Integer testGroupIndex;
+    private Date endDate;
     private Decision testExecutionStatus;
     private Decision decision;
+    @JsonIgnore
     private TaskDataDto taskDataDto;
 
     /** Get test name in format [test group name] [test name] */
@@ -81,7 +87,15 @@ public class TestEntity {
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
-
+    
+    public Date getEndDate() {
+        return endDate;
+    }
+    
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+    
     /** Get index of test group where this test was executed */
     public Integer getTestGroupIndex() {
         return testGroupIndex;

@@ -34,62 +34,41 @@ import java.util.List;
  *
  * @author Mairbek Khadikov
  */
-public class CompositeTask implements Task {
+public class CompositeTask extends Task {
     private List<CompositableTask> leading;
     private List<CompositableTask> attendant = ImmutableList.of();
     private List<Provider<TestGroupListener>> listeners = ImmutableList.of();
     private List<Provider<TestGroupDecisionMakerListener>> decisionMakerListeners = ImmutableList.of();
-    private int number;
-    private String name;
-
+    
     public List<CompositableTask> getLeading() {
         return leading;
     }
-
-    public List<Provider<TestGroupListener>> getListeners() {
-        return listeners;
-    }
-
-    public void setListeners(List<Provider<TestGroupListener>> listeners) {
-        this.listeners = listeners;
-    }
-
-    public List<Provider<TestGroupDecisionMakerListener>> getDecisionMakerListeners() {
-        return decisionMakerListeners;
-    }
-
-    public void setDecisionMakerListeners(List<Provider<TestGroupDecisionMakerListener>> decisionMakerListeners) {
-        this.decisionMakerListeners = decisionMakerListeners;
-    }
-
+    
     public void setLeading(List<CompositableTask> leading) {
         this.leading = leading;
     }
-
+    
+    public List<Provider<TestGroupListener>> getListeners() {
+        return listeners;
+    }
+    
+    public void setListeners(List<Provider<TestGroupListener>> listeners) {
+        this.listeners = listeners;
+    }
+    
+    public List<Provider<TestGroupDecisionMakerListener>> getDecisionMakerListeners() {
+        return decisionMakerListeners;
+    }
+    
+    public void setDecisionMakerListeners(List<Provider<TestGroupDecisionMakerListener>> decisionMakerListeners) {
+        this.decisionMakerListeners = decisionMakerListeners;
+    }
+    
     public List<CompositableTask> getAttendant() {
         return attendant;
     }
-
+    
     public void setAttendant(List<CompositableTask> attendant) {
         this.attendant = attendant;
-    }
-
-    @Override
-    public String getTaskName() {
-        return name;
-    }
-
-    @Override
-    public int getNumber() {
-        return number;
-    }
-    
-    @Override
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

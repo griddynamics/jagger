@@ -20,23 +20,29 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.*;
-import com.griddynamics.jagger.coordinator.*;
+import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.coordinator.Qualifier;
+import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.master.configuration.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Service;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
-public abstract class AbstractDistributor<T extends Task> implements TaskDistributor<T> {
+public abstract class AbstractDistributor<T extends Task> extends SessionInfoAware implements TaskDistributor<T> {
     private static final Logger log = LoggerFactory.getLogger(AbstractDistributor.class);
 
     @Override
-    public Service distribute(final ExecutorService executor, final String sessionId, final String taskId, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final T task, final DistributionListener listener, NodeContext nodeContext) {
+    public Service distribute(final ExecutorService executor, final Multimap<NodeType, NodeId> availableNodes, final Coordinator coordinator, final T task, final DistributionListener listener, NodeContext nodeContext) {
         Set<Qualifier<?>> qualifiers = getQualifiers();
 
         final Map<NodeId, RemoteExecutor> remotes = Maps.newHashMap();
@@ -57,11 +63,11 @@ public abstract class AbstractDistributor<T extends Task> implements TaskDistrib
             throw new NodeNotFound("Nodes not found to distribute the task");
         }
 
-        final Service service = performDistribution(executor, sessionId, taskId, task, remotes, availableNodes, coordinator, nodeContext);
-        return new ListenableService<T>(service, executor, sessionId, taskId, task, listener, remotes);
+        final Service service = performDistribution(executor, task, remotes, availableNodes, coordinator, nodeContext);
+        return new ListenableService<>(service, executor, task, listener, remotes);
     }
 
     protected abstract Set<Qualifier<?>> getQualifiers();
 
-    protected abstract Service performDistribution(ExecutorService executor, String sessionId, String taskId, T task, Map<NodeId, RemoteExecutor> remotes, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator, NodeContext nodeContext);
+    protected abstract Service performDistribution(ExecutorService executor, T task, Map<NodeId, RemoteExecutor> remotes, Multimap<NodeType, NodeId> availableNodes, Coordinator coordinator, NodeContext nodeContext);
 }

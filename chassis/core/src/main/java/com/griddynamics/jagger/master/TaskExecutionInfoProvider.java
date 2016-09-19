@@ -36,31 +36,15 @@ import java.util.concurrent.ConcurrentMap;
  *         Date: 15.05.13
  */
 
-public class TaskExecutionStatusProvider {
-
-    private static final Logger log = LoggerFactory.getLogger(TaskExecutionStatusProvider.class);
-
-    private final ConcurrentMap<String, TaskData.ExecutionStatus> statusMap = new ConcurrentHashMap<String, TaskData.ExecutionStatus>();
+public class TaskExecutionInfoProvider {
     
-    private final TaskIdProvider taskIdProvider;
+    private static final Logger log = LoggerFactory.getLogger(TaskExecutionInfoProvider.class);
     
-    public TaskExecutionStatusProvider(TaskIdProvider taskIdProvider) {this.taskIdProvider = taskIdProvider;}
+    private final ConcurrentMap<String, TaskData.ExecutionStatus> statusMap = new ConcurrentHashMap<>();
     
-    public TaskData.ExecutionStatus getStatus(final String taskId) {
-        return statusMap.get(taskId);
-    }
-    
-    public TaskData.ExecutionStatus getStatus(final Integer taskId) {
-        return getStatus(taskIdProvider.stringify(taskId));
-    }
-
-    public void setStatus(final String taskId, final TaskData.ExecutionStatus status){
-        statusMap.put(taskId, status);
-    }
-
     public Set<String> getTaskIdsWithStatus(final TaskData.ExecutionStatus status) {
         Preconditions.checkNotNull(status);
-    
+        
         Set<String> ret = Sets.newHashSet();
         for (Map.Entry<String, TaskData.ExecutionStatus> entry : statusMap.entrySet()) {
             if (status.equals(entry.getValue())) {
