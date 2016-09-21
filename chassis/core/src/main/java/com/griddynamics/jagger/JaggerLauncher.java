@@ -20,7 +20,9 @@
 
 package com.griddynamics.jagger;
 
+import com.google.common.collect.Sets;
 import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.data_migaration.DataMigrationService;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.kernel.Kernel;
 import com.griddynamics.jagger.launch.LaunchManager;
@@ -46,17 +48,10 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import com.google.common.collect.Sets;
-
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public final class JaggerLauncher {
@@ -132,7 +127,8 @@ public final class JaggerLauncher {
             launchRdbServer(directory);
         }
         if (rolesSet.contains(Role.MASTER.toString())) {
-            launchMaster(directory);
+            boolean migrateDb = args.length == 2 && args[1].equals("migrateDB") && rolesSet.contains(Role.RDB_SERVER.toString());
+            launchMaster(directory, migrateDb);
         }
         if (rolesSet.contains(Role.KERNEL.toString())) {
             launchKernel(directory);
@@ -147,7 +143,7 @@ public final class JaggerLauncher {
         System.exit(result);
     }
 
-    private static void launchMaster(final URL directory) {
+    private static void launchMaster(final URL directory, final boolean migrateDb) {
         LaunchTask masterTask = new LaunchTask() {
             @Override
             public void run() {
@@ -162,6 +158,16 @@ public final class JaggerLauncher {
                     coordinator.waitForReady();
                     coordinator.initialize();
                     Master master = (Master) context.getBean("master");
+
+                    if (migrateDb) {
+                        try {
+                            DataMigrationService dataMigrationService = (DataMigrationService) context.getBean("dataMigrationService");
+                            dataMigrationService.migrateOldData();
+                        } catch (Exception e) {
+                            log.error("Error occurred during old data migration", e);
+                        }
+                    }
+
                     master.run();
                 } catch (Exception e) {
                     log.error("Error during embedded Jetty handling.", e);

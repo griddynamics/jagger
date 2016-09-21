@@ -94,4 +94,16 @@ public class TaskData {
     public static enum ExecutionStatus {
         SUCCEEDED, FAILED, IN_PROGRESS, QUEUED
     }
+
+    @Override
+    public String toString() {
+        return "TaskData{" +
+                "id=" + id +
+                ", taskId='" + taskId + '\'' +
+                ", sessionId='" + sessionId + '\'' +
+                ", taskName='" + taskName + '\'' +
+                ", number=" + number +
+                ", status=" + status +
+                '}';
+    }
 }

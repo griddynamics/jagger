@@ -75,4 +75,14 @@ public class MetricDescriptionEntity {
         result = 31 * result + (taskData != null ? taskData.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "MetricDescriptionEntity{" +
+                "id=" + id +
+                ", metricId='" + metricId + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", taskData=" + taskData +
+                '}';
+    }
 }

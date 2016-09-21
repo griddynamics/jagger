@@ -79,6 +79,16 @@
         <property name="decisionMakerDistributionListener" ref="decisionMakerDistributionListener"/>
     </bean>
 
+    <bean id="dataMigrationService" class="com.griddynamics.jagger.data_migaration.DataMigrationService">
+        <property name="databaseService" ref="databaseService"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="dataService" ref="defaultDataService"/>
+    </bean>
+
+    <bean id="defaultDataService" class="com.griddynamics.jagger.engine.e1.services.DefaultDataService">
+        <constructor-arg type="com.griddynamics.jagger.dbapi.DatabaseService" ref="databaseService"/>
+    </bean>
+
     <bean id="distributionStartTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${chassis.master.distribution.start}"/>
         <property name="name"  value="chassis.master.distribution.start"/>
