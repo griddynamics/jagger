@@ -17,6 +17,7 @@ import org.apache.commons.collections.MapUtils;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +35,7 @@ import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.STANDARD_ME
 import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
 import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.THROUGHPUT;
 import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.VALIDATOR;
-import static com.griddynamics.jagger.dbapi.util.SessionMatchingSetup.MatchBy.ALL;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.getNewMetricNameForOld;
 import static java.lang.Math.round;
 import static java.lang.String.format;
 import static java.util.Collections.emptySet;
@@ -59,7 +60,7 @@ public class DataMigrationService extends HibernateDaoSupport {
         List<SessionDataDto> sessions = databaseService.getSessionInfoService().getBySessionIds(0, Integer.MAX_VALUE, emptySet());
         Set<String> sessionIds = sessions.stream().map(SessionDataDto::getSessionId).collect(toSet());
 
-        List<TaskDataDto> allTaskData = databaseService.getTaskDataForSessions(sessionIds, new SessionMatchingSetup(false, newHashSet(ALL)));
+        List<TaskDataDto> allTaskData = databaseService.getTaskDataForSessions(sessionIds, new SessionMatchingSetup(false, emptySet()));
         Set<Long> taskIds = allTaskData.stream().map(TaskDataDto::getIds).flatMap(Collection::stream).collect(toSet());
 
         Set<MetricNameDto> metricNames = taskIds.stream().flatMap(taskId -> dataService.getMetrics(taskId).stream())
@@ -70,8 +71,8 @@ public class DataMigrationService extends HibernateDaoSupport {
         Set<MetricNameDto> metricNamesForPlots = metricNames.stream().filter(metricNamesForPlotsPredicate()).collect(toSet());
 
         // Fetch summary and plot data
-        Map<MetricNameDto, SummarySingleDto> summaryByMetricName = databaseService.getSummaryByMetricNameDto(metricNamesForSummaries, false);
-        Map<MetricNameDto, List<PlotSingleDto>> plotDataByMetricName = databaseService.getPlotDataByMetricNameDto(metricNamesForPlots);
+        Map<MetricNameDto, SummarySingleDto> summary = fetchMetricsSummary(metricNamesForSummaries);
+        Map<MetricNameDto, List<PlotSingleDto>> plotData = databaseService.getPlotDataByMetricNameDto(metricNamesForPlots);
 
         // Create MetricDescriptionEntities from metricNames and persist them
         Map<MetricNameDto, MetricDescriptionEntity> createdMetricDescriptions = createMetricDescriptions(metricNames);
@@ -80,10 +81,10 @@ public class DataMigrationService extends HibernateDaoSupport {
         // This fetch is needed because metric descriptions are linked with plot and summary data by id
         Map<MetricNameDto, MetricDescriptionEntity> persistedMetricDescriptions = fetchMetricDescriptions(metricNames);
 
-        Set<MetricPointEntity> metricPointEntities = createMetricPoints(plotDataByMetricName, persistedMetricDescriptions);
+        Set<MetricPointEntity> metricPointEntities = createMetricPoints(plotData, persistedMetricDescriptions);
         persistMetricPoints(metricPointEntities);
 
-        Set<MetricSummaryEntity> metricSummaryEntities = createMetricSummaries(summaryByMetricName, persistedMetricDescriptions);
+        Set<MetricSummaryEntity> metricSummaryEntities = createMetricSummaries(summary, persistedMetricDescriptions);
         persistMetricSummaries(metricSummaryEntities);
     }
 
@@ -107,6 +108,19 @@ public class DataMigrationService extends HibernateDaoSupport {
                 name.getOrigin() == TEST_GROUP_METRIC;
     }
 
+    private Map<MetricNameDto, SummarySingleDto> fetchMetricsSummary(Set<MetricNameDto> metricNamesForSummaries) {
+        Map<MetricNameDto, SummarySingleDto> summary = new HashMap<>();
+        for (MetricNameDto metricNamesForSummary : metricNamesForSummaries) {
+            try {
+                Map<MetricNameDto, SummarySingleDto> summaryByMetricName = databaseService.getSummaryByMetricNameDto(newHashSet(metricNamesForSummary), false);
+                summary.putAll(summaryByMetricName);
+            } catch (RuntimeException e) {
+                logger.error(e);
+            }
+        }
+        return summary;
+    }
+
     private Map<MetricNameDto, MetricDescriptionEntity> createMetricDescriptions(Set<MetricNameDto> metricNames) {
         return metricNames.stream().collect(toMap(identity(), this::mapToMetricDescription));
     }
@@ -118,7 +132,7 @@ public class DataMigrationService extends HibernateDaoSupport {
     private MetricDescriptionEntity mapToMetricDescription(MetricNameDto metricNameDto) {
         MetricDescriptionEntity descriptionEntity = new MetricDescriptionEntity();
         descriptionEntity.setDisplayName(metricNameDto.getMetricDisplayName());
-        descriptionEntity.setMetricId(metricNameDto.getMetricName());
+        descriptionEntity.setMetricId(getNewMetricNameForOld(metricNameDto.getMetricName()));
         descriptionEntity.setTaskData(fetchTaskData(metricNameDto.getTest()));
         return descriptionEntity;
     }
