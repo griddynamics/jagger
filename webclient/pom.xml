@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webclient</artifactId>
@@ -17,7 +18,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.6.1</slf4j.version>
-        <gwt.version>2.5.1</gwt.version>
+        <gxt.version>3.0.1</gxt.version>
+        <log4j.version>1.2.16</log4j.version>
+        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+        <jstl.version>1.2</jstl.version>
+        <el.api.version>1.0</el.api.version>
+        <gflot.version>3.2.1</gflot.version>
+        <gwt.sl.version>0.1.5</gwt.sl.version>
+        <maven.war.plugin.version>3.0.0</maven.war.plugin.version>
+        <tomcat7.plugin.version>2.1</tomcat7.plugin.version>
     </properties>
 
     <dependencies>
@@ -29,22 +38,16 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-user</artifactId>
-            <version>${gwt.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.sencha.gxt</groupId>
             <artifactId>gxt</artifactId>
-            <version>3.0.1</version>
+            <version>${gxt.version}</version>
         </dependency>
 
         <!--Logging-->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -57,30 +60,30 @@
             <version>${slf4j.version}</version>
         </dependency>
 
-        <!--Servlets API-->
+        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <version>${jstl.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>el-api</artifactId>
-            <version>1.0</version>
+            <version>${el.api.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.googlecode.gflot</groupId>
             <artifactId>gflot</artifactId>
-            <version>3.2.1</version>
+            <version>${gflot.version}</version>
         </dependency>
 
         <!--Spring Framework-->
@@ -101,7 +104,7 @@
         <dependency>
             <groupId>net.sf.gwt-widget</groupId>
             <artifactId>gwt-sl</artifactId>
-            <version>0.1.5</version>
+            <version>${gwt.sl.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -219,7 +222,7 @@
 
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven.war.plugin.version}</version>
                 <configuration>
                     <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
                     <webResources>
@@ -243,7 +246,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>${gwt.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.google.gwt</groupId>
@@ -281,29 +284,27 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<artifactId>maven-resources-plugin</artifactId>-->
-                <!--<version>2.5</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-reporting-config</id>-->
-                        <!--<phase>generate-resources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<outputDirectory>${build.directory}/${build.finalName}/WEB-INF/classes/spring</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--<resource>-->
-                                    <!--<directory>../chassis/configuration/configuration/reporter</directory>-->
-                                    <!--<filtering>false</filtering>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>${tomcat7.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>tomcat-run</id>
+                        <goals>
+                            <goal>exec-war-only</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <path>/</path>
+                            <enableNaming>false</enableNaming>
+                            <finalName>jagger-${build.finalName}.jar</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+
         <outputDirectory>${build.directory}/${build.finalName}/WEB-INF/classes</outputDirectory>
-</build>
+    </build>
 </project>
