@@ -4,9 +4,18 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * Created by aantonenko on 9/27/16.
+ * An object that represents HTTP-endpoint. It consists of {@link JHttpEndpoint#protocol},
+ * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields. <p>
+ *
+ * @author Anton Antonenko
+ * @since 1.2.7
  */
-public class JHttpEndpoint  {
+@SuppressWarnings("unused")
+public class JHttpEndpoint {
+
+    /**
+     * Enum representing HTTP and HTTPS protocols
+     */
     public enum Protocol {
         HTTP, HTTPS
     }
@@ -39,10 +48,19 @@ public class JHttpEndpoint  {
         this.port = port;
     }
 
+    /**
+     * @return {@link URI} based on {@link JHttpEndpoint#protocol},
+     * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields values.
+     */
     public URI getURI() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * @param queryParams query parameters to be added to URI
+     * @return {@link URI} based on {@link JHttpEndpoint#protocol},
+     * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields values with <b>queryParams</b> added.
+     */
     public URI getURI(Map<String, String> queryParams) {
         throw new UnsupportedOperationException();
     }

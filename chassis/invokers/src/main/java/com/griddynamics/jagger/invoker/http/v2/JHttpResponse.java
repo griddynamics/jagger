@@ -8,7 +8,11 @@ import java.util.Map;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * Created by aantonenko on 9/27/16.
+ * An object that represents HTTP-response. It consists of {@link JHttpResponse#status},
+ * {@link JHttpResponse#body} and {@link JHttpResponse#headers} fields. <p>
+ *
+ * @author Anton Antonenko
+ * @since 1.2.7
  */
 public class JHttpResponse<T> {
 
