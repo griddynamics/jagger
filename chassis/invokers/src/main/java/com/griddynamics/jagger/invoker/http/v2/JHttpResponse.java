@@ -49,4 +49,13 @@ public class JHttpResponse<T> {
                 .map(cookieStr -> cookieStr.split("="))
                 .collect(toMap(cookieArr -> cookieArr[0], cookieArr -> cookieArr[1]));
     }
+
+    @Override
+    public String toString() {
+        return "JHttpResponse{" +
+                "status=" + status +
+                ", body=" + body +
+                ", headers=" + headers +
+                '}';
+    }
 }

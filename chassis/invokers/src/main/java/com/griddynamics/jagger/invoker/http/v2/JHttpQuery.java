@@ -354,6 +354,17 @@ public class JHttpQuery<T> implements Serializable {
         return clientParams;
     }
 
+    @Override
+    public String toString() {
+        return "JHttpQuery{" +
+                "method=" + method +
+                ", headers=" + headers +
+                ", body=" + body +
+                ", queryParams=" + queryParams +
+                ", clientParams=" + clientParams +
+                '}';
+    }
+
     private void initHeadersIfNull() {
         if (this.headers == null)
             this.headers = new HttpHeaders();

@@ -102,4 +102,13 @@ public class JHttpEndpoint {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public String toString() {
+        return "JHttpEndpoint{" +
+                "protocol=" + protocol +
+                ", hostname='" + hostname + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

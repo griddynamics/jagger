@@ -6,6 +6,8 @@ import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.http.ApacheAbstractHttpInvoker;
 import com.griddynamics.jagger.invoker.http.HttpInvoker;
 
+import static java.lang.String.format;
+
 /**
  * An object that represents abstract HTTP-invoker that invokes services of SuT via http protocol. <p>
  * Extending classes should provide its own implementation of
@@ -43,7 +45,11 @@ public abstract class AbstractHttpInvoker<HTTP_CLIENT extends JHttpClient> imple
     public JHttpResponse invoke(JHttpQuery query, JHttpEndpoint endpoint) throws InvocationException {
         Preconditions.checkNotNull(query, "JHttpQuery is null!");
         Preconditions.checkNotNull(endpoint, "JHttpEndpoint is null!");
-        return httpClient.execute(endpoint, query);
+        try {
+            return httpClient.execute(endpoint, query);
+        } catch (Exception e) {
+            throw new InvocationException(format("Exception occurred during execution of query %s to endpoint %s.", query, endpoint), e);
+        }
     }
 
     public HTTP_CLIENT getHttpClient() {
