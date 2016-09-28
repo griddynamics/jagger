@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
+
+    <!--This xml file will contain bean declaration of custom providers:-->
+    <!--endpoint and query providers-->
+    <!--Usually endpoints and queries are not hardcoded, but loaded at runtime f.e. from CSV-->
+
+    <bean id="queryProvider_SessionsList" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_SessionsList"/>
+    <bean id="queryProvider_SessionIds" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_SessionIds"/>
+
+</beans>
