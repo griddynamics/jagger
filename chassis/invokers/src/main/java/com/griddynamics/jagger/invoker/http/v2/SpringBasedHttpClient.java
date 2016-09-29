@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.griddynamics.jagger.invoker.http.v2.DefaultJHttpClient.JSpringBasedHttpClientParameters.DEFAULT_URI_VARIABLES;
-import static com.griddynamics.jagger.invoker.http.v2.DefaultJHttpClient.JSpringBasedHttpClientParameters.ERROR_HANDLER;
-import static com.griddynamics.jagger.invoker.http.v2.DefaultJHttpClient.JSpringBasedHttpClientParameters.INTERCEPTORS;
-import static com.griddynamics.jagger.invoker.http.v2.DefaultJHttpClient.JSpringBasedHttpClientParameters.MESSAGE_CONVERTERS;
-import static com.griddynamics.jagger.invoker.http.v2.DefaultJHttpClient.JSpringBasedHttpClientParameters.REQUEST_FACTORY;
-import static com.griddynamics.jagger.invoker.http.v2.DefaultJHttpClient.JSpringBasedHttpClientParameters.URI_TEMPLATE_HANDLER;
+import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.DEFAULT_URI_VARIABLES;
+import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.ERROR_HANDLER;
+import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.INTERCEPTORS;
+import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.MESSAGE_CONVERTERS;
+import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.REQUEST_FACTORY;
+import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.URI_TEMPLATE_HANDLER;
 import static java.lang.String.format;
 
 /**
@@ -31,7 +31,7 @@ import static java.lang.String.format;
  * @since 1.3
  */
 @SuppressWarnings({"unused", "unchecked"})
-public class DefaultJHttpClient implements JHttpClient {
+public class SpringBasedHttpClient implements JHttpClient {
 
     /**
      * values: {@link JSpringBasedHttpClientParameters#DEFAULT_URI_VARIABLES}, {@link JSpringBasedHttpClientParameters#ERROR_HANDLER},
@@ -59,7 +59,7 @@ public class DefaultJHttpClient implements JHttpClient {
 
     /**
      * This field is a container for {@link RestTemplate} parameters which can be passed by the
-     * {@link DefaultJHttpClient#DefaultJHttpClient(Map)} constructor or by {@link JHttpQuery#clientParams} property.<p>
+     * {@link SpringBasedHttpClient#SpringBasedHttpClient(Map)} constructor or by {@link JHttpQuery#clientParams} property.<p>
      * Client parameters of query {@link JHttpQuery#clientParams} will override the same parameters of <b>clientParams</b> field
      * for the time of execution of this query.
      * <p><p>
@@ -75,7 +75,7 @@ public class DefaultJHttpClient implements JHttpClient {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    public DefaultJHttpClient(Map<String, Object> clientParams) {
+    public SpringBasedHttpClient(Map<String, Object> clientParams) {
         this.clientParams = clientParams;
     }
 

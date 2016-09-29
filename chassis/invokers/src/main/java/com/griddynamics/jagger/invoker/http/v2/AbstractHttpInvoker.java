@@ -1,12 +1,9 @@
 package com.griddynamics.jagger.invoker.http.v2;
 
-import com.google.common.base.Preconditions;
 import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.http.ApacheAbstractHttpInvoker;
 import com.griddynamics.jagger.invoker.http.HttpInvoker;
-
-import static java.lang.String.format;
 
 /**
  * An object that represents abstract HTTP-invoker that invokes services of SuT via http protocol. <p>
@@ -27,14 +24,15 @@ public abstract class AbstractHttpInvoker<HTTP_CLIENT extends JHttpClient> imple
     /**
      * {@link JHttpClient} implementation to be used by invoker
      */
-    private HTTP_CLIENT httpClient;
+    protected HTTP_CLIENT httpClient;
 
     public AbstractHttpInvoker(HTTP_CLIENT httpClient) {
         this.httpClient = httpClient;
     }
 
     /**
-     * Performs HTTP <b>query</b> to the <b>endpoint</b> using {@link HTTP_CLIENT httpClient}.
+     * Performs HTTP <b>query</b> to the <b>endpoint</b> using {@link HTTP_CLIENT httpClient}. <p>
+     * This method must be implemented by extending classed.
      *
      * @param endpoint {@link JHttpEndpoint} to which query must be performed
      * @param query    {@link JHttpQuery} to perform
@@ -42,15 +40,7 @@ public abstract class AbstractHttpInvoker<HTTP_CLIENT extends JHttpClient> imple
      * @throws InvocationException thrown if invocation failed
      */
     @Override
-    public JHttpResponse invoke(JHttpQuery query, JHttpEndpoint endpoint) throws InvocationException {
-        Preconditions.checkNotNull(query, "JHttpQuery is null!");
-        Preconditions.checkNotNull(endpoint, "JHttpEndpoint is null!");
-        try {
-            return httpClient.execute(endpoint, query);
-        } catch (Exception e) {
-            throw new InvocationException(format("Exception occurred during execution of query %s to endpoint %s.", query, endpoint), e);
-        }
-    }
+    public abstract JHttpResponse invoke(JHttpQuery query, JHttpEndpoint endpoint) throws InvocationException;
 
     public HTTP_CLIENT getHttpClient() {
         return httpClient;
