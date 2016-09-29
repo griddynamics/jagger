@@ -11,6 +11,10 @@ import static java.lang.String.format;
 @SuppressWarnings("unused")
 public class DefaultHttpInvoker extends AbstractHttpInvoker {
 
+    public DefaultHttpInvoker() {
+        super(new SpringBasedHttpClient());
+    }
+
     public DefaultHttpInvoker(JHttpClient httpClient) {
         super(httpClient);
     }

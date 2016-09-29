@@ -31,8 +31,8 @@ public abstract class AbstractHttpInvoker<HTTP_CLIENT extends JHttpClient> imple
     }
 
     /**
-     * Performs HTTP <b>query</b> to the <b>endpoint</b> using {@link HTTP_CLIENT httpClient}. <p>
-     * This method must be implemented by extending classed.
+     * This method must be implemented by extending classed. <p>
+     * It must perform HTTP <b>query</b> to the <b>endpoint</b> using {@link HTTP_CLIENT httpClient}.
      *
      * @param endpoint {@link JHttpEndpoint} to which query must be performed
      * @param query    {@link JHttpQuery} to perform

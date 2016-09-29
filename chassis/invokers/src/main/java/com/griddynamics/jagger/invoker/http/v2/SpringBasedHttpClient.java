@@ -75,6 +75,8 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     private RestTemplate restTemplate = new RestTemplate();
 
+    public SpringBasedHttpClient() { }
+
     public SpringBasedHttpClient(Map<String, Object> clientParams) {
         this.clientParams = clientParams;
     }
@@ -89,6 +91,14 @@ public class SpringBasedHttpClient implements JHttpClient {
 
         restoreDefaultRestTemplateParams();
         return mapToJHttpResponse(responseEntity);
+    }
+
+    public Map<String, Object> getClientParams() {
+        return clientParams;
+    }
+
+    public void setClientParams(Map<String, Object> clientParams) {
+        this.clientParams = clientParams;
     }
 
     private void setRestTemplateParamsForQuery(JHttpQuery query) {
