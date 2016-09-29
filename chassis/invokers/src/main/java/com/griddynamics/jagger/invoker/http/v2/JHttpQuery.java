@@ -35,7 +35,7 @@ import java.util.Map;
  *    .clientParam("client param", new Object())
  *    .body(42);
  * }</pre>
- * @since 1.2.7
+ * @since 1.3
  */
 @SuppressWarnings("unused")
 public class JHttpQuery<T> implements Serializable {

@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toMap;
  * {@link JHttpResponse#body} and {@link JHttpResponse#headers} fields. <p>
  *
  * @author Anton Antonenko
- * @since 1.2.7
+ * @since 1.3
  */
 public class JHttpResponse<T> {
 

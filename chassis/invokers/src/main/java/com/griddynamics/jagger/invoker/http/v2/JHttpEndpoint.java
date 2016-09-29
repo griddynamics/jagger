@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.invoker.http.v2;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -7,12 +8,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTP;
+import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTPS;
+import static java.lang.String.format;
+
 /**
  * An object that represents HTTP-endpoint. It consists of {@link JHttpEndpoint#protocol},
  * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields. <p>
  *
  * @author Anton Antonenko
- * @since 1.2.7
+ * @since 1.3
  */
 @SuppressWarnings("unused")
 public class JHttpEndpoint {
@@ -30,9 +35,21 @@ public class JHttpEndpoint {
         }
     }
 
-    private Protocol protocol = Protocol.HTTP;
+    private Protocol protocol = HTTP;
     private String hostname;
-    private int port;
+    private int port = 80;
+
+    public JHttpEndpoint(URI uri) {
+        if (StringUtils.startsWith(uri.getPath().toLowerCase(), HTTP.value))
+            this.protocol = HTTP;
+        else if (StringUtils.startsWith(uri.getPath().toLowerCase(), HTTPS.value))
+            this.protocol = HTTPS;
+        else
+            throw new IllegalArgumentException(format("Protocol of uri '%s' is unsupported!", uri));
+
+        this.hostname = uri.getHost();
+        this.port = uri.getPort();
+    }
 
     public Protocol getProtocol() {
         return protocol;
@@ -63,7 +80,15 @@ public class JHttpEndpoint {
      * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields values.
      */
     public URI getURI() {
-        return URI.create(String.format("%s://%s:%s", protocol.value, hostname, port));
+        Preconditions.checkNotNull(hostname, "Hostname is null!");
+
+        if (protocol.value == null){
+            protocol = HTTP;
+        }
+        if (port == 80) {
+            return URI.create(format("%s://%s", protocol.value, hostname));
+        }
+        return URI.create(format("%s://%s:%s", protocol.value, hostname, port));
     }
 
     /**

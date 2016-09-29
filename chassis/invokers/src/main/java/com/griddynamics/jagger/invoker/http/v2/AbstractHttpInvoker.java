@@ -19,7 +19,7 @@ import static java.lang.String.format;
  * @see Invoker
  * @see ApacheAbstractHttpInvoker
  * @see HttpInvoker
- * @since 1.2.7
+ * @since 1.3
  */
 @SuppressWarnings("unused")
 public abstract class AbstractHttpInvoker<HTTP_CLIENT extends JHttpClient> implements Invoker<JHttpQuery, JHttpResponse, JHttpEndpoint> {
