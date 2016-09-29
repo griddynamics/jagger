@@ -1,9 +1,13 @@
 package com.griddynamics.jagger.invoker.http.v2;
 
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTPS;
 import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.DEFAULT_URI_VARIABLES;
 import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.ERROR_HANDLER;
 import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.INTERCEPTORS;
@@ -86,19 +91,15 @@ public class SpringBasedHttpClient implements JHttpClient {
         setRestTemplateParamsForQuery(query);
         URI endpointURI = endpoint.getURI(query.getQueryParams());
 
+        if (endpoint.getProtocol() == HTTPS) {
+            restTemplate.setRequestFactory(getSslAllTrustRequestFactory());
+        }
+
         RequestEntity requestEntity = mapToRequestEntity(query, endpointURI);
         ResponseEntity responseEntity = restTemplate.exchange(endpointURI, query.getMethod(), requestEntity, Object.class);
 
         restoreDefaultRestTemplateParams();
         return mapToJHttpResponse(responseEntity);
-    }
-
-    public Map<String, Object> getClientParams() {
-        return clientParams;
-    }
-
-    public void setClientParams(Map<String, Object> clientParams) {
-        this.clientParams = clientParams;
     }
 
     private void setRestTemplateParamsForQuery(JHttpQuery query) {
@@ -131,6 +132,13 @@ public class SpringBasedHttpClient implements JHttpClient {
         });
     }
 
+    private HttpComponentsClientHttpRequestFactory getSslAllTrustRequestFactory() {
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+        requestFactory.setHttpClient(httpClient);
+        return requestFactory;
+    }
+
     private <T> RequestEntity<T> mapToRequestEntity(JHttpQuery<T> query, URI endpointURI) {
         return new RequestEntity<>(query.getBody(), query.getHeaders(), query.getMethod(), endpointURI);
     }
@@ -141,5 +149,13 @@ public class SpringBasedHttpClient implements JHttpClient {
         jHttpResponse.setBody(responseEntity.getBody());
         jHttpResponse.setStatus(responseEntity.getStatusCode());
         return jHttpResponse;
+    }
+
+    public Map<String, Object> getClientParams() {
+        return clientParams;
+    }
+
+    public void setClientParams(Map<String, Object> clientParams) {
+        this.clientParams = clientParams;
     }
 }
