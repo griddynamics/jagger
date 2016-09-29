@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.invoker.http.HttpResponse;
-import com.griddynamics.jagger.test.jaas.util.Helper;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -47,8 +46,7 @@ public class SessionResponseContentValidator<E> extends SessionsListResponseCont
             String[] queryParts = query.getURI().toString().split("/"); //Get SessionId from the query path.
             SessionEntity expectedSession = TestContext.getSession(queryParts[queryParts.length - 1]);
 
-            String commentOnFail = String.format("\n Expected %s \n Actual %s", String.valueOf(expectedSession), String.valueOf(actualSession));
-            Assert.assertTrue("Expected and actual session are not equal." + commentOnFail, Helper.areSessionEntitiesEqual(expectedSession, actualSession));
+            Assert.assertEquals("Expected and actual session are not equal.", expectedSession, actualSession);
         } catch (AssertionFailedError e) {
             isValid = false;
             log.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());

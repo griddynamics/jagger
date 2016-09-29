@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.invoker.http.HttpResponse;
-import com.griddynamics.jagger.test.jaas.util.Helper;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
 import com.jayway.jsonpath.Filter;
 import junit.framework.Assert;
@@ -57,14 +56,13 @@ public class SessionsListResponseContentValidator<E> extends BaseHttpResponseVal
             Assert.assertEquals("Response contains duplicate session records", actlSize, noDuplicatesActualList.size());
             //TODO: Wait for JFG-908 to be resolved and un-comment/re-factor.
  //           Assert.assertTrue(String.format("Actual list(%d) is longer than expected one(%d).", actlSize, expctdSize), actlSize <= expctdSize);
-//            Assert.assertTrue("Actual list is not a sub-set of expected set.", actualSessions.containsAll(TestContext.getSessions()));
+            // Re-factor one JFG-908 is resolved.
+            Assert.assertTrue("Actual list is not a sub-set of expected set.", actualSessions.containsAll(TestContext.getSessions()));
 
             SessionEntity randomActualEntity = actualSessions.get((new Random().nextInt(actlSize-1)));
             SessionEntity correspondingExpectedSession = TestContext.getSession(randomActualEntity.getId());
-            String commentOnFail = String.format("\n Expected %s \n Actual %s", String.valueOf(correspondingExpectedSession), String.valueOf(randomActualEntity));
 
-            Assert.assertTrue("Expected and actual sessions are not equal." + commentOnFail,
-                    Helper.areSessionEntitiesEqual(correspondingExpectedSession, randomActualEntity));
+            Assert.assertEquals("Expected and actual sessions are not equal.", correspondingExpectedSession, randomActualEntity);
         } catch (AssertionFailedError e) {
             isValid = false;
             log.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());
