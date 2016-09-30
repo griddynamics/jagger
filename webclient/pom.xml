@@ -297,8 +297,7 @@
                         <phase>package</phase>
                         <configuration>
                             <path>/</path>
-                            <enableNaming>false</enableNaming>
-                            <finalName>jagger-${build.finalName}.jar</finalName>
+                            <attachArtifactClassifier>war-exec</attachArtifactClassifier>
                         </configuration>
                     </execution>
                 </executions>

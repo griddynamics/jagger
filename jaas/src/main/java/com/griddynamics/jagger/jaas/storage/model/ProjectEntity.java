@@ -1,12 +1,13 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-/**
- * @author asokol
- *         created 9/28/16
- */
 @Entity
 public class ProjectEntity {
 
@@ -14,17 +15,14 @@ public class ProjectEntity {
     @Id
     private Long id;
 
-    @Column
     private String description;
 
     @NotNull
     @Column(nullable = false)
     private String zipPath;
 
-    @Column
     private Long dbId;
 
-    @Column
     private String version;
 
     public Long getId() {
@@ -69,12 +67,12 @@ public class ProjectEntity {
 
     @Override
     public String toString() {
-        return "ProjectEntity{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", zipPath='" + zipPath + '\'' +
-                ", dbId=" + dbId +
-                ", version='" + version + '\'' +
-                '}';
+        return "ProjectEntity{"
+                + "id=" + id
+                + ", description='" + description + '\''
+                + ", zipPath='" + zipPath + '\''
+                + ", dbId=" + dbId
+                + ", version='" + version + '\''
+                + '}';
     }
 }
