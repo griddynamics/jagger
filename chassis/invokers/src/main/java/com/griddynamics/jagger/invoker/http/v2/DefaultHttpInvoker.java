@@ -5,8 +5,15 @@ import com.griddynamics.jagger.invoker.InvocationException;
 
 import static java.lang.String.format;
 
+
 /**
- * Created by aantonenko on 9/29/16.
+ * Default HTTP-invoker that invokes services of SuT via http(s) protocol. <p>
+ * By default as HTTP-client {@link SpringBasedHttpClient} is used here, but it can be updated with {@link DefaultHttpInvoker#DefaultHttpInvoker}
+ * constructor.
+ *
+ * @author Anton Antonenko
+ * @see AbstractHttpInvoker
+ * @since 1.3
  */
 @SuppressWarnings("unused")
 public class DefaultHttpInvoker extends AbstractHttpInvoker {

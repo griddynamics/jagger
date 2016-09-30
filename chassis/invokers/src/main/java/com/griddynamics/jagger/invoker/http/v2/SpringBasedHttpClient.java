@@ -64,9 +64,7 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     /**
      * This field is a container for {@link RestTemplate} parameters which can be passed by the
-     * {@link SpringBasedHttpClient#SpringBasedHttpClient(Map)} constructor or by {@link JHttpQuery#clientParams} property.<p>
-     * Client parameters of query {@link JHttpQuery#clientParams} will override the same parameters of <b>clientParams</b> field
-     * for the time of execution of this query.
+     * {@link SpringBasedHttpClient#SpringBasedHttpClient(Map)} constructor or by {@link SpringBasedHttpClient#setClientParams(Map)} setter.<p>
      * <p><p>
      * The list of client params (look at {@link JSpringBasedHttpClientParameters}): <p>
      * - {@code Map<String, ?> defaultUriVariables} (look at {@link RestTemplate#setDefaultUriVariables(Map)}) <p>
@@ -80,15 +78,19 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    public SpringBasedHttpClient() { }
+    public SpringBasedHttpClient() {
+        clientParams = new HashMap<>();
+        restTemplate = new RestTemplate();
+    }
 
     public SpringBasedHttpClient(Map<String, Object> clientParams) {
         this.clientParams = clientParams;
+        restTemplate = new RestTemplate();
+        setRestTemplateParams(this.clientParams);
     }
 
     @Override
     public JHttpResponse execute(JHttpEndpoint endpoint, JHttpQuery query) {
-        setRestTemplateParamsForQuery(query);
         URI endpointURI = endpoint.getURI(query.getQueryParams());
 
         if (endpoint.getProtocol() == HTTPS) {
@@ -98,18 +100,7 @@ public class SpringBasedHttpClient implements JHttpClient {
         RequestEntity requestEntity = mapToRequestEntity(query, endpointURI);
         ResponseEntity responseEntity = restTemplate.exchange(endpointURI, query.getMethod(), requestEntity, Object.class);
 
-        restoreDefaultRestTemplateParams();
         return mapToJHttpResponse(responseEntity);
-    }
-
-    private void setRestTemplateParamsForQuery(JHttpQuery query) {
-        Map<String, Object> queryClientParams = new HashMap<>(query.getClientParams());
-        clientParams.entrySet().forEach(entry -> queryClientParams.putIfAbsent(entry.getKey(), entry.getValue()));
-        setRestTemplateParams(queryClientParams);
-    }
-
-    private void restoreDefaultRestTemplateParams() {
-        setRestTemplateParams(this.clientParams);
     }
 
     private void setRestTemplateParams(Map<String, Object> clientParams) {

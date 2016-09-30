@@ -2,15 +2,18 @@ package com.griddynamics.jagger.invoker.http.v2;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTP;
 import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTPS;
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.springframework.web.util.UriComponentsBuilder.newInstance;
 
 /**
  * An object that represents HTTP-endpoint. It consists of {@link JHttpEndpoint#protocol},
@@ -26,13 +29,7 @@ public class JHttpEndpoint {
      * Enum representing HTTP and HTTPS protocols
      */
     public enum Protocol {
-        HTTP("http"), HTTPS("https");
-
-        private String value;
-
-        Protocol(String value) {
-            this.value = value;
-        }
+        HTTP, HTTPS
     }
 
     private Protocol protocol = HTTP;
@@ -40,9 +37,9 @@ public class JHttpEndpoint {
     private int port = 80;
 
     public JHttpEndpoint(URI uri) {
-        if (StringUtils.startsWith(uri.getPath().toLowerCase(), HTTP.value))
+        if (equalsIgnoreCase(uri.getScheme(), HTTP.name()))
             this.protocol = HTTP;
-        else if (StringUtils.startsWith(uri.getPath().toLowerCase(), HTTPS.value))
+        else if (equalsIgnoreCase(uri.getScheme(), HTTPS.name()))
             this.protocol = HTTPS;
         else
             throw new IllegalArgumentException(format("Protocol of uri '%s' is unsupported!", uri));
@@ -55,24 +52,12 @@ public class JHttpEndpoint {
         return protocol;
     }
 
-    public void setProtocol(Protocol protocol) {
-        this.protocol = protocol;
-    }
-
     public String getHostname() {
         return hostname;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
-
     public int getPort() {
         return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     /**
@@ -82,13 +67,13 @@ public class JHttpEndpoint {
     public URI getURI() {
         Preconditions.checkNotNull(hostname, "Hostname is null!");
 
-        if (protocol.value == null){
+        if (protocol == null) {
             protocol = HTTP;
         }
         if (port == 80) {
-            return URI.create(format("%s://%s", protocol.value, hostname));
+            return newInstance().scheme(protocol.name().toLowerCase()).host(hostname).build().toUri();
         }
-        return URI.create(format("%s://%s:%s", protocol.value, hostname, port));
+        return newInstance().scheme(protocol.name().toLowerCase()).host(hostname).port(port).build().toUri();
     }
 
     /**
@@ -105,27 +90,15 @@ public class JHttpEndpoint {
     }
 
     /**
-     * @param oldUri base {@link URI}
+     * @param oldUri      base {@link URI}
      * @param queryParams query parameters to be added to {@link URI}
      * @return {@link URI} based on oldUri with <b>queryParams</b> added.
      */
     public static URI appendParameters(URI oldUri, Map<String, String> queryParams) {
-        String newQuery = oldUri.getQuery();
-        String appendQuery = queryParams.entrySet().stream()
-                .map(param -> param.getKey() + "=" + param.getValue())
-                .reduce("", (a, b) -> a + "&" + b);
+        MultiValueMap<String, String> localQueryParams = new LinkedMultiValueMap<>();
+        queryParams.entrySet().forEach(entry -> localQueryParams.add(entry.getKey(), entry.getValue()));
 
-        if (newQuery == null) {
-            newQuery = StringUtils.removeStart(appendQuery, "&");
-        } else {
-            newQuery += appendQuery;
-        }
-
-        try {
-            return new URI(oldUri.getScheme(), oldUri.getAuthority(), oldUri.getPath(), newQuery, oldUri.getFragment());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        return UriComponentsBuilder.fromUri(oldUri).queryParams(localQueryParams).build().toUri();
     }
 
     @Override

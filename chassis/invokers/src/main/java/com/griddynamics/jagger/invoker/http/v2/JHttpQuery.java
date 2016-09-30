@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * An object that represents HTTP-request. It consists of {@link JHttpQuery#method},
- * {@link JHttpQuery#headers}, {@link JHttpQuery#body}, {@link JHttpQuery#queryParams} and {@link JHttpQuery#clientParams} fields.
+ * {@link JHttpQuery#headers}, {@link JHttpQuery#body} and {@link JHttpQuery#queryParams} fields.
  * <p>
  * It contains methods which makes query construction concise and easy to read.
  *
@@ -44,7 +44,6 @@ public class JHttpQuery<T> implements Serializable {
     private HttpHeaders headers;
     private T body;
     private Map<String, String> queryParams;
-    private Map<String, Object> clientParams;
 
     /**
      * Sets parameter {@link HttpMethod method} to {@link JHttpQuery#method} field. <p>
@@ -299,41 +298,6 @@ public class JHttpQuery<T> implements Serializable {
         return this;
     }
 
-    /**
-     * Sets parameter {@link Map clientParams} to {@link JHttpQuery#clientParams} field.
-     *
-     * @param clientParams {@link Map} with HTTP-client parameters to be added to query
-     * @return this
-     * @apiNote Usage:
-     * <pre>{@code
-     * Map<String, String> clientParams = new HashMap<>();
-     * clientParams.put("page", "1");
-     * clientParams.put("sort", "asc");
-     *
-     * JHttpQuery httpQuery = new JHttpQuery().clientParams(clientParams);
-     * }</pre>
-     */
-    public JHttpQuery<T> clientParams(Map<String, Object> clientParams) {
-        this.clientParams = clientParams;
-        return this;
-    }
-
-    /**
-     * Adds HTTP-client parameter "paramName=paramValue" to {@link JHttpQuery#clientParams} field.
-     *
-     * @return this
-     * @apiNote Usage:
-     * <pre>{@code
-     * JHttpQuery httpQuery = new JHttpQuery().clientParam("parameter","value");
-     * }</pre>
-     */
-    public JHttpQuery<T> clientParam(String paramName, Object paramValue) {
-        if (clientParams == null)
-            this.clientParams = new HashMap<>();
-        this.clientParams.put(paramName, paramValue);
-        return this;
-    }
-
     public HttpMethod getMethod() {
         return method;
     }
@@ -350,9 +314,6 @@ public class JHttpQuery<T> implements Serializable {
         return queryParams;
     }
 
-    public Map<String, Object> getClientParams() {
-        return clientParams;
-    }
 
     @Override
     public String toString() {
@@ -361,7 +322,6 @@ public class JHttpQuery<T> implements Serializable {
                 ", headers=" + headers +
                 ", body=" + body +
                 ", queryParams=" + queryParams +
-                ", clientParams=" + clientParams +
                 '}';
     }
 
