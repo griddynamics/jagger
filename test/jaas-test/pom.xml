@@ -10,6 +10,7 @@
 
     <properties>
         <spring.version>3.1.4.RELEASE</spring.version>
+        <!-- TODO: Switch to SNAPSHOT once JFG-884 is resolved. -->
         <jagger.version>1.2.6-m2</jagger.version>
     </properties>
 

@@ -21,7 +21,7 @@ import java.util.Map;
  * - actual session record is the same as expected one.
  */
 public class SessionResponseContentValidator<E> extends SessionsListResponseContentValidator<E> {
-    private static final Logger log = LoggerFactory.getLogger(SessionResponseContentValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionResponseContentValidator.class);
 
     public SessionResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
@@ -49,7 +49,7 @@ public class SessionResponseContentValidator<E> extends SessionsListResponseCont
             Assert.assertEquals("Expected and actual session are not equal.", expectedSession, actualSession);
         } catch (AssertionFailedError e) {
             isValid = false;
-            log.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());
+            LOGGER.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());
             logResponseAsFailed(endpoint, result);
         }
 

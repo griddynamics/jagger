@@ -15,7 +15,7 @@ public class QueryProvider_SessionIds extends QueryProvider_SessionsList {
 
     @Override
     public Iterator iterator() {
-        queries.addAll(TestContext.getSessions().stream().map(s -> new HttpGet(uri + s.getId())).collect(Collectors.toList()));
+        queries.addAll(TestContext.getSessions().stream().map(s -> new HttpGet(uri + "/" + s.getId())).collect(Collectors.toList()));
 
         return queries.iterator();
     }

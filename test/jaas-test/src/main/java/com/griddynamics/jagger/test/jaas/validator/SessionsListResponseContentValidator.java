@@ -28,7 +28,7 @@ import static com.jayway.jsonpath.Filter.filter;
  * - a randomly picked records is the same as corresponding expected one.
  */
 public class SessionsListResponseContentValidator<E> extends BaseHttpResponseValidator<HttpRequestBase, E> {
-    private static final Logger log = LoggerFactory.getLogger(SessionsListResponseContentValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionsListResponseContentValidator.class);
 
     public SessionsListResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
@@ -56,16 +56,16 @@ public class SessionsListResponseContentValidator<E> extends BaseHttpResponseVal
             Assert.assertEquals("Response contains duplicate session records", actlSize, noDuplicatesActualList.size());
             //TODO: Wait for JFG-908 to be resolved and un-comment/re-factor.
  //           Assert.assertTrue(String.format("Actual list(%d) is longer than expected one(%d).", actlSize, expctdSize), actlSize <= expctdSize);
-            // Re-factor one JFG-908 is resolved.
+            // Re-factor ones JFG-908 is resolved.
             Assert.assertTrue("Actual list is not a sub-set of expected set.", actualSessions.containsAll(TestContext.getSessions()));
 
             SessionEntity randomActualEntity = actualSessions.get((new Random().nextInt(actlSize-1)));
             SessionEntity correspondingExpectedSession = TestContext.getSession(randomActualEntity.getId());
 
-            Assert.assertEquals("Expected and actual sessions are not equal.", correspondingExpectedSession, randomActualEntity);
+            Assert.assertEquals("Randomly selected expected and actual sessions are not equal.", correspondingExpectedSession, randomActualEntity);
         } catch (AssertionFailedError e) {
             isValid = false;
-            log.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());
+            LOGGER.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());
             logResponseAsFailed(endpoint, result);
         }
 

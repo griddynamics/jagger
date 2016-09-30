@@ -1,25 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
-  ~ http://www.griddynamics.com
-  ~
-  ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
-  ~
-  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  -->
-
 <beans:beans
         xmlns="http://www.griddynamics.com/schema/jagger"
         xmlns:beans="http://www.springframework.org/schema/beans"
@@ -35,10 +14,6 @@
     <beans:import resource="collectors.conf.xml"/>
     <beans:import resource="test.description.conf.xml"/>
 
-    <!--This xml file will contain configuration of your load-->
-    <!--When starting Jagger you tell what configuration to provide with help of-->
-    <!--chassis.master.session.configuration.bean.name property-->
-
     <!--Name of workload configuration-->
     <configuration id="JaaS_TestConfiguration">
         <latency-percentiles>
@@ -47,18 +22,35 @@
 
         <test-suite id="ts_JaaSTestSuit">
             <test-group id="tg_JaaS_GET_Sessions">
-                <test id="t_JaaS_GET_Sessions_SR_eq._1.0" testDescription="td_JaaS_SessionsList">
+                <test id="t_JaaS_GET_Sessions_List_SR_eq._1.0" testDescription="td_JaaS_SessionsList">
                     <load xsi:type="load-user-groups">
-                        <user count="2" startCount="2" startIn="0" startBy="0" life="5s" id="tl_JaaS_sessions" />
+                        <user count="2" startCount="2" startIn="0" startBy="0" life="12s" id="tl_JaaS_sessions" />
                     </load>
                     <termination xsi:type="termination-iterations" iterations="25" maxDuration="10s"/>
                     <limits xsi:type="limits-ref" ref="test_limits"/>
                 </test>
+
                 <test id="t_JaaS_GET_Exact_Session_SR_eq._1.0" testDescription="td_JaaS_ExactSessionIds">
                     <load xsi:type="load-user-groups">
-                        <user count="2" startCount="2" startIn="0" startBy="0" life="5s" id="tl_JaaS_session_ids" />
+                        <user count="2" startCount="2" startIn="0" startBy="0" life="12s" id="tl_JaaS_session_ids" />
                     </load>
                     <termination xsi:type="termination-iterations" iterations="25" maxDuration="10s"/>
+                    <limits xsi:type="limits-ref" ref="test_limits"/>
+                </test>
+
+                <test id="t_JaaS_GET_Session_Tests_List_SR_eq._1.0" testDescription="td_JaaS_SessionTestsList">
+                    <load xsi:type="load-user-groups">
+                        <user count="2" startCount="2" startIn="0" startBy="0" life="12s" id="tl_JaaS_session_tests" />
+                    </load>
+                    <termination xsi:type="termination-iterations" iterations="10" maxDuration="10s"/>
+                    <limits xsi:type="limits-ref" ref="test_limits"/>
+                </test>
+
+                <test id="t_JaaS_GET_Exact_Session_Test_SR_eq._1.0" testDescription="td_JaaS_ExactSessionTest">
+                    <load xsi:type="load-user-groups">
+                        <user count="2" startCount="2" startIn="0" startBy="0" life="12s" id="tl_JaaS_session_test" />
+                    </load>
+                    <termination xsi:type="termination-iterations" iterations="10" maxDuration="10s"/>
                     <limits xsi:type="limits-ref" ref="test_limits"/>
                 </test>
             </test-group>

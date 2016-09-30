@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.jayway.jsonpath.JsonPath.parse;
 
 public abstract class BaseHttpResponseValidator<Q, E> extends ResponseValidator<Q, E, HttpResponse> {
-    private static final Logger log = LoggerFactory.getLogger(BaseHttpResponseValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseHttpResponseValidator.class);
 
     public BaseHttpResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
@@ -28,7 +28,7 @@ public abstract class BaseHttpResponseValidator<Q, E> extends ResponseValidator<
     public abstract boolean validate(Q query, E endpoint, HttpResponse result, long duration);
 
     protected void logResponseAsFailed(E endpoint, HttpResponse response){
-        log.warn(String.format
+        LOGGER.warn(String.format
                 ("------> Failed response:\nEndpoint=%s \nStatus=%d \nBody=%s ",
                         endpoint.toString(), response.getStatusCode(), response.getBody()));
     }
