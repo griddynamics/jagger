@@ -6,7 +6,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 
 import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTP;
@@ -37,6 +39,12 @@ public class JHttpEndpoint {
     private int port = 80;
 
     public JHttpEndpoint(URI uri) {
+        try {
+            URL url = uri.toURL();
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
+        }
+
         if (equalsIgnoreCase(uri.getScheme(), HTTP.name()))
             this.protocol = HTTP;
         else if (equalsIgnoreCase(uri.getScheme(), HTTPS.name()))
@@ -69,9 +77,6 @@ public class JHttpEndpoint {
 
         if (protocol == null) {
             protocol = HTTP;
-        }
-        if (port == 80) {
-            return newInstance().scheme(protocol.name().toLowerCase()).host(hostname).build().toUri();
         }
         return newInstance().scheme(protocol.name().toLowerCase()).host(hostname).port(port).build().toUri();
     }
