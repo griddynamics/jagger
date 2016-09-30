@@ -135,11 +135,7 @@ public class SpringBasedHttpClient implements JHttpClient {
     }
 
     private <T> JHttpResponse<T> mapToJHttpResponse(ResponseEntity<T> responseEntity) {
-        JHttpResponse<T> jHttpResponse = new JHttpResponse<>();
-        jHttpResponse.setHeaders(responseEntity.getHeaders());
-        jHttpResponse.setBody(responseEntity.getBody());
-        jHttpResponse.setStatus(responseEntity.getStatusCode());
-        return jHttpResponse;
+        return new JHttpResponse<>(responseEntity.getStatusCode(), responseEntity.getBody(), responseEntity.getHeaders());
     }
 
     public Map<String, Object> getClientParams() {
