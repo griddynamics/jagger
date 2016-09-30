@@ -20,28 +20,22 @@ public class JHttpResponse<T> {
     private T body;
     private HttpHeaders headers;
 
-    public HttpStatus getStatus() {
-        return status;
+    public JHttpResponse(HttpStatus status, T body, HttpHeaders headers) {
+        this.status = status;
+        this.body = body;
+        this.headers = headers;
     }
 
-    public void setStatus(HttpStatus status) {
-        this.status = status;
+    public HttpStatus getStatus() {
+        return status;
     }
 
     public T getBody() {
         return body;
     }
 
-    public void setBody(T body) {
-        this.body = body;
-    }
-
     public HttpHeaders getHeaders() {
         return headers;
-    }
-
-    public void setHeaders(HttpHeaders headers) {
-        this.headers = headers;
     }
 
     public Map<String, String> getCookies() {
