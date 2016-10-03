@@ -53,7 +53,7 @@ public class JHttpEndpoint {
             throw new IllegalArgumentException(format("Protocol of uri '%s' is unsupported!", uri));
 
         this.hostname = uri.getHost();
-        this.port = uri.getPort();
+        this.port = uri.getPort() < 0 ? 80 : uri.getPort();
     }
 
     public Protocol getProtocol() {

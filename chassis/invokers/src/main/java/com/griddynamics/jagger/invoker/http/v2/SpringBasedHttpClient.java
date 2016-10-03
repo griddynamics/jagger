@@ -76,7 +76,7 @@ public class SpringBasedHttpClient implements JHttpClient {
      */
     private Map<String, Object> clientParams;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate;
 
     public SpringBasedHttpClient() {
         clientParams = new HashMap<>();
@@ -98,7 +98,7 @@ public class SpringBasedHttpClient implements JHttpClient {
         }
 
         RequestEntity requestEntity = mapToRequestEntity(query, endpointURI);
-        ResponseEntity responseEntity = restTemplate.exchange(endpointURI, query.getMethod(), requestEntity, Object.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(endpointURI, query.getMethod(), requestEntity, String.class);
 
         return mapToJHttpResponse(responseEntity);
     }
