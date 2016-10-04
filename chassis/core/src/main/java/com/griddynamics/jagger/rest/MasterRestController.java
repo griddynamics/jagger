@@ -7,20 +7,23 @@ import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.master.TaskIdProvider;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.rest.exception.HttpNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -49,9 +52,11 @@ public class MasterRestController {
     
     private Map<String, Task> nameToTaskMap;
     
-    @GetMapping(path = "/ping")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>("pong", HttpStatus.OK);
+    @GetMapping(path = "/config")
+    public ResponseEntity<TestConfig> getTestConfig() {
+        TestConfig testConfig = new TestConfig();
+        testConfig.name = configurationName;
+        return ResponseEntity.ok(testConfig);
     }
     
     @GetMapping(path = "/session")
@@ -62,32 +67,26 @@ public class MasterRestController {
         sessionInfo.name = sessionIdProvider.getSessionName();
         sessionInfo.configName = configurationName;
         
-        return new ResponseEntity<>(sessionInfo, HttpStatus.OK);
+        return ResponseEntity.ok(sessionInfo);
     }
     
     @GetMapping(path = "/tests")
     public ResponseEntity<List<TestInfo>> getTasks() {
-    
-        List<TestInfo> testInfos = Lists.newArrayList();
-        for (Task task : configuration.getTasks()) {
-            testInfos.add(getTestInfoFrom(task));
+        List<Task> tasks = configuration.getTasks();
+        if (CollectionUtils.isEmpty(tasks)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        
-        return new ResponseEntity<>(testInfos, HttpStatus.OK);
+        return ResponseEntity.ok(tasks.stream().map(this::getTestInfoFrom).collect(Collectors.toList()));
     }
     
     @GetMapping(path = "/tests/{name}")
-    public ResponseEntity<TestInfo> getTestInfo(@PathVariable String name) {
-        
+    public ResponseEntity<TestInfo> getTestInfo(@PathVariable String name) throws HttpNotFoundException {
         if (nameToTaskMap == null) {
             nameToTaskMap = mapTaskToName(configuration.getTasks());
         }
         
-        Task task = nameToTaskMap.get(name);
-        if (task == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(getTestInfoFrom(task), HttpStatus.OK);
+        Optional<TestInfo> testInfo = Optional.ofNullable(nameToTaskMap.get(name)).map(this::getTestInfoFrom);
+        return ResponseEntity.ok(testInfo.orElseThrow(HttpNotFoundException::getInstance));
     }
     
     private Map<String, Task> mapTaskToName(List<? extends Task> taskList) {
@@ -109,19 +108,13 @@ public class MasterRestController {
         if (task instanceof CompositeTask) {
             CompositeTask compositeTask = (CompositeTask) task;
             TestGroupInfo testGroupInfo = new TestGroupInfo();
-            testGroupInfo.leadingTests = Lists.newArrayList();
-            for (Task leadingTask : compositeTask.getLeading()) {
-                testGroupInfo.leadingTests.add(getTestInfoFrom(leadingTask));
-            }
-    
-            testGroupInfo.attendantTests = Lists.newArrayList();
-            for (Task attendantTask : compositeTask.getAttendant()) {
-                testGroupInfo.attendantTests.add(getTestInfoFrom(attendantTask));
-            }
-    
+            testGroupInfo.leadingTests =
+                    compositeTask.getLeading().stream().map(this::getTestInfoFrom).collect(Collectors.toList());
+            testGroupInfo.attendantTests =
+                    compositeTask.getAttendant().stream().map(this::getTestInfoFrom).collect(Collectors.toList());
             testInfo = testGroupInfo;
         }
-    
+        
         testInfo.name = task.getTaskName();
         testInfo.sessionId = sessionIdProvider.getSessionId();
         if (task.getNumber() > 0) {  // 0 means it wasn't set yet.
@@ -191,9 +184,17 @@ public class MasterRestController {
         public String getName() {
             return name;
         }
-    
+        
         public String getConfigName() {
             return configName;
+        }
+    }
+    
+    public static class TestConfig {
+        private String name;
+        
+        public String getName() {
+            return name;
         }
     }
 }

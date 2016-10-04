@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
@@ -38,22 +37,21 @@ public class DynamicDataService implements DbConfigEntityDao {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDataService.class);
     
-    private final ExecutorService destroyerService =
-            Executors.newSingleThreadExecutor(r -> new Thread("DynamicDataServiceDestoyer"));
+    private final ExecutorService destroyerService = Executors.newSingleThreadExecutor(r -> new Thread(r, "DynamicDataServiceDestoyer"));
     
     private final ConcurrentMap<Long, AbstractApplicationContext> dataServiceContexts = new ConcurrentHashMap<>();
-    
-    @Autowired
-    private DbConfigEntityDao jaasDao;
-    
-    @Value("${jaas.data.service.cache.size}")
+    private final DbConfigEntityDao jaasDao;
     private int dataServiceCacheSize = 10;
     
-    @Autowired
-    private DbConfigEntity defaultDbConfigEntity;
-    
-    @PostConstruct
-    public void init() {
+    public DynamicDataService(@Autowired DbConfigEntityDao jaasDao,
+                              @Value("${jaas.data.service.cache.size:10}") int dataServiceCacheSize,
+                              @Autowired DbConfigEntity defaultDbConfigEntity
+    ) {
+        this.jaasDao = jaasDao;
+        if (dataServiceCacheSize > 0) {
+            this.dataServiceCacheSize = dataServiceCacheSize;
+        }
+
         if (jaasDao.readAll().isEmpty()) {
             LOGGER.info("Registering default jagger test db config: {}", defaultDbConfigEntity);
             jaasDao.create(defaultDbConfigEntity);
@@ -66,11 +64,29 @@ public class DynamicDataService implements DbConfigEntityDao {
         destroyerService.shutdown();
     }
     
-    protected void evictDataServiceFor(final Long configId) {
-        LOGGER.info("Evicting jagger test db config with id: {}", configId);
+    protected void evict(final Long configId) {
+        destroyerService.execute(() -> doEvict(configId));
+    }
+    
+    protected void evictIfAboveThreshold() {
+        destroyerService.execute(() -> {
+            if (dataServiceContexts.size() >= dataServiceCacheSize) {
+                doEvict(dataServiceContexts.keySet().iterator().next());
+            }
+        });
+    }
+    
+    /**
+     * To be called only inside {@link #destroyerService} workers
+     * which guarantees serial eviction as soon as {@link #destroyerService} is single-threaded.
+     *
+     * @param configId id of config to be evicted
+     */
+    private void doEvict(final Long configId) {
         AbstractApplicationContext context = dataServiceContexts.remove(configId);
         if (context != null) {
-            destroyerService.execute(context::destroy);
+            LOGGER.info("Destroying jagger test db context with id: {}", configId);
+            context.destroy();
         }
     }
     
@@ -84,14 +100,8 @@ public class DynamicDataService implements DbConfigEntityDao {
             if (Objects.isNull(config)) {
                 return null;
             }
-            synchronized (this) {
-                dataServiceContext = dataServiceContexts.computeIfAbsent(configId, s -> {
-                    if (dataServiceContexts.size() >= dataServiceCacheSize) {
-                        evictDataServiceFor(dataServiceContexts.keySet().iterator().next());
-                    }
-                    return initDataServiceContextFor(config);
-                });
-            }
+            evictIfAboveThreshold();
+            dataServiceContext = dataServiceContexts.computeIfAbsent(configId, s -> initDataServiceContextFor(config));
         }
         
         return dataServiceContext.getBean(DataService.class);
@@ -138,26 +148,26 @@ public class DynamicDataService implements DbConfigEntityDao {
     
     @Override
     public void create(DbConfigEntity config) {
-        evictableOperation(c -> jaasDao.create(c), config);
+        jaasDao.create(config);
     }
     
     @Override
     public void update(DbConfigEntity config) {
-        evictableOperation(c -> jaasDao.update(c), config);
+        evictableOperation(jaasDao::update, config);
     }
     
     @Override
     public void createOrUpdate(DbConfigEntity config) {
-        evictableOperation(c -> jaasDao.createOrUpdate(c), config);
+        evictableOperation(jaasDao::createOrUpdate, config);
     }
     
     @Override
     public void delete(DbConfigEntity config) {
-        evictableOperation(c -> jaasDao.delete(c), config);
+        evictableOperation(jaasDao::delete, config);
     }
     
     private void evictableOperation(Consumer<DbConfigEntity> op, DbConfigEntity config) {
         op.accept(config);
-        evictDataServiceFor(config.getId());
+        evict(config.getId());
     }
 }
