@@ -2,9 +2,9 @@ package com.griddynamics.jagger.invoker.http.v2;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -15,6 +15,7 @@ import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTT
 import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTPS;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 import static org.springframework.web.util.UriComponentsBuilder.newInstance;
 
 /**
@@ -38,6 +39,11 @@ public class JHttpEndpoint {
     private String hostname;
     private int port = 80;
 
+    /**
+     * Parses given uri and sets {@link JHttpEndpoint#protocol}, {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields.
+     *
+     * @param uri URI to parse
+     */
     public JHttpEndpoint(URI uri) {
         try {
             URL url = uri.toURL();
@@ -82,12 +88,39 @@ public class JHttpEndpoint {
     }
 
     /**
+     * @param path path to be added to URI
+     * @return {@link URI} based on {@link JHttpEndpoint#protocol},
+     * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields values with <b>path</b> added.
+     */
+    public URI getURI(String path) {
+        URI oldUri = getURI();
+        if (StringUtils.isEmpty(path))
+            return oldUri;
+
+        return fromUri(oldUri).path(path).build().toUri();
+    }
+
+    /**
      * @param queryParams query parameters to be added to URI
      * @return {@link URI} based on {@link JHttpEndpoint#protocol},
      * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields values with <b>queryParams</b> added.
      */
     public URI getURI(Map<String, String> queryParams) {
         URI uri = getURI();
+        if (MapUtils.isEmpty(queryParams))
+            return uri;
+
+        return appendParameters(uri, queryParams);
+    }
+
+    /**
+     * @param path        path to be added to URI
+     * @param queryParams query parameters to be added to URI
+     * @return {@link URI} based on {@link JHttpEndpoint#protocol},
+     * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields values with <b>path</b> and <b>queryParams</b> added.
+     */
+    public URI getURI(String path, Map<String, String> queryParams) {
+        URI uri = getURI(path);
         if (MapUtils.isEmpty(queryParams))
             return uri;
 
@@ -103,7 +136,7 @@ public class JHttpEndpoint {
         MultiValueMap<String, String> localQueryParams = new LinkedMultiValueMap<>();
         queryParams.entrySet().forEach(entry -> localQueryParams.add(entry.getKey(), entry.getValue()));
 
-        return UriComponentsBuilder.fromUri(oldUri).queryParams(localQueryParams).build().toUri();
+        return fromUri(oldUri).queryParams(localQueryParams).build().toUri();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.invoker.http.v2;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
@@ -45,6 +46,7 @@ public class JHttpQuery<T> implements Serializable {
     private T body;
     private Class responseBodyType;
     private Map<String, String> queryParams;
+    private String path;
 
     /**
      * Sets parameter {@link HttpMethod method} to {@link JHttpQuery#method} field. <p>
@@ -314,6 +316,50 @@ public class JHttpQuery<T> implements Serializable {
         return this;
     }
 
+    /**
+     * Sets path to {@link JHttpQuery#path} field.
+     *
+     * @return this
+     * @apiNote Usage:
+     * <pre>{@code
+     * JHttpQuery httpQuery = new JHttpQuery().path("/products");
+     * }</pre>
+     */
+    public JHttpQuery<T> path(String path) {
+        this.path = StringUtils.startsWith(path, "/") ? path : "/" + path;
+        return this;
+    }
+
+    /**
+     * Concatenates paths values and sets to {@link JHttpQuery#path} field.
+     *
+     * @return this
+     * @apiNote Usage:
+     * <pre>{@code
+     * JHttpQuery httpQuery = new JHttpQuery().path("categories", "clothes", "jeans", "42");
+     * }</pre>
+     */
+    public JHttpQuery<T> path(String... paths) {
+        String path = StringUtils.join(paths, "/");
+        return path(path);
+    }
+
+    /**
+     * Sets path of query to {@link JHttpQuery#path} field. Works the same as {@link String#format(String, Object...)}}.
+     *
+     * @return this
+     * @apiNote Usage:
+     * <pre>{@code
+     * JHttpQuery httpQuery = new JHttpQuery().path("/products/%s/%s", "categories", 42);
+     * }</pre>
+     *
+     * @see String#format(String, Object...)
+     */
+    public JHttpQuery<T> path(String formatString, Object... args) {
+        String path = String.format(formatString, args);
+        return path(path);
+    }
+
     public HttpMethod getMethod() {
         return method;
     }
@@ -332,6 +378,10 @@ public class JHttpQuery<T> implements Serializable {
 
     public Map<String, String> getQueryParams() {
         return queryParams;
+    }
+
+    public String getPath() {
+        return path;
     }
 
 
