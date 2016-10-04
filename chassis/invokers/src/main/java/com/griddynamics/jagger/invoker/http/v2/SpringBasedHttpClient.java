@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTPS;
 import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.DEFAULT_URI_VARIABLES;
 import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.ERROR_HANDLER;
 import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.INTERCEPTORS;
@@ -81,25 +80,25 @@ public class SpringBasedHttpClient implements JHttpClient {
     public SpringBasedHttpClient() {
         clientParams = new HashMap<>();
         restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(getSslAllTrustRequestFactory());
     }
 
     public SpringBasedHttpClient(Map<String, Object> clientParams) {
-        this.clientParams = clientParams;
-        restTemplate = new RestTemplate();
+        this();
+        this.clientParams.putAll(clientParams);
         setRestTemplateParams(this.clientParams);
     }
 
     @Override
     public JHttpResponse execute(JHttpEndpoint endpoint, JHttpQuery query) {
         URI endpointURI = endpoint.getURI(query.getQueryParams());
-
-        if (endpoint.getProtocol() == HTTPS) {
-            restTemplate.setRequestFactory(getSslAllTrustRequestFactory());
-        }
-
         RequestEntity requestEntity = mapToRequestEntity(query, endpointURI);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(endpointURI, query.getMethod(), requestEntity, String.class);
-
+        ResponseEntity responseEntity;
+        if (query.getResponseBodyType() != null) {
+            responseEntity = restTemplate.exchange(endpointURI, query.getMethod(), requestEntity, query.getResponseBodyType());
+        } else {
+            responseEntity = restTemplate.exchange(endpointURI, query.getMethod(), requestEntity, byte[].class);
+        }
         return mapToJHttpResponse(responseEntity);
     }
 

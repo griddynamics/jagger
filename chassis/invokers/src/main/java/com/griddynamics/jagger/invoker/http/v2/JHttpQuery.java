@@ -43,6 +43,7 @@ public class JHttpQuery<T> implements Serializable {
     private HttpMethod method;
     private HttpHeaders headers;
     private T body;
+    private Class responseBodyType;
     private Map<String, String> queryParams;
 
     /**
@@ -264,6 +265,21 @@ public class JHttpQuery<T> implements Serializable {
     }
 
     /**
+     * Sets parameter {@link Class responseBodyType} to {@link JHttpQuery#responseBodyType} field.
+     *
+     * @param responseBodyType expected body type of response
+     * @return this
+     * @apiNote Usage:
+     * <pre>{@code
+     * JHttpQuery httpQuery = new JHttpQuery().responseBodyType(Integer.class);
+     * }</pre>
+     */
+    public JHttpQuery<T> responseBodyType(Class responseBodyType) {
+        this.responseBodyType = responseBodyType;
+        return this;
+    }
+
+    /**
      * Sets parameter {@link Map queryParams} to {@link JHttpQuery#queryParams} field.
      *
      * @param queryParams {@link Map} with query parameters to be added to query
@@ -304,6 +320,10 @@ public class JHttpQuery<T> implements Serializable {
 
     public T getBody() {
         return body;
+    }
+
+    public Class getResponseBodyType() {
+        return responseBodyType;
     }
 
     public HttpHeaders getHeaders() {
