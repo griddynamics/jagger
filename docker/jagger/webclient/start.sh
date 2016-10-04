@@ -13,6 +13,8 @@ JWC_JDBC_URL=jdbc:mysql://172.18.128.228:3306/jaggerdb
 JWC_JDBC_USER=root
 JWC_JDBC_PASS=root
 
+echo "In start script for ${IMAGE_NAME}:${VERSION_TAG} Docker image..."
+
 # Step 1. Check and build the image if needed.
 echo "'Check and build the image if needed' phase..."
 is_image_created=$(docker images -q ${IMAGE_NAME})
