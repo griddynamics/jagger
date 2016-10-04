@@ -45,7 +45,7 @@ public class TestsListResponseContentValidator<E> extends BaseHttpResponseValida
         String content = result.getBody();
 
         List<TestEntity> actualEntities = JSON.parseArray(content, TestEntity.class);
-        boolean isValid = true;
+        boolean isValid = false;
 
         //Checks.
         try {
@@ -59,6 +59,7 @@ public class TestsListResponseContentValidator<E> extends BaseHttpResponseValida
             assertEquals("Actual list's size is not the same as expected one's.", actlSize, expctdSize);
             //TODO: Wait for JFG-916 to be implemented and un-comment.
             //assertTrue("Actual list is not the same as expected set.", expectedEntities.containsAll(actualEntities));
+            isValid = true;
         } catch (AssertionFailedError e) {
             isValid = false;
             LOGGER.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());

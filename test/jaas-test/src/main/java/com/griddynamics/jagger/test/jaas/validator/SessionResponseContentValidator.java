@@ -35,7 +35,7 @@ public class SessionResponseContentValidator<E> extends SessionsListResponseCont
     @Override
     public boolean validate(HttpRequestBase query, E endpoint, HttpResponse result, long duration)  {
         String content = result.getBody();
-        boolean isValid = true;
+        boolean isValid = false;
         List<Map<String, Object>> filteredFields = getJsonEntriesFiltered(content, "$[?]", getAllSessionFieldsFilter());
 
         //Checks.
@@ -47,6 +47,7 @@ public class SessionResponseContentValidator<E> extends SessionsListResponseCont
             SessionEntity expectedSession = TestContext.getSession(queryParts[queryParts.length - 1]);
 
             Assert.assertEquals("Expected and actual session are not equal.", expectedSession, actualSession);
+            isValid = true;
         } catch (AssertionFailedError e) {
             isValid = false;
             LOGGER.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());

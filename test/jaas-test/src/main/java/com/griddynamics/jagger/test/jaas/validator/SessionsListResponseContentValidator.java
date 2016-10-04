@@ -45,7 +45,7 @@ public class SessionsListResponseContentValidator<E> extends BaseHttpResponseVal
 
         List<SessionEntity> actualSessions = JSON.parseArray(content, SessionEntity.class);
 
-        boolean isValid = true;
+        boolean isValid = false;
 
         //Checks.
         try {
@@ -63,6 +63,7 @@ public class SessionsListResponseContentValidator<E> extends BaseHttpResponseVal
             SessionEntity correspondingExpectedSession = TestContext.getSession(randomActualEntity.getId());
 
             Assert.assertEquals("Randomly selected expected and actual sessions are not equal.", correspondingExpectedSession, randomActualEntity);
+            isValid = true;
         } catch (AssertionFailedError e) {
             isValid = false;
             LOGGER.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());

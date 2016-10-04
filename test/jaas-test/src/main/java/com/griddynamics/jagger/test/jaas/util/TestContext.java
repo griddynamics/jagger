@@ -35,7 +35,7 @@ public class TestContext {
     }
 
     /**
-     * Returns NULL is no session entity found.
+     * Returns NULL if no session entity found.
      *
      */
     public static SessionEntity getSession(String id) {

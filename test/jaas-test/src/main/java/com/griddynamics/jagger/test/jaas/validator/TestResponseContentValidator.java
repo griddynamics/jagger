@@ -31,7 +31,7 @@ public class TestResponseContentValidator<E> extends BaseHttpResponseValidator<H
     @Override
     public boolean validate(HttpRequestBase query, E endpoint, HttpResponse result, long duration)  {
         String content = result.getBody();
-        boolean isValid = true;
+        boolean isValid = false;
 
         //Checks.
         try {
@@ -41,6 +41,7 @@ public class TestResponseContentValidator<E> extends BaseHttpResponseValidator<H
 
             //TODO: Wait for JFG-916 to be implemented and un-comment.
             //assertEquals("Expected and actual tests are not equal.", expectedEntity, actualEntity);
+            isValid = true;
         } catch (AssertionFailedError e) {
             isValid = false;
             LOGGER.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());
