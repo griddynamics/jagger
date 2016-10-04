@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Docker variables
-IMAGE_NAME="jaas-web-client"
+IMAGE_NAME="jagger-web-client"
 VERSION_TAG="1.2.6"
 CONTAINER_NAME="jwc"
 HTTP_HOST_PORT=8080
@@ -19,12 +19,12 @@ is_image_created=$(docker images -q ${IMAGE_NAME})
 if [ -z "${is_image_created}" ]; then
     echo "Image ${IMAGE_NAME} is not built yet. Building..."
     cp -v ${HOME}/.m2/repository/com/griddynamics/jagger/webclient/${VERSION_TAG}-SNAPSHOT/webclient-${VERSION_TAG}-SNAPSHOT-exec-war.jar \
-        jaas-webclient.jar
+        jagger-webclient.jar
 
     docker build -t ${IMAGE_NAME}:${VERSION_TAG} .
     [[ $? -eq 0  ]] || { echo "Failed to build the image." >&2; exit 1; }
 
-    rm -fv jaas-webclient.jar
+    rm -fv jagger-webclient.jar
 fi
 
 # Step 2. Check and create the container if needed.
