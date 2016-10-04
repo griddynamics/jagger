@@ -91,7 +91,7 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     @Override
     public JHttpResponse execute(JHttpEndpoint endpoint, JHttpQuery query) {
-        URI endpointURI = endpoint.getURI(query.getQueryParams());
+        URI endpointURI = endpoint.getURI(query.getPath(), query.getQueryParams());
         RequestEntity requestEntity = mapToRequestEntity(query, endpointURI);
         ResponseEntity responseEntity;
         if (query.getResponseBodyType() != null) {
