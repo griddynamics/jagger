@@ -1,58 +1,20 @@
 package com.griddynamics.jagger.jaas.storage;
 
 import com.griddynamics.jagger.jaas.storage.model.ProjectEntity;
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@SuppressWarnings("unchecked")
-@Repository
-public class ProjectDao implements ProjectEntityDao {
+public interface ProjectDao {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    ProjectEntity read(Long projectId);
 
-    protected Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
-    }
+    List<ProjectEntity> readAll();
 
-    @Override
-    @Transactional
-    public ProjectEntity read(Long projectId) {
-        return (ProjectEntity) getCurrentSession().get(ProjectEntity.class, projectId);
-    }
+    void create(ProjectEntity project);
 
-    @Override
-    @Transactional
-    public List<ProjectEntity> readAll() {
-        return getCurrentSession().createCriteria(ProjectEntity.class).list();
-    }
+    void update(ProjectEntity project);
 
-    @Override
-    @Transactional
-    public void create(ProjectEntity project) {
-        getCurrentSession().save(project);
-    }
+    void createOrUpdate(ProjectEntity project);
 
-    @Override
-    @Transactional
-    public void update(ProjectEntity project) {
-        getCurrentSession().update(project);
-    }
-
-    @Override
-    @Transactional
-    public void createOrUpdate(ProjectEntity project) {
-        getCurrentSession().saveOrUpdate(project);
-    }
-
-    @Override
-    @Transactional
-    public void delete(ProjectEntity project) {
-        getCurrentSession().delete(project);
-    }
+    void delete(Long projectId);
 }
