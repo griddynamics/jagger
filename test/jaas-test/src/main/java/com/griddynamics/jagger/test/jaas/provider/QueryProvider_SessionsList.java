@@ -17,11 +17,12 @@ public class QueryProvider_SessionsList implements Iterable {
     @Value( "${jaas.rest.base.sessions}" )
     protected String uri;
 
-    public QueryProvider_SessionsList() {}
+    public QueryProvider_SessionsList() {
+        queries.add(new HttpGet(uri));
+    }
 
     @Override
     public Iterator iterator() {
-        queries.add(new HttpGet(uri));
         return queries.iterator();
     }
 }

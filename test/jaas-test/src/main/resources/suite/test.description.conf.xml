@@ -34,7 +34,7 @@
         </scenario>
     </test-description>
 
-    <test-description id="td_JaaS_SessionTestsList" name="Some concrete sessions" version="1" parent="td_JaaS_default">
+    <test-description id="td_JaaS_SessionTestsList" name="List of session tests" version="1" parent="td_JaaS_default">
         <info-collectors>
             <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.TestsListResponseContentValidator"/>
         </info-collectors>
@@ -44,7 +44,7 @@
         </scenario>
     </test-description>
 
-    <test-description id="td_JaaS_ExactSessionTest" name="Some concrete sessions" version="1" parent="td_JaaS_default">
+    <test-description id="td_JaaS_ExactSessionTest" name="Some concrete test" version="1" parent="td_JaaS_default">
         <info-collectors>
             <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.TestResponseContentValidator"/>
         </info-collectors>

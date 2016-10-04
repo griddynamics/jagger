@@ -20,11 +20,12 @@ public class QueryProvider_TestsList extends QueryProvider_SessionsList {
 
     private String targetSessionId=null;
 
-    public QueryProvider_TestsList() {}
+    public QueryProvider_TestsList() {
+        queries.add(new HttpGet(getTestsPath()));
+    }
 
     @Override
     public Iterator iterator() {
-        queries.add(new HttpGet(getTestsPath()));
         return queries.iterator();
     }
 

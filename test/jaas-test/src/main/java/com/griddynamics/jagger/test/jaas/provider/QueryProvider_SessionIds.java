@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
  */
 public class QueryProvider_SessionIds extends QueryProvider_SessionsList {
 
-    public QueryProvider_SessionIds() {}
+    public QueryProvider_SessionIds() {
+        queries.addAll(TestContext.getSessions().stream().map(s -> new HttpGet(uri + "/" + s.getId())).collect(Collectors.toList()));
+    }
 
     @Override
     public Iterator iterator() {
-        queries.addAll(TestContext.getSessions().stream().map(s -> new HttpGet(uri + "/" + s.getId())).collect(Collectors.toList()));
-
         return queries.iterator();
     }
 }

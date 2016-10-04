@@ -11,14 +11,15 @@ import java.util.stream.Collectors;
  */
 public class QueryProvider_TestNames extends QueryProvider_TestsList {
 
-    public QueryProvider_TestNames() {}
+    public QueryProvider_TestNames() {
+        queries.addAll(TestContext.getTestsBySessionId(getTargetSessionId())
+                .stream().map(t -> new HttpGet(getTestsPath() + "/" + t.getName()))
+                .collect(Collectors.toList()));
+
+    }
 
     @Override
     public Iterator iterator() {
-        queries.addAll(TestContext.getTestsBySessionId(getTargetSessionId())
-                                .stream().map(t -> new HttpGet(getTestsPath() + "/" + t.getName()))
-                                .collect(Collectors.toList()));
-
         return queries.iterator();
     }
 }
