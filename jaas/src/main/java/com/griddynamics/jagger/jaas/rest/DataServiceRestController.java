@@ -39,11 +39,11 @@ import java.util.function.Function;
 /**
  * JaaS REST API controller based on Spring MVC which exposes db backed resources.
  */
-@RequestMapping(value = "/jaas")
+@RequestMapping(value = "/dbs")
 @RestController
-public class JaasRestController {
+public class DataServiceRestController {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(JaasRestController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataServiceRestController.class);
     
     @Autowired
     private DynamicDataService dynamicDataService;
@@ -64,12 +64,12 @@ public class JaasRestController {
         return responseEntity;
     }
     
-    @GetMapping(value = "/dbs", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DbConfigEntity>> getDbConfigs() {
         return produceGetResponse(dynamicDataService, t -> dynamicDataService.readAll());
     }
     
-    @PostMapping(value = "/dbs", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createDbConfig(@RequestBody DbConfigEntity config) {
         dynamicDataService.create(config);
         return ResponseEntity.created(
@@ -77,19 +77,19 @@ public class JaasRestController {
                              .build();
     }
     
-    @PutMapping(value = "/dbs/{dbId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{dbId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateDbConfig(@PathVariable Long dbId, @RequestBody DbConfigEntity config) {
         config.setId(dbId);
         dynamicDataService.update(config);
         return ResponseEntity.accepted().build();
     }
     
-    @GetMapping(value = "/dbs/{dbId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{dbId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DbConfigEntity> getDbConfig(@PathVariable Long dbId) {
         return produceGetResponse(dynamicDataService, t -> dynamicDataService.read(dbId));
     }
     
-    @DeleteMapping("/dbs/{dbId}")
+    @DeleteMapping("/{dbId}")
     public ResponseEntity<?> deleteDbConfig(@PathVariable Long dbId) {
         DbConfigEntity config = new DbConfigEntity();
         config.setId(dbId);
@@ -97,7 +97,7 @@ public class JaasRestController {
         return ResponseEntity.noContent().build();
     }
     
-    @GetMapping(value = "/dbs/{dbId}/sessions", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{dbId}/sessions", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<SessionEntity>> getSessions(@PathVariable Long dbId, @RequestParam(name = "id",
                                                                                                  required = false) String[] sessionIds
     ) {
@@ -105,12 +105,12 @@ public class JaasRestController {
         return produceDsResponse(dbId, dataService -> dataService.getSessions(Arrays.asList(finalSessionIds)));
     }
     
-    @GetMapping(value = "/dbs/{dbId}/sessions/{sessionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SessionEntity> getSession(@PathVariable Long dbId, @PathVariable String sessionId) {
         return produceDsResponse(dbId, dataService -> dataService.getSession(sessionId));
     }
     
-    @GetMapping(value = "/dbs/{dbId}/sessions/{sessionId}/tests/{testName}",
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}",
                 produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TestEntity> getTest(@PathVariable Long dbId, @PathVariable String sessionId,
                                               @PathVariable String testName
@@ -122,17 +122,17 @@ public class JaasRestController {
         return dataService.getTestByName(sessionId, testName);
     }
     
-    @GetMapping(value = "/dbs/{dbId}/sessions/{sessionId}/tests", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<TestEntity>> getTests(@PathVariable Long dbId, @PathVariable String sessionId) {
         return produceDsResponse(dbId, dataService -> dataService.getTests(sessionId));
     }
     
-    @GetMapping(value = "/dbs/{dbId}/tests/{testId}/metrics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{dbId}/tests/{testId}/metrics", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<MetricEntity>> getMetrics(@PathVariable Long dbId, @PathVariable Long testId) {
         return produceDsResponse(dbId, dataService -> dataService.getMetrics(testId));
     }
     
-    @GetMapping(value = "/dbs/{dbId}/sessions/{sessionId}/tests/{testName}/metrics",
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}/metrics",
                 produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<MetricEntity>> getMetrics(@PathVariable Long dbId, @PathVariable String sessionId,
                                                         @PathVariable String testName
@@ -145,7 +145,7 @@ public class JaasRestController {
                        .orElse(Collections.emptySet());
     }
     
-    @GetMapping(value = "/dbs/{dbId}/sessions/{sessionId}/tests/{testName}/metrics/summary",
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}/metrics/summary",
                 produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<MetricEntity, MetricSummaryValueEntity>> getMetricsSummary(@PathVariable Long dbId,
                                                                                          @PathVariable String sessionId,
@@ -155,7 +155,7 @@ public class JaasRestController {
                 .getMetricSummary(getMetrics(dataService, sessionId, testName)));
     }
     
-    @GetMapping(value = "/dbs/{dbId}/sessions/{sessionId}/tests/{testName}/metrics/plot-data",
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}/metrics/plot-data",
                 produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<MetricEntity, List<MetricPlotPointEntity>>> getMetricPlotData(@PathVariable Long dbId,
                                                                                             @PathVariable String sessionId,

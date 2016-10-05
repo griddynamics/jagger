@@ -43,6 +43,7 @@
         <maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
         <checkstyle.version>7.1.1</checkstyle.version>
+        <gwt.version>2.5.1</gwt.version>
     </properties>
 
     <modules>
@@ -457,13 +458,13 @@
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-servlet</artifactId>
-                <version>2.4.0</version>
+                <version>${gwt.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-user</artifactId>
-                <version>2.4.0</version>
+                <version>${gwt.version}</version>
                 <scope>provided</scope>
             </dependency>
 
