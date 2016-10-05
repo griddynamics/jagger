@@ -32,8 +32,7 @@ public class DiagnosticReporter extends AbstractMappedReportProvider<String> {
     private SummaryReporter summaryReporter;
 
     @Override
-    public JRDataSource getDataSource(String id) {
-        String sessionId = getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String id, String sessionId) {
         List<SummaryDto> result = summaryReporter.getSummary(sessionId,id);
 
         return new JRBeanCollectionDataSource(result);

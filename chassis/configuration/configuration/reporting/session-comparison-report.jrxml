@@ -31,6 +31,7 @@
     <template class="java.io.InputStream">
         <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
+    <parameter name="sessionId" class="java.lang.String"/>
     <variable name="sessionVerdict" class="com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict">
         <initialValueExpression><![CDATA[$P{context}.getParameters().get("jagger.verdict")]]></initialValueExpression>
     </variable>
@@ -80,7 +81,7 @@
                 <reportElement positionType="Float" x="0" y="89" width="550" height="10"/>
                 <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
                 <dataSourceExpression>
-                    <![CDATA[$P{context}.getMappedProvider("workloadSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Workload") )]]>
+                    <![CDATA[$P{context}.getMappedProvider("workloadSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Workload"), $P{sessionId} )]]>
                 </dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                     <![CDATA[$P{context}.getMappedProvider("workloadSessionComparison").getReport( ($V{sessionVerdict}).getDetails().get("Workload") )]]>
@@ -90,7 +91,7 @@
                 <reportElement positionType="Float" x="0" y="99" width="550" height="10"/>
                 <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
                 <dataSourceExpression>
-                    <![CDATA[$P{context}.getMappedProvider("monitoringSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Monitoring") )]]>
+                    <![CDATA[$P{context}.getMappedProvider("monitoringSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Monitoring"), $P{sessionId} )]]>
                 </dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                     <![CDATA[$P{context}.getMappedProvider("monitoringSessionComparison").getReport( ($V{sessionVerdict}).getDetails().get("Monitoring") )]]>

@@ -41,9 +41,7 @@ public class SessionStatusReporter extends AbstractReportProvider {
 
 
     @Override
-    public JRDataSource getDataSource() {
-
-        String sessionId = getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String sessionId) {
 
         String sessionStatusComment = "Status is based on status of the worst test";
         Decision sessionStatus = Decision.OK;

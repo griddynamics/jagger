@@ -31,8 +31,7 @@ public class WorkloadValidationReporter extends AbstractMappedReportProvider<Str
     private SummaryReporter summaryReporter;
 
     @Override
-    public JRDataSource getDataSource(String id) {
-        String sessionId = getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String id, String sessionId) {
         List<SummaryDto> result = summaryReporter.getValidators(sessionId, id);
 
         return new JRBeanCollectionDataSource(result);

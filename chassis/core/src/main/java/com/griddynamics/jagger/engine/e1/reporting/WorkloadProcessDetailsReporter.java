@@ -32,9 +32,8 @@ public class WorkloadProcessDetailsReporter extends AbstractMappedReportProvider
     private SummaryReporter summaryReporter;
 
     @Override
-    public JRDataSource getDataSource(String id) {
+    public JRDataSource getDataSource(String id, String sessionId) {
 
-        String sessionId = getSessionIdProvider().getSessionId();
         List<SummaryDto> result = summaryReporter.getLatencyPercentile(sessionId,id);
 
         return new JRBeanCollectionDataSource(result);

@@ -37,12 +37,11 @@ public class TestDetailsReporter extends AbstractReportProvider {
     private DataService dataService;
 
     @Override
-    public JRDataSource getDataSource() {
-        String sessionId = getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String sessionId) {
 
         Set<TestEntity> testEntities = dataService.getTests(sessionId);
 
-        List<TestDetailsDTO> result = new ArrayList<TestDetailsDTO>();
+        List<TestDetailsDTO> result = new ArrayList<>();
 
         for(TestEntity testEntity : testEntities) {
             TestDetailsDTO testDetailsDTO = new TestDetailsDTO();

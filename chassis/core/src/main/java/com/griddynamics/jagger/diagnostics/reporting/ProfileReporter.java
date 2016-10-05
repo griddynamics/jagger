@@ -58,14 +58,11 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
     private int callGraphImageWidth;
     private int callGraphImageHeight;
     private boolean renderGraph;
-    private Map<String, List<SysUnderTestDTO>> sysUnderTests;
     private DatabaseService databaseService;
 
     @Override
     public void clearCache() {
         super.clearCache();
-
-        sysUnderTests = null;
     }
 
     public boolean isRenderGraph() {
@@ -117,16 +114,14 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
     }
 
     @Override
-    public JRDataSource getDataSource(String id) {
+    public JRDataSource getDataSource(String id, String sessionId) {
         if (!enable) {
             return new JRBeanCollectionDataSource(Collections.emptySet());
         }
-
-        if (sysUnderTests == null) {
-            sysUnderTests = loadData();
-        }
-
-        loadMonitoringMap();
+    
+        Map<String, List<SysUnderTestDTO>> sysUnderTests = loadData(sessionId);
+    
+        Map<String, String> monitoringMap = loadMonitoringMap();
 
         List<SysUnderTestDTO> data = null;
         String taskId = null;
@@ -142,7 +137,7 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
              data = sysUnderTests.get(taskId);
 
             if (data == null) {
-                data = sysUnderTests.get(relatedMonitoringTask(taskId));
+                data = sysUnderTests.get(relatedMonitoringTask(taskId, monitoringMap));
             }
 
             // required after monitoring moved to metrics
@@ -155,8 +150,7 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
     }
 
     @Deprecated
-    private Map<String, List<SysUnderTestDTO>> loadData() {
-        final String sessionId = getSessionIdProvider().getSessionId();
+    private Map<String, List<SysUnderTestDTO>> loadData(String sessionId) {
         Map<String, List<SysUnderTestDTO>> result = Maps.newHashMap();
 
         //todo JFG-722 We should delete all queries from reporting-part jagger
@@ -219,14 +213,6 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
 
     public void setEnable(boolean enable) {
         this.enable = enable;
-    }
-
-    public Map<String, List<SysUnderTestDTO>> getSysUnderTests() {
-        return sysUnderTests;
-    }
-
-    public void setSysUnderTests(Map<String, List<SysUnderTestDTO>> sysUnderTests) {
-        this.sysUnderTests = sysUnderTests;
     }
 
     public static class SysUnderTestDTO extends MethodElement {

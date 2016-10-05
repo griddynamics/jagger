@@ -51,9 +51,7 @@ public class SessionScopePlotsReporter extends AbstractReportProvider {
     }
 
     @Override
-    public JRDataSource getDataSource() {
-
-        String sessionId = getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String sessionId) {
 
         int numberOfTestGroup = summaryReporter.getNumberOfTestGroups(sessionId);
         if (numberOfTestGroup < 2) {

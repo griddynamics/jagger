@@ -45,8 +45,7 @@ public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
 
 
     @Override
-    public JRDataSource getDataSource(String id) {
-        String sessionId = getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String id, String sessionId) {
 
         Map<Long, PlotsReporter.MetricPlotDTOs> testIdToPlotsMap = plotsReporter.getTestIdToPlotsMap(sessionId);
 

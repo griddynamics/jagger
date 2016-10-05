@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.reporting;
 
-import com.google.common.collect.Maps;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.extension.ExtensionRegistry;
 import net.sf.jasperreports.engine.JRException;
@@ -31,7 +30,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ResourceLoader;
 
-import java.io.*;
+import com.google.common.collect.Maps;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +46,9 @@ public class ReportingContext implements ApplicationContextAware {
 
     private ResourceLoader resourceLoader;
 
-    private ExtensionRegistry<ReportProvider> providerRegistry = new ExtensionRegistry<ReportProvider>(ReportProvider.class);
-    private ExtensionRegistry<MappedReportProvider> mappedProviderRegistry = new ExtensionRegistry<MappedReportProvider>(MappedReportProvider.class);
+    private ExtensionRegistry<ReportProvider> providerRegistry = new ExtensionRegistry<>(ReportProvider.class);
+    private ExtensionRegistry<MappedReportProvider> mappedProviderRegistry =
+            new ExtensionRegistry<>(MappedReportProvider.class);
 
     private Map<String, Object> parameters = Maps.newHashMap();
 
@@ -66,7 +72,7 @@ public class ReportingContext implements ApplicationContextAware {
     }
 
     public Map<String, ReportingContext> getAsMap() {
-        Map<String, ReportingContext> map = new HashMap<String, ReportingContext>();
+        Map<String, ReportingContext> map = new HashMap<>();
         map.put(CONTEXT_NAME, this);
         return map;
     }

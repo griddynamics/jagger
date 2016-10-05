@@ -21,7 +21,6 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 
-import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
@@ -34,6 +33,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.google.common.collect.Lists;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,11 +54,9 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
     }
 
     @Override
-    public JRDataSource getDataSource() {
+    public JRDataSource getDataSource(String sessionId) {
 
         List<ScenarioPlotDTO> plots = Lists.newArrayList();
-
-        String sessionId = getSessionIdProvider().getSessionId();
 
         Map<TestEntity,Map<String,Double>> dataForScalabilityPlots = summaryReporter.getDataForScalabilityPlots(sessionId);
 

@@ -22,14 +22,19 @@ package com.griddynamics.jagger.reporting;
 
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class LatencyPlotReportProvider extends AbstractReportProvider {
 
@@ -45,7 +50,7 @@ public class LatencyPlotReportProvider extends AbstractReportProvider {
         }
     }
 
-    public JRDataSource getDataSource() {
+    public JRDataSource getDataSource(String sessionID) {
 
         List<PlotDTO> plots = new ArrayList<PlotDTO>();
 

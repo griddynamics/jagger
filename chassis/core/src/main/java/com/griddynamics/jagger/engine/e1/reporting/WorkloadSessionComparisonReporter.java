@@ -20,14 +20,15 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.google.common.collect.Lists;
-import com.griddynamics.jagger.util.Decision;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadComparisonResult;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
+import com.griddynamics.jagger.util.Decision;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.google.common.collect.Lists;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +38,7 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
     private StatusImageProvider statusImageProvider;
 
     @Override
-    public JRDataSource getDataSource(Collection<Verdict<WorkloadComparisonResult>> key) {
+    public JRDataSource getDataSource(Collection<Verdict<WorkloadComparisonResult>> key, String sessionId) {
         getContext().getParameters().put("jagger.workloadsessioncomparator.statusImageProvider", statusImageProvider);
 
 

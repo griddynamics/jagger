@@ -75,7 +75,6 @@
     <alias name="DefaultBaselineSessionProvider" alias="baselineSessionProvider"/>
 
     <bean id="DefaultBaselineSessionProvider" class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
-
         <property name="sessionId" value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
         <property name="sessionIdProvider" ref="sessionIdProvider"/>
     </bean>

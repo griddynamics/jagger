@@ -28,9 +28,7 @@ public class WorkloadReporter extends AbstractReportProvider {
     private SummaryReporter summaryReporter;
 
 	@Override
-	public JRDataSource getDataSource() {
-        String sessionId = getSessionIdProvider().getSessionId();
-
+	public JRDataSource getDataSource(String sessionId) {
         return new JRBeanCollectionDataSource(summaryReporter.getTestSummaryData(sessionId));
 	}
 

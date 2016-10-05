@@ -31,9 +31,14 @@
         <property name="resources">
             <list>
                 <value>configuration/reporter/default.reporting.properties</value>
-                <value>configuration/reporter/reporting.properties</value>
+                <value>${jagger.reporting.properties:configuration/reporter/reporting.properties}</value>
             </list>
         </property>
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="searchSystemEnvironment" value="true"/>
+        <property name="ignoreUnresolvablePlaceholders" value="false"/>
+        <property name="order" value="1"/>
     </bean>
 
     <alias name="sessionIdProviderReadOnly_${report.only}" alias="sessionIdProvider"/>
@@ -76,7 +81,7 @@
 
     <bean id="defaultOverallSessionComparisonReporter" class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter" parent="abstractReportProviderBean">
         <property name="template" value="configuration/reporting/session-comparison-report.jrxml"/>
-        <property name="baselineSessionProvider" ref="baselineSessionProvider"/>
+        <property name="baselineSessionId" value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
         <property name="statusImageProvider" ref="statusImageProvider"/>
         <property name="sessionComparator" ref="sessionComparator"/>
     </bean>
@@ -108,7 +113,6 @@
                 <entry key="e1Scenario">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/workload-reporting.jrxml"/>
-
                         <property name="summaryReporter" ref="summaryReporter"/>
                     </bean>
                 </entry>
@@ -152,7 +156,6 @@
         <property name="autoDiscovery" value="true"/>
         <property name="extensions">
             <map>
-
                 <entry key="diagnosticResults">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.DiagnosticReporter" parent="abstractReportProviderBean">
                         <property name="template" value="configuration/reporting/diagnostics-report.jrxml"/>
@@ -225,6 +228,8 @@
         <property name="reportType" value="${chassis.master.reporting.report.format}"/>
         <property name="rootTemplateLocation" value="${chassis.master.reporting.root.report.template.location}"/>
         <property name="outputReportLocation" value="${chassis.master.reporting.report.file.name}"/>
+        <property name="doGenerateXmlReport" value="${chassis.master.reporting.report.in.xml}"/>
+        <property name="sessionId" value="#{sessionIdProvider.getSessionId()}"/>
     </bean>
 
     <bean id="summaryReporter" class="com.griddynamics.jagger.engine.e1.reporting.SummaryReporter">
