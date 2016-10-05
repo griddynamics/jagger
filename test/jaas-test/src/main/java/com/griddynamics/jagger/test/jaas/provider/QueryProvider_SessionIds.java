@@ -1,7 +1,8 @@
 package com.griddynamics.jagger.test.jaas.provider;
 
+import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
+import com.griddynamics.jagger.invoker.http.v2.JHttpQuery;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
-import org.apache.http.client.methods.HttpGet;
 
 import java.util.Iterator;
 import java.util.stream.Collectors;
@@ -11,12 +12,18 @@ import java.util.stream.Collectors;
  */
 public class QueryProvider_SessionIds extends QueryProvider_SessionsList {
 
-    public QueryProvider_SessionIds() {
-        getQueries().addAll(TestContext.getSessions().stream().map(s -> new HttpGet(uri + "/" + s.getId())).collect(Collectors.toList()));
-    }
+    public QueryProvider_SessionIds() {}
 
     @Override
     public Iterator iterator() {
-        return getQueries().iterator();
+        if (queries.isEmpty()) {
+            queries.addAll(TestContext
+                            .getSessions()
+                            .stream()
+                            .map(s -> new JHttpQuery<String>().get().responseBodyType(SessionEntity.class).path(uri + "/" + s.getId()))
+                            .collect(Collectors.toList()));
+        }
+
+        return queries.iterator();
     }
 }

@@ -4,6 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-lazy-init="true">
 
+    <bean id="endpointProvider_JaaSMain" class="com.griddynamics.jagger.test.jaas.provider.EndpointsProvider_JaaS"/>
+
     <bean id="queryProvider_SessionsList" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_SessionsList"/>
     <bean id="queryProvider_SessionIds" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_SessionIds"/>
     <bean id="queryProvider_SessionTestsList" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_TestsList"/>

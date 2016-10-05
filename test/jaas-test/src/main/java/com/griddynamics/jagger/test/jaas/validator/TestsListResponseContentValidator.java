@@ -1,17 +1,15 @@
 package com.griddynamics.jagger.test.jaas.validator;
 
-import com.alibaba.fastjson.JSON;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
-import com.griddynamics.jagger.invoker.http.HttpResponse;
+import com.griddynamics.jagger.invoker.http.v2.JHttpQuery;
+import com.griddynamics.jagger.invoker.http.v2.JHttpResponse;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,7 +26,7 @@ import static junit.framework.Assert.assertTrue;
  * - the list contains no duplicates;
  * - a randomly picked records is the same as corresponding expected one.
  */
-public class TestsListResponseContentValidator<E> extends BaseHttpResponseValidator<HttpRequestBase, E> {
+public class TestsListResponseContentValidator<E> extends BaseHttpResponseValidator<JHttpQuery<String>, E> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestsListResponseContentValidator.class);
 
     public TestsListResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
@@ -41,10 +39,9 @@ public class TestsListResponseContentValidator<E> extends BaseHttpResponseValida
     }
 
     @Override
-    public boolean validate(HttpRequestBase query, E endpoint, HttpResponse result, long duration)  {
-        String content = result.getBody();
+    public boolean validate(JHttpQuery<String> query, E endpoint, JHttpResponse result, long duration)  {
+        List<TestEntity> actualEntities = Arrays.asList((TestEntity[]) result.getBody());
 
-        List<TestEntity> actualEntities = JSON.parseArray(content, TestEntity.class);
         boolean isValid = false;
 
         //Checks.
@@ -69,9 +66,10 @@ public class TestsListResponseContentValidator<E> extends BaseHttpResponseValida
         return isValid;
     }
 
-    private String getSessionIdFromQuery(HttpRequestBase query){
+    private String getSessionIdFromQuery(JHttpQuery query){
         // ${jaas.rest.root}/sessions/{sessionId}/tests => ${jaas.rest.root} + sessions + {sessionId} + tests
-        String[] parts = query.getURI().toString().split("/");
+        // TODO : re-factor
+        String[] parts = query.getPath().split("/");
 
         return parts[parts.length - 2];
     }

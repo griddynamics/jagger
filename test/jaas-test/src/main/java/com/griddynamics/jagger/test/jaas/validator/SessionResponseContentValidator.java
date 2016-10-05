@@ -1,18 +1,14 @@
 package com.griddynamics.jagger.test.jaas.validator;
 
-import com.alibaba.fastjson.JSON;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
-import com.griddynamics.jagger.invoker.http.HttpResponse;
+import com.griddynamics.jagger.invoker.http.v2.JHttpQuery;
+import com.griddynamics.jagger.invoker.http.v2.JHttpResponse;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Validates response of /jaas/sessions/{id}.
@@ -33,17 +29,14 @@ public class SessionResponseContentValidator<E> extends SessionsListResponseCont
     }
 
     @Override
-    public boolean validate(HttpRequestBase query, E endpoint, HttpResponse result, long duration)  {
-        String content = result.getBody();
+    public boolean validate(JHttpQuery<String> query, E endpoint, JHttpResponse result, long duration)  {
         boolean isValid = false;
-        List<Map<String, Object>> filteredFields = getJsonEntriesFiltered(content, "$[?]", getAllSessionFieldsFilter());
 
         //Checks.
         try {
-            Assert.assertEquals("Single session record is expected.", 1, filteredFields.size());
-            SessionEntity actualSession = JSON.parseObject(content, SessionEntity.class);
+            SessionEntity actualSession = (SessionEntity)result.getBody();
 
-            String[] queryParts = query.getURI().toString().split("/"); //Get SessionId from the query path.
+            String[] queryParts = query.getPath().split("/"); //Get SessionId from the query path.
             SessionEntity expectedSession = TestContext.getSession(queryParts[queryParts.length - 1]);
 
             Assert.assertEquals("Expected and actual session are not equal.", expectedSession, actualSession);

@@ -3,21 +3,18 @@ package com.griddynamics.jagger.test.jaas.validator;
 import com.alibaba.fastjson.JSON;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
-import com.griddynamics.jagger.invoker.http.HttpResponse;
+import com.griddynamics.jagger.invoker.http.v2.JHttpQuery;
+import com.griddynamics.jagger.invoker.http.v2.JHttpResponse;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
-import com.jayway.jsonpath.Filter;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-
-import static com.jayway.jsonpath.Criteria.where;
-import static com.jayway.jsonpath.Filter.filter;
 
 /**
  * Validates response of /jaas/sessions.
@@ -27,7 +24,7 @@ import static com.jayway.jsonpath.Filter.filter;
  * - the list contains no duplicates;
  * - a randomly picked records is the same as corresponding expected one.
  */
-public class SessionsListResponseContentValidator<E> extends BaseHttpResponseValidator<HttpRequestBase, E> {
+public class SessionsListResponseContentValidator<E> extends BaseHttpResponseValidator<JHttpQuery<String>, E> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionsListResponseContentValidator.class);
 
     public SessionsListResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
@@ -40,10 +37,8 @@ public class SessionsListResponseContentValidator<E> extends BaseHttpResponseVal
     }
 
     @Override
-    public boolean validate(HttpRequestBase query, E endpoint, HttpResponse result, long duration)  {
-        String content = result.getBody();
-
-        List<SessionEntity> actualSessions = JSON.parseArray(content, SessionEntity.class);
+    public boolean validate(JHttpQuery<String> query, E endpoint, JHttpResponse result, long duration)  {
+        List<SessionEntity> actualSessions = Arrays.asList((SessionEntity[]) result.getBody());
 
         boolean isValid = false;
 
@@ -71,13 +66,5 @@ public class SessionsListResponseContentValidator<E> extends BaseHttpResponseVal
         }
 
         return isValid;
-    }
-
-    protected Filter getAllSessionFieldsFilter() {
-        return filter(where("id").exists(true)
-                    .and("comment").exists(true)
-                    .and("startDate").exists(true)
-                    .and("endDate").exists(true)
-                    .and("kernels").exists(true));
     }
 }

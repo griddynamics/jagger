@@ -1,7 +1,8 @@
 package com.griddynamics.jagger.test.jaas.provider;
 
+import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
+import com.griddynamics.jagger.invoker.http.v2.JHttpQuery;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
-import org.apache.http.client.methods.HttpGet;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Iterator;
@@ -20,10 +21,12 @@ public class QueryProvider_TestsList extends QueryProvider_SessionsList {
 
     @Override
     public Iterator iterator() {
-        if (getQueries().isEmpty()) {
-            getQueries().add(new HttpGet(getTestsPath())); //Have to that here since Spring's @Value does not provide the value upon constructing.
+        if (queries.isEmpty()) {
+            JHttpQuery<String> q = new JHttpQuery<String>().get().responseBodyType(TestEntity[].class).path(getTestsPath());
+            queries.add(q);
         }
-        return getQueries().iterator();
+
+        return queries.iterator();
     }
 
     protected String getTestsPath(){
