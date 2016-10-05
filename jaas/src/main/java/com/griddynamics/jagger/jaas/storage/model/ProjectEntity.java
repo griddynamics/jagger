@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -21,7 +23,9 @@ public class ProjectEntity {
     @Column(nullable = false)
     private String zipPath;
 
-    private Long dbId;
+    @ManyToOne
+    @JoinColumn(name = "dbId")
+    private DbConfigEntity dbConfig;
 
     private String version;
 
@@ -49,13 +53,17 @@ public class ProjectEntity {
         this.zipPath = zipPath;
     }
 
-    public Long getDbId() {
-        return dbId;
+    public DbConfigEntity getDbConfig() {
+        return dbConfig;
     }
 
-    public void setDbId(Long dbId) {
-        this.dbId = dbId;
+
+    public void setDbConfig(Long dbId) {
+        DbConfigEntity dbConfigEntity = new DbConfigEntity();
+        dbConfigEntity.setId(dbId);
+        this.dbConfig = dbConfigEntity;
     }
+
 
     public String getVersion() {
         return version;
@@ -71,7 +79,7 @@ public class ProjectEntity {
                 + "id=" + id
                 + ", description='" + description + '\''
                 + ", zipPath='" + zipPath + '\''
-                + ", dbId=" + dbId
+                + ", dbId=" + dbConfig
                 + ", version='" + version + '\''
                 + '}';
     }
