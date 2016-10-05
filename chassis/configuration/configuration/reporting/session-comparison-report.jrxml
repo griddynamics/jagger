@@ -29,7 +29,7 @@
     <property name="ireport.y" value="0"/>
     <import value="com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <parameter name="sessionId" class="java.lang.String"/>
     <variable name="sessionVerdict" class="com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict">

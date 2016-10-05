@@ -64,8 +64,8 @@ public class ReportDefinitionParser extends AbstractSimpleBeanDefinitionParser {
             if (baseLineId.isEmpty()) {
                 baseLineId = BaselineSessionProvider.IDENTITY_SESSION;
             }
-            baseLineSessionProvider.addPropertyValue(XMLConstants.SESSION_ID, baseLineId);
-            comparisonReporter.addPropertyValue("baselineSessionId", baseLineId);
+            baseLineSessionProvider.addPropertyValue(XMLConstants.BASELINE_SESSION_ID, baseLineId);
+            comparisonReporter.addPropertyValue("baselineSessionProvider", baseLineSessionProvider);
 
             //parse comparators chain
             CustomBeanDefinitionParser.setBeanProperty(XMLConstants.SESSION_COMPARATOR, sessionComparatorsElement, parserContext, comparisonReporter.getBeanDefinition());

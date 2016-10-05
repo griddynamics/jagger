@@ -45,6 +45,7 @@ public class ReportingContext implements ApplicationContextAware {
     public static final String CONTEXT_NAME = "context";
 
     private ResourceLoader resourceLoader;
+    private String rootPath = "";
 
     private ExtensionRegistry<ReportProvider> providerRegistry = new ExtensionRegistry<>(ReportProvider.class);
     private ExtensionRegistry<MappedReportProvider> mappedProviderRegistry =
@@ -56,7 +57,7 @@ public class ReportingContext implements ApplicationContextAware {
 
     public InputStream getResource(String location) {
         try {
-            return resourceLoader.getResource(location).getInputStream();
+            return resourceLoader.getResource(getPath(location)).getInputStream();
         } catch (IOException e) {
             throw new TechnicalException(e);
         }
@@ -64,7 +65,7 @@ public class ReportingContext implements ApplicationContextAware {
 
     public OutputStream getOutputResource(String location) {
         try {
-            File file = new File(resourceLoader.getResource(location).getFilename());
+            File file = new File(resourceLoader.getResource(getPath(location)).getFilename());
             return new FileOutputStream(file);
         } catch (IOException e) {
             throw new TechnicalException(e);
@@ -91,7 +92,7 @@ public class ReportingContext implements ApplicationContextAware {
 
     public JasperReport getReport(String location) {
         try {
-            return JasperCompileManager.compileReport(new ReportInputStream(resourceLoader.getResource(location).getInputStream(), removeFrame));
+            return JasperCompileManager.compileReport(new ReportInputStream(resourceLoader.getResource(getPath(location)).getInputStream(), removeFrame));
         } catch (JRException e) {
             throw new TechnicalException(e);
         } catch (IOException e) {
@@ -120,5 +121,17 @@ public class ReportingContext implements ApplicationContextAware {
 
     public void setRemoveFrame(boolean removeFrame) {
         this.removeFrame = removeFrame;
+    }
+    
+    public String getRootPath() {
+        return rootPath;
+    }
+    
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
+    }
+    
+    private String getPath(String relativePath) {
+        return rootPath + relativePath;
     }
 }

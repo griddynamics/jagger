@@ -11,6 +11,7 @@ import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.StdDevMon
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.ThroughputWorkloadDecisionMaker;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadFeatureComparator;
 import com.griddynamics.jagger.extension.ExtensionExporter;
+import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.reporting.ReportProvider;
 import com.griddynamics.jagger.reporting.ReportingService;
 import org.junit.BeforeClass;
@@ -23,11 +24,9 @@ import java.util.Properties;
 
 
 /**
- * Created by IntelliJ IDEA.
  * User: nmusienko
  * Date: 29.11.12
  * Time: 19:30
- * To change this template use File | Settings | File Templates.
  */
 
 public class JaggerReportTest {
@@ -61,7 +60,8 @@ public class JaggerReportTest {
         ReportProvider provider = service.getContext().getProvider("sessionComparison");
         Assert.assertNotNull(provider);
         OverallSessionComparisonReporter comparators = (OverallSessionComparisonReporter) provider;
-        Assert.assertEquals(comparators.getBaselineSessionId(), "4444");
+        String currentSession = context.getBean(SessionIdProvider.class).getSessionId();
+        Assert.assertEquals(comparators.getBaselineSessionProvider().getBaselineSession(currentSession), "4444");
     }
 
     @Test

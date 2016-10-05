@@ -1,5 +1,8 @@
 package com.griddynamics.jagger.jaas.service;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.contains;
+
 import com.griddynamics.jagger.config.DataServiceConfig;
 import com.griddynamics.jagger.engine.e1.services.DataService;
 import com.griddynamics.jagger.jaas.storage.DbConfigEntityDao;
@@ -16,7 +19,6 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
-import javax.annotation.PreDestroy;
 import java.lang.reflect.Field;
 import java.net.ConnectException;
 import java.sql.Connection;
@@ -31,8 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.contains;
+import javax.annotation.PreDestroy;
 
 /**
  * Provides {@link com.griddynamics.jagger.engine.e1.services.DataService} service
@@ -71,14 +72,14 @@ public class DynamicDataService implements DbConfigEntityDao {
         destroyerService.shutdown();
     }
 
-    protected void evict(final Long configId) {
-        destroyerService.execute(() -> doEvict(configId));
+    protected void destroy(final AbstractApplicationContext context) {
+        destroyerService.execute(() -> doDestroy(context));
     }
 
     protected void evictIfAboveThreshold() {
         destroyerService.execute(() -> {
             if (dataServiceContexts.size() >= dataServiceCacheSize) {
-                doEvict(dataServiceContexts.keySet().iterator().next());
+                doDestroy(dataServiceContexts.remove(dataServiceContexts.keySet().iterator().next()));
             }
         });
     }
@@ -87,31 +88,32 @@ public class DynamicDataService implements DbConfigEntityDao {
      * To be called only inside {@link #destroyerService} workers
      * which guarantees serial eviction as soon as {@link #destroyerService} is single-threaded.
      *
-     * @param configId id of config to be evicted
+     * @param context to be destroyed
      */
-    private void doEvict(final Long configId) {
-        AbstractApplicationContext context = dataServiceContexts.remove(configId);
+    private void doDestroy(final AbstractApplicationContext context) {
         if (context != null) {
-            LOGGER.info("Destroying jagger test db context with id: {}", configId);
+            LOGGER.info("Destroying jagger db context...");
             context.destroy();
         }
     }
 
     public DataService getDataServiceFor(final Long configId) {
-
+        return getDynamicContextFor(configId).getBean(DataService.class);
+    }
+    
+    public ApplicationContext getDynamicContextFor(final Long configId) {
         Objects.requireNonNull(configId);
-
-        ApplicationContext dataServiceContext = dataServiceContexts.get(configId);
-        if (Objects.isNull(dataServiceContext)) {
+    
+        ApplicationContext applicationContext = dataServiceContexts.get(configId);
+        if (Objects.isNull(applicationContext)) {
             DbConfigEntity config = jaasDao.read(configId);
             if (Objects.isNull(config)) {
                 return null;
             }
             evictIfAboveThreshold();
-            dataServiceContext = dataServiceContexts.computeIfAbsent(configId, s -> initDataServiceContextFor(config));
+            applicationContext = dataServiceContexts.computeIfAbsent(configId, s -> initDataServiceContextFor(config));
         }
-
-        return dataServiceContext.getBean(DataService.class);
+        return applicationContext;
     }
 
     protected AbstractApplicationContext initDataServiceContextFor(DbConfigEntity config) {
@@ -138,8 +140,8 @@ public class DynamicDataService implements DbConfigEntityDao {
             Throwable rootCause = ExceptionUtils.getRootCause(e);
             if (rootCause instanceof ConnectException && contains(rootCause.getMessage(), "Connection refused")) {
                 LOGGER.error(format("Cannot establish connection to data base %s. ", config));
-                throw new RuntimeException(e);
             }
+            throw new RuntimeException(e);
         }
     }
 
@@ -188,6 +190,6 @@ public class DynamicDataService implements DbConfigEntityDao {
 
     private void evictableOperation(Consumer<DbConfigEntity> op, DbConfigEntity config) {
         op.accept(config);
-        evict(config.getId());
+        destroy(dataServiceContexts.remove(config.getId()));
     }
 }

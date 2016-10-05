@@ -101,7 +101,7 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
                     // Get data for baseline session
                     Map<String,Double> metricIdToValuesBaseline = new HashMap<String, Double>();
                     if (needBaselineSessionValue) {
-                        String baselineId = workloadTask.getLimits().getBaselineId();
+                        String baselineId = workloadTask.getLimits().getBaselineId(sessionId);
                         TestEntity testEntityBaseline = null;
 
                         // Strategy to match sessions - we will use baseline only when all test parameters are matching
@@ -125,7 +125,7 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
                         }
                     }
 
-                    log.info("Making decision for test: {} (baseline session: {})",testName,workloadTask.getLimits().getBaselineId());
+                    log.info("Making decision for test: {} (baseline session: {})",testName,workloadTask.getLimits().getBaselineId(sessionId));
 
                     // Compare
                     Set<DecisionPerLimit> decisionsPerLimit = new HashSet<DecisionPerLimit>();

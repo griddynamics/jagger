@@ -32,6 +32,9 @@ import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,14 +77,14 @@ public class ReportingService {
             log.info("BEGIN: Export report");
             switch(reportType) {
                 case HTML : JasperExportManager.exportReportToHtmlFile(jasperPrint, outputReportLocation); break;
-                case PDF : JasperExportManager.exportReportToPdfStream(jasperPrint, context.getOutputResource(outputReportLocation)); break;
+                case PDF : JasperExportManager.exportReportToPdfStream(jasperPrint, Files.newOutputStream(Paths.get(outputReportLocation))); break;
                 default : throw new ConfigurationException("ReportType is not specified");
             }
             if (doGenerateXmlReport) {
                 XMLReporter.create(context, sessionId).generateReport();
             }
             log.info("END: Export report");
-        } catch (JRException e) {
+        } catch (JRException | IOException e) {
             log.error("Error during report rendering", e);
             throw new TechnicalException(e);
         }
