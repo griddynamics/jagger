@@ -65,7 +65,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
     public List<TagDto> getAllTags() {
 
-        List<TagDto> allTags = new ArrayList<TagDto>();
+        List<TagDto> allTags = new ArrayList<>();
         if (isTagsStorageAvailable) {
             List<TagEntity> tags = entityManager.createQuery("select te from TagEntity as te").getResultList();
 
@@ -148,10 +148,10 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         }
 
         if (sessionDataDtoList.isEmpty()) {
-            return Collections.<SessionDataDto>emptyList();
+            return Collections.emptyList();
         }
 
-        log.info("There was loaded {} sessions data for {} ms", new Object[]{sessionDataDtoList.size(), System.currentTimeMillis() - timestamp});
+        log.debug("There was loaded {} sessions data for {} ms", sessionDataDtoList.size(), System.currentTimeMillis() - timestamp);
 
         return sessionDataDtoList;
     }
@@ -165,7 +165,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         if (sessionDataList == null || sessionDataList.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        List<Long> sessionIds = new ArrayList<Long>();
+        List<Long> sessionIds = new ArrayList<>();
         for (int i = 0; i < sessionDataList.size(); i++) {
             sessionIds.add(sessionDataList.get(i).getId());
         }
@@ -268,7 +268,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
                 sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId()), new ArrayList<TagDto>(tagMap.get(sessionData.getId()))));
             }
 
-            log.info("There was loaded {} sessions data for {} ms", new Object[]{sessionDataDtoList.size(), System.currentTimeMillis() - timestamp});
+            log.debug("There was loaded {} sessions data for {} ms", sessionDataDtoList.size(), System.currentTimeMillis() - timestamp);
         } catch (Exception e) {
             log.error("Error was occurred during session data between " + from + " to " + to + "; start " + start + ", length " + length, e);
             throw new RuntimeException(e);
@@ -435,7 +435,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
                 sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId()), tagMap.get(sessionData.getId())));
             }
 
-            log.info("There was loaded {} sessions data for {} ms", new Object[]{sessionDataDtoList.size(), System.currentTimeMillis() - timestamp});
+            log.debug("There was loaded {} sessions data for {} ms", sessionDataDtoList.size(), System.currentTimeMillis() - timestamp);
         } catch (Exception e) {
             log.error("Error was occurred during session data fetching for session tags " + sessionTagNames + "; start " + start + ", length " + length, e);
             throw new RuntimeException(e);

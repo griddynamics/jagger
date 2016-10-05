@@ -1105,27 +1105,15 @@ public class DatabaseServiceImpl implements DatabaseService {
         if (taskList.isEmpty())
             return detailsNode;
 
-        List<TestDetailsNode> taskDataDtoList = new ArrayList<TestDetailsNode>();
+        List<TestDetailsNode> taskDataDtoList = new ArrayList<>();
         MetricGroupNode<PlotNode> sessionScopeNode = null;
 
         try {
             Future<Map<TaskDataDto, List<PlotNode>>> metricsPlotsMapFuture = threadPool.submit(
-                    new Callable<Map<TaskDataDto, List<PlotNode>>>() {
-                        @Override
-                        public Map<TaskDataDto, List<PlotNode>> call() throws Exception {
-                            return getTestPlotsMap(sessionIds, taskList);
-                        }
-                    }
-            );
+                    () -> getTestPlotsMap(sessionIds, taskList));
 
             Future<Map<TaskDataDto, List<PlotNode>>> monitoringNewPlotsMapFuture = threadPool.submit(
-                    new Callable<Map<TaskDataDto, List<PlotNode>>>() {
-                        @Override
-                        public Map<TaskDataDto, List<PlotNode>> call() throws Exception {
-                            return getMonitoringPlots(sessionIds, taskList);
-                        }
-                    }
-            );
+                    () -> getMonitoringPlots(sessionIds, taskList));
 
 
             //a first list element is a map with test nodes
@@ -1140,7 +1128,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             Map<TaskDataDto, List<PlotNode>> monitoringMapSS = monitoringMaps.get(1);
 
             // get agent names
-            Set<PlotNode> plotNodeList = new HashSet<PlotNode>();
+            Set<PlotNode> plotNodeList = new HashSet<>();
             if (!monitoringMap.isEmpty()) {
                 for (TaskDataDto taskDataDto : monitoringMap.keySet()) {
                     plotNodeList.addAll(monitoringMap.get(taskDataDto));
@@ -1404,7 +1392,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             }
         }
 
-        log.debug("Time spent for testInfo fetching for {} taskDataDtos : {}ms", new Object[]{taskDataDtos.size(), System.currentTimeMillis() - temp});
+        log.debug("Time spent for testInfo fetching for {} taskDataDtos : {}ms", taskDataDtos.size(), System.currentTimeMillis() - temp);
 
         return resultMap;
     }
@@ -1736,19 +1724,17 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     private List<Map<TaskDataDto, List<PlotNode>>> separateTestAndSessionScope(Map<TaskDataDto, List<PlotNode>> map) {
 
-        Map<TaskDataDto, List<PlotNode>> mapForTests = new HashMap<TaskDataDto, List<PlotNode>>();
-        Map<TaskDataDto, List<PlotNode>> mapForSessionScope = new HashMap<TaskDataDto, List<PlotNode>>();
+        Map<TaskDataDto, List<PlotNode>> mapForTests = new HashMap<>();
+        Map<TaskDataDto, List<PlotNode>> mapForSessionScope = new HashMap<>();
 
         for (TaskDataDto taskDataDto : map.keySet()) {
             for (PlotNode plotNode : map.get(taskDataDto)) {
                 for (MetricNameDto metricNameDto : plotNode.getMetricNameDtoList()) {
                     if (isSessionScopeMetric(metricNameDto)) {
-                        if (mapForSessionScope.get(taskDataDto) == null)
-                            mapForSessionScope.put(taskDataDto, new ArrayList<PlotNode>());
+                        mapForSessionScope.putIfAbsent(taskDataDto, new ArrayList<>());
                         mapForSessionScope.get(taskDataDto).add(plotNode);
                     } else {
-                        if (mapForTests.get(taskDataDto) == null)
-                            mapForTests.put(taskDataDto, new ArrayList<PlotNode>());
+                        mapForTests.putIfAbsent(taskDataDto, new ArrayList<>());
                         mapForTests.get(taskDataDto).add(plotNode);
                     }
                 }

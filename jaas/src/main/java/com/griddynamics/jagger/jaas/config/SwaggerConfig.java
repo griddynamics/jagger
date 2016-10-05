@@ -20,6 +20,9 @@ import java.util.List;
 
 @EnableSwagger2
 @Configuration
+/**
+ * Configures Swagger REST API docs. Available at /swagger-ui.html url.
+ */
 public class SwaggerConfig {
 
     @Value("${application.version}")
@@ -49,8 +52,8 @@ public class SwaggerConfig {
                         + "It provides different information through its REST API.\n\n"
                         + "JaaS artifact packed as an all in jar (with all dependencies inside) with embedded Tomcat.\n\n"
                         + "JaaS based on Spring Boot, so its properties can be configured using one of Spring Boot ways"
-                        + "By default JaaS is listening on port 8080.\n"
-                        + "To change it just override property \"server.port\".")
+                        + "by default JaaS is listening on port 8080.\n"
+                        + "to change it just override property \"server.port\".")
                 .license("GNU LESSER GENERAL PUBLIC LICENSE Version 2.1")
                 .licenseUrl("https://github.com/griddynamics/jagger/blob/master/license.txt")
                 .version(version)
@@ -62,7 +65,7 @@ public class SwaggerConfig {
         responseMessages
                 .add(new ResponseMessageBuilder()
                         .code(500)
-                        .message("500 - Interna server error.\n\n"
+                        .message("500 - Internal server error.\n\n"
                                 + "There is a problem with the resource you are looking for, and it can not be dispayed.")
                         .responseModel(new ModelRef("Error"))
                         .build());

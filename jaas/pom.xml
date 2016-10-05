@@ -53,8 +53,17 @@
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- DB -->
@@ -80,10 +89,6 @@
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.core</artifactId>
             <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-annotations</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>com.griddynamics.jagger</groupId>
                     <artifactId>chassis.coordinator.zookeeper</artifactId>
