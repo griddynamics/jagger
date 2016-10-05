@@ -8,6 +8,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
@@ -60,6 +61,34 @@ public class JHttpEndpoint {
 
         this.hostname = uri.getHost();
         this.port = uri.getPort() < 0 ? 80 : uri.getPort();
+    }
+
+    /**
+     * @param protocol protocol of endpoint
+     * @param hostname hostname of endpoint
+     * @param port     port of endpoint
+     */
+    public JHttpEndpoint(Protocol protocol, String hostname, int port) {
+        this.protocol = protocol;
+        this.hostname = hostname;
+        this.port = port;
+    }
+
+    /**
+     * @param hostname hostname of endpoint
+     * @param port     port of endpoint
+     */
+    public JHttpEndpoint(String hostname, int port) {
+        this.hostname = hostname;
+        this.port = port;
+    }
+
+    /**
+     * @param endpointURL string with url to be passed to {@link JHttpEndpoint#JHttpEndpoint(URI)} constructor
+     * @throws URISyntaxException if endpointURL is invalid
+     */
+    public JHttpEndpoint(String endpointURL) throws URISyntaxException {
+        this(new URI(endpointURL));
     }
 
     public Protocol getProtocol() {

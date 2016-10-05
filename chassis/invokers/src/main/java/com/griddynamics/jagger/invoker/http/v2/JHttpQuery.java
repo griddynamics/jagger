@@ -352,7 +352,6 @@ public class JHttpQuery<T> implements Serializable {
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().path("/products/%s/%s", "categories", 42);
      * }</pre>
-     *
      * @see String#format(String, Object...)
      */
     public JHttpQuery<T> path(String formatString, Object... args) {
@@ -384,6 +383,10 @@ public class JHttpQuery<T> implements Serializable {
         return path;
     }
 
+    private void initHeadersIfNull() {
+        if (this.headers == null)
+            this.headers = new HttpHeaders();
+    }
 
     @Override
     public String toString() {
@@ -391,12 +394,37 @@ public class JHttpQuery<T> implements Serializable {
                 "method=" + method +
                 ", headers=" + headers +
                 ", body=" + body +
+                ", responseBodyType=" + responseBodyType +
                 ", queryParams=" + queryParams +
+                ", path='" + path + '\'' +
                 '}';
     }
 
-    private void initHeadersIfNull() {
-        if (this.headers == null)
-            this.headers = new HttpHeaders();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JHttpQuery<?> httpQuery = (JHttpQuery<?>) o;
+
+        if (method != httpQuery.method) return false;
+        if (headers != null ? !headers.equals(httpQuery.headers) : httpQuery.headers != null) return false;
+        if (body != null ? !body.equals(httpQuery.body) : httpQuery.body != null) return false;
+        if (responseBodyType != null ? !responseBodyType.equals(httpQuery.responseBodyType) : httpQuery.responseBodyType != null)
+            return false;
+        if (queryParams != null ? !queryParams.equals(httpQuery.queryParams) : httpQuery.queryParams != null) return false;
+        return path != null ? path.equals(httpQuery.path) : httpQuery.path == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = method.hashCode();
+        result = 31 * result + (headers != null ? headers.hashCode() : 0);
+        result = 31 * result + (body != null ? body.hashCode() : 0);
+        result = 31 * result + (responseBodyType != null ? responseBodyType.hashCode() : 0);
+        result = 31 * result + (queryParams != null ? queryParams.hashCode() : 0);
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        return result;
     }
 }
