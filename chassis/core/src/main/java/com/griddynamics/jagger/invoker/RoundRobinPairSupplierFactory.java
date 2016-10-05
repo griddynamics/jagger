@@ -22,17 +22,17 @@ package com.griddynamics.jagger.invoker;
 
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.Pair;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import static com.google.common.base.Preconditions.checkState;
 
 public class RoundRobinPairSupplierFactory<Q, E> implements PairSupplierFactory<Q, E> {
-
     @Override
     public PairSupplier<Q, E> create(Iterable<Q> queries, Iterable<E> endpoints) {
 
-        LinkedList<Pair<Q,E>> tempList = new LinkedList<Pair<Q, E>>();
+        LinkedList<Pair<Q, E>> tempList = new LinkedList<Pair<Q, E>>();
         Iterator<E> endpointIt = endpoints.iterator();
         Iterator<Q> queryIt = queries.iterator();
 
@@ -41,11 +41,11 @@ public class RoundRobinPairSupplierFactory<Q, E> implements PairSupplierFactory<
 
         E currentEndpoint;
         Q currentQuery;
-        while(endpointIt.hasNext() || queryIt.hasNext()) {
-            if(!endpointIt.hasNext()) {
+        while (endpointIt.hasNext() || queryIt.hasNext()) {
+            if (!endpointIt.hasNext()) {
                 endpointIt = endpoints.iterator();
             }
-            if(!queryIt.hasNext()) {
+            if (!queryIt.hasNext()) {
                 queryIt = queries.iterator();
             }
 
