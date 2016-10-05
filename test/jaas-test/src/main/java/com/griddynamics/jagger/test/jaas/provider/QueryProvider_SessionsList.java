@@ -12,17 +12,28 @@ import java.util.List;
  * Provides a query for /jaas/sessions resource which shall return list of available sessions.
  */
 public class QueryProvider_SessionsList implements Iterable {
-    protected List<HttpRequestBase> queries = new LinkedList<>();
+    private List<HttpRequestBase> queries = null;
 
     @Value( "${jaas.rest.base.sessions}" )
     protected String uri;
 
     public QueryProvider_SessionsList() {
-        queries.add(new HttpGet(uri));
     }
 
     @Override
     public Iterator iterator() {
+        if (getQueries().isEmpty()) {
+            queries.add(new HttpGet(uri)); //Have to that here since Spring's @Value does not provide the value upon constructing.
+        }
+
         return queries.iterator();
+    }
+
+    protected List<HttpRequestBase> getQueries(){
+        if (null == queries){
+            queries = new LinkedList<>();
+        }
+
+        return queries;
     }
 }

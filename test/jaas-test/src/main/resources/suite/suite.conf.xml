@@ -11,7 +11,7 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
-    <beans:import resource="collectors.conf.xml"/>
+
     <beans:import resource="test.description.conf.xml"/>
 
     <!--Name of workload configuration-->
