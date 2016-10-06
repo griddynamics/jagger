@@ -35,6 +35,7 @@
         <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
         <springfox-swagger2.version>2.5.0</springfox-swagger2.version>
         <guava.version>19.0</guava.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
     </properties>
 
     <dependencies>
@@ -224,6 +225,14 @@
             <version>${guava.version}</version>
         </dependency>
 
+        <!-- apache -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <dependencyManagement>
@@ -264,6 +273,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <failOnViolation>false</failOnViolation>
+                    <failsOnError>false</failsOnError>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
