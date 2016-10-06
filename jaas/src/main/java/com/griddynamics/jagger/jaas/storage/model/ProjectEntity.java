@@ -25,7 +25,7 @@ public class ProjectEntity {
 
     @ManyToOne
     @JoinColumn(name = "dbId")
-    private DbConfigEntity dbConfig;
+    private DbConfigEntity dbId;
 
     private String version;
 
@@ -53,15 +53,15 @@ public class ProjectEntity {
         this.zipPath = zipPath;
     }
 
-    public DbConfigEntity getDbConfig() {
-        return dbConfig;
+    public Long getDbId() {
+        return dbId.getId();
     }
 
 
-    public void setDbConfig(Long dbId) {
+    public void setDbId(Long dbId) {
         DbConfigEntity dbConfigEntity = new DbConfigEntity();
         dbConfigEntity.setId(dbId);
-        this.dbConfig = dbConfigEntity;
+        this.dbId = dbConfigEntity;
     }
 
 
@@ -79,7 +79,7 @@ public class ProjectEntity {
                 + "id=" + id
                 + ", description='" + description + '\''
                 + ", zipPath='" + zipPath + '\''
-                + ", dbId=" + dbConfig
+                + ", dbId=" + dbId
                 + ", version='" + version + '\''
                 + '}';
     }
