@@ -24,33 +24,33 @@
             <test-group id="tg_JaaS_GET_Sessions">
                 <test id="t_JaaS_GET_Sessions_List_SR_eq._1.0" testDescription="td_JaaS_SessionsList">
                     <load xsi:type="load-user-groups">
-                        <user count="2" startCount="2" startIn="0" startBy="0" life="12s" id="tl_JaaS_sessions" />
+                        <user count="2" startCount="2" startIn="0" startBy="0" life="${jaas.std.tst.life}" id="tl_JaaS_sessions" />
                     </load>
-                    <termination xsi:type="termination-iterations" iterations="25" maxDuration="10s"/>
+                    <termination xsi:type="termination-iterations" iterations="${jaas.std.tst.iterations}" maxDuration="${jaas.std.tst.max_duration}"/>
                     <limits xsi:type="limits-ref" ref="test_limits"/>
                 </test>
 
                 <test id="t_JaaS_GET_Exact_Session_SR_eq._1.0" testDescription="td_JaaS_ExactSessionIds">
                     <load xsi:type="load-user-groups">
-                        <user count="2" startCount="2" startIn="0" startBy="0" life="12s" id="tl_JaaS_session_ids" />
+                        <user count="2" startCount="2" startIn="0" startBy="0" life="${jaas.std.tst.life}" id="tl_JaaS_session_ids" />
                     </load>
-                    <termination xsi:type="termination-iterations" iterations="25" maxDuration="10s"/>
+                    <termination xsi:type="termination-iterations" iterations="${jaas.std.tst.iterations}" maxDuration="${jaas.std.tst.max_duration}"/>
                     <limits xsi:type="limits-ref" ref="test_limits"/>
                 </test>
 
                 <test id="t_JaaS_GET_Session_Tests_List_SR_eq._1.0" testDescription="td_JaaS_SessionTestsList">
                     <load xsi:type="load-user-groups">
-                        <user count="2" startCount="2" startIn="0" startBy="0" life="12s" id="tl_JaaS_session_tests" />
+                        <user count="2" startCount="2" startIn="0" startBy="0" life="${jaas.std.tst.life}" id="tl_JaaS_session_tests" />
                     </load>
-                    <termination xsi:type="termination-iterations" iterations="10" maxDuration="10s"/>
+                    <termination xsi:type="termination-iterations" iterations="${jaas.std.tst.iterations}" maxDuration="${jaas.std.tst.max_duration}"/>
                     <limits xsi:type="limits-ref" ref="test_limits"/>
                 </test>
 
                 <test id="t_JaaS_GET_Exact_Session_Test_SR_eq._1.0" testDescription="td_JaaS_ExactSessionTest">
                     <load xsi:type="load-user-groups">
-                        <user count="2" startCount="2" startIn="0" startBy="0" life="12s" id="tl_JaaS_session_test" />
+                        <user count="2" startCount="2" startIn="0" startBy="0" life="${jaas.std.tst.life}" id="tl_JaaS_session_test" />
                     </load>
-                    <termination xsi:type="termination-iterations" iterations="10" maxDuration="10s"/>
+                    <termination xsi:type="termination-iterations" iterations="${jaas.std.tst.iterations}" maxDuration="${jaas.std.tst.max_duration}"/>
                     <limits xsi:type="limits-ref" ref="test_limits"/>
                 </test>
             </test-group>
