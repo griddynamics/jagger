@@ -78,8 +78,14 @@ public class ProjectServiceRestController {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<?> serverUnavailable() {
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> foreignKeyException(DataIntegrityViolationException error) {
+        ResponseEntity<?> responseEntity;
+        if (error.getMessage().contains("FOREIGN KEY")) {
+            responseEntity = new ResponseEntity<>("There is no such data base.", HttpStatus.BAD_REQUEST);
+        } else {
+            responseEntity = new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return responseEntity;
     }
 
 }
