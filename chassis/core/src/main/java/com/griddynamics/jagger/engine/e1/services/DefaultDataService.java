@@ -38,9 +38,6 @@ public class DefaultDataService implements DataService {
 
     @Override
     public Set<SessionEntity> getSessions(Collection<String> sessionIds) {
-        if (sessionIds.isEmpty()){
-            return Collections.emptySet();
-        }
 
         List<SessionDataDto> sessionDataDtoList = databaseService.getSessionInfoService().getBySessionIds(0,sessionIds.size(),new HashSet<String>(sessionIds));
 
@@ -92,7 +89,7 @@ public class DefaultDataService implements DataService {
 
     @Override
     public TestEntity getTestByName(String sessionId, String testName){
-        Map<String, TestEntity> map = getTestsByName(Arrays.asList(sessionId), testName);
+        Map<String, TestEntity> map = getTestsByName(Collections.singletonList(sessionId), testName);
 
         TestEntity result = map.get(sessionId);
         if (result != null){
@@ -356,7 +353,7 @@ public class DefaultDataService implements DataService {
 
     @Override
     public List<MetricPlotPointEntity> getMetricPlotData(MetricEntity metric) {
-        Map<MetricEntity, List<MetricPlotPointEntity>> map = getMetricPlotData(Arrays.asList(metric));
+        Map<MetricEntity, List<MetricPlotPointEntity>> map = getMetricPlotData(Collections.singletonList(metric));
 
         return map.get(metric);
     }

@@ -5,10 +5,19 @@ import com.griddynamics.jagger.dbapi.dto.SummarySingleDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import javax.annotation.PostConstruct;
+
+@Component
 public class StandardMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingleDto> {
+
+    @PostConstruct
+    public void init() {
+        setMaxSizeOfBatch(100000);
+    }
 
     @Override
     protected Set<SummarySingleDto> fetchData(List<MetricNameDto> standardMetricNames) {

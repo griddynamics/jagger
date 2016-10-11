@@ -39,7 +39,7 @@ import java.util.*;
  * @par Details:
  * @details Invoker uses HttpQuery as query and String as endpoint. Can do POST, GET and etc. request. @n
  *
- * To use this element in xml-configuration, see this - @xlink{invoker-http}
+ * See @xlink{invoker-http} for details on how-to use this element in xml-configuration
  *
  * @ingroup Main_Invokers_group */
 public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {

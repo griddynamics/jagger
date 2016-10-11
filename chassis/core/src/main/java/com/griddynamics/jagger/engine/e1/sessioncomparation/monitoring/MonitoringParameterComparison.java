@@ -22,6 +22,7 @@ package com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring;
 
 import com.google.common.base.Objects;
 
+@Deprecated
 public class MonitoringParameterComparison {
     private final MonitoringStats first;
     private final MonitoringStats second;

@@ -20,8 +20,10 @@
 
 package com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring;
 
+@Deprecated
 public interface MonitoringSummaryRetriever {
 
+    @Deprecated
     MonitoringSummary load(String sessionId, String taskId);
 
 }

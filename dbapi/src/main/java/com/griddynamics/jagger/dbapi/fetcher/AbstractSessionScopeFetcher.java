@@ -1,27 +1,34 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.TreeMultimap;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
 import com.griddynamics.jagger.dbapi.dto.TestInfoDto;
 import com.griddynamics.jagger.dbapi.util.FetchUtil;
 import com.griddynamics.jagger.util.Pair;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Created with IntelliJ IDEA.
  * User: mnovozhilov
  * Date: 6/10/14
  * Time: 4:07 PM
  *
  * This is class is needed because session scope processing of data for test group metrics is equal
  * processing monitoring parameters. We use delegates of required classes.
- *
  */
 
 public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> extends PlotsDbMetricDataFetcher{
@@ -29,12 +36,12 @@ public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> ex
     private F abstractMetricPlotFetcher;
     private FetchUtil fetchUtil;
 
-    @Required
+    @Autowired
     public void setAbstractMetricPlotFetcher(F abstractMetricPlotFetcher){
         this.abstractMetricPlotFetcher = abstractMetricPlotFetcher;
     }
 
-    @Required
+    @Autowired
     public void setFetchUtil(FetchUtil fetchUtil) {
         this.fetchUtil = fetchUtil;
     }

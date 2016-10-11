@@ -6,10 +6,13 @@ import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import com.griddynamics.jagger.util.TimeUtils;
+import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.util.*;
 
+@Component
+@Deprecated
 public class DurationMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingleDto> {
 
     @Override

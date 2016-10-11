@@ -5,16 +5,19 @@ import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+
+@Component
 public class ValidatorNamesProvider implements MetricNameProvider {
 
     private Logger log = LoggerFactory.getLogger(ValidatorNamesProvider.class);

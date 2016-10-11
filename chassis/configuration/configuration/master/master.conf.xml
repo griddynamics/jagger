@@ -20,9 +20,16 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <context:component-scan base-package="com.griddynamics.jagger.rest"/>
+    <mvc:annotation-driven/>
 
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
@@ -41,6 +48,7 @@
         <property name="configuration" ref="${chassis.master.session.configuration.bean.name}"/>
         <property name="coordinator" ref="coordinator"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
+        <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
         <property name="sessionIdProvider" ref="sessionIdProvider"/>
         <property name="reconnectPeriod" value="${chassis.coordinator.reconnect.period}"/>
         <property name="distributorRegistry" ref="distributorRegistry"/>
@@ -65,7 +73,7 @@
         <property name="logReader" ref="bufferedLogReader"/>
         <property name="logWriter" ref="bufferedLogWriter"/>
         <property name="generalNodeInfoAggregator" ref="generalNodeInfoAggregator"/>
-        <property name="databaseValidator" ref="databaseValidator"/>
+        <property name="metricTablesChecker" ref="metricTablesChecker"/>
         <property name="metaDataStorage" ref="metaDataStorage"/>
         <property name="databaseService" ref="databaseService"/>
         <property name="decisionMakerDistributionListener" ref="decisionMakerDistributionListener"/>
@@ -131,7 +139,9 @@
 
     <bean id="taskIdProvider" class="com.griddynamics.jagger.master.ThreadSafeTaskIdProvider"/>
 
-    <bean id="taskStatusProvider" class="com.griddynamics.jagger.master.TaskExecutionStatusProvider"/>
+    <bean id="taskStatusProvider" class="com.griddynamics.jagger.master.TaskExecutionStatusProvider">
+        <constructor-arg name="taskIdProvider" ref="taskIdProvider"/>
+    </bean>
 
     <bean id="monitoringTaskDistributor" class="com.griddynamics.jagger.monitoring.MonitoringTaskDistributor">
         <property name="ttl" value="${chassis.monitoring.command.execution.ttl}"/>
@@ -148,12 +158,11 @@
         <property name="name"  value="chassis.master.collect.node.info.awaittime"/>
     </bean>
 
-    <bean id="databaseValidator" class="com.griddynamics.jagger.master.database.DatabaseValidator">
+    <bean id="metricTablesChecker" class="com.griddynamics.jagger.master.database.MetricTablesChecker">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
     <bean id="metaDataStorage" class="com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage"/>
-
 
 </beans>
 

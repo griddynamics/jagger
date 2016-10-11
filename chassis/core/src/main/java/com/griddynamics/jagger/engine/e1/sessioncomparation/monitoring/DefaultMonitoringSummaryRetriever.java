@@ -27,6 +27,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import java.util.List;
 
+@Deprecated
 public class DefaultMonitoringSummaryRetriever extends HibernateDaoSupport implements MonitoringSummaryRetriever {
     private static final Logger log = LoggerFactory.getLogger(DefaultMonitoringSummaryRetriever.class);
 
@@ -58,7 +59,7 @@ public class DefaultMonitoringSummaryRetriever extends HibernateDaoSupport imple
     @SuppressWarnings("unchecked")
     private List<MonitoringStatistics> loadMonitoringStatistics(String sessionId, String taskId) {
         // todo [mairbek] review this query
-        return getHibernateTemplate().find(
+        return (List<MonitoringStatistics>) getHibernateTemplate().find(
                 "select ms from MonitoringStatistics ms where ms.sessionId =? and ms.taskData.taskId = ?", sessionId, taskId
         );
     }

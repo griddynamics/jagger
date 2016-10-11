@@ -240,7 +240,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
     }
 
     private WorkloadDetails getScenarioData(WorkloadTask workloadTask) {
-        List<WorkloadDetails> all = getHibernateTemplate().find(
+        List<WorkloadDetails> all = (List<WorkloadDetails>) getHibernateTemplate().find(
                                         "from WorkloadDetails s where s.name=? and s.version=? and s.description=?", workloadTask.getName(), workloadTask.getVersion(), workloadTask.getDescription());
 
         if (all.size() > 0) {

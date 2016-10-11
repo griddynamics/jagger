@@ -3,7 +3,11 @@ package com.griddynamics.jagger.dbapi.util;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.model.MetricNode;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class MetricNameUtil {
 
@@ -50,9 +54,11 @@ public class MetricNameUtil {
     }
 
     /**
-     * Returns set of MetricNameDto objects containing in metricNodes
+     * Returns a set of MetricNameDto objects contained in metricNodes
+     *
      * @param metricNodes collection of MetricNode objects
-     * @return Set of MetricNameDto objects containing in metricNodes */
+     * @return Set of MetricNameDto objects containing in metricNodes
+     */
     public static Set<MetricNameDto> getMetricNameDtoSet(Collection<MetricNode> metricNodes) {
         Set<MetricNameDto> metricNameDtoSet = new HashSet<MetricNameDto>();
 

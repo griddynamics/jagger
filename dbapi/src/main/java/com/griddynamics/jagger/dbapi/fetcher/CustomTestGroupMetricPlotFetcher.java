@@ -1,18 +1,25 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.util.FetchUtil;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import com.google.common.collect.Multimap;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by kgribov on 3/17/14.
  */
+@Component
 public class CustomTestGroupMetricPlotFetcher extends CustomMetricPlotFetcher {
     private FetchUtil fetchUtil;
 
-    @Required
+    @Autowired
     public void setFetchUtil(FetchUtil fetchUtil) {
         this.fetchUtil = fetchUtil;
     }

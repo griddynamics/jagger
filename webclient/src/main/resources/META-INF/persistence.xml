@@ -17,8 +17,8 @@
         <class>com.griddynamics.jagger.dbapi.entity.TimeInvocationStatistics</class>
         <class>com.griddynamics.jagger.dbapi.entity.TimeLatencyPercentile</class>
 
-        <class>com.griddynamics.jagger.dbapi.entity.MonitoringStatistics</class>
-        <class>com.griddynamics.jagger.dbapi.entity.PerformedMonitoring</class>
+        <class>com.griddynamics.jagger.dbapi.entity.MonitoringStatistics</class> // read in many place, but is never persisted in the codebase
+        <class>com.griddynamics.jagger.dbapi.entity.PerformedMonitoring</class> // read in many place, but is never persisted in the codebase
         <class>com.griddynamics.jagger.dbapi.entity.WorkloadProcessDescriptiveStatistics</class>
         <class>com.griddynamics.jagger.dbapi.entity.WorkloadProcessLatencyPercentile</class>
         <class>com.griddynamics.jagger.dbapi.entity.ValidationResultEntity</class>

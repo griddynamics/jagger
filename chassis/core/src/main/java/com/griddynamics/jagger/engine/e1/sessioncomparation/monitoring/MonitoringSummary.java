@@ -29,6 +29,7 @@ import com.google.common.collect.Table;
 import java.util.Map;
 import java.util.Set;
 
+@Deprecated
 public class MonitoringSummary {
     private final Table<String, String, MonitoringStats> data;
 
@@ -90,6 +91,4 @@ public class MonitoringSummary {
             return new MonitoringSummary(newTable);
         }
     }
-
-
 }

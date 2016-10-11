@@ -6,6 +6,7 @@ import com.griddynamics.jagger.dbapi.entity.WorkloadProcessLatencyPercentile;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,6 +18,8 @@ import java.util.Set;
 /**
  * Created by kgribov on 4/7/14.
  */
+@Component
+@Deprecated
 public class LatencyMetricNameProvider implements MetricNameProvider {
     private Logger log = LoggerFactory.getLogger(LatencyMetricNameProvider.class);
 
@@ -28,6 +31,7 @@ public class LatencyMetricNameProvider implements MetricNameProvider {
     }
 
     @Override
+    @Deprecated
     public Set<MetricNameDto> getMetricNames(List<TaskDataDto> tests) {
         Set<MetricNameDto> latencyNames;
 
@@ -48,8 +52,6 @@ public class LatencyMetricNameProvider implements MetricNameProvider {
         latencyNames = new HashSet<MetricNameDto>(latency.size());
 
         if (!latency.isEmpty()) {
-
-
             for (WorkloadProcessLatencyPercentile percentile : latency) {
                 for (TaskDataDto tdd : tests) {
 

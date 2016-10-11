@@ -36,7 +36,7 @@ public class MetricNode extends AbstractIdentifyNode {
 
     @Override
     public List<? extends AbstractIdentifyNode> getChildren() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override

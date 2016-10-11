@@ -1,30 +1,42 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import static com.griddynamics.jagger.util.MonitoringIdUtils.splitMonitoringMetricId;
+
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
-import static com.griddynamics.jagger.util.MonitoringIdUtils.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
+@Component
+@Deprecated
 public class MonitoringMetricPlotFetcher extends AbstractMetricPlotFetcher {
 
     private Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups;
     private BiMap<String, String> newToOldMonitoringIds;
     private BiMap<String, String> oldToNewMonitoringIds;
 
-    @Required
+    @Resource
     public void setMonitoringPlotGroups(Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups) {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }
 
-    // Needs to create newToOld/oldToNew MonitoringIds BiMaps. Calls via spring.
-    private void init() {
+    @PostConstruct
+    private void init() { // Needs to create newToOld/oldToNew MonitoringIds BiMaps. Calls via spring.
         initNewToOldMonitoringIds(monitoringPlotGroups);
     }
 

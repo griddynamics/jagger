@@ -5,11 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 1/20/14
  * Time: 12:20 PM
- * To change this template use File | Settings | File Templates.
  */
 
 //A table to generate ids for entities. Is required for batching processing.

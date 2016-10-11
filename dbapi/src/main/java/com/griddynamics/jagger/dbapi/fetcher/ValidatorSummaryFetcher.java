@@ -4,11 +4,13 @@ import com.griddynamics.jagger.dbapi.dto.SummaryMetricValueDto;
 import com.griddynamics.jagger.dbapi.dto.SummarySingleDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
+@Component
 public class ValidatorSummaryFetcher extends DbMetricDataFetcher<SummarySingleDto> {
     @Override
     protected Set<SummarySingleDto> fetchData(List<MetricNameDto> metricNames) {

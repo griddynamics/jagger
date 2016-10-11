@@ -3,16 +3,14 @@ package com.griddynamics.jagger.dbapi.dto;
 import java.util.Set;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kirilkadurilka
  * Date: 08.04.13
  * Time: 17:39
- * To change this template use File | Settings | File Templates.
  */
 public class MetricNameDto extends MetricName {
 
-    // Describes origin of this metric - location in DB where data for this metric ca be taken from
-    // Will be used when fetching data from DB to select correct provider of data
+    // Describes origin of this metric - location in DB where data for this metric can be taken from.
+    // Will be used when fetching data from DB to select correct provider of data.
     private Origin origin = Origin.UNKNOWN;
     private TaskDataDto test;
 

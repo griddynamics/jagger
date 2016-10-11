@@ -26,6 +26,7 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.SortedMap;
 
+@Deprecated
 public class MonitoringStats {
     private final SortedMap<Long, Double> points;
 

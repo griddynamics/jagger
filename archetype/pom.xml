@@ -39,6 +39,10 @@
                             <token>spring.version.placeholder</token>
                             <value>${spring.version}</value>
                         </replacement>
+                        <replacement>
+                            <token>jagger.java.version.placeholder</token>
+                            <value>${jagger.targetJdkVersion}</value>
+                        </replacement>
                     </replacements>
                 </configuration>
             </plugin>

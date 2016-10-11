@@ -19,17 +19,23 @@
  */
 package com.griddynamics.jagger.monitoring;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import com.google.common.util.concurrent.Service;
-import com.griddynamics.jagger.coordinator.*;
+import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.coordinator.Qualifier;
+import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.master.AbstractDistributor;
 import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.google.common.util.concurrent.Service;
 
 import java.util.Map;
 import java.util.Set;
@@ -58,8 +64,10 @@ public class MonitoringTaskDistributor extends AbstractDistributor<MonitoringTas
         return new AbstractExecutionThreadService() {
             @Override
             protected void run() throws Exception {
+    
                 MonitoringController monitoringController = null;
                 try {
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.IN_PROGRESS);
                     MonitoringTerminationStrategy terminationStrategy = task.getTerminationStrategy().get();
 
                     monitoringController =

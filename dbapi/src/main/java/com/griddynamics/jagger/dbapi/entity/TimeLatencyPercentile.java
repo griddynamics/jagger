@@ -23,6 +23,7 @@ package com.griddynamics.jagger.dbapi.entity;
 import javax.persistence.*;
 
 @Entity
+@Deprecated
 public class TimeLatencyPercentile extends Percentile {
     @ManyToOne
     @JoinColumn(name="statistics_id")
