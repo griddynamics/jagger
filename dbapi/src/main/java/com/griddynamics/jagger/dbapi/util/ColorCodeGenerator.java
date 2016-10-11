@@ -48,7 +48,9 @@ public class ColorCodeGenerator {
                 // Color found
                 if (sessionsMap.containsKey(colorId)) {
                     Integer indexInColorsHexCodes = sessionsMap.get(colorId);
-                    colorIds.forEach(colourId -> sessionsMap.put(colourId, indexInColorsHexCodes));
+                    for (String colourId : colorIds) {
+                        sessionsMap.put(colourId, indexInColorsHexCodes);
+                    }
                     return COLORS_HEX_CODES.get(indexInColorsHexCodes);
                 }
             }
@@ -56,7 +58,9 @@ public class ColorCodeGenerator {
 
         // Color was not set before
         int indexInColorsHexCodes = counter.getAndIncrement() % COLORS_HEX_CODES.size();
-        colorIds.forEach(colourId -> sessionsMap.put(colourId, indexInColorsHexCodes));
+        for (String colourId : colorIds) {
+            sessionsMap.put(colourId, indexInColorsHexCodes);
+        }
 
         return COLORS_HEX_CODES.get(indexInColorsHexCodes);
     }
