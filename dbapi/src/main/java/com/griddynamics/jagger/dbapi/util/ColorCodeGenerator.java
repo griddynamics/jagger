@@ -73,8 +73,11 @@ public class ColorCodeGenerator {
         final BigDecimal saturationStep = new BigDecimal("0.6").divide(saturationSteps, 2, RoundingMode.HALF_UP);
         final BigDecimal hueStep = ONE.divide(hueSteps, 8, RoundingMode.HALF_UP);
 
-        for (BigDecimal brightness = ONE; brightness.compareTo(new BigDecimal("0.5")) == 1; ) {
-            for (BigDecimal saturation = ONE; saturation.compareTo(new BigDecimal("0.4")) >= 0; ) {
+        final BigDecimal brightnessLimit = new BigDecimal("0.5");
+        final BigDecimal saturationLimit = new BigDecimal("0.4");
+
+        for (BigDecimal brightness = ONE; brightness.compareTo(brightnessLimit) == 1; ) {
+            for (BigDecimal saturation = ONE; saturation.compareTo(saturationLimit) >= 0; ) {
                 for (BigDecimal hue = ZERO; hue.compareTo(ONE) < 1; ) {
                     Color hsbColor = Color.getHSBColor(hue.floatValue(), saturation.floatValue(), brightness.floatValue());
                     colors.add(getHexCodeOfColor(hsbColor));
