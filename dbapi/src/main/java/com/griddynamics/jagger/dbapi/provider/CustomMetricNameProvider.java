@@ -11,8 +11,12 @@ import com.griddynamics.jagger.dbapi.util.FetchUtil;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
@@ -22,6 +26,7 @@ import java.util.*;
 /**
  * Created by kgribov on 4/7/14.
  */
+@Component
 public class CustomMetricNameProvider implements MetricNameProvider {
     private Logger log = LoggerFactory.getLogger(CustomMetricNameProvider.class);
 
@@ -34,12 +39,12 @@ public class CustomMetricNameProvider implements MetricNameProvider {
         this.entityManager = entityManager;
     }
 
-    @Required
+    @Autowired
     public void setFetchUtil(FetchUtil fetchUtil) {
         this.fetchUtil = fetchUtil;
     }
 
-    @Required
+    @Resource
     public void setMonitoringPlotGroups(Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups) {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }
@@ -67,6 +72,7 @@ public class CustomMetricNameProvider implements MetricNameProvider {
         return metrics;
     }
 
+    @Deprecated
     private Set<MetricNameDto> getCustomMetricsNamesOldModel(List<TaskDataDto> tests) {
         Set<Long> taskIds = new HashSet<Long>();
         Set<String> sessionIds = new HashSet<String>();

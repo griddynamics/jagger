@@ -1,8 +1,57 @@
+### Eclipse template
+*.pydevproject
+.metadata
+.gradle
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+
+# Eclipse Core
+.project
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# TeXlipse plugin
+.texlipse
+
 /*.iml
+**/*.iml
+**/target
 /*.ipr
 /*.iws
 /*.log
 /.idea/
+**/*.iml
+**/*.ipr
+**/*.iws
+**/*.log
+**/.idea/
+**/target
 /archetype-examples/jagger-suite-archetype-examples.iml
 /archetype-examples/target/
 /archetype/jagger-suite-archetype.iml
@@ -15,3 +64,5 @@
 /jagger/
 /test/jagger-test/jagger-test.iml
 /.DS_Store
+**/jaggerworkspace
+**/jaasdb.*

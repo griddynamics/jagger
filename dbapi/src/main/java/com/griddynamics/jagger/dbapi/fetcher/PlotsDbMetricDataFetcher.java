@@ -4,7 +4,7 @@ import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
 import com.griddynamics.jagger.dbapi.util.LegendProvider;
 import com.griddynamics.jagger.util.Pair;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -13,9 +13,8 @@ public abstract class PlotsDbMetricDataFetcher extends DbMetricDataFetcher<Pair<
 
     protected LegendProvider legendProvider;
 
-    @Required
+    @Autowired
     public void setLegendProvider(LegendProvider legendProvider) {
         this.legendProvider = legendProvider;
     }
-
 }

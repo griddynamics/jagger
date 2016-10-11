@@ -3,6 +3,7 @@ package com.griddynamics.jagger.dbapi;
 import com.griddynamics.jagger.dbapi.dto.TagDto;
 import com.griddynamics.jagger.dbapi.entity.SessionData;
 import com.griddynamics.jagger.dbapi.entity.TagEntity;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,12 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created with IntelliJ IDEA.
  * User: mnovozhilov
  * Date: 3/14/14
  * Time: 6:01 PM
- * To change this template use File | Settings | File Templates.
  */
+@Component
 public class DataSaverServiceImpl implements DataSaverService {
 
     private EntityManager entityManager;
@@ -105,6 +105,4 @@ public class DataSaverServiceImpl implements DataSaverService {
             entityManager.getTransaction().commit();
         }
     }
-
-
 }

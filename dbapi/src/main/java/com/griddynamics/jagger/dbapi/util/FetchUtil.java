@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.dto.TestInfoDto;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.util.Decision;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +16,7 @@ import java.util.*;
 /**
  * Created by kgribov on 3/17/14.
  */
+@Component
 public class FetchUtil {
     private EntityManager entityManager;
 
@@ -178,6 +180,4 @@ public class FetchUtil {
 
         return result;
     }
-
-
 }

@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.dbapi.util;
 
 import com.griddynamics.jagger.dbapi.model.NameTokens;
+import org.springframework.stereotype.Component;
 
 /**
  * Class contains methods to create legends for metric`s curves and plot headers for plots.
@@ -8,6 +9,7 @@ import com.griddynamics.jagger.dbapi.model.NameTokens;
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 5/31/12
  */
+@Component
 public class LegendProvider {
 
     private static final String SESSION_PREFIX = "#";

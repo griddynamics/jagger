@@ -11,6 +11,7 @@
     <properties>
         <spring.version>spring.version.placeholder</spring.version>
         <jagger.version>jagger.version.placeholder</jagger.version>
+        <jagger.targetJdkVersion>jagger.java.version.placeholder</jagger.targetJdkVersion>
     </properties>
 
     <repositories>
@@ -35,9 +36,7 @@
     </repositories>
 
     <dependencies>
-
         <!-- Jagger service-->
-
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>jagger-distribution</artifactId>
@@ -65,7 +64,6 @@
         </dependency>
 
         <!-- Spring -->
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -83,16 +81,14 @@
             <artifactId>guava</artifactId>
             <version>r09</version>
         </dependency>
-
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${jagger.targetJdkVersion}</source>
+                    <target>${jagger.targetJdkVersion}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -115,5 +111,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

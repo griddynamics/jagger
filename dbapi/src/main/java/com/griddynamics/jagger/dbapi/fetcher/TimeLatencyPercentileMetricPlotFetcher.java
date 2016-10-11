@@ -5,9 +5,12 @@ import com.griddynamics.jagger.dbapi.dto.PointDto;
 import com.griddynamics.jagger.dbapi.util.ColorCodeGenerator;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
+@Deprecated
 public class TimeLatencyPercentileMetricPlotFetcher extends StandardMetricPlotFetcher<TimeLatencyPercentileMetricPlotFetcher.LatencyPercentileRawData> {
 
     @Override

@@ -1,7 +1,10 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.util.FetchUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Multimap;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,10 +15,12 @@ import java.util.Set;
 /**
  * Created by kgribov on 3/17/14.
  */
+@Component
 public class CustomTestGroupMetricSummaryFetcher extends CustomMetricSummaryFetcher {
 
     private FetchUtil fetchUtil;
 
+    @Autowired
     public void setFetchUtil(FetchUtil fetchUtil) {
         this.fetchUtil = fetchUtil;
     }

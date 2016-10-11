@@ -25,6 +25,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
+@Deprecated
 public class PerformedMonitoring {
     private Long id;
     private String sessionId;

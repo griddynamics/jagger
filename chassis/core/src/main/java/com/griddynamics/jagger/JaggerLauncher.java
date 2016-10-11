@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger;
 
-import com.google.common.collect.Sets;
 import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.kernel.Kernel;
@@ -33,6 +32,8 @@ import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -41,11 +42,21 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
+
+import com.google.common.collect.Sets;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 public final class JaggerLauncher {
@@ -132,11 +143,8 @@ public final class JaggerLauncher {
         }
 
         LaunchManager launchManager = builder.build();
-
         int result = launchManager.launch();
-
         System.exit(result);
-
     }
 
     private static void launchMaster(final URL directory) {
@@ -144,16 +152,46 @@ public final class JaggerLauncher {
             @Override
             public void run() {
                 log.info("Starting Master");
-                ApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
-                final Coordinator coordinator = (Coordinator) context.getBean("coordinator");
-                coordinator.waitForReady();
-                coordinator.initialize();
-                Master master = (Master) context.getBean("master");
-                master.run();
+                WebApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
+                Server server = new Server(getPortFrom("master.rest.http.port", 9090));
+                try {
+                    server.setHandler(getServletContextHandler(context));
+                    server.start();
+        
+                    final Coordinator coordinator = (Coordinator) context.getBean("coordinator");
+                    coordinator.waitForReady();
+                    coordinator.initialize();
+                    Master master = (Master) context.getBean("master");
+                    master.run();
+                } catch (Exception e) {
+                    log.error("Error during embedded Jetty handling.", e);
+                    throw new RuntimeException(e);
+                } finally {
+                    try {
+                        server.stop();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         };
-
         builder.addMainTask(masterTask);
+    }
+    
+    private static int getPortFrom(String envPropName, int def) {
+        int port = def;
+        try {
+            port = Integer.parseInt(environmentProperties.getProperty(envPropName));
+        } finally {
+            return port;
+        }
+    }
+    
+    private static ServletContextHandler getServletContextHandler(WebApplicationContext context) {
+        ServletContextHandler contextHandler = new ServletContextHandler();
+        contextHandler.addServlet(new ServletHolder(new DispatcherServlet(context)), "/jaas/*");
+        contextHandler.addEventListener(new ContextLoaderListener(context));
+        return contextHandler;
     }
 
     private static void launchReporter(final URL directory) {
@@ -179,7 +217,6 @@ public final class JaggerLauncher {
             public void run() {
                 log.info("Starting Kernel");
 
-
                 ApplicationContext context = loadContext(directory, KERNEL_CONFIGURATION, environmentProperties);
 
                 final CountDownLatch latch = new CountDownLatch(1);
@@ -189,16 +226,13 @@ public final class JaggerLauncher {
 
                 toTerminate(kernel);
 
-                Runnable kernelRunner = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            latch.await();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        kernel.run();
+                Runnable kernelRunner = () -> {
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
+                    kernel.run();
                 };
 
                 getExecutor().execute(kernelRunner);
@@ -268,27 +302,25 @@ public final class JaggerLauncher {
                 }
             }
         };
-
         builder.addMainTask(jettyRunner);
     }
-
-    public static ApplicationContext loadContext(URL directory, String role, Properties environmentProperties) {
+    
+    public static WebApplicationContext loadContext(URL directory, String role, Properties environmentProperties) {
         String[] includePatterns = StringUtils.split(environmentProperties.getProperty(role + INCLUDE_SUFFIX), ", ");
         String[] excludePatterns = StringUtils.split(environmentProperties.getProperty(role + EXCLUDE_SUFFIX), ", ");
 
         List<String> descriptors = discoverResources(directory, includePatterns, excludePatterns);
-
         log.info("Discovered descriptors:");
         for (String descriptor : descriptors) {
             log.info("   " + descriptor);
         }
-
+        
         return new JaggerXmlApplicationContext(directory, environmentProperties, descriptors.toArray(new String[descriptors.size()]));
     }
 
     private static List<String> discoverResources(URL directory, String[] includePatterns, String[] excludePatterns) {
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(new FileSystemResourceLoader());
-        List<String> resourceNames = new ArrayList<String>();
+        List<String> resourceNames = new ArrayList<>();
         PathMatcher matcher = new AntPathMatcher();
         try {
             for (String pattern : includePatterns) {

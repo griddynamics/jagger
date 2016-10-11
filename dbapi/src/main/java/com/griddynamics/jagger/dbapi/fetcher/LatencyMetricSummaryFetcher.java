@@ -6,9 +6,12 @@ import com.griddynamics.jagger.dbapi.dto.SummarySingleDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
+@Deprecated
 public class LatencyMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingleDto> {
 
     @Override

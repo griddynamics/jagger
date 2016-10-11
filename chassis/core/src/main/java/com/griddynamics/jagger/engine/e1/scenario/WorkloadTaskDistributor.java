@@ -20,12 +20,16 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.Service;
-import com.griddynamics.jagger.coordinator.*;
-import com.griddynamics.jagger.engine.e1.ProviderUtil;
+import static com.griddynamics.jagger.util.TimeUtils.sleepMillis;
+
+import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.coordinator.Qualifier;
+import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.collector.test.TestInfo;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.process.PollWorkloadProcessStatus;
@@ -41,11 +45,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Service;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-
-import static com.griddynamics.jagger.util.TimeUtils.sleepMillis;
 
 public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
     private static Logger log = LoggerFactory.getLogger(WorkloadTaskDistributor.class);
@@ -100,7 +106,7 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
 
                 DefaultWorkloadController controller = null;
                 try {
-
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.IN_PROGRESS);
                     testListener.onStart(testInfo);
 
                     String line = " ---------------------------------------------------------------------------------------------------------------------------------------------------\n";

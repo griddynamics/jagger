@@ -7,9 +7,12 @@ import com.griddynamics.jagger.dbapi.dto.PointDto;
 import com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
+@Deprecated
 public class LatencyMetricPlotFetcher extends StandardMetricPlotFetcher<LatencyMetricPlotFetcher.LatencyRawData> {
 
     @Override
@@ -48,6 +51,7 @@ public class LatencyMetricPlotFetcher extends StandardMetricPlotFetcher<LatencyM
     }
 
     @Override
+    @Deprecated
     protected List<LatencyRawData> findRawDataByTaskData(Set<Long> taskIds) {
 
         @SuppressWarnings("all")

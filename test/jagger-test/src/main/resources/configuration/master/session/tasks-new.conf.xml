@@ -96,6 +96,7 @@
             </metric>
 
             <!-- begin: following section is used for docu generation - metrics with aggregators -->
+            <!-- Note: to use this example, you shall implement custom metric calculators "constant", "alwaysIncrease" and "sin". -->
 
             <!-- Math functions with aggregators with settings -->
             <!-- Normalize metric value by seconds -->

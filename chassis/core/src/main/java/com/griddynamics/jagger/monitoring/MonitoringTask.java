@@ -20,7 +20,6 @@
 package com.griddynamics.jagger.monitoring;
 
 import com.griddynamics.jagger.master.CompositableTask;
-import org.springframework.beans.factory.annotation.Required;
 
 public class MonitoringTask implements CompositableTask {
     private int number;
@@ -44,7 +43,6 @@ public class MonitoringTask implements CompositableTask {
     }
 
     @Override
-    @Required
     public void setParentTaskId(String taskId) {
         parentTaskId = taskId;
     }
