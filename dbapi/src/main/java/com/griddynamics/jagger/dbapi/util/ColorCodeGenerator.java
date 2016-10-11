@@ -69,8 +69,8 @@ public class ColorCodeGenerator {
         final BigDecimal saturationSteps = new BigDecimal(2);
         final BigDecimal hueSteps = new BigDecimal(15);
 
-        final BigDecimal brightnessStep = new BigDecimal(0.5).divide(brightnessSteps, 2, RoundingMode.HALF_UP);
-        final BigDecimal saturationStep = new BigDecimal(0.6).divide(saturationSteps, 2, RoundingMode.HALF_UP);
+        final BigDecimal brightnessStep = new BigDecimal("0.5").divide(brightnessSteps, 2, RoundingMode.HALF_UP);
+        final BigDecimal saturationStep = new BigDecimal("0.6").divide(saturationSteps, 2, RoundingMode.HALF_UP);
         final BigDecimal hueStep = ONE.divide(hueSteps, 8, RoundingMode.HALF_UP);
 
         for (BigDecimal brightness = ONE; brightness.compareTo(new BigDecimal("0.5")) == 1; ) {
