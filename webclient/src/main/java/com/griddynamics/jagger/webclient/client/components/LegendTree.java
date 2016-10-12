@@ -7,6 +7,7 @@ import com.googlecode.gflot.client.DataPoint;
 import com.googlecode.gflot.client.Series;
 import com.googlecode.gflot.client.SeriesHandler;
 import com.googlecode.gflot.client.SimplePlot;
+import com.googlecode.gflot.client.options.PointsSeriesOptions;
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
 import com.griddynamics.jagger.dbapi.dto.PointDto;
 import com.griddynamics.jagger.dbapi.model.AbstractIdentifyNode;
@@ -20,6 +21,12 @@ import com.sencha.gxt.widget.core.client.tips.QuickTip;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.googlecode.gflot.client.options.PointsSeriesOptions.PointSymbol.CIRCLE;
+import static com.googlecode.gflot.client.options.PointsSeriesOptions.PointSymbol.CROSS;
+import static com.googlecode.gflot.client.options.PointsSeriesOptions.PointSymbol.DIAMOND;
+import static com.googlecode.gflot.client.options.PointsSeriesOptions.PointSymbol.SQUARE;
+import static com.googlecode.gflot.client.options.PointsSeriesOptions.PointSymbol.TRIANGLE;
+
 /**
  * Implementation of AbstractTree that represents interactive legend as tree.
  */
@@ -31,7 +38,8 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
     private SimplePlot plot;
 
     /**
-     * null if it is metric, not null if it is trend */
+     * null if it is metric, not null if it is trend
+     */
     // todo : JFG-803 simplify trends plotting mechanism
     private List<Integer> trendSessionIds;
 
@@ -41,7 +49,7 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
     private PlotsPanel plotsPanel;
 
 
-    private final static ValueProvider<AbstractIdentifyNode, CellData> VALUE_PROVIDER =  new LegendTreeValueProvider();
+    private final static ValueProvider<AbstractIdentifyNode, CellData> VALUE_PROVIDER = new LegendTreeValueProvider();
 
     /**
      * Constructor matches super class
@@ -89,7 +97,7 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
      * Adds or removes lines without redrawing plot. Changes can't be seen.
      * If group item was checked, we want to redraw plot once (instead of firing redrawing for each line).
      *
-     * @param item chosen item
+     * @param item  chosen item
      * @param state check state
      */
     private void noRedrawCheck(AbstractIdentifyNode item, CheckState state) {
@@ -104,10 +112,29 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
         if (plotSingleDto != null) {
 
             if (state == CheckState.CHECKED) {
+                Series series = Series.create()
+                        .setId(item.getId())
+                        .setColor(plotSingleDto.getColor())
+                        .setLabel(plotSingleDto.getLegend());
 
-                Series series = Series.create().setId(item.getId()).setColor(plotSingleDto.getColor()).setLabel(plotSingleDto.getLegend());
+                PointsSeriesOptions pointsSeriesOptions;
+                switch (plotSingleDto.getPointShape()) {
+                    case CIRCLE_EMPTY: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(CIRCLE).setFill(false); break;
+                    case CIRCLE_FILLED: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(CIRCLE).setFill(true); break;
+                    case CROSS_EMPTY: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(CROSS).setFill(false); break;
+                    case CROSS_FILLED: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(CROSS).setFill(true); break;
+                    case DIAMOND_EMPTY: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(DIAMOND).setFill(false); break;
+                    case DIAMOND_FILLED: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(DIAMOND).setFill(true); break;
+                    case SQUARE_EMPTY: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(SQUARE).setFill(false); break;
+                    case SQUARE_FILLED: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(SQUARE).setFill(true); break;
+                    case TRIANGLE_EMPTY: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(TRIANGLE).setFill(false); break;
+                    case TRIANGLE_FILLED: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(TRIANGLE).setFill(true); break;
+                    default: pointsSeriesOptions = PointsSeriesOptions.create().setSymbol(CIRCLE).setFill(false); break;
+                }
+                series.setPointsOptions(pointsSeriesOptions.setRadius(2));
+
                 SeriesHandler sh = plot.getModel().addSeries(series);
-                for (PointDto point: plotSingleDto.getPlotData()) {
+                for (PointDto point : plotSingleDto.getPlotData()) {
                     if (trendSessionIds != null) {
                         // it is trend
                         sh.add(DataPoint.of(trendSessionIds.indexOf((int) point.getX()), point.getY()));
@@ -163,12 +190,13 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
 
     /**
      * Returns list of checked lines
+     *
      * @return list of PlotSingleDto objects
      */
     public List<PlotSingleDto> getListOfSelectedLines() {
         List<PlotSingleDto> result = new ArrayList<PlotSingleDto>();
         for (AbstractIdentifyNode node : store.getAll()) {
-            if ( (isChecked(node)) && (node instanceof LegendNode) ) {
+            if ((isChecked(node)) && (node instanceof LegendNode)) {
                 result.add(((LegendNode) node).getLine());
             }
         }
@@ -212,7 +240,7 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
                     (value.getColor() != null ? "<font color=\'" + value.getColor() + "\'>&#9604;&#9604;</font>" : "") +
                             "<font qtip='" + Format.htmlEncode(value.getDisplayName()) + "'>  " + value.getDisplayName() + "</font>");
         }
-   }
+    }
 
     /**
      * Value provider to set up cell model depending on node model
@@ -240,7 +268,6 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
             return "legend";
         }
     }
-
 
 
 }

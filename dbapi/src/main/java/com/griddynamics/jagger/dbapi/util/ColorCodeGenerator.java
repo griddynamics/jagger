@@ -3,7 +3,7 @@ package com.griddynamics.jagger.dbapi.util;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
 
-import java.awt.Color;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class ColorCodeGenerator {
 
         // These vars are needed for equal distribution of colors
         final BigDecimal brightnessSteps = new BigDecimal(2);
-        final BigDecimal saturationSteps = new BigDecimal(2);
+        final BigDecimal saturationSteps = new BigDecimal(1);
         final BigDecimal hueSteps = new BigDecimal(15);
 
         final BigDecimal brightnessStep = new BigDecimal("0.5").divide(brightnessSteps, 2, RoundingMode.HALF_UP);
@@ -92,8 +92,27 @@ public class ColorCodeGenerator {
             }
             brightness = brightness.subtract(brightnessStep);
         }
-        return colors;
+        return shuffle(colors);
     }
+
+    private static List<String> shuffle(List<String> colors) {
+        List<String> shuffled = new ArrayList<>(colors.size());
+
+        int counter = 0;
+        int localCounter = 0;
+        while (shuffled.size() < colors.size()) {
+            String colorToInsert = colors.get(localCounter % colors.size());
+            if (!shuffled.contains(colorToInsert)) {
+                shuffled.add(counter, colorToInsert);
+                counter++;
+                localCounter += 3;
+            } else {
+                localCounter++;
+            }
+        }
+        return shuffled;
+    }
+
 
     private static String getHexCodeOfColor(Color color) {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue()).toUpperCase();
