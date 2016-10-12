@@ -57,19 +57,20 @@
 ///     to write there - redefine path @n
 /// @n
 /// @n
-/// @li @b Note: 26/09/16 Starting from commit 3f1fe46 the Web Client can be run with embedded server. For this
-///        run the file standalone.jar from com/griddynamics/jagger/webclient folder.
-///        java -jar {Route/to/webclient}/target/jagger-${build.finalName}.jar [-extractDirectory=specify/path] [-resetExtract]
-///        The option -extractDirectory specifies the path where the war archive will be unpacked.
-///        The option -resetExtract erases the folder, if exists, with unpacked war archive.
-///        By the way, you can still run it using .war archive as mentioned above.
+/// It is possible to store Web client properties file in separate file to simplify updating of Web Client. @ref WebUiProperties "[More ...]" @n
+/// @n
+/// How to configure storage of test results you can read [here ...](https://github.com/griddynamics/jagger/wiki/Jagger-Deployment#external-rdbms-for-storing-test-results) @n
+/// @n
+/// @n
+/// @li @b Note: 26/09/16 Starting from commit 3f1fe46 the Web Client can be run with embedded server.@n
 ///        To configure web client you can use java parameters. For example:
+///        @code
 ///        @li java -jar jagger-${build.finalName}.jar -Djdbc.driver=com.mysql.jdbc.Driver
 ///                                                    -Djdbc.url=jdbc:mysql://localhost:3306/jaggerdb
 ///                                                    -Djdbc.user=User
 ///                                                    -Djdbc.password=password
+///        @endcode
+///        The option -extractDirectory specifies the path where the war archive will be unpacked. @n
+///        The option -resetExtract erases the folder, if exists, with unpacked war archive. @n
+///        By the way, you can still run it using .war archive as mentioned above. @n
 /// @n
-/// @n
-/// It is possible to store Web client properties file in separate file to simplify updating of Web Client. @ref WebUiProperties "[More ...]" @n
-/// @n
-/// How to configure storage of test results you can read [here ...](https://github.com/griddynamics/jagger/wiki/Jagger-Deployment#external-rdbms-for-storing-test-results) @n

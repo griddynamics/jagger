@@ -2,12 +2,20 @@ package com.griddynamics.jagger.dbapi.fetcher;
 
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
 import com.griddynamics.jagger.dbapi.dto.PointDto;
-import com.griddynamics.jagger.dbapi.util.ColorCodeGenerator;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
-import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static com.griddynamics.jagger.dbapi.util.ColorCodeGenerator.getHexColorCode;
+import static com.griddynamics.jagger.dbapi.util.PlotPointShapeGenerator.generatePointShape;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.getLatencyMetricName;
+import static java.util.Collections.singletonList;
 
 @Component
 @Deprecated
@@ -35,11 +43,14 @@ public class TimeLatencyPercentileMetricPlotFetcher extends StandardMetricPlotFe
             previousPercentileValue = y;
         }
         for (Map.Entry<Double, List<PointDto>> entry : percentiles.entrySet()) {
-            String latencyNameNewModel = StandardMetricsNamesUtil.getLatencyMetricName(entry.getKey(), false);
+            String latencyNameNewModel = getLatencyMetricName(entry.getKey(), false);
             String legend = legendProvider.generatePlotLegend(sessionId, latencyNameNewModel, true);
             plotDatasetDtoList.add(new PlotSingleDto(entry.getValue(), legend,
-                    ColorCodeGenerator.getHexColorCode(StandardMetricsNamesUtil.getLatencyMetricName(entry.getKey(), true),
-                            Arrays.asList(latencyNameNewModel),
+                    getHexColorCode(getLatencyMetricName(entry.getKey(), true),
+                            singletonList(latencyNameNewModel),
+                            sessionId),
+                    generatePointShape(getLatencyMetricName(entry.getKey(), true),
+                            singletonList(latencyNameNewModel),
                             sessionId)));
         }
 

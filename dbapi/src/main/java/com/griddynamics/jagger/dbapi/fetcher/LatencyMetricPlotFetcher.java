@@ -2,14 +2,20 @@ package com.griddynamics.jagger.dbapi.fetcher;
 
 
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
-import com.griddynamics.jagger.dbapi.util.ColorCodeGenerator;
 import com.griddynamics.jagger.dbapi.dto.PointDto;
 import com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static com.griddynamics.jagger.dbapi.util.ColorCodeGenerator.getHexColorCode;
+import static com.griddynamics.jagger.dbapi.util.PlotPointShapeGenerator.generatePointShape;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.getSynonyms;
 
 @Component
 @Deprecated
@@ -35,15 +41,21 @@ public class LatencyMetricPlotFetcher extends StandardMetricPlotFetcher<LatencyM
 
         String legend = legendProvider.generatePlotLegend(sessionId, DefaultWorkloadParameters.LATENCY.getDescription(), true);
         PlotSingleDto plotDatasetDto = new PlotSingleDto(pointDtoLatencyList, legend,
-                ColorCodeGenerator.getHexColorCode(StandardMetricsNamesUtil.LATENCY_OLD_ID,
-                        StandardMetricsNamesUtil.getSynonyms(StandardMetricsNamesUtil.LATENCY_OLD_ID),
+                getHexColorCode(StandardMetricsNamesUtil.LATENCY_OLD_ID,
+                        getSynonyms(StandardMetricsNamesUtil.LATENCY_OLD_ID),
+                        sessionId),
+                generatePointShape(StandardMetricsNamesUtil.LATENCY_OLD_ID,
+                        getSynonyms(StandardMetricsNamesUtil.LATENCY_OLD_ID),
                         sessionId));
         plotDatasetDtoList.add(plotDatasetDto);
 
         legend = legendProvider.generatePlotLegend(sessionId, DefaultWorkloadParameters.LATENCY_STD_DEV.getDescription(), true);
         plotDatasetDto = new PlotSingleDto(pointDtoLatencyStdDevList, legend,
-                ColorCodeGenerator.getHexColorCode(StandardMetricsNamesUtil.LATENCY_STD_DEV_OLD_ID,
-                        StandardMetricsNamesUtil.getSynonyms(StandardMetricsNamesUtil.LATENCY_STD_DEV_OLD_ID),
+                getHexColorCode(StandardMetricsNamesUtil.LATENCY_STD_DEV_OLD_ID,
+                        getSynonyms(StandardMetricsNamesUtil.LATENCY_STD_DEV_OLD_ID),
+                        sessionId),
+                generatePointShape(StandardMetricsNamesUtil.LATENCY_STD_DEV_OLD_ID,
+                        getSynonyms(StandardMetricsNamesUtil.LATENCY_STD_DEV_OLD_ID),
                         sessionId));
         plotDatasetDtoList.add(plotDatasetDto);
 
