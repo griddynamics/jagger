@@ -1,0 +1,9 @@
+jagger:
+  db.default:
+    desc: default_db
+    url: jdbc:h2:tcp://localhost:8043/jaggerdb/db
+    user: jagger
+    pass: rocks
+    jdbcDriver: org.h2.Driver
+    hibernateDialect: org.hibernate.dialect.H2Dialect
+

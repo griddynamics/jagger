@@ -132,8 +132,8 @@ public class HibernateKeyValueStorage extends HibernateDaoSupport implements Key
     @SuppressWarnings("unchecked")
     @Override
     public Object fetch(Namespace namespace, String key) {
-        List<KeyValue> values = getHibernateTemplate().find("from KeyValue kv where kv.namespace = ? and kv.key = ?",
-                namespace.toString(), key);
+        List<KeyValue> values = (List<KeyValue>) getHibernateTemplate()
+                .find("from KeyValue kv where kv.namespace = ? and kv.key = ?", namespace.toString(), key);
         if (values.isEmpty()) {
             return null;
         }

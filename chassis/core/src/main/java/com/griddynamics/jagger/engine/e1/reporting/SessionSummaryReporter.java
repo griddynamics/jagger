@@ -41,8 +41,7 @@ public class SessionSummaryReporter extends AbstractReportProvider {
     public JRDataSource getDataSource() {
         String sessionId =  getSessionIdProvider().getSessionId();
         @SuppressWarnings("unchecked")
-        List<SessionData> all = getHibernateTemplate().find("from SessionData sd where sd.sessionId=?",
-                sessionId);
+        List<SessionData> all = (List<SessionData>) getHibernateTemplate().find("from SessionData sd where sd.sessionId=?", sessionId);
 
         if (all.size() > 1) {
             throw new IllegalStateException("To much session data was stored for the session " + sessionId);

@@ -70,7 +70,6 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
     @Override
     public SystemInfo getSystemInfo() {
         long startTime = System.currentTimeMillis(), startTimeLog = startTime;
-        SystemInfo systemInfo = new SystemInfo();
         log.debug("start collecting box info through sigar on agent");
         Map<MonitoringParameter, Double> sysInfoStringMap = Maps.newHashMap();
         Map<String, String> memInfo = this.systemInfoService.getMemInfo();
@@ -112,6 +111,7 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_LOAD_AVERAGE_5, loadAverage[1]);
         sysInfoStringMap.put(DefaultMonitoringParameters.CPU_LOAD_AVERAGE_15, loadAverage[2]);
 
+        SystemInfo systemInfo = new SystemInfo();
         systemInfo.setTime(startTime);
         systemInfo.setSysInfo(sysInfoStringMap);
         startTimeLog = System.currentTimeMillis();

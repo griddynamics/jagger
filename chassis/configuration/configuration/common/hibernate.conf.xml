@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="dataSource" class="com.griddynamics.jagger.storage.rdb.RewritebleBatchedStatementsBasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${chassis.storage.rdb.client.driver}"/>
+        <property name="url" value="${chassis.storage.rdb.client.url}"/>
+        <property name="username" value="${chassis.storage.rdb.username}"/>
+        <property name="password" value="${chassis.storage.rdb.password}"/>
+        <property name="rewriteBatchedStatements" value="true"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="validationQuery" value="SELECT 1;"/>
+        <property name="minIdle" value="5"/>
+        <property name="maxIdle" value="5"/>
+        <property name="initialSize" value="5"/>
+        <property name="maxActive" value="40"/>
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" destroy-method="destroy">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties" ref="hibernateProperties"/>
+        <property name="packagesToScan" ref="entityPackages"/>
+        <property name="annotatedClasses">
+            <list>
+                <!--TODO not extensible solution -->
+                <value>com.griddynamics.jagger.master.Session</value>
+                <value>com.griddynamics.jagger.storage.rdb.KeyValue</value>
+                <value>com.griddynamics.jagger.master.database.IdGeneratorEntity</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- this bean provides EntityManager in class, which use PersistenceAnnotation -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          destroy-method="destroy">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence"/>
+        <property name="packagesToScan" ref="entityPackages"/>
+        <property name="jpaProperties" ref="hibernateProperties"/>
+    </bean>
+
+    <util:properties id="hibernateProperties">
+        <prop key="hibernate.hbm2ddl.auto">update</prop>
+        <prop key="hibernate.dialect">${chassis.storage.hibernate.dialect}</prop>
+        <prop key="hibernate.show_sql">false</prop>
+        <prop key="hibernate.jdbc.batch_size">${chassis.storage.hibernate.batch_size}</prop>
+        <prop key="hibernate.cache.use_query_cache">false</prop>
+        <prop key="hibernate.cache.use_second_level_cache">false</prop>
+        <prop key="hibernate.id.new_generator_mappings">true</prop>
+    </util:properties>
+
+    <util:list id="entityPackages">
+        <value>com.griddynamics.jagger.dbapi.entity</value>
+    </util:list>
+</beans>

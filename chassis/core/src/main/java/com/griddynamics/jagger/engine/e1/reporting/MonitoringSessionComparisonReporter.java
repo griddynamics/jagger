@@ -20,24 +20,27 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.google.common.collect.Lists;
-import com.griddynamics.jagger.util.Decision;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringParameterComparison;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
+import com.griddynamics.jagger.util.Decision;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+@Deprecated
 public class MonitoringSessionComparisonReporter extends AbstractMappedReportProvider<Collection<Verdict<MonitoringParameterComparison>>> {
 
     private StatusImageProvider statusImageProvider;
 
     @Override
+    @Deprecated
     public JRDataSource getDataSource(Collection<Verdict<MonitoringParameterComparison>> key) {
         getContext().getParameters().put("jagger.monitoringsessioncomparator.statusImageProvider", statusImageProvider);
 

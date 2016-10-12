@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,14 +45,16 @@ import java.util.Properties;
 public class JaggerConfigurationTest {
 
     private ApplicationContext ctx;
+    private String testDir;
 
     @BeforeClass
-    public void testInit() throws Exception{
-        URL directory = new URL("file:" + "../configuration/");
+    public void testInit() throws Exception {
+        String projectDir = getProjectDir();
+        URL configurationDirectory = new URL("file:" + projectDir + "/../configuration/");
         Properties environmentProperties = new Properties();
-        JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
+        JaggerLauncher.loadBootProperties(configurationDirectory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-configuration.conf.xml1");
-        ctx = JaggerLauncher.loadContext(directory,"chassis.master.configuration",environmentProperties);
+        ctx = JaggerLauncher.loadContext(configurationDirectory,"chassis.master.configuration",environmentProperties);
     }
 
     @Test
@@ -217,5 +220,11 @@ public class JaggerConfigurationTest {
             Assert.assertEquals(10, settings.getPointCount());
             Assert.assertEquals(1000, settings.getPointInterval());
         }
+    }
+
+    public static String getProjectDir() {
+        String someTestResource = JaggerConfigurationTest.class.getResource("/example-configuration-import.conf.xml1").getFile();
+        File someTestFile = new File(someTestResource);
+        return someTestFile.getParentFile().getParentFile().getParent();
     }
 }

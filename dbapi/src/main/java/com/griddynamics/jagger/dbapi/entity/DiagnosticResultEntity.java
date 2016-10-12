@@ -23,6 +23,7 @@ package com.griddynamics.jagger.dbapi.entity;
 import javax.persistence.*;
 
 @Entity
+@Deprecated
 public class DiagnosticResultEntity {
 
     private Long id;
@@ -66,5 +67,4 @@ public class DiagnosticResultEntity {
     public void setTotal(Double total) {
         this.total = total;
     }
-
 }

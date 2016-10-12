@@ -1,11 +1,17 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+@Component
 public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
 
     @Override
@@ -60,13 +66,14 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
     /**
      * @return collection of objects {Task Data id, time, value, sessionId, metricId}
      */
+    @Deprecated
     private Collection<? extends Object[]> getPlotDataOldModel(Set<Long> taskIds, Set<String> metricIds) {
         return entityManager.createQuery(
-                "select metrics.taskData.id, metrics.time, metrics.value, metrics.taskData.sessionId, metrics.metric from MetricDetails metrics " +
-                        "where metrics.metric in (:metricIds) and metrics.taskData.id in (:taskIds)")
-                .setParameter("taskIds", taskIds)
-                .setParameter("metricIds", metricIds)
-                .getResultList();
+                "SELECT metrics.taskData.id, metrics.time, metrics.value, metrics.taskData.sessionId, metrics.metric " +
+                "FROM   MetricDetails metrics " +
+                "WHERE  metrics.metric IN (:metricIds) " +
+                "AND    metrics.taskData.id IN (:taskIds)"
+        ).setParameter("taskIds", taskIds).setParameter("metricIds", metricIds).getResultList();
     }
 
     /**
@@ -75,8 +82,10 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
     protected Collection<? extends Object[]> getPlotDataNewModel(Set<Long> taskIds, Set<String> metricIds) {
         try {
             return entityManager.createQuery(
-                    "select mpe.metricDescription.taskData.id, mpe.time, mpe.value, mpe.metricDescription.taskData.sessionId, mpe.metricDescription.metricId from MetricPointEntity as mpe " +
-                            "where mpe.metricDescription.taskData.id in (:taskIds) and mpe.metricDescription.metricId in (:metricIds)")
+                    "SELECT mpe.metricDescription.taskData.id, mpe.time, mpe.value, mpe.metricDescription.taskData.sessionId, mpe.metricDescription.metricId " +
+                    "from MetricPointEntity AS mpe " +
+                    "WHERE mpe.metricDescription.taskData.id IN (:taskIds) " +
+                    "AND mpe.metricDescription.metricId IN (:metricIds)")
                     .setParameter("taskIds", taskIds)
                     .setParameter("metricIds", metricIds)
                     .getResultList();
@@ -85,5 +94,4 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
             return Collections.emptyList();
         }
     }
-
 }

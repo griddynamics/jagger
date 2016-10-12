@@ -19,16 +19,17 @@
  */
 package com.griddynamics.jagger.master;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.List;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Nikolay Musienko
@@ -39,34 +40,33 @@ public class TaskExecutionStatusProvider {
 
     private static final Logger log = LoggerFactory.getLogger(TaskExecutionStatusProvider.class);
 
-
-    private final Map<String, TaskData.ExecutionStatus> statusMap= Maps.newHashMap();
-
-    public TaskData.ExecutionStatus getStatus(final String taskId){
-        if(statusMap.containsKey(taskId)){
-            log.debug("Task status found: {}", taskId);
-            return statusMap.get(taskId);
-        }
-        log.warn("Task status not found: {}", taskId);
-        return TaskData.ExecutionStatus.FAILED;
+    private final ConcurrentMap<String, TaskData.ExecutionStatus> statusMap = new ConcurrentHashMap<String, TaskData.ExecutionStatus>();
+    
+    private final TaskIdProvider taskIdProvider;
+    
+    public TaskExecutionStatusProvider(TaskIdProvider taskIdProvider) {this.taskIdProvider = taskIdProvider;}
+    
+    public TaskData.ExecutionStatus getStatus(final String taskId) {
+        return statusMap.get(taskId);
+    }
+    
+    public TaskData.ExecutionStatus getStatus(final Integer taskId) {
+        return getStatus(taskIdProvider.stringify(taskId));
     }
 
     public void setStatus(final String taskId, final TaskData.ExecutionStatus status){
         statusMap.put(taskId, status);
     }
 
-
-    public Collection<Map.Entry<String, TaskData.ExecutionStatus>> getTasksWithStatus(final TaskData.ExecutionStatus status) {
+    public Set<String> getTaskIdsWithStatus(final TaskData.ExecutionStatus status) {
         Preconditions.checkNotNull(status);
-
-        List< Map.Entry < String, TaskData.ExecutionStatus >> ret = Lists.newLinkedList();
-        for(Map.Entry<String, TaskData.ExecutionStatus> entry : statusMap.entrySet()){
-            if(status.equals(entry.getValue())){
-                ret.add(entry);
+    
+        Set<String> ret = Sets.newHashSet();
+        for (Map.Entry<String, TaskData.ExecutionStatus> entry : statusMap.entrySet()) {
+            if (status.equals(entry.getValue())) {
+                ret.add(entry.getKey());
             }
         }
-
         return ret;
     }
-
 }

@@ -92,6 +92,6 @@ public class TaskData {
     }
 
     public static enum ExecutionStatus {
-        SUCCEEDED, FAILED
+        SUCCEEDED, FAILED, IN_PROGRESS, QUEUED
     }
 }

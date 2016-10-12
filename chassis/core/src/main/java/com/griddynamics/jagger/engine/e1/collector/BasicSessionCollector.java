@@ -20,8 +20,15 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.AVAILABLE_KERNELS;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.ERROR_MESSAGE;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.FAILED;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.KERNELS_COUNT;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.SESSION;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TASK_EXECUTED;
+
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
@@ -33,9 +40,10 @@ import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 
-import java.util.Collection;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
+import java.util.Collection;
 
 /**
  * Collects basic information on master side. Stores session start/end time,
@@ -84,7 +92,7 @@ public class BasicSessionCollector implements SessionListener, DistributionListe
         Multimap<String, Object> objectsMap = HashMultimap.create();
         objectsMap.put(END_TIME, System.currentTimeMillis());
         objectsMap.put(TASK_EXECUTED, taskCounter);
-        Integer failedTasks = taskExecutionStatusProvider.getTasksWithStatus(TaskData.ExecutionStatus.FAILED).size();
+        Integer failedTasks = taskExecutionStatusProvider.getTaskIdsWithStatus(TaskData.ExecutionStatus.FAILED).size();
         objectsMap.put(FAILED, failedTasks);
         if(failedTasks > 0) {
             if(SessionExecutionStatus.EMPTY.equals(status)){

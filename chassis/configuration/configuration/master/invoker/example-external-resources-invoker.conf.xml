@@ -131,6 +131,7 @@
 
     <bean id="googlePageNew" class="com.griddynamics.jagger.invoker.http.HttpInvokerConfiguration">
         <property name="query" ref="googlePageQuery"/>
+        <property name="endpoint" value="http://www.google.com/search"/>
     </bean>
 
     <bean id="googlePage"

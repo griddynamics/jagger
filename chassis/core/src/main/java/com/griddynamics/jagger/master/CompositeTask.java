@@ -20,11 +20,12 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.master.configuration.Task;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -82,7 +83,8 @@ public class CompositeTask implements Task {
     public int getNumber() {
         return number;
     }
-
+    
+    @Override
     public void setNumber(int number) {
         this.number = number;
     }

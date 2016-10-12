@@ -20,12 +20,14 @@
 
 package com.griddynamics.jagger.dbapi.parameter;
 
-import com.google.common.base.Objects;
 import org.hibernate.annotations.Index;
+
+import com.google.common.base.Objects;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
+@Deprecated
 public class MonitoringParameterBean implements MonitoringParameter {
     @Index(name="description_index")
     private String description;

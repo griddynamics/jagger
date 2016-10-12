@@ -34,6 +34,7 @@ import java.util.List;
 
 import static com.google.common.base.Objects.equal;
 
+@Deprecated
 public class MonitoringFeatureComparator extends HibernateDaoSupport implements FeatureComparator<MonitoringParameterComparison> {
     private static final Logger log = LoggerFactory.getLogger(MonitoringFeatureComparator.class);
 
@@ -41,6 +42,7 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
     private MonitoringParameterDecisionMaker monitoringParameterDecisionMaker;
 
     @Override
+    @Deprecated
     public List<Verdict<MonitoringParameterComparison>> compare(String currentSession, String baselineSession) {
 
         log.debug("Comparing of sessions {} and {} requested", currentSession, baselineSession);
@@ -83,6 +85,7 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
         return verdicts;
     }
 
+    @Deprecated
     private List<Verdict<MonitoringParameterComparison>> compareSummaries(String taskName, MonitoringSummary firstSummary, MonitoringSummary secondSummary) {
 
         log.debug("Comparing of summaries {} {} requested", firstSummary, secondSummary);
@@ -136,6 +139,7 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
 
     }
 
+    @Deprecated
     private boolean areComparable(PerformedMonitoring current, PerformedMonitoring baseline) {
         if (current.getParentId() == null && baseline.getParentId() == null) {
             return true;
@@ -145,8 +149,9 @@ public class MonitoringFeatureComparator extends HibernateDaoSupport implements 
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     private List<PerformedMonitoring> loadPerformedMonitoring(String sessionId) {
-        return getHibernateTemplate().find("from PerformedMonitoring where sessionId = ?", sessionId);
+        return (List<PerformedMonitoring>) getHibernateTemplate().find("from PerformedMonitoring where sessionId = ?", sessionId);
     }
 
     @Override

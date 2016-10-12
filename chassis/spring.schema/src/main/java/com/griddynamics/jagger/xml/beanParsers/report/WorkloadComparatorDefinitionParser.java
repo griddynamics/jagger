@@ -1,23 +1,18 @@
 package com.griddynamics.jagger.xml.beanParsers.report;
 
-import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.ThroughputWorkloadDecisionMaker;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadFeatureComparator;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 2/25/13
  * Time: 5:02 PM
- * To change this template use File | Settings | File Templates.
  */
 public class WorkloadComparatorDefinitionParser extends AbstractSimpleBeanDefinitionParser{
     @Override

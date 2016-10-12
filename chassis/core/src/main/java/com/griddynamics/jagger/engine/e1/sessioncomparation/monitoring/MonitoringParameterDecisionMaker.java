@@ -22,8 +22,10 @@ package com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring;
 
 import com.griddynamics.jagger.util.Decision;
 
+@Deprecated
 public interface MonitoringParameterDecisionMaker {
 
+    @Deprecated
     Decision makeDecision(String name, MonitoringParameterComparison comparison);
 
 }

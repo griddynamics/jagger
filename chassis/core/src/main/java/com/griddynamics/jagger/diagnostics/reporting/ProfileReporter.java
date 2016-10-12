@@ -154,14 +154,15 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
         return new JRBeanCollectionDataSource(data);
     }
 
+    @Deprecated
     private Map<String, List<SysUnderTestDTO>> loadData() {
         final String sessionId = getSessionIdProvider().getSessionId();
         Map<String, List<SysUnderTestDTO>> result = Maps.newHashMap();
 
         //todo JFG-722 We should delete all queries from reporting-part jagger
         @SuppressWarnings("unchecked")
-        List<ProfilingSuT> profilingSuTListFull =
-                getHibernateTemplate().find("from ProfilingSuT where sessionId=? and taskData_id is not null order by taskData, sysUnderTestUrl", sessionId);
+        List<ProfilingSuT> profilingSuTListFull = (List<ProfilingSuT>) getHibernateTemplate()
+                .find("from ProfilingSuT where sessionId=? and taskData_id is not null order by taskData, sysUnderTestUrl", sessionId);
 
         for (ProfilingSuT profilingSuT : profilingSuTListFull) {
             String taskId = profilingSuT.getTaskData().getTaskId();

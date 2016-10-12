@@ -22,12 +22,12 @@ package com.griddynamics.jagger.dbapi.entity;
 import javax.persistence.*;
 
 /**
- * Created with IntelliJ IDEA.
  * User: nmusienko
  * Date: 18.03.13
  * Time: 17:10
  */
 
+@Deprecated
 @Entity
 public class MetricDetails {
 

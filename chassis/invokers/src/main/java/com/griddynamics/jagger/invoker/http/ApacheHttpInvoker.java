@@ -31,7 +31,7 @@ import java.net.URI;
  * @author Evelina Stepanova
  * @n
  * @par Details:
- * @details Instead of HttpInvoker use HttpRequestBase as query. It let you to create more difficult requests.
+ * @details Uses HttpRequestBase as query param type unlike HttpInvoker which uses HttpQuery. That allows you to create complex requests.
  *
  * @ingroup Main_Invokers_group */
 public class ApacheHttpInvoker extends ApacheAbstractHttpInvoker<HttpRequestBase> {

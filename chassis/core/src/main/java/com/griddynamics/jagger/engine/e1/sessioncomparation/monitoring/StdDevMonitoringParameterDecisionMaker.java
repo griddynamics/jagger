@@ -20,13 +20,15 @@
 
 package com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring;
 
-import com.google.common.base.Preconditions;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.ComparisonUtil;
 import com.griddynamics.jagger.util.Decision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.google.common.base.Preconditions;
+
+@Deprecated
 public class StdDevMonitoringParameterDecisionMaker implements MonitoringParameterDecisionMaker {
     private static final Logger log = LoggerFactory.getLogger(StdDevMonitoringParameterDecisionMaker.class);
 
@@ -35,6 +37,7 @@ public class StdDevMonitoringParameterDecisionMaker implements MonitoringParamet
 
 
     @Override
+    @Deprecated
     public Decision makeDecision(String name, MonitoringParameterComparison comparison) {
 
         Preconditions.checkNotNull(name);

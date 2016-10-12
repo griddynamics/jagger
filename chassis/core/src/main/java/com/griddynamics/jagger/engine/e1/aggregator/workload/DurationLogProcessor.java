@@ -20,9 +20,17 @@
 
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
-import com.google.common.collect.Lists;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
+
 import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.dbapi.entity.*;
+import com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity;
+import com.griddynamics.jagger.dbapi.entity.MetricPointEntity;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.dbapi.entity.TimeInvocationStatistics;
+import com.griddynamics.jagger.dbapi.entity.TimeLatencyPercentile;
+import com.griddynamics.jagger.dbapi.entity.WorkloadProcessDescriptiveStatistics;
+import com.griddynamics.jagger.dbapi.entity.WorkloadProcessLatencyPercentile;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
@@ -32,7 +40,11 @@ import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
-import com.griddynamics.jagger.storage.fs.logging.*;
+import com.griddynamics.jagger.storage.fs.logging.AggregationInfo;
+import com.griddynamics.jagger.storage.fs.logging.DurationLogEntry;
+import com.griddynamics.jagger.storage.fs.logging.LogAggregator;
+import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
+import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import com.griddynamics.jagger.util.statistics.StatisticsCalculator;
 import org.hibernate.HibernateException;
@@ -42,12 +54,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
+import com.google.common.collect.Lists;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
-
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Alexey Kiselyov
@@ -191,7 +209,6 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
         } catch (Exception e) {
             log.error("Error during log processing", e);
         }
-
     }
 
     private class StatisticsGenerator {
@@ -210,10 +227,12 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             this.taskData = taskData;
         }
 
+        @Deprecated
         public Collection<TimeInvocationStatistics> getStatistics() {
             return statistics;
         }
 
+        @Deprecated
         public WorkloadProcessDescriptiveStatistics getWorkloadProcessDescriptiveStatistics() {
             return workloadProcessDescriptiveStatistics;
         }
@@ -289,8 +308,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                             newStatistics.add(new MetricPointEntity(currentTime, tis.getLatency(), latencyDescription));
                             newStatistics.add(new MetricPointEntity(currentTime, tis.getLatencyStdDev(), latencyStdDevDescription));
 
-                            List<TimeLatencyPercentile> percentileList = tis.getPercentiles();
-                            for (TimeLatencyPercentile percentile : percentileList) {
+                            for (TimeLatencyPercentile percentile : tis.getPercentiles()) {
                                 Double key = percentile.getPercentileKey();
                                 Double value = percentile.getPercentileValue() / 1000D;
                                 newStatistics.add(new MetricPointEntity(time, value, percentileMap.get(key)));
@@ -357,6 +375,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             return this;
         }
 
+        @Deprecated
         private TimeInvocationStatistics assembleInvocationStatistics(long time, StatisticsCalculator calculator,
                                                                       Double throughput, TaskData taskData) {
             TimeInvocationStatistics statistics = new TimeInvocationStatistics(
@@ -381,6 +400,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             return statistics;
         }
 
+        @Deprecated
         private WorkloadProcessDescriptiveStatistics assembleDescriptiveScenarioStatistics(StatisticsCalculator calculator, TaskData taskData) {
             WorkloadProcessDescriptiveStatistics statistics = new WorkloadProcessDescriptiveStatistics();
             statistics.setTaskData(taskData);

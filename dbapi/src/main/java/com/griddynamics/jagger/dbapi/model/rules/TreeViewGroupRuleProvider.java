@@ -3,15 +3,20 @@ package com.griddynamics.jagger.dbapi.model.rules;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+@Component
 public class TreeViewGroupRuleProvider {
 
     private Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups;
 
+    @Resource
     public void setMonitoringPlotGroups(Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups) {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }

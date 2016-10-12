@@ -1,25 +1,34 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-
+import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.SummaryMetricValueDto;
 import com.griddynamics.jagger.dbapi.dto.SummarySingleDto;
-import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
 import com.griddynamics.jagger.util.FormatCalculator;
+import org.springframework.stereotype.Component;
 
-import javax.persistence.PersistenceException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
+import javax.persistence.PersistenceException;
+
+@Component
+@Deprecated
 public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingleDto> {
 
     @Override
     protected Set<SummarySingleDto> fetchData(List<MetricNameDto> metricNames) {
 
         //custom metric
-
         Set<Long> taskIds = new HashSet<Long>();
         Set<String> metricIds = new HashSet<String>();
         for (MetricNameDto metricName : metricNames) {
@@ -87,18 +96,23 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
      * @param metricIds identifiers of metric
      * @return list of object[] (value, sessionId, metricId, taskDataId)
      */
+    @Deprecated
     protected List<Object[]> getCustomMetricsDataOldModel(Set<Long> taskIds, Set<String> metricIds) {
         return entityManager.createNativeQuery(
-                "select metric.total, taskData.sessionId, metric.name, taskData.taskDataId from DiagnosticResultEntity as metric join " +
-                        "  (" +
-                        "    select wd.sessionId, wd.id, taskData.id as taskDataId from WorkloadData wd join " +
-                        "      (" +
-                        "        select taskData.taskId, taskData.sessionId, taskData.id from TaskData as taskData where taskData.id in (:ids)" +
-                        "      ) as taskData on wd.sessionId=taskData.sessionId and wd.taskId=taskData.taskId" +
-                        "  ) as taskData on metric.workloadData_id=taskData.id and metric.name in (:metricIds);  ")
-                .setParameter("ids", taskIds)
-                .setParameter("metricIds", metricIds)
-                .getResultList();
+                "SELECT metric.total, taskData.sessionId, metric.name, taskData.taskDataId " +
+                "FROM DiagnosticResultEntity AS metric " +
+                "JOIN ( " +
+                        "SELECT wd.sessionId, wd.id, taskData.id AS taskDataId " +
+                        "FROM WorkloadData AS wd " +
+                        "JOIN ( " +
+                            "SELECT taskData.taskId, taskData.sessionId, taskData.id " +
+                            "FROM TaskData AS taskData " +
+                            "WHERE taskData.id IN (:ids) " +
+                        ") AS taskData " +
+                        "ON wd.sessionId=taskData.sessionId AND wd.taskId=taskData.taskId " +
+                ") AS taskData " +
+                "ON metric.workloadData_id=taskData.id AND metric.name IN (:metricIds);"
+        ).setParameter("ids", taskIds).setParameter("metricIds", metricIds).getResultList();
     }
 
 
@@ -114,9 +128,10 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
             }
 
             return entityManager.createQuery(
-                    "select summary.total, summary.metricDescription.taskData.sessionId, summary.metricDescription.metricId, summary.metricDescription.taskData.id" +
-                            " from MetricSummaryEntity as summary" +
-                            " where summary.metricDescription.taskData.id in (:ids) and summary.metricDescription.metricId in (:metricIds)")
+                    "SELECT summary.total, summary.metricDescription.taskData.sessionId, summary.metricDescription.metricId, summary.metricDescription.taskData.id " +
+                    "FROM MetricSummaryEntity AS summary " +
+                    "WHERE summary.metricDescription.taskData.id IN (:ids) " +
+                    "AND summary.metricDescription.metricId IN (:metricIds)")
                     .setParameter("ids", taskIds)
                     .setParameter("metricIds", metricId)
                     .getResultList();
@@ -125,5 +140,4 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
             return Collections.emptyList();
         }
     }
-
 }

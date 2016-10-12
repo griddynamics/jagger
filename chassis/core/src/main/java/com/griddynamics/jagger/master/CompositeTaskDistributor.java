@@ -20,18 +20,12 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
-import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
@@ -42,8 +36,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.*;
-import java.util.concurrent.*;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Service;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Responsible for composite task distribution.
@@ -85,7 +92,9 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
             public Service apply(CompositableTask task) {
                 TaskDistributor taskDistributor = distributorRegistry.getTaskDistributor(task.getClass());
                 task.setParentTaskId(taskId);
-                String childTaskId = taskIdProvider.getTaskId();
+                task.setNumber(taskIdProvider.getTaskId());
+                String childTaskId = taskIdProvider.stringify(task.getNumber());
+                taskExecutionStatusProvider.setStatus(childTaskId, TaskData.ExecutionStatus.QUEUED);
                 return taskDistributor.distribute(executor, sessionId, childTaskId, availableNodes, coordinator, task, listener, nodeContext);
             }
         };
@@ -99,42 +108,45 @@ public class CompositeTaskDistributor implements TaskDistributor<CompositeTask> 
 
             @Override
             protected void run() throws Exception {
-
-                TestGroupListener compositeTestGroupListener = TestGroupListener.Composer.compose(ProviderUtil.provideElements(task.getListeners(),
-                                                                                                                                sessionId,
-                                                                                                                                taskId,
-                                                                                                                                nodeContext,
-                                                                                                                                JaggerPlace.TEST_GROUP_LISTENER));
-
-                TestGroupInfo testGroupInfo = new TestGroupInfo(task, sessionId);
-
-                compositeTestGroupListener.onStart(testGroupInfo);
-
-                long startTime = System.currentTimeMillis();
-
-                List<Future<State>> futures = Lists.newLinkedList();
-                for (Service service : Iterables.concat(leading, attendant)) {
-                    ListenableFuture<State> future = service.start();
-                    futures.add(future);
-                }
-
-                for (Future<State> future : futures) {
-                    State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
-                    log.debug("Service started with state {}", state);
-                }
-
-                while (isRunning()) {
-                    if (activeLeadingTasks() == 0) {
-                        break;
+                try {
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.IN_PROGRESS);
+                    TestGroupListener compositeTestGroupListener = TestGroupListener.Composer.compose(ProviderUtil
+                                                                                                              .provideElements(
+                                                                                                                      task.getListeners(),
+                                                                                                                      sessionId,
+                                                                                                                      taskId,
+                                                                                                                      nodeContext,
+                                                                                                                      JaggerPlace.TEST_GROUP_LISTENER
+                                                                                                              ));
+                    TestGroupInfo testGroupInfo = new TestGroupInfo(task, sessionId);
+                    compositeTestGroupListener.onStart(testGroupInfo);
+        
+                    long startTime = System.currentTimeMillis();
+        
+                    List<Future<State>> futures = Lists.newLinkedList();
+                    for (Service service : Iterables.concat(leading, attendant)) {
+                        ListenableFuture<State> future = service.start();
+                        futures.add(future);
                     }
-
-                    TimeUtils.sleepMillis(500);
+                    for (Future<State> future : futures) {
+                        State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
+                        log.debug("Service started with state {}", state);
+                    }
+                    while (isRunning()) {
+                        if (activeLeadingTasks() == 0) {
+                            break;
+                        }
+                        TimeUtils.sleepMillis(500);
+                    }
+                    testGroupInfo.setDuration(System.currentTimeMillis() - startTime);
+                    compositeTestGroupListener.onStop(testGroupInfo);
+        
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
+                } catch (Exception e) {
+                    log.error("Composite task failure: ", e);
+                    taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.FAILED);
+                    throw e;
                 }
-
-                testGroupInfo.setDuration(System.currentTimeMillis() - startTime);
-                compositeTestGroupListener.onStop(testGroupInfo);
-
-                taskExecutionStatusProvider.setStatus(taskId, TaskData.ExecutionStatus.SUCCEEDED);
             }
 
             private int activeLeadingTasks() {

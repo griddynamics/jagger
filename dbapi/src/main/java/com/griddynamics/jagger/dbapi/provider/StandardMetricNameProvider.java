@@ -5,13 +5,19 @@ import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.math.BigInteger;
-import java.util.*;
 
+@Component
 public class StandardMetricNameProvider implements MetricNameProvider {
     private Logger log = LoggerFactory.getLogger(StandardMetricNameProvider.class);
     private List<MetricNameDto> standardMetricNameDtoList;
@@ -23,7 +29,7 @@ public class StandardMetricNameProvider implements MetricNameProvider {
         this.entityManager = entityManager;
     }
 
-    @Required
+    @Resource
     public void setStandardMetricNameDtoList(List<MetricNameDto> standardMetricNameDtoList) {
         this.standardMetricNameDtoList = standardMetricNameDtoList;
     }

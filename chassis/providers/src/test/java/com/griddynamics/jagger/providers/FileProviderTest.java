@@ -35,10 +35,17 @@ public class FileProviderTest {
 
     @Test
     public static void test() throws Exception {
-        FileProvider<String> firstProvider = new FileProvider<String>("src/test/resources/file-reader.txt");
+        final String file;
+        if (System.lineSeparator().equals("\r\n")) {
+            file = FileProviderTest.class.getResource("/file-reader-windows.txt").getFile();
+        } else {
+            file = FileProviderTest.class.getResource("/file-reader-unix.txt").getFile();
+        }
+
+        FileProvider<String> firstProvider = new FileProvider<String>(file);
         testIterable(firstProvider);
         testIterable(firstProvider);
-        FileProvider<String> secondProvider = new FileProvider<String>("src/test/resources/file-reader.txt");
+        FileProvider<String> secondProvider = new FileProvider<String>(file);
         testIterable(secondProvider);
         testIterable(firstProvider);
     }
