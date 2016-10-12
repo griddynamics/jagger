@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+        xmlns="http://www.griddynamics.com/schema/jagger"
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation=
+                "
+        http://www.griddynamics.com/schema/jagger
+        http://www.griddynamics.com/schema/jagger.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"
+        >
+
+    <beans:import resource="defaults.conf.xml"/>
+    <beans:import resource="limits.conf.xml"/>
+
+    <test-description id="td_JaaS_SessionsList" name="Sessions list" version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.SessionsListResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_SessionsList" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_ExactSessionIds" name="Some concrete sessions" version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.SessionResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_SessionIds" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_SessionTestsList" name="List of session tests" version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.TestsListResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_SessionTestsList" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_ExactSessionTest" name="Some concrete test" version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.TestResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_SessionTestNames" />
+        </scenario>
+    </test-description>
+
+</beans:beans>
