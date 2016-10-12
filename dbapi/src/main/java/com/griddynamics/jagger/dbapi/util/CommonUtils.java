@@ -26,10 +26,10 @@ public class CommonUtils {
      * @return metrics without unused monitoring metrics
      */
     public static List<Object[]> filterMonitoring(List<Object[]> origin, Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups) {
-        List<Object[]> result = new ArrayList<>(origin.size());
+        List<Object[]> result = new ArrayList<Object[]>(origin.size());
 
         // monitoring ids in reporting
-        Set<String> reportingMonitoring = new HashSet<>();
+        Set<String> reportingMonitoring = new HashSet<String>();
         for (DefaultMonitoringParameters[] value : monitoringPlotGroups.values()) {
             for (DefaultMonitoringParameters parameter : value) {
                 reportingMonitoring.add(parameter.getId());
@@ -37,7 +37,7 @@ public class CommonUtils {
         }
 
         // all monitoring ids
-        Set<String> allMonitoring = new HashSet<>();
+        Set<String> allMonitoring = new HashSet<String>();
         for (DefaultMonitoringParameters parameter : DefaultMonitoringParameters.values()) {
             allMonitoring.add(parameter.getId());
         }
@@ -67,7 +67,7 @@ public class CommonUtils {
      * @return a set of TaskDataDto's ids
      */
     public static Set<Long> getTestsIds(List<TaskDataDto> tests) {
-        Set<Long> taskIds = new HashSet<>();
+        Set<Long> taskIds = new HashSet<Long>();
         for (TaskDataDto tdd : tests) {
             taskIds.addAll(tdd.getIds());
         }

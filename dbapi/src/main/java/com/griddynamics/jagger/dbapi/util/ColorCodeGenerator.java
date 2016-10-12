@@ -22,7 +22,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 public class ColorCodeGenerator {
 
     private static AtomicInteger counter = new AtomicInteger(0);
-    private static ConcurrentMap<String, Integer> sessionsMap = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, Integer> sessionsMap = new ConcurrentHashMap<String, Integer>();
     private static final ImmutableList<String> COLORS_HEX_CODES = ImmutableList.copyOf(generateColors());
 
     public static String getHexColorCode(String metricId, String sessionId) {
@@ -36,7 +36,7 @@ public class ColorCodeGenerator {
     }
 
     private static String getHexColorCode(List<String> metricIds, String sessionId) {
-        List<String> colorIds = new ArrayList<>();
+        List<String> colorIds = new ArrayList<String>();
 
         if (isNotEmpty(metricIds)) {
             // Search if metricId or its synonyms already has color
@@ -66,7 +66,7 @@ public class ColorCodeGenerator {
     }
 
     private static List<String> generateColors() {
-        List<String> colors = new ArrayList<>();
+        List<String> colors = new ArrayList<String>();
 
         // These vars are needed for equal distribution of colors
         final BigDecimal brightnessSteps = new BigDecimal(2);
@@ -96,7 +96,7 @@ public class ColorCodeGenerator {
     }
 
     private static List<String> shuffle(List<String> colors) {
-        List<String> shuffled = new ArrayList<>(colors.size());
+        List<String> shuffled = new ArrayList<String>(colors.size());
 
         int counter = 0;
         int localCounter = 0;

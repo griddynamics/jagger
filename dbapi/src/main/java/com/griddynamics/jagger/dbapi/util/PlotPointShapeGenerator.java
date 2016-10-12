@@ -17,7 +17,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 public class PlotPointShapeGenerator {
 
     private static AtomicInteger counter = new AtomicInteger(0);
-    private static ConcurrentMap<String, Integer> sessionsMap = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, Integer> sessionsMap = new ConcurrentHashMap<String, Integer>();
 
     public static PointShape generatePointShape(String metricId, String sessionId) {
         return generatePointShape(Collections.singletonList(metricId), sessionId);
@@ -30,7 +30,7 @@ public class PlotPointShapeGenerator {
     }
 
     private static PointShape generatePointShape(List<String> metricIds, String sessionId) {
-        List<String> shapeIds = new ArrayList<>();
+        List<String> shapeIds = new ArrayList<String>();
 
         if (isNotEmpty(metricIds)) {
             // Search if metricId or its synonyms already has shape
