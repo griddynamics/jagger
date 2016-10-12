@@ -2,13 +2,22 @@ package com.griddynamics.jagger.dbapi.fetcher;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
-import com.griddynamics.jagger.dbapi.util.ColorCodeGenerator;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
+import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
 import com.griddynamics.jagger.dbapi.dto.PointDto;
 import com.griddynamics.jagger.util.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.griddynamics.jagger.dbapi.util.ColorCodeGenerator.getHexColorCode;
+import static com.griddynamics.jagger.dbapi.util.PlotPointShapeGenerator.generatePointShape;
 
 
 /**
@@ -94,7 +103,8 @@ public abstract class AbstractMetricPlotFetcher extends PlotsDbMetricDataFetcher
                         sessionId,
                         metricNameDto.getMetricDisplayName(),
                         true),
-                ColorCodeGenerator.getHexColorCode(metricNameDto.getMetricName(), sessionId));
+                getHexColorCode(metricNameDto.getMetricName(), sessionId),
+                generatePointShape(metricNameDto.getMetricName(), sessionId));
     }
 
 
