@@ -11,10 +11,5 @@
                 <value>configuration/reporter/reporting.properties</value>
             </list>
         </property>
-        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
-        <property name="ignoreResourceNotFound" value="true"/>
-        <property name="searchSystemEnvironment" value="true"/>
-        <property name="ignoreUnresolvablePlaceholders" value="false"/>
-        <property name="order" value="1"/>
     </bean>
 </beans>

@@ -35,7 +35,7 @@
         <band height="30" splitType="Stretch">
             <subreport>
                 <reportElement positionType="Float" x="0" y="12" width="530" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{hotSpotDTOs})]]></dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">

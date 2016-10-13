@@ -22,7 +22,9 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
                   @PropertySource("classpath:/jagger.properties"),
                   @PropertySource(value = "${jagger.reporting.properties:''}", ignoreResourceNotFound = true)
                  })
-@ImportResource({"classpath:/common/hibernate.conf.xml", "classpath:/reporter/reporting.conf.xml"})
+@ImportResource({"classpath:/common/hibernate.conf.xml", "classpath:/reporter/reporting.conf.xml",
+                 "classpath:/reporter/session.comparison.conf.xml"
+                })
 @Configuration
 public class DataServiceConfig {
     

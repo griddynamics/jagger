@@ -52,7 +52,7 @@
         <band height="60" splitType="Stretch">
             <subreport>
                 <reportElement positionType="Float" x="0" y="45" width="550" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{metricPlotDTOs})]]></dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">

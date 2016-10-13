@@ -98,7 +98,7 @@
 
             <subreport>
                 <reportElement positionType="Float" x="230" y="0" width="170" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[$P{context}.getMappedProvider("diagnosticResults").getDataSource( $F{id}, $P{sessionId}  )]]></dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
@@ -107,7 +107,7 @@
 
             <subreport>
                 <reportElement positionType="Float" x="135" y="0" width="90" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[$P{context}.getMappedProvider("workloadProcessDetails").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">

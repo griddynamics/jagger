@@ -79,7 +79,7 @@
 
             <subreport>
                 <reportElement positionType="Float" x="0" y="89" width="550" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[$P{context}.getMappedProvider("workloadSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Workload"), $P{sessionId} )]]>
                 </dataSourceExpression>
@@ -89,7 +89,7 @@
             </subreport>
             <subreport>
                 <reportElement positionType="Float" x="0" y="99" width="550" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[$P{context}.getMappedProvider("monitoringSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Monitoring"), $P{sessionId} )]]>
                 </dataSourceExpression>

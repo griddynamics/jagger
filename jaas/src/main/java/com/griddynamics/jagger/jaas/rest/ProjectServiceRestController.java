@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.jaas.rest;
 
-import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
+import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundFactory;
 import com.griddynamics.jagger.jaas.service.DynamicReportingService;
 import com.griddynamics.jagger.jaas.service.ProjectService;
 import com.griddynamics.jagger.jaas.storage.model.ProjectEntity;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
@@ -86,15 +87,18 @@ public class ProjectServiceRestController {
     }
     
     @GetMapping(value = "/{projectId}/sessions/{sessionId}/report", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<Resource> getReport(@PathVariable Long projectId, @PathVariable String sessionId)
+    public WebAsyncTask<ResponseEntity<Resource>> getReport(@PathVariable Long projectId, @PathVariable String sessionId)
             throws IOException {
-        Long dbId = Optional.ofNullable(projectService.read(projectId))
-                            .orElseThrow(ResourceNotFoundException::new).getDbId();
-        Resource reportResource = dynamicReportingService.generateReportFor(dbId, sessionId);
-        return ResponseEntity
-                .ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + reportResource.getFilename() + "\"")
-                .body(reportResource);
+    
+        // Given up to 5 minutes to generate a report before timeout failure.
+        return new WebAsyncTask<>(1000 * 60 * 5, () -> {
+            Long dbId = Optional.ofNullable(projectService.read(projectId))
+                                .orElseThrow(ResourceNotFoundFactory::getProjectResourceNfe).getDbId();
+            Resource reportResource = dynamicReportingService.generateReportFor(dbId, sessionId);
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                                              "inline; filename=\"" + reportResource.getFilename() + "\""
+            ).body(reportResource);
+        });
     }
     
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

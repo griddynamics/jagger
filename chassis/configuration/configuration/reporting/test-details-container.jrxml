@@ -75,7 +75,7 @@
                 </staticText>
                 <subreport>
                     <reportElement positionType="Float" x="0" y="45" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
                         <![CDATA[$P{context}.getMappedProvider("validationResults").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
@@ -83,7 +83,7 @@
                 </subreport>
                 <subreport>
                     <reportElement positionType="Float" x="0" y="55" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
                         <![CDATA[$P{context}.getMappedProvider("metricsResults").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
@@ -91,7 +91,7 @@
                 </subreport>
                 <subreport>
                     <reportElement positionType="Float" x="0" y="65" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
                         <![CDATA[$P{context}.getMappedProvider("profiler").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
