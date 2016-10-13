@@ -1,0 +1,15 @@
+syntax = "proto2";
+package protobuf;
+
+option java_package = "com.griddynamics.jagger.rawdatasender.protobuf";
+option java_outer_classname = "RawDataPackageProtos";
+
+message RawDataPackage {
+    required string id = 1;
+    repeated TimeValue result = 2;
+}
+
+message TimeValue {
+    required int64 time = 1;
+    optional double value = 2;
+}
