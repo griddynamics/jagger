@@ -26,8 +26,8 @@ public class DynamicReportingService {
         this.dynamicDataService = dynamicDataService;
     }
     
-    public Resource generateReportFor(final Long configId, final String sessionId) throws IOException {
-        ReportingService reportingService = getReportingServiceFor(configId, sessionId);
+    public Resource generateReportFor(final Long dbId, final String sessionId) throws IOException {
+        ReportingService reportingService = getReportingServiceFor(dbId, sessionId);
         reportingService.renderReport(true);
         
         return new FileSystemResource(reportingService.getOutputReportLocation());

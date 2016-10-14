@@ -32,11 +32,8 @@ import org.springframework.core.io.ResourceLoader;
 
 import com.google.common.collect.Maps;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,15 +55,6 @@ public class ReportingContext implements ApplicationContextAware {
     public InputStream getResource(String location) {
         try {
             return resourceLoader.getResource(getPath(location)).getInputStream();
-        } catch (IOException e) {
-            throw new TechnicalException(e);
-        }
-    }
-
-    public OutputStream getOutputResource(String location) {
-        try {
-            File file = new File(resourceLoader.getResource(getPath(location)).getFilename());
-            return new FileOutputStream(file);
         } catch (IOException e) {
             throw new TechnicalException(e);
         }
