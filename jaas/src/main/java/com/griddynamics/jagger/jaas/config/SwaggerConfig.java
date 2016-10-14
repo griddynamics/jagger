@@ -39,7 +39,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.regex("/jaas.*"))
+                .paths(PathSelectors.any())
                 .build()
                 .useDefaultResponseMessages(false)
                 .globalResponseMessage(RequestMethod.GET, responseMessages());
