@@ -1,5 +1,8 @@
 package com.griddynamics.jagger.user.builders;
 
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
+import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.scenario.InfiniteTerminationStrategyConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.IterationsOrDurationStrategyConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration;
@@ -7,7 +10,9 @@ import com.griddynamics.jagger.engine.e1.scenario.TerminateByDuration;
 import com.griddynamics.jagger.engine.e1.scenario.TerminateStrategyConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadClockConfiguration;
 import com.griddynamics.jagger.user.TestConfiguration;
-import com.griddynamics.jagger.user.TestDescription;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author asokol
@@ -15,25 +20,41 @@ import com.griddynamics.jagger.user.TestDescription;
  */
 public class JTestBuilder {
 
-    private TestConfiguration testConfiguration;
+    private String id;
+    private String comment;
+    private WorkloadClockConfiguration clockConfiguration;
+    private TerminateStrategyConfiguration terminateStrategyConfiguration;
+    private int number;
+    private String testGroupName;
+    private long startDelay;
+    private List<Provider<TestListener>> listeners;
+    private JTestDescriptionBuilder testDescription;
+    private LimitSet limits;
 
-    public TestConfiguration build() {
-        TestConfiguration currentTestConfiguration = this.testConfiguration;
-        return testConfiguration;
+    public JTestBuilder() {
+        this.listeners = Collections.EMPTY_LIST;
+        startDelay = -1;
+        limits = null;
     }
 
+
     public JTestBuilder withId(String id) {
-        this.testConfiguration.setId(id);
+        this.id = id;
         return this;
     }
 
-    public JTestBuilder withTestDescription(TestDescription description) {
-        this.testConfiguration.setTestDescription(description);
+    public JTestBuilder withComment(String comment) {
+        this.comment = comment;
+        return this;
+    }
+
+    public JTestBuilder withTestDescription(JTestDescriptionBuilder description) {
+        this.testDescription = description;
         return this;
     }
 
     public JTestBuilder withLoad(WorkloadClockConfiguration load) {
-        this.testConfiguration.setLoad(load);
+        this.clockConfiguration = load;
         return this;
     }
 
@@ -52,7 +73,7 @@ public class JTestBuilder {
         rpsConfiguration.setWarmUpTime(warmUpTimeInSeconds);
         rpsConfiguration.setMaxThreadNumber(maxLoadThreads);
         rpsConfiguration.setValue(requestsPerSecond);
-        this.testConfiguration.setLoad(rpsConfiguration);
+        this.clockConfiguration = rpsConfiguration;
         return this;
     }
 
@@ -60,15 +81,15 @@ public class JTestBuilder {
         RpsClockConfiguration rpsConfiguration = new RpsClockConfiguration();
         rpsConfiguration.setMaxThreadNumber(maxLoadThreads);
         rpsConfiguration.setValue(requestsPerSecond);
-        this.testConfiguration.setLoad(rpsConfiguration);
+        this.clockConfiguration = rpsConfiguration;
         return this;
     }
-
 
     public JTestBuilder withTermination(TerminateStrategyConfiguration termination) {
-        this.testConfiguration.setTerminateStrategy(termination);
+        this.terminateStrategyConfiguration = termination;
         return this;
     }
+
 
     /**
      * Termination describes how long load will be executed. Termination can be configured by element termination. There are some types of termination -
@@ -83,6 +104,7 @@ public class JTestBuilder {
     public JTestBuilder withTerminationDuration(int durationInSeconds) {
         TerminateByDuration configuration = new TerminateByDuration();
         configuration.setSeconds(durationInSeconds);
+        this.terminateStrategyConfiguration = configuration;
         return this;
     }
 
@@ -90,18 +112,28 @@ public class JTestBuilder {
         IterationsOrDurationStrategyConfiguration configuration = new IterationsOrDurationStrategyConfiguration();
         configuration.setIterations(iterationCount);
         configuration.setDuration(maxDurationInSeconds);
+        this.terminateStrategyConfiguration = configuration;
         return this;
     }
 
     public JTestBuilder withTerminationBackgroud() {
         InfiniteTerminationStrategyConfiguration configuration = new InfiniteTerminationStrategyConfiguration();
-        this.testConfiguration.setTerminateStrategy(configuration);
+        this.terminateStrategyConfiguration = configuration;
         return this;
     }
 
-
-    public JTestBuilder withComment(String comment) {
-        return this;
+    public TestConfiguration build() {
+        TestConfiguration testConfiguration = new TestConfiguration();
+        testConfiguration.setId(id);
+        testConfiguration.setLoad(clockConfiguration);
+        testConfiguration.setTerminateStrategy(terminateStrategyConfiguration);
+        testConfiguration.setListeners(listeners);
+        testConfiguration.setNumber(number);
+        testConfiguration.setTestGroupName(testGroupName);
+        testConfiguration.setStartDelay(startDelay);
+        testConfiguration.setTestDescription(testDescription.build());
+        testConfiguration.setLimits(limits);
+        return testConfiguration;
     }
 
 
