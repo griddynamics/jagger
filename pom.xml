@@ -58,7 +58,7 @@
         <module>test/test-target</module>
         <module>archetype-examples</module>
         <module>jaas</module>
-        <module>rawdata-sender</module>
+        <module>rawdata</module>
     </modules>
 
     <scm>

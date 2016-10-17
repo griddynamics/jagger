@@ -9,13 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>rawdata-sender</artifactId>
+    <artifactId>rawdata</artifactId>
     <name>${groupId}.${artifactId}</name>
 
     <properties>
         <protobuf-java.version>3.1.0</protobuf-java.version>
         <protoc-jar-maven-plugin.version>3.1.0</protoc-jar-maven-plugin.version>
         <protoc-jar-maven-plugin.protocVersion>3.1.0</protoc-jar-maven-plugin.protocVersion>
+        <kafka.version>0.9.0.1</kafka.version>
+        <zkclient.version>0.7</zkclient.version>
     </properties>
 
 
@@ -24,6 +26,29 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf-java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.11</artifactId>
+            <version>${kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.101tec</groupId>
+            <artifactId>zkclient</artifactId>
+            <version>${zkclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
         </dependency>
     </dependencies>
 

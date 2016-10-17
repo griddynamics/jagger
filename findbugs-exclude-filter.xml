@@ -6,6 +6,6 @@
         <Bug pattern="REC_CATCH_EXCEPTION"/>
     </Match>
     <Match>
-        <Package name="com.griddynamics.jagger.rawdatasender.protobuf"/>
+        <Package name="com.griddynamics.jagger.rawdata.protobuf"/>
     </Match>
 </FindBugsFilter>
