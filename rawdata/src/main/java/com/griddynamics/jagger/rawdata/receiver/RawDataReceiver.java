@@ -52,13 +52,18 @@ public class RawDataReceiver {
     }
 
     /**
+     * Fetches data from the topic {@link #kafkaTopic}.
+     *
+     * @param timeout The time, in milliseconds, spent waiting in poll if data is not available. If 0, returns
+     *                immediately with any records that are available now. Must not be negative.
      * @return List of raw data packages mapped by metricId.
      * @throws InvalidProtocolBufferException if parsing of protobuf data failed.
+     * @see KafkaConsumer#poll(long)
      */
-    public Map<String, List<RawDataPackageProtos.RawDataPackage>> receiveData() throws InvalidProtocolBufferException {
+    public Map<String, List<RawDataPackageProtos.RawDataPackage>> receiveData(long timeout) throws InvalidProtocolBufferException {
         Map<String, List<RawDataPackageProtos.RawDataPackage>> rawDataByMetricId = new HashMap<>();
 
-        ConsumerRecords<String, byte[]> records = consumer.poll(1000);
+        ConsumerRecords<String, byte[]> records = consumer.poll(timeout);
         for (ConsumerRecord<String, byte[]> record : records) {
             String nodeName = split(record.key(), KAFKA_KEY_SEPARATOR)[0];
             String metricId = split(record.key(), KAFKA_KEY_SEPARATOR)[1];
