@@ -69,7 +69,7 @@ public class RawDataReceiver {
             String metricId = split(record.key(), KAFKA_KEY_SEPARATOR)[1];
             RawDataPackageProtos.RawDataPackage rawDataPackage = parseFrom(record.value());
 
-            LOGGER.debug("Received: nodeName = %s, metricId = %s, offset = %d", nodeName, record.key(), record.offset());
+            LOGGER.debug("Received: nodeName = {}, metricId = {}, offset = {}", nodeName, record.key(), record.offset());
 
             if (rawDataByMetricId.get(metricId) == null)
                 rawDataByMetricId.put(metricId, newArrayList(rawDataPackage));

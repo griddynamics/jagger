@@ -50,7 +50,7 @@ public class RawDataSender {
         ProducerRecord<String, byte[]> producerRecord = new ProducerRecord<>(kafkaTopic, messageKey, metricData.toByteArray());
         kafkaProducer.send(producerRecord, (metadata, exception) -> {
             if (exception == null)
-                LOGGER.debug("Sent: nodeName = %s, metricId = %s, offset = %d", nodeName, metricId, metadata.offset());
+                LOGGER.debug("Sent: nodeName = {}, metricId = {}, offset = {}", nodeName, metricId, metadata.offset());
             else
                 LOGGER.error("Exception on sending message.", exception);
         });
