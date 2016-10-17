@@ -48,8 +48,12 @@ public class RawDataSender {
     public void sendData(String metricId, RawDataPackageProtos.RawDataPackage metricData) {
         String messageKey = nodeName + KAFKA_KEY_SEPARATOR + metricId + KAFKA_KEY_SEPARATOR + sentMetricsCounter.getAndIncrement();
         ProducerRecord<String, byte[]> producerRecord = new ProducerRecord<>(kafkaTopic, messageKey, metricData.toByteArray());
-        kafkaProducer.send(producerRecord, (metadata, exception) ->
-                LOGGER.debug("Sent: nodeName = %s, metricId = %s, offset = %d", nodeName, metricId, metadata.offset()));
+        kafkaProducer.send(producerRecord, (metadata, exception) -> {
+            if (exception == null)
+                LOGGER.debug("Sent: nodeName = %s, metricId = %s, offset = %d", nodeName, metricId, metadata.offset());
+            else
+                LOGGER.error("Exception on sending message.", exception);
+        });
     }
 
 
