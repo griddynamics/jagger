@@ -15,14 +15,24 @@ public class PlotSingleDto implements Serializable {
     private List<PointDto> plotData = Collections.emptyList();
     private String legend;
     private String color;
+    private PointShape pointShape;
+
+    public enum PointShape {
+        CIRCLE_FILLED, CIRCLE_EMPTY,
+        SQUARE_FILLED, SQUARE_EMPTY,
+        TRIANGLE_FILLED, TRIANGLE_EMPTY,
+        CROSS_FILLED, CROSS_EMPTY,
+        DIAMOND_FILLED, DIAMOND_EMPTY;
+    }
 
     public PlotSingleDto() {
     }
 
-    public PlotSingleDto(List<PointDto> plotData, String legend, String color) {
+    public PlotSingleDto(List<PointDto> plotData, String legend, String color, PointShape pointShape) {
         this.plotData = plotData;
         this.legend = legend;
         this.color = color;
+        this.pointShape = pointShape;
     }
 
     public List<PointDto> getPlotData() {
@@ -35,6 +45,10 @@ public class PlotSingleDto implements Serializable {
 
     public String getColor() {
         return color;
+    }
+
+    public PointShape getPointShape() {
+        return pointShape;
     }
 
     @Override
@@ -60,6 +74,7 @@ public class PlotSingleDto implements Serializable {
                 "plotData=" + plotData +
                 ", legend='" + legend + '\'' +
                 ", color='" + color + '\'' +
+                ", pointShape='" + pointShape + '\'' +
                 '}';
     }
 }

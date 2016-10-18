@@ -16,4 +16,4 @@
 /// To change it just override property "server.port".
 /// @n
 /// API documentation is available in the link bellow:
-///    {@link <a href="http://localhost:8080/swagger-ui.html">API documentation</a>}
+///    {@link <a href="http://localhost:8080/jaas/swagger-ui.html">API documentation</a>}

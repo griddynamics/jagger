@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import static com.griddynamics.jagger.dbapi.util.ColorCodeGenerator.getHexColorCode;
+import static com.griddynamics.jagger.dbapi.util.PlotPointShapeGenerator.generatePointShape;
+
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 5/31/12
@@ -80,10 +83,12 @@ public class DataProcessingUtil {
         return new PlotSingleDto(
                 list,
                 legend,
-                ColorCodeGenerator.getHexColorCode(metricDto.getMetricName().getMetricName(),
+                getHexColorCode(metricDto.getMetricName().getMetricName(),
                         metricDto.getMetricName().getMetricNameSynonyms(),
-                        "ss")
-        );
+                        "ss"),
+                generatePointShape(metricDto.getMetricName().getMetricName(),
+                        metricDto.getMetricName().getMetricNameSynonyms(),
+                        "ss"));
     }
 }
 

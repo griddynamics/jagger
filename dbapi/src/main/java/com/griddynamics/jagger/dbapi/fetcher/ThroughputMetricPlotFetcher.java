@@ -1,14 +1,21 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
-import com.griddynamics.jagger.dbapi.util.ColorCodeGenerator;
 import com.griddynamics.jagger.dbapi.dto.PointDto;
 import com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static com.griddynamics.jagger.dbapi.util.ColorCodeGenerator.getHexColorCode;
+import static com.griddynamics.jagger.dbapi.util.PlotPointShapeGenerator.generatePointShape;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.getSynonyms;
+import static java.util.Collections.singletonList;
 
 @Component
 @Deprecated
@@ -27,9 +34,12 @@ public class ThroughputMetricPlotFetcher extends StandardMetricPlotFetcher<Throu
         }
 
         String legend = legendProvider.generatePlotLegend(sessionId, DefaultWorkloadParameters.THROUGHPUT.getDescription(), true);
-        return Arrays.asList(new PlotSingleDto(pointDtoList, legend,
-                ColorCodeGenerator.getHexColorCode(StandardMetricsNamesUtil.THROUGHPUT_OLD_ID,
-                        StandardMetricsNamesUtil.getSynonyms(StandardMetricsNamesUtil.THROUGHPUT_OLD_ID),
+        return singletonList(new PlotSingleDto(pointDtoList, legend,
+                getHexColorCode(StandardMetricsNamesUtil.THROUGHPUT_OLD_ID,
+                        getSynonyms(StandardMetricsNamesUtil.THROUGHPUT_OLD_ID),
+                        sessionId),
+                generatePointShape(StandardMetricsNamesUtil.THROUGHPUT_OLD_ID,
+                        getSynonyms(StandardMetricsNamesUtil.THROUGHPUT_OLD_ID),
                         sessionId)));
     }
 
