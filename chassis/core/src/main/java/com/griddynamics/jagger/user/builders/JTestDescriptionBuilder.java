@@ -5,6 +5,7 @@ import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.Calibrator;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
+import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -66,6 +67,11 @@ public class JTestDescriptionBuilder {
 
     public JTestDescriptionBuilder withLoadBalancer(QueryPoolLoadBalancer loadBalancer) {
         ((QueryPoolScenarioFactory) scenarioFactory).setLoadBalancer(loadBalancer);
+        return this;
+    }
+
+    public JTestDescriptionBuilder withInvoker(Invoker invoker) {
+        ((QueryPoolScenarioFactory) scenarioFactory).setInvokerClazz(invoker.getClass());
         return this;
     }
 
