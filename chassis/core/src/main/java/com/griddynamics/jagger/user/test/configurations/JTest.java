@@ -1,7 +1,5 @@
 package com.griddynamics.jagger.user.test.configurations;
 
-import com.griddynamics.jagger.engine.e1.scenario.WorkloadClockConfiguration;
-
 /**
  * The user
  *
@@ -14,12 +12,17 @@ public class JTest {
     private String id;
     private JTestDescription jTestDescription;
     private long requestsPerSecond;
-    private long maxLoadThreads = 4000;
+    private long maxLoadThreads;
     private long warmUpTimeInSeconds;
+    private TerminationType terminationType;
+    private long durationInSeconds;
+    private long iterationCount;
+    private long maxDurationInSeconds;
 
 
-    private enum TerminationType {
+    enum TerminationType {
         TERMINATION_ITERATIONS,
+        TERMINATION_DURATION,
         TERMINATION_BACKGROUND
     }
 
@@ -27,6 +30,13 @@ public class JTest {
     private JTest(Builder builder) {
         this.id = builder.id;
         this.jTestDescription = builder.jTestDescription;
+        this.requestsPerSecond = builder.requestsPerSecond;
+        this.maxLoadThreads = builder.maxLoadThreads;
+        this.warmUpTimeInSeconds = builder.warmUpTimeInSeconds;
+        this.terminationType = builder.terminationType;
+        this.durationInSeconds = builder.durationInSeconds;
+        this.iterationCount = builder.iterationCount;
+        this.maxDurationInSeconds = builder.maxDurationInSeconds;
     }
 
     public static Builder builder() {
@@ -36,10 +46,13 @@ public class JTest {
     public static class Builder {
         private String id;
         private JTestDescription jTestDescription;
-        private WorkloadClockConfiguration clockConfiguration;
-
-
-        private TerminationType typeOfTermination;
+        private long requestsPerSecond;
+        private long maxLoadThreads = 4000;
+        private long warmUpTimeInSeconds;
+        private long durationInSeconds;
+        private long iterationCount;
+        private long maxDurationInSeconds;
+        private TerminationType terminationType;
 
         private Builder() {
 
@@ -56,22 +69,33 @@ public class JTest {
         }
 
         public Builder withLoadRps(long requestsPerSecond, long maxLoadThreads, long warmUpTimeInSeconds) {
+            this.requestsPerSecond = requestsPerSecond;
+            this.maxLoadThreads = maxLoadThreads;
+            this.warmUpTimeInSeconds = warmUpTimeInSeconds;
             return this;
         }
 
         public Builder withLoadRps(long requestsPerSecond, long maxLoadThreads) {
+            this.requestsPerSecond = requestsPerSecond;
+            this.maxLoadThreads = maxLoadThreads;
             return this;
         }
 
         public Builder withTerminationDuration(long durationInSeconds) {
+            this.durationInSeconds = durationInSeconds;
+            this.terminationType = TerminationType.TERMINATION_DURATION;
             return this;
         }
 
-        public Builder withTerminationIterations(long interationCount, long maxDurationInSeconds) {
+        public Builder withTerminationIterations(long iterationCount, long maxDurationInSeconds) {
+            this.iterationCount = iterationCount;
+            this.maxDurationInSeconds = durationInSeconds;
+            this.terminationType = TerminationType.TERMINATION_ITERATIONS;
             return this;
         }
 
-        public Builder withTerminationBackgroud() {
+        public Builder withTerminationBackground() {
+            this.terminationType = TerminationType.TERMINATION_BACKGROUND;
             return this;
         }
 
@@ -89,5 +113,33 @@ public class JTest {
 
     public JTestDescription getjTestDescription() {
         return jTestDescription;
+    }
+
+    public long getRequestsPerSecond() {
+        return requestsPerSecond;
+    }
+
+    public long getMaxLoadThreads() {
+        return maxLoadThreads;
+    }
+
+    public long getWarmUpTimeInSeconds() {
+        return warmUpTimeInSeconds;
+    }
+
+    public TerminationType getTerminationType() {
+        return terminationType;
+    }
+
+    public long getDurationInSeconds() {
+        return durationInSeconds;
+    }
+
+    public long getIterationCount() {
+        return iterationCount;
+    }
+
+    public long getMaxDurationInSeconds() {
+        return maxDurationInSeconds;
     }
 }
