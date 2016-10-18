@@ -32,7 +32,7 @@ public class TestSuitConfiguration {
         }
 
         int number = 0;
-        List<Task> result = new ArrayList<Task>(testGroups.size());
+        List<Task> result = new ArrayList<>(testGroups.size());
         for (TestGroupConfiguration testGroupConfiguration : testGroups) {
             testGroupConfiguration.setNumber(number++);
             result.add(testGroupConfiguration.generate());

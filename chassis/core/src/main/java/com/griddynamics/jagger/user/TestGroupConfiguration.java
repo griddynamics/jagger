@@ -1,9 +1,8 @@
 package com.griddynamics.jagger.user;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
-import com.griddynamics.jagger.master.CompositableTask;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.monitoring.InfiniteDuration;
@@ -90,11 +89,11 @@ public class TestGroupConfiguration {
     }
 
     public Task generate() {
-        HashSet<String> names = new HashSet<String>();
+        HashSet<String> names = new HashSet<>();
 
         CompositeTask compositeTask = new CompositeTask();
-        compositeTask.setLeading(new ArrayList<CompositableTask>());
-        compositeTask.setAttendant(new ArrayList<CompositableTask>());
+        compositeTask.setLeading(new ArrayList<>());
+        compositeTask.setAttendant(new ArrayList<>());
         compositeTask.setNumber(number);
         compositeTask.setListeners(listeners);
         compositeTask.setDecisionMakerListeners(testGroupDecisionMakerListeners);

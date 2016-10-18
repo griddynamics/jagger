@@ -1,8 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations;
 
 /**
- * The user
- *
  * @author asokol
  *         created 10/18/16
  */
@@ -10,7 +8,7 @@ public class JTest {
 
 
     private String id;
-    private JTestDescription jTestDescription;
+    private JTestDescription testDescription;
     private long requestsPerSecond;
     private long maxLoadThreads;
     private long warmUpTimeInSeconds;
@@ -29,7 +27,7 @@ public class JTest {
 
     private JTest(Builder builder) {
         this.id = builder.id;
-        this.jTestDescription = builder.jTestDescription;
+        this.testDescription = builder.jTestDescription;
         this.requestsPerSecond = builder.requestsPerSecond;
         this.maxLoadThreads = builder.maxLoadThreads;
         this.warmUpTimeInSeconds = builder.warmUpTimeInSeconds;
@@ -111,8 +109,8 @@ public class JTest {
         return id;
     }
 
-    public JTestDescription getjTestDescription() {
-        return jTestDescription;
+    public JTestDescription getTestDescription() {
+        return testDescription;
     }
 
     public long getRequestsPerSecond() {
