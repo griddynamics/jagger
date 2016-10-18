@@ -8,6 +8,7 @@ import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.monitoring.InfiniteDuration;
 import com.griddynamics.jagger.monitoring.MonitoringTask;
+import com.griddynamics.jagger.user.test.configurations.JTestGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +24,18 @@ public class TestGroupConfiguration {
     private List<Provider<TestGroupDecisionMakerListener>> testGroupDecisionMakerListeners = Collections.EMPTY_LIST;
     private boolean monitoringEnabled;
     private int number;
+
+    public TestGroupConfiguration() {
+    }
+
+    /**
+     * Creates {@link TestGroupConfiguration} from object defined by user.
+     *
+     * @param jTestGroup a group of tests defined by a user.
+     */
+    public TestGroupConfiguration(JTestGroup jTestGroup) {
+    }
+
 
     public int getNumber() {
         return number;
@@ -85,7 +98,7 @@ public class TestGroupConfiguration {
         compositeTask.setNumber(number);
         compositeTask.setListeners(listeners);
         compositeTask.setDecisionMakerListeners(testGroupDecisionMakerListeners);
-        compositeTask.setName(id+"-group");
+        compositeTask.setName(id + "-group");
 
         for (TestConfiguration testConfig : tests) {
             testConfig.setTestGroupName(id);
