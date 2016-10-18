@@ -4,6 +4,7 @@ import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.scenario.*;
+import com.griddynamics.jagger.user.test.configurations.JTest;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,17 @@ public class TestConfiguration {
     private List<Provider<TestListener>> listeners = Collections.EMPTY_LIST;
     private TestDescription testDescription;
     private LimitSet limits = null;
+
+    public TestConfiguration() {
+    }
+
+    /**
+     * Creates {@link TestConfiguration} from object defined by user.
+     *
+     * @param jTest a test defined by a user.
+     */
+    public TestConfiguration(JTest jTest) {
+    }
 
     public long getStartDelay() {
         return startDelay;
@@ -89,7 +101,7 @@ public class TestConfiguration {
     }
 
     public String getName() {
-        if ("".equals(id)){
+        if ("".equals(id)) {
             return testGroupName;
         }
         return String.format("%s [%s]", testGroupName, id);
@@ -107,7 +119,9 @@ public class TestConfiguration {
         if (startDelay > 0) {
             task.setStartDelay(startDelay);
         }
-        if (task.getVersion()==null) task.setVersion("0");
+        if (task.getVersion() == null) {
+            task.setVersion("0");
+        }
         task.setParentTaskId(testGroupName);
         task.setTestListeners(listeners);
         task.setLimits(limits);
@@ -118,7 +132,7 @@ public class TestConfiguration {
         }
         task.setClockConfiguration(clockConfiguration);
         if (terminateStrategyConfiguration instanceof IterationsOrDurationStrategyConfiguration) {
-            ((IterationsOrDurationStrategyConfiguration)terminateStrategyConfiguration).setShutdown(shutdown);
+            ((IterationsOrDurationStrategyConfiguration) terminateStrategyConfiguration).setShutdown(shutdown);
         }
         task.setTerminateStrategyConfiguration(terminateStrategyConfiguration);
         return task;
