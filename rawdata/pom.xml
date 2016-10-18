@@ -83,7 +83,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
-                    <excludes>**/protobuf/*.java</excludes>
+                    <excludes>
+                        <exclude>**/protobuf/*.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
