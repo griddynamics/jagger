@@ -49,9 +49,8 @@ public class RawDataSender {
         String messageKey = nodeName + KAFKA_KEY_SEPARATOR + metricId + KAFKA_KEY_SEPARATOR + sentMetricsCounter.getAndIncrement();
         ProducerRecord<String, byte[]> producerRecord = new ProducerRecord<>(kafkaTopic, messageKey, metricData.toByteArray());
         kafkaProducer.send(producerRecord, (metadata, exception) -> {
-            if (exception == null)
-                LOGGER.debug("Sent: nodeName = {}, metricId = {}, offset = {}", nodeName, metricId, metadata.offset());
-            else
+            LOGGER.debug("Sent: nodeName = {}, metricId = {}, offset = {}", nodeName, metricId, metadata.offset());
+            if (exception != null)
                 LOGGER.error("Exception on sending message.", exception);
         });
     }
