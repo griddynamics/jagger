@@ -43,7 +43,6 @@ import java.util.Map;
 
 public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
     private HashMap<String, String> clockDictionary;
-    private SummaryReporter summaryReporter;
 
     public HashMap<String, String> getClockDictionary() {
         return clockDictionary;
@@ -57,9 +56,9 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
     public JRDataSource getDataSource(String sessionId) {
 
         List<ScenarioPlotDTO> plots = Lists.newArrayList();
-
-        Map<TestEntity,Map<String,Double>> dataForScalabilityPlots = summaryReporter.getDataForScalabilityPlots(sessionId);
-
+    
+        Map<TestEntity, Map<String, Double>> dataForScalabilityPlots =
+                getContext().getSummaryReporter().getDataForScalabilityPlots(sessionId);
         plots.addAll(getScenarioPlots(dataForScalabilityPlots));
 
         return new JRBeanCollectionDataSource(plots);
@@ -172,10 +171,4 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
             this.latencyPlot = latencyPlot;
         }
     }
-
-    @Required
-    public void setSummaryReporter(SummaryReporter summaryReporter) {
-        this.summaryReporter = summaryReporter;
-    }
-
 }

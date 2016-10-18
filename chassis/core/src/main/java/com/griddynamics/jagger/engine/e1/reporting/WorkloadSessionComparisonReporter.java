@@ -42,7 +42,7 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
         getContext().getParameters().put("jagger.workloadsessioncomparator.statusImageProvider", statusImageProvider);
 
 
-        List<WorkloadSessionComparisonDto> result = Lists.newLinkedList();
+        List<WorkloadSessionComparisonDto> result = Lists.newArrayList();
 
         for (Verdict<WorkloadComparisonResult> verdict : key) {
             WorkloadSessionComparisonDto dto = new WorkloadSessionComparisonDto();

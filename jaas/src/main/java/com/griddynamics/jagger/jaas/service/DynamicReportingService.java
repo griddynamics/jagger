@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.jaas.service;
 
 import com.griddynamics.jagger.engine.e1.services.DataService;
-import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundFactory;
+import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.reporting.ReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -34,11 +34,11 @@ public class DynamicReportingService {
     }
     
     public ReportingService getReportingServiceFor(final Long dbId, final String sessionId) throws IOException {
-        
+                     
         ApplicationContext applicationContext = Optional.ofNullable(dynamicDataService.getDynamicContextFor(dbId))
-                                                        .orElseThrow(ResourceNotFoundFactory::getDbResourceNfe);
+                                                        .orElseThrow(ResourceNotFoundException::getDbResourceNfe);
         Optional.ofNullable(applicationContext.getBean(DataService.class).getSession(sessionId))
-                .orElseThrow(ResourceNotFoundFactory::getSessionResourceNfe);
+                .orElseThrow(ResourceNotFoundException::getSessionResourceNfe);
         
         ReportingServiceFactory factory = applicationContext.getBean(ReportingServiceFactory.class);
         Path path = Files.createTempDirectory("jaas");

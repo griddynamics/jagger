@@ -7,11 +7,13 @@ import com.griddynamics.jagger.jaas.service.ReportingServiceFactory;
 import com.griddynamics.jagger.reporting.ReportingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
@@ -41,6 +43,7 @@ public class DataServiceConfig {
     }
     
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ReportingServiceFactory reportingServiceFactory(@Autowired ReportingContext context,
                     @Value("${chassis.master.reporting.root.report.template.location}") String rootTemplateLocation
     ) {

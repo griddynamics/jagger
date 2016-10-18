@@ -20,6 +20,8 @@
 
 package com.griddynamics.jagger.reporting;
 
+import com.griddynamics.jagger.engine.e1.reporting.PlotsReporter;
+import com.griddynamics.jagger.engine.e1.reporting.SummaryReporter;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.extension.ExtensionRegistry;
 import net.sf.jasperreports.engine.JRException;
@@ -43,6 +45,8 @@ public class ReportingContext implements ApplicationContextAware {
 
     private ResourceLoader resourceLoader;
     private String rootPath = "";
+    private SummaryReporter summaryReporter;
+    private PlotsReporter plotsReporter;
 
     private ExtensionRegistry<ReportProvider> providerRegistry = new ExtensionRegistry<>(ReportProvider.class);
     private ExtensionRegistry<MappedReportProvider> mappedProviderRegistry =
@@ -81,9 +85,7 @@ public class ReportingContext implements ApplicationContextAware {
     public JasperReport getReport(String location) {
         try {
             return JasperCompileManager.compileReport(new ReportInputStream(resourceLoader.getResource(getPath(location)).getInputStream(), removeFrame));
-        } catch (JRException e) {
-            throw new TechnicalException(e);
-        } catch (IOException e) {
+        } catch (JRException | IOException e) {
             throw new TechnicalException(e);
         }
     }
@@ -91,10 +93,12 @@ public class ReportingContext implements ApplicationContextAware {
     //------------------------------------------------------------------------------------------------------------------
 
     public void setProviderRegistry(ExtensionRegistry<ReportProvider> providerRegistry) {
+        providerRegistry.getExtensions().values().forEach(reportProvider -> reportProvider.setContext(this));
         this.providerRegistry = providerRegistry;
     }
 
     public void setMappedProviderRegistry(ExtensionRegistry<MappedReportProvider> providerRegistry) {
+        providerRegistry.getExtensions().values().forEach(reportProvider -> reportProvider.setContext(this));
         this.mappedProviderRegistry = providerRegistry;
     }
 
@@ -121,5 +125,21 @@ public class ReportingContext implements ApplicationContextAware {
     
     private String getPath(String relativePath) {
         return rootPath + relativePath;
+    }
+    
+    public SummaryReporter getSummaryReporter() {
+        return summaryReporter;
+    }
+    
+    public void setSummaryReporter(SummaryReporter summaryReporter) {
+        this.summaryReporter = summaryReporter;
+    }
+    
+    public PlotsReporter getPlotsReporter() {
+        return plotsReporter;
+    }
+    
+    public void setPlotsReporter(PlotsReporter plotsReporter) {
+        this.plotsReporter = plotsReporter;
     }
 }

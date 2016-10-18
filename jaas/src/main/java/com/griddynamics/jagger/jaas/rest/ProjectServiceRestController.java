@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.jaas.rest;
 
-import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundFactory;
+import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.service.DynamicReportingService;
 import com.griddynamics.jagger.jaas.service.ProjectService;
 import com.griddynamics.jagger.jaas.storage.model.ProjectEntity;
@@ -90,10 +90,10 @@ public class ProjectServiceRestController {
     public WebAsyncTask<ResponseEntity<Resource>> getReport(@PathVariable Long projectId, @PathVariable String sessionId)
             throws IOException {
     
-        // Given up to 5 minutes to generate a report before timeout failure.
-        return new WebAsyncTask<>(1000 * 60 * 5, () -> {
+        // Given up to 10 minutes to generate a report before timeout failure.
+        return new WebAsyncTask<>(1000 * 60 * 10, () -> {
             Long dbId = Optional.ofNullable(projectService.read(projectId))
-                                .orElseThrow(ResourceNotFoundFactory::getProjectResourceNfe).getDbId();
+                                .orElseThrow(ResourceNotFoundException::getProjectResourceNfe).getDbId();
             Resource reportResource = dynamicReportingService.generateReportFor(dbId, sessionId);
             return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                                               "inline; filename=\"" + reportResource.getFilename() + "\""

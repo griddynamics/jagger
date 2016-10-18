@@ -22,20 +22,10 @@ package com.griddynamics.jagger.engine.e1.reporting;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.beans.factory.annotation.Required;
 
 public class WorkloadReporter extends AbstractReportProvider {
-    private SummaryReporter summaryReporter;
-
 	@Override
 	public JRDataSource getDataSource(String sessionId) {
-        return new JRBeanCollectionDataSource(summaryReporter.getTestSummaryData(sessionId));
+        return new JRBeanCollectionDataSource(getContext().getSummaryReporter().getTestSummaryData(sessionId));
 	}
-
-
-    @Required
-    public void setSummaryReporter(SummaryReporter summaryReporter) {
-        this.summaryReporter = summaryReporter;
-    }
-
 }

@@ -151,7 +151,7 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
 
     @Deprecated
     private Map<String, List<SysUnderTestDTO>> loadData(String sessionId) {
-        Map<String, List<SysUnderTestDTO>> result = Maps.newHashMap();
+        Map<String, List<SysUnderTestDTO>> result = Maps.newTreeMap();
 
         //todo JFG-722 We should delete all queries from reporting-part jagger
         @SuppressWarnings("unchecked")
@@ -162,7 +162,7 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
             String taskId = profilingSuT.getTaskData().getTaskId();
             List<SysUnderTestDTO> sysUnderTestDTOs = result.get(taskId);
             if (sysUnderTestDTOs == null) {
-                sysUnderTestDTOs = Lists.newLinkedList();
+                sysUnderTestDTOs = Lists.newArrayList();
                 result.put(taskId, sysUnderTestDTOs);
             }
 

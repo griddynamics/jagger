@@ -64,14 +64,7 @@
         </property>
         <property name="databaseService" ref="databaseService"/>
         <property name="summaryReporter" ref="summaryReporter"/>
-        <property name="baselineSummaryReporter" ref="baselineSummaryReporter"/>
-    </bean>
-
-    <bean id="baselineSummaryReporter" class="com.griddynamics.jagger.engine.e1.reporting.SummaryReporter">
-        <property name="databaseService" ref="databaseService"/>
-        <property name="metricHighlighting" value="${report.enable.decisions.per.metric.highlighting:true}"/>
-        <property name="decisionMaker" ref="sessionStatusDecisionMaker"/>
-        <property name="statusImageProvider" ref="statusImageProvider"/>
+        <property name="baselineSummaryReporter" ref="summaryReporter"/>
     </bean>
 
     <alias name="DefaultBaselineSessionProvider" alias="baselineSessionProvider"/>

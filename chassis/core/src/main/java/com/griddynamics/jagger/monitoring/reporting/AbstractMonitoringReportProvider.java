@@ -39,7 +39,7 @@ public abstract class AbstractMonitoringReportProvider<T> extends AbstractMapped
 
         String sessionId = getSessionIdProvider().getSessionId();
         List<PerformedMonitoring> list = (List<PerformedMonitoring>) getHibernateTemplate().find("select pf from PerformedMonitoring pf where pf.sessionId =? and pf.parentId is not null", sessionId);
-        Map<String, String> result = Maps.newHashMap();
+        Map<String, String> result = Maps.newTreeMap();
 
         for (PerformedMonitoring performedMonitoring : list) {
             result.put(performedMonitoring.getParentId(), performedMonitoring.getMonitoringId());

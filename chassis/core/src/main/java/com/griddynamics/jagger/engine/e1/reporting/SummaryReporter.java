@@ -52,7 +52,7 @@ public class SummaryReporter {
     private DateFormat dateFormatter = new SimpleDateFormat(FormatCalculator.DATE_FORMAT);
     private int numberOfTestGroups;
     private boolean isMetricHighlighting;
-    private List<SummaryTestDto> testSummaryData = new LinkedList<SummaryTestDto>();
+    private List<SummaryTestDto> testSummaryData = new ArrayList<>();
     private Map<TestEntity,Map<String,Double>> dataForScalabilityPlots = new HashMap<TestEntity, Map<String, Double>>();
     private SessionEntity sessionEntity;
 
