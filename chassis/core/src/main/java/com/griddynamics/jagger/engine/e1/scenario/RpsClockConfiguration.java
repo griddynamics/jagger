@@ -29,13 +29,18 @@ import com.griddynamics.jagger.util.SystemClock;
 public class RpsClockConfiguration extends AbstractRateClockConfiguration {
 
     @Override
-    protected WorkloadClock getRateClock(int tickInterval, TpsRouter tpsRouter, WorkloadSuggestionMaker workloadSuggestionMaker, SystemClock systemClock, int maxThreadNumber) {
+    protected WorkloadClock getRateClock(
+            int tickInterval,
+            TpsRouter tpsRouter,
+            WorkloadSuggestionMaker workloadSuggestionMaker,
+            SystemClock systemClock,
+            int maxThreadNumber) {
         return new RpsClock(tickInterval, tpsRouter, workloadSuggestionMaker, systemClock, maxThreadNumber);
     }
 
     @Override
     public String toString() {
-        if (isRumpUp()){
+        if (isRumpUp()) {
             return getTps() + " rump-up rps";
         }
         return getTps() + " rps";
