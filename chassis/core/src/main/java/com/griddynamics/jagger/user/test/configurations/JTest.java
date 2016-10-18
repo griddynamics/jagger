@@ -20,7 +20,7 @@ public class JTest {
     private long maxDurationInSeconds;
 
 
-    enum TerminationType {
+    public enum TerminationType {
         TERMINATION_ITERATIONS,
         TERMINATION_DURATION,
         TERMINATION_BACKGROUND

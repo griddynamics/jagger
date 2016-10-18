@@ -45,8 +45,9 @@ public class JTestDescriptionTest {
         Assert.assertThat(jTestDescription.getName(), is(name));
         Assert.assertThat(jTestDescription.getVersion(), is(version));
         Assert.assertThat(jTestDescription.getDescription(), is(description));
-        Assert.assertThat(((QueryPoolScenarioFactory)jTestDescription.getScenarioFactory()).getEndpointProvider(), is(endpoints));
-        Assert.assertThat(((QueryPoolScenarioFactory)jTestDescription.getScenarioFactory()).getQueryProvider(), is(queries));
+        Assert.assertThat(jTestDescription.getEndpoints(), is(endpoints));
+        Assert.assertThat(jTestDescription.getQueries(), is(queries));
+
     }
 
 }
