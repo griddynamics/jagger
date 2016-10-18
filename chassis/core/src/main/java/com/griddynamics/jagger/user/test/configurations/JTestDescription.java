@@ -1,10 +1,5 @@
 package com.griddynamics.jagger.user.test.configurations;
 
-import com.griddynamics.jagger.engine.e1.scenario.Calibrator;
-import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
-import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
-import com.griddynamics.jagger.invoker.ScenarioFactory;
-
 /**
  * @author asokol
  *         created 10/18/16
@@ -14,14 +9,16 @@ public class JTestDescription {
     private String name;
     private String version;
     private String description;
+    private Iterable endpoints;
+    private Iterable queries;
 
-    private ScenarioFactory<?, ?, ?> scenarioFactory;
 
     private JTestDescription(Builder builder) {
         this.name = builder.name;
         this.version = builder.version;
         this.description = builder.description;
-        this.scenarioFactory = builder.scenarioFactory;
+        this.endpoints = builder.endpoints;
+        this.queries = builder.queries;
     }
 
     public static Builder builder() {
@@ -34,10 +31,11 @@ public class JTestDescription {
         private String name;
         private String version;
         private String description;
-        private ScenarioFactory<?, ?, ?> scenarioFactory;
+        private Iterable endpoints;
+        private Iterable queries;
 
         private Builder() {
-            scenarioFactory = new QueryPoolScenarioFactory<>();
+
         }
 
         public Builder withName(String name) {
@@ -55,13 +53,13 @@ public class JTestDescription {
             return this;
         }
 
-        public Builder withEnpointsProvider(Iterable endpointsProvider) {
-            ((QueryPoolScenarioFactory) scenarioFactory).setEndpointProvider(endpointsProvider);
+        public Builder withEndpointsProvider(Iterable endpointsProvider) {
+            this.endpoints = endpointsProvider;
             return this;
         }
 
         public Builder withQueryProvider(Iterable queryProvider) {
-            ((QueryPoolScenarioFactory) scenarioFactory).setQueryProvider(queryProvider);
+            this.queries = queryProvider;
             return this;
         }
 
@@ -85,7 +83,11 @@ public class JTestDescription {
         return description;
     }
 
-    public ScenarioFactory<?, ?, ?> getScenarioFactory() {
-        return scenarioFactory;
+    public Iterable getEndpoints() {
+        return endpoints;
+    }
+
+    public Iterable getQueries() {
+        return queries;
     }
 }

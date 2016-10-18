@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
 
 /**
  * @author asokol
@@ -32,7 +31,7 @@ public class JTestDescriptionTest {
 
         jTestDescription = JTestDescription.builder()
                 .withDescription(description)
-                .withEnpointsProvider(endpoints)
+                .withEndpointsProvider(endpoints)
                 .withQueryProvider(queries)
                 .withName(name)
                 .withVersion(version)
