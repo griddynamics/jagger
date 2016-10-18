@@ -148,7 +148,11 @@ public class JTest {
             return this;
         }
 
-
+        /**
+         * As one may expect, create the object of {@link JTest} with custom parameters.
+         *
+         * @return {@link JTest} object.
+         */
         public JTest build() {
             return new JTest(this);
         }
