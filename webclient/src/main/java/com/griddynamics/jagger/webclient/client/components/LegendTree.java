@@ -179,7 +179,8 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
 
                 // This multiplication is needed to leave some free space (10% of Y-axis length) above line on the plot
                 double maxYVisible = calculateMaxYAxisValue(plot) * 1.1;
-                if (maxYVisible == 0) maxXVisible += 0.5;
+                // if max value is too small it won't be visible on the plot, that's why we need to set scale to not very small value
+                if (maxYVisible < 0.0000000001) maxYVisible = 0.0000000001;
 
                 // save y axis range for plot from very start
                 plot.getOptions().getYAxisOptions().setMinimum(minYVisible).setMaximum(maxYVisible);
