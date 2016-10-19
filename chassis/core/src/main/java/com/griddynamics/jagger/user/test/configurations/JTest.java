@@ -11,8 +11,8 @@ public class JTest {
 
 
     private String id;
-    private JTestDescription testDescription;
     private JLoad load;
+    private JTestDescription testDescription;
     private JTermination termination;
 
 

@@ -7,15 +7,12 @@ package com.griddynamics.jagger.user.test.configurations;
 public class JTestDescription {
 
     private String name;
-    private String version;
     private String description;
     private Iterable endpoints;
     private Iterable queries;
 
-
     private JTestDescription(Builder builder) {
         this.name = builder.name;
-        this.version = builder.version;
         this.description = builder.description;
         this.endpoints = builder.endpoints;
         this.queries = builder.queries;
@@ -25,11 +22,8 @@ public class JTestDescription {
         return new Builder();
     }
 
-
     public static class Builder {
-
         private String name;
-        private String version;
         private String description;
         private Iterable endpoints;
         private Iterable queries;
@@ -49,16 +43,6 @@ public class JTestDescription {
             return this;
         }
 
-        /**
-         * Set the version of a test.
-         * At the moment of creating this documentation the author had no idea what for this parameter may be set.
-         *
-         * @param version the version of a test.
-         */
-        public Builder withVersion(String version) {
-            this.version = version;
-            return this;
-        }
 
         /**
          * Set description for a test.
@@ -100,16 +84,11 @@ public class JTestDescription {
             return new JTestDescription(this);
         }
 
-
     }
 
 
     public String getName() {
         return name;
-    }
-
-    public String getVersion() {
-        return version;
     }
 
     public String getDescription() {

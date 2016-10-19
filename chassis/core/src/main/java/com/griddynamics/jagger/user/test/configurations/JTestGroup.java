@@ -3,8 +3,7 @@ package com.griddynamics.jagger.user.test.configurations;
 import java.util.List;
 
 /**
- * @author asokol
- *         created 10/18/16
+ * Group of test which that should be run simultaneously.
  */
 public class JTestGroup {
     private List<JTest> tests;
@@ -25,6 +24,11 @@ public class JTestGroup {
         private Builder() {
         }
 
+        /**
+         * The group of test which should be run simultaneously.
+         *
+         * @param tests a list of test.
+         */
         public Builder withTests(List<JTest> tests) {
             this.tests = tests;
             return this;
@@ -34,7 +38,9 @@ public class JTestGroup {
             return new JTestGroup(this);
         }
 
-
     }
 
+    public List<JTest> getTests() {
+        return tests;
+    }
 }
