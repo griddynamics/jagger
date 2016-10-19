@@ -26,7 +26,7 @@ public class JTestConfiguration {
         private Builder() {
         }
 
-        public Builder withTests(List<JTestGroup> testGroups) {
+        public Builder withTestGroups(List<JTestGroup> testGroups) {
             this.testGroups = testGroups;
             return this;
         }

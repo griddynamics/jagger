@@ -6,13 +6,13 @@ package com.griddynamics.jagger.user.test.configurations;
  */
 public class JTestDescription {
 
-    private String name;
+    private String id;
     private String description;
     private Iterable endpoints;
     private Iterable queries;
 
     private JTestDescription(Builder builder) {
-        this.name = builder.name;
+        this.id = builder.id;
         this.description = builder.description;
         this.endpoints = builder.endpoints;
         this.queries = builder.queries;
@@ -23,7 +23,7 @@ public class JTestDescription {
     }
 
     public static class Builder {
-        private String name;
+        private String id;
         private String description;
         private Iterable endpoints;
         private Iterable queries;
@@ -33,13 +33,12 @@ public class JTestDescription {
         }
 
         /**
-         * Set name for a test.
-         * Some thinks that name for a test and its id is absolutely the same things.
+         * Set id for a test.
          *
-         * @param name the name of a test.
+         * @param id the name of a test.
          */
-        public Builder withName(String name) {
-            this.name = name;
+        public Builder withId(String id) {
+            this.id = id;
             return this;
         }
 
@@ -87,8 +86,8 @@ public class JTestDescription {
     }
 
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public String getDescription() {
