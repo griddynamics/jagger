@@ -24,17 +24,6 @@ public class TestGroupConfiguration {
     private boolean monitoringEnabled;
     private int number;
 
-    public TestGroupConfiguration() {
-    }
-
-    /**
-     * Creates {@link TestGroupConfiguration} from object defined by user.
-     *
-     * @param jTestGroup a group of tests defined by a user.
-     */
-    public TestGroupConfiguration(JTestGroup jTestGroup) {
-    }
-
 
     public int getNumber() {
         return number;

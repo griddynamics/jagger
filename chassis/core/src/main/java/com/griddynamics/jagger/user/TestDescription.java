@@ -31,19 +31,6 @@ public class TestDescription {
     private String version;
     private String name;
 
-    public TestDescription() {
-    }
-
-    /**
-     * Creates {@link TestDescription} from object defined by user.
-     *
-     * @param jTestDescription description defined by a user.
-     */
-    public TestDescription(JTestDescription jTestDescription) {
-
-    }
-
-
     public List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> getStandardCollectors() {
         return standardCollectors;
     }

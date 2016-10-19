@@ -29,17 +29,6 @@ public class TestConfiguration {
     private TestDescription testDescription;
     private LimitSet limits = null;
 
-    public TestConfiguration() {
-    }
-
-    /**
-     * Creates {@link TestConfiguration} from object defined by user.
-     *
-     * @param jTest a test defined by a user.
-     */
-    public TestConfiguration(JTest jTest) {
-    }
-
     public long getStartDelay() {
         return startDelay;
     }

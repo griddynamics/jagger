@@ -10,14 +10,6 @@ public class TestSuitConfiguration {
 
     private List<TestGroupConfiguration> testGroups;
 
-    public TestSuitConfiguration() {
-    }
-
-    public TestSuitConfiguration(JTestConfiguration jTestConfiguration) {
-
-    }
-
-
     public void setTestGroups(List<TestGroupConfiguration> testGroups) {
         this.testGroups = testGroups;
     }
