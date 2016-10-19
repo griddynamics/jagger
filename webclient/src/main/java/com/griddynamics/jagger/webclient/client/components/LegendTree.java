@@ -176,6 +176,8 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
 
             if (plot.isAttached()) {
                 double minYVisible = plot.getAxes().getY().getMinimumValue();
+
+                // This multiplication is needed to leave some free space (10% of Y-axis length) above line on the plot
                 double maxYVisible = calculateMaxYAxisValue(plot) * 1.1;
                 if (maxYVisible == 0) maxXVisible += 0.5;
 
