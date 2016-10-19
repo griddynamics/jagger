@@ -6,6 +6,7 @@ import java.util.List;
  * Group of test which that should be run simultaneously.
  */
 public class JTestGroup {
+    private String id;
     private List<JTest> tests;
 
 
@@ -15,10 +16,13 @@ public class JTestGroup {
 
     private JTestGroup(Builder builder) {
         this.tests = builder.tests;
+        this.id = builder.id;
     }
 
 
     public static class Builder {
+        private String id;
+
         private List<JTest> tests;
 
         private Builder() {
@@ -34,6 +38,16 @@ public class JTestGroup {
             return this;
         }
 
+        /**
+         * Sets id or group name.
+         *
+         * @param id group name.
+         */
+        public Builder withId(String id) {
+            this.id = id;
+            return this;
+        }
+
         public JTestGroup build() {
             return new JTestGroup(this);
         }
@@ -42,5 +56,9 @@ public class JTestGroup {
 
     public List<JTest> getTests() {
         return tests;
+    }
+
+    public String getId() {
+        return id;
     }
 }

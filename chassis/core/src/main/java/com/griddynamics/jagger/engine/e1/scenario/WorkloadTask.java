@@ -42,7 +42,7 @@ public class WorkloadTask implements CompositableTask {
     private String name;
     private String version;
     private String description = "";
-    private ScenarioFactory<Object, Object, Object> scenarioFactory;
+    private ScenarioFactory<?, ?, ?> scenarioFactory;
     private List<KernelSideObjectProvider<Validator>> validators = Lists.newLinkedList();
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors = Lists.newLinkedList();
     private List<Provider<InvocationListener<Object, Object, Object>>> listeners = Lists.newLinkedList();
@@ -93,11 +93,11 @@ public class WorkloadTask implements CompositableTask {
         this.version = version;
     }
 
-    public ScenarioFactory<Object, Object, Object> getScenarioFactory() {
+    public ScenarioFactory<?, ?, ?> getScenarioFactory() {
         return scenarioFactory;
     }
 
-    public void setScenarioFactory(ScenarioFactory<Object, Object, Object> scenarioFactory) {
+    public void setScenarioFactory(ScenarioFactory<?, ?, ?> scenarioFactory) {
         this.scenarioFactory = scenarioFactory;
     }
 

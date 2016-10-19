@@ -3,8 +3,7 @@ package com.griddynamics.jagger.user.test.configurations;
 import java.util.List;
 
 /**
- * @author asokol
- *         created 10/18/16
+ * Contains the groups of tests.
  */
 public class JTestConfiguration {
 
@@ -26,6 +25,11 @@ public class JTestConfiguration {
         private Builder() {
         }
 
+        /**
+         * Sets the {@code testGroups} for configuration.
+         *
+         * @param testGroups List of test groups.
+         */
         public Builder withTestGroups(List<JTestGroup> testGroups) {
             this.testGroups = testGroups;
             return this;
@@ -35,8 +39,9 @@ public class JTestConfiguration {
             return new JTestConfiguration(this);
         }
 
-
     }
 
-
+    public List<JTestGroup> getTestGroups() {
+        return testGroups;
+    }
 }

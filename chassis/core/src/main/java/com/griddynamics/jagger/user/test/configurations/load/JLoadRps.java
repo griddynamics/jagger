@@ -4,13 +4,13 @@ package com.griddynamics.jagger.user.test.configurations.load;
  * @author asokol
  *         created 10/19/16
  */
-public class JRpsLoad implements JLoad {
+public class JLoadRps implements JLoad {
 
     private long requestsPerSecond;
     private long maxLoadThreads;
     private long warmUpTimeInSeconds;
 
-    private JRpsLoad(Builder builder) {
+    private JLoadRps(Builder builder) {
         this.maxLoadThreads = builder.maxLoadThreads;
         this.requestsPerSecond = builder.requestsPerSecond;
         this.warmUpTimeInSeconds = builder.warmUpTimeInSeconds;
@@ -44,8 +44,8 @@ public class JRpsLoad implements JLoad {
         }
 
 
-        public JRpsLoad build() {
-            return new JRpsLoad(this);
+        public JLoadRps build() {
+            return new JLoadRps(this);
         }
 
 
