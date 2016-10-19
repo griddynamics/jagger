@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
@@ -32,11 +31,11 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.springframework.beans.factory.annotation.Required;
 
 import com.google.common.collect.Lists;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,8 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
         Map<TestEntity, Map<String, Double>> dataForScalabilityPlots =
                 getContext().getSummaryReporter().getDataForScalabilityPlots(sessionId);
         plots.addAll(getScenarioPlots(dataForScalabilityPlots));
-
+    
+        plots.sort(ScenarioPlotDTO.BY_NAME);
         return new JRBeanCollectionDataSource(plots);
     }
 
@@ -143,6 +143,9 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
     }
 
     public static class ScenarioPlotDTO {
+        
+        public static final Comparator<ScenarioPlotDTO> BY_NAME = Comparator.comparing(ScenarioPlotDTO::getScenarioName);
+        
         private String scenarioName;
         private JCommonDrawableRenderer throughputPlot;
         private JCommonDrawableRenderer latencyPlot;

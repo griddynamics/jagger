@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.dbapi.dto;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,6 +12,9 @@ import java.util.Set;
  * @since 5/29/12
  */
 public class TaskDataDto implements Serializable {
+    
+    public static final Comparator<TaskDataDto> BY_NAME_COMPARATOR = Comparator.comparing(TaskDataDto::getTaskName);
+    
     private Map<Long, String> idToSessionId = new HashMap<Long, String>();
     private String taskName;
     private String description;

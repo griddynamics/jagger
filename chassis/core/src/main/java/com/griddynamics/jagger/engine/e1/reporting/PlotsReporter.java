@@ -68,8 +68,9 @@ public class PlotsReporter {
                 EnumSet.of(SessionMatchingSetup.MatchBy.ALL));
 
         RootNode controlTree = databaseService.getControlTreeForSessions(
-                new HashSet<String>(Arrays.asList(sessionId)),
+                new HashSet<>(Collections.singletonList(sessionId)),
                 sessionMatchingSetup);
+        Collections.sort(controlTree.getDetailsNode().getTests(), TestDetailsNode.BY_TASK_NAME);
 
         fetchSessionScopeData(controlTree);
         fetchPerTestData(controlTree);

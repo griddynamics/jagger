@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Required;
 import com.google.common.collect.Lists;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvider<Collection<Verdict<WorkloadComparisonResult>>> {
@@ -69,7 +71,8 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
 
             result.add(dto);
         }
-
+    
+        Collections.sort(result, WorkloadSessionComparisonDto.BY_NAME);
         return new JRBeanCollectionDataSource(result);
     }
 
@@ -79,6 +82,10 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
     }
 
     public static class WorkloadSessionComparisonDto {
+    
+        public static final Comparator<WorkloadSessionComparisonDto> BY_NAME =
+                Comparator.comparing(WorkloadSessionComparisonDto::getName);
+        
         private String name;
         private Decision decision;
         private double throughputDeviation;

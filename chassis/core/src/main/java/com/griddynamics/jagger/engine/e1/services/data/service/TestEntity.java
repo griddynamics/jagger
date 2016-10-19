@@ -3,6 +3,7 @@ package com.griddynamics.jagger.engine.e1.services.data.service;
 import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 import com.griddynamics.jagger.util.Decision;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /** Class is a model of test
@@ -14,6 +15,9 @@ import java.util.Date;
  * Gribov Kirill
  */
 public class TestEntity {
+    
+    public static final Comparator<TestEntity> BY_NAME = Comparator.comparing(TestEntity::getName);
+    
     private Long id;
     private String name;
     private String description;

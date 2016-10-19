@@ -23,9 +23,13 @@ import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import java.util.List;
+
 public class WorkloadReporter extends AbstractReportProvider {
 	@Override
 	public JRDataSource getDataSource(String sessionId) {
-        return new JRBeanCollectionDataSource(getContext().getSummaryReporter().getTestSummaryData(sessionId));
+		List<SummaryTestDto> testSummaryData = getContext().getSummaryReporter().getTestSummaryData(sessionId);
+		testSummaryData.sort(SummaryTestDto.BY_TEST_NAME);
+        return new JRBeanCollectionDataSource(testSummaryData);
 	}
 }

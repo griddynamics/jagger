@@ -30,6 +30,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -49,11 +50,16 @@ public class TestDetailsReporter extends AbstractReportProvider {
             testDetailsDTO.setId(testEntity.getId().toString());
             result.add(testDetailsDTO);
         }
-
+    
+    
+        result.sort(TestDetailsDTO.BY_TEST_NAME);
         return new JRBeanCollectionDataSource(result);
     }
 
     public static class TestDetailsDTO {
+        
+        public static final Comparator<TestDetailsDTO> BY_TEST_NAME = Comparator.comparing(TestDetailsDTO::getTestName);
+        
         private String testName;
         private String id;
 
