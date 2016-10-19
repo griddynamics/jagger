@@ -40,22 +40,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ReportingContext implements ApplicationContextAware {
-
+    
     public static final String CONTEXT_NAME = "context";
-
+    
     private ResourceLoader resourceLoader;
     private String rootPath = "";
     private SummaryReporter summaryReporter;
     private PlotsReporter plotsReporter;
-
+    
     private ExtensionRegistry<ReportProvider> providerRegistry = new ExtensionRegistry<>(ReportProvider.class);
     private ExtensionRegistry<MappedReportProvider> mappedProviderRegistry =
             new ExtensionRegistry<>(MappedReportProvider.class);
-
+    
     private Map<String, Object> parameters = Maps.newHashMap();
-
+    
     private boolean removeFrame = true;
-
+    
     public InputStream getResource(String location) {
         try {
             return resourceLoader.getResource(getPath(location)).getInputStream();
@@ -63,54 +63,61 @@ public class ReportingContext implements ApplicationContextAware {
             throw new TechnicalException(e);
         }
     }
-
+    
     public Map<String, ReportingContext> getAsMap() {
         Map<String, ReportingContext> map = new HashMap<>();
         map.put(CONTEXT_NAME, this);
         return map;
     }
-
+    
     public ReportProvider getProvider(String name) {
         return providerRegistry.getExtension(name);
     }
-
+    
     public MappedReportProvider getMappedProvider(String name) {
         return mappedProviderRegistry.getExtension(name);
     }
-
+    
     public Map<String, Object> getParameters() {
         return parameters;
     }
-
+    
     public JasperReport getReport(String location) {
         try {
-            return JasperCompileManager.compileReport(new ReportInputStream(resourceLoader.getResource(getPath(location)).getInputStream(), removeFrame));
-        } catch (JRException | IOException e) {
+            return JasperCompileManager.compileReport(
+                    new ReportInputStream(resourceLoader.getResource(getPath(location)).getInputStream(), removeFrame));
+        } catch (JRException e) {
+            throw new TechnicalException(e);
+        } catch (IOException e) {
             throw new TechnicalException(e);
         }
     }
-
+    
     //------------------------------------------------------------------------------------------------------------------
-
+    
     public void setProviderRegistry(ExtensionRegistry<ReportProvider> providerRegistry) {
-        providerRegistry.getExtensions().values().forEach(reportProvider -> reportProvider.setContext(this));
+        for (ReportProvider reportProvider : providerRegistry.getExtensions().values()) {
+            reportProvider.setContext(this);
+        }
         this.providerRegistry = providerRegistry;
     }
-
+    
     public void setMappedProviderRegistry(ExtensionRegistry<MappedReportProvider> providerRegistry) {
-        providerRegistry.getExtensions().values().forEach(reportProvider -> reportProvider.setContext(this));
+        for (MappedReportProvider reportProvider : providerRegistry.getExtensions().values()) {
+            reportProvider.setContext(this);
+        }
         this.mappedProviderRegistry = providerRegistry;
     }
-
+    
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         resourceLoader = applicationContext;
     }
-
+    
     public boolean isRemoveFrame() {
         return removeFrame;
     }
-
+    
     public void setRemoveFrame(boolean removeFrame) {
         this.removeFrame = removeFrame;
     }

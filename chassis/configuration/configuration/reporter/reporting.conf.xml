@@ -226,7 +226,7 @@
     </bean>
 
     <alias name="defaultReportingService" alias="reportingService"/>
-    <bean id="defaultReportingService" class="com.griddynamics.jagger.reporting.ReportingService">
+    <bean id="defaultReportingService" class="com.griddynamics.jagger.reporting.ReportingService" scope="prototype">
         <property name="context" ref="reportingContext"/>
         <property name="reportType" value="${chassis.master.reporting.report.format}"/>
         <property name="rootTemplateLocation" value="${chassis.master.reporting.root.report.template.location}"/>

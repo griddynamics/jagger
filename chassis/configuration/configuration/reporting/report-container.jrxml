@@ -133,7 +133,6 @@
                 </subreport>
             </frame>
 
-
             <frame>
                 <reportElement positionType="Float" x="0" y="0" width="550" height="200"/>
                 <subreport>

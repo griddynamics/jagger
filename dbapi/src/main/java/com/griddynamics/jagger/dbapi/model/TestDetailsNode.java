@@ -4,7 +4,6 @@ package com.griddynamics.jagger.dbapi.model;
 import com.griddynamics.jagger.dbapi.dto.TaskDataDto;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -15,8 +14,6 @@ import java.util.List;
 
 public class TestDetailsNode extends MetricGroupNode<PlotNode> {
     
-    public static final Comparator<TestDetailsNode> BY_TASK_NAME = Comparator.comparing(TestDetailsNode::getDisplayName);
-
     private TaskDataDto taskDataDto;
 
     public TestDetailsNode(MetricGroupNode that) {

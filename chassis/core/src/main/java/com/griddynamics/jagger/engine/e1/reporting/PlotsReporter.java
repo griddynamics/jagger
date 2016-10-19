@@ -20,7 +20,9 @@ import org.springframework.beans.factory.annotation.Required;
 import java.util.*;
 
 public class PlotsReporter {
-
+    
+    public static final Comparator<TestDetailsNode> BY_TASK_NAME = Comparator.comparing(TestDetailsNode::getDisplayName);
+    
     private Logger log = LoggerFactory.getLogger(PlotsReporter.class);
 
     private DatabaseService databaseService;
@@ -70,7 +72,7 @@ public class PlotsReporter {
         RootNode controlTree = databaseService.getControlTreeForSessions(
                 new HashSet<>(Collections.singletonList(sessionId)),
                 sessionMatchingSetup);
-        Collections.sort(controlTree.getDetailsNode().getTests(), TestDetailsNode.BY_TASK_NAME);
+        Collections.sort(controlTree.getDetailsNode().getTests(), BY_TASK_NAME);
 
         fetchSessionScopeData(controlTree);
         fetchPerTestData(controlTree);

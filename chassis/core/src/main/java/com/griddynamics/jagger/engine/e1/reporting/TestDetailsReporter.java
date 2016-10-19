@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Set;
 
 public class TestDetailsReporter extends AbstractReportProvider {
+    
+    public static final Comparator<TestDetailsDTO> BY_TEST_NAME = Comparator.comparing(TestDetailsDTO::getTestName);
+    
     private DataService dataService;
 
     @Override
@@ -52,13 +55,11 @@ public class TestDetailsReporter extends AbstractReportProvider {
         }
     
     
-        result.sort(TestDetailsDTO.BY_TEST_NAME);
+        result.sort(BY_TEST_NAME);
         return new JRBeanCollectionDataSource(result);
     }
 
     public static class TestDetailsDTO {
-        
-        public static final Comparator<TestDetailsDTO> BY_TEST_NAME = Comparator.comparing(TestDetailsDTO::getTestName);
         
         private String testName;
         private String id;
@@ -84,5 +85,4 @@ public class TestDetailsReporter extends AbstractReportProvider {
     public void setDatabaseService(DatabaseService databaseService) {
         this.dataService = new DefaultDataService(databaseService);
     }
-
 }

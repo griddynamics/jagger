@@ -41,6 +41,9 @@ import java.util.List;
 import java.util.Map;
 
 public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
+    
+    public static final Comparator<ScenarioPlotDTO> BY_NAME = Comparator.comparing(ScenarioPlotDTO::getScenarioName);
+    
     private HashMap<String, String> clockDictionary;
 
     public HashMap<String, String> getClockDictionary() {
@@ -60,7 +63,7 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
                 getContext().getSummaryReporter().getDataForScalabilityPlots(sessionId);
         plots.addAll(getScenarioPlots(dataForScalabilityPlots));
     
-        plots.sort(ScenarioPlotDTO.BY_NAME);
+        plots.sort(BY_NAME);
         return new JRBeanCollectionDataSource(plots);
     }
 
@@ -144,7 +147,6 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
 
     public static class ScenarioPlotDTO {
         
-        public static final Comparator<ScenarioPlotDTO> BY_NAME = Comparator.comparing(ScenarioPlotDTO::getScenarioName);
         
         private String scenarioName;
         private JCommonDrawableRenderer throughputPlot;

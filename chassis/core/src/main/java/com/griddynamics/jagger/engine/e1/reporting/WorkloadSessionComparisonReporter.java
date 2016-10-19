@@ -36,13 +36,15 @@ import java.util.Comparator;
 import java.util.List;
 
 public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvider<Collection<Verdict<WorkloadComparisonResult>>> {
-
+    
+    public static final Comparator<WorkloadSessionComparisonDto> BY_NAME =
+            Comparator.comparing(WorkloadSessionComparisonDto::getName);
+    
     private StatusImageProvider statusImageProvider;
 
     @Override
     public JRDataSource getDataSource(Collection<Verdict<WorkloadComparisonResult>> key, String sessionId) {
         getContext().getParameters().put("jagger.workloadsessioncomparator.statusImageProvider", statusImageProvider);
-
 
         List<WorkloadSessionComparisonDto> result = Lists.newArrayList();
 
@@ -72,7 +74,7 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
             result.add(dto);
         }
     
-        Collections.sort(result, WorkloadSessionComparisonDto.BY_NAME);
+        Collections.sort(result, BY_NAME);
         return new JRBeanCollectionDataSource(result);
     }
 
@@ -82,9 +84,6 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
     }
 
     public static class WorkloadSessionComparisonDto {
-    
-        public static final Comparator<WorkloadSessionComparisonDto> BY_NAME =
-                Comparator.comparing(WorkloadSessionComparisonDto::getName);
         
         private String name;
         private Decision decision;

@@ -23,13 +23,17 @@ import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class WorkloadReporter extends AbstractReportProvider {
+	
+	public static final Comparator<SummaryTestDto> BY_TEST_NAME = Comparator.comparing(SummaryTestDto::getTestName);
+	
 	@Override
 	public JRDataSource getDataSource(String sessionId) {
 		List<SummaryTestDto> testSummaryData = getContext().getSummaryReporter().getTestSummaryData(sessionId);
-		testSummaryData.sort(SummaryTestDto.BY_TEST_NAME);
+		testSummaryData.sort(BY_TEST_NAME);
         return new JRBeanCollectionDataSource(testSummaryData);
 	}
 }
