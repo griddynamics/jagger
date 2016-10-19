@@ -18,6 +18,7 @@ WORKDIR /com/griddynamics/jagger
 
 EXPOSE ${JWC_HTTP_PORT}
 
+# Command "sleep 10" needed for initialisation of database. Watch JFG-939.
 CMD sleep 10 && java -jar jagger-webclient.jar -httpPort=${JWC_HTTP_PORT} -Djdbc.driver=${JWC_JDBC_DRIVER} \
                                                             -Djdbc.url=${JWC_JDBC_URL} \
                                                             -Djdbc.user=${JWC_JDBC_USER} \
