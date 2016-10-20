@@ -180,8 +180,8 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
                 // This multiplication is needed to leave some free space (10% of Y-axis length) above line on the plot
                 double maxYVisible = calculateMaxYAxisValue(plot) * 1.1;
                 // If max value is too small it won't be visible on the plot, since the smallest float number that GWT can show is 10^-300
-                Double jsMinFloatValue = Math.pow(10, -300);
-                if (maxYVisible < jsMinFloatValue) maxYVisible = jsMinFloatValue;
+                Double minVisibleFloatValue = Math.pow(10, -300);
+                if (maxYVisible < minVisibleFloatValue) maxYVisible = minVisibleFloatValue;
 
                 // save y axis range for plot from very start
                 plot.getOptions().getYAxisOptions().setMinimum(minYVisible).setMaximum(maxYVisible);
