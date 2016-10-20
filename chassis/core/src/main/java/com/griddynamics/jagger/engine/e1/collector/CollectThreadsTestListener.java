@@ -5,7 +5,9 @@ import com.griddynamics.jagger.engine.e1.collector.test.TestInfo;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 
-/** Listener, executed periodically during test to collect number of workload threads
+/**
+ * Listener, executed periodically during test to collect number of workload threads
+ *
  * @author Gribov Kirill
  * @n
  * @par Details:
@@ -16,25 +18,33 @@ import com.griddynamics.jagger.engine.e1.services.ServicesAware;
  * @par Usage example in XML:
  * To use this listener add @xlink_complex{listeners-test} of type @xlink_complex{listener-test-threads} to @xlink{test} block in your configuration XML file
  * @n
- * @dontinclude  suite.conf.xml
- * @skip  begin: following section is used for docu generation - test listener usage
+ * @dontinclude suite.conf.xml
+ * @skip begin: following section is used for docu generation - test listener usage
  * @until end: following section is used for docu generation - test listener usage
  * @n
- * @ingroup Main_Listeners_group */
+ * @ingroup Main_Listeners_group
+ */
 public class CollectThreadsTestListener extends ServicesAware implements Provider<TestListener> {
 
-    private String metricId = "Jagger.Threads";
+    private static final String METRIC_ID = "Jagger.Threads";
+    private static final String METRIC_DISPLAY_NAME = "Virtual users";
 
-    /** Method is executed single time when listener is created */
+    /**
+     * Method is executed single time when listener is created
+     */
     @Override
     protected void init() {
-        getMetricService().createMetric(new MetricDescription(metricId)
-                                                .plotData(true)
-                                                .showSummary(true)
-                                                .addAggregator(new AvgMetricAggregatorProvider()));
+        MetricDescription metricDescription = new MetricDescription(METRIC_ID)
+                .displayName(METRIC_DISPLAY_NAME)
+                .plotData(true)
+                .showSummary(true)
+                .addAggregator(new AvgMetricAggregatorProvider());
+        getMetricService().createMetric(metricDescription);
     }
 
-    /** Method is providing listener to Jagger that will trigger listener methods during test run*/
+    /**
+     * Method is providing listener to Jagger that will trigger listener methods during test run
+     */
     @Override
     public TestListener provide() {
         return new TestListener() {
@@ -46,7 +56,7 @@ public class CollectThreadsTestListener extends ServicesAware implements Provide
 
             @Override
             public void onRun(TestInfo status) {
-                getMetricService().saveValue(metricId, status.getThreads());
+                getMetricService().saveValue(METRIC_ID, status.getThreads());
             }
         };
     }
