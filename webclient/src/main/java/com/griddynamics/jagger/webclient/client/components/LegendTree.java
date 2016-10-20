@@ -5,6 +5,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.googlecode.gflot.client.DataPoint;
 import com.googlecode.gflot.client.Series;
+import com.googlecode.gflot.client.SeriesData;
 import com.googlecode.gflot.client.SeriesHandler;
 import com.googlecode.gflot.client.SimplePlot;
 import com.googlecode.gflot.client.options.PointsSeriesOptions;
@@ -175,7 +176,10 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
 
             if (plot.isAttached()) {
                 double minYVisible = plot.getAxes().getY().getMinimumValue();
-                double maxYVisible = plot.getAxes().getY().getMaximumValue();
+
+                // This multiplication is needed to leave some free space (10% of Y-axis length) above line on the plot
+                double maxYVisible = calculateMaxYAxisValue(plot) * 1.1;
+                if (maxYVisible == 0) maxXVisible += 0.5;
 
                 // save y axis range for plot from very start
                 plot.getOptions().getYAxisOptions().setMinimum(minYVisible).setMaximum(maxYVisible);
@@ -185,6 +189,22 @@ public class LegendTree extends AbstractTree<AbstractIdentifyNode, LegendTree.Ce
             plot.getOptions().getXAxisOptions().setMinimum(minXVisible).setMaximum(maxXVisible);
             plot.redraw();
         }
+    }
+
+    private double calculateMaxYAxisValue(SimplePlot plot) {
+        JsArray<Series> seriesArray = plot.getModel().getSeries();
+        double maxValue = Double.MIN_VALUE;
+        for (int i = 0; i < seriesArray.length(); i++) {
+            // get curve
+            SeriesData curve = seriesArray.get(i).getData();
+            for (int j = 0; j < curve.length(); j++) {
+                double temp = curve.getY(j);
+                if (maxValue < temp) {
+                    maxValue = temp;
+                }
+            }
+        }
+        return maxValue;
     }
 
 
