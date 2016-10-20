@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 public class TestDetailsNode extends MetricGroupNode<PlotNode> {
-
+    
     private TaskDataDto taskDataDto;
 
     public TestDetailsNode(MetricGroupNode that) {

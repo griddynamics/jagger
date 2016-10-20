@@ -24,7 +24,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperReport;
 
 public interface ReportProvider {
-    JRDataSource getDataSource();
+    JRDataSource getDataSource(String sessionId);
     JasperReport getReport();
     void setContext(ReportingContext context);
 }

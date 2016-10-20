@@ -20,8 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-
-import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
@@ -33,16 +31,20 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.springframework.beans.factory.annotation.Required;
+
+import com.google.common.collect.Lists;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
+    
+    public static final Comparator<ScenarioPlotDTO> BY_NAME = Comparator.comparing(ScenarioPlotDTO::getScenarioName);
+    
     private HashMap<String, String> clockDictionary;
-    private SummaryReporter summaryReporter;
 
     public HashMap<String, String> getClockDictionary() {
         return clockDictionary;
@@ -53,16 +55,15 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
     }
 
     @Override
-    public JRDataSource getDataSource() {
+    public JRDataSource getDataSource(String sessionId) {
 
         List<ScenarioPlotDTO> plots = Lists.newArrayList();
-
-        String sessionId = getSessionIdProvider().getSessionId();
-
-        Map<TestEntity,Map<String,Double>> dataForScalabilityPlots = summaryReporter.getDataForScalabilityPlots(sessionId);
-
+    
+        Map<TestEntity, Map<String, Double>> dataForScalabilityPlots =
+                getContext().getSummaryReporter().getDataForScalabilityPlots(sessionId);
         plots.addAll(getScenarioPlots(dataForScalabilityPlots));
-
+    
+        plots.sort(BY_NAME);
         return new JRBeanCollectionDataSource(plots);
     }
 
@@ -145,6 +146,8 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
     }
 
     public static class ScenarioPlotDTO {
+        
+        
         private String scenarioName;
         private JCommonDrawableRenderer throughputPlot;
         private JCommonDrawableRenderer latencyPlot;
@@ -173,10 +176,4 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
             this.latencyPlot = latencyPlot;
         }
     }
-
-    @Required
-    public void setSummaryReporter(SummaryReporter summaryReporter) {
-        this.summaryReporter = summaryReporter;
-    }
-
 }

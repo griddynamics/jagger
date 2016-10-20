@@ -21,13 +21,12 @@
 package com.griddynamics.jagger.util;
 
 import com.griddynamics.jagger.exception.TechnicalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-
 import java.io.IOException;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -36,6 +35,7 @@ import java.util.Properties;
  * Alternative to PropertyPlaceholderConfigurer that allows to declare multiple beans which are backed by single properties registry
  */
 public class PropertiesResolver extends PropertyPlaceholderConfigurer {
+    
     private PropertiesResolverRegistry registry;
 
     protected String resolvePlaceholder(String placeholder, Properties props) {

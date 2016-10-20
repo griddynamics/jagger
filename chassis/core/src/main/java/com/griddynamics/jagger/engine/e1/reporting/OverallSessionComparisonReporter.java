@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict;
@@ -30,6 +29,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.google.common.collect.Lists;
 
 public class OverallSessionComparisonReporter extends AbstractReportProvider {
 
@@ -43,15 +44,12 @@ public class OverallSessionComparisonReporter extends AbstractReportProvider {
     private StatusImageProvider statusImageProvider;
     private BaselineSessionProvider baselineSessionProvider;
 
-
     @Override
-    public JRDataSource getDataSource() {
-
+    public JRDataSource getDataSource(String currentSession) {
+    
         log.debug("Going to build session comparison report");
-
-        String currentSession = getSessionIdProvider().getSessionId();
-        String baselineSession = baselineSessionProvider.getBaselineSession();
-
+        
+        String baselineSession = baselineSessionProvider.getBaselineSession(currentSession);
         SessionVerdict verdict = sessionComparator.compare(currentSession, baselineSession);
 
         getContext().getParameters().put(JAGGER_VERDICT, verdict);
@@ -71,16 +69,17 @@ public class OverallSessionComparisonReporter extends AbstractReportProvider {
     public void setSessionComparator(SessionComparator sessionComparator) {
         this.sessionComparator = sessionComparator;
     }
-
-    @Required
-    public void setBaselineSessionProvider(BaselineSessionProvider baselineSessionProvider) {
-        this.baselineSessionProvider = baselineSessionProvider;
-    }
-
-    public BaselineSessionProvider getBaselineSessionProvider(){
+    
+    public BaselineSessionProvider getBaselineSessionProvider() {
         return baselineSessionProvider;
     }
-
+    
+    @Required
+    public void setBaselineSessionProvider(BaselineSessionProvider baselineSessionProvider
+    ) {
+        this.baselineSessionProvider = baselineSessionProvider;
+    }
+    
     public SessionComparator getSessionComparator(){
         return sessionComparator;
     }

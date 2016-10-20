@@ -24,31 +24,22 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author Nikolay Musienko
  *         Date: 19.03.13
  */
-
 public class MetricPlotsReporter extends AbstractMappedReportProvider<String> {
     private Logger log = LoggerFactory.getLogger(MetricPlotsReporter.class);
 
-    private PlotsReporter plotsReporter;
-
-    @Required
-    public void setPlotsReporter(PlotsReporter plotsReporter) {
-        this.plotsReporter = plotsReporter;
-    }
-
-
     @Override
-    public JRDataSource getDataSource(String id) {
-        String sessionId = getSessionIdProvider().getSessionId();
-
-        Map<Long, PlotsReporter.MetricPlotDTOs> testIdToPlotsMap = plotsReporter.getTestIdToPlotsMap(sessionId);
+    public JRDataSource getDataSource(String id, String sessionId) {
+    
+        Map<Long, PlotsReporter.MetricPlotDTOs> testIdToPlotsMap =
+                getContext().getPlotsReporter().getTestIdToPlotsMap(sessionId);
 
         Long testId = Long.valueOf(id);
         if (!testIdToPlotsMap.containsKey(testId)) {

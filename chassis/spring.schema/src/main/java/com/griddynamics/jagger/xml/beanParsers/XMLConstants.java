@@ -45,7 +45,7 @@ public class XMLConstants {
     public static final String SESSION_COMPARISON = "sessionComparison";
     public static final String WORST_CASE_DECISION_MAKER = "worstCaseDecisionMaker";
     public static final String WORST_CASE = "worstCase";
-    public static final String SESSION_ID = "sessionId";
+    public static final String BASELINE_SESSION_ID = "baselineSessionId";
     public static final String SESSION_ID_PROVIDER = "sessionIdProvider";
     public static final String CUSTOM_BASELINE_SESSION_PROVIDER = "customBaselineSessionProvider";
     public static final String BASELINE_SESSION_PROVIDER = "baselineSessionProvider";

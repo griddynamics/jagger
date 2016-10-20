@@ -28,8 +28,9 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
+    <parameter name="sessionId" class="java.lang.String"/>
     <field name="testName" class="java.lang.String"/>
     <field name="id" class="java.lang.String"/>
 
@@ -74,25 +75,25 @@
                 </staticText>
                 <subreport>
                     <reportElement positionType="Float" x="0" y="45" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("validationResults").getDataSource( $F{id} )]]></dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("validationResults").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                         <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("validationResults").getReport( $F{id} )]]></subreportExpression>
                 </subreport>
                 <subreport>
                     <reportElement positionType="Float" x="0" y="55" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("metricsResults").getDataSource( $F{id} )]]></dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("metricsResults").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                         <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("metricsResults").getReport( $F{id} )]]></subreportExpression>
                 </subreport>
                 <subreport>
                     <reportElement positionType="Float" x="0" y="65" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("profiler").getDataSource( $F{id} )]]></dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("profiler").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                         <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("profiler").getReport( $F{id} )]]></subreportExpression>
                 </subreport>

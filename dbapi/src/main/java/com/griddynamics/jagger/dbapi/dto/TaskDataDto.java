@@ -11,6 +11,7 @@ import java.util.Set;
  * @since 5/29/12
  */
 public class TaskDataDto implements Serializable {
+    
     private Map<Long, String> idToSessionId = new HashMap<Long, String>();
     private String taskName;
     private String description;

@@ -54,8 +54,8 @@ public class LimitSet {
         this.id = id;
     }
 
-    public String getBaselineId() {
-        return baselineSessionProvider.getBaselineSession();
+    public String getBaselineId(String sessionId) {
+        return baselineSessionProvider.getBaselineSession(sessionId);
     }
 
     public void setBaselineSessionProvider(BaselineSessionProvider baselineSessionProvider) {

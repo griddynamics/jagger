@@ -26,16 +26,6 @@
     <!-- Import DatabaseService definition-->
     <import resource="classpath*:/spring/dbapi.config.xml"/>
 
-    <bean class="com.griddynamics.jagger.util.PropertiesResolver">
-        <property name="registry" ref="propertiesResolverRegistry"/>
-        <property name="resources">
-            <list>
-                <value>configuration/reporter/default.reporting.properties</value>
-                <value>configuration/reporter/reporting.properties</value>
-            </list>
-        </property>
-    </bean>
-
     <alias name="sessionIdProviderReadOnly_${report.only}" alias="sessionIdProvider"/>
     <alias name="sessionIdProviderBean" alias="sessionIdProviderReadOnly_true"/>
     <alias name="sequenceSessionIdProvider" alias="sessionIdProviderReadOnly_false"/>
@@ -53,11 +43,14 @@
     </bean>
 
     <bean id="statusImageProvider" class="com.griddynamics.jagger.engine.e1.reporting.StatusImageProvider">
-        <property name="statusImageOKLocation" value="configuration/reporting/common/images/green_ball_84.png"/>
+        <property name="statusImageOKLocation"
+                  value="${chassis.master.reporting.root.path}/reporting/common/images/green_ball_84.png"/>
         <property name="statusImageWarningLocation"
-                  value="configuration/reporting/common/images/yellow_ball_84.png"/>
-        <property name="statusImageFatalLocation" value="configuration/reporting/common/images/red_ball_84.png"/>
-        <property name="statusImageErrorLocation" value="configuration/reporting/common/images/gray_ball_84.png"/>
+                  value="${chassis.master.reporting.root.path}/reporting/common/images/yellow_ball_84.png"/>
+        <property name="statusImageFatalLocation"
+                  value="${chassis.master.reporting.root.path}/reporting/common/images/red_ball_84.png"/>
+        <property name="statusImageErrorLocation"
+                  value="${chassis.master.reporting.root.path}/reporting/common/images/gray_ball_84.png"/>
     </bean>
 
     <bean id="sessionStatusDecisionMaker"
@@ -65,57 +58,57 @@
         <property name="description"
                   value="Status is based on success rate. Session status is a status of the worst test."/>
         <property name="successRateThreshold" value="${chassis.master.reporting.successrate.threshold}"/>
-        <property name="doNotUseDeprecatedMethodToSetTestStatus" value="${chassis.decision.maker.with.limits.is.only.decision.maker}"/>
+        <property name="doNotUseDeprecatedMethodToSetTestStatus"
+                  value="${chassis.decision.maker.with.limits.is.only.decision.maker}"/>
     </bean>
 
-    <bean id="abstractReportProviderBean" class="com.griddynamics.jagger.reporting.AbstractReportProviderBean" abstract="true">
-        <property name="context" ref="reportingContext"/>
+    <bean id="abstractReportProviderBean" class="com.griddynamics.jagger.reporting.AbstractReportProviderBean"
+          abstract="true">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="sessionIdProvider" ref="sessionIdProvider"/>
     </bean>
 
-    <bean id="defaultOverallSessionComparisonReporter" class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter" parent="abstractReportProviderBean">
-        <property name="template" value="configuration/reporting/session-comparison-report.jrxml"/>
-        <property name="baselineSessionProvider" ref="baselineSessionProvider"/>
-        <property name="statusImageProvider" ref="statusImageProvider"/>
-        <property name="sessionComparator" ref="sessionComparator"/>
-    </bean>
-
-    <bean id="reporterExtensionRegistry" class="com.griddynamics.jagger.extension.ExtensionRegistry">
+    <bean id="reporterExtensionRegistry" class="com.griddynamics.jagger.extension.ExtensionRegistry" scope="prototype">
         <constructor-arg index="0" value="com.griddynamics.jagger.reporting.ReportProvider"/>
-
         <property name="autoDiscovery" value="true"/>
         <property name="extensions">
             <map merge="true">
                 <entry key="sessionComparison">
-                    <ref bean="defaultOverallSessionComparisonReporter"/>
-                </entry>
-
-                <entry key="sessionSummary">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionSummaryReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/session-summary-reporting.jrxml"/>
-                    </bean>
-                </entry>
-
-                <entry key="sessionStatus">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionStatusReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/session-status-report.jrxml"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template" value="/reporting/session-comparison-report.jrxml"/>
+                        <property name="baselineSessionProvider" ref="baselineSessionProvider"/>
                         <property name="statusImageProvider" ref="statusImageProvider"/>
-                        <property name="summaryReporter" ref="summaryReporter"/>
+                        <property name="sessionComparator" ref="sessionComparator"/>
                     </bean>
                 </entry>
-
+                <entry key="sessionSummary">
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionSummaryReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/session-summary-reporting.jrxml"/>
+                    </bean>
+                </entry>
+                <entry key="sessionStatus">
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionStatusReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/session-status-report.jrxml"/>
+                        <property name="statusImageProvider" ref="statusImageProvider"/>
+                    </bean>
+                </entry>
                 <entry key="e1Scenario">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/workload-reporting.jrxml"/>
-
-                        <property name="summaryReporter" ref="summaryReporter"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/workload-reporting.jrxml"/>
                     </bean>
                 </entry>
-
                 <entry key="scalabilityPlots">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadScalabilityPlotsReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/scalability-plots.jrxml"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadScalabilityPlotsReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/scalability-plots.jrxml"/>
                         <property name="clockDictionary">
                             <map key-type="java.lang.String" value-type="java.lang.String">
                                 <entry key="delay" value="Thread Count"/>
@@ -123,83 +116,84 @@
                                 <entry key="user" value="Invocations"/>
                             </map>
                         </property>
-                        <property name="summaryReporter" ref="summaryReporter"/>
                     </bean>
                 </entry>
-
                 <entry key="sessionScopePlotsReporter">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionScopePlotsReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/session-scope-plots-report.jrxml"/>
-                        <property name="plotsReporter" ref="plotsReporter"/>
-                        <property name="summaryReporter" ref="summaryReporter"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.SessionScopePlotsReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/session-scope-plots-report.jrxml"/>
                     </bean>
                 </entry>
-
                 <entry key="testDetailsContainer">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.TestDetailsReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/test-details-container.jrxml"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.TestDetailsReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/test-details-container.jrxml"/>
                         <property name="databaseService" ref="databaseService"/>
                     </bean>
                 </entry>
-
             </map>
         </property>
     </bean>
 
-    <bean id="mappedReporterExtensionRegistry" class="com.griddynamics.jagger.extension.ExtensionRegistry">
+    <bean id="mappedReporterExtensionRegistry" class="com.griddynamics.jagger.extension.ExtensionRegistry"
+          scope="prototype">
         <constructor-arg index="0" value="com.griddynamics.jagger.reporting.MappedReportProvider"/>
-
         <property name="autoDiscovery" value="true"/>
         <property name="extensions">
             <map>
-
                 <entry key="diagnosticResults">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.DiagnosticReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/diagnostics-report.jrxml"/>
-                        <property name="summaryReporter" ref="summaryReporter"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.DiagnosticReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/diagnostics-report.jrxml"/>
                     </bean>
                 </entry>
-
                 <entry key="workloadSessionComparison">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadSessionComparisonReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/workload-session-comparison-report.jrxml"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadSessionComparisonReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/workload-session-comparison-report.jrxml"/>
                         <property name="statusImageProvider" ref="statusImageProvider"/>
                     </bean>
                 </entry>
-
                 <entry key="monitoringSessionComparison">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.MonitoringSessionComparisonReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/monitoring-session-comparison-report.jrxml"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.MonitoringSessionComparisonReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/monitoring-session-comparison-report.jrxml"/>
                         <property name="statusImageProvider" ref="statusImageProvider"/>
                     </bean>
                 </entry>
-
                 <entry key="workloadProcessDetails">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadProcessDetailsReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/workload-process-details.jrxml"/>
-                        <property name="summaryReporter" ref="summaryReporter"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadProcessDetailsReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/workload-process-details.jrxml"/>
                     </bean>
                 </entry>
                 <entry key="validationResults">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadValidationReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/workload-validation-results.jrxml"/>
-                        <property name="summaryReporter" ref="summaryReporter"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadValidationReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/workload-validation-results.jrxml"/>
                     </bean>
                 </entry>
-
                 <entry key="metricsResults">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.MetricPlotsReporter" parent="abstractReportProviderBean">
-                        <property name="template" value="configuration/reporting/metrics-report.jrxml"/>
-                        <property name="plotsReporter" ref="plotsReporter"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.MetricPlotsReporter"
+                          parent="abstractReportProviderBean">
+                        <property name="template"
+                                  value="/reporting/metrics-report.jrxml"/>
                     </bean>
                 </entry>
-
                 <entry key="profiler">
-                    <bean class="com.griddynamics.jagger.diagnostics.reporting.ProfileReporter" parent="abstractReportProviderBean">
+                    <bean class="com.griddynamics.jagger.diagnostics.reporting.ProfileReporter"
+                          parent="abstractReportProviderBean">
                         <property name="databaseService" ref="databaseService"/>
                         <property name="enable" value="${chassis.conditions.monitoring.enable}"/>
-                        <property name="template" value="configuration/reporting/profile-reporting.jrxml"/>
-
+                        <property name="template"
+                                  value="/reporting/profile-reporting.jrxml"/>
                         <property name="maxHotSpots" value="5"/>
                         <property name="maxCallTreeDepth" value="5"/>
                         <property name="maxCallersInGraph" value="5"/>
@@ -208,33 +202,36 @@
                         <property name="renderGraph" value="false"/>
                     </bean>
                 </entry>
-
             </map>
         </property>
     </bean>
 
-    <bean id="reportingContext" class="com.griddynamics.jagger.reporting.ReportingContext">
+    <bean id="reportingContext" class="com.griddynamics.jagger.reporting.ReportingContext" scope="prototype">
         <property name="providerRegistry" ref="reporterExtensionRegistry"/>
         <property name="mappedProviderRegistry" ref="mappedReporterExtensionRegistry"/>
+        <property name="rootPath" value="${chassis.master.reporting.root.path}"/>
+        <property name="plotsReporter">
+            <bean class="com.griddynamics.jagger.engine.e1.reporting.PlotsReporter">
+                <property name="databaseService" ref="databaseService"/>
+            </bean>
+        </property>
+        <property name="summaryReporter" ref="summaryReporter"/>
     </bean>
 
-    <alias name="defaultReportingService" alias="reportingService"/>
-
-    <bean id="defaultReportingService" class="com.griddynamics.jagger.reporting.ReportingService">
-        <property name="context" ref="reportingContext"/>
-        <property name="reportType" value="${chassis.master.reporting.report.format}"/>
-        <property name="rootTemplateLocation" value="${chassis.master.reporting.root.report.template.location}"/>
-        <property name="outputReportLocation" value="${chassis.master.reporting.report.file.name}"/>
-    </bean>
-
-    <bean id="summaryReporter" class="com.griddynamics.jagger.engine.e1.reporting.SummaryReporter">
+    <bean id="summaryReporter" class="com.griddynamics.jagger.engine.e1.reporting.SummaryReporter" scope="prototype">
         <property name="databaseService" ref="databaseService"/>
         <property name="metricHighlighting" value="${report.enable.decisions.per.metric.highlighting:true}"/>
         <property name="decisionMaker" ref="sessionStatusDecisionMaker"/>
         <property name="statusImageProvider" ref="statusImageProvider"/>
     </bean>
-    
-    <bean id="plotsReporter" class="com.griddynamics.jagger.engine.e1.reporting.PlotsReporter">
-        <property name="databaseService" ref="databaseService"/>
+
+    <alias name="defaultReportingService" alias="reportingService"/>
+    <bean id="defaultReportingService" class="com.griddynamics.jagger.reporting.ReportingService" scope="prototype">
+        <property name="context" ref="reportingContext"/>
+        <property name="reportType" value="${chassis.master.reporting.report.format}"/>
+        <property name="rootTemplateLocation" value="${chassis.master.reporting.root.report.template.location}"/>
+        <property name="outputReportLocation" value="${chassis.master.reporting.report.file.name}"/>
+        <property name="doGenerateXmlReport" value="${chassis.master.reporting.report.in.xml}"/>
+        <property name="sessionId" value="#{sessionIdProvider.getSessionId()}"/>
     </bean>
 </beans>

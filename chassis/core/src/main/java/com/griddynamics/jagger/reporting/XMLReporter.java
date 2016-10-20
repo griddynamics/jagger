@@ -10,20 +10,22 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.File;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 
 /**
- * Created with IntelliJ IDEA.
  * User: nmusienko
  * Date: 01.02.13
  * Time: 19:14
- * To change this template use File | Settings | File Templates.
  */
 public class XMLReporter {
 
@@ -46,6 +48,7 @@ public class XMLReporter {
 
 
     private ReportingContext context;
+    private String sessionId;
 
     private static final Logger log = LoggerFactory.getLogger(XMLReporter.class);
 
@@ -54,9 +57,10 @@ public class XMLReporter {
      * @param context - context
      * @return SessionStatusXMLMaker with context
      */
-    public static XMLReporter create(ReportingContext context) {
+    public static XMLReporter create(ReportingContext context, String sessionId) {
         XMLReporter maker = new XMLReporter();
         maker.setContext(context);
+        maker.sessionId = sessionId;
         return maker;
     }
 
@@ -134,7 +138,7 @@ public class XMLReporter {
             }
 
             JRBeanCollectionDataSource source=(JRBeanCollectionDataSource)
-                    context.getProvider(SESSION_SUMMARY).getDataSource();
+                    context.getProvider(SESSION_SUMMARY).getDataSource(sessionId);
             if(source.getData().size()==1){
                 SessionData data= (SessionData) source.getData().iterator().next();
 
@@ -159,7 +163,7 @@ public class XMLReporter {
     private void fillSessionStatus(Document doc) throws ParserConfigurationException {
         Element rootElement=doc.getDocumentElement();
         if(context.getProvider(SESSION_STATUS)!=null){
-            JRBeanCollectionDataSource source=(JRBeanCollectionDataSource) context.getProvider(SESSION_STATUS).getDataSource();
+            JRBeanCollectionDataSource source=(JRBeanCollectionDataSource) context.getProvider(SESSION_STATUS).getDataSource(sessionId);
             if(source.getData().size()==1){
 
                 Element summary=doc.createElement(SESSION_SUMMARY_TAG_NAME);
@@ -184,5 +188,9 @@ public class XMLReporter {
 
     public void setContext(ReportingContext context) {
         this.context = context;
+    }
+    
+    public String getSessionId() {
+        return sessionId;
     }
 }

@@ -1,11 +1,15 @@
 package com.griddynamics.jagger.jaas.rest;
 
+import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
+import com.griddynamics.jagger.jaas.service.DynamicReportingService;
 import com.griddynamics.jagger.jaas.service.ProjectService;
 import com.griddynamics.jagger.jaas.storage.model.ProjectEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +23,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -35,7 +42,10 @@ public class ProjectServiceRestController {
 
     @Autowired
     private ProjectService projectService;
-
+    
+    @Autowired
+    private DynamicReportingService dynamicReportingService;
+    
     private <T, R> ResponseEntity<R> produceGetResponse(T responseSource, Function<T, R> responseFunction) {
         ResponseEntity<R> responseEntity = HttpGetResponseProducer.produce(responseSource, responseFunction);
         LOGGER.debug("Produced response: {}", responseEntity);
@@ -75,17 +85,31 @@ public class ProjectServiceRestController {
         projectService.delete(projectId);
         return ResponseEntity.noContent().build();
     }
-
+    
+    @GetMapping(value = "/{projectId}/sessions/{sessionId}/report", produces = MediaType.APPLICATION_PDF_VALUE)
+    public WebAsyncTask<ResponseEntity<Resource>> getReport(@PathVariable Long projectId, @PathVariable String sessionId)
+            throws IOException {
+    
+        // Given up to 10 minutes to generate a report before timeout failure.
+        return new WebAsyncTask<>(1000 * 60 * 10, () -> {
+            Long dbId = Optional.ofNullable(projectService.read(projectId))
+                                .orElseThrow(ResourceNotFoundException::getProjectResourceNfe).getDbId();
+            Resource reportResource = dynamicReportingService.generateReportFor(dbId, sessionId);
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                                              "inline; filename=\"" + reportResource.getFilename() + "\""
+            ).body(reportResource);
+        });
+    }
+    
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> foreignKeyException(DataIntegrityViolationException error) {
         ResponseEntity<?> responseEntity;
         if (error.getMessage().contains("FOREIGN KEY")) {
-            responseEntity = new ResponseEntity<>("There is no such data base.", HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity<>("There is no such database.", HttpStatus.BAD_REQUEST);
         } else {
             responseEntity = new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return responseEntity;
     }
-
 }

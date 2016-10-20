@@ -28,7 +28,7 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="metricPlotDTOs" class="java.util.Collection"/>
 
@@ -52,11 +52,11 @@
         <band height="60" splitType="Stretch">
             <subreport>
                 <reportElement positionType="Float" x="0" y="45" width="550" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{metricPlotDTOs})]]></dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                    <![CDATA[$P{context}.getReport("configuration/reporting/metrics/metric-plot.jrxml")]]></subreportExpression>
+                    <![CDATA[$P{context}.getReport("/reporting/metrics/metric-plot.jrxml")]]></subreportExpression>
             </subreport>
         </band>
     </detail>

@@ -24,38 +24,20 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
-import java.util.*;
+import java.util.Collections;
 
 /**
  * @author Mark Novozhilov
  *         Date: 26.06.2014
  */
-
 public class SessionScopePlotsReporter extends AbstractReportProvider {
     private Logger log = LoggerFactory.getLogger(SessionScopePlotsReporter.class);
 
-    private PlotsReporter plotsReporter;
-
-    private SummaryReporter summaryReporter;
-
-    @Required
-    public void setPlotsReporter(PlotsReporter plotsReporter) {
-        this.plotsReporter = plotsReporter;
-    }
-
-    @Required
-    public void setSummaryReporter(SummaryReporter summaryReporter) {
-        this.summaryReporter = summaryReporter;
-    }
-
     @Override
-    public JRDataSource getDataSource() {
+    public JRDataSource getDataSource(String sessionId) {
 
-        String sessionId = getSessionIdProvider().getSessionId();
-
-        int numberOfTestGroup = summaryReporter.getNumberOfTestGroups(sessionId);
+        int numberOfTestGroup = getContext().getSummaryReporter().getNumberOfTestGroups(sessionId);
         if (numberOfTestGroup < 2) {
             if (numberOfTestGroup == 0) {
                 log.error("No test groups were fetched for {} session.", sessionId);
@@ -66,9 +48,8 @@ public class SessionScopePlotsReporter extends AbstractReportProvider {
             return new JRBeanCollectionDataSource(Collections.emptyList());
         }
 
-        PlotsReporter.MetricPlotDTOs sessionScopePlots = plotsReporter.getSessionScopePlots(sessionId);
+        PlotsReporter.MetricPlotDTOs sessionScopePlots = getContext().getPlotsReporter().getSessionScopePlots(sessionId);
 
         return new JRBeanCollectionDataSource(Collections.singleton(sessionScopePlots));
-
     }
 }

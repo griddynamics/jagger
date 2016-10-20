@@ -22,12 +22,21 @@ package com.griddynamics.jagger.reporting;
 
 import com.griddynamics.jagger.exception.ConfigurationException;
 import com.griddynamics.jagger.exception.TechnicalException;
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReportingService {
 
@@ -40,11 +49,14 @@ public class ReportingService {
     private String rootTemplateLocation;
     private ReportType reportType = ReportType.PDF;
     private String outputReportLocation;
+    private boolean doGenerateXmlReport;
+    private String sessionId;
 
     public JasperPrint generateReport(boolean removeFrame) {
         context.setRemoveFrame(removeFrame);
-        Map<String, Object> contextMap = new HashMap<String, Object>();
+        Map<String, Object> contextMap = new HashMap<>();
         contextMap.put(ReportingContext.CONTEXT_NAME, context);
+        contextMap.put("sessionId", sessionId);
         try {
             log.info("BEGIN: Compile report");
             JasperReport jasperReport = JasperCompileManager.compileReport(new ReportInputStream(context.getResource(rootTemplateLocation), removeFrame));
@@ -65,12 +77,14 @@ public class ReportingService {
             log.info("BEGIN: Export report");
             switch(reportType) {
                 case HTML : JasperExportManager.exportReportToHtmlFile(jasperPrint, outputReportLocation); break;
-                case PDF : JasperExportManager.exportReportToPdfStream(jasperPrint, context.getOutputResource(outputReportLocation)); break;
+                case PDF : JasperExportManager.exportReportToPdfStream(jasperPrint, Files.newOutputStream(Paths.get(outputReportLocation))); break;
                 default : throw new ConfigurationException("ReportType is not specified");
             }
-            XMLReporter.create(context).generateReport();
+            if (doGenerateXmlReport) {
+                XMLReporter.create(context, sessionId).generateReport();
+            }
             log.info("END: Export report");
-        } catch (JRException e) {
+        } catch (JRException | IOException e) {
             log.error("Error during report rendering", e);
             throw new TechnicalException(e);
         }
@@ -93,7 +107,15 @@ public class ReportingService {
     public void setOutputReportLocation(String outputReportLocation) {
         this.outputReportLocation = outputReportLocation;
     }
-
+    
+    public boolean isDoGenerateXmlReport() {
+        return doGenerateXmlReport;
+    }
+    
+    public void setDoGenerateXmlReport(boolean doGenerateXmlReport) {
+        this.doGenerateXmlReport = doGenerateXmlReport;
+    }
+    
     public ReportingContext getContext() {
         return context;
     }
@@ -108,5 +130,13 @@ public class ReportingService {
 
     public String getOutputReportLocation() {
         return outputReportLocation;
+    }
+    
+    public String getSessionId() {
+        return sessionId;
+    }
+    
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }
