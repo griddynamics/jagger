@@ -141,6 +141,7 @@ public class TestDescription {
                 .addAggregator(new SuccessRateFailsAggregatorProvider());
         SuccessRateCollectorProvider successRateCollectorProvider = new SuccessRateCollectorProvider();
         successRateCollectorProvider.setMetricDescription(metricDescriptions);
+        successRateCollectorProvider.setName("SR");
         return successRateCollectorProvider;
     }
 }
