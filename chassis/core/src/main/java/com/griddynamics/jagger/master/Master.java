@@ -208,7 +208,7 @@ public class Master implements Runnable {
             processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
         }
     }
-
+    
     @Override
     public void run() {
         final String sessionId = sessionIdProvider.getSessionId();
@@ -277,6 +277,9 @@ public class Master implements Runnable {
                     listener.onSessionExecuted(sessionId, metaDataStorage.getComment());
                 }
             }
+            log.info("Going to stop all agents");
+            processAgentManagement(sessionId, agentStopManagementProps);
+            log.info("Agents stopped");
 
             log.info("Going to generate report");
             if (configuration.getReport() != null) {
@@ -285,10 +288,6 @@ public class Master implements Runnable {
                 reportingService.renderReport(true);
             }
             log.info("Report generated");
-
-            log.info("Going to stop all agents");
-            processAgentManagement(sessionId, agentStopManagementProps);
-            log.info("Agents stopped");
         } finally {
             try {
                 keyValueStorage.deleteAll();
