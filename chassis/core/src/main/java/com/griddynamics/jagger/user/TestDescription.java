@@ -14,6 +14,7 @@ import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +136,7 @@ public class TestDescription {
 
     private SuccessRateCollectorProvider getSuccessRateMetric() {
         MetricDescription metricDescriptions = new MetricDescription("SR")
+                .displayName(StandardMetricsNamesUtil.SUCCESS_RATE)
                 .plotData(true)
                 .showSummary(true)
                 .addAggregator(new SuccessRateAggregatorProvider())
