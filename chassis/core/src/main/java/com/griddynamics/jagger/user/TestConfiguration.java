@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.user;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.scenario.InfiniteTerminationStrategyConfiguration;
@@ -115,8 +114,10 @@ public class TestConfiguration {
         }
         if (task.getVersion()==null) task.setVersion("0");
         task.setParentTaskId(testGroupName);
-        listeners.add(new CollectThreadsTestListener());
-        task.setTestListeners(listeners);
+        if (task.getTestListeners() == null)
+            task.setTestListeners(listeners);
+        else
+            task.getTestListeners().addAll(listeners);
         task.setLimits(limits);
 
         //TODO refactor
