@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.user;
 
 import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
@@ -16,6 +17,8 @@ import com.griddynamics.jagger.invoker.ScenarioFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -119,6 +122,7 @@ public class TestDescription {
         prototype.setVersion(version);
         prototype.setValidators(validators);
         prototype.setListeners(listeners);
+        prototype.setTestListeners(newArrayList(new CollectThreadsTestListener()));
 
         List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> allMetrics = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>>(metrics.size()+ standardCollectors.size());
         allMetrics.addAll(standardCollectors);
