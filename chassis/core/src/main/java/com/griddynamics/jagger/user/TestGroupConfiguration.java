@@ -1,13 +1,13 @@
 package com.griddynamics.jagger.user;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
-import com.griddynamics.jagger.master.CompositableTask;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.monitoring.InfiniteDuration;
 import com.griddynamics.jagger.monitoring.MonitoringTask;
+import com.griddynamics.jagger.user.test.configurations.JTestGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +23,7 @@ public class TestGroupConfiguration {
     private List<Provider<TestGroupDecisionMakerListener>> testGroupDecisionMakerListeners = Collections.EMPTY_LIST;
     private boolean monitoringEnabled;
     private int number;
+
 
     public int getNumber() {
         return number;
@@ -77,15 +78,15 @@ public class TestGroupConfiguration {
     }
 
     public Task generate() {
-        HashSet<String> names = new HashSet<String>();
+        HashSet<String> names = new HashSet<>();
 
         CompositeTask compositeTask = new CompositeTask();
-        compositeTask.setLeading(new ArrayList<CompositableTask>());
-        compositeTask.setAttendant(new ArrayList<CompositableTask>());
+        compositeTask.setLeading(new ArrayList<>());
+        compositeTask.setAttendant(new ArrayList<>());
         compositeTask.setNumber(number);
         compositeTask.setListeners(listeners);
         compositeTask.setDecisionMakerListeners(testGroupDecisionMakerListeners);
-        compositeTask.setName(id+"-group");
+        compositeTask.setName(id + "-group");
 
         for (TestConfiguration testConfig : tests) {
             testConfig.setTestGroupName(id);
