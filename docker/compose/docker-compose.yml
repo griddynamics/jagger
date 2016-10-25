@@ -7,7 +7,7 @@ services:
     # Expose ports. Either specify both ports (HOST:CONTAINER), or just the
     # container port (a random host port will be chosen).
     ports:
-      - 3306:3306
+      - 3307:3306
     # Set mysql environments
     environment:
       MYSQL_ROOT_PASSWORD: password
@@ -19,11 +19,11 @@ services:
       - ./files/my.cnf:/etc/mysql/conf.d/my.cnf
 
   # Container with mysql base for jaas
-  jagger-jaas-mysql:
+  jaas-mysql:
     image: mysql:5.7
-    container_name: jagger-jaas-mysql
+    container_name: jaas-mysql
     ports:
-      - 3307:3306
+      - 3308:3306
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: jaggeruser
@@ -34,7 +34,7 @@ services:
     image: griddynamics/jagger-web-client:snapshot
     container_name: jagger-web-client
     ports:
-      - 80:80
+      - 8087:80
     # Wait when jagger-mysql container started 
     depends_on:
       - jagger-mysql
@@ -50,16 +50,17 @@ services:
     image: griddynamics/jagger-jaas:snapshot
     container_name: jagger-jaas
     ports:
-      - 8080:8080
+      - 8088:8080
     depends_on:
-      - jagger-jaas-mysql
+      - jaas-mysql
     environment:
       JAAS_HTTP_PORT: 8080
+      JAAS_DB_URL: jdbc:mysql://jaas-mysql:3306/jaasdb
       JAAS_DB_DRIVER: com.mysql.jdbc.Driver
-      JAAS_DB_URL: jdbc:mysql://jagger-jaas-mysql:3306/jaasdb
       JAAS_DB_USER: jaggeruser
       JAAS_DB_PASS: password
       JAAS_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      # These parameters are optional, but you can avoid some issues if they are set (watch JFG-947).
       JAGGER_DB_DEFAULT_URL: jdbc:mysql://jagger-mysql:3306/jaggerdb
       JAGGER_DB_DEFAULT_DESC: default_db
       JAGGER_DB_DEFAULT_USER: jaggeruser
