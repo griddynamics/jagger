@@ -200,12 +200,6 @@ public class Master implements Runnable {
     
         if (configuration.getMonitoringConfiguration() != null) {
             dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
-            Map<ManageAgent.ActionProp, Serializable>  agentStartManagementProps = Maps.newHashMap();
-        
-            agentStartManagementProps.put(
-                    ManageAgent.ActionProp.SET_JMX_METRICS, dynamicPlotGroups.getJmxMetrics()
-            );
-            processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
         }
     }
     
@@ -252,7 +246,15 @@ public class Master implements Runnable {
         try {
             Runtime.getRuntime().addShutdownHook(shutdownHook);
             log.info("Configuration launched!!");
-
+    
+            if (configuration.getMonitoringConfiguration() != null) {
+                Map<ManageAgent.ActionProp, Serializable>  agentStartManagementProps = Maps.newHashMap();
+                agentStartManagementProps.put(
+                        ManageAgent.ActionProp.SET_JMX_METRICS, dynamicPlotGroups.getJmxMetrics()
+                );
+                processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
+            }
+            
             TestSuiteListener testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
                                                                                                                     sessionId,
                                                                                                                     "session",

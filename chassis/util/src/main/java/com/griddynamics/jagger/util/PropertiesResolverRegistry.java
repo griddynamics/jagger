@@ -27,11 +27,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * Repository that stores two sets of properties: root properties and regular properties.
@@ -69,8 +69,13 @@ public class PropertiesResolverRegistry implements ApplicationContextAware {
         }
 
         for(String rawPropertyName : rawProperties.stringPropertyNames()) {
-            String rawPropertyValue = rawProperties.getProperty(rawPropertyName);
-            result.setProperty(rawPropertyName, resolveProperty(rawPropertyValue));
+            String overridingValue = getProperty(rawPropertyName);
+            if (StringUtils.isEmpty(overridingValue)) {
+                String rawPropertyValue = rawProperties.getProperty(rawPropertyName);
+                result.setProperty(rawPropertyName, resolveProperty(rawPropertyValue));
+            } else {
+                result.setProperty(rawPropertyName, overridingValue);
+            }
         }
 
         return result;

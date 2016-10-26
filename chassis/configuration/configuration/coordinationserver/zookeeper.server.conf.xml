@@ -23,7 +23,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="zookeeperCoordinatorServer" class="com.griddynamics.jagger.ZooKeeperServer" lazy-init="true">
+    <bean id="zookeeperCoordinatorServer" class="com.griddynamics.jagger.ZooKeeperServer" lazy-init="true" destroy-method="terminate">
         <property name="startupProperties"
                   value="#{propertiesResolverRegistry.resolve('configuration/coordinationserver/zookeeper.server.properties')}"/>
         <property name="endpoint" value="${chassis.coordinator.zookeeper.endpoint}"/>

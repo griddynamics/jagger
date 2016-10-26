@@ -149,6 +149,12 @@ public final class JaggerLauncher {
         int result = launchManager.launch();
         System.exit(result);
     }
+    
+    private static void initCoordinator(ApplicationContext applicationContext) {
+        final Coordinator coordinator = (Coordinator) applicationContext.getBean("coordinator");
+        coordinator.waitForReady();
+        coordinator.initialize();
+    }
 
     private static void launchMaster(final URL directory) {
         LaunchTask masterTask = new LaunchTask() {
@@ -163,9 +169,7 @@ public final class JaggerLauncher {
                        environmentProperties.setProperty(TEST_CONFIG_NAME_PROP, getTestConfigName());
                        XmlWebApplicationContext context =
                                (XmlWebApplicationContext) loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
-                       final Coordinator coordinator = (Coordinator) context.getBean("coordinator");
-                       coordinator.waitForReady();
-                       coordinator.initialize();
+                       initCoordinator(context);
                        Master master = (Master) context.getBean("master");
                        master.run();
                        
@@ -177,10 +181,8 @@ public final class JaggerLauncher {
                     try {
                         server.setHandler(getServletContextHandler(context));
                         server.start();
-        
-                        final Coordinator coordinator = (Coordinator) context.getBean("coordinator");
-                        coordinator.waitForReady();
-                        coordinator.initialize();
+    
+                        initCoordinator(context);
                         Master master = (Master) context.getBean("master");
                         master.run();
                     } catch (Exception e) {
@@ -322,7 +324,9 @@ public final class JaggerLauncher {
                 log.info("Starting Cometd Coordination Server");
 
                 ApplicationContext context = loadContext(directory, COORDINATION_HTTP_CONFIGURATION, environmentProperties);
-
+    
+                initCoordinator(context);
+                
                 Server jettyServer = (Server) context.getBean("jettyServer");
                 try {
                     jettyServer.start();
