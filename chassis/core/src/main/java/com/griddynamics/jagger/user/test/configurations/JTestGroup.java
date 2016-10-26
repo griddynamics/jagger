@@ -29,7 +29,7 @@ public class JTestGroup {
         }
 
         /**
-         * Sets the tests in the group.
+         * Sets the tests executed in parallel.
          *
          * @param tests a list of tests.
          */

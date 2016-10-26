@@ -1,8 +1,8 @@
 package com.griddynamics.jagger.user.test.configurations.load;
 
 /**
- * This type of load imitates an exact number of requests per second performed by Jagger.
- * The number of requests, the number of threads and the warm up time values are configurable.
+ * This type of load implements an exact number of requests per second performed by Jagger.
+ * The number of requests, the max allowed number of load threads and the warm up time values are configurable.
  */
 public class JLoadRps implements JLoad {
 
@@ -17,7 +17,7 @@ public class JLoadRps implements JLoad {
     }
 
     /**
-     * This type of load imitates an exact number of requests per second. Where request is invoke from Jagger.
+     * This type of load generates an exact number of requests per second. Where request is invoke from Jagger.
      * By using attribute 'requestsPerSecond', you can configure a number of requests. Attribute 'maxLoadThreads'
      * says what is the maximum number of threads Jagger engine is allowed to create, to provide the requested load.
      * By default it equals 4000. You can change this value in property file. If attribute 'warmUpTimeInSeconds' is set,

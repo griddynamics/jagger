@@ -27,6 +27,7 @@ public class JTestSuite {
 
         /**
          * Sets the {@code testGroups} for test suite.
+         * Test groups will be executed in the order from beginning to the end of the list.
          *
          * @param testGroups List of test groups.
          */

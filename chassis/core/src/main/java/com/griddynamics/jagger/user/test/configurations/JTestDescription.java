@@ -53,9 +53,9 @@ public class JTestDescription {
         }
 
         /**
-         * Sets end points for the tests inherited from the current test prototype.
+         * Sets end points (where load will be applied during performance test) for the tests using this test prototype.
          *
-         * @param endpointsProvider iterable end points. {@link java.util.List}, for example.
+         * @param endpointsProvider iterable end points. See JHttpEndpoint for example.
          */
         public Builder withEndpointsProvider(Iterable endpointsProvider) {
             this.endpoints = endpointsProvider;
@@ -64,9 +64,9 @@ public class JTestDescription {
 
 
         /**
-         * Sets queries for the tests inherited from the current test prototype.
+         * Sets queries (where load will be applied during performance test) for the tests using this test prototype.
          *
-         * @param queryProvider iterable queries. {@link java.util.List}, for example.
+         * @param queryProvider iterable queries. See JHttpQuery for example.
          */
         public Builder withQueryProvider(Iterable queryProvider) {
             this.queries = queryProvider;

@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.termination;
 
 /**
- * Limits the number of execution iterations of a test.
+ * Test with such termination strategy will last till defined number of requests are executed.
  */
 public class JTerminationIterations implements JTermination {
 
@@ -24,7 +24,7 @@ public class JTerminationIterations implements JTermination {
         private long maxDurationInSeconds;
 
         /**
-         * Sets target number of test executions.
+         * Sets target number of requests to the system under test.
          *
          * @param iterationCount the number of test executions.
          */
@@ -34,7 +34,7 @@ public class JTerminationIterations implements JTermination {
         }
 
         /**
-         * Sets the maximum test execution time in seconds.
+         * sets timeout for the test execution.
          * Default value is 2 hours.
          *
          * @param maxDurationInSeconds maximum test execution time value.

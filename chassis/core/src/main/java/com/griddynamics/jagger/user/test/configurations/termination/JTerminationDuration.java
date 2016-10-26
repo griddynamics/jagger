@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.termination;
 
 /**
- * Limits test execution time.
+ * Test with such termination strategy will be executed for the defined time - duration.
  */
 public class JTerminationDuration implements JTermination {
     private long durationInSeconds;
