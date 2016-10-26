@@ -64,7 +64,7 @@ public class JTestDescription {
 
 
         /**
-         * Sets queries (where load will be applied during performance test) for the tests using this test prototype.
+         * Sets queries (what load will be applied during performance test) for the tests using this test prototype.
          *
          * @param queryProvider iterable queries. See JHttpQuery for example.
          */
