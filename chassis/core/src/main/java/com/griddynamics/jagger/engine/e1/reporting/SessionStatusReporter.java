@@ -36,14 +36,10 @@ import java.util.List;
 public class SessionStatusReporter extends AbstractReportProvider {
     private static final Logger log = LoggerFactory.getLogger(SessionStatusReporter.class);
 
-    private SummaryReporter summaryReporter;
     private StatusImageProvider statusImageProvider;
 
-
     @Override
-    public JRDataSource getDataSource() {
-
-        String sessionId = getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String sessionId) {
 
         String sessionStatusComment = "Status is based on status of the worst test";
         Decision sessionStatus = Decision.OK;
@@ -51,7 +47,7 @@ public class SessionStatusReporter extends AbstractReportProvider {
         // Worst status of executed tests
         Decision sessionsWorstTestStatus = Decision.OK;
         String sessionsWorstTestStatusComment = "";
-        List<SummaryTestDto> summaryTestDtoList = summaryReporter.getTestSummaryData(sessionId);
+        List<SummaryTestDto> summaryTestDtoList = getContext().getSummaryReporter().getTestSummaryData(sessionId);
         for (SummaryTestDto summaryTestDto : summaryTestDtoList) {
             if (summaryTestDto.getTestStatus().ordinal() > sessionsWorstTestStatus.ordinal()) {
                 sessionsWorstTestStatus = summaryTestDto.getTestStatus();
@@ -126,10 +122,4 @@ public class SessionStatusReporter extends AbstractReportProvider {
             this.decision = decision;
         }
     }
-
-    @Required
-    public void setSummaryReporter(SummaryReporter summaryReporter) {
-        this.summaryReporter = summaryReporter;
-    }
-
 }

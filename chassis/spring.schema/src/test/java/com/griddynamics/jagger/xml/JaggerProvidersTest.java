@@ -2,14 +2,18 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.invoker.http.HttpQuery;
+import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Properties;
+
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,6 +25,7 @@ import java.util.Properties;
 public class JaggerProvidersTest {
 
     private ApplicationContext ctx;
+    private H2DatabaseServer dbServer;
 
     @BeforeClass
     public void testInit() throws Exception{
@@ -28,7 +33,17 @@ public class JaggerProvidersTest {
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-providers.conf.xml1");
+
+        ApplicationContext rdbContext = JaggerLauncher.loadContext(directory, RDB_CONFIGURATION, environmentProperties);
+        dbServer = (H2DatabaseServer) rdbContext.getBean("databaseServer");
+        dbServer.run();
+
         ctx = JaggerLauncher.loadContext(directory,"chassis.master.configuration",environmentProperties);
+    }
+
+    @AfterClass
+    public void testShutdown() {
+        dbServer.terminate();
     }
 
     @Test

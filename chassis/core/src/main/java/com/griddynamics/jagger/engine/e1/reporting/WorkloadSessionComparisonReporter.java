@@ -20,28 +20,33 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.google.common.collect.Lists;
-import com.griddynamics.jagger.util.Decision;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadComparisonResult;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
+import com.griddynamics.jagger.util.Decision;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.google.common.collect.Lists;
+
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvider<Collection<Verdict<WorkloadComparisonResult>>> {
-
+    
+    public static final Comparator<WorkloadSessionComparisonDto> BY_NAME =
+            Comparator.comparing(WorkloadSessionComparisonDto::getName);
+    
     private StatusImageProvider statusImageProvider;
 
     @Override
-    public JRDataSource getDataSource(Collection<Verdict<WorkloadComparisonResult>> key) {
+    public JRDataSource getDataSource(Collection<Verdict<WorkloadComparisonResult>> key, String sessionId) {
         getContext().getParameters().put("jagger.workloadsessioncomparator.statusImageProvider", statusImageProvider);
 
-
-        List<WorkloadSessionComparisonDto> result = Lists.newLinkedList();
+        List<WorkloadSessionComparisonDto> result = Lists.newArrayList();
 
         for (Verdict<WorkloadComparisonResult> verdict : key) {
             WorkloadSessionComparisonDto dto = new WorkloadSessionComparisonDto();
@@ -68,7 +73,8 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
 
             result.add(dto);
         }
-
+    
+        Collections.sort(result, BY_NAME);
         return new JRBeanCollectionDataSource(result);
     }
 
@@ -78,6 +84,7 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
     }
 
     public static class WorkloadSessionComparisonDto {
+        
         private String name;
         private Decision decision;
         private double throughputDeviation;

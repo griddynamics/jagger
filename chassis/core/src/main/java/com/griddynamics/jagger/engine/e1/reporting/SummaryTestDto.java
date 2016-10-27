@@ -3,9 +3,11 @@ package com.griddynamics.jagger.engine.e1.reporting;
 import com.griddynamics.jagger.util.Decision;
 
 import java.awt.*;
+import java.util.Comparator;
 
 /** Class is used to pass information about tests values to jasper report templates */
 public class SummaryTestDto {
+    
     private String sessionId;
     private String number;
     private String testName;

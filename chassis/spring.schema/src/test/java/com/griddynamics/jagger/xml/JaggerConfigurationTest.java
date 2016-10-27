@@ -12,6 +12,7 @@ import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.reporting.ReportingService;
+import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.user.TestGroupConfiguration;
 import com.griddynamics.jagger.util.TimeUnits;
 import com.griddynamics.jagger.xml.stubs.xml.ExampleDecisionMakerListener;
@@ -19,6 +20,7 @@ import com.griddynamics.jagger.xml.stubs.xml.ExampleDistributionListener;
 import com.griddynamics.jagger.xml.stubs.xml.ExampleTestGroupListener;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -30,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,7 +49,7 @@ import java.util.Properties;
 public class JaggerConfigurationTest {
 
     private ApplicationContext ctx;
-    private String testDir;
+    private H2DatabaseServer dbServer;
 
     @BeforeClass
     public void testInit() throws Exception {
@@ -54,7 +58,17 @@ public class JaggerConfigurationTest {
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(configurationDirectory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-configuration.conf.xml1");
+
+        ApplicationContext rdbContext = JaggerLauncher.loadContext(configurationDirectory, RDB_CONFIGURATION, environmentProperties);
+        dbServer = (H2DatabaseServer) rdbContext.getBean("databaseServer");
+        dbServer.run();
+
         ctx = JaggerLauncher.loadContext(configurationDirectory,"chassis.master.configuration",environmentProperties);
+    }
+
+    @AfterClass
+    public void testShutdown() {
+        dbServer.terminate();
     }
 
     @Test

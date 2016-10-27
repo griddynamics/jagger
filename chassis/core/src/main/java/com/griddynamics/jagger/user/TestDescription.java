@@ -1,13 +1,25 @@
 package com.griddynamics.jagger.user;
 
 import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
+import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
+import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
+import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
-import com.griddynamics.jagger.engine.e1.scenario.*;
+import com.griddynamics.jagger.engine.e1.scenario.Calibrator;
+import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
+import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
+import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -111,13 +123,27 @@ public class TestDescription {
         prototype.setVersion(version);
         prototype.setValidators(validators);
         prototype.setListeners(listeners);
+        prototype.setTestListeners(newArrayList(new CollectThreadsTestListener()));
 
         List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> allMetrics = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>>(metrics.size()+ standardCollectors.size());
         allMetrics.addAll(standardCollectors);
         allMetrics.addAll(metrics);
-
+        allMetrics.add(getSuccessRateMetric());
         prototype.setCollectors(allMetrics);
 
         return prototype;
+    }
+
+    private SuccessRateCollectorProvider getSuccessRateMetric() {
+        MetricDescription metricDescriptions = new MetricDescription("SR")
+                .displayName(StandardMetricsNamesUtil.SUCCESS_RATE)
+                .plotData(true)
+                .showSummary(true)
+                .addAggregator(new SuccessRateAggregatorProvider())
+                .addAggregator(new SuccessRateFailsAggregatorProvider());
+        SuccessRateCollectorProvider successRateCollectorProvider = new SuccessRateCollectorProvider();
+        successRateCollectorProvider.setMetricDescription(metricDescriptions);
+        successRateCollectorProvider.setName("SR");
+        return successRateCollectorProvider;
     }
 }

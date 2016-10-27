@@ -41,7 +41,7 @@ public class MonitoringSessionComparisonReporter extends AbstractMappedReportPro
 
     @Override
     @Deprecated
-    public JRDataSource getDataSource(Collection<Verdict<MonitoringParameterComparison>> key) {
+    public JRDataSource getDataSource(Collection<Verdict<MonitoringParameterComparison>> key, String sessionId) {
         getContext().getParameters().put("jagger.monitoringsessioncomparator.statusImageProvider", statusImageProvider);
 
         ArrayList<MonitoringComparisonDto> result = Lists.newArrayList();

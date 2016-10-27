@@ -30,19 +30,22 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 public class TestDetailsReporter extends AbstractReportProvider {
+    
+    public static final Comparator<TestDetailsDTO> BY_TEST_NAME = Comparator.comparing(TestDetailsDTO::getTestName);
+    
     private DataService dataService;
 
     @Override
-    public JRDataSource getDataSource() {
-        String sessionId = getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String sessionId) {
 
         Set<TestEntity> testEntities = dataService.getTests(sessionId);
 
-        List<TestDetailsDTO> result = new ArrayList<TestDetailsDTO>();
+        List<TestDetailsDTO> result = new ArrayList<>();
 
         for(TestEntity testEntity : testEntities) {
             TestDetailsDTO testDetailsDTO = new TestDetailsDTO();
@@ -50,11 +53,14 @@ public class TestDetailsReporter extends AbstractReportProvider {
             testDetailsDTO.setId(testEntity.getId().toString());
             result.add(testDetailsDTO);
         }
-
+    
+    
+        result.sort(BY_TEST_NAME);
         return new JRBeanCollectionDataSource(result);
     }
 
     public static class TestDetailsDTO {
+        
         private String testName;
         private String id;
 
@@ -79,5 +85,4 @@ public class TestDetailsReporter extends AbstractReportProvider {
     public void setDatabaseService(DatabaseService databaseService) {
         this.dataService = new DefaultDataService(databaseService);
     }
-
 }

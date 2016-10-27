@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 
 /**
  * An object that represents HTTP-request. It consists of {@link JHttpQuery#method},
@@ -208,6 +210,23 @@ public class JHttpQuery<T> implements Serializable {
     public JHttpQuery<T> header(String key, List<String> values) {
         initHeadersIfNull();
         headers.put(key, values);
+        return this;
+    }
+
+    /**
+     * Adds header "key=value" to {@link JHttpQuery#headers}.
+     *
+     * @param key   name of header
+     * @param value value of header
+     * @return this
+     * @apiNote Usage:
+     * <pre>{@code
+     * JHttpQuery httpQuery = new JHttpQuery().header("header", "value");
+     * }</pre>
+     */
+    public JHttpQuery<T> header(String key, String value) {
+        initHeadersIfNull();
+        headers.put(key, newArrayList(value));
         return this;
     }
 

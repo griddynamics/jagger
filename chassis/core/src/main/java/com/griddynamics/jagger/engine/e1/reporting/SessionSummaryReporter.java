@@ -38,8 +38,7 @@ public class SessionSummaryReporter extends AbstractReportProvider {
     private static final Logger log = LoggerFactory.getLogger(SessionSummaryReporter.class);
 
     @Override
-    public JRDataSource getDataSource() {
-        String sessionId =  getSessionIdProvider().getSessionId();
+    public JRDataSource getDataSource(String sessionId) {
         @SuppressWarnings("unchecked")
         List<SessionData> all = (List<SessionData>) getHibernateTemplate().find("from SessionData sd where sd.sessionId=?", sessionId);
 

@@ -5,16 +5,21 @@ import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcesso
 import com.griddynamics.jagger.engine.e1.collector.ConsistencyValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
-import com.griddynamics.jagger.engine.e1.scenario.*;
+import com.griddynamics.jagger.engine.e1.scenario.IterationsOrDurationStrategyConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
+import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
+import com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.reporting.ReportingService;
+import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.user.TestConfiguration;
 import com.griddynamics.jagger.user.TestDescription;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -22,6 +27,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,6 +39,7 @@ import java.util.Properties;
  */
 public class JaggerInheritanceTest {
     private ApplicationContext ctx;
+    private H2DatabaseServer dbServer;
 
     @BeforeClass
     public void testInit() throws Exception{
@@ -39,7 +47,17 @@ public class JaggerInheritanceTest {
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-inheritance.conf.xml1");
+
+        ApplicationContext rdbContext = JaggerLauncher.loadContext(directory, RDB_CONFIGURATION, environmentProperties);
+        dbServer = (H2DatabaseServer) rdbContext.getBean("databaseServer");
+        dbServer.run();
+
         ctx = JaggerLauncher.loadContext(directory,"chassis.master.configuration",environmentProperties);
+    }
+
+    @AfterClass
+    public void testShutdown() {
+        dbServer.terminate();
     }
 
     @Test

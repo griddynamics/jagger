@@ -1,17 +1,29 @@
 package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.JaggerLauncher;
-import com.griddynamics.jagger.engine.e1.scenario.*;
+import com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.InfiniteTerminationStrategyConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.IterationsOrDurationStrategyConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.QpsClock;
+import com.griddynamics.jagger.engine.e1.scenario.QpsClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.TpsClock;
+import com.griddynamics.jagger.engine.e1.scenario.TpsClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.UserGroupsClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.VirtualUsersClockConfiguration;
+import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.user.TestConfiguration;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,6 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class JaggerLoadTest {
 
     private ApplicationContext context;
+    private H2DatabaseServer dbServer;
 
     @BeforeClass
     public void testContext() throws Exception{
@@ -30,7 +43,17 @@ public class JaggerLoadTest {
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-load.conf.xml1");
+
+        ApplicationContext rdbContext = JaggerLauncher.loadContext(directory, RDB_CONFIGURATION, environmentProperties);
+        dbServer = (H2DatabaseServer) rdbContext.getBean("databaseServer");
+        dbServer.run();
+
         context = JaggerLauncher.loadContext(directory,"chassis.master.configuration",environmentProperties);
+    }
+
+    @AfterClass
+    public void testShutdown() {
+        dbServer.terminate();
     }
 
     @Test

@@ -20,25 +20,24 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
-
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <alias name="defaultSessionComparator" alias="sessionComparator"/>
-
     <bean id="defaultSessionComparator"
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator">
-
         <property name="comparatorChain">
             <ref bean="comparators_${chassis.decision.maker.with.limits.is.only.decision.maker}"/>
         </property>
         <property name="decisionMaker" ref="worstCaseDecisionMaker"/>
-
     </bean>
+    <bean id="worstCaseDecisionMaker"
+          class="com.griddynamics.jagger.engine.e1.sessioncomparation.WorstCaseDecisionMaker"/>
 
     <util:list id="comparators_true">
-       <ref bean="limitsBasedFeatureComparator"/>
+        <ref bean="limitsBasedFeatureComparator"/>
     </util:list>
 
     <util:list id="comparators_false">
@@ -46,6 +45,12 @@
         <ref bean="limitsBasedFeatureComparator"/>
     </util:list>
 
+    <!-- Limits -->
+    <bean id="limitsBasedFeatureComparator"
+          class="com.griddynamics.jagger.engine.e1.sessioncomparation.limits.LimitsBasedFeatureComparator">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="databaseService" ref="databaseService"/>
+    </bean>
 
     <bean id="workloadFeatureComparator"
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadFeatureComparator">
@@ -59,40 +64,33 @@
         </property>
         <property name="databaseService" ref="databaseService"/>
         <property name="summaryReporter" ref="summaryReporter"/>
-        <property name="baselineSummaryReporter" ref="baselineSummaryReporter"/>
+        <property name="baselineSummaryReporter" ref="summaryReporter"/>
     </bean>
-
-    <bean id="baselineSummaryReporter" class="com.griddynamics.jagger.engine.e1.reporting.SummaryReporter">
-        <property name="databaseService" ref="databaseService"/>
-        <property name="metricHighlighting" value="${report.enable.decisions.per.metric.highlighting:true}"/>
-        <property name="decisionMaker" ref="sessionStatusDecisionMaker"/>
-        <property name="statusImageProvider" ref="statusImageProvider"/>
-    </bean>
-
-    <bean id="worstCaseDecisionMaker"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.WorstCaseDecisionMaker"/>
 
     <alias name="DefaultBaselineSessionProvider" alias="baselineSessionProvider"/>
-
-    <bean id="DefaultBaselineSessionProvider" class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
-
-        <property name="sessionId" value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
-        <property name="sessionIdProvider" ref="sessionIdProvider"/>
+    <bean id="DefaultBaselineSessionProvider"
+          class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
+        <property name="baselineSessionId"
+                  value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
     </bean>
 
     <bean id="limitSetConfig" class="com.griddynamics.jagger.engine.e1.collector.limits.LimitSetConfig">
-        <property name="decisionWhenNoMetricForLimit" value="${chassis.decision.maker.with.limits.decisionWhenNoMetricForLimit}"/>
-        <property name="decisionWhenNoBaselineForMetric" value="${chassis.decision.maker.with.limits.decisionWhenNoBaselineForMetric}"/>
-        <property name="decisionWhenSeveralLimitsMatchSingleMetric" value="${chassis.decision.maker.with.limits.decisionWhenSeveralLimitsMatchSingleMetric}"/>
+        <property name="decisionWhenNoMetricForLimit"
+                  value="${chassis.decision.maker.with.limits.decisionWhenNoMetricForLimit}"/>
+        <property name="decisionWhenNoBaselineForMetric"
+                  value="${chassis.decision.maker.with.limits.decisionWhenNoBaselineForMetric}"/>
+        <property name="decisionWhenSeveralLimitsMatchSingleMetric"
+                  value="${chassis.decision.maker.with.limits.decisionWhenSeveralLimitsMatchSingleMetric}"/>
     </bean>
 
     <!-- Monitoring -->
     <!-- Deprecated. Not used starting from 1.2.5 -->
-    <bean id="monitoringFeatureComparator" class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringFeatureComparator">
+    <bean id="monitoringFeatureComparator"
+          class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringFeatureComparator">
 
         <property name="monitoringParameterDecisionMaker" ref="stdDevMonitoringParameterDecisionMaker"/>
         <property name="monitoringSummaryRetriever" ref="monitoringSummaryRetriever"/>
-        <property name="sessionFactory"  ref="sessionFactory"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
     <bean id="stdDevMonitoringParameterDecisionMaker"
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.StdDevMonitoringParameterDecisionMaker">
@@ -101,17 +99,9 @@
                   value="${chassis.engine.e1.reporting.session.comparison.decision.maker.fatal.deviation.threshold}"/>
         <property name="warningDeviationThreshold"
                   value="${chassis.engine.e1.reporting.session.comparison.decision.maker.warning.deviation.threshold}"/>
-
     </bean>
     <bean id="monitoringSummaryRetriever"
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.DefaultMonitoringSummaryRetriever">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
-
-    <!-- Limits -->
-    <bean id="limitsBasedFeatureComparator" class="com.griddynamics.jagger.engine.e1.sessioncomparation.limits.LimitsBasedFeatureComparator">
-        <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="databaseService" ref="databaseService"/>
-    </bean>
-
 </beans>

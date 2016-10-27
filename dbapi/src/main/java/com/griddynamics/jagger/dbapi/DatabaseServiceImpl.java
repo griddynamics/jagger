@@ -208,6 +208,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @PostConstruct
     public void postConstruct() {
+        this.defaultMonitoringParams = getDefaultMonitoringParametersMap(monitoringPlotGroups);
         this.sessionInfoServiceImpl.setIsTagsStorageAvailable(checkIfTagsStorageAvailable());
         this.sessionInfoServiceImpl.setIsUserCommentStorageAvailable(checkIfUserCommentStorageAvailable());
     }

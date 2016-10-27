@@ -28,18 +28,18 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="hotSpotDTOs" class="java.util.List"/>
     <detail>
         <band height="30" splitType="Stretch">
             <subreport>
                 <reportElement positionType="Float" x="0" y="12" width="530" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
                     <![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{hotSpotDTOs})]]></dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                    <![CDATA[$P{context}.getReport("configuration/reporting/diagnostics/diagnostics-sampling-profiler.jrxml")]]></subreportExpression>
+                    <![CDATA[$P{context}.getReport("/reporting/diagnostics/diagnostics-sampling-profiler.jrxml")]]></subreportExpression>
             </subreport>
         </band>
     </detail>

@@ -38,7 +38,6 @@ public abstract class AbstractReportProviderBean extends HibernateDaoSupport {
         return context;
     }
 
-    @Required
     public void setContext(ReportingContext context) {
         this.context = context;
     }

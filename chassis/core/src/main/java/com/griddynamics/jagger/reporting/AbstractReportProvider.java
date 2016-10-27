@@ -37,5 +37,5 @@ public abstract class AbstractReportProvider extends AbstractReportProviderBean 
      * @return dataSource
      */
     @Override
-    public abstract JRDataSource getDataSource();
+    public abstract JRDataSource getDataSource(String sessionId);
 }

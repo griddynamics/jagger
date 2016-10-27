@@ -22,22 +22,18 @@ package com.griddynamics.jagger.engine.e1.reporting;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.beans.factory.annotation.Required;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class WorkloadReporter extends AbstractReportProvider {
-    private SummaryReporter summaryReporter;
-
+	
+	public static final Comparator<SummaryTestDto> BY_TEST_NAME = Comparator.comparing(SummaryTestDto::getTestName);
+	
 	@Override
-	public JRDataSource getDataSource() {
-        String sessionId = getSessionIdProvider().getSessionId();
-
-        return new JRBeanCollectionDataSource(summaryReporter.getTestSummaryData(sessionId));
+	public JRDataSource getDataSource(String sessionId) {
+		List<SummaryTestDto> testSummaryData = getContext().getSummaryReporter().getTestSummaryData(sessionId);
+		testSummaryData.sort(BY_TEST_NAME);
+        return new JRBeanCollectionDataSource(testSummaryData);
 	}
-
-
-    @Required
-    public void setSummaryReporter(SummaryReporter summaryReporter) {
-        this.summaryReporter = summaryReporter;
-    }
-
 }

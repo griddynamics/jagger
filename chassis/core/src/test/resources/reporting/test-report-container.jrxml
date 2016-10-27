@@ -50,7 +50,7 @@
                 <subreport>
                     <reportElement x="0" y="40" width="550" height="10" positionType="Float" />
                     <parametersMapExpression><![CDATA[ $P{context}.getAsMap() ]]></parametersMapExpression>
-                    <dataSourceExpression><![CDATA[ $P{context}.getProvider("monitoring").getDataSource() ]]></dataSourceExpression>
+                    <dataSourceExpression><![CDATA[ $P{context}.getProvider("monitoring").getDataSource($P{sessionId}) ]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                         <![CDATA[ (net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("monitoring").getReport() ]]>
                     </subreportExpression>
@@ -62,7 +62,7 @@
                 <subreport>
                     <reportElement x="0" y="90" width="550" height="10" positionType="Float" />
                     <parametersMapExpression><![CDATA[ $P{context}.getAsMap() ]]></parametersMapExpression>
-                    <dataSourceExpression><![CDATA[ $P{context}.getProvider("latency-plot").getDataSource() ]]></dataSourceExpression>
+                    <dataSourceExpression><![CDATA[ $P{context}.getProvider("latency-plot").getDataSource($P{sessionId}) ]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                         <![CDATA[ (net.sf.jasperreports.engine.JasperReport) $P{context}.getProvider("latency-plot").getReport() ]]>
                     </subreportExpression>

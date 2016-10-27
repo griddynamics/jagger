@@ -49,7 +49,7 @@ public class MonitoringReportProvider extends AbstractReportProvider {
         }
     }
 
-    public JRDataSource getDataSource() {
+    public JRDataSource getDataSource(String sessionId) {
         List<MonitoringReportDTO> data = new ArrayList<MonitoringReportDTO>();
 
         for(int i = 0; i < 10; i++) {

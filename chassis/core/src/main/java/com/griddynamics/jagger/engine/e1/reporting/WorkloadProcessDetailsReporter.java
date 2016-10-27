@@ -23,26 +23,16 @@ package com.griddynamics.jagger.engine.e1.reporting;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.beans.factory.annotation.Required;
 
 import java.util.List;
 
 public class WorkloadProcessDetailsReporter extends AbstractMappedReportProvider<String> {
 
-    private SummaryReporter summaryReporter;
-
     @Override
-    public JRDataSource getDataSource(String id) {
+    public JRDataSource getDataSource(String id, String sessionId) {
 
-        String sessionId = getSessionIdProvider().getSessionId();
-        List<SummaryDto> result = summaryReporter.getLatencyPercentile(sessionId,id);
+        List<SummaryDto> result = getContext().getSummaryReporter().getLatencyPercentile(sessionId,id);
 
         return new JRBeanCollectionDataSource(result);
     }
-
-    @Required
-    public void setSummaryReporter(SummaryReporter summaryReporter) {
-        this.summaryReporter = summaryReporter;
-    }
-
 }

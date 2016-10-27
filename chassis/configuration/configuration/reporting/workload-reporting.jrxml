@@ -28,8 +28,9 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
+    <parameter name="sessionId" class="java.lang.String"/>
     <field name="number" class="java.lang.String"/>
     <field name="testName" class="java.lang.String"/>
     <field name="statusImage" class="java.awt.Image"/>
@@ -97,18 +98,18 @@
 
             <subreport>
                 <reportElement positionType="Float" x="230" y="0" width="170" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
-                    <![CDATA[$P{context}.getMappedProvider("diagnosticResults").getDataSource( $F{id} )]]></dataSourceExpression>
+                    <![CDATA[$P{context}.getMappedProvider("diagnosticResults").getDataSource( $F{id}, $P{sessionId}  )]]></dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                     <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("diagnosticResults").getReport( $F{id} )]]></subreportExpression>
             </subreport>
 
             <subreport>
                 <reportElement positionType="Float" x="135" y="0" width="90" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
-                    <![CDATA[$P{context}.getMappedProvider("workloadProcessDetails").getDataSource( $F{id} )]]></dataSourceExpression>
+                    <![CDATA[$P{context}.getMappedProvider("workloadProcessDetails").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                     <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("workloadProcessDetails").getReport( $F{id} )]]></subreportExpression>
             </subreport>

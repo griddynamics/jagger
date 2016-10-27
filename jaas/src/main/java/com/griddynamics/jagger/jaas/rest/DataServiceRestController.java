@@ -7,16 +7,14 @@ import com.griddynamics.jagger.engine.e1.services.data.service.MetricSummaryValu
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.jaas.service.DynamicDataService;
+import com.griddynamics.jagger.jaas.service.DynamicReportingService;
 import com.griddynamics.jagger.jaas.storage.model.DbConfigEntity;
-import org.hibernate.StaleStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -47,7 +44,7 @@ public class DataServiceRestController {
 
     @Autowired
     private DynamicDataService dynamicDataService;
-
+    
     private DataService getDataService(Long id) {
         return dynamicDataService.getDataServiceFor(id);
     }
@@ -163,15 +160,5 @@ public class DataServiceRestController {
     ) {
         return produceDsResponse(dbId, dataService -> dataService
                 .getMetricPlotData(getMetrics(dataService, sessionId, testName)));
-    }
-
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(StaleStateException.class)
-    /**
-     * Catches an exception which occurs if we try delete or update a row that does
-     * not exist.
-     */
-    void noDataFound() {
     }
 }
