@@ -77,7 +77,6 @@
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter"
                           parent="abstractReportProviderBean">
                         <property name="template" value="/reporting/session-comparison-report.jrxml"/>
-                        <property name="baselineSessionProvider" ref="baselineSessionProvider"/>
                         <property name="statusImageProvider" ref="statusImageProvider"/>
                         <property name="sessionComparator" ref="sessionComparator"/>
                     </bean>
@@ -216,6 +215,12 @@
             </bean>
         </property>
         <property name="summaryReporter" ref="summaryReporter"/>
+        <property name="baselineSessionProvider">
+            <bean class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
+                <property name="baselineSessionId"
+                          value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
+            </bean>
+        </property>
     </bean>
 
     <bean id="summaryReporter" class="com.griddynamics.jagger.engine.e1.reporting.SummaryReporter" scope="prototype">

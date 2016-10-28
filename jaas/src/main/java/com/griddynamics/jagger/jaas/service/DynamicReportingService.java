@@ -6,7 +6,7 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 
 public interface DynamicReportingService {
-    Resource generateReportFor(Long dbId, String sessionId) throws IOException;
+    Resource generateReportFor(Long dbId, String sessionId, String baseLineSessionId) throws IOException;
 
-    ReportingService getReportingServiceFor(Long dbId, String sessionId) throws IOException;
+    ReportingService getReportingServiceFor(Long dbId, String sessionId, String baseLineSessionId) throws IOException;
 }

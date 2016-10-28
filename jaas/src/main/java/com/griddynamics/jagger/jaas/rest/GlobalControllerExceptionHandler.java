@@ -1,5 +1,12 @@
 package com.griddynamics.jagger.jaas.rest;
 
+import static com.griddynamics.jagger.jaas.rest.error.ErrorResponse.errorResponse;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+
 import com.griddynamics.jagger.jaas.exceptions.ResourceAlreadyExistsException;
 import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentInvalidIdException;
@@ -20,15 +27,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.griddynamics.jagger.jaas.rest.error.ErrorResponse.errorResponse;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handles all exceptional situations for all rest controllers.
@@ -128,10 +129,5 @@ public class GlobalControllerExceptionHandler {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(APPLICATION_JSON);
         return new ResponseEntity<>(errorResponse(exception.getMessage(), BAD_REQUEST), httpHeaders, BAD_REQUEST);
-    }
-
-    @ExceptionHandler(Throwable.class)
-    public void otherExceptions(Throwable exception) {
-        LOGGER.error(exception.getMessage(), exception);
     }
 }

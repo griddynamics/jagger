@@ -18,6 +18,9 @@ import java.util.Optional;
 
 /**
  * Provides {@link com.griddynamics.jagger.reporting.ReportingService} based on runtime DB config.
+ *
+ * Note: <code>baseLineSessionId</code> parameter is optional,
+ * i.e. if passed value is <code>null</code> then default value provided by Spring context is used.
  */
 @Service
 public class DynamicReportingServiceImpl implements DynamicReportingService {
@@ -27,17 +30,20 @@ public class DynamicReportingServiceImpl implements DynamicReportingService {
     public DynamicReportingServiceImpl(@Autowired DynamicDataServiceImpl dynamicDataService) {
         this.dynamicDataService = dynamicDataService;
     }
-
+    
     @Override
-    public Resource generateReportFor(final Long dbId, final String sessionId) throws IOException {
-        ReportingService reportingService = getReportingServiceFor(dbId, sessionId);
+    public Resource generateReportFor(final Long dbId, final String sessionId, final String baseLineSessionId)
+            throws IOException {
+        ReportingService reportingService = getReportingServiceFor(dbId, sessionId, baseLineSessionId);
         reportingService.renderReport(true);
         
         return new FileSystemResource(reportingService.getOutputReportLocation());
     }
 
     @Override
-    public ReportingService getReportingServiceFor(final Long dbId, final String sessionId) throws IOException {
+    public ReportingService getReportingServiceFor(final Long dbId, final String sessionId,
+                                                   final String baseLineSessionId
+    ) throws IOException {
                      
         ApplicationContext applicationContext = Optional.ofNullable(dynamicDataService.getDynamicContextFor(dbId))
                                                         .orElseThrow(ResourceNotFoundException::getDbResourceNfe);
@@ -46,6 +52,7 @@ public class DynamicReportingServiceImpl implements DynamicReportingService {
         
         ReportingServiceFactory factory = applicationContext.getBean(ReportingServiceFactory.class);
         Path path = Files.createTempDirectory("jaas");
-        return factory.newInstance(sessionId, path.resolve("jagger-report.pdf").toString());
+        
+        return factory.newInstance(sessionId, baseLineSessionId, path.resolve("jagger-report.pdf").toString());
     }
 }

@@ -67,13 +67,6 @@
         <property name="baselineSummaryReporter" ref="summaryReporter"/>
     </bean>
 
-    <alias name="DefaultBaselineSessionProvider" alias="baselineSessionProvider"/>
-    <bean id="DefaultBaselineSessionProvider"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
-        <property name="baselineSessionId"
-                  value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
-    </bean>
-
     <bean id="limitSetConfig" class="com.griddynamics.jagger.engine.e1.collector.limits.LimitSetConfig">
         <property name="decisionWhenNoMetricForLimit"
                   value="${chassis.decision.maker.with.limits.decisionWhenNoMetricForLimit}"/>

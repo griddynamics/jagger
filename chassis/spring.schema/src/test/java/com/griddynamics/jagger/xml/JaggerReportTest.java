@@ -1,7 +1,11 @@
 package com.griddynamics.jagger.xml;
 
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
+import static org.testng.Assert.assertEquals;
+
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.WorstCaseDecisionMaker;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringFeatureComparator;
@@ -21,9 +25,6 @@ import org.testng.Assert;
 
 import java.net.URL;
 import java.util.Properties;
-
-import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
-import static org.testng.Assert.assertEquals;
 
 
 /**
@@ -71,11 +72,9 @@ public class JaggerReportTest {
     @Test
     public void checkBaseline(){
         ReportingService service = (ReportingService) context.getBean("report1");
-        ReportProvider provider = service.getContext().getProvider("sessionComparison");
-        Assert.assertNotNull(provider);
-        OverallSessionComparisonReporter comparators = (OverallSessionComparisonReporter) provider;
+        BaselineSessionProvider baselineSessionProvider = service.getContext().getBaselineSessionProvider();
         String currentSession = context.getBean(SessionIdProvider.class).getSessionId();
-        Assert.assertEquals(comparators.getBaselineSessionProvider().getBaselineSession(currentSession), "4444");
+        Assert.assertEquals(baselineSessionProvider.getBaselineSession(currentSession), "4444");
     }
 
     @Test
