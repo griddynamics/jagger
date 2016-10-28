@@ -160,12 +160,12 @@ public final class JaggerLauncher {
         LaunchTask masterTask = new LaunchTask() {
             @Override
             public void run() {
-                log.info("Starting Master");
                 boolean isStandByMode =
                         Boolean.parseBoolean(environmentProperties.getProperty("realtime.enable.standby.mode"));
                 
                 if (isStandByMode) {
-                   while (isStandByMode) {
+                    log.info("Starting Master in stand by mode...");
+                    while (isStandByMode) {
                        environmentProperties.setProperty(TEST_CONFIG_NAME_PROP, getTestConfigName());
                        XmlWebApplicationContext context =
                                (XmlWebApplicationContext) loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
@@ -174,8 +174,9 @@ public final class JaggerLauncher {
                        master.run();
                        
                        context.destroy();
-                   }
+                    }
                 } else {
+                    log.info("Starting Master in right away mode...");
                     WebApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
                     Server server = new Server(getPortFrom("master.rest.http.port", 9090));
                     try {
