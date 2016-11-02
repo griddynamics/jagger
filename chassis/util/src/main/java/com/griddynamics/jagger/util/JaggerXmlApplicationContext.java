@@ -20,9 +20,9 @@
 
 package com.griddynamics.jagger.util;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +31,7 @@ import java.util.Properties;
 /**
  * User: dkotlyarov
  */
-public class JaggerXmlApplicationContext extends XmlWebApplicationContext {
+public class JaggerXmlApplicationContext extends AbstractXmlApplicationContext {
     private final URL directory;
     private final Properties environmentProperties;
 
