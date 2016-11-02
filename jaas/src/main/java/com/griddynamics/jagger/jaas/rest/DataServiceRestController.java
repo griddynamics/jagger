@@ -7,7 +7,6 @@ import com.griddynamics.jagger.engine.e1.services.data.service.MetricSummaryValu
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.jaas.service.DynamicDataService;
-import com.griddynamics.jagger.jaas.service.DynamicReportingService;
 import com.griddynamics.jagger.jaas.storage.model.DbConfigEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,21 +37,19 @@ import java.util.function.Function;
  */
 @RequestMapping(value = "/dbs")
 @RestController
-public class DataServiceRestController {
+public class DataServiceRestController extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataServiceRestController.class);
 
-    @Autowired
     private DynamicDataService dynamicDataService;
-    
-    private DataService getDataService(Long id) {
-        return dynamicDataService.getDataServiceFor(id);
+
+    @Autowired
+    public DataServiceRestController(DynamicDataService dynamicDataService) {
+        this.dynamicDataService = dynamicDataService;
     }
 
-    private <T, R> ResponseEntity<R> produceGetResponse(T responseSource, Function<T, R> responseFunction) {
-        ResponseEntity<R> responseEntity = HttpGetResponseProducer.produce(responseSource, responseFunction);
-        LOGGER.debug("Produced response: {}", responseEntity);
-        return responseEntity;
+    private DataService getDataService(Long id) {
+        return dynamicDataService.getDataServiceFor(id);
     }
 
     private <R> ResponseEntity<R> produceDsResponse(Long dbId, Function<DataService, R> responseFunction) {

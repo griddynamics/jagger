@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Spring Boot based starter.
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableConfigurationProperties(DbConfigEntity.class)
 @SpringBootApplication(exclude = {HibernateJpaAutoConfiguration.class})
 @EnableAsync
+@EnableScheduling
 public class JaasStarter {
     
     public static void main(String[] args) throws Exception {
