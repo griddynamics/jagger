@@ -83,12 +83,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
+import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.MONITORING;
+import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
 
 /**
  * Created by kgribov on 4/2/14.
@@ -934,25 +938,17 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         for (MetricNode node : nodeList) {
             // old monitoring or new monitoring as metrics
-            node.getMetricNameDtoList().stream().filter(metricNameDto ->
-                    (metricNameDto.getOrigin().equals(MetricNameDto.Origin.MONITORING)) ||
-                            (metricNameDto.getOrigin().equals(MetricNameDto.Origin.TEST_GROUP_METRIC)))
-                    .forEach(metricNameDto -> {
-
-                        // if looks like monitoring parameter
-                        MonitoringIdUtils.MonitoringId monitoringId = MonitoringIdUtils.splitMonitoringMetricId(metricNameDto.getMetricName());
-                        if (monitoringId != null) {
-                            // if available in default monitoring parameters
+            node.getMetricNameDtoList().stream()
+                    .filter(metricNameDto -> (metricNameDto.getOrigin() == MONITORING) || (metricNameDto.getOrigin() == TEST_GROUP_METRIC))
+                    .map(metricNameDto -> MonitoringIdUtils.splitMonitoringMetricId(metricNameDto.getMetricName()))
+                    .filter(Objects::nonNull)
+                    .forEach(monitoringId ->
                             defaultMonitoringParams.keySet().stream()
                                     .filter(key -> defaultMonitoringParams.get(key).contains(monitoringId.getMonitoringName()))
                                     .forEach(key -> {
-                                        if (!agentNames.containsKey(key)) {
-                                            agentNames.put(key, new HashSet<>());
-                                        }
+                                        agentNames.putIfAbsent(key, new HashSet<>());
                                         agentNames.get(key).add(monitoringId.getAgentName());
-                                    });
-                        }
-                    });
+                                    }));
         }
         return agentNames;
     }
@@ -1166,7 +1162,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         for (MetricNameDto metricName : metricNames) {
             metricIds.add(metricName.getMetricName());
             taskIds.addAll(metricName.getTaskIds());
-            if (metricName.getOrigin().equals(MetricNameDto.Origin.TEST_GROUP_METRIC)) {
+            if (metricName.getOrigin().equals(TEST_GROUP_METRIC)) {
                 taskIdsWhereParentIdIsRequired.addAll(metricName.getTaskIds());
             }
         }
