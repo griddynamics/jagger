@@ -17,8 +17,8 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
     @Override
     protected Collection<MetricRawData> getAllRawData(List<MetricNameDto> metricNames) {
 
-        Set<String> metricIds = new HashSet<String>();
-        Set<Long> taskIds = new HashSet<Long>();
+        Set<String> metricIds = new HashSet<>();
+        Set<Long> taskIds = new HashSet<>();
 
         for (MetricNameDto metricName : metricNames) {
             metricIds.add(metricName.getMetricName());
@@ -32,15 +32,15 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
             return Collections.emptyList();
         }
 
-        List<MetricRawData> resultList = new ArrayList<MetricRawData>();
+        List<MetricRawData> resultList = new ArrayList<>();
         for (Object[] objects : rawData) {
             MetricRawData metricRawData = new MetricRawData();
 
-            metricRawData.setWorkloadTaskDataId(((Number)objects[0]).longValue());
-            metricRawData.setTime((Long)objects[1]);
-            metricRawData.setValue((Double)objects[2]);
-            metricRawData.setSessionId((String)objects[3]);
-            metricRawData.setMetricId((String)objects[4]);
+            metricRawData.setWorkloadTaskDataId(((Number) objects[0]).longValue());
+            metricRawData.setTime((Long) objects[1]);
+            metricRawData.setValue((Double) objects[2]);
+            metricRawData.setSessionId((String) objects[3]);
+            metricRawData.setMetricId((String) objects[4]);
 
             resultList.add(metricRawData);
         }
@@ -57,7 +57,7 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
             log.warn("Empty data for getRawData() method {}; {}" + taskDataIds, metricIds);
             return Collections.emptyList();
         }
-        List<Object[]> resultList = new ArrayList<Object[]>();
+        List<Object[]> resultList = new ArrayList<>();
         resultList.addAll(getPlotDataNewModel(taskDataIds, metricIds));
         resultList.addAll(getPlotDataOldModel(taskDataIds, metricIds));
         return resultList;
@@ -70,9 +70,9 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
     private Collection<? extends Object[]> getPlotDataOldModel(Set<Long> taskIds, Set<String> metricIds) {
         return entityManager.createQuery(
                 "SELECT metrics.taskData.id, metrics.time, metrics.value, metrics.taskData.sessionId, metrics.metric " +
-                "FROM   MetricDetails metrics " +
-                "WHERE  metrics.metric IN (:metricIds) " +
-                "AND    metrics.taskData.id IN (:taskIds)"
+                        "FROM   MetricDetails metrics " +
+                        "WHERE  metrics.metric IN (:metricIds) " +
+                        "AND    metrics.taskData.id IN (:taskIds)"
         ).setParameter("taskIds", taskIds).setParameter("metricIds", metricIds).getResultList();
     }
 
@@ -82,10 +82,11 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
     protected Collection<? extends Object[]> getPlotDataNewModel(Set<Long> taskIds, Set<String> metricIds) {
         try {
             return entityManager.createQuery(
-                    "SELECT mpe.metricDescription.taskData.id, mpe.time, mpe.value, mpe.metricDescription.taskData.sessionId, mpe.metricDescription.metricId " +
-                    "from MetricPointEntity AS mpe " +
-                    "WHERE mpe.metricDescription.taskData.id IN (:taskIds) " +
-                    "AND mpe.metricDescription.metricId IN (:metricIds)")
+                    "SELECT mpe.metricDescription.taskData.id, mpe.time, mpe.value, mpe.metricDescription.taskData.sessionId, " +
+                            "mpe.metricDescription.metricId " +
+                            "from MetricPointEntity AS mpe " +
+                            "WHERE mpe.metricDescription.taskData.id IN (:taskIds) " +
+                            "AND mpe.metricDescription.metricId IN (:metricIds)")
                     .setParameter("taskIds", taskIds)
                     .setParameter("metricIds", metricIds)
                     .getResultList();

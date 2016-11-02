@@ -32,7 +32,7 @@ public class TaskDataDto implements Serializable {
         idToSessionId.putAll(id2SessionId);
 
         this.taskName = taskName;
-    } 
+    }
 
     public Map<Long, String> getIdToSessionId() {
         return idToSessionId;

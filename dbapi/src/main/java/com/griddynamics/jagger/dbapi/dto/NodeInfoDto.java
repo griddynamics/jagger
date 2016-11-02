@@ -17,6 +17,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.griddynamics.jagger.dbapi.dto;
 
 import java.io.Serializable;
@@ -25,17 +26,19 @@ import java.util.Map;
 public class NodeInfoDto implements Serializable {
 
     private String nodeId;
-    private Map<String,String> parameters;
+    private Map<String, String> parameters;
 
     public NodeInfoDto(String nodeId, Map<String, String> parameters) {
         this.nodeId = nodeId;
         this.parameters = parameters;
     }
+
     public NodeInfoDto() {}
 
     public String getNodeId() {
         return nodeId;
     }
+
     public Map<String, String> getParameters() {
         return parameters;
     }

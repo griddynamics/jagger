@@ -1,6 +1,11 @@
 package com.griddynamics.jagger.dbapi.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,10 +23,10 @@ public class NodePropertyEntity {
     @Column
     private Long id;
 
-    @Column(length=1000)
+    @Column(length = 1000)
     private String name;
 
-    @Column(length=2000)
+    @Column(length = 2000)
     private String value;
 
     @ManyToOne

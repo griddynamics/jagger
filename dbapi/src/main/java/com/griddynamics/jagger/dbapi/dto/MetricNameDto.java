@@ -14,7 +14,7 @@ public class MetricNameDto extends MetricName {
     private Origin origin = Origin.UNKNOWN;
     private TaskDataDto test;
 
-    public MetricNameDto(){}
+    public MetricNameDto() {}
 
     public MetricNameDto(TaskDataDto test, String metricName) {
         super(metricName);
@@ -22,12 +22,12 @@ public class MetricNameDto extends MetricName {
     }
 
     public MetricNameDto(TaskDataDto test, String metricName, String metricDisplayName) {
-        super(metricName,metricDisplayName);
+        super(metricName, metricDisplayName);
         this.test = test;
     }
 
     public MetricNameDto(TaskDataDto test, String metricName, String metricDisplayName, Origin origin) {
-        super(metricName,metricDisplayName);
+        super(metricName, metricDisplayName);
         this.test = test;
         this.origin = origin;
     }
@@ -83,7 +83,7 @@ public class MetricNameDto extends MetricName {
         return result;
     }
 
-    public static enum Origin {
+    public enum Origin {
         UNKNOWN,                      /* default value - will produce errors during fetching */
         METRIC,                       /* custom metric */
         TEST_GROUP_METRIC,            /* custom test-group metric */

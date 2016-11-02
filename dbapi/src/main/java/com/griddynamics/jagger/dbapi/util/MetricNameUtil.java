@@ -13,16 +13,17 @@ public class MetricNameUtil {
 
     /**
      * Map Collection of MetricNameDto first of all by TaskDataDto id, after all by metric name (metric id)
+     *
      * @param metricNameDtos collection of MetricNameDto to be mapped
-     * @return Map <TaskDataDto.id, Map<metricName, MetricDto>>
+     * @return Map &lt;TaskDataDto.id, Map&lt;metricName, MetricDto&gt;&gt;
      */
     public static Map<Long, Map<String, MetricNameDto>> getMappedMetricDtos(Collection<MetricNameDto> metricNameDtos) {
-        Map<Long, Map<String, MetricNameDto>> taskIdMap = new HashMap<Long, Map<String, MetricNameDto>>();
+        Map<Long, Map<String, MetricNameDto>> taskIdMap = new HashMap<>();
         for (MetricNameDto metricName : metricNameDtos) {
             Set<Long> ids = metricName.getTaskIds();
             for (Long id : ids) {
                 if (!taskIdMap.containsKey(id)) {
-                    taskIdMap.put(id, new HashMap<String, MetricNameDto>());
+                    taskIdMap.put(id, new HashMap<>());
                 }
                 Map<String, MetricNameDto> metricIdMap = taskIdMap.get(id);
                 if (!metricIdMap.containsKey(metricName.getMetricName())) {
@@ -37,18 +38,15 @@ public class MetricNameUtil {
 
     /**
      * Map Collection of MetricNameDto first of all by TaskDataDto id, after all by metric name (metric id)
+     *
      * @param metricNameDtos collection of MetricNameDto to be mapped
-     * @return Map <TaskDataDto.id, MetricNameDto>
+     * @return Map &lt;TaskDataDto.id, MetricNameDto&gt;
      */
     public static Map<Long, MetricNameDto> getMappedMetricDtosByTaskIds(Collection<MetricNameDto> metricNameDtos) {
-        Map<Long, MetricNameDto> taskIdMap = new HashMap<Long, MetricNameDto>();
+        Map<Long, MetricNameDto> taskIdMap = new HashMap<>();
         for (MetricNameDto metricName : metricNameDtos) {
             Set<Long> ids = metricName.getTaskIds();
-            for (Long id : ids) {
-                if (!taskIdMap.containsKey(id)) {
-                    taskIdMap.put(id, metricName);
-                }
-            }
+            ids.stream().filter(id -> !taskIdMap.containsKey(id)).forEach(id -> taskIdMap.put(id, metricName));
         }
         return taskIdMap;
     }
@@ -60,7 +58,7 @@ public class MetricNameUtil {
      * @return Set of MetricNameDto objects containing in metricNodes
      */
     public static Set<MetricNameDto> getMetricNameDtoSet(Collection<MetricNode> metricNodes) {
-        Set<MetricNameDto> metricNameDtoSet = new HashSet<MetricNameDto>();
+        Set<MetricNameDto> metricNameDtoSet = new HashSet<>();
 
         for (MetricNode metricNode : metricNodes) {
             metricNameDtoSet.addAll(metricNode.getMetricNameDtoList());

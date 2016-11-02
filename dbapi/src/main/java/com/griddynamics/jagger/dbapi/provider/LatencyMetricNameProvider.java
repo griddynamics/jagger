@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class LatencyMetricNameProvider implements MetricNameProvider {
     public Set<MetricNameDto> getMetricNames(List<TaskDataDto> tests) {
         Set<MetricNameDto> latencyNames;
 
-        Set<Long> testIds = new HashSet<Long>();
+        Set<Long> testIds = new HashSet<>();
         for (TaskDataDto tdd : tests) {
             testIds.addAll(tdd.getIds());
         }
@@ -49,7 +49,7 @@ public class LatencyMetricNameProvider implements MetricNameProvider {
 
         log.debug("{} ms spent for Latency Percentile fetching (size ={})", System.currentTimeMillis() - temp, latency.size());
 
-        latencyNames = new HashSet<MetricNameDto>(latency.size());
+        latencyNames = new HashSet<>(latency.size());
 
         if (!latency.isEmpty()) {
             for (WorkloadProcessLatencyPercentile percentile : latency) {
@@ -62,7 +62,7 @@ public class LatencyMetricNameProvider implements MetricNameProvider {
                         dto.setMetricName(metricName);
                         dto.setMetricDisplayName(metricNameSynonym); // done on purpose to have equal display names for old and new model
                         dto.setTest(tdd);
-                        dto.setMetricNameSynonyms(Arrays.asList(metricNameSynonym));
+                        dto.setMetricNameSynonyms(Collections.singletonList(metricNameSynonym));
                         dto.setOrigin(MetricNameDto.Origin.LATENCY_PERCENTILE);
                         latencyNames.add(dto);
                         break;

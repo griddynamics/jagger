@@ -8,13 +8,10 @@ import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.dbapi.util.CommonUtils;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import com.griddynamics.jagger.dbapi.util.FetchUtil;
-
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -22,7 +19,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * User: kgribov
@@ -32,7 +34,7 @@ import java.util.*;
 @Component
 public class CustomMetricPlotNameProvider {
 
-    Logger log = LoggerFactory.getLogger(CustomMetricPlotNameProvider.class);
+    private Logger log = LoggerFactory.getLogger(CustomMetricPlotNameProvider.class);
 
     private FetchUtil fetchUtil;
     private Map<GroupKey, DefaultMonitoringParameters[]> monitoringPlotGroups;
@@ -54,10 +56,10 @@ public class CustomMetricPlotNameProvider {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }
 
-    public Set<MetricNameDto> getPlotNames(List<TaskDataDto> taskDataDtos){
+    public Set<MetricNameDto> getPlotNames(List<TaskDataDto> taskDataDtos) {
 
-        long temp = System.currentTimeMillis();
-        Set<MetricNameDto> result = new HashSet<MetricNameDto>();
+        final long temp = System.currentTimeMillis();
+        Set<MetricNameDto> result = new HashSet<>();
 
         result.addAll(getPlotNamesNewModel(taskDataDtos));
 
@@ -71,17 +73,18 @@ public class CustomMetricPlotNameProvider {
     }
 
     @Deprecated
-    public Set<MetricNameDto> getPlotNamesOldModel(List<TaskDataDto> taskDataDtos){
+    public Set<MetricNameDto> getPlotNamesOldModel(List<TaskDataDto> taskDataDtos) {
 
-        Set<Long> testIds = new HashSet<Long>();
+        Set<Long> testIds = new HashSet<>();
         for (TaskDataDto tdd : taskDataDtos) {
             testIds.addAll(tdd.getIds());
         }
 
         // check old model (before jagger 1.2.4)
-        List<Object[]> plotNames = entityManager.createNativeQuery("select metricDetails.metric, metricDetails.taskData_id from MetricDetails metricDetails " +
-                "where metricDetails.taskData_id in (:ids) " +
-                "group by metricDetails.metric, metricDetails.taskData_id")
+        List<Object[]> plotNames = entityManager.createNativeQuery("SELECT metricDetails.metric, metricDetails.taskData_id FROM MetricDetails "
+                + "metricDetails "
+                + "WHERE metricDetails.taskData_id IN (:ids) "
+                + "GROUP BY metricDetails.metric, metricDetails.taskData_id")
                 .setParameter("ids", testIds)
                 .getResultList();
 
@@ -90,13 +93,13 @@ public class CustomMetricPlotNameProvider {
             return Collections.emptySet();
         }
 
-        Set<MetricNameDto> result = new HashSet<MetricNameDto>(plotNames.size());
+        Set<MetricNameDto> result = new HashSet<>(plotNames.size());
 
-        for (Object[] plotName : plotNames){
+        for (Object[] plotName : plotNames) {
             if (plotName != null) {
                 for (TaskDataDto tdd : taskDataDtos) {
-                    if (tdd.getIds().contains(((BigInteger)plotName[1]).longValue())) {
-                        MetricNameDto metricNameDto = new MetricNameDto(tdd, (String)plotName[0]);
+                    if (tdd.getIds().contains(((BigInteger) plotName[1]).longValue())) {
+                        MetricNameDto metricNameDto = new MetricNameDto(tdd, (String) plotName[0]);
                         metricNameDto.setOrigin(MetricNameDto.Origin.METRIC);
                         result.add(metricNameDto);
                     }
@@ -107,7 +110,7 @@ public class CustomMetricPlotNameProvider {
         return result;
     }
 
-    public Set<MetricNameDto> getPlotNamesNewModel(List<TaskDataDto> taskDataDtos){
+    public Set<MetricNameDto> getPlotNamesNewModel(List<TaskDataDto> taskDataDtos) {
 
         try {
             Set<Long> testIds = CommonUtils.getTestsIds(taskDataDtos);
@@ -115,17 +118,17 @@ public class CustomMetricPlotNameProvider {
             List<Object[]> plotNamesNew = getMetricNames(testIds);
 
             if (plotNamesNew.isEmpty()) {
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
 
-            Set<MetricNameDto> result = new HashSet<MetricNameDto>(plotNamesNew.size());
+            Set<MetricNameDto> result = new HashSet<>(plotNamesNew.size());
 
-            for (Object[] plotName : plotNamesNew){
+            for (Object[] plotName : plotNamesNew) {
                 if (plotName != null) {
                     for (TaskDataDto tdd : taskDataDtos) {
-                        if (tdd.getIds().contains((Long)plotName[2])) {
+                        if (tdd.getIds().contains((Long) plotName[2])) {
                             String metricName = (String) plotName[0];
-                            MetricNameDto metricNameDto = new MetricNameDto(tdd, metricName, (String)plotName[1], MetricNameDto.Origin.METRIC);
+                            MetricNameDto metricNameDto = new MetricNameDto(tdd, metricName, (String) plotName[1], MetricNameDto.Origin.METRIC);
                             // synonyms are required for new model of standard metrics for correct back compatibility
                             metricNameDto.setMetricNameSynonyms(StandardMetricsNamesUtil.getSynonyms(metricName));
                             result.add(metricNameDto);
@@ -137,12 +140,12 @@ public class CustomMetricPlotNameProvider {
             return result;
         } catch (PersistenceException e) {
             log.debug("Could not fetch metric plot names from MetricPointEntity: {}", DataProcessingUtil.getMessageFromLastCause(e));
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
     }
 
-    public Set<MetricNameDto> getTestGroupPlotNamesNewModel(List<TaskDataDto> tests){
+    public Set<MetricNameDto> getTestGroupPlotNamesNewModel(List<TaskDataDto> tests) {
 
         try {
             Set<Long> testIds = CommonUtils.getTestsIds(tests);
@@ -154,18 +157,18 @@ public class CustomMetricPlotNameProvider {
             plotNamesNew = CommonUtils.filterMonitoring(plotNamesNew, monitoringPlotGroups);
 
             if (plotNamesNew.isEmpty()) {
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
 
-            Set<MetricNameDto> result = new HashSet<MetricNameDto>(plotNamesNew.size());
+            Set<MetricNameDto> result = new HashSet<>(plotNamesNew.size());
 
-            for (Object[] mde : plotNamesNew){
-                for (TaskDataDto td : tests){
-                    Collection<Long> allTestsInGroup = testGroupMap.get((Long)mde[2]);
-                    if (CommonUtils.containsAtLeastOne(td.getIds(), allTestsInGroup)){
-                        result.add(new MetricNameDto(td, (String)mde[0], (String)mde[1], MetricNameDto.Origin.TEST_GROUP_METRIC));
+            for (Object[] mde : plotNamesNew) {
+                for (TaskDataDto td : tests) {
+                    Collection<Long> allTestsInGroup = testGroupMap.get((Long) mde[2]);
+                    if (CommonUtils.containsAtLeastOne(td.getIds(), allTestsInGroup)) {
+                        result.add(new MetricNameDto(td, (String) mde[0], (String) mde[1], MetricNameDto.Origin.TEST_GROUP_METRIC));
                         // we should create new MetricNameDto with another origin, because we need it for Session Scope plots
-                        result.add(new MetricNameDto(td, (String)mde[0], (String)mde[1], MetricNameDto.Origin.SESSION_SCOPE_TG));
+                        result.add(new MetricNameDto(td, (String) mde[0], (String) mde[1], MetricNameDto.Origin.SESSION_SCOPE_TG));
                     }
                 }
             }
@@ -173,13 +176,13 @@ public class CustomMetricPlotNameProvider {
             return result;
         } catch (PersistenceException e) {
             log.debug("Could not fetch test-group metric plot names from MetricPointEntity: {}", DataProcessingUtil.getMessageFromLastCause(e));
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
     }
 
-    private List<Object[]> getMetricNames(Set<Long> testIds){
-        if (testIds.isEmpty()){
-            return Collections.EMPTY_LIST;
+    private List<Object[]> getMetricNames(Set<Long> testIds) {
+        if (testIds.isEmpty()) {
+            return Collections.emptyList();
         }
         return entityManager.createQuery(
                 "select mpe.metricDescription.metricId, mpe.metricDescription.displayName, mpe.metricDescription.taskData.id " +

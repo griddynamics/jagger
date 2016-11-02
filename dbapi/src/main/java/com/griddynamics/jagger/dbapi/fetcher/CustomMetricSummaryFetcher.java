@@ -8,6 +8,7 @@ import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
 import com.griddynamics.jagger.util.FormatCalculator;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.PersistenceException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -19,8 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.PersistenceException;
-
 @Component
 @Deprecated
 public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingleDto> {
@@ -29,14 +28,14 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
     protected Set<SummarySingleDto> fetchData(List<MetricNameDto> metricNames) {
 
         //custom metric
-        Set<Long> taskIds = new HashSet<Long>();
-        Set<String> metricIds = new HashSet<String>();
+        Set<Long> taskIds = new HashSet<>();
+        Set<String> metricIds = new HashSet<>();
         for (MetricNameDto metricName : metricNames) {
             taskIds.addAll(metricName.getTaskIds());
             metricIds.add(metricName.getMetricName());
         }
 
-        List<Object[]> metrics = new ArrayList<Object[]>();
+        List<Object[]> metrics = new ArrayList<>();
 
         // check old model
         metrics.addAll(getCustomMetricsDataOldModel(taskIds, metricIds));
@@ -44,18 +43,18 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
         // check new model
         metrics.addAll(getCustomMetricsDataNewModel(taskIds, metricIds));
 
-        if (metrics.isEmpty()){
+        if (metrics.isEmpty()) {
             log.warn("Could not find data for {}", metricNames);
             return Collections.emptySet();
         }
 
-        Map<MetricNameDto, SummarySingleDto> resultMap = new HashMap<MetricNameDto, SummarySingleDto>();
+        Map<MetricNameDto, SummarySingleDto> resultMap = new HashMap<>();
         Map<Long, Map<String, MetricNameDto>> mappedMetricDtos = MetricNameUtil.getMappedMetricDtos(metricNames);
 
-        for (Object[] mas : metrics){
+        for (Object[] mas : metrics) {
 
-            Number taskDataId = (Number)mas[3];
-            String metricId = (String)mas[2];
+            Number taskDataId = (Number) mas[3];
+            String metricId = (String) mas[2];
 
             MetricNameDto metricNameDto;
             try {
@@ -70,7 +69,7 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
             if (!resultMap.containsKey(metricNameDto)) {
                 SummarySingleDto metricDto = new SummarySingleDto();
                 metricDto.setMetricName(metricNameDto);
-                metricDto.setValues(new HashSet<SummaryMetricValueDto>());
+                metricDto.setValues(new HashSet<>());
                 resultMap.put(metricNameDto, metricDto);
             }
             SummarySingleDto metricDto = resultMap.get(metricNameDto);
@@ -84,15 +83,15 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
                             .format(val)
             );
 
-            value.setSessionId(Long.parseLong((String)mas[1]));
+            value.setSessionId(Long.parseLong((String) mas[1]));
             metricDto.getValues().add(value);
         }
 
-        return new HashSet<SummarySingleDto>(resultMap.values());
+        return new HashSet<>(resultMap.values());
     }
 
     /**
-     * @param taskIds ids of all tasks
+     * @param taskIds   ids of all tasks
      * @param metricIds identifiers of metric
      * @return list of object[] (value, sessionId, metricId, taskDataId)
      */
@@ -100,38 +99,39 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
     protected List<Object[]> getCustomMetricsDataOldModel(Set<Long> taskIds, Set<String> metricIds) {
         return entityManager.createNativeQuery(
                 "SELECT metric.total, taskData.sessionId, metric.name, taskData.taskDataId " +
-                "FROM DiagnosticResultEntity AS metric " +
-                "JOIN ( " +
+                        "FROM DiagnosticResultEntity AS metric " +
+                        "JOIN ( " +
                         "SELECT wd.sessionId, wd.id, taskData.id AS taskDataId " +
                         "FROM WorkloadData AS wd " +
                         "JOIN ( " +
-                            "SELECT taskData.taskId, taskData.sessionId, taskData.id " +
-                            "FROM TaskData AS taskData " +
-                            "WHERE taskData.id IN (:ids) " +
+                        "SELECT taskData.taskId, taskData.sessionId, taskData.id " +
+                        "FROM TaskData AS taskData " +
+                        "WHERE taskData.id IN (:ids) " +
                         ") AS taskData " +
                         "ON wd.sessionId=taskData.sessionId AND wd.taskId=taskData.taskId " +
-                ") AS taskData " +
-                "ON metric.workloadData_id=taskData.id AND metric.name IN (:metricIds);"
+                        ") AS taskData " +
+                        "ON metric.workloadData_id=taskData.id AND metric.name IN (:metricIds);"
         ).setParameter("ids", taskIds).setParameter("metricIds", metricIds).getResultList();
     }
 
 
     /**
-     * @param taskIds ids of all tasks
+     * @param taskIds  ids of all tasks
      * @param metricId identifier of metric
      * @return list of object[] (value, sessionId, metricId, taskDataId)
      */
     protected List<Object[]> getCustomMetricsDataNewModel(Set<Long> taskIds, Set<String> metricId) {
         try {
-            if (taskIds.isEmpty() || metricId.isEmpty()){
+            if (taskIds.isEmpty() || metricId.isEmpty()) {
                 return Collections.emptyList();
             }
 
             return entityManager.createQuery(
-                    "SELECT summary.total, summary.metricDescription.taskData.sessionId, summary.metricDescription.metricId, summary.metricDescription.taskData.id " +
-                    "FROM MetricSummaryEntity AS summary " +
-                    "WHERE summary.metricDescription.taskData.id IN (:ids) " +
-                    "AND summary.metricDescription.metricId IN (:metricIds)")
+                    "SELECT summary.total, summary.metricDescription.taskData.sessionId, summary.metricDescription.metricId, summary" +
+                            ".metricDescription.taskData.id " +
+                            "FROM MetricSummaryEntity AS summary " +
+                            "WHERE summary.metricDescription.taskData.id IN (:ids) " +
+                            "AND summary.metricDescription.metricId IN (:metricIds)")
                     .setParameter("ids", taskIds)
                     .setParameter("metricIds", metricId)
                     .getResultList();

@@ -12,8 +12,6 @@ import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -21,7 +19,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by kgribov on 4/7/14.
@@ -51,15 +54,16 @@ public class CustomMetricNameProvider implements MetricNameProvider {
 
     /**
      * Fetch custom metrics names from database
+     *
      * @param tests tests data
      * @return set of MetricNameDto representing name of metric
      */
     @Override
-    public Set<MetricNameDto> getMetricNames(List<TaskDataDto> tests){
+    public Set<MetricNameDto> getMetricNames(List<TaskDataDto> tests) {
 
-        Set<MetricNameDto>  metrics = new HashSet<MetricNameDto>();
+        Set<MetricNameDto> metrics = new HashSet<>();
 
-        long temp = System.currentTimeMillis();
+        final long temp = System.currentTimeMillis();
 
         metrics.addAll(getCustomMetricsNamesNewModel(tests));
 
@@ -74,8 +78,8 @@ public class CustomMetricNameProvider implements MetricNameProvider {
 
     @Deprecated
     private Set<MetricNameDto> getCustomMetricsNamesOldModel(List<TaskDataDto> tests) {
-        Set<Long> taskIds = new HashSet<Long>();
-        Set<String> sessionIds = new HashSet<String>();
+        Set<Long> taskIds = new HashSet<>();
+        Set<String> sessionIds = new HashSet<>();
         for (TaskDataDto tdd : tests) {
             taskIds.addAll(tdd.getIds());
             sessionIds.addAll(tdd.getSessionIds());
@@ -85,16 +89,16 @@ public class CustomMetricNameProvider implements MetricNameProvider {
 
         // check old data (before jagger 1.2.4 version)
         List<Object[]> metricNames = entityManager.createNativeQuery(
-                "select dre.name, selected.id from DiagnosticResultEntity dre join " +
-                        " (" +
-                        "  select wd.workloaddataID, td.id from " +
-                        "    (" +
-                        "     select wd.id as workloaddataID, wd.sessionId, wd.taskId from WorkloadData wd where wd.sessionId in (:sessionIds)" +
-                        "    ) as wd join   " +
-                        "    ( " +
-                        "     select td.taskId, td.sessionId, td.id from TaskData td where td.id in (:taskIds)" +
-                        "    ) as td on wd.taskId=td.taskId and wd.sessionId=td.sessionId" +
-                        " ) as selected on dre.workloadData_id=selected.workloaddataID")
+                "SELECT dre.name, selected.id FROM DiagnosticResultEntity dre JOIN "
+                        + " ("
+                        + "  SELECT wd.workloaddataID, td.id FROM "
+                        + "    ("
+                        + "     SELECT wd.id AS workloaddataID, wd.sessionId, wd.taskId FROM WorkloadData wd WHERE wd.sessionId IN (:sessionIds)"
+                        + "    ) AS wd JOIN   "
+                        + "    ( "
+                        + "     SELECT td.taskId, td.sessionId, td.id FROM TaskData td WHERE td.id IN (:taskIds)"
+                        + "    ) AS td ON wd.taskId=td.taskId AND wd.sessionId=td.sessionId"
+                        + " ) AS selected ON dre.workloadData_id=selected.workloaddataID")
                 .setParameter("taskIds", taskIds)
                 .setParameter("sessionIds", sessionIds)
                 .getResultList();
@@ -103,14 +107,14 @@ public class CustomMetricNameProvider implements MetricNameProvider {
             return Collections.emptySet();
         }
 
-        Set<MetricNameDto> metrics = new HashSet<MetricNameDto>(metricNames.size());
+        Set<MetricNameDto> metrics = new HashSet<>(metricNames.size());
 
         log.debug("{} ms spent for fetching {} custom metrics", System.currentTimeMillis() - temp, metricNames.size());
 
-        for (Object[] name : metricNames){
+        for (Object[] name : metricNames) {
             if (name == null || name[0] == null) continue;
             for (TaskDataDto td : tests) {
-                if (td.getIds().contains(((BigInteger)name[1]).longValue())) {
+                if (td.getIds().contains(((BigInteger) name[1]).longValue())) {
                     MetricNameDto metric = new MetricNameDto();
                     metric.setTest(td);
                     metric.setMetricName((String) name[0]);
@@ -135,7 +139,7 @@ public class CustomMetricNameProvider implements MetricNameProvider {
                 return Collections.emptySet();
             }
 
-            Set<MetricNameDto>  metrics = new HashSet<MetricNameDto>(metricDescriptionEntities.size());
+            Set<MetricNameDto> metrics = new HashSet<>(metricDescriptionEntities.size());
 
             for (Object[] mde : metricDescriptionEntities) {
                 for (TaskDataDto td : tests) {
@@ -171,14 +175,14 @@ public class CustomMetricNameProvider implements MetricNameProvider {
                 return Collections.emptySet();
             }
 
-            Set<MetricNameDto>  metrics = new HashSet<MetricNameDto>(metricDescriptionEntities.size());
+            Set<MetricNameDto> metrics = new HashSet<>(metricDescriptionEntities.size());
 
             // add test-group metric names
-            for (Object[] mde : metricDescriptionEntities){
-                for (TaskDataDto td : tests){
-                    Collection<Long> allTestsInGroup = testGroupMap.get((Long)mde[2]);
-                    if (CommonUtils.containsAtLeastOne(td.getIds(), allTestsInGroup)){
-                        metrics.add(new MetricNameDto(td, (String)mde[0], (String)mde[1], MetricNameDto.Origin.TEST_GROUP_METRIC));
+            for (Object[] mde : metricDescriptionEntities) {
+                for (TaskDataDto td : tests) {
+                    Collection<Long> allTestsInGroup = testGroupMap.get((Long) mde[2]);
+                    if (CommonUtils.containsAtLeastOne(td.getIds(), allTestsInGroup)) {
+                        metrics.add(new MetricNameDto(td, (String) mde[0], (String) mde[1], MetricNameDto.Origin.TEST_GROUP_METRIC));
                     }
                 }
             }
@@ -194,8 +198,8 @@ public class CustomMetricNameProvider implements MetricNameProvider {
      * @param taskIds TaskData ids
      * @return list of objects {MetricDescription.id, MetricDescription.dysplayName, TaskData.id}
      */
-    private List<Object[]> getMetricNames(Set<Long> taskIds){
-        if (taskIds.isEmpty()){
+    private List<Object[]> getMetricNames(Set<Long> taskIds) {
+        if (taskIds.isEmpty()) {
             return Collections.emptyList();
         }
         return entityManager.createQuery(

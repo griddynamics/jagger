@@ -1,16 +1,15 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
-import static com.griddynamics.jagger.util.MonitoringIdUtils.splitMonitoringMetricId;
-
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,8 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import static com.griddynamics.jagger.util.MonitoringIdUtils.splitMonitoringMetricId;
 
 @Component
 @Deprecated
@@ -52,18 +50,17 @@ public class MonitoringMetricPlotFetcher extends AbstractMetricPlotFetcher {
         oldToNewMonitoringIds = newToOldMonitoringIds.inverse();
     }
 
-
     @Override
     protected Collection<MetricRawData> getAllRawData(List<MetricNameDto> metricNames) {
 
-        Set<String> agentNames = new HashSet<String>();
-        Set<String> monitoringDescriptions = new HashSet<String>();
-        Set<String> sessionIds = new HashSet<String>();
-        Set<Long> taskIds = new HashSet<Long>();
+        Set<String> agentNames = new HashSet<>();
+        Set<String> monitoringDescriptions = new HashSet<>();
+        Set<String> sessionIds = new HashSet<>();
+        Set<Long> taskIds = new HashSet<>();
         for (MetricNameDto metricName : metricNames) {
 
             MonitoringIdUtils.MonitoringId monitoringId = splitMonitoringMetricId(metricName.getMetricName());
-            if(monitoringId == null) {
+            if (monitoringId == null) {
                 log.error("Could not split metricName of {} to MonitoringId. Will skip.", metricName);
                 continue;
             }
@@ -81,7 +78,7 @@ public class MonitoringMetricPlotFetcher extends AbstractMetricPlotFetcher {
             return Collections.emptyList();
         }
 
-        List<MetricRawData> result = new ArrayList<MetricRawData>(rawDatas.size());
+        List<MetricRawData> result = new ArrayList<>(rawDatas.size());
         for (Object[] raw : rawDatas) {
             MetricRawData metricRawData = new MetricRawData();
 
@@ -96,7 +93,7 @@ public class MonitoringMetricPlotFetcher extends AbstractMetricPlotFetcher {
             metricRawData.setMetricId(MonitoringIdUtils.getMonitoringMetricId(monitoringName, agentName));
 
             metricRawData.setWorkloadTaskDataId(((Number) raw[6]).longValue());
-            metricRawData.setSessionId((String)raw[1]);
+            metricRawData.setSessionId((String) raw[1]);
 
             result.add(metricRawData);
         }
@@ -104,46 +101,48 @@ public class MonitoringMetricPlotFetcher extends AbstractMetricPlotFetcher {
     }
 
     /**
-     * @param sessionIds is a collection of id of sessions
-     * @param workloadTaskDataIds is a collection of workload task id
-     * @param agentNames is a collection of all agent names
+     * @param sessionIds             is a collection of id of sessions
+     * @param workloadTaskDataIds    is a collection of workload task id
+     * @param agentNames             is a collection of all agent names
      * @param monitoringDescriptions is a collection of monitoring descriptions
-     * @return  @return collection of objects {a description, a session id, an average value, a box identifier, an url of system under test, a task id}
+     * @return @return collection of objects {a description, a session id, an average value, a box identifier, an url of system under test, a task id}
      */
     private List<Object[]> getRawDataDbCall(
             Collection<String> sessionIds, Collection<Long> workloadTaskDataIds,
             Collection<String> agentNames, Collection<String> monitoringDescriptions) {
 
         return entityManager.createNativeQuery(
-                "select ms.description, ms.sessionId, ms.time, ms.averageValue, ms.boxIdentifier, ms.systemUnderTestUrl, ids.taskDataId  from " +
+                "SELECT ms.description, ms.sessionId, ms.time, ms.averageValue, ms.boxIdentifier, ms.systemUnderTestUrl, ids.taskDataId  FROM " +
                         "  (" +
-                        "    select * from MonitoringStatistics as ms " +
-                        "    where ms.sessionId in (:sessionIds)" +
-                        "    and ms.description in (:descriptions)" +
-                        "    and (ms.boxIdentifier in (:agentNames) or ms.systemUnderTestUrl in (:agentNames))" +
-                        "  ) as ms join " +
+                        "    SELECT * FROM MonitoringStatistics AS ms " +
+                        "    WHERE ms.sessionId IN (:sessionIds)" +
+                        "    AND ms.description IN (:descriptions)" +
+                        "    AND (ms.boxIdentifier IN (:agentNames) OR ms.systemUnderTestUrl IN (:agentNames))" +
+                        "  ) AS ms JOIN " +
                         "  ( " +
-                        "        select test.id, mysome.taskDataId from " +
+                        "        SELECT test.id, mysome.taskDataId FROM " +
                         "          ( " +
-                        "            select test.id, test.sessionId, test.taskId from TaskData as test where test.sessionId in (:sessionIds)" +
-                        "          ) as test join " +
+                        "            SELECT test.id, test.sessionId, test.taskId FROM TaskData AS test WHERE test.sessionId IN (:sessionIds)" +
+                        "          ) AS test JOIN " +
                         "          (" +
-                        "            select mysome.parentId, pm.monitoringId, mysome.taskDataId, pm.sessionId from" +
+                        "            SELECT mysome.parentId, pm.monitoringId, mysome.taskDataId, pm.sessionId FROM" +
                         "              (" +
-                        "                select pm.monitoringId, pm.sessionId, pm.parentId from PerformedMonitoring as pm where pm.sessionId in (:sessionIds) " +
-                        "              ) as pm join " +
+                        "                SELECT pm.monitoringId, pm.sessionId, pm.parentId FROM PerformedMonitoring AS pm WHERE pm.sessionId IN " +
+                        "(:sessionIds) " +
+                        "              ) AS pm JOIN " +
                         "              (" +
-                        "                select td2.sessionId, td2.id as taskDataId, wd.parentId from" +
+                        "                SELECT td2.sessionId, td2.id AS taskDataId, wd.parentId FROM" +
                         "                  ( " +
-                        "                    select wd.parentId, wd.sessionId, wd.taskId from WorkloadData as wd where wd.sessionId in (:sessionIds)" +
-                        "                  ) as wd join " +
-                        "                    TaskData as td2" +
-                        "                    on td2.id in (:taskIds)" +
-                        "                    and wd.sessionId = td2.sessionId" +
-                        "                    and wd.taskId=td2.taskId" +
-                        "              ) as mysome on pm.sessionId = mysome.sessionId and pm.parentId=mysome.parentId" +
-                        "          ) as mysome on test.sessionId = mysome.sessionId and test.taskId=mysome.monitoringId" +
-                        "  ) as ids on ms.taskData_id = ids.id")
+                        "                    SELECT wd.parentId, wd.sessionId, wd.taskId FROM WorkloadData AS wd WHERE wd.sessionId IN " +
+                        "(:sessionIds)" +
+                        "                  ) AS wd JOIN " +
+                        "                    TaskData AS td2" +
+                        "                    ON td2.id IN (:taskIds)" +
+                        "                    AND wd.sessionId = td2.sessionId" +
+                        "                    AND wd.taskId=td2.taskId" +
+                        "              ) AS mysome ON pm.sessionId = mysome.sessionId AND pm.parentId=mysome.parentId" +
+                        "          ) AS mysome ON test.sessionId = mysome.sessionId AND test.taskId=mysome.monitoringId" +
+                        "  ) AS ids ON ms.taskData_id = ids.id")
                 .setParameter("sessionIds", sessionIds)
                 .setParameter("taskIds", workloadTaskDataIds)
                 .setParameter("agentNames", agentNames)

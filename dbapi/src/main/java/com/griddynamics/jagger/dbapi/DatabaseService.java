@@ -42,7 +42,7 @@ public interface DatabaseService {
             throws RuntimeException;
 
     /**
-     * Returns map <metricNode, plot values> for specific metric nodes from control tree
+     * Returns map &lt;metricNode, plot values&gt; for specific metric nodes from control tree
      *
      * @param plots - set of metric nodes
      * @return plot values for metric nodes
@@ -50,7 +50,7 @@ public interface DatabaseService {
     Map<MetricNode, PlotIntegratedDto> getPlotDataByMetricNode(Set<MetricNode> plots) throws IllegalArgumentException;
 
     /**
-     * Returns map <metricNameDto, plot values> for specific metric names
+     * Returns map &lt;metricNameDto, plot values&gt; for specific metric names
      *
      * @param metricNames - set of metric names
      * @return plot values for metric names
@@ -59,7 +59,7 @@ public interface DatabaseService {
             throws IllegalArgumentException;
 
     /**
-     * Returns map <metricNode, plot values> for specific metric nodes from control tree
+     * Returns map &lt;metricNode, plot values&gt; for specific metric nodes from control tree
      *
      * @param metricNodes - set of metric nodes
      * @return plot values for metric nodes
@@ -82,7 +82,7 @@ public interface DatabaseService {
      * Returns test info for specified tests
      *
      * @param taskDataDtos - selected tests
-     * @return map <taskDataDto, map <sessionId, test info>>
+     * @return map &lt;taskDataDto, map &lt;sessionId, test info&gt;&gt;
      */
     Map<TaskDataDto, Map<String, TestInfoDto>> getTestInfoByTaskDataDto(Collection<TaskDataDto> taskDataDtos)
             throws RuntimeException;
@@ -91,7 +91,7 @@ public interface DatabaseService {
      * Returns test info for specified tests ids
      *
      * @param taskIds - selected test ids
-     * @return map <testId, map <sessionId, test info>>
+     * @return map &lt;testId, map &lt;sessionId, test info&gt;&gt;
      */
     Map<Long, Map<String, TestInfoDto>> getTestInfoByTaskIds(Set<Long> taskIds) throws RuntimeException;
 
@@ -136,7 +136,7 @@ public interface DatabaseService {
      * Returns list of test group task ids corresponding to given test task ids
      *
      * @param taskIds TaskData ids
-     * @return map <test-group id, set<tests ids>>
+     * @return map &lt;test-group id, set&lt;tests ids&gt;&gt;
      */
     Map<Long, Set<Long>> getTestGroupIdsByTestIds(Set<Long> taskIds);
 
@@ -152,7 +152,7 @@ public interface DatabaseService {
      * Returns map of decisions per metric corresponding to given metricId, sessionId
      *
      * @param metricNames - set of metric names
-     * @return map <metric, map <sessionId, decision>> of decisions
+     * @return map &lt;metric, map &lt;sessionId, decision&gt;&gt; of decisions
      */
     Map<MetricNameDto, Map<String, Decision>> getDecisionsPerMetric(Set<MetricNameDto> metricNames);
 
@@ -160,7 +160,7 @@ public interface DatabaseService {
      * Returns map of decisions per session corresponding to given sessionIds
      *
      * @param sessionIds - selected sessions
-     * @return map <sessionId, decision> of decisions
+     * @return map &lt;sessionId, decision&gt; of decisions
      */
     Map<String, Decision> getDecisionsPerSession(Set<String> sessionIds);
 
@@ -191,7 +191,7 @@ public interface DatabaseService {
      * Returns task data, corresponding to TaskData ids
      *
      * @param ids - TaskData ids
-     * @return map <TaskData id, TaskData>
+     * @return map &lt;TaskData id, TaskData&gt;
      */
     Map<Long, TaskData> getTaskData(Collection<Long> ids);
 }

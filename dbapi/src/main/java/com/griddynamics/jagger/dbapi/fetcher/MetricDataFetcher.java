@@ -8,7 +8,8 @@ import java.util.Set;
 
 /**
  * Abstract class to fetch Data from list of MetricNameDto
- * @param <R>
+ *
+ * @param <R> type of data.
  */
 public abstract class MetricDataFetcher<R> {
 

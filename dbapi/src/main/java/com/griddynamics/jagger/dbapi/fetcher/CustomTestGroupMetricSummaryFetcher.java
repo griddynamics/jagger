@@ -27,7 +27,7 @@ public class CustomTestGroupMetricSummaryFetcher extends CustomMetricSummaryFetc
 
     @Override
     protected List<Object[]> getCustomMetricsDataOldModel(Set<Long> taskIds, Set<String> metricIds) {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -36,12 +36,12 @@ public class CustomTestGroupMetricSummaryFetcher extends CustomMetricSummaryFetc
 
         List<Object[]> testGroupsSummary = super.getCustomMetricsDataNewModel(testGroupMap.keySet(), metricId);
 
-        List<Object[]> testsSummary = new ArrayList<Object[]>();
+        List<Object[]> testsSummary = new ArrayList<>();
 
-        for (Object[] testGroupSummary : testGroupsSummary){
+        for (Object[] testGroupSummary : testGroupsSummary) {
             Long testGroupId = (Long) testGroupSummary[3];
 
-            for (Long testId : testGroupMap.get(testGroupId)){
+            for (Long testId : testGroupMap.get(testGroupId)) {
                 testGroupSummary[3] = new BigInteger(testId.toString());
                 testsSummary.add(testGroupSummary);
             }

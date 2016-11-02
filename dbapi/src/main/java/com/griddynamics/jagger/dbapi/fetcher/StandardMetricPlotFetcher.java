@@ -7,7 +7,13 @@ import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
 import com.griddynamics.jagger.dbapi.util.MetricNameUtil;
 import com.griddynamics.jagger.util.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public abstract class StandardMetricPlotFetcher<T extends StandardMetricPlotFetcher.StandardMetricRawData> extends PlotsDbMetricDataFetcher {
@@ -17,8 +23,8 @@ public abstract class StandardMetricPlotFetcher<T extends StandardMetricPlotFetc
             return Collections.emptySet();
         }
 
-        Set<Pair<MetricNameDto, List<PlotSingleDto>>> resultSet = new HashSet<Pair<MetricNameDto, List<PlotSingleDto>>>(metricNames.size());
-        Set<Long> taskIds = new HashSet<Long>();
+        Set<Pair<MetricNameDto, List<PlotSingleDto>>> resultSet = new HashSet<>(metricNames.size());
+        Set<Long> taskIds = new HashSet<>();
         for (MetricNameDto metricNameDto : metricNames) {
             taskIds.addAll(metricNameDto.getTaskIds());
         }
@@ -37,7 +43,7 @@ public abstract class StandardMetricPlotFetcher<T extends StandardMetricPlotFetc
 
         Multimap<MetricNameDto, PlotSingleDto> metricNamePlotMap = ArrayListMultimap.create();
 
-        Map<Long,  MetricNameDto> mappedMetricNames = MetricNameUtil.getMappedMetricDtosByTaskIds(metricNames);
+        Map<Long, MetricNameDto> mappedMetricNames = MetricNameUtil.getMappedMetricDtosByTaskIds(metricNames);
 
         for (Long taskDataId : taskIdRawMap.keySet()) {
 
@@ -48,7 +54,7 @@ public abstract class StandardMetricPlotFetcher<T extends StandardMetricPlotFetc
                 throw new RuntimeException("cant find metric name dto in MetricNameUtil.getMappedMetricDtos(metricNames) " + metricNames);
             }
 
-            Collection<T> rawData =  taskIdRawMap.get(taskDataId);
+            Collection<T> rawData = taskIdRawMap.get(taskDataId);
             if (rawData.isEmpty()) {
                 throw new RuntimeException("no plot data found for TaskDataId : " + taskDataId);
             }
@@ -56,17 +62,11 @@ public abstract class StandardMetricPlotFetcher<T extends StandardMetricPlotFetc
         }
 
         for (MetricNameDto metricName : metricNamePlotMap.keySet()) {
-            List<PlotSingleDto> plotDatasetDtoList = new ArrayList<PlotSingleDto>(metricNamePlotMap.get(metricName));
-            resultSet.add(
-                    Pair.of(
-                            metricName,
-                            plotDatasetDtoList
-                    ));
+            List<PlotSingleDto> plotDatasetDtoList = new ArrayList<>(metricNamePlotMap.get(metricName));
+            resultSet.add(Pair.of(metricName, plotDatasetDtoList));
         }
-
         return resultSet;
     }
-
 
     /**
      * assemble raw data of one taskDataId
@@ -74,19 +74,16 @@ public abstract class StandardMetricPlotFetcher<T extends StandardMetricPlotFetc
      */
     protected abstract Iterable<? extends PlotSingleDto> assemble(Collection<T> rawData);
 
-
     /**
      * @param taskIds ids of TaskData
      */
     protected abstract List<T> findRawDataByTaskData(Set<Long> taskIds);
 
-
     /**
      * Interface of Raw data.
      * It should contain getTaskDataId() method for StandardMetricPlotFetcher logic. Namely one TaskData id -> one curve
      */
-    public static interface StandardMetricRawData {
-
-        public Long getTaskDataId();
+    public interface StandardMetricRawData {
+        Long getTaskDataId();
     }
 }

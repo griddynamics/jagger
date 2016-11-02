@@ -24,7 +24,7 @@ public class SummaryNode extends AbstractIdentifyNode {
 
     public List<TestNode> getTests() {
         if (tests == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return tests;
     }
