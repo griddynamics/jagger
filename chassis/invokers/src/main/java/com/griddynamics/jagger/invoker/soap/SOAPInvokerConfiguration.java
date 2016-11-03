@@ -31,6 +31,7 @@ import java.io.Serializable;
  * @author Alexey Kiselyov
  *         Date: 05.08.11
  */
+@Deprecated
 public class SOAPInvokerConfiguration implements ScenarioFactory<SOAPQuery, String, String>, Serializable {
     private SOAPQuery query;
     private SystemClock systemClock = new JavaSystemClock();

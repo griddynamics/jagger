@@ -38,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @param <S> - type of Hessian service
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public abstract class HessianInvoker<S, Q, R> implements Invoker<Q, R, String> {
     private final ConcurrentHashMap<String, S> services = new ConcurrentHashMap<String, S>();
 

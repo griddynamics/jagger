@@ -37,6 +37,7 @@ import java.net.URL;
  * @details Creates an 10000 of TCP connections to SuT
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class TcpTrafficInvoker implements Invoker<Nothing, String, String> {
     private static final long serialVersionUID = -1L;
     private static final Logger log = LoggerFactory.getLogger(TcpTrafficInvoker.class);

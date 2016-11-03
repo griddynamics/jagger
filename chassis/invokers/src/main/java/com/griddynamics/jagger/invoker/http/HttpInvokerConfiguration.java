@@ -32,6 +32,7 @@ import java.io.Serializable;
  * @author Alexey Kiselyov
  *         Date: 04.08.11
  */
+@Deprecated
 public class HttpInvokerConfiguration implements ScenarioFactory<HttpQuery, HttpResponse, String>, Serializable {
     private HttpQuery query;
     private String endpoint;

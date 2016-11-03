@@ -31,6 +31,7 @@ import java.util.Map;
  * @author Alexey Kiselyov
  *         Date: 04.08.11
  */
+@Deprecated
 public class HttpQuery implements Serializable {
 
     public static enum Method {
