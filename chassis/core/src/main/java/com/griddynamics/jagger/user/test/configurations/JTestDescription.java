@@ -9,12 +9,14 @@ public class JTestDescription {
     private String comment;
     private Iterable endpoints;
     private Iterable queries;
+    private Class invokerClass;
 
     private JTestDescription(Builder builder) {
         this.id = builder.id;
         this.comment = builder.comment;
         this.endpoints = builder.endpoints;
         this.queries = builder.queries;
+        this.invokerClass = builder.invokerClass;
     }
 
     public static Builder builder() {
@@ -26,6 +28,8 @@ public class JTestDescription {
         private String comment;
         private Iterable endpoints;
         private Iterable queries;
+        private Class invokerClass;
+
 
         private Builder() {
 
@@ -74,6 +78,16 @@ public class JTestDescription {
         }
 
         /**
+         * Add some description.
+         *
+         * @param invokerClass the class of {@link com.griddynamics.jagger.invoker.Invoker}.
+         */
+        public Builder withInvokerClass(Class invokerClass) {
+            this.invokerClass = invokerClass;
+            return this;
+        }
+
+        /**
          * As one may expect, creates the object of {@link JTest} type with custom parameters.
          *
          * @return {@link JTest} object.
@@ -99,5 +113,9 @@ public class JTestDescription {
 
     public Iterable getQueries() {
         return queries;
+    }
+
+    public Class getInvokerClass() {
+        return invokerClass;
     }
 }

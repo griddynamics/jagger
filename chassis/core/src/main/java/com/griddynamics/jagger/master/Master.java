@@ -46,10 +46,13 @@ import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
+import com.griddynamics.jagger.user.test.configurations.JTestSuite;
+import com.griddynamics.jagger.util.ConfigurationGenerator;
 import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 import com.google.common.collect.HashMultimap;
@@ -57,10 +60,12 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.Service;
+import org.springframework.context.ApplicationContext;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -102,6 +107,12 @@ public class Master implements Runnable {
     private MetricTablesChecker metricTablesChecker;
     private DatabaseService databaseService;
     private DecisionMakerDistributionListener decisionMakerDistributionListener;
+    private ConfigurationGenerator configurationGenerator;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+
     private Thread shutdownHook = new Thread(new Runnable() {
         @Override
         public void run() {
@@ -118,7 +129,7 @@ public class Master implements Runnable {
             }
         }
     }, String.format("Shutdown hook for %s", getClass().toString()));
-    
+
     @Required
     public void setReconnectPeriod(long reconnectPeriod) {
         this.reconnectPeriod = reconnectPeriod;
@@ -190,32 +201,34 @@ public class Master implements Runnable {
     public void init() {
         metricTablesChecker.checkMetricColumnsHaveDoubleType();
         metricTablesChecker.checkMetricDetailsIndex();
-    
+
         if (!keyValueStorage.isAvailable()) {
             keyValueStorage.initialize();
             keyValueStorage.setSessionId(sessionIdProvider.getSessionId());
         }
-    
+
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
-    
+
         if (configuration.getMonitoringConfiguration() != null) {
             dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
         }
     }
-    
+
     @Override
     public void run() {
         final String sessionId = sessionIdProvider.getSessionId();
-    
+        List<JTestSuite> userSuites = (List<JTestSuite>) applicationContext.getBean("userConfigurations");
+        Configuration userConfiguration = configurationGenerator.generate(userSuites.get(0));
+        configuration = userConfiguration;
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();
         allNodes.putAll(NodeType.MASTER, coordinator.getAvailableNodes(NodeType.MASTER));
-        NodeContext context  = Coordination.contextBuilder(NodeId.masterNode())
-                                           .addService(LogWriter.class, getLogWriter())
-                                           .addService(LogReader.class, getLogReader())
-                                           .addService(KeyValueStorage.class, keyValueStorage)
-                                           .addService(SessionMetaDataStorage.class, metaDataStorage)
-                                           .addService(DatabaseService.class,databaseService)
-                                           .build();
+        NodeContext context = Coordination.contextBuilder(NodeId.masterNode())
+                .addService(LogWriter.class, getLogWriter())
+                .addService(LogReader.class, getLogReader())
+                .addService(KeyValueStorage.class, keyValueStorage)
+                .addService(SessionMetaDataStorage.class, metaDataStorage)
+                .addService(DatabaseService.class, databaseService)
+                .build();
         // add additional listener to configuration
         // done here (not in spring like other listeners), because we need to set context to this listener
         decisionMakerDistributionListener.setNodeContext(context);
@@ -223,8 +236,8 @@ public class Master implements Runnable {
     
         CountDownLatch agentCountDownLatch = new CountDownLatch(
                 conditions.isMonitoringEnable() ?
-                conditions.getMinAgentsCount() :
-                0
+                        conditions.getMinAgentsCount() :
+                        0
         );
         CountDownLatch kernelCountDownLatch = new CountDownLatch(conditions.getMinKernelsCount());
         Map<NodeType, CountDownLatch> countDownLatchMap = Maps.newHashMap();
@@ -246,7 +259,7 @@ public class Master implements Runnable {
         try {
             Runtime.getRuntime().addShutdownHook(shutdownHook);
             log.info("Configuration launched!!");
-    
+
             if (configuration.getMonitoringConfiguration() != null) {
                 Map<ManageAgent.ActionProp, Serializable>  agentStartManagementProps = Maps.newHashMap();
                 agentStartManagementProps.put(
@@ -254,7 +267,7 @@ public class Master implements Runnable {
                 );
                 processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
             }
-            
+
             TestSuiteListener testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
                                                                                                                     sessionId,
                                                                                                                     "session",
@@ -416,6 +429,10 @@ public class Master implements Runnable {
     @Required
     public void setTimeoutConfiguration(MasterTimeoutConfiguration timeoutConfiguration) {
         this.timeoutConfiguration = timeoutConfiguration;
+    }
+
+    public void setConfigurationGenerator(ConfigurationGenerator configurationGenerator) {
+        this.configurationGenerator = configurationGenerator;
     }
 
     private class StartWorkConditions implements Runnable {
