@@ -83,4 +83,31 @@ public class ProjectEntity {
                 + ", version='" + version + '\''
                 + '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ProjectEntity that = (ProjectEntity) obj;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (zipPath != null ? !zipPath.equals(that.zipPath) : that.zipPath != null) return false;
+        Long dbIdLong = dbId != null ? dbId.getId() : null;
+        Long otherDbId = that.dbId != null ? that.dbId.getId() : null;
+        if (dbIdLong != null ? !dbIdLong.equals(otherDbId) : otherDbId != null) return false;
+        return version != null ? version.equals(that.version) : that.version == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (zipPath != null ? zipPath.hashCode() : 0);
+        result = 31 * result + (dbId != null ? dbId.hashCode() : 0);
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        return result;
+    }
 }

@@ -44,6 +44,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import com.google.common.collect.Sets;
@@ -71,6 +72,8 @@ public final class JaggerLauncher {
     public static final String RDB_CONFIGURATION = "chassis.rdb.configuration";
     public static final String INCLUDE_SUFFIX = ".include";
     public static final String EXCLUDE_SUFFIX = ".exclude";
+    
+    public static final String TEST_CONFIG_NAME_PROP = "chassis.master.session.configuration.bean.name";
 
     public static final String DEFAULT_ENVIRONMENT_PROPERTIES = "jagger.default.environment.properties";
     public static final String USER_ENVIRONMENT_PROPERTIES = "jagger.user.environment.properties";
@@ -146,36 +149,65 @@ public final class JaggerLauncher {
         int result = launchManager.launch();
         System.exit(result);
     }
+    
+    private static void initCoordinator(ApplicationContext applicationContext) {
+        final Coordinator coordinator = (Coordinator) applicationContext.getBean("coordinator");
+        coordinator.waitForReady();
+        coordinator.initialize();
+    }
 
     private static void launchMaster(final URL directory) {
         LaunchTask masterTask = new LaunchTask() {
             @Override
             public void run() {
-                log.info("Starting Master");
-                WebApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
-                Server server = new Server(getPortFrom("master.rest.http.port", 9090));
-                try {
-                    server.setHandler(getServletContextHandler(context));
-                    server.start();
-        
-                    final Coordinator coordinator = (Coordinator) context.getBean("coordinator");
-                    coordinator.waitForReady();
-                    coordinator.initialize();
-                    Master master = (Master) context.getBean("master");
-                    master.run();
-                } catch (Exception e) {
-                    log.error("Error during embedded Jetty handling.", e);
-                    throw new RuntimeException(e);
-                } finally {
+                boolean isStandByMode =
+                        Boolean.parseBoolean(environmentProperties.getProperty("realtime.enable.standby.mode"));
+                
+                if (isStandByMode) {
+                    log.info("Starting Master in stand by mode...");
+                    while (isStandByMode) {
+                       environmentProperties.setProperty(TEST_CONFIG_NAME_PROP, getTestConfigName());
+                       XmlWebApplicationContext context =
+                               (XmlWebApplicationContext) loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
+                       initCoordinator(context);
+                       Master master = (Master) context.getBean("master");
+                       master.run();
+                       
+                       context.destroy();
+                    }
+                } else {
+                    log.info("Starting Master in right away mode...");
+                    WebApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
+                    Server server = new Server(getPortFrom("master.rest.http.port", 9090));
                     try {
-                        server.stop();
+                        server.setHandler(getServletContextHandler(context));
+                        server.start();
+    
+                        initCoordinator(context);
+                        Master master = (Master) context.getBean("master");
+                        master.run();
                     } catch (Exception e) {
+                        log.error("Error during embedded Jetty handling.", e);
                         throw new RuntimeException(e);
+                    } finally {
+                        try {
+                            server.stop();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
         };
         builder.addMainTask(masterTask);
+    }
+    
+    private static String getTestConfigName() {
+        try {
+            Thread.sleep(100_000); // 100 secs
+        } catch (InterruptedException ignored) {
+        }
+        return environmentProperties.getProperty(TEST_CONFIG_NAME_PROP);
     }
     
     private static int getPortFrom(String envPropName, int def) {
@@ -293,7 +325,9 @@ public final class JaggerLauncher {
                 log.info("Starting Cometd Coordination Server");
 
                 ApplicationContext context = loadContext(directory, COORDINATION_HTTP_CONFIGURATION, environmentProperties);
-
+    
+                initCoordinator(context);
+                
                 Server jettyServer = (Server) context.getBean("jettyServer");
                 try {
                     jettyServer.start();

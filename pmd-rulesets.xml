@@ -32,12 +32,10 @@
     <rule ref="rulesets/java/clone.xml/CloneThrowsCloneNotSupportedException">		<priority>5</priority></rule>
     <rule ref="rulesets/java/clone.xml/ProperCloneImplementation">					<priority>5</priority></rule>
 
-    <rule ref="rulesets/java/codesize.xml/CyclomaticComplexity">					<priority>5</priority></rule>
     <rule ref="rulesets/java/codesize.xml/ExcessiveClassLength">			        <priority>5</priority></rule>
     <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">					<priority>5</priority></rule>
     <rule ref="rulesets/java/codesize.xml/ExcessiveParameterList">					<priority>5</priority></rule>
     <rule ref="rulesets/java/codesize.xml/ExcessivePublicCount">					<priority>5</priority></rule>
-    <rule ref="rulesets/java/codesize.xml/NPathComplexity">							<priority>5</priority></rule>
     <rule ref="rulesets/java/codesize.xml/TooManyFields">							<priority>5</priority></rule>
 
     <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor"> 			<priority>5</priority></rule>

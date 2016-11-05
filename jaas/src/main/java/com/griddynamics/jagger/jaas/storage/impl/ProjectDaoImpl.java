@@ -1,24 +1,20 @@
-package com.griddynamics.jagger.jaas.storage;
+package com.griddynamics.jagger.jaas.storage.impl;
 
+import com.griddynamics.jagger.jaas.storage.AbstractCrudDao;
+import com.griddynamics.jagger.jaas.storage.ProjectDao;
 import com.griddynamics.jagger.jaas.storage.model.ProjectEntity;
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Hibernate based transactional implementation of {@link com.griddynamics.jagger.jaas.storage.CrudDao} interface for
+ * {@link ProjectEntity}.
+ */
 @SuppressWarnings("unchecked")
 @Repository
-public class ProjectDaoImpl implements ProjectDao {
-
-    @Autowired
-    SessionFactory sessionFactory;
-
-    protected Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
-    }
+public class ProjectDaoImpl extends AbstractCrudDao<ProjectEntity, Long> implements ProjectDao {
 
     @Override
     @Transactional
@@ -55,6 +51,12 @@ public class ProjectDaoImpl implements ProjectDao {
     public void delete(Long projectId) {
         ProjectEntity project = new ProjectEntity();
         project.setId(projectId);
+        delete(project);
+    }
+
+    @Override
+    @Transactional
+    public void delete(ProjectEntity project) {
         getCurrentSession().delete(project);
     }
 }

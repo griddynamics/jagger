@@ -200,15 +200,9 @@ public class Master implements Runnable {
     
         if (configuration.getMonitoringConfiguration() != null) {
             dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
-            Map<ManageAgent.ActionProp, Serializable>  agentStartManagementProps = Maps.newHashMap();
-        
-            agentStartManagementProps.put(
-                    ManageAgent.ActionProp.SET_JMX_METRICS, dynamicPlotGroups.getJmxMetrics()
-            );
-            processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
         }
     }
-
+    
     @Override
     public void run() {
         final String sessionId = sessionIdProvider.getSessionId();
@@ -252,7 +246,15 @@ public class Master implements Runnable {
         try {
             Runtime.getRuntime().addShutdownHook(shutdownHook);
             log.info("Configuration launched!!");
-
+    
+            if (configuration.getMonitoringConfiguration() != null) {
+                Map<ManageAgent.ActionProp, Serializable>  agentStartManagementProps = Maps.newHashMap();
+                agentStartManagementProps.put(
+                        ManageAgent.ActionProp.SET_JMX_METRICS, dynamicPlotGroups.getJmxMetrics()
+                );
+                processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
+            }
+            
             TestSuiteListener testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
                                                                                                                     sessionId,
                                                                                                                     "session",
@@ -277,6 +279,9 @@ public class Master implements Runnable {
                     listener.onSessionExecuted(sessionId, metaDataStorage.getComment());
                 }
             }
+            log.info("Going to stop all agents");
+            processAgentManagement(sessionId, agentStopManagementProps);
+            log.info("Agents stopped");
 
             log.info("Going to generate report");
             if (configuration.getReport() != null) {
@@ -285,10 +290,6 @@ public class Master implements Runnable {
                 reportingService.renderReport(true);
             }
             log.info("Report generated");
-
-            log.info("Going to stop all agents");
-            processAgentManagement(sessionId, agentStopManagementProps);
-            log.info("Agents stopped");
         } finally {
             try {
                 keyValueStorage.deleteAll();

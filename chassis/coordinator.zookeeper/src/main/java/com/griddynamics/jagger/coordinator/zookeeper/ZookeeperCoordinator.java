@@ -20,21 +20,38 @@
 
 package com.griddynamics.jagger.coordinator.zookeeper;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.griddynamics.jagger.coordinator.*;
+import static com.griddynamics.jagger.coordinator.zookeeper.Zoo.znode;
+
+import com.griddynamics.jagger.coordinator.Command;
+import com.griddynamics.jagger.coordinator.CommandExecutor;
+import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.coordinator.CoordinatorException;
+import com.griddynamics.jagger.coordinator.NodeCommandExecutionListener;
+import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.NodeStatus;
+import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.coordinator.Qualifier;
+import com.griddynamics.jagger.coordinator.RemoteExecutor;
+import com.griddynamics.jagger.coordinator.StatusChangeListener;
+import com.griddynamics.jagger.coordinator.Worker;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static com.griddynamics.jagger.coordinator.zookeeper.Zoo.znode;
 
 public class ZookeeperCoordinator implements Coordinator {
     private static final Logger log = LoggerFactory.getLogger(ZookeeperCoordinator.class);
@@ -58,6 +75,9 @@ public class ZookeeperCoordinator implements Coordinator {
         log.info("Going to register node {} with {} workers", nodeContext.getId(), workers.size());
 
         ZNode typeNode = rootNode.child(CoordinationUtil.nodeNameOf(nodeContext.getId().getType()));
+        if (typeNode.hasChild(nodeContext.getId().getIdentifier())) {
+            typeNode.child(nodeContext.getId().getIdentifier()).removeWithChildren();
+        }
         ZNode node = typeNode.createChild(znode().withPath(nodeContext.getId().getIdentifier()));
 
         Set<CommandExecutor<?, ?>> executors = Sets.newHashSet();
@@ -251,16 +271,20 @@ public class ZookeeperCoordinator implements Coordinator {
 
     @Override
     public void initialize() {
-        log.debug("Going to initialize required znode structure in zookeeper");
+        log.info("Going to initialize required znode structure in zookeeper");
         for (NodeType type : NodeType.values()) {
             String child = CoordinationUtil.nodeNameOf(type);
-            rootNode.createChild(znode().withPath(child));
-            log.debug("Created node {}", child);
+            if (!rootNode.hasChild(child)) {
+                rootNode.createChild(znode().withPath(child));
+                log.info("Created Zookeeper node {}", child);
+            }
         }
-
-        rootNode.createChild(znode().withPath(CoordinationUtil.STATUSES_NODE_NAME));
-        log.debug("Created node {}", CoordinationUtil.STATUSES_NODE_NAME);
-        log.debug("Successfully initialized");
+    
+        if (!rootNode.hasChild(CoordinationUtil.STATUSES_NODE_NAME)) {
+            rootNode.createChild(znode().withPath(CoordinationUtil.STATUSES_NODE_NAME));
+            log.info("Created Zookeeper node {}", CoordinationUtil.STATUSES_NODE_NAME);
+        }
+        log.info("Successfully initialized");
     }
 
     @Override
