@@ -46,13 +46,11 @@ import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
-import com.griddynamics.jagger.user.test.configurations.JTestSuite;
-import com.griddynamics.jagger.util.ConfigurationGenerator;
+import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 import com.google.common.collect.HashMultimap;
@@ -60,12 +58,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.Service;
-import org.springframework.context.ApplicationContext;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -108,9 +104,6 @@ public class Master implements Runnable {
     private DatabaseService databaseService;
     private DecisionMakerDistributionListener decisionMakerDistributionListener;
     private ConfigurationGenerator configurationGenerator;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     private Thread shutdownHook = new Thread(new Runnable() {
         @Override
@@ -216,8 +209,7 @@ public class Master implements Runnable {
     @Override
     public void run() {
         final String sessionId = sessionIdProvider.getSessionId();
-        Configuration userConfiguration = configurationGenerator.generate();
-        configuration = userConfiguration;
+        configuration = configurationGenerator.generate();
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();
         allNodes.putAll(NodeType.MASTER, coordinator.getAvailableNodes(NodeType.MASTER));
         NodeContext context = Coordination.contextBuilder(NodeId.masterNode())
