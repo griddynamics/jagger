@@ -173,6 +173,7 @@
         <property name="e1ScenarioAggregator" ref="e1ScenarioAggregator"/>
         <property name="metricLogProcessor" ref="metricLogProcessor"/>
         <property name="profilerLogProcessor" ref="profilerLogProcessor"/>
+        <property name="userConfigurations" ref="userConfigurations"/>
     </bean>
 
 </beans>

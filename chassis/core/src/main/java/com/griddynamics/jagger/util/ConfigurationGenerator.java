@@ -48,7 +48,15 @@ public class ConfigurationGenerator {
     private WorkloadAggregator e1ScenarioAggregator;
     private MetricLogProcessor metricLogProcessor;
     private ProfilerLogProcessor profilerLogProcessor;
+    private List<JTestSuite> userConfigurations;
 
+    public void setUserConfigurations(List<JTestSuite> userConfigurations) {
+        this.userConfigurations = userConfigurations;
+    }
+
+    public Configuration generate(){
+        return generate(userConfigurations.iterator().next());
+    }
 
     /**
      * Generates {@link Configuration} from {@code jTestConfiguration}.
