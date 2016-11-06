@@ -13,8 +13,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * @author asokol
  *         created 11/6/16
+ *         Generates {@link TerminateStrategyConfiguration} entity from user-defined {@link JTermination} entity.
  */
-public class TerminationGenerator {
+class TerminationGenerator {
 
     static TerminateStrategyConfiguration generateTermination(JTermination jTermination) {
         TerminateStrategyConfiguration termination = null;
