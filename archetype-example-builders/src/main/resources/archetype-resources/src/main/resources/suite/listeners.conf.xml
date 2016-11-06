@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
+
+    <!--This xml file will contain bean declaration of custom listeners:-->
+    <!--test suite, test group, test, invocation listeners-->
+    <!--Listeners allow to execute user actions, triggered by Jagger events like f.e. test start/stop-->
+
+</beans>
