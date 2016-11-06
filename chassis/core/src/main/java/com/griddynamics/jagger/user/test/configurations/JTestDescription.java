@@ -78,7 +78,8 @@ public class JTestDescription {
         }
 
         /**
-         * Add some description.
+         * Sets class type of {@link com.griddynamics.jagger.invoker.Invoker}.
+         * Currently available Invoker_PageVisitor.
          *
          * @param invokerClass the class of {@link com.griddynamics.jagger.invoker.Invoker}.
          */

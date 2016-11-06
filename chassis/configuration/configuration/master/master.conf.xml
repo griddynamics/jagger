@@ -166,7 +166,7 @@
 
     <bean id="metaDataStorage" class="com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage"/>
 
-    <bean id="configurationGenerator" class="com.griddynamics.jagger.util.ConfigurationGenerator">
+    <bean id="configurationGenerator" class="com.griddynamics.jagger.util.generators.ConfigurationGenerator">
         <property name="basicAggregator" ref="basicAggregator"/>
         <property name="basicSessionCollector" ref="basicSessionCollector"/>
         <property name="e1MasterCollector" ref="e1MasterCollector"/>
