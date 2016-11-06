@@ -8,7 +8,7 @@ import com.griddynamics.jagger.user.test.configurations.load.JLoadRps;
 /**
  * @author asokol
  *         created 11/6/16
- *         *         Generates {@link WorkloadClockConfiguration} entity from user-defined {@link JLoad} entity.
+ *         Generates {@link WorkloadClockConfiguration} entity from user-defined {@link JLoad} entity.
  */
 class WorkloadGenerator {
 
