@@ -59,6 +59,8 @@
         <module>archetype-examples</module>
         <module>jaas</module>
         <module>rawdata</module>
+        <module>archetype-example-builders</module>
+
     </modules>
 
     <scm>
