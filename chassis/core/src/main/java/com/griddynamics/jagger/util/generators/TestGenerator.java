@@ -12,8 +12,9 @@ import static com.griddynamics.jagger.util.generators.WorkloadGenerator.generate
 /**
  * @author asokol
  *         created 11/6/16
+ *         Generates {@link WorkloadTask} entity from user-defined {@link JTest} entity.
  */
-public class TestGenerator {
+class TestGenerator {
     static WorkloadTask generateFromTest(JTest jTest) {
         WorkloadTask task = generatePrototype(jTest.getTestDescription());
         task.setName(jTest.getId());

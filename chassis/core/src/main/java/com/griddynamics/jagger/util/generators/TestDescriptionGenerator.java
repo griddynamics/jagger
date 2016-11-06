@@ -10,8 +10,9 @@ import com.griddynamics.jagger.user.test.configurations.JTestDescription;
 /**
  * @author asokol
  *         created 11/6/16
+ *         Generate {@link WorkloadTask} entity from user-defined {@link JTestDescription} entity.
  */
-public class TestDescriptionGenerator {
+class TestDescriptionGenerator {
 
     static WorkloadTask generatePrototype(JTestDescription jTestDescription) {
         WorkloadTask prototype = new WorkloadTask();

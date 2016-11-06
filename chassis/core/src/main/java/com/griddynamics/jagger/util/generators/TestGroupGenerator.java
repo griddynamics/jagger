@@ -14,8 +14,9 @@ import static com.griddynamics.jagger.util.generators.TestGenerator.generateFrom
 /**
  * @author asokol
  *         created 11/6/16
+ *         Generates {@link Task} entity from user-defined {@link JTestGroup} entity.
  */
-public class TestGroupGenerator {
+class TestGroupGenerator {
     static Task generateFromTestGroup(JTestGroup jTestGroup) {
         CompositeTask compositeTask = new CompositeTask();
         compositeTask.setLeading(new ArrayList<>());
