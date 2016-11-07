@@ -44,6 +44,7 @@
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
         <checkstyle.version>7.1.1</checkstyle.version>
         <gwt.version>2.5.1</gwt.version>
+        <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
     </properties>
 
     <modules>
@@ -59,6 +60,7 @@
         <module>archetype-examples</module>
         <module>jaas</module>
         <module>rawdata</module>
+        <module>jaas-client</module>
     </modules>
 
     <scm>
@@ -105,6 +107,12 @@
     <dependencyManagement>
         <dependencies>
             <!-- Jagger Components -->
+            <dependency>
+                <groupId>com.griddynamics.jagger</groupId>
+                <artifactId>jaas-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.util</artifactId>
