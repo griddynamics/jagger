@@ -46,8 +46,9 @@ public class ConfigurationGenerator {
      */
     public Configuration generate(JTestSuite jTestConfiguration) {
         Configuration configuration = new Configuration();
-        List<Task> tasks = jTestConfiguration.getTestGroups().stream().
-                map(TestGroupGenerator::generateFromTestGroup)
+        List<Task> tasks = jTestConfiguration.getTestGroups()
+                .stream()
+                .map(TestGroupGenerator::generateFromTestGroup)
                 .collect(Collectors.toList());
         configuration.setTasks(tasks);
 
