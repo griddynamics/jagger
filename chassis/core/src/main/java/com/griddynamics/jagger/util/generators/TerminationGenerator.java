@@ -20,17 +20,9 @@ class TerminationGenerator {
     static TerminateStrategyConfiguration generateTermination(JTermination jTermination) {
         TerminateStrategyConfiguration termination = null;
         if (jTermination instanceof JTerminationIterations) {
-            termination = new IterationsOrDurationStrategyConfiguration();
-            String duration = parseDuration(((JTerminationIterations) jTermination).getMaxDurationInSeconds());
-            ((IterationsOrDurationStrategyConfiguration) termination).setDuration(duration);
-            ((IterationsOrDurationStrategyConfiguration) termination).setIterations(
-                    (int) ((JTerminationIterations) jTermination).getIterationCount());
-            ((IterationsOrDurationStrategyConfiguration) termination).setShutdown(new AtomicBoolean(false));
+            termination = generateIterationTermination((JTerminationIterations) jTermination);
         } else if (jTermination instanceof JTerminationDuration) {
-            termination = new IterationsOrDurationStrategyConfiguration();
-            String duration = parseDuration(((JTerminationDuration) jTermination).getDurationInSeconds());
-            ((IterationsOrDurationStrategyConfiguration) termination).setDuration(duration);
-            ((IterationsOrDurationStrategyConfiguration) termination).setShutdown(new AtomicBoolean(false));
+            termination = generateDurationTermination((JTerminationDuration) jTermination);
         } else if (jTermination instanceof JTerminationBackground) {
             termination = new InfiniteTerminationStrategyConfiguration();
         }
@@ -39,5 +31,22 @@ class TerminationGenerator {
 
     private static String parseDuration(long durationInSecond) {
         return durationInSecond + "s";
+    }
+
+    private static TerminateStrategyConfiguration generateIterationTermination(JTerminationIterations jTerminationIterations) {
+        IterationsOrDurationStrategyConfiguration termination = new IterationsOrDurationStrategyConfiguration();
+        String duration = parseDuration(jTerminationIterations.getMaxDurationInSeconds());
+        termination.setDuration(duration);
+        termination.setIterations((int) jTerminationIterations.getIterationCount());
+        termination.setShutdown(new AtomicBoolean(false));
+        return termination;
+    }
+
+    private static TerminateStrategyConfiguration generateDurationTermination(JTerminationDuration jTermination) {
+        IterationsOrDurationStrategyConfiguration termination = new IterationsOrDurationStrategyConfiguration();
+        String duration = parseDuration(jTermination.getDurationInSeconds());
+        termination.setDuration(duration);
+        termination.setShutdown(new AtomicBoolean(false));
+        return termination;
     }
 }
