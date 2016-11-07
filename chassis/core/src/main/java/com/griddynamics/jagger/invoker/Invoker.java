@@ -71,15 +71,15 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @li @ref Main_Listeners_General_group
 /// @li @ref Main_Providers_General_group
 /// @li @ref Main_Services_General_group
-/// @li @ref Main_Decision_Maker_General_group @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
+/// @li @ref Main_Decision_Maker_General_group
 ///
 /// @li @ref Main_Custom_Components_group
 ///
-/// @li @ref Main_Properties_group @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
+/// @li @ref Main_Properties_group
 ///
 /// @li @ref WebUiMain
 ///
-/// @li @ref MonitoringMain @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
+/// @li @ref MonitoringMain
 ///
 /// @n
 /// @n

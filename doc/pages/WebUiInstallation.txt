@@ -10,7 +10,7 @@
 /// I will show you how to launch jagger web client with [Apache Tomcat](http://tomcat.apache.org/) @n
 /// @n
 /// @li Download jagger war file from the next link - @n
-/// https://nexus.griddynamics.net/nexus/content/repositories/public/com/griddynamics/jagger/webclient/1.2.5/webclient-1.2.5.war @n
+/// https://nexus.griddynamics.net/nexus/content/repositories/public/com/griddynamics/jagger/webclient/1.2.6/webclient-1.2.6.war @n
 /// <b> @e Note: </b> Latest version number you can find in [Release notes](https://github.com/griddynamics/jagger/wiki/Jagger-Release-Notes#jagger-release-notes) @n
 /// @n
 /// @li Rename `webclient-X.X.X.war` file to `ROOT.war` @n
