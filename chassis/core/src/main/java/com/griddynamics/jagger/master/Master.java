@@ -20,6 +20,11 @@
 
 package com.griddynamics.jagger.master;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.agent.model.ManageAgent;
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.Coordinator;
@@ -46,19 +51,14 @@ import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
-import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
+import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.Service;
-
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,8 +67,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Main thread of Master
@@ -125,11 +123,6 @@ public class Master implements Runnable {
     @Required
     public void setReconnectPeriod(long reconnectPeriod) {
         this.reconnectPeriod = reconnectPeriod;
-    }
-
-    @Required
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     @Required
@@ -200,6 +193,9 @@ public class Master implements Runnable {
         }
 
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
+        if (configuration == null) {
+            configuration = configurationGenerator.generate();
+        }
 
         if (configuration.getMonitoringConfiguration() != null) {
             dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
@@ -209,7 +205,6 @@ public class Master implements Runnable {
     @Override
     public void run() {
         final String sessionId = sessionIdProvider.getSessionId();
-        configuration = configurationGenerator.generate();
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();
         allNodes.putAll(NodeType.MASTER, coordinator.getAvailableNodes(NodeType.MASTER));
         NodeContext context = Coordination.contextBuilder(NodeId.masterNode())

@@ -45,7 +45,6 @@
     </bean>
 
     <bean id="master" class="com.griddynamics.jagger.master.Master">
-        <property name="configuration" ref="${chassis.master.session.configuration.bean.name}"/>
         <property name="coordinator" ref="coordinator"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
@@ -173,7 +172,7 @@
         <property name="e1ScenarioAggregator" ref="e1ScenarioAggregator"/>
         <property name="metricLogProcessor" ref="metricLogProcessor"/>
         <property name="profilerLogProcessor" ref="profilerLogProcessor"/>
-        <property name="userConfigurations" ref="${chassis.master.session.configuration.bean.name}"/>
+        <property name="userConfigurations" ref="userConfigurations"/>
     </bean>
 
 </beans>

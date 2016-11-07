@@ -37,8 +37,7 @@ public class MasterRestController {
     
     @Resource(name = "sessionIdProvider")
     private SessionIdProvider sessionIdProvider;
-    
-    @Resource(name = "${chassis.master.session.configuration.bean.name}")
+
     private Configuration configuration;
     
     @Value("${chassis.master.session.configuration.bean.name}")
