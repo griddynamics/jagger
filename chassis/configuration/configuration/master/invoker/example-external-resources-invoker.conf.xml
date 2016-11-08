@@ -25,48 +25,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd">
 
-    <bean id="soapActiveStationsQuery" class="com.griddynamics.jagger.invoker.soap.SOAPQuery">
-        <property name="defaultEndpoint" value="http://opendap.co-ops.nos.noaa.gov/axis/services/ActiveStations"/>
-        <property name="method" value="getActiveStations"/>
-        <property name="methodParams">
-            <map>
-                <entry key="x" value-ref="soapCalculatorQueryParamX"/>
-                <entry key="y" value-ref="soapCalculatorQueryParamY"/>
-            </map>
-        </property>
-        <property name="wsdl" value="http://soaptest.parasoft.com/calculator.wsdl"/>
-    </bean>
-
-    <bean id="soapCalculatorQueryParamX" class="java.lang.Float">
-        <constructor-arg type="java.lang.String" value="1.0"/>
-    </bean>
-    <bean id="soapCalculatorQueryParamY" class="java.lang.Float">
-        <constructor-arg type="java.lang.String" value="2.0"/>
-    </bean>
-
-    <bean id="soapActiveStations" class="com.griddynamics.jagger.invoker.soap.SOAPInvokerConfiguration">
-        <property name="query" ref="soapActiveStationsQuery"/>
-    </bean>
-
-    <bean id="googlePageQuery" class="com.griddynamics.jagger.invoker.http.HttpQuery">
-        <property name="method" value="GET"/>
-        <property name="methodParams">
-            <map>
-                <entry key="P1" value="V1"/>
-                <entry key="P2" value="V2"/>
-                <entry key="P3" value="V3"/>
-            </map>
-        </property>
-        <property name="clientParams">
-            <map>
-                <entry key="http.protocol.allow-circular-redirects" value="false"/>
-                <entry key="http.protocol.max-redirects" value="2"/>
-                <entry key="http.connection-manager.timeout" value="5000"/>
-            </map>
-        </property>
-    </bean>
-
-
     <bean id="parentHttpQuery" class="com.griddynamics.jagger.invoker.http.HttpQuery">
         <property name="method" value="GET" />
         <property name="clientParams">
@@ -128,29 +86,4 @@
         </property>
         <property name="invokerClazz" value="com.griddynamics.jagger.invoker.http.HttpInvoker"/>
     </bean>
-
-    <bean id="googlePageNew" class="com.griddynamics.jagger.invoker.http.HttpInvokerConfiguration">
-        <property name="query" ref="googlePageQuery"/>
-        <property name="endpoint" value="http://www.google.com/search"/>
-    </bean>
-
-    <bean id="googlePage"
-          class="com.griddynamics.jagger.invoker.http.HttpVisitorInvokerConfiguration">
-        <property name="url" value="http://google.com"/>
-    </bean>
-
-    <bean id="yandexPage"
-          class="com.griddynamics.jagger.invoker.http.HttpVisitorInvokerConfiguration">
-        <property name="url" value="http://ya.ru"/>
-    </bean>
-
-    <bean id="griddynamicsPage"
-          class="com.griddynamics.jagger.invoker.http.HttpVisitorInvokerConfiguration">
-        <property name="url" value="http://www.griddynamics.com"/>
-    </bean>
-
-    <bean id="groovyCnnRssInvoker" class="com.griddynamics.jagger.invoker.script.GroovyLoadInvokerSupplier">
-        <property name="script" value="configuration/master/invoker/scripts/examples/GroovyRestInvoker.groovy"/>
-    </bean>
-
 </beans>

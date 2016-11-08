@@ -24,5 +24,6 @@ package com.griddynamics.jagger.invoker.soap;
  * @author Alexey Kiselyov
  *         Date: 08.08.11
  */
+@Deprecated
 public class SOAPResponce {
 }

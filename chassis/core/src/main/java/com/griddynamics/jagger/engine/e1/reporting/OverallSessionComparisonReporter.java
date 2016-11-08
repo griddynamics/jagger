@@ -20,7 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
@@ -42,14 +41,13 @@ public class OverallSessionComparisonReporter extends AbstractReportProvider {
 
     private SessionComparator sessionComparator;
     private StatusImageProvider statusImageProvider;
-    private BaselineSessionProvider baselineSessionProvider;
 
     @Override
     public JRDataSource getDataSource(String currentSession) {
     
         log.debug("Going to build session comparison report");
         
-        String baselineSession = baselineSessionProvider.getBaselineSession(currentSession);
+        String baselineSession = getContext().getBaselineSessionProvider().getBaselineSession(currentSession);
         SessionVerdict verdict = sessionComparator.compare(currentSession, baselineSession);
 
         getContext().getParameters().put(JAGGER_VERDICT, verdict);
@@ -68,16 +66,6 @@ public class OverallSessionComparisonReporter extends AbstractReportProvider {
     @Required
     public void setSessionComparator(SessionComparator sessionComparator) {
         this.sessionComparator = sessionComparator;
-    }
-    
-    public BaselineSessionProvider getBaselineSessionProvider() {
-        return baselineSessionProvider;
-    }
-    
-    @Required
-    public void setBaselineSessionProvider(BaselineSessionProvider baselineSessionProvider
-    ) {
-        this.baselineSessionProvider = baselineSessionProvider;
     }
     
     public SessionComparator getSessionComparator(){

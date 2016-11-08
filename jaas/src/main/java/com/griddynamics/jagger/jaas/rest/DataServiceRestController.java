@@ -41,8 +41,8 @@ public class DataServiceRestController extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataServiceRestController.class);
 
-    private DynamicDataService dynamicDataService;
-
+    private final DynamicDataService dynamicDataService;
+    
     @Autowired
     public DataServiceRestController(DynamicDataService dynamicDataService) {
         this.dynamicDataService = dynamicDataService;

@@ -1,5 +1,16 @@
 package com.griddynamics.jagger.jaas.service.impl;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
+import static java.lang.String.format;
+import static java.time.ZonedDateTime.now;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentRunningTestSuiteException;
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentStatusException;
 import com.griddynamics.jagger.jaas.service.TestEnvironmentService;
@@ -15,18 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
-import static java.lang.String.format;
-import static java.time.ZoneOffset.UTC;
-import static java.time.ZonedDateTime.now;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Service
 public class TestEnvironmentServiceImpl implements TestEnvironmentService {
@@ -139,6 +138,6 @@ public class TestEnvironmentServiceImpl implements TestEnvironmentService {
     }
 
     private long getExpirationTimestamp() {
-        return now().plusMinutes(environmentsTtlMinutes).withZoneSameInstant(UTC).toInstant().toEpochMilli();
+        return now().plusMinutes(environmentsTtlMinutes).toInstant().toEpochMilli();
     }
 }
