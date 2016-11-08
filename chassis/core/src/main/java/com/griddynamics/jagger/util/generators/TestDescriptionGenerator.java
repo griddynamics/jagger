@@ -1,17 +1,13 @@
 package com.griddynamics.jagger.util.generators;
 
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
-import com.griddynamics.jagger.engine.e1.collector.DiagnosticCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
-import com.griddynamics.jagger.engine.e1.collector.SimpleMetricCalculator;
-import com.griddynamics.jagger.engine.e1.collector.StdDevMetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
-import com.griddynamics.jagger.engine.e1.collector.SumMetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
@@ -33,6 +29,7 @@ import static com.google.common.collect.Lists.newArrayList;
 class TestDescriptionGenerator {
 
     public static WorkloadTask generatePrototype(JTestDescription jTestDescription) {
+
         WorkloadTask prototype = new WorkloadTask();
         prototype.setCalibrator(new OneNodeCalibrator());
         prototype.setDescription(jTestDescription.getDescription());
@@ -43,9 +40,8 @@ class TestDescriptionGenerator {
         scenarioFactory.setLoadBalancer(new SimpleCircularLoadBalancer() {{
             setPairSupplierFactory(new RoundRobinPairSupplierFactory());
         }});
-
-
         prototype.setScenarioFactory(scenarioFactory);
+
         prototype.setName(jTestDescription.getId());
 
         ManagedList collectors = new ManagedList();
