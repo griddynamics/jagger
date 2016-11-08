@@ -300,7 +300,7 @@ public class TestEnvironmentDaoTest {
         return testEnvironmentEntity;
     }
 
-    private List<TestEnvironmentEntity> getTestEnvironmentEntities() {
+    static List<TestEnvironmentEntity> getTestEnvironmentEntities() {
         TestEnvironmentEntity testEnvironmentEntity1 = new TestEnvironmentEntity();
         testEnvironmentEntity1.setEnvironmentId(ENVIRONMENT_ID_1);
         testEnvironmentEntity1.setStatus(RUNNING);

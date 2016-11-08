@@ -1,12 +1,6 @@
 package com.griddynamics.jagger.jaas.rest;
 
-import static com.griddynamics.jagger.jaas.rest.error.ErrorResponse.errorResponse;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-
+import com.griddynamics.jagger.jaas.exceptions.InvalidJobException;
 import com.griddynamics.jagger.jaas.exceptions.ResourceAlreadyExistsException;
 import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentInvalidIdException;
@@ -27,9 +21,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static com.griddynamics.jagger.jaas.rest.error.ErrorResponse.errorResponse;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 /**
  * Handles all exceptional situations for all rest controllers.
@@ -121,9 +121,10 @@ public class GlobalControllerExceptionHandler {
      * - {@link WrongTestEnvironmentStatusException} client tries to set status which doesn't corresponds to runningTestSuite value; <p>
      * - {@link TestEnvironmentNoSessionException} client tries to perform PUT /envs/{envId} request without Environment-Session cookie. <p>
      * - {@link TestEnvironmentInvalidIdException} client tries to create TestEnvironment with invalid id. <p>
+     * - {@link InvalidJobException} client tries to create Job with not existing envId or testSuiteId. <p>
      */
     @ExceptionHandler({WrongTestEnvironmentRunningTestSuiteException.class, WrongTestEnvironmentStatusException.class,
-            TestEnvironmentNoSessionException.class, TestEnvironmentInvalidIdException.class})
+            TestEnvironmentNoSessionException.class, TestEnvironmentInvalidIdException.class, InvalidJobException.class})
     public ResponseEntity<ErrorResponse> badTestSuite(RuntimeException exception) {
         LOGGER.error(exception.getMessage(), exception);
         HttpHeaders httpHeaders = new HttpHeaders();
