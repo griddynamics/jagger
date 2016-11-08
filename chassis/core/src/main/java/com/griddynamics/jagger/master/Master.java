@@ -127,7 +127,6 @@ public class Master implements Runnable {
         this.reconnectPeriod = reconnectPeriod;
     }
 
-    @Required
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
     }
@@ -201,6 +200,10 @@ public class Master implements Runnable {
 
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
 
+        if(configuration == null){
+            configuration = configurationGenerator.generate();
+        }
+
         if (configuration.getMonitoringConfiguration() != null) {
             dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
         }
@@ -209,7 +212,6 @@ public class Master implements Runnable {
     @Override
     public void run() {
         final String sessionId = sessionIdProvider.getSessionId();
-        configuration = configurationGenerator.generate();
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();
         allNodes.putAll(NodeType.MASTER, coordinator.getAvailableNodes(NodeType.MASTER));
         NodeContext context = Coordination.contextBuilder(NodeId.masterNode())

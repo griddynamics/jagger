@@ -45,7 +45,6 @@
     </bean>
 
     <bean id="master" class="com.griddynamics.jagger.master.Master">
-        <property name="configuration" ref="${chassis.master.session.configuration.bean.name}"/>
         <property name="coordinator" ref="coordinator"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
