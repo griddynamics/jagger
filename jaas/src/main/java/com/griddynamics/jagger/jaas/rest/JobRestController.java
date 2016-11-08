@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping("/jobs")
 public class JobRestController extends AbstractController {
-    
+
     private JobService jobService;
 
     @Autowired
@@ -30,26 +31,30 @@ public class JobRestController extends AbstractController {
 
     @GetMapping(value = "/{jobId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<JobEntity> getJob(@PathVariable Long jobId) {
-        
-        return null;
+        return produceGetResponse(jobService, t -> jobService.read(jobId));
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<JobEntity>> getJobs() {
-        
-        return null;
+        return produceGetResponse(jobService, t -> jobService.readAll());
     }
 
     @PutMapping(value = "/{jobId}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateJob(@PathVariable Long jobId, @RequestBody JobEntity job) {
-
-        return null;
+        job.setId(jobId);
+        jobService.update(job);
+        return ResponseEntity.accepted().build();
     }
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createJob(@RequestBody JobEntity job) {
-
-        return null;
+        jobService.create(job);
+        return ResponseEntity.created(
+                ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{jobId}")
+                        .buildAndExpand(job.getId())
+                        .toUri())
+                .build();
     }
 
     @DeleteMapping(value = "/{jobId}")
