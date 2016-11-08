@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.test.jaas.provider;
+package com.griddynamics.jagger.test.jaas.provider.sessions;
 
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.invoker.http.v2.JHttpQuery;
@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 /**
  * Provides queries like /jaas/sessions/{id}.
  */
-public class QueryProvider_SessionIds extends QueryProvider_SessionsList {
+public class QueryProvider_GET_SessionIds extends QueryProvider_GET_SessionsList {
 
-    public QueryProvider_SessionIds() {}
+    public QueryProvider_GET_SessionIds() {}
 
     @Override
     public Iterator iterator() {

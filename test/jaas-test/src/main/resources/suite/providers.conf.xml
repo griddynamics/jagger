@@ -6,8 +6,23 @@
 
     <bean id="endpointProvider_JaaSMain" class="com.griddynamics.jagger.test.jaas.provider.EndpointsProvider_JaaS"/>
 
-    <bean id="queryProvider_SessionsList" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_SessionsList"/>
-    <bean id="queryProvider_SessionIds" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_SessionIds"/>
-    <bean id="queryProvider_SessionTestsList" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_TestsList"/>
-    <bean id="queryProvider_SessionTestNames" class="com.griddynamics.jagger.test.jaas.provider.QueryProvider_TestNames"/>
+    <bean id="queryProvider_DBsList" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_GET_DBsList"/>
+    <bean id="queryProvider_DBIds" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_GET_DBIds"/>
+    <bean id="queryProvider_NonNumeric_DBIds" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_GET_NonNumeric_DBIds"/>
+    <bean id="queryProvider_NonExisting_DBIds" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_GET_NonExisting_DBIds"/>
+
+    <bean id="queryProvider_Create_DB" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_POST_DB"/>
+    <bean id="queryProvider_Get_Created_DB_Ids" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_GET_CreatedDBIds"/>
+    <bean id="queryProvider_Update_DB" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_PUT_DB"/>
+    <bean id="queryProvider_Delete_DB" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_DELETE_DB"/>
+    <bean id="queryProvider_Get_Deleted_DB" class="com.griddynamics.jagger.test.jaas.provider.dbs.QueryProvider_GET_Deleted_DB"/>
+
+    <bean id="queryProvider_SessionsList" class="com.griddynamics.jagger.test.jaas.provider.sessions.QueryProvider_GET_SessionsList"/>
+    <bean id="queryProvider_SessionIds" class="com.griddynamics.jagger.test.jaas.provider.sessions.QueryProvider_GET_SessionIds"/>
+    <bean id="queryProvider_SessionTestsList" class="com.griddynamics.jagger.test.jaas.provider.tests.QueryProvider_GET_TestsList"/>
+    <bean id="queryProvider_SessionTestNames" class="com.griddynamics.jagger.test.jaas.provider.tests.QueryProvider_GET_TestNames"/>
+
+    <bean id="queryProvider_TestMetrics" class="com.griddynamics.jagger.test.jaas.provider.metrics.QueryProvider_GET_TestMetrics"/>
+    <bean id="queryProvider_MetricSummaries" class="com.griddynamics.jagger.test.jaas.provider.metrics.QueryProvider_GET_MetricSummary"/>
+    <bean id="queryProvider_MetricPlots" class="com.griddynamics.jagger.test.jaas.provider.metrics.QueryProvider_GET_MetricPlotData"/>
 </beans>

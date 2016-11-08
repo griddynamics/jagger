@@ -8,15 +8,84 @@
         http://www.griddynamics.com/schema/jagger
         http://www.griddynamics.com/schema/jagger.xsd
         http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd"
-        >
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <beans:import resource="defaults.conf.xml"/>
     <beans:import resource="limits.conf.xml"/>
 
+    <test-description id="td_JaaS_DBsList" name="DB Configs list" version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.dbs.DBsListResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_DBsList" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_ExactDBsIds" name="Some concrete DB Configs" version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.dbs.DBResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_DBIds" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_DBsIds_Non_Numeric" name="String as DB Config id" version="1" parent="td_JaaS_BadRequest">
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_NonNumeric_DBIds" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_DBsIds_Not_Existent" name="Not existing DB Config ids" version="1" parent="td_JaaS_NotFound">
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_NonExisting_DBIds" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_Create_DB" name="Create(POST) /jaas/dbs" version="1" parent="td_JaaS_POST_Request">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.dbs.CreateDBResponseValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_Create_DB"/>
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_CreatedDBsIds" name="Just created DB Configs" version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.dbs.CreatedDBContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_Get_Created_DB_Ids" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_Update_DB" name="Update(PUT) /jaas/dbs" version="1" parent="td_JaaS_PUT_Request">
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_Update_DB"/>
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_Delete_DB" name="Delete(DELETE) /jaas/dbs" version="1" parent="td_JaaS_DELETE_Request">
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_Delete_DB"/>
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_DeletedDBsIds" name="Read just deleted DB Configs" version="1" parent="td_JaaS_NotFound">
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_Get_Deleted_DB"/>
+        </scenario>
+    </test-description>
+
     <test-description id="td_JaaS_SessionsList" name="Sessions list" version="1" parent="td_JaaS_default">
         <info-collectors>
-            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.SessionsListResponseContentValidator"/>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.sessions.SessionsListResponseContentValidator"/>
         </info-collectors>
 
         <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
@@ -26,7 +95,7 @@
 
     <test-description id="td_JaaS_ExactSessionIds" name="Some concrete sessions" version="1" parent="td_JaaS_default">
         <info-collectors>
-            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.SessionResponseContentValidator"/>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.sessions.SessionResponseContentValidator"/>
         </info-collectors>
 
         <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
@@ -36,7 +105,7 @@
 
     <test-description id="td_JaaS_SessionTestsList" name="List of session tests" version="1" parent="td_JaaS_default">
         <info-collectors>
-            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.TestsListResponseContentValidator"/>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.tests.TestsListResponseContentValidator"/>
         </info-collectors>
 
         <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
@@ -46,11 +115,41 @@
 
     <test-description id="td_JaaS_ExactSessionTest" name="Some concrete test" version="1" parent="td_JaaS_default">
         <info-collectors>
-            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.TestResponseContentValidator"/>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.tests.TestResponseContentValidator"/>
         </info-collectors>
 
         <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
             <query-provider xsi:type="query-provider-ref" ref="queryProvider_SessionTestNames" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_MetricsList" name="A test for list of metrics." version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.metrics.MetricsListResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_TestMetrics" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_MetricSummaryList" name="Test for list of metric summaries." version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.metrics.SummaryListResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_MetricSummaries" />
+        </scenario>
+    </test-description>
+
+    <test-description id="td_JaaS_MetricPlotList" name="Test for list of metric plots." version="1" parent="td_JaaS_default">
+        <info-collectors>
+            <validator xsi:type="validator-custom" validator="com.griddynamics.jagger.test.jaas.validator.metrics.PlotListResponseContentValidator"/>
+        </info-collectors>
+
+        <scenario  xsi:type="scenario-query-pool" parent="scn_JaaS_std">
+            <query-provider xsi:type="query-provider-ref" ref="queryProvider_MetricPlots" />
         </scenario>
     </test-description>
 

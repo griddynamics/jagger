@@ -1,13 +1,14 @@
-package com.griddynamics.jagger.test.jaas.validator;
+package com.griddynamics.jagger.test.jaas.validator.tests;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
+import com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.http.v2.JHttpQuery;
 import com.griddynamics.jagger.invoker.http.v2.JHttpResponse;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
-import junit.framework.AssertionFailedError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.griddynamics.jagger.test.jaas.validator.BaseHttpResponseValidator;
+
+import static junit.framework.Assert.assertNotNull;
 
 /**
  * [JFG-879]
@@ -15,8 +16,7 @@ import org.slf4j.LoggerFactory;
  * Expected:
  * - actual record is the same as expected one.
  */
-public class TestResponseContentValidator<E> extends BaseHttpResponseValidator<JHttpQuery<String>, E> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestResponseContentValidator.class);
+public class TestResponseContentValidator extends BaseHttpResponseValidator {
 
     public TestResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
@@ -28,24 +28,15 @@ public class TestResponseContentValidator<E> extends BaseHttpResponseValidator<J
     }
 
     @Override
-    public boolean validate(JHttpQuery<String> query, E endpoint, JHttpResponse result, long duration)  {
-        boolean isValid = false;
+    public boolean isValid(JHttpQuery query, JHttpEndpoint endpoint, JHttpResponse result)  {
+        TestEntity actualEntity= (TestEntity) result.getBody();
+        TestEntity expectedEntity = TestContext.getTestByName(getSessionIdFromQuery(query), getTestNameFromQuery(query));
 
-        //Checks.
-        try {
-            TestEntity actualEntity= (TestEntity) result.getBody();
-            TestEntity expectedEntity = TestContext.getTestByName(getSessionIdFromQuery(query), getTestNameFromQuery(query));
+        assertNotNull("Returned test entity is null.", actualEntity);
+        //TODO: Wait for JFG-916 to be implemented and un-comment.
+        //assertEquals("Expected and actual tests are not equal.", expectedEntity, actualEntity);
 
-            //TODO: Wait for JFG-916 to be implemented and un-comment.
-            //assertEquals("Expected and actual tests are not equal.", expectedEntity, actualEntity);
-            isValid = true;
-        } catch (AssertionFailedError e) {
-            isValid = false;
-            LOGGER.warn("{}'s query response content is not valid, due to [{}].", query.toString(), e.getMessage());
-            logResponseAsFailed(endpoint, result);
-        }
-
-        return isValid;
+        return true;
     }
 
     private String getSessionIdFromQuery(JHttpQuery<String> query){

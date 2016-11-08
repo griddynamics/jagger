@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,7 +26,7 @@ public class EndpointsProvider_JaaS implements Iterable {
     public Iterator iterator() {
         if (endpoints.isEmpty()) {
             try {
-                endpoints.add(new JHttpEndpoint(new URI(endpoint))); //TODO: use another constructor when PR-626 is merged.
+                endpoints.add(new JHttpEndpoint(endpoint));
             } catch (URISyntaxException e) {
                 LOGGER.warn("Could not create an endpoint entity from {} due to: ", endpoint, e);
             }

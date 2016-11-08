@@ -35,9 +35,7 @@
     </repositories>
 
     <dependencies>
-
         <!-- Jagger service-->
-
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>jagger-distribution</artifactId>

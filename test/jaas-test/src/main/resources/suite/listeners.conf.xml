@@ -5,4 +5,5 @@
        default-lazy-init="true">
 
     <bean id="listenerTestSuite" class="com.griddynamics.jagger.test.jaas.listener.TestSuiteConfigListener"/>
+    <bean id="listenerAfterCreateDbTestsCleanUp" class="com.griddynamics.jagger.test.jaas.listener.AfterCreateDbTestsCleanUpListener"/>
 </beans>
