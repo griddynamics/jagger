@@ -68,8 +68,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
-
 /**
  * Main thread of Master
  *
@@ -199,6 +197,9 @@ public class Master implements Runnable {
         }
 
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
+        if (configuration == null) {
+            configuration = configurationGenerator.generate();
+        }
 
         if(configuration == null){
             configuration = configurationGenerator.generate();
@@ -212,7 +213,6 @@ public class Master implements Runnable {
     @Override
     public void run() {
         final String sessionId = sessionIdProvider.getSessionId();
-        configuration = configurationGenerator.generate();
         Multimap<NodeType, NodeId> allNodes = HashMultimap.create();
         allNodes.putAll(NodeType.MASTER, coordinator.getAvailableNodes(NodeType.MASTER));
         NodeContext context = Coordination.contextBuilder(NodeId.masterNode())
