@@ -83,10 +83,11 @@ public class TestEnvironmentRestController extends AbstractController {
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "Update is successful."),
             @ApiResponse(code = 404, message = "Test Environment with provided envId or sessionId is not found."),
-            @ApiResponse(code = 404, message = TestEnvUtils.SESSION_COOKIE + " cookie is not present.")})
+            @ApiResponse(code = 400, message = TestEnvUtils.SESSION_COOKIE + " cookie is not present.")})
     public ResponseEntity<?> updateTestEnvironment(@CookieValue(TestEnvUtils.SESSION_COOKIE) String sessionId,
                                                    @PathVariable String envId,
-                                                   @RequestBody TestEnvironmentEntity testEnv) {
+                                                   @RequestBody TestEnvironmentEntity testEnv,
+                                                   HttpServletResponse response) {
         if (!testEnvService.exists(envId))
             throw ResourceNotFoundException.getTestEnvResourceNfe();
 
@@ -94,7 +95,8 @@ public class TestEnvironmentRestController extends AbstractController {
             throw new TestEnvironmentSessionNotFoundException(envId, sessionId);
 
         testEnv.setEnvironmentId(envId);
-        testEnvService.update(testEnv);
+        TestEnvironmentEntity updated = testEnvService.update(testEnv);
+        response.addCookie(getSessionCookie(updated));
         return ResponseEntity.accepted().build();
     }
 
@@ -137,6 +139,7 @@ public class TestEnvironmentRestController extends AbstractController {
     private Cookie getSessionCookie(TestEnvironmentEntity testEnv) {
         Cookie cookie = new Cookie(TestEnvUtils.SESSION_COOKIE, testEnv.getSessionId());
         cookie.setMaxAge(environmentsTtlMinutes * 60);
+        cookie.setPath("/");
     
         return cookie;
     }

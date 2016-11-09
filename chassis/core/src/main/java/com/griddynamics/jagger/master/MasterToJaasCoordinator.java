@@ -113,12 +113,13 @@ public class MasterToJaasCoordinator {
                     throw e;
                 }
                 envId = UUID.randomUUID().toString();
+                LOGGER.warn("Changing env id from {} to {}", testEnvironmentEntity.getEnvironmentId(), envId);
                 testEnvironmentEntity.setEnvironmentId(envId);
             }
         } while (!posted);
     
         final String sessionCookie = extractSessionCookie(responseEntity);
-        LOGGER.info("Received {} cookie value - {}", TestEnvUtils.SESSION_COOKIE, sessionCookie);
+        LOGGER.info("Environment {} successfully registered to JaaS with session cookie - {}", envId, sessionCookie);
         return sessionCookie;
     }
     
@@ -135,12 +136,13 @@ public class MasterToJaasCoordinator {
     }
     
     private boolean isEnvIdUnacceptable(HttpClientErrorException exception) {
-        // If env with such an id already exists
         if (exception.getStatusCode() == HttpStatus.CONFLICT) {
+            LOGGER.warn("Env with id {} already registered", envId);
             return true;
         }
         // If env id doesn't match acceptable pattern.
         if (exception.getStatusCode() == HttpStatus.BAD_REQUEST && exception.getResponseBodyAsString().contains("doesn't match pattern")) {
+            LOGGER.warn("Env id {} doesn't match pattern", envId);
             return true;
         }
         return false;
@@ -226,11 +228,13 @@ public class MasterToJaasCoordinator {
             } while (standBy);
         }
         
-        
         private void updateStatus() throws InterruptedException {
+            LOGGER.debug("Performing status update...");
             try {
-                ResponseEntity<String> responseEntity = doUpdateStatus();
+                ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
                 tryToOfferNextConfigToExecute(responseEntity);
+            } catch (HttpServerErrorException e) {
+                LOGGER.warn("Server error during update", e);
             } catch (HttpClientErrorException e) {
                 if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                     reRegister();
@@ -239,21 +243,6 @@ public class MasterToJaasCoordinator {
                     standBy = false;
                 }
             }
-        }
-        
-        private ResponseEntity<String> doUpdateStatus() throws InterruptedException {
-            int retries = 0;
-            HttpServerErrorException exception;
-            do {
-                try {
-                    return restTemplate.exchange(requestEntity, String.class);
-                } catch (HttpServerErrorException e) {
-                    exception = e;
-                }
-                Thread.sleep(1000 * 60); // Sleep 1 minute before retry
-            } while (retries++ < 5);
-            standBy = false;
-            throw exception;
         }
         
         private void reRegister() {
