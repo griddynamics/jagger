@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.invoker.http.v2;
+package com.griddynamics.jagger.invoker.v2;
 
 import com.google.common.base.Preconditions;
 import com.griddynamics.jagger.invoker.InvocationException;

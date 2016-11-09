@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.invoker.http.v2;
+package com.griddynamics.jagger.invoker.v2;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
@@ -12,8 +12,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
-import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTP;
-import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTPS;
+import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTP;
+import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTPS;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.springframework.web.util.UriComponentsBuilder.fromUri;

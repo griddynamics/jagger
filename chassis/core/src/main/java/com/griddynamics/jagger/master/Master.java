@@ -104,6 +104,7 @@ public class Master implements Runnable {
     private DatabaseService databaseService;
     private DecisionMakerDistributionListener decisionMakerDistributionListener;
     private ConfigurationGenerator configurationGenerator;
+    private boolean useBuilders;
 
     private Thread shutdownHook = new Thread(new Runnable() {
         @Override
@@ -200,7 +201,7 @@ public class Master implements Runnable {
 
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
 
-        if(configuration == null){
+        if(useBuilders){
             configuration = configurationGenerator.generate();
         }
 
@@ -425,6 +426,10 @@ public class Master implements Runnable {
 
     public void setConfigurationGenerator(ConfigurationGenerator configurationGenerator) {
         this.configurationGenerator = configurationGenerator;
+    }
+
+    public void setUseBuilders(boolean useBuilders) {
+        this.useBuilders = useBuilders;
     }
 
     private class StartWorkConditions implements Runnable {

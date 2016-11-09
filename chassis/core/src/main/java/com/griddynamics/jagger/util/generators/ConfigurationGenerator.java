@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.util.generators;
 
 import com.griddynamics.jagger.engine.e1.aggregator.session.BasicAggregator;
+import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.MetricLogProcessor;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.ProfilerLogProcessor;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.WorkloadAggregator;
@@ -28,6 +29,7 @@ public class ConfigurationGenerator {
     private WorkloadAggregator e1ScenarioAggregator;
     private MetricLogProcessor metricLogProcessor;
     private ProfilerLogProcessor profilerLogProcessor;
+    private DurationLogProcessor durationLogProcessor;
     private List<JTestSuite> userConfigurations;
 
     public void setUserConfigurations(List<JTestSuite> userConfigurations) {
@@ -64,7 +66,7 @@ public class ConfigurationGenerator {
         teListeners.add(e1ScenarioAggregator);
         teListeners.add(metricLogProcessor);
         teListeners.add(profilerLogProcessor);
-
+        teListeners.add(durationLogProcessor);
 
         configuration.setSessionExecutionListeners(seListeners);
         configuration.setTaskExecutionListeners(teListeners);
@@ -95,5 +97,9 @@ public class ConfigurationGenerator {
 
     public void setProfilerLogProcessor(ProfilerLogProcessor profilerLogProcessor) {
         this.profilerLogProcessor = profilerLogProcessor;
+    }
+
+    public void setDurationLogProcessor(DurationLogProcessor durationLogProcessor) {
+        this.durationLogProcessor = durationLogProcessor;
     }
 }

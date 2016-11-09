@@ -2,7 +2,7 @@ package com.griddynamics.jagger.test.jaas.validator;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
-import com.griddynamics.jagger.invoker.http.v2.JHttpResponse;
+import com.griddynamics.jagger.invoker.v2.JHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -45,6 +45,7 @@
     </bean>
 
     <bean id="master" class="com.griddynamics.jagger.master.Master">
+        <property name="configuration" ref="${chassis.master.session.configuration.bean.name}"/>
         <property name="coordinator" ref="coordinator"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
@@ -77,6 +78,7 @@
         <property name="databaseService" ref="databaseService"/>
         <property name="decisionMakerDistributionListener" ref="decisionMakerDistributionListener"/>
         <property name="configurationGenerator" ref="configurationGenerator"/>
+        <property name="useBuilders" value="${chassis.master.using.builders}"/>
     </bean>
 
     <bean id="distributionStartTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
@@ -172,6 +174,7 @@
         <property name="e1ScenarioAggregator" ref="e1ScenarioAggregator"/>
         <property name="metricLogProcessor" ref="metricLogProcessor"/>
         <property name="profilerLogProcessor" ref="profilerLogProcessor"/>
+        <property name="durationLogProcessor" ref="durationLogProcessor"/>
         <property name="userConfigurations" ref="userConfigurations"/>
     </bean>
 
