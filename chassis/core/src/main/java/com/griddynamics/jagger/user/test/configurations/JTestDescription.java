@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.griddynamics.jagger.invoker.Invoker;
+
 /**
  * Describes {@link JTest} prototype.
  */
@@ -9,14 +11,14 @@ public class JTestDescription {
     private String comment;
     private Iterable endpoints;
     private Iterable queries;
-    private Class invokerClass;
+    private Invoker invoker;
 
     private JTestDescription(Builder builder) {
         this.id = builder.id;
         this.comment = builder.comment;
         this.endpoints = builder.endpoints;
         this.queries = builder.queries;
-        this.invokerClass = builder.invokerClass;
+        this.invoker = builder.invoker;
     }
 
     public static Builder builder() {
@@ -28,7 +30,7 @@ public class JTestDescription {
         private String comment;
         private Iterable endpoints;
         private Iterable queries;
-        private Class invokerClass;
+        private Invoker invoker;
 
 
         private Builder() {
@@ -81,10 +83,10 @@ public class JTestDescription {
          * Sets class type of {@link com.griddynamics.jagger.invoker.Invoker}.
          * Currently available Invoker_PageVisitor.
          *
-         * @param invokerClass the class of {@link com.griddynamics.jagger.invoker.Invoker}.
+         * @param invoker user's invoker.
          */
-        public Builder withInvokerClass(Class invokerClass) {
-            this.invokerClass = invokerClass;
+        public Builder withInvoker(Invoker invoker) {
+            this.invoker = invoker;
             return this;
         }
 
@@ -116,7 +118,7 @@ public class JTestDescription {
         return queries;
     }
 
-    public Class getInvokerClass() {
-        return invokerClass;
+    public Invoker getInvoker() {
+        return invoker;
     }
 }

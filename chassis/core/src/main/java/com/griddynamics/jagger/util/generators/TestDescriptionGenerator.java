@@ -15,6 +15,7 @@ import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
+import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.user.test.configurations.JTestDescription;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.beans.factory.support.ManagedList;
@@ -36,7 +37,7 @@ class TestDescriptionGenerator {
         QueryPoolScenarioFactory scenarioFactory = new QueryPoolScenarioFactory();
         scenarioFactory.setQueryProvider(jTestDescription.getQueries());
         scenarioFactory.setEndpointProvider(jTestDescription.getEndpoints());
-        scenarioFactory.setInvokerClazz(jTestDescription.getInvokerClass());
+        scenarioFactory.setInvokerClazz(jTestDescription.getInvoker().getClass());
         scenarioFactory.setLoadBalancer(new SimpleCircularLoadBalancer() {{
             setPairSupplierFactory(new RoundRobinPairSupplierFactory());
         }});
