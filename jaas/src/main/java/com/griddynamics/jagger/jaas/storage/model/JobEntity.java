@@ -70,11 +70,11 @@ public class JobEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
 
-        JobEntity jobEntity = (JobEntity) o;
+        JobEntity jobEntity = (JobEntity) obj;
 
         if (id != null ? !id.equals(jobEntity.id) : jobEntity.id != null) return false;
 
@@ -82,8 +82,8 @@ public class JobEntity {
         String otherTestEnvironmentId = jobEntity.getTestEnvironmentId();
         if (testEnvironmentId != null ? !testEnvironmentId.equals(otherTestEnvironmentId) : otherTestEnvironmentId != null) return false;
 
-        String testSuiteId = testSuite != null? testSuite.getTestSuiteId() : null;
-        String otherTestSuiteId =  jobEntity.getTestSuiteId();
+        String testSuiteId = testSuite != null ? testSuite.getTestSuiteId() : null;
+        String otherTestSuiteId = jobEntity.getTestSuiteId();
         if (testSuiteId != null ? !testSuiteId.equals(otherTestSuiteId) : otherTestSuiteId != null) return false;
 
         return jobStartTimeoutInSeconds != null ? jobStartTimeoutInSeconds.equals(jobEntity.jobStartTimeoutInSeconds) : jobEntity
@@ -96,7 +96,7 @@ public class JobEntity {
         int result = id != null ? id.hashCode() : 0;
         String testEnvironmentId = testEnvironment != null ? testEnvironment.getEnvironmentId() : null;
         result = 31 * result + (testEnvironmentId != null ? testEnvironmentId.hashCode() : 0);
-        String testSuiteId = testSuite != null? testSuite.getTestSuiteId() : null;
+        String testSuiteId = testSuite != null ? testSuite.getTestSuiteId() : null;
         result = 31 * result + (testSuiteId != null ? testSuiteId.hashCode() : 0);
         result = 31 * result + (jobStartTimeoutInSeconds != null ? jobStartTimeoutInSeconds.hashCode() : 0);
         return result;
