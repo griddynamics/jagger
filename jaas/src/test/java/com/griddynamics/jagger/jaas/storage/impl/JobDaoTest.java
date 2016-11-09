@@ -2,14 +2,10 @@ package com.griddynamics.jagger.jaas.storage.impl;
 
 import com.griddynamics.jagger.jaas.config.TestPersistenceConfig;
 import com.griddynamics.jagger.jaas.storage.JobDao;
-import com.griddynamics.jagger.jaas.storage.TestEnvironmentDao;
 import com.griddynamics.jagger.jaas.storage.model.JobEntity;
-import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -17,7 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.jaas.storage.impl.TestEnvironmentDaoTest.getTestEnvironmentEntities;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -36,15 +31,6 @@ public class JobDaoTest {
 
     @Autowired
     private JobDao jobDao;
-
-    @Autowired
-    private TestEnvironmentDao testEnvironmentDao;
-
-    @Before
-    public void setUp() {
-        List<TestEnvironmentEntity> testEnvironmentEntities = getTestEnvironmentEntities();
-        testEnvironmentDao.create(testEnvironmentEntities);
-    }
 
     @Test
     public void idGeneratorTest() {
@@ -104,24 +90,6 @@ public class JobDaoTest {
         assertThat(jobDao.readAll().size(), is(1));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void updateSetNotExistingEnvTest() throws Exception {
-        JobEntity expected = getJobEntity();
-        jobDao.create(expected);
-
-        expected.setTestEnvironmentId("not existing env");
-        jobDao.update(expected);
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
-    public void updateSetNotExistingSuiteTest() throws Exception {
-        JobEntity expected = getJobEntity();
-        jobDao.create(expected);
-
-        expected.setTestSuiteId("not existing test");
-        jobDao.update(expected);
-    }
-
     @Test
     public void createOrUpdate_Create_Test() {
         JobEntity expected = getJobEntity();
@@ -176,7 +144,7 @@ public class JobDaoTest {
     private JobEntity getJobEntity() {
         JobEntity jobEntity = new JobEntity();
 
-        jobEntity.setTestEnvironmentId(ENVIRONMENT_ID_1);
+        jobEntity.setEnvId(ENVIRONMENT_ID_1);
         jobEntity.setTestSuiteId(TEST_SUITE_ID_1);
         jobEntity.setJobStartTimeoutInSeconds(0L);
 
@@ -185,12 +153,12 @@ public class JobDaoTest {
 
     private List<JobEntity> getJobEntities() {
         JobEntity jobEntity1 = new JobEntity();
-        jobEntity1.setTestEnvironmentId(ENVIRONMENT_ID_1);
+        jobEntity1.setEnvId(ENVIRONMENT_ID_1);
         jobEntity1.setTestSuiteId(TEST_SUITE_ID_1);
         jobEntity1.setJobStartTimeoutInSeconds(0L);
 
         JobEntity jobEntity2 = new JobEntity();
-        jobEntity2.setTestEnvironmentId(ENVIRONMENT_ID_2);
+        jobEntity2.setEnvId(ENVIRONMENT_ID_2);
         jobEntity2.setTestSuiteId(TEST_SUITE_ID_2);
         jobEntity2.setJobStartTimeoutInSeconds(50L);
 

@@ -1,13 +1,9 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -18,14 +14,10 @@ public class JobEntity {
     private Long id;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "envId")
-    private TestEnvironmentEntity testEnvironment;
+    private String envId;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "testSuiteId")
-    private TestSuiteEntity testSuite;
+    private String testSuiteId;
 
     private Long jobStartTimeoutInSeconds;
 
@@ -37,28 +29,20 @@ public class JobEntity {
         this.id = id;
     }
 
-    @JsonProperty(required = true, value = "envId")
-    public String getTestEnvironmentId() {
-        if (testEnvironment == null) return null;
-        return testEnvironment.getEnvironmentId();
+    public String getEnvId() {
+        return envId;
     }
 
-    public void setTestEnvironmentId(String testEnvironmentId) {
-        TestEnvironmentEntity testEnvironment = new TestEnvironmentEntity();
-        testEnvironment.setEnvironmentId(testEnvironmentId);
-        this.testEnvironment = testEnvironment;
+    public void setEnvId(String envId) {
+        this.envId = envId;
     }
 
-    @JsonProperty(required = true, value = "testSuiteId")
     public String getTestSuiteId() {
-        if (testSuite == null) return null;
-        return testSuite.getTestSuiteId();
+        return testSuiteId;
     }
 
     public void setTestSuiteId(String testSuiteId) {
-        TestSuiteEntity testSuite = new TestSuiteEntity();
-        testSuite.setTestSuiteId(testSuiteId);
-        this.testSuite = testSuite;
+        this.testSuiteId = testSuiteId;
     }
 
     public Long getJobStartTimeoutInSeconds() {
@@ -77,14 +61,8 @@ public class JobEntity {
         JobEntity jobEntity = (JobEntity) obj;
 
         if (id != null ? !id.equals(jobEntity.id) : jobEntity.id != null) return false;
-
-        String testEnvironmentId = testEnvironment != null ? testEnvironment.getEnvironmentId() : null;
-        String otherTestEnvironmentId = jobEntity.getTestEnvironmentId();
-        if (testEnvironmentId != null ? !testEnvironmentId.equals(otherTestEnvironmentId) : otherTestEnvironmentId != null) return false;
-
-        String testSuiteId = testSuite != null ? testSuite.getTestSuiteId() : null;
-        String otherTestSuiteId = jobEntity.getTestSuiteId();
-        if (testSuiteId != null ? !testSuiteId.equals(otherTestSuiteId) : otherTestSuiteId != null) return false;
+        if (envId != null ? !envId.equals(jobEntity.envId) : jobEntity.envId != null) return false;
+        if (testSuiteId != null ? !testSuiteId.equals(jobEntity.testSuiteId) : jobEntity.testSuiteId != null) return false;
 
         return jobStartTimeoutInSeconds != null ? jobStartTimeoutInSeconds.equals(jobEntity.jobStartTimeoutInSeconds) : jobEntity
                 .jobStartTimeoutInSeconds == null;
@@ -94,9 +72,7 @@ public class JobEntity {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        String testEnvironmentId = testEnvironment != null ? testEnvironment.getEnvironmentId() : null;
-        result = 31 * result + (testEnvironmentId != null ? testEnvironmentId.hashCode() : 0);
-        String testSuiteId = testSuite != null ? testSuite.getTestSuiteId() : null;
+        result = 31 * result + (envId != null ? envId.hashCode() : 0);
         result = 31 * result + (testSuiteId != null ? testSuiteId.hashCode() : 0);
         result = 31 * result + (jobStartTimeoutInSeconds != null ? jobStartTimeoutInSeconds.hashCode() : 0);
         return result;
