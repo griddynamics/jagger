@@ -40,21 +40,21 @@ public class JobRestController extends AbstractController {
     }
 
     @PutMapping(value = "/{jobId}", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateJob(@PathVariable Long jobId, @RequestBody JobEntity job) {
+    public ResponseEntity<JobEntity> updateJob(@PathVariable Long jobId, @RequestBody JobEntity job) {
         job.setId(jobId);
         jobService.update(job);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.accepted().body(job);
     }
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createJob(@RequestBody JobEntity job) {
+    public ResponseEntity<JobEntity> createJob(@RequestBody JobEntity job) {
         jobService.create(job);
         return ResponseEntity.created(
                 ServletUriComponentsBuilder.fromCurrentRequest()
                         .path("/{jobId}")
                         .buildAndExpand(job.getId())
                         .toUri())
-                .build();
+                .body(job);
     }
 
     @DeleteMapping(value = "/{jobId}")
