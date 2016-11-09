@@ -20,6 +20,10 @@
 
 package ${package};
 
+import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,22 +31,23 @@ import java.util.List;
 public class Provider_Endpoints implements Iterable
 {
     // Simple example of endpoint provider
-    // Constructor will be triggered during spring bean creation at Jagger startup
-    // Later distributor will invoke iterator method to get endpoints
+// Constructor will be triggered during spring bean creation at Jagger startup
+// Later distributor will invoke iterator method to get endpoints
     public Provider_Endpoints()
     {
-        // Put custom code here to get endpoints
-        // In our case they will be hardcoded
-        endpoints.add("http://google.com");
-        endpoints.add("http://google.ru");
+// Put custom code here to get endpoints
+// In our case they will be hardcoded
+        try {
+            JHttpEndpoint httpEndpoint = new JHttpEndpoint(new URI("http://www.scala-lang.org"));
+            endpoints.add(httpEndpoint);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
-
     @Override
-    public Iterator<String> iterator()
+    public Iterator<JHttpEndpoint> iterator()
     {
         return endpoints.iterator();
     }
-
-    private List<String> endpoints = new LinkedList<String>();
-
+    private List<JHttpEndpoint> endpoints = new LinkedList<JHttpEndpoint>();
 }

@@ -7,6 +7,9 @@
         <source>src/main/java/Invoker_PageVisitor.java</source>
         <source>src/main/java/Metric_ResponseSize.java</source>
         <source>src/main/java/Provider_Endpoints.java</source>
+        <source>src/main/java/Provider_Queries.java</source>
+        <source>src/main/java/Provider_TestSuite.java</source>
+
     </sources>
     <resources>
         <resource>src/main/resources/profiles/basic/environment.properties</resource>
@@ -17,6 +20,7 @@
         <resource>src/main/resources/suite/providers.conf.xml</resource>
         <resource>src/main/resources/suite/suite.conf.xml</resource>
         <resource>src/main/resources/suite/test.description.conf.xml</resource>
+        <resource>src/main/resources/suite/test.suite.conf.xml</resource>
         <resource>assembly-config.xml</resource>
     </resources>
 
