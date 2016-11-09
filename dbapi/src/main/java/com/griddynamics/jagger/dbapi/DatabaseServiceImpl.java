@@ -91,7 +91,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.MONITORING;
 import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
 
 /**
@@ -139,22 +138,18 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Autowired
     private TreeViewGroupMetricsToNodeRuleProvider treeViewGroupMetricsToNodeRuleProvider;
 
-    // true way
     @Autowired
     private CustomMetricPlotFetcher customMetricPlotFetcher;
 
-    // true way
     @Autowired
     private CustomTestGroupMetricPlotFetcher customTestGroupMetricPlotFetcher;
 
-    // true way
     @Autowired
     private SessionScopeTestGroupMetricPlotFetcher sessionScopeTestGroupMetricPlotFetcher;
 
     @Autowired
     private CustomMetricSummaryFetcher customMetricSummaryFetcher;
 
-    // true way
     @Autowired
     private CustomTestGroupMetricSummaryFetcher customTestGroupMetricSummaryFetcher;
 
@@ -223,7 +218,6 @@ public class DatabaseServiceImpl implements DatabaseService {
      * @return plot for given MetricNode
      */
     private PlotIntegratedDto createPlotIntegratedDto(MetricNode metricNode, List<PlotSingleDto> curves, String xAxisLabel) {
-
         String taskName = metricNode.getMetricNameDtoList().get(0).getTest().getTaskName();
 
         MetricNameDto firstMetricNameDto = metricNode.getMetricNameDtoList().get(0);
@@ -306,13 +300,13 @@ public class DatabaseServiceImpl implements DatabaseService {
         final Multimap<PlotsDbMetricDataFetcher, MetricNameDto> fetchMap = ArrayListMultimap.create();
         for (MetricNameDto metricNameDto : metricNames) {
             switch (metricNameDto.getOrigin()) {
-                case METRIC: // true way
+                case METRIC:
                     fetchMap.put(customMetricPlotFetcher, metricNameDto);
                     break;
-                case TEST_GROUP_METRIC: // true way
+                case TEST_GROUP_METRIC:
                     fetchMap.put(customTestGroupMetricPlotFetcher, metricNameDto);
                     break;
-                case SESSION_SCOPE_TG: // true way
+                case SESSION_SCOPE_TG:
                     fetchMap.put(sessionScopeTestGroupMetricPlotFetcher, metricNameDto);
                     break;
                 default:  // if anything else
@@ -442,18 +436,16 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         for (MetricNameDto metricName : metricNames) {
             switch (metricName.getOrigin()) {
-                case METRIC: // true way
+                case METRIC:
                     fetchMap.put(customMetricSummaryFetcher, metricName);
                     break;
-                case TEST_GROUP_METRIC: // true way
+                case TEST_GROUP_METRIC:
                     fetchMap.put(customTestGroupMetricSummaryFetcher, metricName);
                     break;
                 case VALIDATOR:
                     fetchMap.put(validatorSummaryFetcher, metricName);
                     break;
                 case SESSION_SCOPE_TG:
-                    break;
-                case SESSION_SCOPE_MONITORING:
                     break;
                 default:  // if anything else
                     log.error("MetricNameDto with origin : {} appears in metric name list for summary retrieving ({})", metricName.getOrigin(),
@@ -937,9 +929,8 @@ public class DatabaseServiceImpl implements DatabaseService {
         Map<String, Set<String>> agentNames = new HashMap<>();
 
         for (MetricNode node : nodeList) {
-            // old monitoring or new monitoring as metrics
             node.getMetricNameDtoList().stream()
-                    .filter(metricNameDto -> (metricNameDto.getOrigin() == MONITORING) || (metricNameDto.getOrigin() == TEST_GROUP_METRIC))
+                    .filter(metricNameDto -> metricNameDto.getOrigin() == TEST_GROUP_METRIC)
                     .map(metricNameDto -> MonitoringIdUtils.splitMonitoringMetricId(metricNameDto.getMetricName()))
                     .filter(Objects::nonNull)
                     .forEach(monitoringId ->
@@ -1345,8 +1336,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     private boolean isSessionScopeMetric(MetricNameDto metricNameDto) {
-        return (metricNameDto.getOrigin().equals(MetricNameDto.Origin.SESSION_SCOPE_TG)
-                || metricNameDto.getOrigin().equals(MetricNameDto.Origin.SESSION_SCOPE_MONITORING));
+        return metricNameDto.getOrigin() == MetricNameDto.Origin.SESSION_SCOPE_TG;
     }
 }
 

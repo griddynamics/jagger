@@ -27,7 +27,7 @@ import static com.google.common.collect.TreeMultimap.create;
  * Date: 6/10/14
  * Time: 4:07 PM
  *
- * <p>This is class is needed because session scope processing of data for test group metrics is equal
+ * This is class is needed because session scope processing of data for test group metrics is equal
  * processing monitoring parameters. We use delegates of required classes.
  */
 

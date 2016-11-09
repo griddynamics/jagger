@@ -92,9 +92,7 @@ public class MetricNameDto extends MetricName {
         LATENCY_PERCENTILE,
         DURATION,
         STANDARD_METRICS,             /* success rate, iterations, etc */
-        MONITORING,                    /* monitoring parameters saved in separate DB table */
         VALIDATOR,
-        SESSION_SCOPE_TG,             /* custom test-group metrics for session scope */
-        SESSION_SCOPE_MONITORING      /* monitoring parameters for session scope */
+        SESSION_SCOPE_TG             /* custom test-group metrics for session scope */
     }
 }
