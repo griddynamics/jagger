@@ -105,6 +105,7 @@ public class Master implements Runnable {
     private DecisionMakerDistributionListener decisionMakerDistributionListener;
     private ConfigurationGenerator configurationGenerator;
     private boolean useBuilders;
+    private String defaultConfiguration;
 
     private Thread shutdownHook = new Thread(new Runnable() {
         @Override
@@ -201,8 +202,13 @@ public class Master implements Runnable {
 
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
 
-        if(useBuilders){
-            configuration = configurationGenerator.generate();
+        if (useBuilders) {
+            try {
+                configuration = configurationGenerator.generate(defaultConfiguration);
+            } catch (Exception e) {
+                log.error(e + "/n There is no such configuration:/n" + defaultConfiguration);
+                e.printStackTrace();
+            }
         }
 
         if (configuration.getMonitoringConfiguration() != null) {
@@ -430,6 +436,10 @@ public class Master implements Runnable {
 
     public void setUseBuilders(boolean useBuilders) {
         this.useBuilders = useBuilders;
+    }
+
+    public void setDefaultConfiguration(String defaultConfiguration) {
+        this.defaultConfiguration = defaultConfiguration;
     }
 
     private class StartWorkConditions implements Runnable {

@@ -79,6 +79,7 @@
         <property name="decisionMakerDistributionListener" ref="decisionMakerDistributionListener"/>
         <property name="configurationGenerator" ref="configurationGenerator"/>
         <property name="useBuilders" value="${chassis.master.using.builders}"/>
+        <property name="defaultConfiguration" value="${chassis.master.session.configuration.bean.name}"/>
     </bean>
 
     <bean id="distributionStartTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
