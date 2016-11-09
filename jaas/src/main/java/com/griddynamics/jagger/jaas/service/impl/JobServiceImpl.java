@@ -7,6 +7,7 @@ import com.griddynamics.jagger.jaas.storage.TestEnvironmentDao;
 import com.griddynamics.jagger.jaas.storage.model.JobEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,9 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 @Service
 public class JobServiceImpl implements JobService {
+
+    @Value("${job.default.start.timeout.seconds}")
+    private Long jobDefaultStartTimeoutInSeconds;
 
     private JobDao jobDao;
 
@@ -41,6 +45,8 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobEntity create(JobEntity job) {
         validateJob(job);
+        if (job.getJobStartTimeoutInSeconds() == null)
+            job.setJobStartTimeoutInSeconds(jobDefaultStartTimeoutInSeconds);
         jobDao.create(job);
         return job;
     }
@@ -48,6 +54,8 @@ public class JobServiceImpl implements JobService {
     @Override
     public JobEntity update(JobEntity job) {
         validateJob(job);
+        if (job.getJobStartTimeoutInSeconds() == null)
+            job.setJobStartTimeoutInSeconds(jobDefaultStartTimeoutInSeconds);
         jobDao.update(job);
         return job;
     }
@@ -57,7 +65,7 @@ public class JobServiceImpl implements JobService {
         jobDao.delete(jobId);
     }
 
-    private void validateJob(JobEntity job) {
+    private void validateJob(final JobEntity job) {
         TestEnvironmentEntity testEnv = testEnvironmentDao.read(job.getTestEnvironmentId());
         if (testEnv == null)
             throw new InvalidJobException(format("Test Environment with id '%s' not exists.", job.getTestEnvironmentId()));
