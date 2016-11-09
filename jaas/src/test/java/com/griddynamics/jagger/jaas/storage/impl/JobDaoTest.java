@@ -190,9 +190,9 @@ public class JobDaoTest {
         jobEntity1.setJobStartTimeoutInSeconds(0L);
 
         JobEntity jobEntity2 = new JobEntity();
-        jobEntity1.setTestEnvironmentId(ENVIRONMENT_ID_2);
-        jobEntity1.setTestSuiteId(TEST_SUITE_ID_2);
-        jobEntity1.setJobStartTimeoutInSeconds(50L);
+        jobEntity2.setTestEnvironmentId(ENVIRONMENT_ID_2);
+        jobEntity2.setTestSuiteId(TEST_SUITE_ID_2);
+        jobEntity2.setJobStartTimeoutInSeconds(50L);
 
         return newArrayList(jobEntity1, jobEntity2);
     }
