@@ -7,6 +7,8 @@ import java.util.List;
  */
 public class JTestSuite {
 
+
+    private String name;
     private List<JTestGroup> testGroups;
 
 
@@ -16,10 +18,12 @@ public class JTestSuite {
 
     private JTestSuite(Builder builder) {
         this.testGroups = builder.testGroups;
+        this.name = builder.name;
     }
 
 
     public static class Builder {
+        private String name;
         private List<JTestGroup> testGroups;
 
         private Builder() {
@@ -37,6 +41,16 @@ public class JTestSuite {
         }
 
         /**
+         * Sets name for a {@link JTestSuite}.
+         *
+         * @param name name of TestSuite.
+         */
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        /**
          * Creates the object of {@link JTestSuite} type with custom parameters.
          *
          * @return {@link JTestSuite} object.
@@ -49,5 +63,9 @@ public class JTestSuite {
 
     public List<JTestGroup> getTestGroups() {
         return testGroups;
+    }
+
+    public String getName() {
+        return name;
     }
 }

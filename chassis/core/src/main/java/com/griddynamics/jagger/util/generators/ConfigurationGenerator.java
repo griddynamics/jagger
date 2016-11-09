@@ -15,6 +15,7 @@ import com.griddynamics.jagger.user.test.configurations.JTestSuite;
 import org.springframework.beans.factory.support.ManagedList;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +39,15 @@ public class ConfigurationGenerator {
 
     public Configuration generate() {
         return generate(userConfigurations.iterator().next());
+    }
+
+
+    public Configuration generate(String configurationName) throws Exception {
+        Optional<JTestSuite> testSuite = userConfigurations.stream()
+                .filter(test -> configurationName.equals(test.getName()))
+                .findFirst();
+        // TODO: GD 11/9/16 What to do if there is no such TestSuite?
+        return generate(testSuite.orElseThrow(null));
     }
 
     /**
