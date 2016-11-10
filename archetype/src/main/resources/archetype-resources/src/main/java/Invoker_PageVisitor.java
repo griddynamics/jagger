@@ -21,59 +21,19 @@
 package ${package};
 
 import com.griddynamics.jagger.invoker.InvocationException;
-import com.griddynamics.jagger.invoker.Invoker;
+import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
+import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
+import com.griddynamics.jagger.invoker.v2.JHttpQuery;
+import com.griddynamics.jagger.invoker.v2.JHttpResponse;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-public class Invoker_PageVisitor implements Invoker<String, String, String> {
-
+public class Invoker_PageVisitor extends DefaultHttpInvoker {
     public Invoker_PageVisitor() {
     }
 
-    private String getUrl(String endpoint, String path) {
-        return endpoint + "/" + path;
-    }
     @Override
-    public String invoke(String path, String endpoint) throws InvocationException {
-        try {
-            return doHttpGet(getUrl(endpoint, path));
-        } catch (Exception e) {
-            throw new InvocationException(e.getMessage(), e);
-        }
-    }
-
-    private String doHttpGet(String urlStr) throws IOException {
-        URL url = new URL(urlStr);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setInstanceFollowRedirects(false);
-        connection.setUseCaches(false);
-
-        InputStream is = connection.getInputStream();
-
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        String theLine;
-
-        StringBuilder response = new StringBuilder();
-        while ((theLine = br.readLine()) != null) {
-            response.append(theLine);
-        }
-        connection.disconnect();
-
-        return response.toString();
-    }
-
-    @Override
-    public String toString() {
-        return "Http Invoker";
+    public JHttpResponse invoke(JHttpQuery query, JHttpEndpoint endpoint) throws InvocationException {
+        return super.invoke(query, endpoint);
     }
 
     private static final long serialVersionUID = 1323093228502340420L;
-
 }

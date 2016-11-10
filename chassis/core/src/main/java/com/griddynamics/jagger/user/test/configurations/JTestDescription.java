@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.griddynamics.jagger.invoker.Invoker;
+
 /**
  * Describes {@link JTest} prototype.
  */
@@ -9,12 +11,14 @@ public class JTestDescription {
     private String comment;
     private Iterable endpoints;
     private Iterable queries;
+    private Invoker invoker;
 
     private JTestDescription(Builder builder) {
         this.id = builder.id;
         this.comment = builder.comment;
         this.endpoints = builder.endpoints;
         this.queries = builder.queries;
+        this.invoker = builder.invoker;
     }
 
     public static Builder builder() {
@@ -26,6 +30,8 @@ public class JTestDescription {
         private String comment;
         private Iterable endpoints;
         private Iterable queries;
+        private Invoker invoker;
+
 
         private Builder() {
 
@@ -74,6 +80,17 @@ public class JTestDescription {
         }
 
         /**
+         * Sets class type of {@link com.griddynamics.jagger.invoker.Invoker}.
+         * Currently available Invoker_PageVisitor.
+         *
+         * @param invoker user's invoker.
+         */
+        public Builder withInvoker(Invoker invoker) {
+            this.invoker = invoker;
+            return this;
+        }
+
+        /**
          * As one may expect, creates the object of {@link JTest} type with custom parameters.
          *
          * @return {@link JTest} object.
@@ -99,5 +116,9 @@ public class JTestDescription {
 
     public Iterable getQueries() {
         return queries;
+    }
+
+    public Invoker getInvoker() {
+        return invoker;
     }
 }

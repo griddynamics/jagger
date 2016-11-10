@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.invoker.http.v2;
+package com.griddynamics.jagger.invoker.v2;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
@@ -6,14 +6,15 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
-import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTP;
-import static com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint.Protocol.HTTPS;
+import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTP;
+import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTPS;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.springframework.web.util.UriComponentsBuilder.fromUri;
@@ -27,7 +28,7 @@ import static org.springframework.web.util.UriComponentsBuilder.newInstance;
  * @since 1.3
  */
 @SuppressWarnings("unused")
-public class JHttpEndpoint {
+public class JHttpEndpoint implements Serializable {
 
     /**
      * Enum representing HTTP and HTTPS protocols
@@ -52,12 +53,13 @@ public class JHttpEndpoint {
             throw new IllegalArgumentException(e);
         }
 
-        if (equalsIgnoreCase(uri.getScheme(), HTTP.name()))
+        if (equalsIgnoreCase(uri.getScheme(), HTTP.name())) {
             this.protocol = HTTP;
-        else if (equalsIgnoreCase(uri.getScheme(), HTTPS.name()))
+        } else if (equalsIgnoreCase(uri.getScheme(), HTTPS.name())) {
             this.protocol = HTTPS;
-        else
+        } else {
             throw new IllegalArgumentException(format("Protocol of uri '%s' is unsupported!", uri));
+        }
 
         this.hostname = uri.getHost();
         this.port = uri.getPort() < 0 ? 80 : uri.getPort();
@@ -123,8 +125,9 @@ public class JHttpEndpoint {
      */
     public URI getURI(String path) {
         URI oldUri = getURI();
-        if (StringUtils.isEmpty(path))
+        if (StringUtils.isEmpty(path)) {
             return oldUri;
+        }
 
         return fromUri(oldUri).path(path).build().toUri();
     }
@@ -136,8 +139,9 @@ public class JHttpEndpoint {
      */
     public URI getURI(Map<String, String> queryParams) {
         URI uri = getURI();
-        if (MapUtils.isEmpty(queryParams))
+        if (MapUtils.isEmpty(queryParams)) {
             return uri;
+        }
 
         return appendParameters(uri, queryParams);
     }
@@ -150,8 +154,9 @@ public class JHttpEndpoint {
      */
     public URI getURI(String path, Map<String, String> queryParams) {
         URI uri = getURI(path);
-        if (MapUtils.isEmpty(queryParams))
+        if (MapUtils.isEmpty(queryParams)) {
             return uri;
+        }
 
         return appendParameters(uri, queryParams);
     }
