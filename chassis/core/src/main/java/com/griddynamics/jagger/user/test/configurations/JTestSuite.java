@@ -7,27 +7,36 @@ import java.util.List;
  */
 public class JTestSuite {
 
+    private String id;
+    private List<JTestGroup> testGroups;
 
-    private final String name;
-    private final List<JTestGroup> testGroups;
-
-
-    public static Builder builder(String name) {
-        return new Builder(name);
+    public static Builder builder() {
+        return new Builder();
     }
 
     private JTestSuite(Builder builder) {
         this.testGroups = builder.testGroups;
-        this.name = builder.name;
+        this.id = builder.id;
+        if (id == null) {
+            throw new IllegalStateException("Test suite should have a unique id");
+        }
     }
 
-
     public static class Builder {
-        private final String name;
+        private String id;
         private List<JTestGroup> testGroups;
 
-        private Builder(String name) {
-            this.name = name;
+        private Builder() {
+        }
+    
+        /**
+         * Sets id for the group.
+         *
+         * @param id test suite.
+         */
+        public JTestSuite.Builder withId(String id) {
+            this.id = id;
+            return this;
         }
 
         /**
@@ -56,7 +65,7 @@ public class JTestSuite {
         return testGroups;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 }

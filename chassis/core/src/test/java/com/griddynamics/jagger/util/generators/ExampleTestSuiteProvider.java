@@ -20,8 +20,8 @@ import java.util.List;
 public class ExampleTestSuiteProvider {
     public static List<JTestSuite> jTestSuites() {
         JTestDescription description = JTestDescription.builder()
-                                                       .withComment("My comment")
-                                                       .withId("popa")
+                                                       .withId("my_first_jagger_test_description")
+                                                       .withComment("no_comments")
                                                        .withEndpointsProvider(new ExampleEndpointsProvider())
                                                        .withQueryProvider(new ExampleQueriesProvider())
                                                        .withInvoker(new ExamplePageVisitorInvoker())
@@ -52,23 +52,24 @@ public class ExampleTestSuiteProvider {
                            .withJTestDescription(description)
                            .withLoad(load)
                            .withTermination(termination)
-                           .withId("popa2")
+                           .withId("my_first_test")
                            .build();
         
         JTest test2 = JTest.builder()
+                           .withId("yet_another_test")
                            .withJTestDescription(description)
                            .withLoad(load2)
                            .withTermination(termination2)
-                           .withId("popa3")
                            .build();
         
         
         JTestGroup testGroup = JTestGroup.builder()
-                                         .withId("anti popa")
+                                         .withId("my_first_test_group")
                                          .withTests(Arrays.asList(test1, test2))
                                          .build();
         
-        JTestSuite configuration = JTestSuite.builder("my_first_test")
+        JTestSuite configuration = JTestSuite.builder()
+                                             .withId("my_first_test")
                                              .withTestGroups(Collections.singletonList(testGroup))
                                              .build();
         

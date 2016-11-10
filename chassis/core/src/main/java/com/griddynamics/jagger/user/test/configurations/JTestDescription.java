@@ -81,9 +81,8 @@ public class JTestDescription {
 
         /**
          * Sets class type of {@link com.griddynamics.jagger.invoker.Invoker}.
-         * Currently available Invoker_PageVisitor.
          *
-         * @param invoker user's invoker.
+         * @param invoker is a custom implementation of {@link com.griddynamics.jagger.invoker.Invoker}.
          */
         public Builder withInvoker(Invoker invoker) {
             this.invoker = invoker;
