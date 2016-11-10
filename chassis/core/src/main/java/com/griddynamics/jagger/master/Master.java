@@ -46,9 +46,9 @@ import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
-import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
+import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -105,7 +105,7 @@ public class Master implements Runnable {
     private DecisionMakerDistributionListener decisionMakerDistributionListener;
     private ConfigurationGenerator configurationGenerator;
     private boolean useBuilders;
-    private String defaultConfiguration;
+    private String jTestSuiteNameToExecute;
 
     private Thread shutdownHook = new Thread(new Runnable() {
         @Override
@@ -203,12 +203,7 @@ public class Master implements Runnable {
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
 
         if (useBuilders) {
-            try {
-                configuration = configurationGenerator.generate(defaultConfiguration);
-            } catch (Exception e) {
-                log.error(e + "/n There is no such configuration:/n" + defaultConfiguration);
-                e.printStackTrace();
-            }
+            configuration = configurationGenerator.generate(jTestSuiteNameToExecute);
         }
 
         if (configuration.getMonitoringConfiguration() != null) {
@@ -438,8 +433,8 @@ public class Master implements Runnable {
         this.useBuilders = useBuilders;
     }
 
-    public void setDefaultConfiguration(String defaultConfiguration) {
-        this.defaultConfiguration = defaultConfiguration;
+    public void setjTestSuiteNameToExecute(String jTestSuiteNameToExecute) {
+        this.jTestSuiteNameToExecute = jTestSuiteNameToExecute;
     }
 
     private class StartWorkConditions implements Runnable {

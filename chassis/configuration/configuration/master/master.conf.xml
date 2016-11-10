@@ -79,7 +79,7 @@
         <property name="decisionMakerDistributionListener" ref="decisionMakerDistributionListener"/>
         <property name="configurationGenerator" ref="configurationGenerator"/>
         <property name="useBuilders" value="${chassis.master.using.builders}"/>
-        <property name="defaultConfiguration" value="${chassis.master.session.configuration.bean.name}"/>
+        <property name="jTestSuiteNameToExecute" value="${chassis.master.session.configuration.bean.name}"/>
     </bean>
 
     <bean id="distributionStartTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
@@ -176,7 +176,6 @@
         <property name="metricLogProcessor" ref="metricLogProcessor"/>
         <property name="profilerLogProcessor" ref="profilerLogProcessor"/>
         <property name="durationLogProcessor" ref="durationLogProcessor"/>
-        <property name="userConfigurations" ref="userConfigurations"/>
     </bean>
 
 </beans>

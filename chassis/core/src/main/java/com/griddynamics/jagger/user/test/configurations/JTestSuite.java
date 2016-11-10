@@ -8,12 +8,12 @@ import java.util.List;
 public class JTestSuite {
 
 
-    private String name;
-    private List<JTestGroup> testGroups;
+    private final String name;
+    private final List<JTestGroup> testGroups;
 
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(String name) {
+        return new Builder(name);
     }
 
     private JTestSuite(Builder builder) {
@@ -23,10 +23,11 @@ public class JTestSuite {
 
 
     public static class Builder {
-        private String name;
+        private final String name;
         private List<JTestGroup> testGroups;
 
-        private Builder() {
+        private Builder(String name) {
+            this.name = name;
         }
 
         /**
@@ -37,16 +38,6 @@ public class JTestSuite {
          */
         public Builder withTestGroups(List<JTestGroup> testGroups) {
             this.testGroups = testGroups;
-            return this;
-        }
-
-        /**
-         * Sets name for a {@link JTestSuite}.
-         *
-         * @param name name of TestSuite.
-         */
-        public Builder withName(String name) {
-            this.name = name;
             return this;
         }
 
