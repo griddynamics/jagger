@@ -1,25 +1,35 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "job_entity")
 public class JobEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     private String envId;
 
-    @NotNull
+    @Column(nullable = false)
     private String testSuiteId;
 
     private Long jobStartTimeoutInSeconds;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "job", cascade = CascadeType.REMOVE)
+    private JobExecutionEntity jobExecutionEntity;
 
     public Long getId() {
         return id;
@@ -53,6 +63,14 @@ public class JobEntity {
         this.jobStartTimeoutInSeconds = jobStartTimeoutInSeconds;
     }
 
+    public JobExecutionEntity getJobExecutionEntity() {
+        return jobExecutionEntity;
+    }
+
+    public void setJobExecutionEntity(JobExecutionEntity jobExecutionEntity) {
+        this.jobExecutionEntity = jobExecutionEntity;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -60,7 +78,6 @@ public class JobEntity {
 
         JobEntity jobEntity = (JobEntity) obj;
 
-        if (id != null ? !id.equals(jobEntity.id) : jobEntity.id != null) return false;
         if (envId != null ? !envId.equals(jobEntity.envId) : jobEntity.envId != null) return false;
         if (testSuiteId != null ? !testSuiteId.equals(jobEntity.testSuiteId) : jobEntity.testSuiteId != null) return false;
 
@@ -71,10 +88,19 @@ public class JobEntity {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (envId != null ? envId.hashCode() : 0);
+        int result = envId != null ? envId.hashCode() : 0;
         result = 31 * result + (testSuiteId != null ? testSuiteId.hashCode() : 0);
         result = 31 * result + (jobStartTimeoutInSeconds != null ? jobStartTimeoutInSeconds.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "JobEntity{" +
+                "id=" + id +
+                ", envId='" + envId + '\'' +
+                ", testSuiteId='" + testSuiteId + '\'' +
+                ", jobStartTimeoutInSeconds=" + jobStartTimeoutInSeconds +
+                '}';
     }
 }

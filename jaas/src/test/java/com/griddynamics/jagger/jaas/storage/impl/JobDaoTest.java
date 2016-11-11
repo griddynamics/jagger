@@ -151,7 +151,7 @@ public class JobDaoTest {
         return jobEntity;
     }
 
-    private List<JobEntity> getJobEntities() {
+    static List<JobEntity> getJobEntities() {
         JobEntity jobEntity1 = new JobEntity();
         jobEntity1.setEnvId(ENVIRONMENT_ID_1);
         jobEntity1.setTestSuiteId(TEST_SUITE_ID_1);
