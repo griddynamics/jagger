@@ -23,8 +23,8 @@ public class JobExecutionServiceImpl implements JobExecutionService {
     }
 
     @Override
-    public JobExecutionEntity read(Long jobId) {
-        return jobExecutionDao.read(jobId);
+    public JobExecutionEntity read(Long jobExecutionId) {
+        return jobExecutionDao.read(jobExecutionId);
     }
 
     @Override
@@ -33,20 +33,21 @@ public class JobExecutionServiceImpl implements JobExecutionService {
     }
 
     @Override
-    public JobExecutionEntity create(JobExecutionEntity job) {
-        job.setAuditEntities(newArrayList(new JobExecutionAuditEntity(job, System.currentTimeMillis(), null, PENDING)));
-        jobExecutionDao.create(job);
-        return job;
+    public JobExecutionEntity create(JobExecutionEntity jobExecution) {
+        jobExecution.setAuditEntities(newArrayList(new JobExecutionAuditEntity(jobExecution, System.currentTimeMillis(), null, PENDING)));
+        jobExecution.setStatus(PENDING);
+        jobExecutionDao.create(jobExecution);
+        return jobExecution;
     }
 
     @Override
-    public JobExecutionEntity update(JobExecutionEntity job) {
-        jobExecutionDao.update(job);
-        return job;
+    public JobExecutionEntity update(JobExecutionEntity jobExecution) {
+        jobExecutionDao.update(jobExecution);
+        return jobExecution;
     }
 
     @Override
-    public void delete(Long jobId) {
-        jobExecutionDao.delete(jobId);
+    public void delete(Long jobExecutionId) {
+        jobExecutionDao.delete(jobExecutionId);
     }
 }
