@@ -68,11 +68,11 @@ public class ExampleTestSuiteProvider {
                                          .withTests(Arrays.asList(test1, test2))
                                          .build();
         
-        JTestSuite configuration = JTestSuite.builder()
-                                             .withId("my_first_test")
+        JTestSuite jTestSuite = JTestSuite.builder()
+                                             .withId("my_first_test_suite")
                                              .withTestGroups(Collections.singletonList(testGroup))
                                              .build();
         
-        return Collections.singletonList(configuration);
+        return Collections.singletonList(jTestSuite);
     }
 }

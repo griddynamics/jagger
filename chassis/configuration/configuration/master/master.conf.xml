@@ -78,7 +78,7 @@
         <property name="databaseService" ref="databaseService"/>
         <property name="decisionMakerDistributionListener" ref="decisionMakerDistributionListener"/>
         <property name="configurationGenerator" ref="configurationGenerator"/>
-        <property name="useBuilders" value="${chassis.master.using.builders}"/>
+        <property name="useBuilders" value="${chassis.master.using.builders:false}"/>
         <property name="jTestSuiteNameToExecute" value="${chassis.master.session.configuration.bean.name}"/>
     </bean>
 

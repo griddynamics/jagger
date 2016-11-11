@@ -10,6 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class ConfigurationGeneratorTest {
     
+    
     @org.junit.Test
     public void setUserJTestSuites() throws Exception {
     

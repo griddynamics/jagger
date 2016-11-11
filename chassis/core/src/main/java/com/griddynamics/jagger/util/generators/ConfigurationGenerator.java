@@ -48,7 +48,7 @@ public class ConfigurationGenerator {
     
     @Autowired(required = false)
     public void setUserJTestSuites(List<JTestSuite> userJTestSuites) {
-        this.userJTestSuites = userJTestSuites.stream().collect(Collectors.toMap(JTestSuite::getName, identity()));
+        this.userJTestSuites = userJTestSuites.stream().collect(Collectors.toMap(JTestSuite::getId, identity()));
     }
     
     public Configuration generate(String userJTestSuiteName) {
