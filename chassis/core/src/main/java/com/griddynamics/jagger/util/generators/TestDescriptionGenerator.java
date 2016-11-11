@@ -36,7 +36,7 @@ class TestDescriptionGenerator {
         QueryPoolScenarioFactory scenarioFactory = new QueryPoolScenarioFactory();
         scenarioFactory.setQueryProvider(jTestDescription.getQueries());
         scenarioFactory.setEndpointProvider(jTestDescription.getEndpoints());
-        scenarioFactory.setInvokerClazz(jTestDescription.getInvoker().getClass());
+        scenarioFactory.setInvokerClazz(jTestDescription.getInvoker());
         scenarioFactory.setLoadBalancer(new SimpleCircularLoadBalancer() {{
             setPairSupplierFactory(new RoundRobinPairSupplierFactory());
         }});

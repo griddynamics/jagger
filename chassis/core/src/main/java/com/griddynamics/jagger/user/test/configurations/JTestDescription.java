@@ -16,7 +16,7 @@ public class JTestDescription {
     private String comment;
     private Iterable endpoints;
     private Iterable queries;
-    private Invoker invoker;
+    private Class<? extends Invoker> invoker;
     private List<Class<? extends ResponseValidator>> validators;
 
     private JTestDescription(Builder builder) {
@@ -37,11 +37,10 @@ public class JTestDescription {
         private String comment;
         private Iterable endpoints;
         private Iterable queries;
-        private Invoker invoker = new DefaultHttpInvoker();
+        private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
         private List<Class<? extends ResponseValidator>> validators = Collections.emptyList();
 
         private Builder() {
-
         }
 
         /**
@@ -87,17 +86,23 @@ public class JTestDescription {
         }
 
         /**
-         * Sets class type of {@link com.griddynamics.jagger.invoker.Invoker}.
+         * Sets subtypes of {@link com.griddynamics.jagger.invoker.Invoker}.
+         * Instances of this class will be used to during Jagger test execution.
          *
-         * @param invoker is a custom implementation of {@link com.griddynamics.jagger.invoker.Invoker}.
+         * Example:
+         * <code>withInvoker(Collections.singletonList(com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker.class))</code>
          */
-        public Builder withInvoker(Invoker invoker) {
+        public Builder withInvoker(Class<? extends Invoker> invoker) {
             this.invoker = invoker;
             return this;
         }
     
         /**
-         * Sets a list of subtypes of {@link ResponseValidator} to validate responses during Jagger test execution.
+         * Sets a list of subtypes of {@link ResponseValidator}
+         * Instances of those subtypes will be used to validate responses during Jagger test execution.
+         *
+         * Example:
+         * <code>withValidators(Collections.singletonList(com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator.class))</code>
          *
          * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
          */
@@ -131,8 +136,8 @@ public class JTestDescription {
     public Iterable getQueries() {
         return queries;
     }
-
-    public Invoker getInvoker() {
+    
+    public Class<? extends Invoker> getInvoker() {
         return invoker;
     }
     

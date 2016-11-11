@@ -7,7 +7,7 @@ import com.griddynamics.jagger.invoker.v2.JHttpQuery;
 import com.griddynamics.jagger.invoker.v2.JHttpResponse;
 
 /**
- * Created by Andrey Badaev (andrey.badaev@kohls.com)
+ * Created by Andrey Badaev
  * Date: 10/11/16
  */
 public class ExamplePageVisitorInvoker extends DefaultHttpInvoker {

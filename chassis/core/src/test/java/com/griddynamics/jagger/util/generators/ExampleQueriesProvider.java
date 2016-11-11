@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by Andrey Badaev (andrey.badaev@kohls.com)
+ * Created by Andrey Badaev
  * Date: 10/11/16
  */
 public class ExampleQueriesProvider  implements Iterable {

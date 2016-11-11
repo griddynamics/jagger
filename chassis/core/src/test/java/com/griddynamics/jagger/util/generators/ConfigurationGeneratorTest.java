@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Created by Andrey Badaev (andrey.badaev@kohls.com)
+ * Created by Andrey Badaev
  * Date: 10/11/16
  */
 public class ConfigurationGeneratorTest {
