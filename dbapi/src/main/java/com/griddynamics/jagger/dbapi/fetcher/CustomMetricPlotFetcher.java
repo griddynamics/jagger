@@ -59,21 +59,7 @@ public class CustomMetricPlotFetcher extends AbstractMetricPlotFetcher {
         }
         List<Object[]> resultList = new ArrayList<>();
         resultList.addAll(getPlotDataNewModel(taskDataIds, metricIds));
-        resultList.addAll(getPlotDataOldModel(taskDataIds, metricIds));
         return resultList;
-    }
-
-    /**
-     * @return collection of objects {Task Data id, time, value, sessionId, metricId}
-     */
-    @Deprecated
-    private Collection<? extends Object[]> getPlotDataOldModel(Set<Long> taskIds, Set<String> metricIds) {
-        return entityManager.createQuery(
-                "SELECT metrics.taskData.id, metrics.time, metrics.value, metrics.taskData.sessionId, metrics.metric " +
-                        "FROM   MetricDetails metrics " +
-                        "WHERE  metrics.metric IN (:metricIds) " +
-                        "AND    metrics.taskData.id IN (:taskIds)"
-        ).setParameter("taskIds", taskIds).setParameter("metricIds", metricIds).getResultList();
     }
 
     /**

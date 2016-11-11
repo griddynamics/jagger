@@ -18,7 +18,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -69,64 +68,9 @@ public class CustomMetricNameProvider implements MetricNameProvider {
 
         metrics.addAll(getCustomTestGroupMetricsNamesNewModel(tests));
 
-        metrics.addAll(getCustomMetricsNamesOldModel(tests));
-
         log.debug("{} ms spent for fetching {} custom metrics", System.currentTimeMillis() - temp, metrics.size());
 
         return metrics;
-    }
-
-    @Deprecated
-    private Set<MetricNameDto> getCustomMetricsNamesOldModel(List<TaskDataDto> tests) {
-        Set<Long> taskIds = new HashSet<>();
-        Set<String> sessionIds = new HashSet<>();
-        for (TaskDataDto tdd : tests) {
-            taskIds.addAll(tdd.getIds());
-            sessionIds.addAll(tdd.getSessionIds());
-        }
-
-        long temp = System.currentTimeMillis();
-
-        // check old data (before jagger 1.2.4 version)
-        List<Object[]> metricNames = entityManager.createNativeQuery(
-                "SELECT dre.name, selected.id FROM DiagnosticResultEntity dre JOIN "
-                        + " ("
-                        + "  SELECT wd.workloaddataID, td.id FROM "
-                        + "    ("
-                        + "     SELECT wd.id AS workloaddataID, wd.sessionId, wd.taskId FROM WorkloadData wd WHERE wd.sessionId IN (:sessionIds)"
-                        + "    ) AS wd JOIN   "
-                        + "    ( "
-                        + "     SELECT td.taskId, td.sessionId, td.id FROM TaskData td WHERE td.id IN (:taskIds)"
-                        + "    ) AS td ON wd.taskId=td.taskId AND wd.sessionId=td.sessionId"
-                        + " ) AS selected ON dre.workloadData_id=selected.workloaddataID")
-                .setParameter("taskIds", taskIds)
-                .setParameter("sessionIds", sessionIds)
-                .getResultList();
-
-        if (metricNames.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        Set<MetricNameDto> metrics = new HashSet<>(metricNames.size());
-
-        log.debug("{} ms spent for fetching {} custom metrics", System.currentTimeMillis() - temp, metricNames.size());
-
-        for (Object[] name : metricNames) {
-            if (name == null || name[0] == null) continue;
-            for (TaskDataDto td : tests) {
-                if (td.getIds().contains(((BigInteger) name[1]).longValue())) {
-                    MetricNameDto metric = new MetricNameDto();
-                    metric.setTest(td);
-                    metric.setMetricName((String) name[0]);
-                    metric.setOrigin(MetricNameDto.Origin.METRIC);
-                    metrics.add(metric);
-                    break;
-                }
-            }
-        }
-
-        return metrics;
-
     }
 
     private Set<MetricNameDto> getCustomMetricsNamesNewModel(List<TaskDataDto> tests) {

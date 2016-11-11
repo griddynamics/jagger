@@ -1,14 +1,12 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
+import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.util.FetchUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Multimap;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -23,11 +21,6 @@ public class CustomTestGroupMetricSummaryFetcher extends CustomMetricSummaryFetc
     @Autowired
     public void setFetchUtil(FetchUtil fetchUtil) {
         this.fetchUtil = fetchUtil;
-    }
-
-    @Override
-    protected List<Object[]> getCustomMetricsDataOldModel(Set<Long> taskIds, Set<String> metricIds) {
-        return Collections.emptyList();
     }
 
     @Override

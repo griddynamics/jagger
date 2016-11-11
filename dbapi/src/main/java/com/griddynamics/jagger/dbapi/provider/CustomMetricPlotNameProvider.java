@@ -18,7 +18,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -65,47 +64,7 @@ public class CustomMetricPlotNameProvider {
 
         result.addAll(getTestGroupPlotNamesNewModel(taskDataDtos));
 
-        result.addAll(getPlotNamesOldModel(taskDataDtos));
-
         log.debug("{} ms spent to fetch custom metrics plots names in count of {}", System.currentTimeMillis() - temp, result.size());
-
-        return result;
-    }
-
-    @Deprecated
-    public Set<MetricNameDto> getPlotNamesOldModel(List<TaskDataDto> taskDataDtos) {
-
-        Set<Long> testIds = new HashSet<>();
-        for (TaskDataDto tdd : taskDataDtos) {
-            testIds.addAll(tdd.getIds());
-        }
-
-        // check old model (before jagger 1.2.4)
-        List<Object[]> plotNames = entityManager.createNativeQuery("SELECT metricDetails.metric, metricDetails.taskData_id FROM MetricDetails "
-                + "metricDetails "
-                + "WHERE metricDetails.taskData_id IN (:ids) "
-                + "GROUP BY metricDetails.metric, metricDetails.taskData_id")
-                .setParameter("ids", testIds)
-                .getResultList();
-
-
-        if (plotNames.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        Set<MetricNameDto> result = new HashSet<>(plotNames.size());
-
-        for (Object[] plotName : plotNames) {
-            if (plotName != null) {
-                for (TaskDataDto tdd : taskDataDtos) {
-                    if (tdd.getIds().contains(((BigInteger) plotName[1]).longValue())) {
-                        MetricNameDto metricNameDto = new MetricNameDto(tdd, (String) plotName[0]);
-                        metricNameDto.setOrigin(MetricNameDto.Origin.METRIC);
-                        result.add(metricNameDto);
-                    }
-                }
-            }
-        }
 
         return result;
     }
