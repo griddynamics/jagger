@@ -1,6 +1,11 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
 import com.griddynamics.jagger.invoker.Invoker;
+import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Describes {@link JTest} prototype.
@@ -12,6 +17,7 @@ public class JTestDescription {
     private Iterable endpoints;
     private Iterable queries;
     private Invoker invoker;
+    private List<Class<? extends ResponseValidator>> validators;
 
     private JTestDescription(Builder builder) {
         this.id = builder.id;
@@ -19,6 +25,7 @@ public class JTestDescription {
         this.endpoints = builder.endpoints;
         this.queries = builder.queries;
         this.invoker = builder.invoker;
+        this.validators = builder.validators;
     }
 
     public static Builder builder() {
@@ -30,8 +37,8 @@ public class JTestDescription {
         private String comment;
         private Iterable endpoints;
         private Iterable queries;
-        private Invoker invoker;
-
+        private Invoker invoker = new DefaultHttpInvoker();
+        private List<Class<? extends ResponseValidator>> validators = Collections.emptyList();
 
         private Builder() {
 
@@ -47,7 +54,6 @@ public class JTestDescription {
             return this;
         }
 
-
         /**
          * Sets human readable comment for the test prototype.
          *
@@ -61,18 +67,19 @@ public class JTestDescription {
         /**
          * Sets end points (where load will be applied during performance test) for the tests using this test prototype.
          *
-         * @param endpointsProvider iterable end points. See JHttpEndpoint for example.
+         * @param endpointsProvider iterable end points.
+         * @see com.griddynamics.jagger.invoker.v2.JHttpEndpoint for example.
          */
         public Builder withEndpointsProvider(Iterable endpointsProvider) {
             this.endpoints = endpointsProvider;
             return this;
         }
 
-
         /**
          * Sets queries (what load will be applied during performance test) for the tests using this test prototype.
          *
-         * @param queryProvider iterable queries. See JHttpQuery for example.
+         * @param queryProvider iterable queries.
+         * @see com.griddynamics.jagger.invoker.v2.JHttpQuery for example.
          */
         public Builder withQueryProvider(Iterable queryProvider) {
             this.queries = queryProvider;
@@ -88,6 +95,16 @@ public class JTestDescription {
             this.invoker = invoker;
             return this;
         }
+    
+        /**
+         * Sets a list of subtypes of {@link ResponseValidator} to validate responses during Jagger test execution.
+         *
+         * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
+         */
+        public Builder withValidators(List<Class<? extends ResponseValidator>> validators) {
+            this.validators = validators;
+            return this;
+        }
 
         /**
          * As one may expect, creates the object of {@link JTest} type with custom parameters.
@@ -97,9 +114,7 @@ public class JTestDescription {
         public JTestDescription build() {
             return new JTestDescription(this);
         }
-
     }
-
 
     public String getId() {
         return id;
@@ -119,5 +134,13 @@ public class JTestDescription {
 
     public Invoker getInvoker() {
         return invoker;
+    }
+    
+    public String getComment() {
+        return comment;
+    }
+    
+    public List<Class<? extends ResponseValidator>> getValidators() {
+        return validators;
     }
 }

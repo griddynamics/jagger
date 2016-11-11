@@ -1,5 +1,8 @@
 package com.griddynamics.jagger.util.generators;
 
+import static java.util.Collections.singletonList;
+
+import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
 import com.griddynamics.jagger.user.test.configurations.JTest;
 import com.griddynamics.jagger.user.test.configurations.JTestDescription;
 import com.griddynamics.jagger.user.test.configurations.JTestGroup;
@@ -10,10 +13,10 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationIterations;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
+ *
  * Created by Andrey Badaev (andrey.badaev@kohls.com)
  * Date: 10/11/16
  */
@@ -24,7 +27,7 @@ public class ExampleTestSuiteProvider {
                                                        .withComment("no_comments")
                                                        .withEndpointsProvider(new ExampleEndpointsProvider())
                                                        .withQueryProvider(new ExampleQueriesProvider())
-                                                       .withInvoker(new ExamplePageVisitorInvoker())
+                                                       .withValidators(singletonList(NotNullResponseValidator.class))
                                                        .build();
         
         JLoad load = JLoadRps.builder()
@@ -67,12 +70,13 @@ public class ExampleTestSuiteProvider {
                                          .withId("my_first_test_group")
                                          .withTests(Arrays.asList(test1, test2))
                                          .build();
+    
         
         JTestSuite jTestSuite = JTestSuite.builder()
                                              .withId("my_first_test_suite")
-                                             .withTestGroups(Collections.singletonList(testGroup))
+                                             .withTestGroups(singletonList(testGroup))
                                              .build();
         
-        return Collections.singletonList(jTestSuite);
+        return singletonList(jTestSuite);
     }
 }
