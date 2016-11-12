@@ -88,9 +88,9 @@ public class JTestDescription {
         /**
          * Sets subtypes of {@link com.griddynamics.jagger.invoker.Invoker}.
          * Instances of this class will be used to during Jagger test execution.
-         *
+         * <p/>
          * Example:
-         * <code>withInvoker(Collections.singletonList(com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker.class))</code>
+         *      <code>withInvoker(com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker.class)</code>
          */
         public Builder withInvoker(Class<? extends Invoker> invoker) {
             this.invoker = invoker;
@@ -100,10 +100,10 @@ public class JTestDescription {
         /**
          * Sets a list of subtypes of {@link ResponseValidator}
          * Instances of those subtypes will be used to validate responses during Jagger test execution.
-         *
+         * <p/>
          * Example:
-         * <code>withValidators(Collections.singletonList(com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator.class))</code>
-         *
+         *      <code>withValidators(Arrays.asList(com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator.class))</code>
+         * <p/>
          * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
          */
         public Builder withValidators(List<Class<? extends ResponseValidator>> validators) {
