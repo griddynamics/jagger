@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
+import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
+
 /**
  * Hibernate based transactional implementation of {@link com.griddynamics.jagger.jaas.storage.CrudDao} interface for {@link JobEntity}.
  */
@@ -26,7 +28,7 @@ public class JobDaoImpl extends AbstractCrudDao<JobEntity, Long> implements JobD
     @Override
     @Transactional
     public List<JobEntity> readAll() {
-        return getCurrentSession().createCriteria(JobEntity.class).list();
+        return getCurrentSession().createCriteria(JobEntity.class).setResultTransformer(DISTINCT_ROOT_ENTITY).list();
     }
 
     @Override

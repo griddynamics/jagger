@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
+import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
 import static org.hibernate.criterion.Projections.rowCount;
 
 /**
@@ -29,7 +30,7 @@ public class TestEnvironmentDaoImpl extends AbstractCrudDao<TestEnvironmentEntit
     @Override
     @Transactional
     public List<TestEnvironmentEntity> readAll() {
-        return getCurrentSession().createCriteria(TestEnvironmentEntity.class).list();
+        return getCurrentSession().createCriteria(TestEnvironmentEntity.class).setResultTransformer(DISTINCT_ROOT_ENTITY).list();
     }
 
     @Override
