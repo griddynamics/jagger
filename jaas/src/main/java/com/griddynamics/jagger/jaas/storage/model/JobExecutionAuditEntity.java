@@ -2,6 +2,8 @@ package com.griddynamics.jagger.jaas.storage.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,9 +27,11 @@ public class JobExecutionAuditEntity {
     private long timestamp;
 
     @Column(name = "`old_status`")
+    @Enumerated(EnumType.STRING)
     private JobExecutionEntity.JobExecutionStatus oldStatus;
 
     @Column(name = "`new_status`", nullable = false)
+    @Enumerated(EnumType.STRING)
     private JobExecutionEntity.JobExecutionStatus newStatus;
 
     public JobExecutionAuditEntity() {}

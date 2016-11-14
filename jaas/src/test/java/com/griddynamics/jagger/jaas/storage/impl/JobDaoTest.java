@@ -141,6 +141,19 @@ public class JobDaoTest {
         assertThat(jobDao.readAll().size(), is(1));
     }
 
+    @Test
+    public void existsTest() {
+        JobEntity expected = getJobEntity();
+        jobDao.create(expected);
+
+        boolean actual = jobDao.exists(1L);
+        boolean actual2 = jobDao.exists(2L);
+
+        assertThat(actual, is(true));
+        assertThat(actual2, is(false));
+    }
+
+
     private JobEntity getJobEntity() {
         JobEntity jobEntity = new JobEntity();
 

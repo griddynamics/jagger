@@ -19,12 +19,13 @@ public class JobEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "`env_id`", nullable = false)
     private String envId;
 
-    @Column(nullable = false)
+    @Column(name = "`test_suite_id`", nullable = false)
     private String testSuiteId;
 
+    @Column(name = "`job_start_timeout_in_seconds`")
     private Long jobStartTimeoutInSeconds;
 
     @JsonIgnore

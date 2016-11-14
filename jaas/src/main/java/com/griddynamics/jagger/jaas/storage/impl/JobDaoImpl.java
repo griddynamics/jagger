@@ -3,6 +3,7 @@ package com.griddynamics.jagger.jaas.storage.impl;
 import com.griddynamics.jagger.jaas.storage.AbstractCrudDao;
 import com.griddynamics.jagger.jaas.storage.JobDao;
 import com.griddynamics.jagger.jaas.storage.model.JobEntity;
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,5 +66,13 @@ public class JobDaoImpl extends AbstractCrudDao<JobEntity, Long> implements JobD
     @Transactional
     public void delete(JobEntity job) {
         getCurrentSession().delete(job);
+    }
+
+    @Override
+    @Transactional
+    public boolean exists(Long jobId) {
+        Query query = getCurrentSession().createQuery("select 1 from JobEntity t where t.id = :id");
+        query.setLong("id", jobId);
+        return query.uniqueResult() != null;
     }
 }

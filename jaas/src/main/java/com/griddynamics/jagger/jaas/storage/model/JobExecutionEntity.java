@@ -40,6 +40,12 @@ public class JobExecutionEntity {
     @OneToMany(mappedBy = "jobExecutionEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JobExecutionAuditEntity> auditEntities;
 
+    public JobExecutionEntity() {}
+
+    public JobExecutionEntity(Long jobId) {
+        setJobId(jobId);
+    }
+
     public Long getId() {
         return id;
     }
