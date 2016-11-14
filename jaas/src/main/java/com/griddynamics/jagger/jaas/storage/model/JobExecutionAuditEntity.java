@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
+import com.griddynamics.jagger.jaas.storage.model.JobExecutionEntity.JobExecutionStatus;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -28,16 +30,16 @@ public class JobExecutionAuditEntity {
 
     @Column(name = "`old_status`")
     @Enumerated(EnumType.STRING)
-    private JobExecutionEntity.JobExecutionStatus oldStatus;
+    private JobExecutionStatus oldStatus;
 
     @Column(name = "`new_status`", nullable = false)
     @Enumerated(EnumType.STRING)
-    private JobExecutionEntity.JobExecutionStatus newStatus;
+    private JobExecutionStatus newStatus;
 
     public JobExecutionAuditEntity() {}
 
-    public JobExecutionAuditEntity(JobExecutionEntity jobExecutionEntity, long timestamp, JobExecutionEntity.JobExecutionStatus oldStatus,
-                                   JobExecutionEntity.JobExecutionStatus newStatus) {
+    public JobExecutionAuditEntity(JobExecutionEntity jobExecutionEntity, long timestamp, JobExecutionStatus oldStatus,
+                                   JobExecutionStatus newStatus) {
         this.jobExecutionEntity = jobExecutionEntity;
         this.timestamp = timestamp;
         this.oldStatus = oldStatus;
@@ -68,19 +70,19 @@ public class JobExecutionAuditEntity {
         this.timestamp = timestamp;
     }
 
-    public JobExecutionEntity.JobExecutionStatus getOldStatus() {
+    public JobExecutionStatus getOldStatus() {
         return oldStatus;
     }
 
-    public void setOldStatus(JobExecutionEntity.JobExecutionStatus oldStatus) {
+    public void setOldStatus(JobExecutionStatus oldStatus) {
         this.oldStatus = oldStatus;
     }
 
-    public JobExecutionEntity.JobExecutionStatus getNewStatus() {
+    public JobExecutionStatus getNewStatus() {
         return newStatus;
     }
 
-    public void setNewStatus(JobExecutionEntity.JobExecutionStatus newStatus) {
+    public void setNewStatus(JobExecutionStatus newStatus) {
         this.newStatus = newStatus;
     }
 
