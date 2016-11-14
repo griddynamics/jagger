@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.invoker.http.v2;
+package com.griddynamics.jagger.invoker.v2;
 
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -18,12 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.DEFAULT_URI_VARIABLES;
-import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.ERROR_HANDLER;
-import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.INTERCEPTORS;
-import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.MESSAGE_CONVERTERS;
-import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.REQUEST_FACTORY;
-import static com.griddynamics.jagger.invoker.http.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.URI_TEMPLATE_HANDLER;
+
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.DEFAULT_URI_VARIABLES;
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.ERROR_HANDLER;
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.INTERCEPTORS;
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.MESSAGE_CONVERTERS;
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.REQUEST_FACTORY;
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.URI_TEMPLATE_HANDLER;
 import static java.lang.String.format;
 
 /**

@@ -77,23 +77,26 @@
         <property name="metaDataStorage" ref="metaDataStorage"/>
         <property name="databaseService" ref="databaseService"/>
         <property name="decisionMakerDistributionListener" ref="decisionMakerDistributionListener"/>
+        <property name="configurationGenerator" ref="configurationGenerator"/>
+        <property name="useBuilders" value="${chassis.master.using.builders:false}"/>
+        <property name="jTestSuiteNameToExecute" value="${chassis.master.session.configuration.bean.name}"/>
     </bean>
 
     <bean id="distributionStartTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${chassis.master.distribution.start}"/>
-        <property name="name"  value="chassis.master.distribution.start"/>
+        <property name="name" value="chassis.master.distribution.start"/>
     </bean>
     <bean id="distributionStopTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${chassis.master.distribution.stop}"/>
-        <property name="name"  value="chassis.master.distribution.stop"/>
+        <property name="name" value="chassis.master.distribution.stop"/>
     </bean>
     <bean id="taskExecutionTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${chassis.master.task.maxtime}"/>
-        <property name="name"  value="chassis.master.task.maxtime"/>
+        <property name="name" value="chassis.master.task.maxtime"/>
     </bean>
     <bean id="nodeAwaitTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${chassis.master.node.awaittime}"/>
-        <property name="name"  value="chassis.master.node.awaittime"/>
+        <property name="name" value="chassis.master.node.awaittime"/>
     </bean>
 
     <bean id="masterTimeoutConfiguration" class="com.griddynamics.jagger.master.MasterTimeoutConfiguration">
@@ -120,14 +123,14 @@
     <bean id="workloadTaskDistributor"
           class="com.griddynamics.jagger.engine.e1.scenario.WorkloadTaskDistributor">
         <property name="logInterval" value="${chassis.logging.period}"/>
-        <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
+        <property name="timeoutsConfiguration" ref="timeoutsConfiguration"/>
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
     </bean>
 
     <bean id="compositeTaskDistributor" class="com.griddynamics.jagger.master.CompositeTaskDistributor">
         <property name="distributorRegistry" ref="distributorRegistry"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
-        <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
+        <property name="timeoutsConfiguration" ref="timeoutsConfiguration"/>
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
     </bean>
 
@@ -148,14 +151,15 @@
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
     </bean>
 
-    <bean id="generalNodeInfoAggregator" class="com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator">
+    <bean id="generalNodeInfoAggregator"
+          class="com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="nodeCollectInfoTime" ref="nodeCollectInfoTimeTimeout"/>
     </bean>
 
     <bean id="nodeCollectInfoTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${chassis.master.collect.node.info.awaittime}"/>
-        <property name="name"  value="chassis.master.collect.node.info.awaittime"/>
+        <property name="name" value="chassis.master.collect.node.info.awaittime"/>
     </bean>
 
     <bean id="metricTablesChecker" class="com.griddynamics.jagger.master.database.MetricTablesChecker">
@@ -163,6 +167,16 @@
     </bean>
 
     <bean id="metaDataStorage" class="com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage"/>
+
+    <bean id="configurationGenerator" class="com.griddynamics.jagger.util.generators.ConfigurationGenerator">
+        <property name="basicAggregator" ref="basicAggregator"/>
+        <property name="basicSessionCollector" ref="basicSessionCollector"/>
+        <property name="e1MasterCollector" ref="e1MasterCollector"/>
+        <property name="e1ScenarioAggregator" ref="e1ScenarioAggregator"/>
+        <property name="metricLogProcessor" ref="metricLogProcessor"/>
+        <property name="profilerLogProcessor" ref="profilerLogProcessor"/>
+        <property name="durationLogProcessor" ref="durationLogProcessor"/>
+    </bean>
 
 </beans>
 

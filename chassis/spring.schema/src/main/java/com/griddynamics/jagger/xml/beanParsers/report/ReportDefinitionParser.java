@@ -1,5 +1,21 @@
 package com.griddynamics.jagger.xml.beanParsers.report;
 
+import static com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider.IDENTITY_SESSION;
+import static com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser.setBeanProperty;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.BASELINE_ID;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.BASELINE_SESSION_ID;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.BASELINE_SESSION_PROVIDER;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.CONTEXT;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.DEFAULT_REPORTING_SERVICE;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.EXTENSIONS;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.PROVIDER_REGISTRY;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.REPORTER_REGISTRY;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.REPORTING_CONTEXT;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.SESSION_COMPARATOR;
+import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.SESSION_COMPARATORS_ELEMENT;
+import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
+import static org.springframework.util.xml.DomUtils.getChildElementByTagName;
+
 import com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.extension.ExtensionRegistry;
@@ -11,23 +27,6 @@ import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import static com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider.IDENTITY_SESSION;
-import static com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser.setBeanProperty;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.BASELINE_ID;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.BASELINE_SESSION_ID;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.BASELINE_SESSION_PROVIDER;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.CONTEXT;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.DEFAULT_REPORTING_SERVICE;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.EXTENSIONS;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.PROVIDER_REGISTRY;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.REPORTER_BASELINE_PROVIDER;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.REPORTER_REGISTRY;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.REPORTING_CONTEXT;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.SESSION_COMPARATOR;
-import static com.griddynamics.jagger.xml.beanParsers.XMLConstants.SESSION_COMPARATORS_ELEMENT;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
-import static org.springframework.util.xml.DomUtils.getChildElementByTagName;
 
 /**
  * Created by IntelliJ IDEA.
@@ -73,15 +72,13 @@ public class ReportDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
             //parse baselineProvider
             BeanDefinitionBuilder baseLineSessionProvider = genericBeanDefinition(BaselineSessionProvider.class);
-            baseLineSessionProvider.setParentName(REPORTER_BASELINE_PROVIDER);
-
             String baseLineId = sessionComparatorsElement.getAttribute(BASELINE_ID);
             if (!baseLineId.isEmpty()) {
                 baseLineSessionProvider.addPropertyValue(BASELINE_SESSION_ID, baseLineId);
             } else {
                 baseLineSessionProvider.addPropertyValue(BASELINE_SESSION_ID, IDENTITY_SESSION);
             }
-            comparisonReporter.addPropertyValue(BASELINE_SESSION_PROVIDER, baseLineSessionProvider.getBeanDefinition());
+            reportContext.addPropertyValue(BASELINE_SESSION_PROVIDER, baseLineSessionProvider.getBeanDefinition());
 
             //parse comparators chain
             setBeanProperty(SESSION_COMPARATOR, sessionComparatorsElement, parserContext, comparisonReporter.getBeanDefinition());

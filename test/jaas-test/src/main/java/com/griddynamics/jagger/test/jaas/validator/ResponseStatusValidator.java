@@ -2,7 +2,7 @@ package com.griddynamics.jagger.test.jaas.validator;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.invoker.http.HttpResponse;
-import com.griddynamics.jagger.invoker.http.v2.JHttpResponse;
+import com.griddynamics.jagger.invoker.v2.JHttpResponse;
 
 public class ResponseStatusValidator<Q, E> extends BaseHttpResponseValidator<Q, E> {
 

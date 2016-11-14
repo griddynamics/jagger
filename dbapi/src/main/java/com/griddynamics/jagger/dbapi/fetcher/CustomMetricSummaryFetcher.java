@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-@Deprecated
 public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingleDto> {
 
     @Override
@@ -37,10 +36,6 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
 
         List<Object[]> metrics = new ArrayList<>();
 
-        // check old model
-        metrics.addAll(getCustomMetricsDataOldModel(taskIds, metricIds));
-
-        // check new model
         metrics.addAll(getCustomMetricsDataNewModel(taskIds, metricIds));
 
         if (metrics.isEmpty()) {
@@ -89,31 +84,6 @@ public class CustomMetricSummaryFetcher extends DbMetricDataFetcher<SummarySingl
 
         return new HashSet<>(resultMap.values());
     }
-
-    /**
-     * @param taskIds   ids of all tasks
-     * @param metricIds identifiers of metric
-     * @return list of object[] (value, sessionId, metricId, taskDataId)
-     */
-    @Deprecated
-    protected List<Object[]> getCustomMetricsDataOldModel(Set<Long> taskIds, Set<String> metricIds) {
-        return entityManager.createNativeQuery(
-                "SELECT metric.total, taskData.sessionId, metric.name, taskData.taskDataId " +
-                        "FROM DiagnosticResultEntity AS metric " +
-                        "JOIN ( " +
-                        "SELECT wd.sessionId, wd.id, taskData.id AS taskDataId " +
-                        "FROM WorkloadData AS wd " +
-                        "JOIN ( " +
-                        "SELECT taskData.taskId, taskData.sessionId, taskData.id " +
-                        "FROM TaskData AS taskData " +
-                        "WHERE taskData.id IN (:ids) " +
-                        ") AS taskData " +
-                        "ON wd.sessionId=taskData.sessionId AND wd.taskId=taskData.taskId " +
-                        ") AS taskData " +
-                        "ON metric.workloadData_id=taskData.id AND metric.name IN (:metricIds);"
-        ).setParameter("ids", taskIds).setParameter("metricIds", metricIds).getResultList();
-    }
-
 
     /**
      * @param taskIds  ids of all tasks

@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.invoker.http.v2;
+package com.griddynamics.jagger.invoker.v2;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpHeaders;

@@ -1,11 +1,12 @@
-package com.griddynamics.jagger.invoker.http.v2;
+package com.griddynamics.jagger.invoker.v2;
+
+import static java.util.stream.Collectors.toMap;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
 import java.util.Map;
-
-import static java.util.stream.Collectors.toMap;
 
 /**
  * An object that represents HTTP-response. It consists of {@link JHttpResponse#status},
@@ -14,7 +15,7 @@ import static java.util.stream.Collectors.toMap;
  * @author Anton Antonenko
  * @since 1.3
  */
-public class JHttpResponse<T> {
+public class JHttpResponse<T> implements Serializable {
 
     private HttpStatus status;
     private T body;
