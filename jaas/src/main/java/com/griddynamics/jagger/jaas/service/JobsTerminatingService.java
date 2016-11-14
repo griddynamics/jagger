@@ -43,7 +43,7 @@ public class JobsTerminatingService {
     }
 
     private void terminate(JobExecutionEntity jobExec) {
-        JobExecutionStatus oldStatus = jobExec.getLastAuditEntity().getNewStatus();
+        JobExecutionStatus oldStatus = jobExec.getStatus();
         jobExec.addAuditEntity(new JobExecutionAuditEntity(jobExec, System.currentTimeMillis(), oldStatus, TIMEOUT));
         jobExec.setStatus(TIMEOUT);
         jobExecutionDao.update(jobExec);

@@ -16,8 +16,6 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
 @Entity
 @Table(name = "job_execution_entity")
 public class JobExecutionEntity {
@@ -88,12 +86,6 @@ public class JobExecutionEntity {
         if (auditEntities == null)
             auditEntities = new ArrayList<>();
         auditEntities.add(auditEntity);
-    }
-
-    public JobExecutionAuditEntity getLastAuditEntity() {
-        if (isEmpty(auditEntities))
-            return null;
-        return auditEntities.get(auditEntities.size() - 1);
     }
 
     @Override
