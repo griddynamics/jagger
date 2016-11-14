@@ -147,6 +147,36 @@ public class TestEnvironmentDaoTest {
     }
 
     @Test
+    public void createWithSameTestSuitesTest() {
+        TestEnvironmentEntity expected = getTestEnvironmentEntities().get(0);
+        testEnvironmentDao.create(expected);
+
+        TestEnvironmentEntity expected2 = getTestEnvironmentEntities().get(1);
+        expected2.setRunningTestSuite(null);
+        expected2.getTestSuites().clear();
+
+        TestSuiteEntity testSuiteEntity = new TestSuiteEntity();
+        testSuiteEntity.setTestSuiteId(TEST_SUITE_ID_1);
+        testSuiteEntity.setTestEnvironmentEntity(expected2);
+        expected2.getTestSuites().add(testSuiteEntity);
+
+        testEnvironmentDao.create(expected2);
+
+        TestEnvironmentEntity actual1 = testEnvironmentDao.read(ENVIRONMENT_ID_1);
+        TestEnvironmentEntity actual2 = testEnvironmentDao.read(ENVIRONMENT_ID_2);
+
+        assertThat(actual1, is(notNullValue()));
+        assertThat(actual1, is(expected));
+        assertThat(actual2, is(notNullValue()));
+        assertThat(actual2, is(expected2));
+        assertThat(testEnvironmentDao.readAll().size(), is(2));
+        assertThat(actual1.getTestSuites().size(), is(1));
+        assertThat(actual2.getTestSuites().size(), is(1));
+        assertThat(actual1.getTestSuites().get(0), is(expected.getTestSuites().get(0)));
+        assertThat(actual2.getTestSuites().get(0), is(expected2.getTestSuites().get(0)));
+    }
+
+    @Test
     public void createOrUpdate_Create_Test() {
         TestEnvironmentEntity expected = getTestEnvironmentEntity();
         testEnvironmentDao.createOrUpdate(expected);

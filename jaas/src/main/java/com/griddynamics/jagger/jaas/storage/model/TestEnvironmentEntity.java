@@ -12,17 +12,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
 
 @Entity
+@Table(name = "test_environment_entity")
 public class TestEnvironmentEntity {
     public enum TestEnvironmentStatus {
         PENDING, RUNNING
     }
 
     @Id
+    @Column(name = "`environment_id`")
     private String environmentId;
 
     @OneToMany(mappedBy = "testEnvironmentEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,13 +36,15 @@ public class TestEnvironmentEntity {
     private TestEnvironmentStatus status = TestEnvironmentStatus.PENDING;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "runningTestSuite")
+    @JoinColumn(name = "`running_test_suite`")
     private TestSuiteEntity runningTestSuite;
 
     @JsonIgnore
+    @Column(name = "`expiration_timestamp`")
     private long expirationTimestamp;
 
     @JsonIgnore
+    @Column(name = "`session_id`")
     private String sessionId;
 
     public String getEnvironmentId() {
