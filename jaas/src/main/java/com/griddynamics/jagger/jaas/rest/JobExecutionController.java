@@ -23,7 +23,7 @@ public class JobExecutionController {
     }
 
     @PostMapping("/{jobId}/start")
-    public ResponseEntity<?> startJob(@PathVariable Long jobId) {
+    public ResponseEntity<?> createJobExecution(@PathVariable Long jobId) {
         jobExecutionService.create(new JobExecutionEntity(jobId));
         return ResponseEntity.status(CREATED).build();
     }
