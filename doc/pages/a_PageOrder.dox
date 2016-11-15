@@ -1,5 +1,5 @@
 // file defines order of the pages in the documentation tree view
 
-/// @page Installation
-/// @page GettingStarted
-/// @page Components
+/// @page Installation Installation
+/// @page GettingStarted Getting started
+/// @page Components Framework components
