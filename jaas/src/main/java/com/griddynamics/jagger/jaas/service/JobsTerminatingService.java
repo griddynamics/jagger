@@ -24,14 +24,12 @@ public class JobsTerminatingService {
         this.jobExecutionDao = jobExecutionDao;
     }
 
-    @Scheduled(fixedRateString = "${job.execution.termination.periodicity}")
+    @Scheduled(fixedRateString = "${job.execution.termination.periodicity.milliseconds}")
     public void terminateOutdatedJobsTask() {
-        long terminated = jobExecutionDao.readAllPending().stream().filter(this::isOutdated).peek(this::terminate).count();
-        if (terminated > 0) {
-            LOGGER.info("{} jobs has been terminated.", terminated);
-        } else {
-            LOGGER.debug("{} jobs has been terminated.", terminated);
-        }
+        jobExecutionDao.readAllPending().stream()
+                .filter(this::isOutdated)
+                .peek(this::terminate)
+                .peek(jobExec -> LOGGER.info("{} has been terminated.", jobExec.getJob()));
     }
 
     private boolean isOutdated(JobExecutionEntity jobExec) {
