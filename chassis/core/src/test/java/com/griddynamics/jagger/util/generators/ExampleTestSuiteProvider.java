@@ -13,7 +13,6 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationIterations;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  *
@@ -21,7 +20,7 @@ import java.util.List;
  * Date: 10/11/16
  */
 public class ExampleTestSuiteProvider {
-    public static List<JTestSuite> jTestSuites() {
+    public static JTestSuite jTestSuite() {
         JTestDescription description = JTestDescription.builder()
                                                        .withId("my_first_jagger_test_description")
                                                        .withComment("no_comments")
@@ -77,6 +76,6 @@ public class ExampleTestSuiteProvider {
                                              .withTestGroups(singletonList(testGroup))
                                              .build();
         
-        return singletonList(jTestSuite);
+        return jTestSuite;
     }
 }

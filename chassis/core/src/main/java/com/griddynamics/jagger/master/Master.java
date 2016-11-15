@@ -48,7 +48,6 @@ import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
-import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -103,9 +102,6 @@ public class Master implements Runnable {
     private MetricTablesChecker metricTablesChecker;
     private DatabaseService databaseService;
     private DecisionMakerDistributionListener decisionMakerDistributionListener;
-    private ConfigurationGenerator configurationGenerator;
-    private boolean useBuilders;
-    private String jTestSuiteNameToExecute;
 
     private Thread shutdownHook = new Thread(new Runnable() {
         @Override
@@ -201,10 +197,6 @@ public class Master implements Runnable {
         }
 
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
-
-        if (useBuilders) {
-            configuration = configurationGenerator.generate(jTestSuiteNameToExecute);
-        }
 
         if (configuration.getMonitoringConfiguration() != null) {
             dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
@@ -423,18 +415,6 @@ public class Master implements Runnable {
     @Required
     public void setTimeoutConfiguration(MasterTimeoutConfiguration timeoutConfiguration) {
         this.timeoutConfiguration = timeoutConfiguration;
-    }
-
-    public void setConfigurationGenerator(ConfigurationGenerator configurationGenerator) {
-        this.configurationGenerator = configurationGenerator;
-    }
-
-    public void setUseBuilders(boolean useBuilders) {
-        this.useBuilders = useBuilders;
-    }
-
-    public void setjTestSuiteNameToExecute(String jTestSuiteNameToExecute) {
-        this.jTestSuiteNameToExecute = jTestSuiteNameToExecute;
     }
 
     private class StartWorkConditions implements Runnable {

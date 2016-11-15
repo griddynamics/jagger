@@ -29,6 +29,7 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <context:component-scan base-package="com.griddynamics.jagger.rest"/>
+    <context:annotation-config/>
     <mvc:annotation-driven/>
 
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
@@ -45,7 +46,7 @@
     </bean>
 
     <bean id="master" class="com.griddynamics.jagger.master.Master">
-        <property name="configuration" ref="${chassis.master.session.configuration.bean.name}"/>
+        <property name="configuration" value="#{configurationGenerator.generate()}"/>
         <property name="coordinator" ref="coordinator"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
@@ -77,9 +78,6 @@
         <property name="metaDataStorage" ref="metaDataStorage"/>
         <property name="databaseService" ref="databaseService"/>
         <property name="decisionMakerDistributionListener" ref="decisionMakerDistributionListener"/>
-        <property name="configurationGenerator" ref="configurationGenerator"/>
-        <property name="useBuilders" value="${chassis.master.using.builders:false}"/>
-        <property name="jTestSuiteNameToExecute" value="${chassis.master.session.configuration.bean.name}"/>
     </bean>
 
     <bean id="distributionStartTimeTimeout" class="com.griddynamics.jagger.util.Timeout">
@@ -169,6 +167,7 @@
     <bean id="metaDataStorage" class="com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage"/>
 
     <bean id="configurationGenerator" class="com.griddynamics.jagger.util.generators.ConfigurationGenerator">
+        <constructor-arg name="jTestSuiteNameToExecute" value="${chassis.master.session.configuration.bean.name}"/>
         <property name="basicAggregator" ref="basicAggregator"/>
         <property name="basicSessionCollector" ref="basicSessionCollector"/>
         <property name="e1MasterCollector" ref="e1MasterCollector"/>
@@ -176,8 +175,8 @@
         <property name="metricLogProcessor" ref="metricLogProcessor"/>
         <property name="profilerLogProcessor" ref="profilerLogProcessor"/>
         <property name="durationLogProcessor" ref="durationLogProcessor"/>
+        <property name="useBuilders" value="${chassis.master.using.builders:false}"/>
     </bean>
-
 </beans>
 
 

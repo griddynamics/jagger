@@ -297,5 +297,9 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>jaas-client</artifactId>
+        </dependency>
     </dependencies>
 </project>

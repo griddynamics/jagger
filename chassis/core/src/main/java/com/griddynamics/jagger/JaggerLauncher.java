@@ -27,9 +27,12 @@ import com.griddynamics.jagger.launch.LaunchManager;
 import com.griddynamics.jagger.launch.LaunchTask;
 import com.griddynamics.jagger.launch.Launches;
 import com.griddynamics.jagger.master.Master;
+import com.griddynamics.jagger.master.MasterToJaasCoordinator;
+import com.griddynamics.jagger.master.TerminateException;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
+import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
@@ -155,22 +158,43 @@ public final class JaggerLauncher {
         LaunchTask masterTask = new LaunchTask() {
             @Override
             public void run() {
-                boolean isStandByMode =
-                        Boolean.parseBoolean(environmentProperties.getProperty("realtime.enable.standby.mode"));
+                try {
+                    boolean isStandByMode = Boolean.parseBoolean(
+                            environmentProperties.getProperty("realtime.enable.standby.mode", "false"));
+        
+                    if (isStandByMode) {
+                        log.info("Starting Master in stand by mode...");
+            
+                        MasterToJaasCoordinator masterToJaasCoordinator = new MasterToJaasCoordinator(
+                                environmentProperties.getProperty("realtime.environment.id"),
+                                environmentProperties.getProperty("realtime.jaas.endpoint"), Integer.parseInt(
+                                environmentProperties.getProperty("realtime.status.report.interval.seconds")),
+                                getAvailableConfigurations(directory)
+                        );
+                        masterToJaasCoordinator.register();
+                        while (masterToJaasCoordinator.isStandBy()) {
                 
-                if (isStandByMode) {
-                    log.info("Starting Master in stand by mode...");
-                    while (isStandByMode) {
-                        environmentProperties.setProperty(TEST_CONFIG_NAME_PROP, getTestConfigName());
+                            environmentProperties
+                                    .setProperty(TEST_CONFIG_NAME_PROP, masterToJaasCoordinator.awaitConfigToExecute());
+                
+                            doLaunchMaster(directory);
+                        }
+                    } else {
+                        log.info("Starting Master in right away mode...");
                         doLaunchMaster(directory);
                     }
-                } else {
-                    log.info("Starting Master in right away mode...");
-                    doLaunchMaster(directory);
+                } catch (TerminateException e) {
+                    log.error("Master has been terminated.");
                 }
             }
         };
         builder.addMainTask(masterTask);
+    }
+    
+    private static Set<String> getAvailableConfigurations(final URL directory) {
+        AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
+        ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
+        return configurationGenerator.getUserJTestSuiteNames();
     }
     
     private static void doLaunchMaster(final URL directory) {
@@ -179,14 +203,6 @@ public final class JaggerLauncher {
         Master master = (Master) context.getBean("master");
         master.run();
         context.destroy();
-    }
-    
-    private static String getTestConfigName() {
-        try {
-            Thread.sleep(100_000); // 100 secs
-        } catch (InterruptedException ignored) {
-        }
-        return environmentProperties.getProperty(TEST_CONFIG_NAME_PROP);
     }
     
     private static void launchReporter(final URL directory) {

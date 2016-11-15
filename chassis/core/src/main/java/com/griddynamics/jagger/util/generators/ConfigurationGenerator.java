@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Generates {@link Configuration} entity
  * from {@link JTestSuite} object.
@@ -37,13 +39,20 @@ public class ConfigurationGenerator {
     private MetricLogProcessor metricLogProcessor;
     private ProfilerLogProcessor profilerLogProcessor;
     private DurationLogProcessor durationLogProcessor;
-    private Map<String, JTestSuite> userJTestSuites;
+    private Map<String, JTestSuite> userJTestSuites = Collections.emptyMap();
+    private boolean useBuilders;
+    private final String jTestSuiteNameToExecute;
+    private Map<String, Configuration> configurations = Collections.emptyMap();
+    
+    public ConfigurationGenerator(String jTestSuiteNameToExecute) {
+        this.jTestSuiteNameToExecute = jTestSuiteNameToExecute;
+    }
     
     public Set<String> getUserJTestSuiteNames() {
-        if (userJTestSuites == null) {
-            return Collections.emptySet();
+        if (useBuilders) {
+            return new HashSet<>(userJTestSuites.keySet());
         }
-        return new HashSet<>(userJTestSuites.keySet());
+        return new HashSet<>(configurations.keySet());
     }
     
     @Autowired(required = false)
@@ -51,13 +60,25 @@ public class ConfigurationGenerator {
         this.userJTestSuites = userJTestSuites.stream().collect(Collectors.toMap(JTestSuite::getId, identity()));
     }
     
-    public Configuration generate(String userJTestSuiteName) {
-        
-        JTestSuite jTestSuite = userJTestSuites.get(userJTestSuiteName);
-        if (jTestSuite == null) {
-            throw new IllegalArgumentException(String.format("No Jagger test suit with name %s", userJTestSuiteName));
+    @Autowired(required = false)
+    public void setConfigurations(Map<String, Configuration> configurations) {
+        this.configurations = configurations;
+    }
+    
+    public Configuration generate() {
+        if (useBuilders) {
+            JTestSuite jTestSuite = userJTestSuites.get(jTestSuiteNameToExecute);
+            if (jTestSuite == null) {
+                throw new IllegalArgumentException(String.format("No Jagger test suite with name %s", jTestSuiteNameToExecute));
+            }
+            return generate(jTestSuite);
         }
-        return generate(jTestSuite);
+
+        Configuration configuration = configurations.get(jTestSuiteNameToExecute);
+        if (configuration == null) {
+            throw new IllegalArgumentException(String.format("No Jagger configuration with name %s", jTestSuiteNameToExecute));
+        }
+        return configuration;
     }
     
     /**
@@ -119,4 +140,14 @@ public class ConfigurationGenerator {
     public void setDurationLogProcessor(DurationLogProcessor durationLogProcessor) {
         this.durationLogProcessor = durationLogProcessor;
     }
+    
+    public boolean isUseBuilders() {
+        return useBuilders;
+    }
+    
+    public void setUseBuilders(boolean useBuilders) {
+        this.useBuilders = useBuilders;
+    }
+    
+    public String getjTestSuiteNameToExecute() { return jTestSuiteNameToExecute; }
 }
