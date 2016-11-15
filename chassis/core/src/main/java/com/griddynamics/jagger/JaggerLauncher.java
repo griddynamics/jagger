@@ -30,6 +30,7 @@ import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.master.MasterToJaasCoordinator;
 import com.griddynamics.jagger.master.TerminateException;
 import com.griddynamics.jagger.reporting.ReportingService;
+import com.griddynamics.jagger.storage.StorageServerLauncher;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
 import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
@@ -52,6 +53,7 @@ import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -194,13 +196,18 @@ public final class JaggerLauncher {
     private static Set<String> getAvailableConfigurations(final URL directory) {
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
-        return configurationGenerator.getUserJTestSuiteNames();
+        Set<String> availableConfigs = new HashSet<>(configurationGenerator.getUserJTestSuiteNames());
+        context.destroy();
+        return availableConfigs;
     }
     
     private static void doLaunchMaster(final URL directory) {
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
         initCoordinator(context);
-        Master master = (Master) context.getBean("master");
+        context.getBean(StorageServerLauncher.class); // to trigger lazy initialization
+        ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
+        configurationGenerator.setJTestSuiteNameToExecute(environmentProperties.getProperty(TEST_CONFIG_NAME_PROP));
+        Master master = context.getBean(Master.class);
         master.run();
         context.destroy();
     }
