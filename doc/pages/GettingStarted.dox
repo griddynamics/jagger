@@ -1,0 +1,45 @@
+/// @page GettingStarted Getting started
+/// @brief Start development of the first test project with Jagger
+/// @details
+/// @n
+/// @li @ref section_getting_started_run
+/// @li @ref section_getting_started_project
+///
+/// @n
+/// @n
+/// @section section_getting_started_run Run test project
+/// @n
+/// Before running test project, you will need to run @ref section_installation_local @n
+/// After installation is finished, go to your project directory @n
+/// @n
+/// Build Jagger test project
+/// @code
+/// mvn clean install
+/// @endcode
+/// @n
+/// Run test project
+/// @code
+/// cd ./target/{artifactdId}-{version}-full/
+/// ./start.sh profiles/basic/environment.properties
+/// @endcode
+/// @n
+/// @section section_getting_started_project Test project components
+/// Created test project will have following test components:
+/// - Test description. It describes
+///     - Where and how to read test data
+///     - What protocol to use for communication with the SUT
+///     - How to validate if responses from the SUT are valid
+///
+/// - Test. It describes:
+///     - What load strategy will be used
+///     - When the load test should be terminated
+///
+/// @li Test group. It describes what tests will be executed in parallel. Tests, belonging to the same test group are executed in parallel
+///
+/// @li Test suite. It describes the order of test group execution. This is the entity that can be executed. Test project can contain multiple test suits. You can run of the test suits at a time
+///
+/// In the code of the template project, you can look for:
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestDescription
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JTest
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestGroup
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestSuite

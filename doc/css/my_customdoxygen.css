@@ -1,0 +1,8 @@
+/* The custom CSS for doxygen 1.8.4 */
+
+div.fragment {
+        padding: 10px;
+        margin: 0px 25px 0px 0px;
+	background-color: #FBFCFD;
+	border: 1px solid #C4CFE5;
+}

@@ -30,7 +30,7 @@ public class JTest {
         private final JTestDescription jTestDescription;
         private final JLoad load;
         private final JTermination termination;
-    
+
         private Builder(Id id, JTestDescription jTestDescription, JLoad load, JTermination termination) {
             this.id = id;
             this.jTestDescription = jTestDescription;

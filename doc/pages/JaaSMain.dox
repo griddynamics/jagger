@@ -1,0 +1,6 @@
+/// @page JaasMain Jagger as a Service REST API
+/// @brief JaaS - provides REST API for test results managements and CI environments orchestration @n
+/// @details
+/// @n
+/// @li @subpage JaasInstallation
+///
