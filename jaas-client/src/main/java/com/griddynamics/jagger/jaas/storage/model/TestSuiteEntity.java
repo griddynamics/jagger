@@ -27,7 +27,14 @@ public class TestSuiteEntity {
 
     @Column(name = "`test_suite_id`", nullable = false)
     private String testSuiteId;
-
+    
+    public TestSuiteEntity() {
+    }
+    
+    public TestSuiteEntity(String testSuiteId) {
+        this.testSuiteId = testSuiteId;
+    }
+    
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "`environment_id`")

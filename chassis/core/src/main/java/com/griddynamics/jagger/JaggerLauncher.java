@@ -29,10 +29,10 @@ import com.griddynamics.jagger.launch.Launches;
 import com.griddynamics.jagger.master.Master;
 import com.griddynamics.jagger.master.MasterToJaasCoordinator;
 import com.griddynamics.jagger.master.TerminateException;
-import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
+import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
@@ -52,7 +52,6 @@ import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -194,8 +193,8 @@ public final class JaggerLauncher {
     
     private static Set<String> getAvailableConfigurations(final URL directory) {
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
-        Map<String, Configuration> configurationMap = context.getBeansOfType(Configuration.class);
-        return new HashSet<>(configurationMap.keySet());
+        ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
+        return configurationGenerator.getUserJTestSuiteNames();
     }
     
     private static void doLaunchMaster(final URL directory) {
