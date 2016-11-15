@@ -44,7 +44,7 @@
         <property name="reconnectPeriod" value="${chassis.coordination.reconnect.period}"/>
     </bean>
 
-    <bean id="zooKeeper" factory-bean="zooKeeperFactory" factory-method="create" lazy-init="true"/>
+    <bean id="zooKeeper" factory-bean="zooKeeperFactory" factory-method="create" lazy-init="true" destroy-method="close"/>
 
     <alias name="${chassis.coordination.bean}" alias="coordinator"/>
 

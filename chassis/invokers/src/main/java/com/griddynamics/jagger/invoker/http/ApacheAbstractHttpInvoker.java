@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @param <Q> -query type
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public abstract class ApacheAbstractHttpInvoker<Q> implements Invoker<Q, HttpResponse, String> {
     private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 

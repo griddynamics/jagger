@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.dbapi.dto;
 
-import com.griddynamics.jagger.dbapi.model.MetricGroupNode;
 import com.griddynamics.jagger.dbapi.model.LegendNode;
+import com.griddynamics.jagger.dbapi.model.MetricGroupNode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,7 +38,8 @@ public class PlotIntegratedDto implements Serializable {
         this.plotHeader = plotHeader;
     }
 
-    public PlotIntegratedDto(MetricGroupNode<LegendNode> legendTree, String xAxisLabel, String yAxisLabel, String plotHeader, Collection<MarkingDto> markingSeries) {
+    public PlotIntegratedDto(MetricGroupNode<LegendNode> legendTree, String xAxisLabel, String yAxisLabel, String plotHeader,
+                             Collection<MarkingDto> markingSeries) {
         this.legendTree = legendTree;
         this.xAxisLabel = xAxisLabel;
         this.yAxisLabel = yAxisLabel;
@@ -47,7 +48,8 @@ public class PlotIntegratedDto implements Serializable {
     }
 
     /**
-     * get list of lines */
+     * get list of lines
+     */
     public Collection<PlotSingleDto> getPlotSeries() {
         if (legendTree == null) {
             return Collections.emptyList();

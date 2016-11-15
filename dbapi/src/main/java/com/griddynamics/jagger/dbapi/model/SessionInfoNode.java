@@ -18,6 +18,6 @@ public class SessionInfoNode extends AbstractIdentifyNode {
 
     @Override
     public List<? extends AbstractIdentifyNode> getChildren() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

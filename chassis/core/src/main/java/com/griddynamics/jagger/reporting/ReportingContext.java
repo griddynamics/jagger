@@ -22,12 +22,14 @@ package com.griddynamics.jagger.reporting;
 
 import com.griddynamics.jagger.engine.e1.reporting.PlotsReporter;
 import com.griddynamics.jagger.engine.e1.reporting.SummaryReporter;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.extension.ExtensionRegistry;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ResourceLoader;
@@ -47,6 +49,7 @@ public class ReportingContext implements ApplicationContextAware {
     private String rootPath = "";
     private SummaryReporter summaryReporter;
     private PlotsReporter plotsReporter;
+    private BaselineSessionProvider baselineSessionProvider;
     
     private ExtensionRegistry<ReportProvider> providerRegistry = new ExtensionRegistry<>(ReportProvider.class);
     private ExtensionRegistry<MappedReportProvider> mappedProviderRegistry =
@@ -138,6 +141,7 @@ public class ReportingContext implements ApplicationContextAware {
         return summaryReporter;
     }
     
+    @Required
     public void setSummaryReporter(SummaryReporter summaryReporter) {
         this.summaryReporter = summaryReporter;
     }
@@ -146,7 +150,17 @@ public class ReportingContext implements ApplicationContextAware {
         return plotsReporter;
     }
     
+    @Required
     public void setPlotsReporter(PlotsReporter plotsReporter) {
         this.plotsReporter = plotsReporter;
+    }
+    
+    public BaselineSessionProvider getBaselineSessionProvider() {
+        return baselineSessionProvider;
+    }
+    
+    @Required
+    public void setBaselineSessionProvider(BaselineSessionProvider baselineSessionProvider) {
+        this.baselineSessionProvider = baselineSessionProvider;
     }
 }

@@ -24,7 +24,15 @@ import java.util.Date;
 import java.util.Set;
 import java.util.Collections;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 @Entity
 public class SessionData {
@@ -44,7 +52,7 @@ public class SessionData {
     private String errorMessage;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "SessionTagEntity")
-    private Set<TagEntity> tags = Collections.EMPTY_SET;
+    private Set<TagEntity> tags = Collections.emptySet();
 
     public SessionData() {
     }

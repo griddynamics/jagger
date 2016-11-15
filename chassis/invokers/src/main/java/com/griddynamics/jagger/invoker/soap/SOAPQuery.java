@@ -26,6 +26,7 @@ import java.util.Map;
  * @author Alexey Kiselyov
  *         Date: 05.08.11
  */
+@Deprecated
 public class SOAPQuery {
     private String defaultEndpoint;
     private String wsdl;

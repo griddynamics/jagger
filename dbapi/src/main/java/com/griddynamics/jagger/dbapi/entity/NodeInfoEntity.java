@@ -17,14 +17,22 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.griddynamics.jagger.dbapi.entity;
 
 import com.griddynamics.jagger.util.GeneralNodeInfo;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Entity
 public class NodeInfoEntity {
@@ -65,23 +73,23 @@ public class NodeInfoEntity {
     private List<NodePropertyEntity> properties;
 
     public NodeInfoEntity(String sessionId, GeneralNodeInfo generalNodeInfo) {
-        this.sessionId          = sessionId;
-        this.nodeId             = generalNodeInfo.getNodeId();
-        this.systemTime         = generalNodeInfo.getSystemTime();
-        this.osName             = generalNodeInfo.getOsName();
-        this.osVersion          = generalNodeInfo.getOsVersion();
+        this.sessionId = sessionId;
+        this.nodeId = generalNodeInfo.getNodeId();
+        this.systemTime = generalNodeInfo.getSystemTime();
+        this.osName = generalNodeInfo.getOsName();
+        this.osVersion = generalNodeInfo.getOsVersion();
         this.jaggerJavaVersion = generalNodeInfo.getJaggerJavaVersion();
-        this.cpuModel           = generalNodeInfo.getCpuModel();
-        this.cpuMHz             = generalNodeInfo.getCpuMHz();
-        this.cpuTotalCores      = generalNodeInfo.getCpuTotalCores();
-        this.cpuTotalSockets    = generalNodeInfo.getCpuTotalSockets();
-        this.systemRAM          = generalNodeInfo.getSystemRAM();
+        this.cpuModel = generalNodeInfo.getCpuModel();
+        this.cpuMHz = generalNodeInfo.getCpuMHz();
+        this.cpuTotalCores = generalNodeInfo.getCpuTotalCores();
+        this.cpuTotalSockets = generalNodeInfo.getCpuTotalSockets();
+        this.systemRAM = generalNodeInfo.getSystemRAM();
 
-        if (generalNodeInfo.getProperties() != null){
-            properties = new ArrayList<NodePropertyEntity>(generalNodeInfo.getProperties().size());
-            for (Map.Entry<String, String> entry : generalNodeInfo.getProperties().entrySet()){
-                properties.add(new NodePropertyEntity(entry.getKey(), entry.getValue(), this));
-            }
+        if (generalNodeInfo.getProperties() != null) {
+            properties = new ArrayList<>(generalNodeInfo.getProperties().size());
+            properties.addAll(generalNodeInfo.getProperties().entrySet().stream()
+                    .map(entry -> new NodePropertyEntity(entry.getKey(), entry.getValue(), this))
+                    .collect(Collectors.toList()));
         }
     }
 

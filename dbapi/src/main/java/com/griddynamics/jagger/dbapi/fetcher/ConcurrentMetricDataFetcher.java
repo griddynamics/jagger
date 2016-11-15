@@ -36,7 +36,7 @@ public abstract class ConcurrentMetricDataFetcher<R> extends MetricDataFetcher<R
     @Override
     public Set<R> getResult(List<MetricNameDto> metricNames) {
 
-        List<Future<Set<R>>> futureList = new ArrayList<Future<Set<R>>>();
+        List<Future<Set<R>>> futureList = new ArrayList<>();
 
         int fromIndex = 0;
         while (fromIndex < metricNames.size()) {
@@ -49,7 +49,7 @@ public abstract class ConcurrentMetricDataFetcher<R> extends MetricDataFetcher<R
 
                         private List<MetricNameDto> metricsToFetch;
 
-                        private Callable<Set<R>> init (List<MetricNameDto> metricsToFetch) {
+                        private Callable<Set<R>> init(List<MetricNameDto> metricsToFetch) {
                             this.metricsToFetch = metricsToFetch;
                             return this;
                         }
@@ -64,7 +64,7 @@ public abstract class ConcurrentMetricDataFetcher<R> extends MetricDataFetcher<R
             fromIndex += maxSizeOfBatch;
         }
 
-        Set<R> result = new HashSet<R>();
+        Set<R> result = new HashSet<>();
 
         try {
             for (Future<Set<R>> future : futureList) {
@@ -72,7 +72,7 @@ public abstract class ConcurrentMetricDataFetcher<R> extends MetricDataFetcher<R
             }
         } catch (Exception e) {
             log.error("Exception while fetching data", e);
-            throw new RuntimeException("Exception while getting data from future" , e);
+            throw new RuntimeException("Exception while getting data from future", e);
         }
 
         return result;

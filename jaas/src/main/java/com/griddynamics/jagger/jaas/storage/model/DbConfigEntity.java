@@ -110,4 +110,33 @@ public class DbConfigEntity {
                 + user + '\'' + ", pass='" + pass + '\'' + ", jdbcDriver='" + jdbcDriver + '\'' + ", hibernateDialect='"
                 + hibernateDialect + '\'' + '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        DbConfigEntity that = (DbConfigEntity) obj;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (desc != null ? !desc.equals(that.desc) : that.desc != null) return false;
+        if (url != null ? !url.equals(that.url) : that.url != null) return false;
+        if (user != null ? !user.equals(that.user) : that.user != null) return false;
+        if (pass != null ? !pass.equals(that.pass) : that.pass != null) return false;
+        if (jdbcDriver != null ? !jdbcDriver.equals(that.jdbcDriver) : that.jdbcDriver != null) return false;
+        return hibernateDialect != null ? hibernateDialect.equals(that.hibernateDialect) : that.hibernateDialect == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (desc != null ? desc.hashCode() : 0);
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
+        result = 31 * result + (pass != null ? pass.hashCode() : 0);
+        result = 31 * result + (jdbcDriver != null ? jdbcDriver.hashCode() : 0);
+        result = 31 * result + (hibernateDialect != null ? hibernateDialect.hashCode() : 0);
+        return result;
+    }
 }

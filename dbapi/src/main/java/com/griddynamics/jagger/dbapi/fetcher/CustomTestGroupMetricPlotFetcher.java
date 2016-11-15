@@ -32,7 +32,7 @@ public class CustomTestGroupMetricPlotFetcher extends CustomMetricPlotFetcher {
             return Collections.emptyList();
         }
 
-        List<Object[]> resultList = new ArrayList<Object[]>();
+        List<Object[]> resultList = new ArrayList<>();
 
         Multimap<Long, Long> testGroupMap = fetchUtil.getTestGroupIdsByTestIds(taskIds);
 
@@ -42,9 +42,9 @@ public class CustomTestGroupMetricPlotFetcher extends CustomMetricPlotFetcher {
         }
         Collection<? extends Object[]> testGroupValues = getPlotDataNewModel(testGroupMap.keySet(), metricIds);
 
-        for (Object[] row : testGroupValues){
+        for (Object[] row : testGroupValues) {
             Long testGroupId = (Long) row[0];
-            for (Long testId : testGroupMap.get(testGroupId)){
+            for (Long testId : testGroupMap.get(testGroupId)) {
                 resultList.add(new Object[]{testId, row[1], row[2], row[3], row[4]});
             }
         }

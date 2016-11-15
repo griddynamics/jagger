@@ -1,45 +1,19 @@
 package com.griddynamics.jagger.jaas.service;
 
-import com.griddynamics.jagger.jaas.storage.ProjectDao;
 import com.griddynamics.jagger.jaas.storage.model.ProjectEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class ProjectService implements ProjectDao {
+public interface ProjectService {
+    ProjectEntity read(Long projectId);
 
-    @Autowired
-    private ProjectDao projectDao;
+    List<ProjectEntity> readAll();
 
-    @Override
-    public ProjectEntity read(Long projectId) {
-        return projectDao.read(projectId);
-    }
+    void create(ProjectEntity project);
 
-    @Override
-    public List<ProjectEntity> readAll() {
-        return projectDao.readAll();
-    }
+    void update(ProjectEntity project);
 
-    @Override
-    public void create(ProjectEntity project) {
-        projectDao.create(project);
-    }
+    void createOrUpdate(ProjectEntity project);
 
-    @Override
-    public void update(ProjectEntity project) {
-        projectDao.update(project);
-    }
-
-    @Override
-    public void createOrUpdate(ProjectEntity project) {
-        projectDao.createOrUpdate(project);
-    }
-
-    @Override
-    public void delete(Long projectId) {
-        projectDao.delete(projectId);
-    }
+    void delete(Long projectId);
 }

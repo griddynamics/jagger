@@ -32,7 +32,7 @@
     </bean>
 
     <bean id="hdfsStorageServer" class="com.griddynamics.jagger.storage.fs.hdfs.HDFSNamenodeServer"
-          init-method="start" lazy-init="true">
+          init-method="start" destroy-method="shutdown" lazy-init="true">
         <property name="startupProperties"
                   value="#{propertiesResolverRegistry.resolve('configuration/master/hdfs/namenode.properties')} "/>
     </bean>

@@ -20,47 +20,50 @@
 
 package com.griddynamics.jagger.dbapi.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.Date;
-
-import javax.persistence.*;
 
 @Entity
 public class WorkloadData {
-	private Long id;
-	private String sessionId;
-	private String taskId;
+    private Long id;
+    private String sessionId;
+    private String taskId;
     private String parentId;
     private Integer number;
-	private WorkloadDetails scenario;
-	private Date startTime;
-	private Date endTime;
+    private WorkloadDetails scenario;
+    private Date startTime;
+    private Date endTime;
 
-	@Id
+    @Id
     // Identity strategy is not supported by Oracle DB from the box
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Long getId() {
-		return id;
-	}
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
 
-	public String getTaskId() {
-		return taskId;
-	}
+    public String getTaskId() {
+        return taskId;
+    }
 
-	public String getSessionId() {
-		return sessionId;
-	}
+    public String getSessionId() {
+        return sessionId;
+    }
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
-	}
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     public Integer getNumber() {
         return number;
@@ -71,29 +74,29 @@ public class WorkloadData {
     }
 
     @ManyToOne
-	public WorkloadDetails getScenario() {
-		return scenario;
-	}
+    public WorkloadDetails getScenario() {
+        return scenario;
+    }
 
-	public void setScenario(WorkloadDetails scenario) {
-		this.scenario = scenario;
-	}
+    public void setScenario(WorkloadDetails scenario) {
+        this.scenario = scenario;
+    }
 
-	public Date getStartTime() {
-		return startTime;
-	}
+    public Date getStartTime() {
+        return startTime;
+    }
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
 
-	public Date getEndTime() {
-		return endTime;
-	}
+    public Date getEndTime() {
+        return endTime;
+    }
 
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
 
     public String getParentId() {
         return parentId;

@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> - Endpoint type
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class WaitingInvoker<Q, R, E> implements Invoker<Q, R, E> {
     private static final Logger log = LoggerFactory.getLogger(WaitingInvoker.class);
 

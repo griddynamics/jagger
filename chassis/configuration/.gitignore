@@ -2,5 +2,5 @@
 /*.iml
 /jaggerworkspace/
 jagger.log*
-jagger-report.pdf
+*.pdf
 result.xml

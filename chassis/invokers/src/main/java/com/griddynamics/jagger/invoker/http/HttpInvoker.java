@@ -42,6 +42,7 @@ import java.util.*;
  * See @xlink{invoker-http} for details on how-to use this element in xml-configuration
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {
     private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 

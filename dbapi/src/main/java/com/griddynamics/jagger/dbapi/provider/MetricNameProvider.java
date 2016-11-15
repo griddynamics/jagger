@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Set;
 
 public interface MetricNameProvider {
-    public Set<MetricNameDto> getMetricNames(List<TaskDataDto> tests);
+    Set<MetricNameDto> getMetricNames(List<TaskDataDto> tests);
 }
