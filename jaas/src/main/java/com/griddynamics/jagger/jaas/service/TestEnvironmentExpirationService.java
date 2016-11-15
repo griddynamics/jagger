@@ -19,7 +19,7 @@ public class TestEnvironmentExpirationService {
         this.testEnvironmentDao = testEnvironmentDao;
     }
 
-    @Scheduled(fixedRateString = "${environments.cleaning.job.periodicity}")
+    @Scheduled(fixedRateString = "${environments.cleaning.job.periodicity.milliseconds}")
     public void deleteExpiredEnvironmentsTask() {
         int deleted = testEnvironmentDao.deleteExpired(System.currentTimeMillis());
         if (deleted > 0) {
