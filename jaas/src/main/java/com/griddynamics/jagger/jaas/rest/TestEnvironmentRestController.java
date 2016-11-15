@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -104,9 +105,11 @@ public class TestEnvironmentRestController extends AbstractController {
         testEnv.setEnvironmentId(envId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         response.addCookie(getSessionCookie(updated));
-        String testSuiteNameToExecute = getTestSuiteNameToExecute(updated);
-        if (testSuiteNameToExecute != null) {
-            setNextConfigToExecuteHeader(response, testSuiteNameToExecute);
+        if (updated.getStatus() == PENDING) {
+            String testSuiteNameToExecute = getTestSuiteNameToExecute(updated);
+            if (testSuiteNameToExecute != null) {
+                setNextConfigToExecuteHeader(response, testSuiteNameToExecute);
+            }
         }
         return ResponseEntity.accepted().build();
     }
@@ -151,7 +154,7 @@ public class TestEnvironmentRestController extends AbstractController {
             throw new TestEnvironmentInvalidIdException(envId, envIdPattern);
 
         if (testEnv.getRunningTestSuite() == null && testEnv.getStatus() == TestEnvironmentEntity.TestEnvironmentStatus.RUNNING
-                || testEnv.getRunningTestSuite() != null && testEnv.getStatus() == TestEnvironmentEntity.TestEnvironmentStatus.PENDING)
+                || testEnv.getRunningTestSuite() != null && testEnv.getStatus() == PENDING)
             throw new WrongTestEnvironmentStatusException(testEnv.getStatus(), testEnv.getRunningTestSuite());
     }
 
