@@ -55,7 +55,7 @@ public interface Invoker<Q,R,E> extends Serializable {
 
 /* Below is doxygen documentation for Jagger customization */
 
-/// @mainpage Jagger source code documentation
+/// @par Jagger source code documentation
 /// Documentation version:
 /// @dontinclude  JaggerVersion.txt
 /// @skipline  Version

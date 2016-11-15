@@ -60,7 +60,7 @@ public class JTest {
 
 
         /**
-         * Sets {@link JLoad} for a test.
+         * Sets {@link com.griddynamics.jagger.user.test.configurations.load.JLoad} for a test.
          *
          * @param load the load.
          */
@@ -70,7 +70,7 @@ public class JTest {
         }
 
         /**
-         * Set {@link JTermination} for a test.
+         * Set {@link com.griddynamics.jagger.user.test.configurations.termination.JTermination} for a test.
          *
          * @param termination termination.
          */

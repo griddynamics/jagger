@@ -4,8 +4,27 @@
 /// @n
 /// Back to @ref WebUiMain @n
 /// @n
-/// @par Jagger WebUI installation
+/// @li @ref section_webui_installation_docker
+/// @li @ref section_webui_installation_embedded
+/// @li @ref section_webui_installation_app_server
+///
+/// @section section_webui_installation_docker Installation with docker
+/// Fast way to install WebUI - download and run docker image. @n
+/// Details, you can find in @ref section_installation_local
 /// @n
+/// @section section_webui_installation_embedded Installation with embedded server
+/// <b> @e Note: </b> Starting Jagger version 2.0 WebUI can be run with embedded server.@n
+/// To configure web client you can use java parameters. For example:
+/// @code
+/// java -jar jagger-${build.finalName}.jar -Djdbc.driver=com.mysql.jdbc.Driver
+///                                         -Djdbc.url=jdbc:mysql://localhost:3306/jaggerdb
+///                                         -Djdbc.user=User
+///                                         -Djdbc.password=password
+/// @endcode
+/// The option -extractDirectory specifies the path where the war archive will be unpacked. @n
+/// The option -resetExtract erases the folder, if exists, with unpacked war archive. @n
+/// @n
+/// @section section_webui_installation_app_server Installation with application server
 /// Web client is a java web application, which works with a lot of [java web containers](http://en.wikipedia.org/wiki/Web_container). @n
 /// I will show you how to launch jagger web client with [Apache Tomcat](http://tomcat.apache.org/) @n
 /// @n
@@ -62,15 +81,4 @@
 /// How to configure storage of test results you can read [here ...](https://github.com/griddynamics/jagger/wiki/Jagger-Deployment#external-rdbms-for-storing-test-results) @n
 /// @n
 /// @n
-/// @li @b Note: 26/09/16 Starting from commit 3f1fe46 the Web Client can be run with embedded server.@n
-///        To configure web client you can use java parameters. For example:
-///        @code
-///        @li java -jar jagger-${build.finalName}.jar -Djdbc.driver=com.mysql.jdbc.Driver
-///                                                    -Djdbc.url=jdbc:mysql://localhost:3306/jaggerdb
-///                                                    -Djdbc.user=User
-///                                                    -Djdbc.password=password
-///        @endcode
-///        The option -extractDirectory specifies the path where the war archive will be unpacked. @n
-///        The option -resetExtract erases the folder, if exists, with unpacked war archive. @n
-///        By the way, you can still run it using .war archive as mentioned above. @n
-/// @n
+
