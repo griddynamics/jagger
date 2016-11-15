@@ -167,7 +167,7 @@ public class TestEnvironmentRestController extends AbstractController {
         Cookie cookie = new Cookie(TestEnvUtils.SESSION_COOKIE, testEnv.getSessionId());
         cookie.setMaxAge(environmentsTtlMinutes * 60);
         cookie.setPath("/");
-    
+
         return cookie;
     }
 
