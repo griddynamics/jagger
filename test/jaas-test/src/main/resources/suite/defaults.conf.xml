@@ -13,7 +13,7 @@
 
     <scenario  id="scn_JaaS_std" xsi:type="scenario-query-pool">
         <query-distributor xsi:type="query-distributor-round-robin" />
-        <invoker xsi:type="invoker-class" class="com.griddynamics.jagger.invoker.http.v2.DefaultHttpInvoker"/>
+        <invoker xsi:type="invoker-class" class="com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker"/>
 
         <endpoint-provider xsi:type="endpoint-provider-ref" ref="endpointProvider_JaaSMain"/>
     </scenario>

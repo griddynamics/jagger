@@ -1,9 +1,7 @@
-package com.griddynamics.jagger.invoker.http.v2;
+package com.griddynamics.jagger.invoker.v2;
 
 import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
-import com.griddynamics.jagger.invoker.http.ApacheAbstractHttpInvoker;
-import com.griddynamics.jagger.invoker.http.HttpInvoker;
 
 /**
  * An object that represents abstract HTTP-invoker that invokes services of SuT via http protocol. <p>
@@ -14,8 +12,6 @@ import com.griddynamics.jagger.invoker.http.HttpInvoker;
  * @param <HTTP_CLIENT> the type of the HTTP-client (look at {@link JHttpClient})<p>
  * @author Anton Antonenko
  * @see Invoker
- * @see ApacheAbstractHttpInvoker
- * @see HttpInvoker
  * @since 1.3
  */
 @SuppressWarnings("unused")

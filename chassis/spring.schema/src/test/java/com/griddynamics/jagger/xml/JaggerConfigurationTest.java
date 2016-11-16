@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.xml;
 
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
+
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.agent.model.JmxMetricGroup;
 import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorSettings;
@@ -19,13 +21,11 @@ import com.griddynamics.jagger.xml.stubs.xml.ExampleDecisionMakerListener;
 import com.griddynamics.jagger.xml.stubs.xml.ExampleDistributionListener;
 import com.griddynamics.jagger.xml.stubs.xml.ExampleTestGroupListener;
 import junit.framework.Assert;
-import org.springframework.context.ApplicationContext;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,42 +33,41 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 12/14/12
  * Time: 11:00 AM
- * To change this template use File | Settings | File Templates.
  */
-
 /*
 *   Launch only as maven test
 */
 public class JaggerConfigurationTest {
 
-    private ApplicationContext ctx;
-    private H2DatabaseServer dbServer;
+    private static AbstractXmlApplicationContext ctx;
+    private static AbstractXmlApplicationContext dbCtx;
 
     @BeforeClass
-    public void testInit() throws Exception {
+    public static void testInit() throws Exception {
         String projectDir = getProjectDir();
         URL configurationDirectory = new URL("file:" + projectDir + "/../configuration/");
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(configurationDirectory, "profiles/local/environment.properties", environmentProperties);
         environmentProperties.put("chassis.master.configuration.include",environmentProperties.get("chassis.master.configuration.include")+", ../spring.schema/src/test/resources/example-configuration.conf.xml1");
-
-        ApplicationContext rdbContext = JaggerLauncher.loadContext(configurationDirectory, RDB_CONFIGURATION, environmentProperties);
-        dbServer = (H2DatabaseServer) rdbContext.getBean("databaseServer");
+    
+        dbCtx = JaggerLauncher.loadContext(configurationDirectory, RDB_CONFIGURATION, environmentProperties);
+        H2DatabaseServer dbServer = (H2DatabaseServer) dbCtx.getBean("databaseServer");
         dbServer.run();
 
         ctx = JaggerLauncher.loadContext(configurationDirectory,"chassis.master.configuration",environmentProperties);
     }
 
     @AfterClass
-    public void testShutdown() {
-        dbServer.terminate();
+    public static void testShutdown() {
+        dbCtx.destroy();
+        ctx.destroy();
     }
 
     @Test

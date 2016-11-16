@@ -34,7 +34,7 @@ import java.math.BigDecimal;
 public abstract class AbstractRateClockConfiguration implements WorkloadClockConfiguration {
     private static final Logger log = LoggerFactory.getLogger(TpsClockConfiguration.class);
 
-    private int tickInterval;
+    private int tickInterval = 500;
     private double tps;
     private MaxTpsCalculator maxTpsCalculator = new DefaultMaxTpsCalculator();
     private WorkloadSuggestionMaker workloadSuggestionMaker;

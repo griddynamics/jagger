@@ -92,6 +92,10 @@
         <!-- Jagger -->
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>jaas-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.core</artifactId>
             <exclusions>
                 <exclusion>
