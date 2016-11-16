@@ -20,12 +20,12 @@ networks:
 <b>Use existing test results DB: </b>
 
 We need to run only three containers: Jaas, Jaasdb and WebUI. And connect it to the existing database. 
-Please edit docker-compose-existing.yml:
+Please edit docker-compose-wtih-existing-results-db.yml:
 Need to add hostname into JWC_JDBC_URL, specify login/password on the JWC_JDBC_USER/JWC_JDBC_PASS on the jagger-web-client container section.
 After that need to add hostname into JAGGER_DB_DEFAULT_URL, specify login/password on the JAGGER_DB_DEFAULT_USER/JAGGER_DB_DEFAULT_PASSWORD on the jagger-jaas container section.
-After editing start three containers run "docker compose -f docker-compose-existing.yml up -d".
+After editing start three containers run "docker-compose -f docker-compose-wtih-existing-results-db.yml up -d".
 
 <b>Use new test results DB: </b>
 
 We need to run four containers: Jaas, Jaasdb, Jaggerdb and WebUI.
-To start all four containers simply run "docker compose up -d" on the docker/compose/ directory.
+To start all four containers simply run "docker-compose -f docker-compose.yml up -d" on the docker/compose/ directory.
