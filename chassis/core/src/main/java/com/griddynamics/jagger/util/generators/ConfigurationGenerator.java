@@ -41,12 +41,8 @@ public class ConfigurationGenerator {
     private DurationLogProcessor durationLogProcessor;
     private Map<String, JTestSuite> userJTestSuites = Collections.emptyMap();
     private boolean useBuilders;
-    private final String jTestSuiteNameToExecute;
+    private String jTestSuiteNameToExecute;
     private Map<String, Configuration> configurations = Collections.emptyMap();
-    
-    public ConfigurationGenerator(String jTestSuiteNameToExecute) {
-        this.jTestSuiteNameToExecute = jTestSuiteNameToExecute;
-    }
     
     public Set<String> getUserJTestSuiteNames() {
         if (useBuilders) {
@@ -150,4 +146,8 @@ public class ConfigurationGenerator {
     }
     
     public String getjTestSuiteNameToExecute() { return jTestSuiteNameToExecute; }
+    
+    public void setJTestSuiteNameToExecute(String jTestSuiteNameToExecute) {
+        this.jTestSuiteNameToExecute = jTestSuiteNameToExecute;
+    }
 }

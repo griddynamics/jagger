@@ -22,15 +22,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.griddynamics.jagger.rest"/>
     <context:annotation-config/>
-    <mvc:annotation-driven/>
 
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
@@ -45,7 +40,7 @@
         </property>
     </bean>
 
-    <bean id="master" class="com.griddynamics.jagger.master.Master">
+    <bean id="master" class="com.griddynamics.jagger.master.Master" lazy-init="true">
         <property name="configuration" value="#{configurationGenerator.generate()}"/>
         <property name="coordinator" ref="coordinator"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
@@ -167,7 +162,7 @@
     <bean id="metaDataStorage" class="com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage"/>
 
     <bean id="configurationGenerator" class="com.griddynamics.jagger.util.generators.ConfigurationGenerator">
-        <constructor-arg name="jTestSuiteNameToExecute" value="${chassis.master.session.configuration.bean.name}"/>
+        <property name="JTestSuiteNameToExecute" value="${chassis.master.session.configuration.bean.name}"/>
         <property name="basicAggregator" ref="basicAggregator"/>
         <property name="basicSessionCollector" ref="basicSessionCollector"/>
         <property name="e1MasterCollector" ref="e1MasterCollector"/>

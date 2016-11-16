@@ -1,17 +1,17 @@
 package com.griddynamics.jagger.jaas.rest;
 
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
-
 import com.griddynamics.jagger.jaas.exceptions.ResourceAlreadyExistsException;
 import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentInvalidIdException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentSessionNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentStatusException;
+import com.griddynamics.jagger.jaas.service.JobExecutionService;
 import com.griddynamics.jagger.jaas.service.TestEnvironmentService;
+import com.griddynamics.jagger.jaas.storage.model.JobEntity;
+import com.griddynamics.jagger.jaas.storage.model.JobExecutionEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
+import com.griddynamics.jagger.jaas.storage.model.TestSuiteEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -29,13 +29,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
 @RequestMapping(value = "/envs")
@@ -48,11 +54,14 @@ public class TestEnvironmentRestController extends AbstractController {
     @Value("${environments.ttl.minutes}")
     private int environmentsTtlMinutes;
 
-    private TestEnvironmentService testEnvService;
+    private final TestEnvironmentService testEnvService;
+
+    private final JobExecutionService jobExecutionService;
 
     @Autowired
-    public TestEnvironmentRestController(TestEnvironmentService testEnvironmentService) {
+    public TestEnvironmentRestController(TestEnvironmentService testEnvironmentService, JobExecutionService jobExecutionService) {
         this.testEnvService = testEnvironmentService;
+        this.jobExecutionService = jobExecutionService;
     }
 
     @GetMapping(value = "/{envId}", produces = APPLICATION_JSON_VALUE)
@@ -97,7 +106,21 @@ public class TestEnvironmentRestController extends AbstractController {
         testEnv.setEnvironmentId(envId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         response.addCookie(getSessionCookie(updated));
+        if (updated.getStatus() == PENDING) {
+            getTestSuiteNameToExecute(updated).ifPresent(testSuiteName -> setNextConfigToExecuteHeader(response, testSuiteName));
+        }
         return ResponseEntity.accepted().build();
+    }
+
+    private Optional<String> getTestSuiteNameToExecute(TestEnvironmentEntity testEnv) {
+        List<String> testSuitesNames = testEnv.getTestSuites().stream().map(TestSuiteEntity::getTestSuiteId).collect(toList());
+
+        return jobExecutionService.readAllPending().stream()
+                .map(JobExecutionEntity::getJob)
+                .filter(job -> job.getEnvId().equals(testEnv.getEnvironmentId()))
+                .map(JobEntity::getTestSuiteId)
+                .filter(testSuitesNames::contains)
+                .findFirst();
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
@@ -128,7 +151,7 @@ public class TestEnvironmentRestController extends AbstractController {
             throw new TestEnvironmentInvalidIdException(envId, envIdPattern);
 
         if (testEnv.getRunningTestSuite() == null && testEnv.getStatus() == TestEnvironmentEntity.TestEnvironmentStatus.RUNNING
-                || testEnv.getRunningTestSuite() != null && testEnv.getStatus() == TestEnvironmentEntity.TestEnvironmentStatus.PENDING)
+                || testEnv.getRunningTestSuite() != null && testEnv.getStatus() == PENDING)
             throw new WrongTestEnvironmentStatusException(testEnv.getStatus(), testEnv.getRunningTestSuite());
     }
 
@@ -136,11 +159,15 @@ public class TestEnvironmentRestController extends AbstractController {
         response.addHeader(TestEnvUtils.EXPIRES_HEADER, getFormattedExpirationDate(testEnv));
     }
 
+    private void setNextConfigToExecuteHeader(HttpServletResponse response, String testSuiteName) {
+        response.addHeader(TestEnvUtils.CONFIG_NAME_HEADER, testSuiteName);
+    }
+
     private Cookie getSessionCookie(TestEnvironmentEntity testEnv) {
         Cookie cookie = new Cookie(TestEnvUtils.SESSION_COOKIE, testEnv.getSessionId());
         cookie.setMaxAge(environmentsTtlMinutes * 60);
         cookie.setPath("/");
-    
+
         return cookie;
     }
 
