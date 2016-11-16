@@ -33,6 +33,15 @@ public class JobDaoImpl extends AbstractCrudDao<JobEntity, Long> implements JobD
 
     @Override
     @Transactional
+    public List<JobEntity> readByEnvAndTestSuite(String envId, String testSuiteId) {
+        Query query = getCurrentSession().createQuery("select t from JobEntity t where t.envId = :envId and t.testSuiteId = :testSuiteId");
+        query.setString("envId", envId);
+        query.setString("testSuiteId", testSuiteId);
+        return (List<JobEntity>) query.list();
+    }
+
+    @Override
+    @Transactional
     public void create(JobEntity job) {
         getCurrentSession().save(job);
     }

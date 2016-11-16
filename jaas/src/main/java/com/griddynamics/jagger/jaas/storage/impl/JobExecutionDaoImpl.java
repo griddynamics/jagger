@@ -69,6 +69,7 @@ public class JobExecutionDaoImpl extends AbstractCrudDao<JobExecutionEntity, Lon
     @Transactional
     public void delete(Long jobExecutionId) {
         JobExecutionEntity jobExecutionEntity = read(jobExecutionId);
+        jobExecutionEntity.getJob().getJobExecutionEntities().remove(jobExecutionEntity);
         delete(jobExecutionEntity);
     }
 

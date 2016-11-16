@@ -225,7 +225,7 @@ public class JobExecutionDaoTest {
         assertThat(jobExecutionDao.readAll().size(), is(2));
     }
 
-    private JobExecutionEntity getJobExecutionEntity() {
+    static JobExecutionEntity getJobExecutionEntity() {
         JobExecutionEntity jobExecution = new JobExecutionEntity();
         jobExecution.setJobId(1L);
         jobExecution.setStatus(PENDING);

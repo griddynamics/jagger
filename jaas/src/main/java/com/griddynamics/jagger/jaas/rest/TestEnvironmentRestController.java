@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -102,13 +103,21 @@ public class TestEnvironmentRestController extends AbstractController {
 
         if (!testEnvService.existsWithSessionId(envId, sessionId))
             throw new TestEnvironmentSessionNotFoundException(envId, sessionId);
+        validateTestEnv(testEnv);
+        TestEnvironmentEntity oldEnv = testEnvService.read(envId);
 
         testEnv.setEnvironmentId(envId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
-        response.addCookie(getSessionCookie(updated));
         if (updated.getStatus() == PENDING) {
-            getTestSuiteNameToExecute(updated).ifPresent(testSuiteName -> setNextConfigToExecuteHeader(response, testSuiteName));
+            if (oldEnv.getStatus() == RUNNING)
+                jobExecutionService.finishExecution(envId, oldEnv.getRunningTestSuite().getTestSuiteId());
+            else
+                getTestSuiteNameToExecute(updated).ifPresent(testSuiteName -> setNextConfigToExecuteHeader(response, testSuiteName));
         }
+        if (updated.getStatus() == RUNNING) {
+            jobExecutionService.startExecution(envId, testEnv.getRunningTestSuite().getTestSuiteId());
+        }
+        response.addCookie(getSessionCookie(updated));
         return ResponseEntity.accepted().build();
     }
 
@@ -125,8 +134,7 @@ public class TestEnvironmentRestController extends AbstractController {
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Creates Test Environment.",
-                  notes = "If operation successful, '" + TestEnvUtils.SESSION_COOKIE
-                          + "' cookie is returned with response, "
+                  notes = "If operation successful, '" + TestEnvUtils.SESSION_COOKIE + "' cookie is returned with response, "
             + "which is required for PUT request. This cookie is valid only for Test Environment with envId which was specified in request body.")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Creation is successful."),
@@ -139,8 +147,7 @@ public class TestEnvironmentRestController extends AbstractController {
 
         TestEnvironmentEntity created = testEnvService.create(testEnv);
         response.addCookie(getSessionCookie(created));
-        return ResponseEntity.created(fromCurrentRequest().path("/{envId}")
-                                                          .buildAndExpand(testEnv.getEnvironmentId()).toUri()).build();
+        return ResponseEntity.created(fromCurrentRequest().path("/{envId}").buildAndExpand(testEnv.getEnvironmentId()).toUri()).build();
     }
 
     private void validateTestEnv(TestEnvironmentEntity testEnv) {
@@ -150,7 +157,7 @@ public class TestEnvironmentRestController extends AbstractController {
         if (!matcher.matches())
             throw new TestEnvironmentInvalidIdException(envId, envIdPattern);
 
-        if (testEnv.getRunningTestSuite() == null && testEnv.getStatus() == TestEnvironmentEntity.TestEnvironmentStatus.RUNNING
+        if (testEnv.getRunningTestSuite() == null && testEnv.getStatus() == RUNNING
                 || testEnv.getRunningTestSuite() != null && testEnv.getStatus() == PENDING)
             throw new WrongTestEnvironmentStatusException(testEnv.getStatus(), testEnv.getRunningTestSuite());
     }

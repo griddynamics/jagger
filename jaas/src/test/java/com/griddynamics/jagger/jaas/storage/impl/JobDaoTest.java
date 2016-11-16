@@ -2,6 +2,7 @@ package com.griddynamics.jagger.jaas.storage.impl;
 
 import com.griddynamics.jagger.jaas.config.TestPersistenceConfig;
 import com.griddynamics.jagger.jaas.storage.JobDao;
+import com.griddynamics.jagger.jaas.storage.JobExecutionDao;
 import com.griddynamics.jagger.jaas.storage.model.JobEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.griddynamics.jagger.jaas.storage.impl.JobExecutionDaoTest.getJobExecutionEntity;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -31,6 +33,9 @@ public class JobDaoTest {
 
     @Autowired
     private JobDao jobDao;
+
+    @Autowired
+    private JobExecutionDao jobExecutionDao;
 
     @Test
     public void idGeneratorTest() {
@@ -73,6 +78,18 @@ public class JobDaoTest {
             assertThat(actuals.get(i), is(notNullValue()));
             assertThat(actuals.get(i), is(expected.get(i)));
         }
+    }
+
+    @Test
+    public void readByEnvAndTestSuiteTest() {
+        JobEntity expected = getJobEntity();
+        jobDao.create(expected);
+
+        List<JobEntity> actual = jobDao.readByEnvAndTestSuite(ENVIRONMENT_ID_1, TEST_SUITE_ID_1);
+
+        assertThat(actual, is(notNullValue()));
+        assertThat(actual.get(0), is(expected));
+        assertThat(actual.size(), is(1));
     }
 
     @Test
@@ -142,6 +159,21 @@ public class JobDaoTest {
     }
 
     @Test
+    public void deleteWithExecutionTest() {
+        jobDao.create(getJobEntities());
+        jobExecutionDao.create(getJobExecutionEntity());
+        List<JobEntity> expected = (List<JobEntity>) jobDao.readAll();
+
+        jobDao.delete(expected.get(0));
+
+        JobEntity actual = jobDao.read(1L);
+
+        assertThat(actual, is(nullValue()));
+        assertThat(jobDao.readAll().size(), is(1));
+        assertThat(jobExecutionDao.readAll().size(), is(0));
+    }
+
+    @Test
     public void existsTest() {
         JobEntity expected = getJobEntity();
         jobDao.create(expected);
@@ -160,7 +192,6 @@ public class JobDaoTest {
         jobEntity.setEnvId(ENVIRONMENT_ID_1);
         jobEntity.setTestSuiteId(TEST_SUITE_ID_1);
         jobEntity.setJobStartTimeoutInSeconds(0L);
-
         return jobEntity;
     }
 

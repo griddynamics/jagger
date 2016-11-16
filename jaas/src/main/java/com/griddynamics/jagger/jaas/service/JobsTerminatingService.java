@@ -34,7 +34,7 @@ public class JobsTerminatingService {
 
     private boolean isOutdated(JobExecutionEntity jobExec) {
         long jobStartTimeoutInSeconds = jobExec.getJob().getJobStartTimeoutInSeconds();
-        long jobCreated = jobExec.getAuditEntities().get(0).getTimestamp();
+        long jobCreated = jobExec.getAuditEntities().stream().findFirst().get().getTimestamp();
 
         long expirationTimestamp = jobCreated + jobStartTimeoutInSeconds * 1000;
         return expirationTimestamp <= System.currentTimeMillis();

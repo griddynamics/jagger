@@ -12,4 +12,8 @@ public interface JobExecutionService {
     JobExecutionEntity create(JobExecutionEntity job);
 
     void delete(Long jobId);
+
+    void finishExecution(String environmentId, String testSuiteId);
+
+    void startExecution(String environmentId, String testSuiteId);
 }

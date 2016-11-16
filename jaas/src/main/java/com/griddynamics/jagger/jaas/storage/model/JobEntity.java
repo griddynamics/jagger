@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "job_entity")
@@ -29,8 +31,8 @@ public class JobEntity {
     private Long jobStartTimeoutInSeconds;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "job", cascade = CascadeType.REMOVE)
-    private JobExecutionEntity jobExecutionEntity;
+    @OneToMany(mappedBy = "job", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobExecutionEntity> jobExecutionEntities;
 
     public Long getId() {
         return id;
@@ -64,12 +66,12 @@ public class JobEntity {
         this.jobStartTimeoutInSeconds = jobStartTimeoutInSeconds;
     }
 
-    public JobExecutionEntity getJobExecutionEntity() {
-        return jobExecutionEntity;
+    public List<JobExecutionEntity> getJobExecutionEntities() {
+        return jobExecutionEntities;
     }
 
-    public void setJobExecutionEntity(JobExecutionEntity jobExecutionEntity) {
-        this.jobExecutionEntity = jobExecutionEntity;
+    public void setJobExecutionEntity(List<JobExecutionEntity> jobExecutionEntities) {
+        this.jobExecutionEntities = jobExecutionEntities;
     }
 
     @Override

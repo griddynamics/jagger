@@ -10,11 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "job_execution_entity")
@@ -27,7 +27,7 @@ public class JobExecutionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "`job_id`")
     private JobEntity job;
 
@@ -36,7 +36,7 @@ public class JobExecutionEntity {
     private JobExecutionStatus status;
 
     @OneToMany(mappedBy = "jobExecutionEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<JobExecutionAuditEntity> auditEntities;
+    private Set<JobExecutionAuditEntity> auditEntities;
 
     public JobExecutionEntity() {}
 
@@ -74,17 +74,17 @@ public class JobExecutionEntity {
         this.status = status;
     }
 
-    public List<JobExecutionAuditEntity> getAuditEntities() {
+    public Set<JobExecutionAuditEntity> getAuditEntities() {
         return auditEntities;
     }
 
-    public void setAuditEntities(List<JobExecutionAuditEntity> auditEntities) {
+    public void setAuditEntities(Set<JobExecutionAuditEntity> auditEntities) {
         this.auditEntities = auditEntities;
     }
 
     public void addAuditEntity(JobExecutionAuditEntity auditEntity) {
         if (auditEntities == null)
-            auditEntities = new ArrayList<>();
+            auditEntities = new HashSet<>();
         auditEntities.add(auditEntity);
     }
 
