@@ -2,13 +2,15 @@ package com.griddynamics.jagger.dbapi.util;
 
 
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
+import com.griddynamics.jagger.dbapi.dto.PointDto;
 import com.griddynamics.jagger.dbapi.dto.SummaryMetricValueDto;
 import com.griddynamics.jagger.dbapi.dto.SummarySingleDto;
-import com.griddynamics.jagger.dbapi.dto.PointDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.griddynamics.jagger.dbapi.util.ColorCodeGenerator.getHexColorCode;
 import static com.griddynamics.jagger.dbapi.util.PlotPointShapeGenerator.generatePointShape;
@@ -20,23 +22,6 @@ import static com.griddynamics.jagger.dbapi.util.PlotPointShapeGenerator.generat
 public class DataProcessingUtil {
 
     protected DataProcessingUtil() {
-    }
-
-    public static List<PointDto> convertFromRawDataToPointDto(Collection<Object[]> rawData, int xIdx, int yIdx) {
-        if (rawData == null) {
-            throw new IllegalArgumentException("rawData is null");
-        }
-        if (rawData.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<PointDto> pointDtoList = new ArrayList<PointDto>(rawData.size());
-        for (Object[] raw : rawData) {
-            double x = round((Long) raw[xIdx] / 1000.0D);
-            double y = round((Double) raw[yIdx]);
-            pointDtoList.add(new PointDto(x, y));
-        }
-        return pointDtoList;
     }
 
     public static double round(double value) {
@@ -58,37 +43,23 @@ public class DataProcessingUtil {
      * @return curve
      */
     public static PlotSingleDto generatePlotSingleDto(SummarySingleDto metricDto) {
-        List<PointDto> list = new ArrayList<PointDto>();
+        List<PointDto> list = new ArrayList<>();
 
-        List<SummaryMetricValueDto> metricList = new ArrayList<SummaryMetricValueDto>();
-        for(SummaryMetricValueDto value: metricDto.getValues()) {
-            metricList.add(value);
-        }
+        List<SummaryMetricValueDto> metricList = new ArrayList<>();
+        metricList.addAll(metricDto.getValues());
 
-        Collections.sort(metricList, new Comparator<SummaryMetricValueDto>() {
+        Collections.sort(metricList, (o1, o2) -> o2.getSessionId() < o1.getSessionId() ? 1 : -1);
 
-            @Override
-            public int compare(SummaryMetricValueDto o1, SummaryMetricValueDto o2) {
-                return  o2.getSessionId() < o1.getSessionId() ? 1 : -1;
-            }
-        });
-
-        for (SummaryMetricValueDto value: metricList) {
+        for (SummaryMetricValueDto value : metricList) {
             double temp = Double.parseDouble(value.getValue());
             list.add(new PointDto(value.getSessionId(), temp));
         }
 
         String legend = metricDto.getMetricName().getMetricDisplayName();
 
-        return new PlotSingleDto(
-                list,
-                legend,
-                getHexColorCode(metricDto.getMetricName().getMetricName(),
-                        metricDto.getMetricName().getMetricNameSynonyms(),
-                        "ss"),
-                generatePointShape(metricDto.getMetricName().getMetricName(),
-                        metricDto.getMetricName().getMetricNameSynonyms(),
-                        "ss"));
+        return new PlotSingleDto(list, legend,
+                getHexColorCode(metricDto.getMetricName().getMetricName(), metricDto.getMetricName().getMetricNameSynonyms(), "ss"),
+                generatePointShape(metricDto.getMetricName().getMetricName(), metricDto.getMetricName().getMetricNameSynonyms(), "ss"));
     }
 }
 

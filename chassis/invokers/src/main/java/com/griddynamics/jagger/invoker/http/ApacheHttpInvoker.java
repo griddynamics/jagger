@@ -34,6 +34,7 @@ import java.net.URI;
  * @details Uses HttpRequestBase as query param type unlike HttpInvoker which uses HttpQuery. That allows you to create complex requests.
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class ApacheHttpInvoker extends ApacheAbstractHttpInvoker<HttpRequestBase> {
     private static final Logger log = LoggerFactory.getLogger(ApacheHttpInvoker.class);
 

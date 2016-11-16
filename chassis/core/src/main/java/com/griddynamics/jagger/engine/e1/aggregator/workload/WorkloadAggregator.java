@@ -71,6 +71,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
 
     @Override
     public void onTaskDistributionCompleted(String sessionId, String taskId, Task task) {
+
         log.debug("Going to perform workload data aggregation");
         if (task instanceof WorkloadTask) {
             aggregateValues(sessionId, taskId, (WorkloadTask) task);

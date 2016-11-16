@@ -11,8 +11,8 @@ import java.util.List;
  */
 public interface DataSaverService {
 
-    void saveUserComment(Long sessionData_id, String userComment);
+    void saveUserComment(Long sessionDataId, String userComment);
 
-    void saveTags(Long sessionData_id, List<TagDto> tags);
+    void saveTags(Long sessionDataId, List<TagDto> tags);
 
 }

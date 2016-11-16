@@ -24,7 +24,7 @@ public enum DefaultWorkloadParameters {
     private final boolean isCumulativeCounter;
     private final MetricNameDto.Origin origin;
 
-    private DefaultWorkloadParameters(String description, boolean cumulativeCounter, MetricNameDto.Origin origin) {
+    DefaultWorkloadParameters(String description, boolean cumulativeCounter, MetricNameDto.Origin origin) {
         this.description = description;
         isCumulativeCounter = cumulativeCounter;
         this.origin = origin;

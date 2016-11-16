@@ -20,16 +20,16 @@
 
 package com.griddynamics.jagger.invoker.http;
 
+import com.griddynamics.jagger.invoker.InvocationException;
+import com.griddynamics.jagger.invoker.Invoker;
+import com.griddynamics.jagger.util.Nothing;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import com.griddynamics.jagger.invoker.InvocationException;
-import com.griddynamics.jagger.invoker.Invoker;
-import com.griddynamics.jagger.util.Nothing;
 
 /** Creates http request via java.net.URL
  * @author Dmitry Kotlyarov
@@ -38,6 +38,7 @@ import com.griddynamics.jagger.util.Nothing;
  * @details Creates http request(GET request) to endpoint. Return response of http service. In common ways returns http page.
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class HttpVisitorInvoker implements Invoker<Nothing, String, String> {
 
     public HttpVisitorInvoker() {

@@ -11,8 +11,7 @@ public class HTMLFormatter {
 
     private static String BREAK_LINE = "<br>";
 
-    public static String format(String source){
-        String result = source.replaceAll(System.getProperty("line.separator"), BREAK_LINE);
-        return result;
+    public static String format(String source) {
+        return source.replaceAll(System.getProperty("line.separator"), BREAK_LINE);
     }
 }

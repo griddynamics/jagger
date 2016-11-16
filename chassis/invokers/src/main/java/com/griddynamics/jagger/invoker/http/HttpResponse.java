@@ -22,6 +22,7 @@ package com.griddynamics.jagger.invoker.http;
 
 import java.io.Serializable;
 
+@Deprecated
 public class HttpResponse implements Serializable {
     private int statusCode;
     private String body;

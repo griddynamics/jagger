@@ -25,9 +25,11 @@ public class MetricGroupNode<M extends MetricNode> extends AbstractIdentifyNode 
             }
         }
     }
+
     public MetricGroupNode(String displayName) {
         this.displayName = displayName;
     }
+
     public MetricGroupNode() {}
 
     public void setMetricGroupNodeList(List<MetricGroupNode<M>> metricGroupNodeList) {
@@ -41,6 +43,7 @@ public class MetricGroupNode<M extends MetricNode> extends AbstractIdentifyNode 
     public List<M> getMetricsWithoutChildren() {
         return metrics;
     }
+
     public List<MetricGroupNode<M>> getMetricGroupNodeList() {
         return metricGroupNodeList;
     }
@@ -85,7 +88,6 @@ public class MetricGroupNode<M extends MetricNode> extends AbstractIdentifyNode 
                 return (res != 0) ? res : o1.getDisplayName().compareTo(o2.getDisplayName());
             }
         });
-
         return metricNodeList;
     }
 }

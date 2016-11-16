@@ -64,12 +64,11 @@ public class HDFSDatanodeServer implements BlockingBean, AttendantServer {
             public void run() {
                 log.info("Starting DataNode...");
 
-                for (; ; ) {
+                while (!ready) {
                     try {
                         if (startupProperties != null) {
                             dataNode = DataNode.createDataNode(null, HadoopUtils.toConfiguration(startupProperties));
                             ready = true;
-                            break;
                         } else Thread.sleep(10000);
                     } catch (Exception e) {
                         log.warn("Failed start DataNode: {}", e);
@@ -96,6 +95,8 @@ public class HDFSDatanodeServer implements BlockingBean, AttendantServer {
     public void shutdown() {
         if (dataNode != null) {
             dataNode.shutdown();
+        } else {
+            ready = true;
         }
     }
 

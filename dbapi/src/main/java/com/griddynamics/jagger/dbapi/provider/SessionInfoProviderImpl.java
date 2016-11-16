@@ -1,8 +1,7 @@
 package com.griddynamics.jagger.dbapi.provider;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.DataSaverService;
 import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
 import com.griddynamics.jagger.dbapi.dto.TagDto;
@@ -14,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,13 +26,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by kgribov on 4/7/14.
  */
+@SuppressWarnings("unchecked")
 @Component
 public class SessionInfoProviderImpl implements SessionInfoProvider {
     private static final Logger log = LoggerFactory.getLogger(SessionInfoProviderImpl.class);
@@ -70,66 +69,67 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             List<TagEntity> tags = entityManager.createQuery("select te from TagEntity as te").getResultList();
 
             if (!tags.isEmpty()) {
-                for (TagEntity tagEntity : tags) {
-                    allTags.add(new TagDto(tagEntity.getName(), tagEntity.getDescription()));
-                }
+                allTags.addAll(tags.stream().map(tagEntity -> new TagDto(tagEntity.getName(), tagEntity.getDescription()))
+                        .collect(Collectors.toList()));
             }
         }
         return allTags;
     }
 
-    public void saveTags(Long sessionData_id, List<TagDto> tags) {
-        dataSaverService.saveTags(sessionData_id, tags);
+    public void saveTags(Long sessionDataId, List<TagDto> tags) {
+        dataSaverService.saveTags(sessionDataId, tags);
     }
 
-    public void saveUserComment(Long sessionData_id, String userComment) throws RuntimeException {
-        dataSaverService.saveUserComment(sessionData_id, userComment);
+    public void saveUserComment(Long sessionDataId, String userComment) throws RuntimeException {
+        dataSaverService.saveUserComment(sessionDataId, userComment);
     }
 
-    public Long getTotalSize() throws RuntimeException{
+    public Long getTotalSize() throws RuntimeException {
         return (Long) entityManager.createQuery("select count(sessionData.id) from SessionData as sessionData").getSingleResult();
     }
 
-    public Long getTotalSizeByDate(Date from, Date to){
-        return (Long)entityManager.createQuery("select count(sd.id) from SessionData as sd where sd.startTime between :from and :to")
-                                        .setParameter("from", from)
-                                        .setParameter("to", to)
-                                        .getSingleResult();
+    public Long getTotalSizeByDate(Date from, Date to) {
+        return (Long) entityManager.createQuery("select count(sd.id) from SessionData as sd where sd.startTime between :from and :to")
+                .setParameter("from", from)
+                .setParameter("to", to)
+                .getSingleResult();
     }
 
-    public Long getTotalSizeByIds(Set<String> sessionIds){
-        return (Long)entityManager.createQuery("select count(sd.id) from SessionData as sd where sd.sessionId in (:sessionIds)")
-                                        .setParameter("sessionIds", new ArrayList<String>(sessionIds))
-                                        .getSingleResult();
+    public Long getTotalSizeByIds(Set<String> sessionIds) {
+        return (Long) entityManager.createQuery("select count(sd.id) from SessionData as sd where sd.sessionId in (:sessionIds)")
+                .setParameter("sessionIds", new ArrayList<>(sessionIds))
+                .getSingleResult();
     }
 
-    public Long getTotalSizeByTags(Set<String> sessionTagNames){
+    public Long getTotalSizeByTags(Set<String> sessionTagNames) {
         if (isTagsStorageAvailable) {
-            return ((BigInteger) entityManager.createNativeQuery("select count(distinct ste.sessions_id) from SessionTagEntity as ste where ste.tags_name in (:sessionTagNames)")
-                                                .setParameter("sessionTagNames", new ArrayList<String>(sessionTagNames))
-                                                .getSingleResult()).longValue();
-        }
-        else {
+            return ((BigInteger) entityManager.createNativeQuery("SELECT count(DISTINCT ste.sessions_id) FROM SessionTagEntity AS ste WHERE ste" +
+                    ".tags_name IN (:sessionTagNames)")
+                    .setParameter("sessionTagNames", new ArrayList<>(sessionTagNames))
+                    .getSingleResult()).longValue();
+        } else {
             return 0L;
         }
     }
 
     public Long getFirstPosition(Set<String> selectedIds) throws RuntimeException {
-        if (selectedIds.isEmpty()){
+        if (selectedIds.isEmpty()) {
             return 0L;
         }
 
-        List<Date> startTimeList = (List<Date>)entityManager.createQuery("select ses.startTime from SessionData ses where ses.sessionId in (:sessionIds) order by ses.startTime asc")
+        List<Date> startTimeList = (List<Date>) entityManager.createQuery("select ses.startTime from SessionData ses where ses.sessionId in " +
+                "(:sessionIds) order by ses.startTime asc")
                 .setMaxResults(1)
                 .setParameter("sessionIds", selectedIds).getResultList();
 
-        if (startTimeList.isEmpty()){
+        if (startTimeList.isEmpty()) {
             return 0L;
         }
 
         Date startTime = startTimeList.iterator().next();
 
-        Long lastPosition = (Long)entityManager.createQuery("select count(ses.id) from SessionData ses where startTime<=:startTime").setParameter("startTime", startTime).getSingleResult();
+        Long lastPosition = (Long) entityManager.createQuery("select count(ses.id) from SessionData ses where startTime<=:startTime")
+                .setParameter("startTime", startTime).getSingleResult();
 
         return lastPosition - 1;
     }
@@ -158,17 +158,14 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
     private List<SessionDataDto> getAllWithMetaData(int start, int length) {
 
-        @SuppressWarnings("unchecked")
         List<SessionData> sessionDataList = (List<SessionData>)
-                entityManager.createQuery("select sd from SessionData as sd order by sd.startTime asc").setFirstResult(start).setMaxResults(length).getResultList();
+                entityManager.createQuery("select sd from SessionData as sd order by sd.startTime asc").setFirstResult(start).setMaxResults(length)
+                        .getResultList();
 
         if (sessionDataList == null || sessionDataList.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
-        List<Long> sessionIds = new ArrayList<>();
-        for (int i = 0; i < sessionDataList.size(); i++) {
-            sessionIds.add(sessionDataList.get(i).getId());
-        }
+        List<Long> sessionIds = sessionDataList.stream().map(SessionData::getId).collect(Collectors.toList());
 
         Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
         if (isUserCommentStorageAvailable) {
@@ -178,7 +175,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
                     .getResultList();
 
             if (!userComments.isEmpty()) {
-                userCommentMap = new HashMap<Long, String>(userComments.size());
+                userCommentMap = new HashMap<>(userComments.size());
                 for (Object[] objects : userComments) {
                     userCommentMap.put((Long) objects[0], (String) objects[1]);
                 }
@@ -187,9 +184,10 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         }
         Multimap<Long, TagDto> tagMap = HashMultimap.create();
         if (isTagsStorageAvailable) {
-            List<Object[]> sessionTags = entityManager.createNativeQuery("select a.sessions_id, a.tags_name, te.description " +
-                    "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name from SessionTagEntity as ste where ste.sessions_id in (:sessionIds)) as a " +
-                    "where a.tags_name=te.name")
+            List<Object[]> sessionTags = entityManager.createNativeQuery("SELECT a.sessions_id, a.tags_name, te.description " +
+                    "FROM  TagEntity AS te, (SELECT DISTINCT ste.sessions_id, ste.tags_name FROM SessionTagEntity AS ste WHERE ste.sessions_id IN " +
+                    "(:sessionIds)) AS a " +
+                    "WHERE a.tags_name=te.name")
                     .setParameter("sessionIds", sessionIds)
                     .getResultList();
             for (Object[] tags : sessionTags) {
@@ -198,10 +196,11 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             }
         }
 
-        List<SessionDataDto> sessionDataDtoList = new ArrayList<SessionDataDto>(sessionDataList.size());
+        List<SessionDataDto> sessionDataDtoList = new ArrayList<>(sessionDataList.size());
 
         for (SessionData sessionData : sessionDataList) {
-            sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId()), new ArrayList<TagDto>(tagMap.get(sessionData.getId()))));
+            sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId()),
+                    new ArrayList<>(tagMap.get(sessionData.getId()))));
         }
 
         return sessionDataDtoList;
@@ -217,7 +216,6 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
         List<SessionDataDto> sessionDataDtoList;
         try {
-            @SuppressWarnings("unchecked")
             List<SessionData> sessionDataList = (List<SessionData>)
                     entityManager.createQuery("select sd from SessionData as sd where sd.startTime between :from and :to order by sd.startTime asc")
                             .setParameter("from", from)
@@ -227,14 +225,11 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
                             .getResultList();
 
             if (sessionDataList.isEmpty()) {
-                return Collections.<SessionDataDto>emptyList();
+                return Collections.emptyList();
             }
 
-            List<Long> sessionIds = new ArrayList<Long>();
-            for (int i = 0; i < sessionDataList.size(); i++) {
-                sessionIds.add(sessionDataList.get(i).getId());
-            }
-            Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
+            List<Long> sessionIds = sessionDataList.stream().map(SessionData::getId).collect(Collectors.toList());
+            Map<Long, String> userCommentMap = Collections.emptyMap();
 
             if (isUserCommentStorageAvailable) {
                 List<Object[]> userComments = entityManager.createQuery(
@@ -243,7 +238,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
                         .getResultList();
 
                 if (!userComments.isEmpty()) {
-                    userCommentMap = new HashMap<Long, String>(userComments.size());
+                    userCommentMap = new HashMap<>(userComments.size());
                     for (Object[] objects : userComments) {
                         userCommentMap.put((Long) objects[0], (String) objects[1]);
                     }
@@ -252,9 +247,10 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             Multimap<Long, TagDto> tagMap = HashMultimap.create();
 
             if (isTagsStorageAvailable) {
-                List<Object[]> sessionTags = entityManager.createNativeQuery("select a.sessions_id, a.tags_name, te.description " +
-                        "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name from SessionTagEntity as ste where ste.sessions_id in (:sessionIds)) as a " +
-                        "where a.tags_name=te.name")
+                List<Object[]> sessionTags = entityManager.createNativeQuery("SELECT a.sessions_id, a.tags_name, te.description " +
+                        "FROM  TagEntity AS te, (SELECT DISTINCT ste.sessions_id, ste.tags_name FROM SessionTagEntity AS ste WHERE ste.sessions_id " +
+                        "IN (:sessionIds)) AS a " +
+                        "WHERE a.tags_name=te.name")
                         .setParameter("sessionIds", sessionIds)
                         .getResultList();
                 for (Object[] tags : sessionTags) {
@@ -263,9 +259,10 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
                 }
             }
 
-            sessionDataDtoList = new ArrayList<SessionDataDto>(sessionDataList.size());
+            sessionDataDtoList = new ArrayList<>(sessionDataList.size());
             for (SessionData sessionData : sessionDataList) {
-                sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId()), new ArrayList<TagDto>(tagMap.get(sessionData.getId()))));
+                sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId()),
+                        new ArrayList<>(tagMap.get(sessionData.getId()))));
             }
 
             log.debug("There was loaded {} sessions data for {} ms", sessionDataDtoList.size(), System.currentTimeMillis() - timestamp);
@@ -289,14 +286,13 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         try {
             Query query = entityManager.createQuery(
                     "select sd from SessionData as sd " +
-                    (isFetchAll ? " " : "where sd.sessionId in (:sessionIds) ") +
-                    "order by sd.startTime asc"
+                            (isFetchAll ? " " : "where sd.sessionId in (:sessionIds) ") +
+                            "order by sd.startTime asc"
             ).setFirstResult(start);
             if (!isFetchAll) {
                 query.setParameter("sessionIds", new ArrayList<>(sessionIds))
-                     .setMaxResults(length);
+                        .setMaxResults(length);
             }
-            @SuppressWarnings("unchecked")
             List<SessionData> sessionDataList = (List<SessionData>) query.getResultList();
             if (sessionDataList.isEmpty()) {
                 return Collections.emptyList();
@@ -306,7 +302,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             if (isUserCommentStorageAvailable) {
                 query = entityManager.createQuery(
                         "select smd.sessionData.id, smd.userComment from SessionMetaDataEntity as smd "
-                        + (isFetchAll ? " " : " where smd.sessionData in (:sessionDataList)")
+                                + (isFetchAll ? " " : " where smd.sessionData in (:sessionDataList)")
                 );
                 if (!isFetchAll) {
                     query.setParameter("sessionDataList", sessionDataList);
@@ -324,13 +320,13 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             if (isTagsStorageAvailable) {
                 query = entityManager.createNativeQuery(
                         "select a.sessions_id, a.tags_name, te.description " +
-                        "from  TagEntity as te, " +
-                            " (" +
+                                "from  TagEntity as te, " +
+                                " (" +
                                 "select distinct ste.sessions_id, ste.tags_name " +
                                 "from SessionTagEntity as ste " +
-                                (isFetchAll ? " " : " where ste.sessions_id in (:ids) ")+
-                            ") as a " +
-                        "where a.tags_name=te.name "
+                                (isFetchAll ? " " : " where ste.sessions_id in (:ids) ") +
+                                ") as a " +
+                                "where a.tags_name=te.name "
                 );
                 if (!isFetchAll) {
                     Set<Long> ids = sessionDataList.stream().map(SessionData::getId).collect(Collectors.toSet());
@@ -345,7 +341,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             sessionDataDtoList = new ArrayList<>(sessionDataList.size());
             for (SessionData sessionData : sessionDataList) {
                 sessionDataDtoList.add(createSessionDataDto(sessionData, userCommentMap.get(sessionData.getId()),
-                                                            new ArrayList<>(tagMap.get(sessionData.getId()))));
+                        new ArrayList<>(tagMap.get(sessionData.getId()))));
             }
 
             log.debug("There was loaded {} sessions data for {} ms", sessionDataDtoList.size(), System.currentTimeMillis() - timestamp);
@@ -362,7 +358,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
     public List<SessionDataDto> getBySessionTagsName(int start, int length, Set<String> sessionTagNames) {
         if (!isTagsStorageAvailable) {
-            return Collections.<SessionDataDto>emptyList();
+            return Collections.emptyList();
         }
 
         checkArgument(start >= 0, "start is negative");
@@ -372,28 +368,27 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         long timestamp = System.currentTimeMillis();
 
         List<SessionDataDto> sessionDataDtoList;
-        List<Long> sessionIds = new ArrayList<Long>();
+        List<Long> sessionIds = new ArrayList<>();
         List<BigInteger> ids;
 
         try {
-            ids = entityManager.createNativeQuery("select distinct sd.sessions_id from SessionTagEntity as sd where sd.tags_name in (:sessionTagNames)")
-                    .setParameter("sessionTagNames", new ArrayList<String>(sessionTagNames)).getResultList();
+            ids = entityManager.createNativeQuery("SELECT DISTINCT sd.sessions_id FROM SessionTagEntity AS sd WHERE sd.tags_name IN " +
+                    "(:sessionTagNames)")
+                    .setParameter("sessionTagNames", new ArrayList<>(sessionTagNames)).getResultList();
 
-            if (ids.isEmpty()){
-                return Collections.<SessionDataDto>emptyList();
+            if (ids.isEmpty()) {
+                return Collections.emptyList();
             }
-            for (BigInteger id : ids) {
-                sessionIds.add(id.longValue());
-            }
-            @SuppressWarnings("unchecked")
-            List<SessionData> sessionDataList = (List<SessionData>) entityManager.createQuery("SELECT sd from SessionData as sd where sd.id in (:sessionIds)")
+            sessionIds.addAll(ids.stream().map(BigInteger::longValue).collect(Collectors.toList()));
+            List<SessionData> sessionDataList = (List<SessionData>) entityManager.createQuery("SELECT sd from SessionData as sd where sd.id in " +
+                    "(:sessionIds)")
                     .setParameter("sessionIds", sessionIds)
                     .setFirstResult(start)
                     .setMaxResults(length)
                     .getResultList();
 
             if (sessionDataList.isEmpty()) {
-                return Collections.<SessionDataDto>emptyList();
+                return Collections.emptyList();
             }
 
             Map<Long, String> userCommentMap = Collections.EMPTY_MAP;
@@ -406,7 +401,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
                         .getResultList();
 
                 if (!userComments.isEmpty()) {
-                    userCommentMap = new HashMap<Long, String>(userComments.size());
+                    userCommentMap = new HashMap<>(userComments.size());
                     for (Object[] objects : userComments) {
                         userCommentMap.put((Long) objects[0], (String) objects[1]);
                     }
@@ -415,9 +410,10 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             Map<Long, ArrayList<TagDto>> tagMap = Collections.EMPTY_MAP;
 
             if (isTagsStorageAvailable) {
-                List<Object[]> sessionTags = entityManager.createNativeQuery("select a.sessions_id, a.tags_name, te.description " +
-                        "from  TagEntity as te, (select distinct ste.sessions_id, ste.tags_name from SessionTagEntity as ste where ste.sessions_id in (:sessionIds)) as a " +
-                        "where a.tags_name=te.name")
+                List<Object[]> sessionTags = entityManager.createNativeQuery("SELECT a.sessions_id, a.tags_name, te.description " +
+                        "FROM  TagEntity AS te, (SELECT DISTINCT ste.sessions_id, ste.tags_name FROM SessionTagEntity AS ste WHERE ste.sessions_id " +
+                        "IN (:sessionIds)) AS a " +
+                        "WHERE a.tags_name=te.name")
                         .setParameter("sessionIds", sessionIds)
                         .getResultList();
                 tagMap = new HashMap<>();
@@ -437,7 +433,8 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
             log.debug("There was loaded {} sessions data for {} ms", sessionDataDtoList.size(), System.currentTimeMillis() - timestamp);
         } catch (Exception e) {
-            log.error("Error was occurred during session data fetching for session tags " + sessionTagNames + "; start " + start + ", length " + length, e);
+            log.error("Error was occurred during session data fetching for session tags " + sessionTagNames + "; start " + start + ", length " +
+                    length, e);
             throw new RuntimeException(e);
         }
 

@@ -17,6 +17,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.griddynamics.jagger.dbapi.dto;
 
 import java.io.Serializable;
@@ -31,15 +32,16 @@ public class NodeInfoPerSessionDto implements Serializable {
         this.sessionId = sessionId;
         this.nodes = nodes;
     }
+
     public NodeInfoPerSessionDto() {}
 
     public String getSessionId() {
         return sessionId;
     }
+
     public List<NodeInfoDto> getNodes() {
         return nodes;
     }
-
 
 
 }

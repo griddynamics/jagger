@@ -15,10 +15,10 @@ public class PlotToCsvGenerator {
 
     /**
      * Write csv file to OutputStream. OutputStream will be automatically closed.
-     * @param lines list of lines
-     * @param xAxisLabel x axis label
+     * @param lines        list of lines
+     * @param xAxisLabel   x axis label
      * @param outputStream stream to write csv to
-     * @throws IOException
+     * @throws IOException .
      */
     public static void generateCsvFile(List<PlotSingleDto> lines, String xAxisLabel, OutputStream outputStream) throws IOException {
 
@@ -44,7 +44,7 @@ public class PlotToCsvGenerator {
                     raw[0] = point.getX();
                     raw[i] = point.getY();
 
-                    writer.write((Object[])raw);
+                    writer.write((Object[]) raw);
                 }
                 i++;
             }

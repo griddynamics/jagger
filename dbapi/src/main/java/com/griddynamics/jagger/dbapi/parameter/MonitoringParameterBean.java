@@ -29,7 +29,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 @Deprecated
 public class MonitoringParameterBean implements MonitoringParameter {
-    @Index(name="description_index")
+    @Index(name = "description_index")
     private String description;
 
     private MonitoringParameterLevel level;

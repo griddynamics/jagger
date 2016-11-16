@@ -143,10 +143,8 @@
         <property name="extensions">
             <map>
                 <entry key="diagnosticResults">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.DiagnosticReporter"
-                          parent="abstractReportProviderBean">
-                        <property name="template"
-                                  value="/reporting/diagnostics-report.jrxml"/>
+                    <bean class="com.griddynamics.jagger.engine.e1.reporting.DiagnosticReporter" parent="abstractReportProviderBean">
+                        <property name="template" value="/reporting/diagnostics-report.jrxml"/>
                     </bean>
                 </entry>
                 <entry key="workloadSessionComparison">

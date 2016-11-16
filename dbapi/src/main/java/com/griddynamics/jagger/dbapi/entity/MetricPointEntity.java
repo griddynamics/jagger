@@ -1,6 +1,12 @@
 package com.griddynamics.jagger.dbapi.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.TableGenerator;
 
 @Entity
 public class MetricPointEntity {
@@ -8,19 +14,16 @@ public class MetricPointEntity {
     public static final int ALLOCATION_SIZE = 100;
     public static final String METRIC_ID = "MetricPointEntity_ID";
 
-    @TableGenerator(name="GENERATOR",
-            table="IdGeneratorEntity",
-
-            pkColumnName="tableName",
-            valueColumnName="idValue",
-            pkColumnValue=METRIC_ID,
-
+    @TableGenerator(name = "GENERATOR",
+            table = "IdGeneratorEntity",
+            pkColumnName = "tableName",
+            valueColumnName = "idValue",
+            pkColumnValue = METRIC_ID,
             //do not change allocationSize value, it will cause duplicated key problem
-            allocationSize=ALLOCATION_SIZE,
-            initialValue = 0
-    )
+            allocationSize = ALLOCATION_SIZE,
+            initialValue = 0)
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator="GENERATOR")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "GENERATOR")
     private Long id;
 
     @Column

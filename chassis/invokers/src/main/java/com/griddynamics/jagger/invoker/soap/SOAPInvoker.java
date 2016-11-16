@@ -39,6 +39,7 @@ import java.util.Map;
  * @n
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class SOAPInvoker implements Invoker<SOAPQuery, String, String> {
     private static final Logger log = LoggerFactory.getLogger(SOAPInvoker.class);
 
