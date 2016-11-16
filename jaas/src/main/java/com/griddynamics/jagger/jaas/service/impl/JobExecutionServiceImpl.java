@@ -9,6 +9,7 @@ import com.griddynamics.jagger.jaas.storage.model.JobExecutionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -25,6 +26,16 @@ public class JobExecutionServiceImpl implements JobExecutionService {
     public JobExecutionServiceImpl(JobExecutionDao jobExecutionDao, JobDao jobDao) {
         this.jobExecutionDao = jobExecutionDao;
         this.jobDao = jobDao;
+    }
+
+    @Override
+    public List<JobExecutionEntity> readAll() {
+        return newArrayList(jobExecutionDao.readAll());
+    }
+
+    @Override
+    public List<JobExecutionEntity> readAllPending() {
+        return newArrayList(jobExecutionDao.readAllPending());
     }
 
     @Override
