@@ -20,10 +20,17 @@
 
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
+
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity;
 import com.griddynamics.jagger.dbapi.entity.MetricPointEntity;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.dbapi.entity.TimeInvocationStatistics;
+import com.griddynamics.jagger.dbapi.entity.TimeLatencyPercentile;
+import com.griddynamics.jagger.dbapi.entity.WorkloadProcessDescriptiveStatistics;
+import com.griddynamics.jagger.dbapi.entity.WorkloadProcessLatencyPercentile;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
@@ -47,6 +54,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
+import com.google.common.collect.Lists;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -54,17 +63,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_TPS;
 
 /**
  * @author Alexey Kiselyov
@@ -83,6 +84,11 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
     private List<Double> globalPercentilesKeys;
 
     private KeyValueStorage keyValueStorage;
+
+    // Legacy way: slow, distributed among many tables in DB
+    private boolean saveStandardMetricsWithOldModel = false;
+    // Unified metric representation: fast, single flow for all types of metrics
+    private boolean saveStandardMetricsWithNewModel = true;
 
     @Required
     public void setKeyValueStorage(KeyValueStorage keyValueStorage) {
@@ -108,6 +114,14 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
         this.logAggregator = logAggregator;
     }
 
+    public void setSaveStandardMetricsWithOldModel(boolean saveStandardMetricsWithOldModel) {
+        this.saveStandardMetricsWithOldModel = saveStandardMetricsWithOldModel;
+    }
+
+    public void setSaveStandardMetricsWithNewModel(boolean saveStandardMetricsWithNewModel) {
+        this.saveStandardMetricsWithNewModel = saveStandardMetricsWithNewModel;
+    }
+
     @Override
     public void onDistributionStarted(String sessionId, String taskId, Task task, Collection<NodeId> capableNodes) {
         // do nothing
@@ -119,7 +133,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
 
     @Required
     public void setTimeWindowPercentilesKeys(List<Double> timeWindowPercentilesKeys) {
-        this.timeWindowPercentilesKeys = new ArrayList<>(new HashSet<>(timeWindowPercentilesKeys));
+        this.timeWindowPercentilesKeys = new ArrayList<Double>(new HashSet<Double>(timeWindowPercentilesKeys));
     }
 
     public List<Double> getGlobalPercentilesKeys() {
@@ -128,7 +142,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
 
     @Required
     public void setGlobalPercentilesKeys(List<Double> globalPercentilesKeys) {
-        this.globalPercentilesKeys = new ArrayList<>(new HashSet<>(globalPercentilesKeys));
+        this.globalPercentilesKeys = new ArrayList<Double>(new HashSet<Double>(globalPercentilesKeys));
     }
 
     @Override
@@ -161,15 +175,31 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             }
 
             StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSize, taskData).generate();
-            final Collection<MetricPointEntity> statistics = statisticsGenerator.getStatistics();
+            final Collection<TimeInvocationStatistics> statistics = statisticsGenerator.getStatistics();
+            final WorkloadProcessDescriptiveStatistics workloadProcessDescriptiveStatistics = statisticsGenerator.getWorkloadProcessDescriptiveStatistics();
+            final Collection<MetricPointEntity> newStatistics = statisticsGenerator.getNewStatistics();
 
             log.info("BEGIN: Save to data base " + dir);
             getHibernateTemplate().execute(new HibernateCallback<Void>() {
                 @Override
                 public Void doInHibernate(Session session) throws HibernateException, SQLException {
-                    for (MetricPointEntity point : statistics) {
-                        session.persist(point);
+
+                    // persist standard metrics as custom metric (since version 1.2.6)
+                    if (saveStandardMetricsWithNewModel) {
+                        for (MetricPointEntity point : newStatistics) {
+                            session.persist(point);
+                        }
                     }
+
+                    if (saveStandardMetricsWithOldModel) {
+                        // persist standard metrics as TimeInvocationStatistics
+                        for (TimeInvocationStatistics stat : statistics) {
+                            session.persist(stat);
+                        }
+                        // persist standard metrics as WorkloadProcessDescriptiveStatistics
+                        session.persist(workloadProcessDescriptiveStatistics);
+                    }
+
                     session.flush();
                     return null;
                 }
@@ -186,47 +216,84 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
         private AggregationInfo aggregationInfo;
         private int intervalSize;
         private TaskData taskData;
-        private Collection<MetricPointEntity> statistics;
+        private Collection<TimeInvocationStatistics> statistics;
+        private WorkloadProcessDescriptiveStatistics workloadProcessDescriptiveStatistics;
+        private Collection<MetricPointEntity> newStatistics;
 
-        StatisticsGenerator(String path, AggregationInfo aggregationInfo, int intervalSize, TaskData taskData) {
+        public StatisticsGenerator(String path, AggregationInfo aggregationInfo, int intervalSize, TaskData taskData) {
             this.path = path;
             this.aggregationInfo = aggregationInfo;
             this.intervalSize = intervalSize;
             this.taskData = taskData;
         }
 
-        Collection<MetricPointEntity> getStatistics() {
+        @Deprecated
+        public Collection<TimeInvocationStatistics> getStatistics() {
             return statistics;
         }
 
-        public StatisticsGenerator generate() throws IOException {
-            statistics = new ArrayList<>();
+        @Deprecated
+        public WorkloadProcessDescriptiveStatistics getWorkloadProcessDescriptiveStatistics() {
+            return workloadProcessDescriptiveStatistics;
+        }
 
-            // starting point is aggregationInfo.getMinTime()
+        public Collection<MetricPointEntity> getNewStatistics() {
+            return newStatistics;
+        }
+
+        public StatisticsGenerator generate() throws IOException {
+            statistics = new ArrayList<TimeInvocationStatistics>();
+            newStatistics = new ArrayList<MetricPointEntity>();
+
+
+            // starting point is aagregationInfo.getMinTime()
             long currentInterval = aggregationInfo.getMinTime() + intervalSize;
             // starting point is 0
             long time = intervalSize;
             int currentCount = 0;
             int totalCount = 0;
             int extendedInterval = intervalSize;
-            StatisticsCalculator windowStatisticsCalc = new StatisticsCalculator();
-            StatisticsCalculator globalStatisticsCalc = new StatisticsCalculator();
+            StatisticsCalculator windowStatisticsCalculator = new StatisticsCalculator();
+            StatisticsCalculator globalStatisticsCalculator = new StatisticsCalculator();
 
-            MetricDescriptionEntity throughputDescription = persistMetricDescription(THROUGHPUT_ID, THROUGHPUT_TPS, taskData);
-            MetricDescriptionEntity latencyDesc = persistMetricDescription(LATENCY_ID, LATENCY_SEC, taskData);
-            MetricDescriptionEntity latencyStdDevDesc = persistMetricDescription(LATENCY_STD_DEV_ID, LATENCY_STD_DEV_SEC, taskData);
+            MetricDescriptionEntity throughputDescription = persistMetricDescription(
+                    StandardMetricsNamesUtil.THROUGHPUT_ID,
+                    StandardMetricsNamesUtil.THROUGHPUT_TPS,
+                    taskData);
 
-            Map<Double, MetricDescriptionEntity> percentileMap = new HashMap<>(getTimeWindowPercentilesKeys().size());
+            MetricDescriptionEntity latencyDescription = persistMetricDescription(
+                    StandardMetricsNamesUtil.LATENCY_ID,
+                    StandardMetricsNamesUtil.LATENCY_SEC,
+                    taskData);
+
+            MetricDescriptionEntity latencyStdDevDescription = persistMetricDescription(
+                    StandardMetricsNamesUtil.LATENCY_STD_DEV_ID,
+                    StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC,
+                    taskData);
+
+            Map<Double, MetricDescriptionEntity> percentileMap =
+                    new HashMap<Double, MetricDescriptionEntity>(getTimeWindowPercentilesKeys().size());
             for (Double percentileKey : getTimeWindowPercentilesKeys()) {
+
                 String metricStr = StandardMetricsNamesUtil.getLatencyMetricName(percentileKey, false);
-                percentileMap.put(percentileKey, persistMetricDescription(metricStr, metricStr, taskData));
+                percentileMap.put(
+                        percentileKey,
+                        persistMetricDescription(
+                                metricStr
+                                , metricStr
+                                , taskData
+                        )
+                );
             }
 
             // collect-aggregate plot data
             LogReader.FileReader<DurationLogEntry> fileReader = null;
             try {
                 fileReader = logReader.read(path, DurationLogEntry.class);
-                for (DurationLogEntry logEntry : fileReader) {
+                Iterator<DurationLogEntry> it = fileReader.iterator();
+                while (it.hasNext()) {
+                    DurationLogEntry logEntry = it.next();
+
                     log.debug("Log entry {} time", logEntry.getTime());
 
                     while (logEntry.getTime() > currentInterval) {
@@ -235,17 +302,21 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                         if (currentCount > 0) {
                             double throughput = (double) currentCount * 1000 / extendedInterval;
                             long currentTime = time - extendedInterval / 2;
-                            statistics.add(new MetricPointEntity(currentTime, throughput, throughputDescription));
-                            statistics.add(new MetricPointEntity(currentTime, windowStatisticsCalc.getMean() / 1000, latencyDesc));
-                            statistics.add(new MetricPointEntity(currentTime, windowStatisticsCalc.getStandardDeviation() / 1000, latencyStdDevDesc));
+                            TimeInvocationStatistics tis = assembleInvocationStatistics(currentTime, windowStatisticsCalculator, throughput, taskData);
+                            statistics.add(tis);
+                            newStatistics.add(new MetricPointEntity(currentTime, tis.getThroughput(), throughputDescription));
+                            newStatistics.add(new MetricPointEntity(currentTime, tis.getLatency(), latencyDescription));
+                            newStatistics.add(new MetricPointEntity(currentTime, tis.getLatencyStdDev(), latencyStdDevDescription));
 
-                            for (Double percentileKey : getTimeWindowPercentilesKeys()) {
-                                Double percentileValue = windowStatisticsCalc.getPercentile(percentileKey) / 1000D;
-                                statistics.add(new MetricPointEntity(time, percentileValue, percentileMap.get(percentileKey)));
+                            for (TimeLatencyPercentile percentile : tis.getPercentiles()) {
+                                Double key = percentile.getPercentileKey();
+                                Double value = percentile.getPercentileValue() / 1000D;
+                                newStatistics.add(new MetricPointEntity(time, value, percentileMap.get(key)));
                             }
+
                             currentCount = 0;
                             extendedInterval = 0;
-                            windowStatisticsCalc.reset();
+                            windowStatisticsCalculator.reset();
                         }
                         time += intervalSize;
                         extendedInterval += intervalSize;
@@ -253,8 +324,8 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                     }
                     currentCount++;
                     totalCount++;
-                    windowStatisticsCalc.addValue(logEntry.getDuration());
-                    globalStatisticsCalc.addValue(logEntry.getDuration());
+                    windowStatisticsCalculator.addValue(logEntry.getDuration());
+                    globalStatisticsCalculator.addValue(logEntry.getDuration());
                 }
             } finally {
                 if (fileReader != null) {
@@ -265,35 +336,90 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             if (currentCount > 0) {
                 double throughput = (double) currentCount * 1000 / intervalSize;
                 long currentTime = time - extendedInterval / 2;
-                statistics.add(new MetricPointEntity(currentTime, throughput, throughputDescription));
-                statistics.add(new MetricPointEntity(currentTime, windowStatisticsCalc.getMean() / 1000, latencyDesc));
-                statistics.add(new MetricPointEntity(currentTime, windowStatisticsCalc.getStandardDeviation() / 1000, latencyStdDevDesc));
+                TimeInvocationStatistics tis = assembleInvocationStatistics(currentTime, windowStatisticsCalculator, throughput, taskData);
+                statistics.add(tis);
+                newStatistics.add(new MetricPointEntity(currentTime, tis.getThroughput(), throughputDescription));
+                newStatistics.add(new MetricPointEntity(currentTime, tis.getLatency(), latencyDescription));
+                newStatistics.add(new MetricPointEntity(currentTime, tis.getLatencyStdDev(), latencyStdDevDescription));
 
-                for (Double percentileKey : getTimeWindowPercentilesKeys()) {
-                    Double value = windowStatisticsCalc.getPercentile(percentileKey) / 1000D;
-                    statistics.add(new MetricPointEntity(time, value, percentileMap.get(percentileKey)));
+                List<TimeLatencyPercentile> percentileList = tis.getPercentiles();
+                for (TimeLatencyPercentile percentile : percentileList) {
+                    Double key = percentile.getPercentileKey();
+                    Double value = percentile.getPercentileValue() / 1000D;
+                    newStatistics.add(new MetricPointEntity(time, value, percentileMap.get(key)));
                 }
             }
 
-            for (double percentileKey : getGlobalPercentilesKeys()) {
-                double percentileValue = globalStatisticsCalc.getPercentile(percentileKey);
-                persistAggregatedMetricValue(Math.rint(percentileValue) / 1000D, percentileMap.get(percentileKey));
+            workloadProcessDescriptiveStatistics = assembleDescriptiveScenarioStatistics(globalStatisticsCalculator, taskData);
+
+            // persist summary values as custom metrics (since version 1.2.6)
+            if (saveStandardMetricsWithNewModel) {
+                for (WorkloadProcessLatencyPercentile pp : workloadProcessDescriptiveStatistics.getPercentiles()) {
+                    persistAggregatedMetricValue(Math.rint(pp.getPercentileValue()) / 1000D, percentileMap.get(pp.getPercentileKey()));
+                }
+
+                persistAggregatedMetricValue(Math.rint(globalStatisticsCalculator.getMean()) / 1000D, latencyDescription);
+                persistAggregatedMetricValue(Math.rint(globalStatisticsCalculator.getStandardDeviation()) / 1000D, latencyStdDevDescription);
+
+                Namespace taskNamespace = Namespace.of(taskData.getSessionId(), taskData.getTaskId());
+
+                Long startTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, START_TIME);
+                Long endTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, END_TIME);
+
+                double duration = (double) (endTime - startTime) / 1000;
+                double totalThroughput = Math.rint(totalCount / duration * 100) / 100;
+
+                persistAggregatedMetricValue(Math.rint(totalThroughput * 100) / 100, throughputDescription);
             }
 
-            persistAggregatedMetricValue(Math.rint(globalStatisticsCalc.getMean()) / 1000D, latencyDesc);
-            persistAggregatedMetricValue(Math.rint(globalStatisticsCalc.getStandardDeviation()) / 1000D, latencyStdDevDesc);
-
-            Namespace taskNamespace = Namespace.of(taskData.getSessionId(), taskData.getTaskId());
-
-            Long startTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, START_TIME);
-            Long endTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, END_TIME);
-
-            double duration = (double) (endTime - startTime) / 1000;
-            double totalThroughput = Math.rint(totalCount / duration * 100) / 100;
-
-            persistAggregatedMetricValue(Math.rint(totalThroughput * 100) / 100, throughputDescription);
-
             return this;
+        }
+
+        @Deprecated
+        private TimeInvocationStatistics assembleInvocationStatistics(long time, StatisticsCalculator calculator,
+                                                                      Double throughput, TaskData taskData) {
+            TimeInvocationStatistics statistics = new TimeInvocationStatistics(
+                    time,
+                    calculator.getMean() / 1000,
+                    calculator.getStandardDeviation() / 1000,
+                    throughput,
+                    taskData
+            );
+
+            List<TimeLatencyPercentile> percentiles = new ArrayList<TimeLatencyPercentile>();
+            for (double percentileKey : getTimeWindowPercentilesKeys()) {
+                double percentileValue = calculator.getPercentile(percentileKey);
+                TimeLatencyPercentile percentile = new TimeLatencyPercentile(percentileKey, percentileValue);
+                percentile.setTimeInvocationStatistics(statistics);
+                percentiles.add(percentile);
+            }
+            if (!percentiles.isEmpty()) {
+                statistics.setPercentiles(percentiles);
+            }
+
+            return statistics;
+        }
+
+        @Deprecated
+        private WorkloadProcessDescriptiveStatistics assembleDescriptiveScenarioStatistics(StatisticsCalculator calculator, TaskData taskData) {
+            WorkloadProcessDescriptiveStatistics statistics = new WorkloadProcessDescriptiveStatistics();
+            statistics.setTaskData(taskData);
+
+            List<WorkloadProcessLatencyPercentile> percentiles = Lists.newArrayList();
+            for (double percentileKey : getGlobalPercentilesKeys()) {
+                double percentileValue = calculator.getPercentile(percentileKey);
+                if (Double.isNaN(percentileKey) || Double.isNaN(percentileValue)) {
+                    log.error("Percentile has NaN values : key={}, value={}", percentileKey, percentileValue);
+                    continue;
+                }
+                WorkloadProcessLatencyPercentile percentile = new WorkloadProcessLatencyPercentile(percentileKey, percentileValue);
+                percentile.setWorkloadProcessDescriptiveStatistics(statistics);
+                percentiles.add(percentile);
+            }
+            if (!percentiles.isEmpty()) {
+                statistics.setPercentiles(percentiles);
+            }
+            return statistics;
         }
     }
 }

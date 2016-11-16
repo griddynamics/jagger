@@ -17,7 +17,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.griddynamics.jagger.coordinator.NodeId;
@@ -70,12 +69,11 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     private FileStorage fileStorage;
 
     private MetricDescription defaultMetricDescription;
-
     {
         defaultMetricDescription = new MetricDescription("No name metric");
         defaultMetricDescription.setPlotData(false);
         defaultMetricDescription.setShowSummary(true);
-        defaultMetricDescription.setAggregators(Arrays.asList(new SumMetricAggregatorProvider()));
+        defaultMetricDescription.setAggregators(Arrays.<MetricAggregatorProvider>asList(new SumMetricAggregatorProvider()));
     }
 
     private KeyValueStorage keyValueStorage;
@@ -121,6 +119,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
     }
 
     private void processLog(String sessionId, String taskId) {
+
         try {
             TaskData taskData = getTaskData(taskId, sessionId);
             if (taskData == null) {
@@ -130,17 +129,17 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             String dir = sessionId + File.separatorChar + taskId + File.separatorChar + MetricCollector.METRIC_MARKER + File.separatorChar;
             Set<String> metrics = fileStorage.getFileNameList(dir);
 
-            for (String metricPath : metrics) {
+            for (String metricPath: metrics) {
                 try {
                     String file = metricPath + File.separatorChar + "aggregated.dat";
                     AggregationInfo aggregationInfo = logAggregator.chronology(metricPath, file);
 
-                    if (aggregationInfo.getCount() == 0) {
+
+                    if(aggregationInfo.getCount() == 0) {
                         //metric not collected
                         return;
                     }
-                    StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSizeProvider, taskData)
-                            .generate();
+                    StatisticsGenerator statisticsGenerator = new StatisticsGenerator(file, aggregationInfo, intervalSizeProvider, taskData).generate();
                     final Collection<MetricPointEntity> statistics = statisticsGenerator.getStatistics();
 
                     log.debug("BEGIN: Save to data base " + metricPath);
@@ -156,7 +155,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     });
                     log.debug("END: Save to data base " + metricPath);
                 } catch (Exception e) {
-                    log.error("Error during processing metric by path: '{}'", metricPath);
+                    log.error("Error during processing metric by path: '{}'",metricPath);
                 }
             }
 
@@ -173,7 +172,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
         private TaskData taskData;
         private Collection<MetricPointEntity> statistics;
 
-        StatisticsGenerator(String path, AggregationInfo aggregationInfo, IntervalSizeProvider intervalSizeProvider, TaskData taskData) {
+        public StatisticsGenerator(String path, AggregationInfo aggregationInfo,  IntervalSizeProvider intervalSizeProvider, TaskData taskData) {
             this.path = path;
             this.aggregationInfo = aggregationInfo;
             this.intervalSizeProvider = intervalSizeProvider;
@@ -195,16 +194,16 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                 log.warn("Aggregators not found for metric: '{}' in task: '{}'; Using default aggregator", metricName, taskData.getTaskId());
                 metricDescription = defaultMetricDescription;
                 metricDescription.setMetricId(metricName);
-            } else {
+            }else{
                 // if there are no aggregators - add default sum-aggregator
-                if (metricDescription.getAggregators().isEmpty()) {
+                if (metricDescription.getAggregators().isEmpty()){
                     log.warn("Aggregators not found for metric: '{}' in task: '{}'; Using default aggregator", metricName, taskData.getTaskId());
                     metricDescription.addAggregator(new SumMetricAggregatorProvider());
                 }
             }
 
             LogReader.FileReader<MetricLogEntry> fileReader = null;
-            statistics = new LinkedList<>();
+            statistics = new LinkedList<MetricPointEntity>();
 
             for (Map.Entry<MetricAggregatorProvider, MetricAggregatorSettings> entry : metricDescription.getAggregatorsWithSettings().entrySet()) {
                 MetricAggregator overallMetricAggregator = null;
@@ -232,7 +231,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     String aggregatorDisplayNameSuffix = createAggregatorDisplayNameSuffix(aggregatorName, normalizeByIntervalValue);
 
                     String displayName = (metricDescription.getDisplayName() == null ? metricDescription.getMetricId() :
-                            metricDescription.getDisplayName()) + aggregatorDisplayNameSuffix;
+                    metricDescription.getDisplayName()) + aggregatorDisplayNameSuffix;
                     String metricId = metricDescription.getMetricId() + '-' + aggregatorIdSuffix;
 
                     MetricDescriptionEntity metricDescriptionEntity = persistMetricDescription(metricId, displayName, taskData);
@@ -247,10 +246,10 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         for (MetricLogEntry logEntry : fileReader) {
                             log.debug("Log entry {} time", logEntry.getTime());
                             if (metricDescription.getPlotData()) {
-                                while (logEntry.getTime() > currentInterval) {
+                                while (logEntry.getTime() > currentInterval){
                                     // we leave current interval or current interval is empty
                                     Number aggregated = intervalAggregator.getAggregated();
-                                    if (aggregated != null) {
+                                    if (aggregated != null){
                                         // we leave interval
                                         // we have some info in interval aggregator
                                         // we need to save it
@@ -262,7 +261,8 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                             if (!normalizeByFullTimeIntervalRequired) {
                                                 // normalize by current aggregation interval
                                                 intervalForNormalization = extendedInterval;
-                                            } else {
+                                            }
+                                            else {
                                                 // normalize by time from beginning of the test
                                                 intervalForNormalization = time;
                                             }
@@ -276,10 +276,10 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                         extendedInterval = intervalSize;
                                         time += intervalSize;
                                         currentInterval += intervalSize;
-                                    } else {
+                                    }else{
                                         // current interval is empty
                                         // we will extend it
-                                        while (logEntry.getTime() > currentInterval) {
+                                        while (logEntry.getTime() > currentInterval){
                                             extendedInterval += intervalSize;
                                             time += intervalSize;
                                             currentInterval += intervalSize;
@@ -294,7 +294,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
 
                         if (metricDescription.getPlotData()) {
                             Number aggregated = intervalAggregator.getAggregated();
-                            if (aggregated != null) {
+                            if (aggregated != null){
                                 double value = aggregated.doubleValue();
 
                                 // normalize result
@@ -303,7 +303,8 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                     if (!normalizeByFullTimeIntervalRequired) {
                                         // normalize by current aggregation interval
                                         intervalForNormalization = extendedInterval;
-                                    } else {
+                                    }
+                                    else {
                                         // normalize by time from beginning of the test
                                         intervalForNormalization = time;
                                     }
@@ -322,7 +323,9 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                             }
                             persistAggregatedMetricValue(value, metricDescriptionEntity);
                         }
-                    } finally {
+
+                    }
+                    finally {
                         if (fileReader != null) {
                             fileReader.close();
                         }
@@ -334,8 +337,8 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
         }
 
         private int getIntervalSize(IntervalSizeProvider intervalSizeProvider,
-                                    MetricAggregatorSettings aggregatorSettings,
-                                    AggregationInfo aggregationInfo) {
+                                            MetricAggregatorSettings aggregatorSettings,
+                                            AggregationInfo aggregationInfo) {
 
             long maxTime = aggregationInfo.getMaxTime();
             long minTime = aggregationInfo.getMinTime();
@@ -363,20 +366,20 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     metricName
             );
 
-            if (!metricDescription.iterator().hasNext()) {
+            if (!metricDescription.iterator().hasNext()){
                 return null;
             }
 
-            return (MetricDescription) metricDescription.iterator().next();
+            return (MetricDescription)metricDescription.iterator().next();
         }
 
-        /**
-         * Creates aggregator`s id from aggregator`s displayName.
-         * Replace all reserved symbols for aggregator`s name with empty String.
-         * Reserved symbols = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" | "$" | ","
-         * @param name aggregator`s name
-         * @return aggregator`s id
-         */
+       /**
+        * Creates aggregator`s id from aggregator`s displayName.
+        * Replace all reserved symbols for aggregator`s name with empty String.
+        * Reserved symbols = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" | "$" | ","
+        * @param name aggregator`s name
+        * @return aggregator`s id
+        */
         private String createIdFromName(String name, TimeUnits normalization) {
             String result;
             String regexp = "[\\;/\\?\\:@\\&=\\+\\$\\,]";
@@ -399,7 +402,6 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
 
         /**
          * Wrap aggregator name to make it more comfortable to read in pdf/webclient
-         *
          * @param name aggregator`s name
          * @return suffix for displayName of metric with given aggregator
          */

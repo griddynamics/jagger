@@ -17,18 +17,11 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.dbapi.entity.DiagnosticResultEntity;
-import com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity;
-import com.griddynamics.jagger.dbapi.entity.TaskData;
-import com.griddynamics.jagger.dbapi.entity.ValidationResultEntity;
-import com.griddynamics.jagger.dbapi.entity.WorkloadData;
-import com.griddynamics.jagger.dbapi.entity.WorkloadDetails;
-import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
+import com.griddynamics.jagger.dbapi.entity.*;
 import com.griddynamics.jagger.engine.e1.collector.DiagnosticResult;
 import com.griddynamics.jagger.engine.e1.collector.ValidationResult;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
@@ -37,32 +30,15 @@ import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.CLOCK;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.CLOCK_VALUE;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.FAILED;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.INVOKED;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.KERNELS;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.RESULT;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TERMINATION;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_DURATION;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_SQR_DURATION;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
 
 /**
  * Aggregates recorded e1 scenario data from key-value storage to relational
@@ -71,9 +47,22 @@ import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE
  * @author Mairbek Khadikov
  */
 public class WorkloadAggregator extends LogProcessor implements DistributionListener {
-    private static final Logger log = LoggerFactory.getLogger(WorkloadAggregator.class);
+    private final static Logger log = LoggerFactory.getLogger(WorkloadAggregator.class);
 
     private KeyValueStorage keyValueStorage;
+
+    // Legacy way: slow, distributed among many tables in DB
+    private boolean saveStandardMetricsWithOldModel = false;
+    // Unified metric representation: fast, single flow for all types of metrics
+    private boolean saveStandardMetricsWithNewModel = true;
+
+    public void setSaveStandardMetricsWithOldModel(boolean saveStandardMetricsWithOldModel) {
+        this.saveStandardMetricsWithOldModel = saveStandardMetricsWithOldModel;
+    }
+
+    public void setSaveStandardMetricsWithNewModel(boolean saveStandardMetricsWithNewModel) {
+        this.saveStandardMetricsWithNewModel = saveStandardMetricsWithNewModel;
+    }
 
     @Override
     public void onDistributionStarted(String sessionId, String taskId, Task task, Collection<NodeId> capableNodes) {
@@ -103,8 +92,8 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         Long startTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, START_TIME);
         Long endTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, END_TIME);
         double duration = (double) (endTime - startTime) / 1000;
-        log.debug("start {} end {} duration {}", startTime, endTime, duration);
-
+        log.debug("start {} end {} duration {}", new Object[]{startTime, endTime, duration});
+        
         @SuppressWarnings({"unchecked", "rawtypes"})
         Collection<String> kernels = (Collection) keyValueStorage.fetchAll(taskNamespace, KERNELS);
         log.debug("kernels found {}", kernels);
@@ -115,8 +104,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         Map<String, ValidationResult> validationResults = Maps.newHashMap();
         Map<String, Double> diagnosticResults = Maps.newHashMap();
         for (String kernelId : kernels) {
-            KernelProcessor kernelProcessor = new KernelProcessor(taskNamespace, totalDuration, totalSqrDuration, failed, invoked,
-                    validationResults, diagnosticResults, kernelId).process();
+            KernelProcessor kernelProcessor = new KernelProcessor(taskNamespace, totalDuration, totalSqrDuration, failed, invoked, validationResults, diagnosticResults, kernelId).process();
             invoked = kernelProcessor.getInvoked();
             failed = kernelProcessor.getFailed();
             totalDuration = kernelProcessor.getTotalDuration();
@@ -157,13 +145,10 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         }
         log.debug("Success rate: {}", successRate);
 
-        persistValues(sessionId, taskId, workloadTask, clock, clockValue, termination, startTime, endTime, kernels, failed, invoked,
-                validationResults, diagnosticResults, successRate);
+        persistValues(sessionId, taskId, workloadTask, clock, clockValue, termination, startTime, endTime, kernels, totalDuration, failed, invoked, validationResults, diagnosticResults, avgLatency, stdDevLatency, throughput, successRate);
     }
 
-    private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination,
-                               Long startTime, Long endTime, Collection<String> kernels, Integer failed, Integer invoked,
-                               Map<String, ValidationResult> validationResults, Map<String, Double> diagnosticResults, double successRate) {
+    private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination, Long startTime, Long endTime, Collection<String> kernels, double totalDuration, Integer failed, Integer invoked, Map<String, ValidationResult> validationResults, Map<String, Double> diagnosticResults, double avgLatency, double stdDevLatency, double throughput, double successRate) {
         String parentId = workloadTask.getParentTaskId();
 
         TaskData taskData = getTaskData(taskId, sessionId);
@@ -194,17 +179,40 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         workloadTaskData.setClockValue(clockValue);
         workloadTaskData.setTermination(termination);
         workloadTaskData.setKernels(kernels.size());
+        workloadTaskData.setTotalDuration(BigDecimal.valueOf(totalDuration));
+        if (saveStandardMetricsWithOldModel) {
+            // when saved with new model, following fields will be null
+            workloadTaskData.setSamples(invoked);
+            workloadTaskData.setThroughput(BigDecimal.valueOf(throughput));
+            workloadTaskData.setFailuresCount(failed);
+            workloadTaskData.setSuccessRate(BigDecimal.valueOf(successRate));
+            workloadTaskData.setAvgLatency(BigDecimal.valueOf(avgLatency));
+            workloadTaskData.setStdDevLatency(BigDecimal.valueOf(stdDevLatency));
+        }
 
         getHibernateTemplate().persist(workloadTaskData);
 
-        MetricDescriptionEntity successRateDescription = persistMetricDescription(SUCCESS_RATE_ID, SUCCESS_RATE, taskData);
-        persistAggregatedMetricValue(successRate, successRateDescription);
+        if (saveStandardMetricsWithNewModel) {
+            MetricDescriptionEntity successRateDescription = persistMetricDescription(
+                    StandardMetricsNamesUtil.SUCCESS_RATE_ID,
+                    StandardMetricsNamesUtil.SUCCESS_RATE,
+                    taskData);
+            persistAggregatedMetricValue(successRate, successRateDescription);
 
-        MetricDescriptionEntity samplesDescription = persistMetricDescription(ITERATION_SAMPLES_ID, ITERATIONS_SAMPLES, taskData);
-        persistAggregatedMetricValue(invoked, samplesDescription);
 
-        MetricDescriptionEntity failuresDescription = persistMetricDescription(FAIL_COUNT_ID, FAIL_COUNT, taskData);
-        persistAggregatedMetricValue(failed, failuresDescription);
+            MetricDescriptionEntity samplesDescription = persistMetricDescription(
+                    StandardMetricsNamesUtil.ITERATION_SAMPLES_ID,
+                    StandardMetricsNamesUtil.ITERATIONS_SAMPLES,
+                    taskData);
+            persistAggregatedMetricValue(invoked, samplesDescription);
+
+
+            MetricDescriptionEntity failuresDescription = persistMetricDescription(
+                    StandardMetricsNamesUtil.FAIL_COUNT_ID,
+                    StandardMetricsNamesUtil.FAIL_COUNT,
+                    taskData);
+            persistAggregatedMetricValue(failed, failuresDescription);
+        }
 
         for (Map.Entry<String, ValidationResult> entry : validationResults.entrySet()) {
             ValidationResultEntity entity = new ValidationResultEntity();
@@ -234,8 +242,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
 
     private WorkloadDetails getScenarioData(WorkloadTask workloadTask) {
         List<WorkloadDetails> all = (List<WorkloadDetails>) getHibernateTemplate().find(
-                "from WorkloadDetails s where s.name=? and s.version=? and s.description=?", workloadTask.getName(), workloadTask.getVersion(),
-                workloadTask.getDescription());
+                                        "from WorkloadDetails s where s.name=? and s.version=? and s.description=?", workloadTask.getName(), workloadTask.getVersion(), workloadTask.getDescription());
 
         if (all.size() > 0) {
             return all.get(0);
@@ -259,8 +266,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         private Map<String, Double> diagnosticResults;
         private String kernelId;
 
-        public KernelProcessor(Namespace taskNamespace, double totalDuration, double totalSqrDuration, Integer failed, Integer invoked, Map<String,
-                ValidationResult> validationResults, Map<String, Double> diagnosticResults, String kernelId) {
+        public KernelProcessor(Namespace taskNamespace, double totalDuration, double totalSqrDuration, Integer failed, Integer invoked, Map<String, ValidationResult> validationResults, Map<String, Double> diagnosticResults,String kernelId) {
             this.taskNamespace = taskNamespace;
             this.totalDuration = totalDuration;
             this.totalSqrDuration = totalSqrDuration;
