@@ -7,6 +7,8 @@ import java.util.List;
 public interface JobExecutionService {
     List<JobExecutionEntity> readAll();
 
+    List<JobExecutionEntity> readAllPending();
+
     JobExecutionEntity create(JobExecutionEntity job);
 
     void delete(Long jobId);

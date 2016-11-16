@@ -33,6 +33,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,9 +54,9 @@ public class TestEnvironmentRestController extends AbstractController {
     @Value("${environments.ttl.minutes}")
     private int environmentsTtlMinutes;
 
-    private TestEnvironmentService testEnvService;
+    private final TestEnvironmentService testEnvService;
 
-    private JobExecutionService jobExecutionService;
+    private final JobExecutionService jobExecutionService;
 
     @Autowired
     public TestEnvironmentRestController(TestEnvironmentService testEnvironmentService, JobExecutionService jobExecutionService) {
@@ -106,24 +107,20 @@ public class TestEnvironmentRestController extends AbstractController {
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         response.addCookie(getSessionCookie(updated));
         if (updated.getStatus() == PENDING) {
-            String testSuiteNameToExecute = getTestSuiteNameToExecute(updated);
-            if (testSuiteNameToExecute != null) {
-                setNextConfigToExecuteHeader(response, testSuiteNameToExecute);
-            }
+            getTestSuiteNameToExecute(updated).ifPresent(testSuiteName -> setNextConfigToExecuteHeader(response, testSuiteName));
         }
         return ResponseEntity.accepted().build();
     }
 
-    private String getTestSuiteNameToExecute(TestEnvironmentEntity testEnv) {
+    private Optional<String> getTestSuiteNameToExecute(TestEnvironmentEntity testEnv) {
         List<String> testSuitesNames = testEnv.getTestSuites().stream().map(TestSuiteEntity::getTestSuiteId).collect(toList());
 
-        return jobExecutionService.readAll().stream()
+        return jobExecutionService.readAllPending().stream()
                 .map(JobExecutionEntity::getJob)
                 .filter(job -> job.getEnvId().equals(testEnv.getEnvironmentId()))
                 .map(JobEntity::getTestSuiteId)
                 .filter(testSuitesNames::contains)
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)

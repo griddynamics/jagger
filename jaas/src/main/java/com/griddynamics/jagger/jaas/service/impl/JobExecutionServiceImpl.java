@@ -34,6 +34,11 @@ public class JobExecutionServiceImpl implements JobExecutionService {
     }
 
     @Override
+    public List<JobExecutionEntity> readAllPending() {
+        return newArrayList(jobExecutionDao.readAllPending());
+    }
+
+    @Override
     public JobExecutionEntity create(JobExecutionEntity jobExecution) {
         Objects.requireNonNull(jobExecution.getJobId(), "Job id must not be null!");
 
