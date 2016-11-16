@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -7,47 +8,29 @@ import java.util.List;
  */
 public class JTestSuite {
 
-    private String id;
-    private List<JTestGroup> testGroups;
+    private final String id;
+    private final List<JTestGroup> testGroups;
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Id id, List<JTestGroup> testGroups) {
+        return new Builder(id, testGroups);
+    }
+    
+    public static Builder builder(Id id, JTestGroup testGroup) {
+        return new Builder(id, Collections.singletonList(testGroup));
     }
 
     private JTestSuite(Builder builder) {
+        this.id = builder.id.value();
         this.testGroups = builder.testGroups;
-        this.id = builder.id;
-        if (id == null) {
-            throw new IllegalStateException("Test suite should have a unique id");
-        }
     }
 
     public static class Builder {
-        private String id;
-        private List<JTestGroup> testGroups;
-
-        private Builder() {
-        }
+        private final Id id;
+        private final List<JTestGroup> testGroups;
     
-        /**
-         * Sets id for the group.
-         *
-         * @param id test suite.
-         */
-        public JTestSuite.Builder withId(String id) {
+        public Builder(Id id, List<JTestGroup> testGroups) {
             this.id = id;
-            return this;
-        }
-
-        /**
-         * Sets the {@code testGroups} for test suite.
-         * Test groups will be executed in the order from beginning to the end of the list.
-         *
-         * @param testGroups List of test groups.
-         */
-        public Builder withTestGroups(List<JTestGroup> testGroups) {
             this.testGroups = testGroups;
-            return this;
         }
 
         /**

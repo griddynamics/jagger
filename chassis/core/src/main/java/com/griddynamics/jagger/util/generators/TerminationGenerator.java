@@ -37,7 +37,7 @@ class TerminationGenerator {
         IterationsOrDurationStrategyConfiguration termination = new IterationsOrDurationStrategyConfiguration();
         String duration = parseDuration(jTerminationIterations.getMaxDurationInSeconds());
         termination.setDuration(duration);
-        termination.setIterations((int) jTerminationIterations.getIterationCount());
+        termination.setIterations((int) jTerminationIterations.getIterationsNumber());
         termination.setShutdown(new AtomicBoolean(false));
         return termination;
     }
