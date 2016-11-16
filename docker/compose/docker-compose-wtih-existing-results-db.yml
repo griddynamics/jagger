@@ -21,9 +21,10 @@ services:
       TZ: Europe/Moscow
       JWC_HTTP_PORT: 80
       JWC_JDBC_DRIVER: com.mysql.jdbc.Driver
-      JWC_JDBC_URL: jdbc:mysql://jagger-ci1.vm.griddynamics.net:3306/jaggerdb
-      JWC_JDBC_USER: jagger
-      JWC_JDBC_PASS: rocks
+      # Specify here the existing results database
+      JWC_JDBC_URL: jdbc:mysql://<hostname>:<port>/<base_name>
+      JWC_JDBC_USER: <username>
+      JWC_JDBC_PASS: <password>
 
   jagger-jaas:
     image: griddynamics/jagger-jaas:snapshot
@@ -39,10 +40,10 @@ services:
       JAAS_DB_USER: jaggeruser
       JAAS_DB_PASS: password
       JAAS_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
-      # These parameters are optional, but you can avoid some issues if they are set (watch JFG-947).
-      JAGGER_DB_DEFAULT_URL: jdbc:mysql://jagger-ci1.vm.griddynamics.net:3306/jaggerdb
+      # Specify here the existing results database
+      JAGGER_DB_DEFAULT_URL: jdbc:mysql://<hostname>:<port>/<base_name>
       JAGGER_DB_DEFAULT_DESC: default_db
-      JAGGER_DB_DEFAULT_USER: jagger
-      JAGGER_DB_DEFAULT_PASSWORD: rocks
+      JAGGER_DB_DEFAULT_USER: <username>
+      JAGGER_DB_DEFAULT_PASSWORD: <password>
       JAGGER_DB_DEFAULT_DRIVER: com.mysql.jdbc.Driver
       JAGGER_DB_DEFAULT_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
