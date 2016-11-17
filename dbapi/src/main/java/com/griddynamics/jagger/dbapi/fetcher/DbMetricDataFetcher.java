@@ -3,7 +3,7 @@ package com.griddynamics.jagger.dbapi.fetcher;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-public abstract class DbMetricDataFetcher<R> extends ConcurrentMetricDataFetcher <R> {
+public abstract class DbMetricDataFetcher<R> extends ConcurrentMetricDataFetcher<R> {
 
     protected EntityManager entityManager;
 

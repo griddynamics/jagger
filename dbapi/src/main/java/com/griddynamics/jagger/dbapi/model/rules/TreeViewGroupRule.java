@@ -8,30 +8,34 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TreeViewGroupRule extends Rule{
+public class TreeViewGroupRule extends Rule {
 
     public TreeViewGroupRule(String id, String displayName, String rule) {
-        super(id,displayName,rule);
+        super(id, displayName, rule);
     }
+
     public TreeViewGroupRule(By filterBy, String id, String displayName, String rule) {
-        super(filterBy,id,displayName,rule);
+        super(filterBy, id, displayName, rule);
     }
+
     public TreeViewGroupRule(String id, String displayName, String rule, List<TreeViewGroupRule> children) {
-        super(id,displayName,rule);
-        AssignChildren(children);
+        super(id, displayName, rule);
+        assignChildren(children);
     }
+
     public TreeViewGroupRule(By filterBy, String id, String displayName, String rule, List<TreeViewGroupRule> children) {
-        super(filterBy,id,displayName,rule);
-        AssignChildren(children);
+        super(filterBy, id, displayName, rule);
+        assignChildren(children);
     }
-    private void AssignChildren (List<TreeViewGroupRule> children) {
+
+    private void assignChildren(List<TreeViewGroupRule> children) {
         // remove duplicates and sort
-        List<TreeViewGroupRule> temp = removeDuplicates(By.ID,children);
+        List<TreeViewGroupRule> temp = removeDuplicates(By.ID, children);
         this.children = sort(By.DISPLAY_NAME, temp);
     }
 
     public <M extends MetricNode> MetricGroupNode<M> filter(String parentId, List<M> metricNodeList) {
-        MetricGroupNode<M> result = new MetricGroupNode<M>(displayName);
+        MetricGroupNode<M> result = new MetricGroupNode<>(displayName);
         boolean returnResult = false;
 
         // null is required only for root node
@@ -39,8 +43,7 @@ public class TreeViewGroupRule extends Rule{
         String id;
         if (parentId == null) {
             id = this.id;
-        }
-        else {
+        } else {
             // depth of tree is not limited => be careful with long id. They will concatenate
             // G goes for group
             id = parentId + "G_" + this.id;
@@ -50,10 +53,10 @@ public class TreeViewGroupRule extends Rule{
         result.setId(id);
 
         // first ask all children to filter
-        List<MetricGroupNode<M>> metricGroupNodeListFromChildren = new ArrayList<MetricGroupNode<M>>();
+        List<MetricGroupNode<M>> metricGroupNodeListFromChildren = new ArrayList<>();
         if (children != null) {
             for (TreeViewGroupRule child : children) {
-                MetricGroupNode<M> childResult = child.filter(id,metricNodeList);
+                MetricGroupNode<M> childResult = child.filter(id, metricNodeList);
                 if (childResult != null) {
                     metricGroupNodeListFromChildren.add(childResult);
                 }
@@ -66,7 +69,7 @@ public class TreeViewGroupRule extends Rule{
 
         // apply own filter
         if (rule != null) {
-            List<M> metricsPerRule = new ArrayList<M>();
+            List<M> metricsPerRule = new ArrayList<>();
             Iterator<M> i = metricNodeList.iterator();
             while (i.hasNext()) {
                 M metricNode = i.next();
@@ -78,8 +81,7 @@ public class TreeViewGroupRule extends Rule{
                 for (MetricNameDto metricNameDto : metricNode.getMetricNameDtoList()) {
                     if (filterBy == By.DISPLAY_NAME) {
                         metric = metricNameDto.getMetricDisplayName();
-                    }
-                    else {
+                    } else {
                         metric = metricNameDto.getMetricName();
                     }
                     if (metric.matches(rule)) {
@@ -97,8 +99,7 @@ public class TreeViewGroupRule extends Rule{
 
         if (returnResult) {
             return result;
-        }
-        else {
+        } else {
             return null;
         }
     }

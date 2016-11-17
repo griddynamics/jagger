@@ -65,7 +65,6 @@ public class DynamicDataServiceImpl implements DynamicDataService {
         if (jaasDao.readAll().isEmpty()) {
             LOGGER.info("Registering default jagger test db config: {}", defaultDbConfigEntity);
             jaasDao.create(defaultDbConfigEntity);
-            getDataServiceFor(defaultDbConfigEntity.getId());
         }
     }
 

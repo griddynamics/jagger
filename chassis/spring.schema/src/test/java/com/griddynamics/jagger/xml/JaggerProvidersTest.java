@@ -1,34 +1,32 @@
 package com.griddynamics.jagger.xml;
 
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
+
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.invoker.http.HttpQuery;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import junit.framework.Assert;
 import org.springframework.context.ApplicationContext;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Properties;
 
-import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
-
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 2/19/13
  * Time: 12:27 PM
- * To change this template use File | Settings | File Templates.
  */
 public class JaggerProvidersTest {
 
-    private ApplicationContext ctx;
-    private H2DatabaseServer dbServer;
+    private static ApplicationContext ctx;
+    private static H2DatabaseServer dbServer;
 
     @BeforeClass
-    public void testInit() throws Exception{
+    public static void testInit() throws Exception{
         URL directory = new URL("file:" + "../configuration/");
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
@@ -42,7 +40,7 @@ public class JaggerProvidersTest {
     }
 
     @AfterClass
-    public void testShutdown() {
+    public static void testShutdown() {
         dbServer.terminate();
     }
 

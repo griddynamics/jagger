@@ -1,16 +1,14 @@
 package com.griddynamics.jagger.dbapi.fetcher;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
 import com.griddynamics.jagger.dbapi.dto.TestInfoDto;
 import com.griddynamics.jagger.dbapi.util.FetchUtil;
 import com.griddynamics.jagger.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.TreeMultimap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.collect.TreeMultimap.create;
+
 /**
  * User: mnovozhilov
  * Date: 6/10/14
@@ -31,13 +31,13 @@ import java.util.Set;
  * processing monitoring parameters. We use delegates of required classes.
  */
 
-public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> extends PlotsDbMetricDataFetcher{
+public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> extends PlotsDbMetricDataFetcher {
 
     private F abstractMetricPlotFetcher;
     private FetchUtil fetchUtil;
 
     @Autowired
-    public void setAbstractMetricPlotFetcher(F abstractMetricPlotFetcher){
+    public void setAbstractMetricPlotFetcher(F abstractMetricPlotFetcher) {
         this.abstractMetricPlotFetcher = abstractMetricPlotFetcher;
     }
 
@@ -62,9 +62,10 @@ public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> ex
     }
 
 
-    protected Set<Pair<MetricNameDto, List<PlotSingleDto>>> getResult(Collection<AbstractMetricPlotFetcher.MetricRawData> allRawData, List<MetricNameDto> metricNames) {
+    protected Set<Pair<MetricNameDto, List<PlotSingleDto>>> getResult(Collection<AbstractMetricPlotFetcher.MetricRawData> allRawData,
+                                                                      List<MetricNameDto> metricNames) {
 
-        Set<Long> taskIds = new HashSet<Long>();
+        Set<Long> taskIds = new HashSet<>();
         for (MetricNameDto metricName : metricNames) {
             taskIds.addAll(metricName.getTaskIds());
         }
@@ -85,14 +86,11 @@ public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> ex
             metricNamePlotMap.put(metricName, abstractMetricPlotFetcher.assemble(metricName, rawDatas));
         }
 
-        Set<Pair<MetricNameDto, List<PlotSingleDto>>> resultSet = new HashSet<Pair<MetricNameDto, List<PlotSingleDto>>>(metricNames.size());
+        Set<Pair<MetricNameDto, List<PlotSingleDto>>> resultSet = new HashSet<>(metricNames.size());
 
         for (MetricNameDto metricName : metricNamePlotMap.keySet()) {
-            List<PlotSingleDto> plotDatasetDtoList = new ArrayList<PlotSingleDto>(metricNamePlotMap.get(metricName));
-            resultSet.add(Pair.of(
-                    metricName,
-                    plotDatasetDtoList
-            ));
+            List<PlotSingleDto> plotDatasetDtoList = new ArrayList<>(metricNamePlotMap.get(metricName));
+            resultSet.add(Pair.of(metricName, plotDatasetDtoList));
         }
 
         return resultSet;
@@ -114,7 +112,8 @@ public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> ex
     }
 
 
-    private Collection<AbstractMetricPlotFetcher.MetricRawData> dataProcess(Collection<AbstractMetricPlotFetcher.MetricRawData> forProcess, Set<Long> taskIds) {
+    private Collection<AbstractMetricPlotFetcher.MetricRawData> dataProcess(Collection<AbstractMetricPlotFetcher.MetricRawData> forProcess,
+                                                                            Set<Long> taskIds) {
 
         List<AbstractMetricPlotFetcher.MetricRawData> result = Lists.newArrayList();
         Map<Long, Map<String, TestInfoDto>> testStartEndMap = fetchUtil.getTestInfoByTaskIds(taskIds);
@@ -154,13 +153,14 @@ public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> ex
         return result;
     }
 
-    private Map<String, Multimap<Number, AbstractMetricPlotFetcher.MetricRawData>> getLineForSessionScope(Collection<AbstractMetricPlotFetcher.MetricRawData> forProcess) {
-        Map<String, Multimap<Number, AbstractMetricPlotFetcher.MetricRawData>> lines = new HashMap<String, Multimap<Number, AbstractMetricPlotFetcher.MetricRawData>>();
+    private Map<String, Multimap<Number, AbstractMetricPlotFetcher.MetricRawData>> getLineForSessionScope(
+            Collection<AbstractMetricPlotFetcher.MetricRawData> forProcess) {
+        Map<String, Multimap<Number, AbstractMetricPlotFetcher.MetricRawData>> lines = new HashMap<>();
 
         for (AbstractMetricPlotFetcher.MetricRawData metricRawData : forProcess) {
             String metricId = metricRawData.getMetricId();
             if (lines.get(metricId) == null) {
-                Multimap<Number, AbstractMetricPlotFetcher.MetricRawData> multimap = TreeMultimap.create(numberComparator, metricRawDataComparator);
+                Multimap<Number, AbstractMetricPlotFetcher.MetricRawData> multimap = create(numberComparator, metricRawDataComparator);
                 lines.put(metricId, multimap);
             }
             lines.get(metricId).put(metricRawData.getWorkloadTaskDataId(), metricRawData);
@@ -168,18 +168,14 @@ public class AbstractSessionScopeFetcher<F extends AbstractMetricPlotFetcher> ex
         return lines;
     }
 
-    private static Comparator<AbstractMetricPlotFetcher.MetricRawData> metricRawDataComparator = new Comparator<AbstractMetricPlotFetcher.MetricRawData>() {
-        public int compare(AbstractMetricPlotFetcher.MetricRawData s1, AbstractMetricPlotFetcher.MetricRawData s2) {
-            Long sLong = s1.getTime();
-            return sLong.compareTo(s2.getTime());
-        }
+    private static Comparator<AbstractMetricPlotFetcher.MetricRawData> metricRawDataComparator = (s1, s2) -> {
+        Long s1Long = s1.getTime();
+        return s1Long.compareTo(s2.getTime());
     };
 
-    private static Comparator<Number> numberComparator = new Comparator<Number>() {
-        public int compare(Number s1, Number s2) {
-            Long sLong = s1.longValue();
-            return sLong.compareTo(s2.longValue());
-        }
+    private static Comparator<Number> numberComparator = (s1, s2) -> {
+        Long s1Long = s1.longValue();
+        return s1Long.compareTo(s2.longValue());
     };
 
 

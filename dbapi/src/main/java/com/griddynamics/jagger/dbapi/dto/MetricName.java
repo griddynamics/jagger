@@ -19,9 +19,11 @@ public class MetricName implements Serializable {
     protected List<String> metricNameSynonyms = null;
 
     public MetricName() {}
+
     public MetricName(String metricName) {
         this.metricName = metricName;
     }
+
     public MetricName(String metricName, String metricDisplayName) {
         this.metricName = metricName;
         this.metricDisplayName = metricDisplayName;

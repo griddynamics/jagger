@@ -1,3 +1,7 @@
+#
+# Docker Compose configuration file for new test results DB
+#
+
 version: "2"
 services:
   # Container with mysql base for jagger
@@ -60,10 +64,3 @@ services:
       JAAS_DB_USER: jaggeruser
       JAAS_DB_PASS: password
       JAAS_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
-      # These parameters are optional, but you can avoid some issues if they are set (watch JFG-947).
-      JAGGER_DB_DEFAULT_URL: jdbc:mysql://jagger-mysql:3306/jaggerdb
-      JAGGER_DB_DEFAULT_DESC: default_db
-      JAGGER_DB_DEFAULT_USER: jaggeruser
-      JAGGER_DB_DEFAULT_PASSWORD: password
-      JAGGER_DB_DEFAULT_DRIVER: com.mysql.jdbc.Driver
-      JAGGER_DB_DEFAULT_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect

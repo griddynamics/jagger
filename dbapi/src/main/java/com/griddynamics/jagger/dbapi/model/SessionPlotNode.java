@@ -12,7 +12,7 @@ import java.util.List;
 public class SessionPlotNode extends AbstractIdentifyNode {
     private SessionPlotNameDto metricNameDto;
 
-    public SessionPlotNode (SessionPlotNameDto metricName) {
+    public SessionPlotNode(SessionPlotNameDto metricName) {
         this.metricNameDto = metricName;
     }
 
@@ -28,6 +28,6 @@ public class SessionPlotNode extends AbstractIdentifyNode {
 
     @Override
     public List<? extends AbstractIdentifyNode> getChildren() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

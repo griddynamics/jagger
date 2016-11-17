@@ -3,7 +3,7 @@ package com.griddynamics.jagger.dbapi.util;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.MonitoringIdUtils;
 
-import java.awt.*;
+import java.awt.Color;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;

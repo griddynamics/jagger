@@ -17,6 +17,6 @@ public class PlotNode extends MetricNode {
 
     @Override
     public List<? extends AbstractIdentifyNode> getChildren() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

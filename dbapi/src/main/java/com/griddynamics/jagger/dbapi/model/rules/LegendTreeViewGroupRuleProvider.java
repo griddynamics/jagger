@@ -17,7 +17,7 @@ public class LegendTreeViewGroupRuleProvider {
     public TreeViewGroupRule provide(String rootId,
                                      Collection<String> legendGroups, String idFormatRegex) {
 
-        List<TreeViewGroupRule> firstLevelFilters = new ArrayList<TreeViewGroupRule>();
+        List<TreeViewGroupRule> firstLevelFilters = new ArrayList<>();
 
         for (String legendGroup: legendGroups) {
 

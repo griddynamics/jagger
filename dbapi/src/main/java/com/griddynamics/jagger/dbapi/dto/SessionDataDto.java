@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
  * @since 5/29/12
@@ -27,7 +28,8 @@ public class SessionDataDto implements Serializable {
         this.sessionId = sessionId;
     }
 
-    public SessionDataDto(String sessionId, Date startDate, Date endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed, String comment) {
+    public SessionDataDto(String sessionId, Date startDate, Date endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed,
+                          String comment) {
         this.sessionId = sessionId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -37,7 +39,8 @@ public class SessionDataDto implements Serializable {
         this.comment = comment;
     }
 
-    public SessionDataDto(Long id,String sessionId, Date startDate, Date endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed, String comment, String userComment, List<TagDto> tags) {
+    public SessionDataDto(Long id, String sessionId, Date startDate, Date endDate, int activeKernelsCount, int tasksExecuted, int tasksFailed,
+                          String comment, String userComment, List<TagDto> tags) {
         this.id = id;
         this.sessionId = sessionId;
         this.startDate = startDate;
@@ -132,9 +135,9 @@ public class SessionDataDto implements Serializable {
 
     @Override
     public String toString() {
-        String tagStr="";
+        String tagStr = "";
         for (TagDto tagDto : tags)
-            tagStr+=tagDto.getName()+" ";
+            tagStr += tagDto.getName() + " ";
         return "SessionDataDto{" +
                 "name='" + getName() + '\'' +
                 ", startDate=" + startDate +
@@ -144,7 +147,7 @@ public class SessionDataDto implements Serializable {
                 ", tasksFailed=" + tasksFailed +
                 ", comment=" + comment +
                 ", userComment=" + userComment +
-                ", tags="+ tagStr +
+                ", tags=" + tagStr +
                 '}';
     }
 }

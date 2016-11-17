@@ -7,15 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 
 @Component
 public class ValidatorNamesProvider implements MetricNameProvider {
@@ -31,8 +30,8 @@ public class ValidatorNamesProvider implements MetricNameProvider {
 
     @Override
     public Set<MetricNameDto> getMetricNames(List<TaskDataDto> tests) {
-        Set<Long> taskIds = new HashSet<Long>();
-        Set<String> sessionIds = new HashSet<String>();
+        Set<Long> taskIds = new HashSet<>();
+        Set<String> sessionIds = new HashSet<>();
         for (TaskDataDto tdd : tests) {
             taskIds.addAll(tdd.getIds());
             sessionIds.addAll(tdd.getSessionIds());
@@ -44,27 +43,27 @@ public class ValidatorNamesProvider implements MetricNameProvider {
         if (validators == null) { // some exception occured
 
             List<Object[]> validatorNames = entityManager.createNativeQuery(
-                    "select v.validator, selected.taskdataID from ValidationResultEntity v join " +
+                    "SELECT v.validator, selected.taskdataID FROM ValidationResultEntity v JOIN " +
                             "(" +
-                            "  select wd.workloaddataID, td.taskdataID from " +
+                            "  SELECT wd.workloaddataID, td.taskdataID FROM " +
                             "    ( " +
-                            "      select wd.id as workloaddataID, wd.taskId, wd.sessionId from WorkloadData wd where wd.sessionId in (:sessionIds)" +
-                            "    ) as wd join   " +
+                            "      SELECT wd.id AS workloaddataID, wd.taskId, wd.sessionId FROM WorkloadData wd WHERE wd.sessionId IN (:sessionIds)" +
+                            "    ) AS wd JOIN   " +
                             "    ( " +
-                            "      select td.id as taskdataID, td.taskId, td.sessionId from TaskData td where td.id in (:taskIds)" +
-                            "    ) as td on wd.taskId=td.taskId and wd.sessionId=td.sessionId" +
-                            ") as selected on v.workloadData_id=selected.workloaddataID")
+                            "      SELECT td.id AS taskdataID, td.taskId, td.sessionId FROM TaskData td WHERE td.id IN (:taskIds)" +
+                            "    ) AS td ON wd.taskId=td.taskId AND wd.sessionId=td.sessionId" +
+                            ") AS selected ON v.workloadData_id=selected.workloaddataID")
                     .setParameter("taskIds", taskIds)
                     .setParameter("sessionIds", sessionIds)
                     .getResultList();
             log.debug("{} ms spent for fetching {} validators", System.currentTimeMillis() - temp, validatorNames.size());
 
-            validators = new HashSet<MetricNameDto>(validatorNames.size());
+            validators = new HashSet<>(validatorNames.size());
 
-            for (Object[] name : validatorNames){
+            for (Object[] name : validatorNames) {
                 if (name == null || name[0] == null) continue;
                 for (TaskDataDto td : tests) {
-                    if (td.getIds().contains(((BigInteger)name[1]).longValue())) {
+                    if (td.getIds().contains(((BigInteger) name[1]).longValue())) {
                         MetricNameDto metric = new MetricNameDto();
                         metric.setTest(td);
                         metric.setMetricName((String) name[0]);
@@ -82,8 +81,8 @@ public class ValidatorNamesProvider implements MetricNameProvider {
 
     public Set<MetricNameDto> getValidatorsNamesNewModel(List<TaskDataDto> tests) {
         try {
-            Set<Long> taskIds = new HashSet<Long>();
-            Set<String> sessionIds = new HashSet<String>();
+            Set<Long> taskIds = new HashSet<>();
+            Set<String> sessionIds = new HashSet<>();
             for (TaskDataDto tdd : tests) {
                 taskIds.addAll(tdd.getIds());
                 sessionIds.addAll(tdd.getSessionIds());
@@ -92,16 +91,16 @@ public class ValidatorNamesProvider implements MetricNameProvider {
             long temp = System.currentTimeMillis();
 
             List<Object[]> validatorNames = entityManager.createNativeQuery(
-                    "select v.validator, selected.taskdataID, v.displayName from ValidationResultEntity v join " +
+                    "SELECT v.validator, selected.taskdataID, v.displayName FROM ValidationResultEntity v JOIN " +
                             "(" +
-                            "  select wd.workloaddataID, td.taskdataID from " +
+                            "  SELECT wd.workloaddataID, td.taskdataID FROM " +
                             "    ( " +
-                            "      select wd.id as workloaddataID, wd.taskId, wd.sessionId from WorkloadData wd where wd.sessionId in (:sessionIds)" +
-                            "    ) as wd join   " +
+                            "      SELECT wd.id AS workloaddataID, wd.taskId, wd.sessionId FROM WorkloadData wd WHERE wd.sessionId IN (:sessionIds)" +
+                            "    ) AS wd JOIN   " +
                             "    ( " +
-                            "      select td.id as taskdataID, td.taskId, td.sessionId from TaskData td where td.id in (:taskIds)" +
-                            "    ) as td on wd.taskId=td.taskId and wd.sessionId=td.sessionId" +
-                            ") as selected on v.workloadData_id=selected.workloaddataID")
+                            "      SELECT td.id AS taskdataID, td.taskId, td.sessionId FROM TaskData td WHERE td.id IN (:taskIds)" +
+                            "    ) AS td ON wd.taskId=td.taskId AND wd.sessionId=td.sessionId" +
+                            ") AS selected ON v.workloadData_id=selected.workloaddataID")
                     .setParameter("taskIds", taskIds)
                     .setParameter("sessionIds", sessionIds)
                     .getResultList();
@@ -110,12 +109,12 @@ public class ValidatorNamesProvider implements MetricNameProvider {
             if (validatorNames.isEmpty()) {
                 return Collections.emptySet();
             }
-            Set<MetricNameDto> validators = new HashSet<MetricNameDto>(validatorNames.size());
+            Set<MetricNameDto> validators = new HashSet<>(validatorNames.size());
 
-            for (Object[] name : validatorNames){
+            for (Object[] name : validatorNames) {
                 if (name == null || name[0] == null) continue;
                 for (TaskDataDto td : tests) {
-                    if (td.getIds().contains(((BigInteger)name[1]).longValue())) {
+                    if (td.getIds().contains(((BigInteger) name[1]).longValue())) {
                         MetricNameDto metric = new MetricNameDto();
                         metric.setTest(td);
                         metric.setMetricName((String) name[0]);

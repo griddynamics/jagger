@@ -20,6 +20,7 @@ public class TestNode extends MetricGroupNode<MetricNode> {
     public TestNode(MetricGroupNode that) {
         super(that);
     }
+
     public TestNode() {}
 
     @Override

@@ -7,8 +7,8 @@ import java.util.List;
  */
 public class JTestSuite {
 
+    private String id;
     private List<JTestGroup> testGroups;
-
 
     public static Builder builder() {
         return new Builder();
@@ -16,13 +16,27 @@ public class JTestSuite {
 
     private JTestSuite(Builder builder) {
         this.testGroups = builder.testGroups;
+        this.id = builder.id;
+        if (id == null) {
+            throw new IllegalStateException("Test suite should have a unique id");
+        }
     }
 
-
     public static class Builder {
+        private String id;
         private List<JTestGroup> testGroups;
 
         private Builder() {
+        }
+    
+        /**
+         * Sets id for the group.
+         *
+         * @param id test suite.
+         */
+        public JTestSuite.Builder withId(String id) {
+            this.id = id;
+            return this;
         }
 
         /**
@@ -49,5 +63,9 @@ public class JTestSuite {
 
     public List<JTestGroup> getTestGroups() {
         return testGroups;
+    }
+
+    public String getId() {
+        return id;
     }
 }

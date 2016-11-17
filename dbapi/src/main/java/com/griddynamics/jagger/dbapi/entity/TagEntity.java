@@ -1,6 +1,10 @@
 package com.griddynamics.jagger.dbapi.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.Collections;
 import java.util.Set;
 
@@ -22,7 +26,7 @@ public class TagEntity {
     @Column(length = 100)
     private String description;
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
-    private Set<SessionData> sessions = Collections.EMPTY_SET;
+    private Set<SessionData> sessions = Collections.emptySet();
 
     public TagEntity(String name, String description) {
         this.name = name;

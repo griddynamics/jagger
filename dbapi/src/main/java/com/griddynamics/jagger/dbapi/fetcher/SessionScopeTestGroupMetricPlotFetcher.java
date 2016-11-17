@@ -9,6 +9,4 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class SessionScopeTestGroupMetricPlotFetcher extends AbstractSessionScopeFetcher<CustomTestGroupMetricPlotFetcher>{
-
-}
+public class SessionScopeTestGroupMetricPlotFetcher extends AbstractSessionScopeFetcher<CustomTestGroupMetricPlotFetcher> {}

@@ -11,7 +11,13 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by kgribov on 3/17/14.
@@ -26,9 +32,9 @@ public class FetchUtil {
     }
 
     /**
-     * @return multi map <test-group id, tests ids>
+     * @return multi map &lt;test-group id, tests ids&gt;
      */
-    public Multimap<Long, Long> getTestGroupIdsByTestIds(Set<Long> taskIds){
+    public Multimap<Long, Long> getTestGroupIdsByTestIds(Set<Long> taskIds) {
 
         Multimap<Long, Long> resultMap = HashMultimap.create();
 
@@ -50,25 +56,25 @@ public class FetchUtil {
 
     /**
      * @param sessionIds session ids of sessions to select pairs
-     * @param taskIds TaskData ids of tests to select pairs
+     * @param taskIds    TaskData ids of tests to select pairs
      * @return pairs as (test group id, test id)
      */
-    private List<Object[]> getGroupToTaskIdsList (Collection<String> sessionIds, Collection<Long> taskIds) {
-        return entityManager.createNativeQuery("select grTaskData.id, mysome.taskDataId from" +
+    private List<Object[]> getGroupToTaskIdsList(Collection<String> sessionIds, Collection<Long> taskIds) {
+        return entityManager.createNativeQuery("SELECT grTaskData.id, mysome.taskDataId FROM" +
                 "  (" +
-                "    select * from TaskData as td where td.sessionId in (:sessionIds) " +
-                "  ) as grTaskData join" +
+                "    SELECT * FROM TaskData AS td WHERE td.sessionId IN (:sessionIds) " +
+                "  ) AS grTaskData JOIN" +
                 "  (" +
-                "    select td2.sessionId, td2.id as taskDataId, wd.parentId from" +
+                "    SELECT td2.sessionId, td2.id AS taskDataId, wd.parentId FROM" +
                 "      ( " +
-                "         select wd.parentId, wd.sessionId, wd.taskId from WorkloadData as wd where wd.sessionId in (:sessionIds)" +
-                "      ) as wd join " +
-                "      TaskData as td2" +
-                "          on td2.id in (:taskIds)" +
-                "          and wd.sessionId = td2.sessionId" +
-                "          and wd.taskId=td2.taskId" +
-                "  ) as mysome " +
-                "      on grTaskData.sessionId = mysome.sessionId and grTaskData.taskId=mysome.parentId")
+                "         SELECT wd.parentId, wd.sessionId, wd.taskId FROM WorkloadData AS wd WHERE wd.sessionId IN (:sessionIds)" +
+                "      ) AS wd JOIN " +
+                "      TaskData AS td2" +
+                "          ON td2.id IN (:taskIds)" +
+                "          AND wd.sessionId = td2.sessionId" +
+                "          AND wd.taskId=td2.taskId" +
+                "  ) AS mysome " +
+                "      ON grTaskData.sessionId = mysome.sessionId AND grTaskData.taskId=mysome.parentId")
                 .setParameter("sessionIds", sessionIds)
                 .setParameter("taskIds", taskIds)
                 .getResultList();
@@ -79,16 +85,18 @@ public class FetchUtil {
      * @return list of session Ids
      */
     public List<String> getSessionIdsByTaskIds(Set<Long> taskIds) {
-        return entityManager.createNativeQuery("select distinct taskData.sessionId from TaskData taskData " +
-                "where taskData.id in (:ids)")
+        return entityManager.createNativeQuery("SELECT DISTINCT taskData.sessionId FROM TaskData taskData " +
+                "WHERE taskData.id IN (:ids)")
                 .setParameter("ids", taskIds)
                 .getResultList();
     }
 
-    /** Returns test info for specified tests ids
+    /**
+     * Returns test info for specified tests ids
+     *
      * @param taskIds - selected test ids
-     * @return map <testId, map <sessionId, test info>> of test info
-     * */
+     * @return map &lt;testId, map &lt;sessionId, test info&gt;&gt; of test info
+     */
     public Map<Long, Map<String, TestInfoDto>> getTestInfoByTaskIds(Set<Long> taskIds) throws RuntimeException {
 
         if (taskIds.isEmpty()) {
@@ -96,17 +104,17 @@ public class FetchUtil {
         }
 
         @SuppressWarnings("all")
-        List<Object[]> objectsList = (List<Object[]>)entityManager.createNativeQuery(
-                "select wtd.sessionId, wtd.clock, wtd.clockValue, wtd.termination, finalTaskData.id," +
+        List<Object[]> objectsList = (List<Object[]>) entityManager.createNativeQuery(
+                "SELECT wtd.sessionId, wtd.clock, wtd.clockValue, wtd.termination, finalTaskData.id," +
                         "finalTaskData.startTime, finalTaskData.endTime, wtd.number, finalTaskData.status " +
-                        "from WorkloadTaskData as wtd join " +
-                        "(select wd.startTime, wd.endTime, wd.taskId, wd.sessionId, taskData.id, taskData.status from WorkloadData " +
-                        "as wd join " +
-                        "( select  td.id, td.sessionId, td.taskId, td.status from TaskData td where td.id in (:taskDataIds) " +
-                        ") as taskData " +
-                        "on wd.taskId=taskData.taskId and wd.sessionId=taskData.sessionId" +
-                        ") as finalTaskData " +
-                        "on wtd.sessionId=finalTaskData.sessionId and wtd.taskId=finalTaskData.taskId order by finalTaskData.startTime")
+                        "FROM WorkloadTaskData AS wtd JOIN " +
+                        "(SELECT wd.startTime, wd.endTime, wd.taskId, wd.sessionId, taskData.id, taskData.status FROM WorkloadData " +
+                        "AS wd JOIN " +
+                        "( SELECT  td.id, td.sessionId, td.taskId, td.status FROM TaskData td WHERE td.id IN (:taskDataIds) " +
+                        ") AS taskData " +
+                        "ON wd.taskId=taskData.taskId AND wd.sessionId=taskData.sessionId" +
+                        ") AS finalTaskData " +
+                        "ON wtd.sessionId=finalTaskData.sessionId AND wtd.taskId=finalTaskData.taskId ORDER BY finalTaskData.startTime")
                 .setParameter("taskDataIds", taskIds)
                 .getResultList();
 
@@ -114,17 +122,17 @@ public class FetchUtil {
 
         for (Object[] objects : objectsList) {
 
-            Long taskId = ((BigInteger)objects[4]).longValue();
-            String clock = (String)objects[1];
-            Integer clockValue = (Integer)objects[2];
-            String termination = (String)objects[3];
-            String sessionId = (String)objects[0];
+            Long taskId = ((BigInteger) objects[4]).longValue();
+            String clock = (String) objects[1];
+            Integer clockValue = (Integer) objects[2];
+            String termination = (String) objects[3];
+            String sessionId = (String) objects[0];
 
-            Date startTime = (Date)objects[5];
-            Date endTime = (Date)objects[6];
+            Date startTime = (Date) objects[5];
+            Date endTime = (Date) objects[6];
 
 
-            Integer number = (Integer)objects[7];
+            Integer number = (Integer) objects[7];
             if (number == null) {
                 number = 0;
             }
@@ -135,7 +143,7 @@ public class FetchUtil {
             }
 
             if (!resultMap.containsKey(taskId)) {
-                resultMap.put(taskId,new HashMap<String, TestInfoDto>());
+                resultMap.put(taskId, new HashMap<>());
             }
             TestInfoDto testInfo = new TestInfoDto();
             testInfo.setClock(clock);
@@ -146,34 +154,38 @@ public class FetchUtil {
             testInfo.setNumber(number);
             testInfo.setStatus(status);
 
-            resultMap.get(taskId).put(sessionId,testInfo);
+            resultMap.get(taskId).put(sessionId, testInfo);
         }
 
         return resultMap;
     }
 
-    /** Returns task data, corresponding to defined pair of taskIs and sessionId
-     * @param taskId - TaskData taskId
+    /**
+     * Returns task data, corresponding to defined pair of taskIs and sessionId
+     *
+     * @param taskId    - TaskData taskId
      * @param sessionId - session id
      * @return TaskData for selected params
      */
     public TaskData getTaskData(String taskId, String sessionId) {
         return (TaskData) entityManager.createQuery("select t from TaskData t where sessionId=(:sessionId) and taskId=(:taskId)")
-                        .setParameter("sessionId", sessionId)
-                        .setParameter("taskId", taskId).
-                        getSingleResult();
+                .setParameter("sessionId", sessionId)
+                .setParameter("taskId", taskId)
+                .getSingleResult();
     }
 
-    /** Returns task data, corresponding to TaskData ids
+    /**
+     * Returns task data, corresponding to TaskData ids
+     *
      * @param ids - TaskData ids
-     * @return map <TaskData id, TaskData>
+     * @return map &lt;TaskData id, TaskData&gt;
      */
     public Map<Long, TaskData> getTaskData(Collection<Long> ids) {
         List<TaskData> taskDataList = (List<TaskData>) entityManager.createQuery("select t from TaskData t where id in (:ids)")
-                                        .setParameter("ids", ids).
-                                        getResultList();
+                .setParameter("ids", ids)
+                .getResultList();
 
-        Map<Long, TaskData> result = new HashMap<Long, TaskData>();
+        Map<Long, TaskData> result = new HashMap<>();
         for (TaskData taskData : taskDataList) {
             result.put(taskData.getId(), taskData);
         }

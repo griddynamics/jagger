@@ -20,50 +20,54 @@
 
 package com.griddynamics.jagger.dbapi.entity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class WorkloadDetails {
-	private Long id;
-	private String name;
-	private String version;
+    private Long id;
+    private String name;
+    private String version;
     private String description;
-	private String comment;
+    private String comment;
 
-	@Id
+    @Id
     // Identity strategy is not supported by Oracle DB from the box
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Long getId() {
-		return id;
-	}
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -75,7 +79,7 @@ public class WorkloadDetails {
         if (id.equals(that.id)) return true;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (version != null ? !version.equals(that.version) : that.version != null) return false;
-        if (("".equals(description) && that.description!=null) || ("".equals(that.description) && description!=null)) return true;
+        if (("".equals(description) && that.description != null) || ("".equals(that.description) && description != null)) return true;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         return true;
     }
@@ -90,7 +94,7 @@ public class WorkloadDetails {
     }
 
 
-    @Column(name="description", columnDefinition="Varchar(300) default ''")
+    @Column(name = "description", columnDefinition = "Varchar(300) default ''")
     public String getDescription() {
         return description;
     }

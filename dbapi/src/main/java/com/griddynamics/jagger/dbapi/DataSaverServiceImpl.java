@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * User: mnovozhilov
@@ -23,16 +24,16 @@ public class DataSaverServiceImpl implements DataSaverService {
 
     @PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
-       this.entityManager = entityManager.getEntityManagerFactory().createEntityManager();
+        this.entityManager = entityManager.getEntityManagerFactory().createEntityManager();
     }
 
     //synchronized because we use not thread safe entity manager
     @Override
-    public synchronized void saveUserComment(Long sessionData_id, String userComment) {
+    public synchronized void saveUserComment(Long sessionDataId, String userComment) {
 
         Number number = (Number) entityManager.createQuery(
                 "select count(*) from SessionMetaDataEntity as sm where sm.sessionData.id=:sessionData_id")
-                .setParameter("sessionData_id", sessionData_id)
+                .setParameter("sessionData_id", sessionDataId)
                 .getSingleResult();
 
         if (number.intValue() == 0) {
@@ -45,10 +46,10 @@ public class DataSaverServiceImpl implements DataSaverService {
             try {
                 entityManager.getTransaction().begin();
                 entityManager.createNativeQuery(
-                        "insert into SessionMetaDataEntity (userComment, sessionData_id) " +
-                                "values (:userComment, :sessionData_id)")
+                        "INSERT INTO SessionMetaDataEntity (userComment, sessionData_id) " +
+                                "VALUES (:userComment, :sessionData_id)")
                         .setParameter("userComment", userComment)
-                        .setParameter("sessionData_id", sessionData_id)
+                        .setParameter("sessionData_id", sessionDataId)
                         .executeUpdate();
 
             } finally {
@@ -63,7 +64,7 @@ public class DataSaverServiceImpl implements DataSaverService {
                     entityManager.getTransaction().begin();
                     entityManager.createQuery(
                             "delete SessionMetaDataEntity where sessionData.id=:sessionData_id")
-                            .setParameter("sessionData_id", sessionData_id)
+                            .setParameter("sessionData_id", sessionDataId)
                             .executeUpdate();
                 } finally {
                     entityManager.getTransaction().commit();
@@ -74,10 +75,10 @@ public class DataSaverServiceImpl implements DataSaverService {
                 try {
                     entityManager.getTransaction().begin();
                     entityManager.createNativeQuery(
-                            "update SessionMetaDataEntity smd set smd.userComment=:userComment " +
-                                    "where smd.sessionData_id=:sessionData_id")
+                            "UPDATE SessionMetaDataEntity smd SET smd.userComment=:userComment " +
+                                    "WHERE smd.sessionData_id=:sessionData_id")
                             .setParameter("userComment", userComment)
-                            .setParameter("sessionData_id", sessionData_id)
+                            .setParameter("sessionData_id", sessionDataId)
                             .executeUpdate();
                 } finally {
                     entityManager.getTransaction().commit();
@@ -87,15 +88,13 @@ public class DataSaverServiceImpl implements DataSaverService {
     }
 
     @Override
-    public synchronized void saveTags(Long sessionData_id, List<TagDto> tags) {
-        Set<TagEntity> tagEntities = new HashSet<TagEntity>();
+    public synchronized void saveTags(Long sessionDataId, List<TagDto> tags) {
+        Set<TagEntity> tagEntities = new HashSet<>();
         SessionData sessionData;
-        for (TagDto tagDto : tags) {
-            tagEntities.add(new TagEntity(tagDto.getName(), tagDto.getDescription()));
-        }
+        tagEntities.addAll(tags.stream().map(tagDto -> new TagEntity(tagDto.getName(), tagDto.getDescription())).collect(Collectors.toList()));
         try {
             entityManager.getTransaction().begin();
-            sessionData = entityManager.find(SessionData.class,sessionData_id);
+            sessionData = entityManager.find(SessionData.class, sessionDataId);
             if (sessionData != null) {
                 sessionData.setTags(tagEntities);
                 entityManager.merge(sessionData);

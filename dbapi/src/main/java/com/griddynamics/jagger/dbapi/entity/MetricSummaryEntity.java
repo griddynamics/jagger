@@ -1,6 +1,10 @@
 package com.griddynamics.jagger.dbapi.entity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class MetricSummaryEntity {
@@ -38,7 +42,7 @@ public class MetricSummaryEntity {
         this.metricDescription = metricDescription;
     }
 
-    public String getDisplay () {
+    public String getDisplay() {
         return metricDescription.getDisplay();
     }
 }

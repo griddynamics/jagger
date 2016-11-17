@@ -74,10 +74,10 @@ public abstract class AbstractMetricPlotFetcher extends PlotsDbMetricDataFetcher
             }
         }
 
-        Set<Pair<MetricNameDto, List<PlotSingleDto>>> resultSet = new HashSet<Pair<MetricNameDto, List<PlotSingleDto>>>(metricNames.size());
+        Set<Pair<MetricNameDto, List<PlotSingleDto>>> resultSet = new HashSet<>(metricNames.size());
 
         for (MetricNameDto metricName : metricNamePlotMap.keySet()) {
-            List<PlotSingleDto> plotDatasetDtoList = new ArrayList<PlotSingleDto>(metricNamePlotMap.get(metricName));
+            List<PlotSingleDto> plotDatasetDtoList = new ArrayList<>(metricNamePlotMap.get(metricName));
             resultSet.add(
                     Pair.of(
                             metricName,
@@ -89,10 +89,10 @@ public abstract class AbstractMetricPlotFetcher extends PlotsDbMetricDataFetcher
     }
 
     protected PlotSingleDto assemble(MetricNameDto metricNameDto, Collection<MetricRawData> rawDatas) {
-        List<PointDto> points = new ArrayList<PointDto>(rawDatas.size());
+        List<PointDto> points = new ArrayList<>(rawDatas.size());
         String sessionId = null;
 
-        for (MetricRawData metricRawData : rawDatas){
+        for (MetricRawData metricRawData : rawDatas) {
             if (sessionId == null) sessionId = metricRawData.getSessionId();
             points.add(new PointDto(metricRawData.getTime() / 1000D, metricRawData.getValue()));
         }
@@ -119,15 +119,15 @@ public abstract class AbstractMetricPlotFetcher extends PlotsDbMetricDataFetcher
     /**
      * Map Collection of MetricNameDto first of all by TaskDataDto id, after all by metric name (metric id)
      * @param metricNameDtos collection of MetricNameDto to be mapped
-     * @return Map <TaskDataDto.id, Multimap<metricName, MetricRawData>>
+     * @return Map&lt;Long, Multimap&lt;String, MetricRawData&gt;&gt; mappedPlotDatasets.
      */
     private Map<Long, Multimap<String, MetricRawData>> createMappedPlotDatasets(Collection<MetricNameDto> metricNameDtos) {
-        Map<Long, Multimap<String, MetricRawData>> taskIdMap = new HashMap<Long, Multimap<String, MetricRawData>>();
+        Map<Long, Multimap<String, MetricRawData>> taskIdMap = new HashMap<>();
         for (MetricNameDto metricName : metricNameDtos) {
             Set<Long> ids = metricName.getTaskIds();
             for (Long id : ids) {
                 if (!taskIdMap.containsKey(id)) {
-                    taskIdMap.put(id, ArrayListMultimap.<String, MetricRawData>create());
+                    taskIdMap.put(id, ArrayListMultimap.create());
                 }
             }
         }

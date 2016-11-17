@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.xml;
 
 import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
-import static org.testng.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter;
@@ -18,10 +18,10 @@ import com.griddynamics.jagger.reporting.ReportProvider;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import org.testng.Assert;
 
 import java.net.URL;
 import java.util.Properties;
@@ -59,7 +59,7 @@ public class JaggerReportTest {
     }
 
     @AfterClass
-    public void testShutdown() {
+    public static void testShutdown() {
         dbServer.terminate();
     }
 
@@ -73,7 +73,7 @@ public class JaggerReportTest {
     public void checkBaseline(){
         ReportingService service = (ReportingService) context.getBean("report1");
         BaselineSessionProvider baselineSessionProvider = service.getContext().getBaselineSessionProvider();
-        String currentSession = context.getBean(SessionIdProvider.class).getSessionId();
+        String currentSession = ((SessionIdProvider)context.getBean("sessionIdProvider")).getSessionId();
         Assert.assertEquals(baselineSessionProvider.getBaselineSession(currentSession), "4444");
     }
 
@@ -94,23 +94,23 @@ public class JaggerReportTest {
 
         StdDevMonitoringParameterDecisionMaker monitoringMaker = (StdDevMonitoringParameterDecisionMaker)monitoringComparator.getMonitoringParameterDecisionMaker();
         Assert.assertNotNull(monitoringMaker);
-        Assert.assertEquals(monitoringMaker.getFatalDeviationThreshold(), 0.7);
-        Assert.assertEquals(monitoringMaker.getWarningDeviationThreshold(), 0.5);
+        Assert.assertEquals(monitoringMaker.getFatalDeviationThreshold(), 0.7, 0.0);
+        Assert.assertEquals(monitoringMaker.getWarningDeviationThreshold(), 0.5, 0.0);
 
         WorkloadFeatureComparator workloadComparator = (WorkloadFeatureComparator)comparatorChain.getComparatorChain().get(1);
         Assert.assertNotNull(workloadComparator);
 
         ThroughputWorkloadDecisionMaker workloadMaker = (ThroughputWorkloadDecisionMaker) workloadComparator.getWorkloadDecisionMaker();
         Assert.assertNotNull(workloadMaker);
-        Assert.assertEquals(workloadMaker.getFatalDeviationThreshold(), 0.7);
-        Assert.assertEquals(workloadMaker.getWarningDeviationThreshold(), 0.2);
+        Assert.assertEquals(workloadMaker.getFatalDeviationThreshold(), 0.7, 0.0);
+        Assert.assertEquals(workloadMaker.getWarningDeviationThreshold(), 0.2, 0.0);
 
         MonitoringFeatureComparator monitoringComparatorRef = (MonitoringFeatureComparator)comparatorChain.getComparatorChain().get(2);
         Assert.assertNotNull(monitoringComparatorRef);
 
         StdDevMonitoringParameterDecisionMaker monitoringMakerRef = (StdDevMonitoringParameterDecisionMaker)monitoringComparatorRef.getMonitoringParameterDecisionMaker();
         Assert.assertNotNull(monitoringMakerRef);
-        Assert.assertEquals(monitoringMakerRef.getFatalDeviationThreshold(), 0.5);
-        Assert.assertEquals(monitoringMakerRef.getWarningDeviationThreshold(), 0.9);
+        Assert.assertEquals(monitoringMakerRef.getFatalDeviationThreshold(), 0.5, 0.0);
+        Assert.assertEquals(monitoringMakerRef.getWarningDeviationThreshold(), 0.9, 0.0);
     }
 }

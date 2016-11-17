@@ -43,15 +43,15 @@ public class MonitoringStatistics {
     private Long id;
 
     @Column(name = "boxIdentifier")
-    @Index(name="boxIdentifier_index")
+    @Index(name = "boxIdentifier_index")
     private String boxIdentifier;
 
     @Column(name = "systemUnderTestUrl")
-    @Index(name="systemUnderTestUrl_index")
+    @Index(name = "systemUnderTestUrl_index")
     private String systemUnderTestUrl;
 
     @Column(name = "sessionId")
-    @Index(name="sessionId_index")
+    @Index(name = "sessionId_index")
     private String sessionId;
 
     @Column(name = "time")

@@ -20,7 +20,12 @@
 
 package com.griddynamics.jagger.dbapi.entity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class TaskData {
@@ -91,7 +96,7 @@ public class TaskData {
         this.status = status;
     }
 
-    public static enum ExecutionStatus {
+    public enum ExecutionStatus {
         SUCCEEDED, FAILED, IN_PROGRESS, QUEUED
     }
 }

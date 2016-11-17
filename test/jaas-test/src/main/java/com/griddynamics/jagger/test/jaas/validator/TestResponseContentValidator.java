@@ -2,8 +2,8 @@ package com.griddynamics.jagger.test.jaas.validator;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
-import com.griddynamics.jagger.invoker.http.v2.JHttpQuery;
-import com.griddynamics.jagger.invoker.http.v2.JHttpResponse;
+import com.griddynamics.jagger.invoker.v2.JHttpQuery;
+import com.griddynamics.jagger.invoker.v2.JHttpResponse;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
 import junit.framework.AssertionFailedError;
 import org.slf4j.Logger;

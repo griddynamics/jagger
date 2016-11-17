@@ -1,6 +1,17 @@
 package com.griddynamics.jagger.jaas.storage.impl;
 
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
+import static java.time.ZoneOffset.UTC;
+import static java.time.ZonedDateTime.now;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
+
 import com.griddynamics.jagger.jaas.config.TestPersistenceConfig;
 import com.griddynamics.jagger.jaas.storage.TestEnvironmentDao;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
@@ -15,17 +26,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
-import static java.time.ZoneOffset.UTC;
-import static java.time.ZonedDateTime.now;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestPersistenceConfig.class)
@@ -144,6 +144,36 @@ public class TestEnvironmentDaoTest {
         assertThat(actual, is(notNullValue()));
         assertThat(actual, is(expected));
         assertThat(testEnvironmentDao.readAll().size(), is(1));
+    }
+
+    @Test
+    public void createWithSameTestSuitesTest() {
+        TestEnvironmentEntity expected = getTestEnvironmentEntities().get(0);
+        testEnvironmentDao.create(expected);
+
+        TestEnvironmentEntity expected2 = getTestEnvironmentEntities().get(1);
+        expected2.setRunningTestSuite(null);
+        expected2.getTestSuites().clear();
+
+        TestSuiteEntity testSuiteEntity = new TestSuiteEntity();
+        testSuiteEntity.setTestSuiteId(TEST_SUITE_ID_1);
+        testSuiteEntity.setTestEnvironmentEntity(expected2);
+        expected2.getTestSuites().add(testSuiteEntity);
+
+        testEnvironmentDao.create(expected2);
+
+        TestEnvironmentEntity actual1 = testEnvironmentDao.read(ENVIRONMENT_ID_1);
+        TestEnvironmentEntity actual2 = testEnvironmentDao.read(ENVIRONMENT_ID_2);
+
+        assertThat(actual1, is(notNullValue()));
+        assertThat(actual1, is(expected));
+        assertThat(actual2, is(notNullValue()));
+        assertThat(actual2, is(expected2));
+        assertThat(testEnvironmentDao.readAll().size(), is(2));
+        assertThat(actual1.getTestSuites().size(), is(1));
+        assertThat(actual2.getTestSuites().size(), is(1));
+        assertThat(actual1.getTestSuites().get(0), is(expected.getTestSuites().get(0)));
+        assertThat(actual2.getTestSuites().get(0), is(expected2.getTestSuites().get(0)));
     }
 
     @Test

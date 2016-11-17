@@ -20,12 +20,14 @@ public abstract class AbstractIdentifyNode implements Serializable {
     protected String displayName;
 
     public AbstractIdentifyNode() {}
+
     public AbstractIdentifyNode(String id, String displayName) {
         this.id = id;
         this.displayName = displayName;
     }
+
     public AbstractIdentifyNode(AbstractIdentifyNode that) {
-        this(that.getId(),that.getDisplayName());
+        this(that.getId(), that.getDisplayName());
     }
 
     public String getId() {
@@ -50,11 +52,11 @@ public abstract class AbstractIdentifyNode implements Serializable {
     public abstract List<? extends AbstractIdentifyNode> getChildren();
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
 
-        AbstractIdentifyNode that = (AbstractIdentifyNode) o;
+        AbstractIdentifyNode that = (AbstractIdentifyNode) obj;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
