@@ -718,4 +718,36 @@
             </plugin>
         </plugins>
     </reporting>
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>exec-maven-plugin</artifactId>
+                            <version>1.5.0</version>
+                            <executions>
+                                <execution>
+                                 <id>docker-build</id>
+                                    <phase>install</phase>
+                                    <goals>
+                                        <goal>exec</goal>
+                                    </goals>
+                                </execution>
+                                <execution>
+                                    <id>docker-push</id>
+                                    <phase>deploy</phase>
+                                    <goals>
+                                        <goal>exec</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
