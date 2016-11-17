@@ -49,6 +49,7 @@
 
     <modules>
         <module>dbapi</module>
+        <module>docker</module>
         <module>monitoring/agent</module>
         <module>diagnostics</module>
         <module>chassis/</module>
