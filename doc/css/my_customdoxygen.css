@@ -6,3 +6,11 @@ div.fragment {
 	background-color: #FBFCFD;
 	border: 1px solid #C4CFE5;
 }
+
+body, table, div, p, dl {
+    font: 16px Helvetica Neue,Helvetica,Arial,sans-serif;
+    line-height: 24px;
+    color: #4d4d4d;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 300;
+}

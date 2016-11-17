@@ -25,12 +25,12 @@
 /// @n
 /// @section section_getting_started_project Test project components
 /// Created test project will have following test components:
-/// - Test description. It describes
+/// @li Test description. It describes
 ///     - Where and how to read test data
 ///     - What protocol to use for communication with the SUT
-///     - How to validate if responses from the SUT are valid
+///     - How to verify if responses from the SUT are valid
 ///
-/// - Test. It describes:
+/// @li Test. It describes:
 ///     - What load strategy will be used
 ///     - When the load test should be terminated
 ///

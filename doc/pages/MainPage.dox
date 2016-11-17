@@ -5,8 +5,11 @@
 /// @n
 /// Back to <a href="https://github.com/griddynamics/jagger/wiki">GitHub</a> documentation @n
 /// @n
-/// @section section_main_what_is_jagger Overview of Jagger capabilities
+/// @section section_main_introduction Introduction
 /// Jagger is performance test framework, suitable for local usage and for building continuous performance testing. @n
+/// Easy deployment, simple configuration and rich set of the features available out of the box makes it a good choice for developers and QA engineers @n
+/// @n
+/// @section section_main_what_is_jagger Capabilities overview
 /// Main features:
 /// @li Generate load (TODO link to load and termination)
 /// @li Collect performance metrics (TODO link to main performance metrics)
@@ -19,6 +22,7 @@
 /// @li Integrate to CI
 /// @li Rise pass/warning/fail alerts in the CI
 /// @li Work with custom components
+/// @li Run in single node or distributed mode
 ///
 ///
 /// @section section_main_outdated Outdated (TODO remove)
