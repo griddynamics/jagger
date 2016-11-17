@@ -68,8 +68,7 @@ public class JobDaoImpl extends AbstractCrudDao<JobEntity, Long> implements JobD
     @Override
     @Transactional
     public void delete(Long jobId) {
-        JobEntity job = new JobEntity();
-        job.setId(jobId);
+        JobEntity job = read(jobId);
         delete(job);
     }
 

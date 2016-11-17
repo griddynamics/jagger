@@ -174,6 +174,21 @@ public class JobDaoTest {
     }
 
     @Test
+    public void deleteByIdWithExecutionTest() {
+        jobDao.create(getJobEntities());
+        jobExecutionDao.create(getJobExecutionEntity());
+        List<JobEntity> expected = (List<JobEntity>) jobDao.readAll();
+
+        jobDao.delete(expected.get(0).getId());
+
+        JobEntity actual = jobDao.read(1L);
+
+        assertThat(actual, is(nullValue()));
+        assertThat(jobDao.readAll().size(), is(1));
+        assertThat(jobExecutionDao.readAll().size(), is(0));
+    }
+
+    @Test
     public void existsTest() {
         JobEntity expected = getJobEntity();
         jobDao.create(expected);
