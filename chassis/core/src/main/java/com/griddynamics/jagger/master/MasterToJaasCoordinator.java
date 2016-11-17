@@ -219,7 +219,6 @@ public class MasterToJaasCoordinator {
 
             this.requestEntity = buildPendingRequestEntity();
             setLastStatus(TestEnvironmentStatus.PENDING);
-            runningStatusSent = false;
         }
         
         public void setRunningRequestEntity(String configName) {
