@@ -18,8 +18,6 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.MaxDurationInSeconds;
 
-import java.util.Arrays;
-
 /**
  * Created by Andrey Badaev
  * Date: 10/11/16
@@ -43,7 +41,7 @@ public class ExampleTestSuiteProvider {
         JTest test1 = JTest.builder(Id.of("my_first_test"), description, load, termination).build();
         JTest test2 = JTest.builder(Id.of("yet_another_test"), description, load2, termination2).build();
     
-        JTestGroup testGroup = JTestGroup.builder(Id.of("my_first_test_group"), Arrays.asList(test1, test2)).build();
+        JTestGroup testGroup = JTestGroup.builder(Id.of("my_first_test_group"), test1, test2).build();
     
         return JTestSuite.builder(Id.of("my_first_test_suite"), testGroup).build();
     }

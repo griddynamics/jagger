@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,8 +16,13 @@ public class JTestSuite {
         return new Builder(id, testGroups);
     }
     
-    public static Builder builder(Id id, JTestGroup testGroup) {
-        return new Builder(id, Collections.singletonList(testGroup));
+    public static Builder builder(Id id, JTestGroup testGroup, JTestGroup... testGroups) {
+        
+        List<JTestGroup> jTestGroupList = new ArrayList<>();
+        jTestGroupList.add(testGroup);
+        Collections.addAll(jTestGroupList, testGroups);
+        
+        return new Builder(id, jTestGroupList);
     }
 
     private JTestSuite(Builder builder) {
