@@ -114,7 +114,7 @@ public class TestEnvironmentRestController extends AbstractController {
             else
                 getTestSuiteNameToExecute(updated).ifPresent(testSuiteName -> setNextConfigToExecuteHeader(response, testSuiteName));
         }
-        if (updated.getStatus() == RUNNING) {
+        if (oldEnv.getStatus() == PENDING && updated.getStatus() == RUNNING) {
             jobExecutionService.startExecution(envId, testEnv.getRunningTestSuite().getTestSuiteId());
         }
         response.addCookie(getSessionCookie(updated));
