@@ -13,7 +13,7 @@ public final class WarmUpTimeInSeconds {
     private WarmUpTimeInSeconds(long warmUpTimeInSeconds) {
         if (warmUpTimeInSeconds < 0) {
             throw new IllegalArgumentException(
-                    String.format("The warm up time value in seconds. must be > 0. Provided value is %s",
+                    String.format("The warm up time value in seconds. must be >= 0. Provided value is %s",
                             warmUpTimeInSeconds
                     ));
         }

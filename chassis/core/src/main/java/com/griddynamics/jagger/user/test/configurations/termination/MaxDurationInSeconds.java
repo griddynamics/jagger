@@ -9,7 +9,7 @@ public final class MaxDurationInSeconds {
     public MaxDurationInSeconds(long maxDurationInSeconds) {
         if (maxDurationInSeconds <= 0) {
             throw new IllegalArgumentException(
-                    String.format("Max duration in seconds must be >= 0. Provided value is %s", maxDurationInSeconds));
+                    String.format("Max duration in seconds must be > 0. Provided value is %s", maxDurationInSeconds));
         }
         this.maxDurationInSeconds = maxDurationInSeconds;
     }

@@ -12,7 +12,7 @@ public final class RequestsPerSecond {
     RequestsPerSecond(long requestsPerSecond) {
         if (requestsPerSecond <= 0) {
             throw new IllegalArgumentException(
-                    String.format("Requests per second must be >= 0. Provided value is %s", requestsPerSecond));
+                    String.format("Requests per second must be > 0. Provided value is %s", requestsPerSecond));
         }
         this.requestsPerSecond = requestsPerSecond;
     }

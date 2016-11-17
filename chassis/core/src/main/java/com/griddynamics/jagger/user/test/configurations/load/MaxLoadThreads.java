@@ -12,7 +12,7 @@ public final class MaxLoadThreads {
     private MaxLoadThreads(long maxLoadThreads) {
         if (maxLoadThreads <= 0) {
             throw new IllegalArgumentException(
-                    String.format("The maximum number of threads must be >= 0. Provided value is %s", maxLoadThreads));
+                    String.format("The maximum number of threads must be > 0. Provided value is %s", maxLoadThreads));
         }
         this.maxLoadThreads = maxLoadThreads;
     }

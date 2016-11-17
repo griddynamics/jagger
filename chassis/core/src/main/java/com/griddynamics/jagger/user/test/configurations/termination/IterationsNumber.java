@@ -10,7 +10,7 @@ public final class IterationsNumber {
     private IterationsNumber(long iterationsNumber) {
         if (iterationsNumber <= 0) {
             throw new IllegalArgumentException(
-                    String.format("Iterations number must be >= 0. Provided value is %s", iterationsNumber));
+                    String.format("Iterations number must be > 0. Provided value is %s", iterationsNumber));
         }
         this.iterationsNumber = iterationsNumber;
     }
