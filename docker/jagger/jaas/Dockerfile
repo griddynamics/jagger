@@ -8,8 +8,3 @@ RUN chmod +x /com/griddynamics/jagger/run.sh
 WORKDIR /com/griddynamics/jagger
 
 CMD /com/griddynamics/jagger/run.sh
-
-LABEL   project.groupId="${project.groupId}" \
-        project.artifactId="${project.artifactId}" \
-        project.version="${project.version}"
-

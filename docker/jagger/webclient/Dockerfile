@@ -23,8 +23,3 @@ CMD sleep 10 && java -jar jagger-webclient.jar -httpPort=${JWC_HTTP_PORT} -Djdbc
                                                             -Djdbc.url=${JWC_JDBC_URL} \
                                                             -Djdbc.user=${JWC_JDBC_USER} \
                                                             -Djdbc.password=${JWC_JDBC_PASS}
-
-LABEL   project.groupId="${project.groupId}" \
-        project.artifactId="${project.artifactId}" \
-        project.version="${project.version}"
-
