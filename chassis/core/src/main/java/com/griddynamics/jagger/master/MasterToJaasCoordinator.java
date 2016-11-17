@@ -43,7 +43,7 @@ public class MasterToJaasCoordinator {
     private final Set<String> availableConfigs;
     private boolean registered = false;
     private StatusExchangeThread statusExchangeThread;
-    
+
     public MasterToJaasCoordinator(String envId, String jaasEndpoint, int statusReportIntervalSeconds,
                                    Set<String> availableConfigs) {
         this.envId = envId;
@@ -183,7 +183,11 @@ public class MasterToJaasCoordinator {
         private final SynchronousQueue<String> nextConfigToExecute = new SynchronousQueue<>();
         
         private volatile RequestEntity<TestEnvironmentEntity> requestEntity;
-    
+
+        private TestEnvironmentStatus lastStatus = TestEnvironmentStatus.PENDING;
+
+        private volatile boolean runningStatusSent = false;
+
         public StatusExchangeThread(String sessionCookie) {
             this.sessionCookie = sessionCookie;
             this.requestEntity = buildPendingRequestEntity();
@@ -205,7 +209,17 @@ public class MasterToJaasCoordinator {
         }
         
         public void setPendingRequestEntity() {
+            while (lastStatus == TestEnvironmentStatus.RUNNING && !runningStatusSent) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException e) {
+                    LOGGER.error("Error occurred while sleeping", e);
+                }
+            }
+
             this.requestEntity = buildPendingRequestEntity();
+            setLastStatus(TestEnvironmentStatus.PENDING);
+            runningStatusSent = false;
         }
         
         public void setRunningRequestEntity(String configName) {
@@ -214,13 +228,20 @@ public class MasterToJaasCoordinator {
             requestEntity.getBody().setRunningTestSuite(new TestSuiteEntity(configName));
     
             this.requestEntity = requestEntity;
+
+            setLastStatus(TestEnvironmentStatus.RUNNING);
         }
-    
+
+        private void setLastStatus(TestEnvironmentStatus lastStatus) {
+            this.lastStatus = lastStatus;
+        }
+
         @Override
         public void run() {
             do {
                 try {
                     updateStatus();
+                    runningStatusSent = lastStatus == TestEnvironmentStatus.RUNNING;
                     Thread.sleep(statusReportIntervalSeconds * 1000);
                 } catch (InterruptedException e) {
                     standBy = false;
