@@ -64,20 +64,18 @@ public class TestExecutionServiceImpl implements TestExecutionService {
 
     @Override
     public void startExecution(String environmentId, String loadScenarioId) {
-        TestExecutionEntity testExecutionEntity = testExecutionDao.readByEnvAndLoadScenario(environmentId, loadScenarioId).stream()
+        testExecutionDao.readByEnvAndLoadScenario(environmentId, loadScenarioId).stream()
                 .filter(exec -> exec.getStatus() == PENDING)
                 .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("TestExecution", environmentId + " and loadScenarioId=" + loadScenarioId));
-        updateStatus(testExecutionEntity, RUNNING);
+                .ifPresent(testExecutionEntity -> updateStatus(testExecutionEntity, RUNNING));
     }
 
     @Override
     public void finishExecution(String environmentId, String loadScenarioId) {
-        TestExecutionEntity testExecutionEntity = testExecutionDao.readByEnvAndLoadScenario(environmentId, loadScenarioId).stream()
+        testExecutionDao.readByEnvAndLoadScenario(environmentId, loadScenarioId).stream()
                 .filter(exec -> exec.getStatus() == RUNNING)
                 .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("TestExecution", environmentId + " and loadScenarioId=" + loadScenarioId));
-        updateStatus(testExecutionEntity, FINISHED);
+                .ifPresent(testExecutionEntity -> updateStatus(testExecutionEntity, FINISHED));
     }
 
     private void updateStatus(TestExecutionEntity testExec, TestExecutionStatus newStatus) {
