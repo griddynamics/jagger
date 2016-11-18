@@ -12,45 +12,40 @@ import java.util.List;
  */
 public class JTestDescription {
 
-    private String id;
+    private final String id;
+    private final Iterable endpoints;
+    
     private String comment;
-    private Iterable endpoints;
     private Iterable queries;
     private Class<? extends Invoker> invoker;
     private List<Class<? extends ResponseValidator>> validators;
 
     private JTestDescription(Builder builder) {
-        this.id = builder.id;
-        this.comment = builder.comment;
+        this.id = builder.id.value();
         this.endpoints = builder.endpoints;
+        
+        this.comment = builder.comment;
         this.queries = builder.queries;
         this.invoker = builder.invoker;
         this.validators = builder.validators;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Id id, Iterable endpoints) {
+        return new Builder(id, endpoints);
     }
 
     public static class Builder {
-        private String id;
+        private final Id id;
+        private final Iterable endpoints;
+        
         private String comment;
-        private Iterable endpoints;
         private Iterable queries;
         private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
         private List<Class<? extends ResponseValidator>> validators = Collections.emptyList();
 
-        private Builder() {
-        }
-
-        /**
-         * Sets id for the test prototype.
-         *
-         * @param id the id of the test prototype.
-         */
-        public Builder withId(String id) {
+        private Builder(Id id, Iterable endpoints) {
             this.id = id;
-            return this;
+            this.endpoints = endpoints;
         }
 
         /**
@@ -60,17 +55,6 @@ public class JTestDescription {
          */
         public Builder withComment(String comment) {
             this.comment = comment;
-            return this;
-        }
-
-        /**
-         * Sets end points (where load will be applied during performance test) for the tests using this test prototype.
-         *
-         * @param endpointsProvider iterable end points.
-         * @see com.griddynamics.jagger.invoker.v2.JHttpEndpoint for example.
-         */
-        public Builder withEndpointsProvider(Iterable endpointsProvider) {
-            this.endpoints = endpointsProvider;
             return this;
         }
 

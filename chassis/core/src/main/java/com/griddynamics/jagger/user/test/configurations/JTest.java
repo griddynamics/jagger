@@ -9,74 +9,33 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
  */
 public class JTest {
 
-
-    private String id;
-    private JLoad load;
-    private JTestDescription testDescription;
-    private JTermination termination;
-
+    private final String id;
+    private final JLoad load;
+    private final JTestDescription testDescription;
+    private final JTermination termination;
 
     private JTest(Builder builder) {
-        this.id = builder.id;
+        this.id = builder.id.value();
         this.testDescription = builder.jTestDescription;
         this.load = builder.load;
         this.termination = builder.termination;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Id id, JTestDescription description, JLoad load, JTermination termination) {
+        return new Builder(id, description, load, termination);
     }
 
     public static class Builder {
-        private String id;
-        private JTestDescription jTestDescription;
-        private JLoad load;
-        private JTermination termination;
-
-
-        private Builder() {
-
-        }
-
-        /**
-         * Sets {@code id} for a test.
-         *
-         * @param id for a test.
-         */
-        public Builder withId(String id) {
+        private final Id id;
+        private final JTestDescription jTestDescription;
+        private final JLoad load;
+        private final JTermination termination;
+    
+        private Builder(Id id, JTestDescription jTestDescription, JLoad load, JTermination termination) {
             this.id = id;
-            return this;
-        }
-
-        /**
-         * Set {@link JTestDescription} for the test.
-         *
-         * @param jTestDescription the test description.
-         */
-        public Builder withJTestDescription(JTestDescription jTestDescription) {
             this.jTestDescription = jTestDescription;
-            return this;
-        }
-
-
-        /**
-         * Sets {@link JLoad} for a test.
-         *
-         * @param load the load.
-         */
-        public Builder withLoad(JLoad load) {
             this.load = load;
-            return this;
-        }
-
-        /**
-         * Set {@link JTermination} for a test.
-         *
-         * @param termination termination.
-         */
-        public Builder withTermination(JTermination termination) {
             this.termination = termination;
-            return this;
         }
 
         /**
@@ -87,8 +46,6 @@ public class JTest {
         public JTest build() {
             return new JTest(this);
         }
-
-
     }
 
     public String getId() {
