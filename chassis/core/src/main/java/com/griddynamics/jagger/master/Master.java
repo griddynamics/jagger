@@ -20,6 +20,11 @@
 
 package com.griddynamics.jagger.master;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.agent.model.ManageAgent;
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.Coordinator;
@@ -40,7 +45,6 @@ import com.griddynamics.jagger.master.configuration.SessionExecutionListener;
 import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
 import com.griddynamics.jagger.master.configuration.SessionListener;
 import com.griddynamics.jagger.master.configuration.Task;
-import com.griddynamics.jagger.master.database.MetricTablesChecker;
 import com.griddynamics.jagger.monitoring.reporting.DynamicPlotGroups;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.KeyValueStorage;
@@ -52,12 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.Service;
-
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -66,8 +65,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Main thread of Master
@@ -99,7 +96,6 @@ public class Master implements Runnable {
     private LogReader logReader;
     private GeneralNodeInfoAggregator generalNodeInfoAggregator;
     private SessionMetaDataStorage metaDataStorage;
-    private MetricTablesChecker metricTablesChecker;
     private DatabaseService databaseService;
     private DecisionMakerDistributionListener decisionMakerDistributionListener;
 
@@ -173,10 +169,6 @@ public class Master implements Runnable {
         this.generalNodeInfoAggregator = generalNodeInfoAggregator;
     }
 
-    public void setMetricTablesChecker(MetricTablesChecker metricTablesChecker) {
-        this.metricTablesChecker = metricTablesChecker;
-    }
-
     public void setDatabaseService(DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
@@ -188,9 +180,6 @@ public class Master implements Runnable {
 
     @PostConstruct
     public void init() {
-        metricTablesChecker.checkMetricColumnsHaveDoubleType();
-        metricTablesChecker.checkMetricDetailsIndex();
-
         if (!keyValueStorage.isAvailable()) {
             keyValueStorage.initialize();
             keyValueStorage.setSessionId(sessionIdProvider.getSessionId());

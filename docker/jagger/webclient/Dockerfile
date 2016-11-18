@@ -5,7 +5,6 @@ ENV JWC_JDBC_DRIVER com.mysql.jdbc.Driver
 ENV JWC_JDBC_URL jdbc:mysql://localhost:3306/jaggerdb
 ENV JWC_JDBC_USER root
 ENV JWC_JDBC_PASS root
-ENV VERSION 1.2.6-SNAPSHOT
 
 RUN apk --update add tzdata
 
@@ -13,7 +12,8 @@ RUN apk --update add tzdata
 ENV TZ=Europe/Moscow
 
 # Get latest jagger-webclient
-ADD ["http://nexus.vm.griddynamics.net:8081/nexus/service/local/artifact/maven/content?r=jagger-snapshots&g=com.griddynamics.jagger&a=webclient&c=exec-war&v=${VERSION}", "/com/griddynamics/jagger/jagger-webclient.jar"] 
+ADD ["http://nexus.vm.griddynamics.net:8081/nexus/service/local/artifact/maven/content?r=jagger-snapshots&g=com.griddynamics.jagger&a=webclient&c=exec-war&v=${project.version}", "/com/griddynamics/jagger/jagger-webclient.jar"] 
+
 WORKDIR /com/griddynamics/jagger
 
 EXPOSE ${JWC_HTTP_PORT}

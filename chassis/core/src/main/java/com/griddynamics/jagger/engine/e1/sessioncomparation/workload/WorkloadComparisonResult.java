@@ -185,7 +185,6 @@ public class WorkloadComparisonResult {
         workloadTaskData.setClockValue(testEntity.getClockValue());
         workloadTaskData.setTermination(testEntity.getTerminationStrategy());
         workloadTaskData.setKernels(sessionEntity.getKernels());
-        workloadTaskData.setTotalDuration(new BigDecimal(0));
         Double throughput = getStandardMetricValueById(StandardMetricsNamesUtil.THROUGHPUT_ID,standardMetricsMap).getValue();
         if (throughput != null) {
             workloadTaskData.setThroughput(new BigDecimal(throughput));
