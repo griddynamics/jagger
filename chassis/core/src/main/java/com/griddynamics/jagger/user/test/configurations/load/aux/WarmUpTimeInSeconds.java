@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.user.test.configurations.load;
+package com.griddynamics.jagger.user.test.configurations.load.aux;
 
 /**
  * The warm up time value in seconds.

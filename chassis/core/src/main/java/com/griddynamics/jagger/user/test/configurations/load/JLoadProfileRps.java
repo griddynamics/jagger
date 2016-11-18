@@ -1,5 +1,9 @@
 package com.griddynamics.jagger.user.test.configurations.load;
 
+import com.griddynamics.jagger.user.test.configurations.load.aux.MaxLoadThreads;
+import com.griddynamics.jagger.user.test.configurations.load.aux.RequestsPerSecond;
+import com.griddynamics.jagger.user.test.configurations.load.aux.WarmUpTimeInSeconds;
+
 import java.util.Objects;
 
 /**
@@ -12,13 +16,13 @@ import java.util.Objects;
  * By default it equals 4000. You can change this value in property file. If attribute 'warmUpTimeInSeconds' is set,
  * load will increase from 0 to the value for this time.
  */
-public class JLoadRps implements JLoad {
+public class JLoadProfileRps implements JLoadProfile {
 
     private final long requestsPerSecond;
     private final long maxLoadThreads;
     private final long warmUpTimeInSeconds;
     
-    public JLoadRps(RequestsPerSecond requestsPerSecond, MaxLoadThreads maxLoadThreads, WarmUpTimeInSeconds warmUpTimeInSeconds) {
+    public JLoadProfileRps(RequestsPerSecond requestsPerSecond, MaxLoadThreads maxLoadThreads, WarmUpTimeInSeconds warmUpTimeInSeconds) {
         Objects.nonNull(requestsPerSecond);
         Objects.nonNull(maxLoadThreads);
         Objects.nonNull(warmUpTimeInSeconds);
@@ -28,8 +32,8 @@ public class JLoadRps implements JLoad {
         this.warmUpTimeInSeconds = warmUpTimeInSeconds.value();
     }
     
-    public static JLoadRps of(RequestsPerSecond requestsPerSecond, MaxLoadThreads maxLoadThreads, WarmUpTimeInSeconds warmUpTimeInSeconds) {
-        return new JLoadRps(requestsPerSecond, maxLoadThreads, warmUpTimeInSeconds);
+    public static JLoadProfileRps of(RequestsPerSecond requestsPerSecond, MaxLoadThreads maxLoadThreads, WarmUpTimeInSeconds warmUpTimeInSeconds) {
+        return new JLoadProfileRps(requestsPerSecond, maxLoadThreads, warmUpTimeInSeconds);
     }
     
     public long getRequestsPerSecond() {

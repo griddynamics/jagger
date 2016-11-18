@@ -70,7 +70,7 @@ public final class JaggerLauncher {
     public static final String RDB_CONFIGURATION = "chassis.rdb.configuration";
     public static final String INCLUDE_SUFFIX = ".include";
     public static final String EXCLUDE_SUFFIX = ".exclude";
-    public static final String TEST_CONFIG_NAME_PROP = "chassis.master.session.configuration.bean.name";
+    public static final String TEST_CONFIG_NAME_PROP = "jagger.load.scenario.id.to.execute";
     public static final String DEFAULT_ENVIRONMENT_PROPERTIES = "jagger.default.environment.properties";
     public static final String USER_ENVIRONMENT_PROPERTIES = "jagger.user.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
@@ -196,7 +196,7 @@ public final class JaggerLauncher {
     private static Set<String> getAvailableConfigurations(final URL directory) {
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
-        Set<String> availableConfigs = new HashSet<>(configurationGenerator.getUserJTestSuiteNames());
+        Set<String> availableConfigs = new HashSet<>(configurationGenerator.getJaggerLoadScenarioNames());
         context.destroy();
         return availableConfigs;
     }
@@ -206,7 +206,7 @@ public final class JaggerLauncher {
         initCoordinator(context);
         context.getBean(StorageServerLauncher.class); // to trigger lazy initialization
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
-        configurationGenerator.setJTestSuiteNameToExecute(environmentProperties.getProperty(TEST_CONFIG_NAME_PROP));
+        configurationGenerator.setJLoadScenarioIdToExecute(environmentProperties.getProperty(TEST_CONFIG_NAME_PROP));
         Master master = context.getBean(Master.class);
         master.run();
         context.destroy();

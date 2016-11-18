@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.user.test.configurations;
+package com.griddynamics.jagger.user.test.configurations.aux;
 
 import org.springframework.util.StringUtils;
 

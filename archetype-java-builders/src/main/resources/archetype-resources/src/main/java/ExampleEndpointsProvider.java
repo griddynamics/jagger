@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.util.generators;
+package com.griddynamics.jagger;
 
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 

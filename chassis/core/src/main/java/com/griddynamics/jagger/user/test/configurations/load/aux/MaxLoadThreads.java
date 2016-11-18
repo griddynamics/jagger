@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.user.test.configurations.load;
+package com.griddynamics.jagger.user.test.configurations.load.aux;
 
 /**
  * The maximum number of threads, which Jagger engine can create to provide the requested load.

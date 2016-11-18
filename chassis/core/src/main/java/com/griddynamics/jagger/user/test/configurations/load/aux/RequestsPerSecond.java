@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.user.test.configurations.load;
+package com.griddynamics.jagger.user.test.configurations.load.aux;
 
 /**
  * The number of requests per second Jagger shall perform.

@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.user.test.configurations.termination;
+package com.griddynamics.jagger.user.test.configurations.termination.aux;
 
 /**
  * The timeout for the test execution.

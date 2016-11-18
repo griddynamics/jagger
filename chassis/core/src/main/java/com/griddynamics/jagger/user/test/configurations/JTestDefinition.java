@@ -3,14 +3,16 @@ package com.griddynamics.jagger.user.test.configurations;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
+import com.griddynamics.jagger.user.test.configurations.aux.Id;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Describes {@link JTest} prototype.
+ * Definition for {@link JLoadTest} instance,
+ * i.e. what and how will be triggered during Jagger test execution
  */
-public class JTestDescription {
+public class JTestDefinition {
 
     private final String id;
     private final Iterable endpoints;
@@ -20,7 +22,7 @@ public class JTestDescription {
     private Class<? extends Invoker> invoker;
     private List<Class<? extends ResponseValidator>> validators;
 
-    private JTestDescription(Builder builder) {
+    private JTestDefinition(Builder builder) {
         this.id = builder.id.value();
         this.endpoints = builder.endpoints;
         
@@ -96,12 +98,12 @@ public class JTestDescription {
         }
 
         /**
-         * As one may expect, creates the object of {@link JTest} type with custom parameters.
+         * As one may expect, creates the object of {@link JLoadTest} type with custom parameters.
          *
-         * @return {@link JTest} object.
+         * @return {@link JLoadTest} object.
          */
-        public JTestDescription build() {
-            return new JTestDescription(this);
+        public JTestDefinition build() {
+            return new JTestDefinition(this);
         }
     }
 

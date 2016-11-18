@@ -37,7 +37,7 @@
 
     <!--This xml file will contain configuration of your load-->
     <!--When starting Jagger you tell what configuration to execute with help of-->
-    <!--chassis.master.session.configuration.bean.name propety-->
+    <!--jagger.load.scenario.id.to.execute propety-->
 
     <!--Name of workload configuration-->
     <configuration id="s_exampleConfiguration">

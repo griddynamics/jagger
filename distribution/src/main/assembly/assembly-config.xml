@@ -54,6 +54,7 @@
                 <include>*com.griddynamics.jagger:chassis.spring.schema</include>
                 <include>*com.griddynamics.jagger:chassis.providers</include>
                 <include>*com.griddynamics.jagger:dbapi</include>
+                <include>*com.griddynamics.jagger:jaas-client</include>
             </includes>
         </dependencySet>
 

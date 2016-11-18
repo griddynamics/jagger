@@ -6,13 +6,12 @@
 
     <sources>
         <source>src/main/java/ExampleEndpointsProvider.java</source>
-        <source>src/main/java/ExamplePageVisitorInvoker.java</source>
         <source>src/main/java/ExampleQueriesProvider.java</source>
-        <source>src/main/java/ExampleTestSuiteProvider.java</source>
+        <source>src/main/java/ExampleJLoadScenarioProvider.java</source>
+        <source>src/main/java/config/JLoadScenariosConfig.java</source>
     </sources>
     <resources>
         <resource>src/main/resources/profiles/basic/environment.properties</resource>
-        <resource>src/main/resources/suite/suite.conf.xml</resource>
         <resource>src/main/resources/jagger.log4j.properties</resource>
         <resource>assembly-config.xml</resource>
     </resources>
