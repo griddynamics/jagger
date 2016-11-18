@@ -54,7 +54,6 @@ public class DefaultDataService implements DataService {
             sessionEntity.setKernels(sessionDataDto.getActiveKernelsCount());
             sessionEntity.setComment(sessionDataDto.getComment());
 
-            System.out.println(sessionEntity);
             entities.add(sessionEntity);
         }
 
