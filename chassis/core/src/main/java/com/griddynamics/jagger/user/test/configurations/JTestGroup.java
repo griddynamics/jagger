@@ -1,51 +1,42 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Describes the group of {@link JTest} that should run in parallel.
  */
 public class JTestGroup {
-    private String id;
-    private List<JTest> tests;
+    private final String id;
+    private final List<JTest> tests;
 
-
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Id id, List<JTest> tests) {
+        return new Builder(id, tests);
+    }
+    
+    public static Builder builder(Id id, JTest test, JTest... tests) {
+        
+        List<JTest> testList = new ArrayList<>();
+        testList.add(test);
+        Collections.addAll(testList, tests);
+        
+        return new Builder(id, testList);
     }
 
     private JTestGroup(Builder builder) {
+        this.id = builder.id.value();
         this.tests = builder.tests;
-        this.id = builder.id;
     }
 
-
     public static class Builder {
-        private String id;
+        private final Id id;
 
-        private List<JTest> tests;
-
-        private Builder() {
-        }
-
-        /**
-         * Sets the tests executed in parallel.
-         *
-         * @param tests a list of tests.
-         */
-        public Builder withTests(List<JTest> tests) {
-            this.tests = tests;
-            return this;
-        }
-
-        /**
-         * Sets id for the group.
-         *
-         * @param id group name.
-         */
-        public Builder withId(String id) {
+        private final List<JTest> tests;
+    
+        public Builder(Id id, List<JTest> tests) {
             this.id = id;
-            return this;
+            this.tests = tests;
         }
 
         /**

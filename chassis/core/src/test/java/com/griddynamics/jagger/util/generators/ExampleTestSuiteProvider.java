@@ -3,79 +3,46 @@ package com.griddynamics.jagger.util.generators;
 import static java.util.Collections.singletonList;
 
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
+import com.griddynamics.jagger.user.test.configurations.Id;
 import com.griddynamics.jagger.user.test.configurations.JTest;
 import com.griddynamics.jagger.user.test.configurations.JTestDescription;
 import com.griddynamics.jagger.user.test.configurations.JTestGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestSuite;
 import com.griddynamics.jagger.user.test.configurations.load.JLoad;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadRps;
+import com.griddynamics.jagger.user.test.configurations.load.MaxLoadThreads;
+import com.griddynamics.jagger.user.test.configurations.load.RequestsPerSecond;
+import com.griddynamics.jagger.user.test.configurations.load.WarmUpTimeInSeconds;
+import com.griddynamics.jagger.user.test.configurations.termination.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.JTermination;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationIterations;
-
-import java.util.Arrays;
+import com.griddynamics.jagger.user.test.configurations.termination.MaxDurationInSeconds;
 
 /**
- *
  * Created by Andrey Badaev
  * Date: 10/11/16
  */
 public class ExampleTestSuiteProvider {
     public static JTestSuite jTestSuite() {
-        JTestDescription description = JTestDescription.builder()
-                                                       .withId("my_first_jagger_test_description")
-                                                       .withComment("no_comments")
-                                                       .withEndpointsProvider(new ExampleEndpointsProvider())
-                                                       .withQueryProvider(new ExampleQueriesProvider())
-                                                       .withValidators(singletonList(NotNullResponseValidator.class))
-                                                       .build();
-        
-        JLoad load = JLoadRps.builder()
-                             .withMaxLoadThreads(50)
-                             .withRequestPerSecond(100)
-                             .withWarmUpTimeInSeconds(24)
-                             .build();
-        JLoad load2 = JLoadRps.builder()
-                              .withMaxLoadThreads(500)
-                              .withRequestPerSecond(500)
-                              .withWarmUpTimeInSeconds(42)
-                              .build();
-        
-        JTermination termination = JTerminationIterations.builder()
-                                                         .withIterationsCount(100)
-                                                         .withMaxDurationInSeconds(500)
-                                                         .build();
-        
-        JTermination termination2 = JTerminationIterations.builder()
-                                                          .withIterationsCount(100)
-                                                          .withMaxDurationInSeconds(100)
-                                                          .build();
-        
-        JTest test1 = JTest.builder()
-                           .withJTestDescription(description)
-                           .withLoad(load)
-                           .withTermination(termination)
-                           .withId("my_first_test")
-                           .build();
-        
-        JTest test2 = JTest.builder()
-                           .withId("yet_another_test")
-                           .withJTestDescription(description)
-                           .withLoad(load2)
-                           .withTermination(termination2)
-                           .build();
-        
-        
-        JTestGroup testGroup = JTestGroup.builder()
-                                         .withId("my_first_test_group")
-                                         .withTests(Arrays.asList(test1, test2))
-                                         .build();
+        JTestDescription description = JTestDescription
+                .builder(Id.of("my_first_jagger_test_description"), new ExampleEndpointsProvider())
+                // optional
+                .withComment("no_comments")
+                .withQueryProvider(new ExampleQueriesProvider())
+                .withValidators(singletonList(NotNullResponseValidator.class))
+                .build();
     
-        
-        JTestSuite jTestSuite = JTestSuite.builder()
-                                             .withId("my_first_test_suite")
-                                             .withTestGroups(singletonList(testGroup))
-                                             .build();
-        
-        return jTestSuite;
+        JLoad load = JLoadRps.of(RequestsPerSecond.of(500), MaxLoadThreads.of(50), WarmUpTimeInSeconds.of(60));
+        JLoad load2 = JLoadRps.of(RequestsPerSecond.of(100), MaxLoadThreads.of(10), WarmUpTimeInSeconds.of(24));
+    
+        JTermination termination = JTerminationIterations.of(IterationsNumber.of(100), MaxDurationInSeconds.of(500));
+        JTermination termination2 = JTerminationIterations.of(IterationsNumber.of(100), MaxDurationInSeconds.of(100));
+    
+        JTest test1 = JTest.builder(Id.of("my_first_test"), description, load, termination).build();
+        JTest test2 = JTest.builder(Id.of("yet_another_test"), description, load2, termination2).build();
+    
+        JTestGroup testGroup = JTestGroup.builder(Id.of("my_first_test_group"), test1, test2).build();
+    
+        return JTestSuite.builder(Id.of("my_first_test_suite"), testGroup).build();
     }
 }
