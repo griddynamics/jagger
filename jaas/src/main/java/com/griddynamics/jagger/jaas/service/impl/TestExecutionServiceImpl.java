@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.jaas.service.impl;
 
+import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.storage.TestExecutionDao;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionAuditEntity;
@@ -65,7 +66,8 @@ public class TestExecutionServiceImpl implements TestExecutionService {
     public void startExecution(String environmentId, String loadScenarioId) {
         TestExecutionEntity testExecutionEntity = testExecutionDao.readByEnvAndLoadScenario(environmentId, loadScenarioId).stream()
                 .filter(exec -> exec.getStatus() == PENDING)
-                .findFirst().get();
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("TestExecution", environmentId + " and loadScenarioId=" + loadScenarioId));
         updateStatus(testExecutionEntity, RUNNING);
     }
 
@@ -73,7 +75,8 @@ public class TestExecutionServiceImpl implements TestExecutionService {
     public void finishExecution(String environmentId, String loadScenarioId) {
         TestExecutionEntity testExecutionEntity = testExecutionDao.readByEnvAndLoadScenario(environmentId, loadScenarioId).stream()
                 .filter(exec -> exec.getStatus() == RUNNING)
-                .findFirst().get();
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("TestExecution", environmentId + " and loadScenarioId=" + loadScenarioId));
         updateStatus(testExecutionEntity, FINISHED);
     }
 
