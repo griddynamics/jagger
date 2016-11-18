@@ -3,7 +3,7 @@ package com.griddynamics.jagger.master;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus;
-import com.griddynamics.jagger.jaas.storage.model.TestSuiteEntity;
+import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -127,8 +127,8 @@ public class MasterToJaasCoordinator {
         TestEnvironmentEntity testEnvironmentEntity = new TestEnvironmentEntity();
         testEnvironmentEntity.setEnvironmentId(envId);
         testEnvironmentEntity.setStatus(status);
-        testEnvironmentEntity.setTestSuites(availableConfigs.stream()
-                                                            .map(TestSuiteEntity::new)
+        testEnvironmentEntity.setLoadScenarios(availableConfigs.stream()
+                                                            .map(LoadScenarioEntity::new)
                                                             .collect(Collectors.toList())
         );
         
@@ -225,7 +225,7 @@ public class MasterToJaasCoordinator {
         public void setRunningRequestEntity(String configName) {
             RequestEntity<TestEnvironmentEntity> requestEntity = buildPendingRequestEntity();
             requestEntity.getBody().setStatus(TestEnvironmentStatus.RUNNING);
-            requestEntity.getBody().setRunningTestSuite(new TestSuiteEntity(configName));
+            requestEntity.getBody().setRunningLoadScenario(new LoadScenarioEntity(configName));
     
             this.requestEntity = requestEntity;
 
@@ -271,7 +271,7 @@ public class MasterToJaasCoordinator {
             if (requestEntity.getBody().getStatus() == TestEnvironmentStatus.PENDING) {
                 setPendingRequestEntity();
             } else {
-                setRunningRequestEntity(requestEntity.getBody().getRunningTestSuite().getTestSuiteId());
+                setRunningRequestEntity(requestEntity.getBody().getRunningLoadScenario().getLoadScenarioId());
             }
         }
         

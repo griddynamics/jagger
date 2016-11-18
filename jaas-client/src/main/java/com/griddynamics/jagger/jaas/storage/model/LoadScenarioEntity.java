@@ -13,26 +13,26 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
- * This entity represents Test Suite configuration. Currently it has only testSuiteId field, but in future it will be extended
+ * This entity represents Load Scenario configuration. Currently it has only loadScenarioId field, but in future it will be extended
  * with more fields.
  */
 @Entity
-@Table(name = "test_suite_entity", uniqueConstraints = @UniqueConstraint(columnNames = {"`test_suite_id`", "`environment_id`"}))
-public class TestSuiteEntity {
+@Table(name = "load_scenario_entity", uniqueConstraints = @UniqueConstraint(columnNames = {"`load_scenario_id`", "`environment_id`"}))
+public class LoadScenarioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
-    @Column(name = "`test_suite_id`", nullable = false)
-    private String testSuiteId;
+    @Column(name = "`load_scenario_id`", nullable = false)
+    private String loadScenarioId;
     
-    public TestSuiteEntity() {
+    public LoadScenarioEntity() {
     }
     
-    public TestSuiteEntity(String testSuiteId) {
-        this.testSuiteId = testSuiteId;
+    public LoadScenarioEntity(String loadScenarioId) {
+        this.loadScenarioId = loadScenarioId;
     }
     
     @JsonIgnore
@@ -48,12 +48,12 @@ public class TestSuiteEntity {
         this.id = id;
     }
 
-    public String getTestSuiteId() {
-        return testSuiteId;
+    public String getLoadScenarioId() {
+        return loadScenarioId;
     }
 
-    public void setTestSuiteId(String testSuiteId) {
-        this.testSuiteId = testSuiteId;
+    public void setLoadScenarioId(String loadScenarioId) {
+        this.loadScenarioId = loadScenarioId;
     }
 
     public TestEnvironmentEntity getTestEnvironmentEntity() {
@@ -69,9 +69,9 @@ public class TestSuiteEntity {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
-        TestSuiteEntity that = (TestSuiteEntity) obj;
+        LoadScenarioEntity that = (LoadScenarioEntity) obj;
 
-        if (testSuiteId != null ? !testSuiteId.equals(that.testSuiteId) : that.testSuiteId != null) return false;
+        if (loadScenarioId != null ? !loadScenarioId.equals(that.loadScenarioId) : that.loadScenarioId != null) return false;
         String envId = testEnvironmentEntity != null ? testEnvironmentEntity.getEnvironmentId() : null;
         String thatEnvId = that.testEnvironmentEntity != null ? that.testEnvironmentEntity.getEnvironmentId() : null;
         return envId != null ? envId.equals(thatEnvId) : thatEnvId == null;
@@ -80,7 +80,7 @@ public class TestSuiteEntity {
 
     @Override
     public int hashCode() {
-        int result = testSuiteId != null ? testSuiteId.hashCode() : 0;
+        int result = loadScenarioId != null ? loadScenarioId.hashCode() : 0;
         String envId = testEnvironmentEntity != null ? testEnvironmentEntity.getEnvironmentId() : null;
         result = 31 * result + (envId != null ? envId.hashCode() : 0);
         return result;
@@ -88,8 +88,8 @@ public class TestSuiteEntity {
 
     @Override
     public String toString() {
-        return "TestSuiteEntity{" +
-                "testSuiteId='" + testSuiteId + '\'' +
+        return "LoadScenarioEntity{" +
+                "loadScenarioId='" + loadScenarioId + '\'' +
                 ", testEnvironmentId=" + (testEnvironmentEntity != null ? testEnvironmentEntity.getEnvironmentId() : null) +
                 '}';
     }
