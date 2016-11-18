@@ -209,11 +209,12 @@ public class MasterToJaasCoordinator {
         }
         
         public void setPendingRequestEntity() {
-            while (lastStatus == TestEnvironmentStatus.RUNNING && !runningStatusSent) {
+            while (standBy && lastStatus == TestEnvironmentStatus.RUNNING && !runningStatusSent) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(100);
                 } catch (InterruptedException e) {
                     LOGGER.error("Error occurred while sleeping", e);
+                    standBy = false;
                 }
             }
 
