@@ -1,4 +1,4 @@
-package com.griddynamics.jagger;
+package ${package};
 
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
 
