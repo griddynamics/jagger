@@ -26,7 +26,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
      <!--to include user defined Jagger Load Test scenarios-->
-    <context:component-scan base-package="com.griddynamics.jagger.config"/>
+    <context:component-scan base-package="${chassis.master.package.to.scan:com.griddynamics.jagger}.config"/>
     <context:annotation-config/>
 
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>

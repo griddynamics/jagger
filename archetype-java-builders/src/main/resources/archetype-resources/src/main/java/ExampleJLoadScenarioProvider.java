@@ -1,4 +1,4 @@
-package com.griddynamics.jagger;
+package ${package};
 
 import static java.util.Collections.singletonList;
 
@@ -28,10 +28,10 @@ public class ExampleJLoadScenarioProvider {
     public static JLoadScenario getExampleJaggerLoadScenario() {
         
         JTestDefinition jTestDefinition = JTestDefinition
-                .builder(Id.of("exampleJaggerTestDefinition"), new com.griddynamics.jagger.ExampleEndpointsProvider())
+                .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment("no comments")
-                .withQueryProvider(new com.griddynamics.jagger.ExampleQueriesProvider())
+                .withQueryProvider(new ExampleQueriesProvider())
                 .withValidators(singletonList(NotNullResponseValidator.class))
                 .build();
         
@@ -52,10 +52,10 @@ public class ExampleJLoadScenarioProvider {
     
     public static JLoadScenario getFirstJaggerLoadScenario() {
         JTestDefinition description = JTestDefinition
-                .builder(Id.of("myFirstJaggerTestDefinition"), new com.griddynamics.jagger.ExampleEndpointsProvider())
+                .builder(Id.of("myFirstJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment("no comments")
-                .withQueryProvider(new com.griddynamics.jagger.ExampleQueriesProvider())
+                .withQueryProvider(new ExampleQueriesProvider())
                 .withValidators(singletonList(NotNullResponseValidator.class))
                 .build();
         
