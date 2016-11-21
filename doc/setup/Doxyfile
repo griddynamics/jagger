@@ -662,14 +662,27 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-# Important: Order of the references in the a_PageOrder.dox will define order in the documentstion tree view
+# Important: Order of the references in the a_PageOrder.dox will define order in the documentation tree view
 
 INPUT                  = ./doc/pages/a_PageOrder.dox \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/Invoker.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/user/test/configurations \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/v2 \
-                         ./doc/pages
+                         ./doc/pages/a_PageOrder.dox \
+                         ./doc/pages/Components.dox \
+                         ./doc/pages/GettingStarted.dox \
+                         ./doc/pages/Installation.dox \
+                         ./doc/pages/JaasInstallation.dox \
+                         ./doc/pages/JaaSMain.dox \
+                         ./doc/pages/MainPage.dox \
+                         ./doc/pages/WebUiInstallation.dox \
+                         ./doc/pages/WebUiMain.dox \
+                         ./doc/pages/WebUiOverview.dox \
+                         ./doc/pages/WebUiProperties.dox \
+                         ./doc/pages/WebUiUserCommentsAndTags.dox
+
+#                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/v2 \
+#                         ./doc/pages \
+#                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/Invoker.java \
+#                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is

@@ -17,8 +17,8 @@
 /// @li Collect monitoring metrics from agents (TODO link to monitoring)
 /// @li Store test results
 /// @li Report test results
-/// @li Display, compare, share test results via @ref WebUiMain "WebUI"
-/// @li Provide @ref JaasMain "REST API" for the test results access
+/// @li @ref WebUiMain "Display, compare, share test results via WebUI"
+/// @li @ref JaasMain "Provide REST API for the test results access"
 /// @li Integrate to CI
 /// @li Rise pass/warning/fail alerts in the CI
 /// @li Work with custom components
