@@ -1,9 +1,8 @@
-package com.griddynamics.jagger;
+package ${package};
 
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

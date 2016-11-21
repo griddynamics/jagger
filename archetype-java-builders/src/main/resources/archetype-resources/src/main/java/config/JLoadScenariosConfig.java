@@ -1,13 +1,12 @@
-package com.griddynamics.jagger.config;
+package ${package}.config;
 
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
-import com.griddynamics.jagger.ExampleJLoadScenarioProvider;
+import ${package}.ExampleJLoadScenarioProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * Spring Java config for @{@link com.griddynamics.jagger.user.test.configurations.JLoadScenario} instances.
- *
  *
  * Created by Andrey Badaev
  * Date: 18/11/16
