@@ -3,7 +3,6 @@ package com.griddynamics.jagger;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,12 +20,8 @@ public class ExampleEndpointsProvider implements Iterable {
     public ExampleEndpointsProvider() {
         // Put custom code here to get endpoints
         // In our case they will be hardcoded
-        try {
-            JHttpEndpoint httpEndpoint = new JHttpEndpoint(new URI("http://www.scala-lang.org"));
-            endpoints.add(httpEndpoint);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        JHttpEndpoint httpEndpoint = new JHttpEndpoint(URI.create("http://www.scala-lang.org"));
+        endpoints.add(httpEndpoint);
     }
     
     @Override

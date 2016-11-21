@@ -39,7 +39,7 @@ public class ConfigurationGenerator {
     private DurationLogProcessor durationLogProcessor;
     private Map<String, JLoadScenario> jaggerLoadScenarios = Collections.emptyMap();
     private boolean useBuilders;
-    private String jConfigNameToExecute;
+    private String jLoadScenarioToExecute;
     private Map<String, Configuration> configurations = Collections.emptyMap();
     
     public Set<String> getJaggerLoadScenarioNames() {
@@ -61,19 +61,19 @@ public class ConfigurationGenerator {
     
     public Configuration generate() {
         if (useBuilders) {
-            JLoadScenario jLoadScenario = jaggerLoadScenarios.get(jConfigNameToExecute);
+            JLoadScenario jLoadScenario = jaggerLoadScenarios.get(jLoadScenarioToExecute);
             if (jLoadScenario == null) {
                 throw new IllegalArgumentException(String.format("No Jagger test suite with name %s",
-                        jConfigNameToExecute
+                        jLoadScenarioToExecute
                 ));
             }
             return generate(jLoadScenario);
         }
 
-        Configuration configuration = configurations.get(jConfigNameToExecute);
+        Configuration configuration = configurations.get(jLoadScenarioToExecute);
         if (configuration == null) {
             throw new IllegalArgumentException(String.format("No Jagger configuration with name %s",
-                    jConfigNameToExecute
+                    jLoadScenarioToExecute
             ));
         }
         return configuration;
@@ -147,9 +147,9 @@ public class ConfigurationGenerator {
         this.useBuilders = useBuilders;
     }
     
-    public String getjConfigNameToExecute() { return jConfigNameToExecute; }
+    public String getjLoadScenarioToExecute() { return jLoadScenarioToExecute; }
     
-    public void setJLoadScenarioIdToExecute(String jTestSuiteNameToExecute) {
-        this.jConfigNameToExecute = jTestSuiteNameToExecute;
+    public void setJLoadScenarioIdToExecute(String jLoadScenarioToExecute) {
+        this.jLoadScenarioToExecute = jLoadScenarioToExecute;
     }
 }

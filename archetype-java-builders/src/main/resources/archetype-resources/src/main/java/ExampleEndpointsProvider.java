@@ -21,12 +21,8 @@ public class ExampleEndpointsProvider implements Iterable {
     public ExampleEndpointsProvider() {
         // Put custom code here to get endpoints
         // In our case they will be hardcoded
-        try {
-            JHttpEndpoint httpEndpoint = new JHttpEndpoint(new URI("https://jagger.griddynamics.net:443"));
-            endpoints.add(httpEndpoint);
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException(e);
-        }
+        JHttpEndpoint httpEndpoint = new JHttpEndpoint(URI.create("https://jagger.griddynamics.net:443"));
+        endpoints.add(httpEndpoint);
     }
     
     @Override
