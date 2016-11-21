@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.test.jaas.provider;
 
-import com.griddynamics.jagger.invoker.http.v2.JHttpEndpoint;
+import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

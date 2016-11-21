@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.xml;
 
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
+
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.InfiniteTerminationStrategyConfiguration;
@@ -14,31 +16,26 @@ import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.user.TestConfiguration;
 import junit.framework.Assert;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
-
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 12/14/12
- * Time: 12:22 PM
- * To change this template use File | Settings | File Templates.
  */
 public class JaggerLoadTest {
 
-    private ApplicationContext context;
-    private H2DatabaseServer dbServer;
+    private static ApplicationContext context;
+    private static H2DatabaseServer dbServer;
 
     @BeforeClass
-    public void testContext() throws Exception{
+    public static void testContext() throws Exception{
         URL directory = new URL("file:" + "../configuration/");
         Properties environmentProperties = new Properties();
         JaggerLauncher.loadBootProperties(directory, "profiles/local/environment.properties", environmentProperties);
@@ -52,7 +49,7 @@ public class JaggerLoadTest {
     }
 
     @AfterClass
-    public void testShutdown() {
+    public static void testShutdown() {
         dbServer.terminate();
     }
 

@@ -27,9 +27,6 @@
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="keyValueStorage" ref="h2KeyValueStorage"/>
         <property name="databaseService" ref="databaseService"/>
-
-        <property name="saveStandardMetricsWithNewModel" value="${chassis.enable.new.model.for.standard.metric}"/>
-        <property name="saveStandardMetricsWithOldModel" value="${chassis.enable.old.model.for.standard.metric}"/>
     </bean>
 
     <bean id="basicAggregator" class="com.griddynamics.jagger.engine.e1.aggregator.session.BasicAggregator">
@@ -94,9 +91,6 @@
         <property name="globalPercentilesKeys" ref="standardPercentilesGlobal"/>
         <property name="keyValueStorage" ref="h2KeyValueStorage"/>
         <property name="databaseService" ref="databaseService"/>
-
-        <property name="saveStandardMetricsWithNewModel" value="${chassis.enable.new.model.for.standard.metric}"/>
-        <property name="saveStandardMetricsWithOldModel" value="${chassis.enable.old.model.for.standard.metric}"/>
     </bean>
 
     <bean id="metricIntervalSizeProvider_count" class="com.griddynamics.jagger.reporting.interval.CalculatedIntervalSizeProvider" lazy-init="true">

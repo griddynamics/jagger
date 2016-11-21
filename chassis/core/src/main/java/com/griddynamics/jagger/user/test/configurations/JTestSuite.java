@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -7,33 +9,34 @@ import java.util.List;
  */
 public class JTestSuite {
 
-    private List<JTestGroup> testGroups;
+    private final String id;
+    private final List<JTestGroup> testGroups;
 
-
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Id id, List<JTestGroup> testGroups) {
+        return new Builder(id, testGroups);
+    }
+    
+    public static Builder builder(Id id, JTestGroup testGroup, JTestGroup... testGroups) {
+        
+        List<JTestGroup> jTestGroupList = new ArrayList<>();
+        jTestGroupList.add(testGroup);
+        Collections.addAll(jTestGroupList, testGroups);
+        
+        return new Builder(id, jTestGroupList);
     }
 
     private JTestSuite(Builder builder) {
+        this.id = builder.id.value();
         this.testGroups = builder.testGroups;
     }
 
-
     public static class Builder {
-        private List<JTestGroup> testGroups;
-
-        private Builder() {
-        }
-
-        /**
-         * Sets the {@code testGroups} for test suite.
-         * Test groups will be executed in the order from beginning to the end of the list.
-         *
-         * @param testGroups List of test groups.
-         */
-        public Builder withTestGroups(List<JTestGroup> testGroups) {
+        private final Id id;
+        private final List<JTestGroup> testGroups;
+    
+        public Builder(Id id, List<JTestGroup> testGroups) {
+            this.id = id;
             this.testGroups = testGroups;
-            return this;
         }
 
         /**
@@ -49,5 +52,9 @@ public class JTestSuite {
 
     public List<JTestGroup> getTestGroups() {
         return testGroups;
+    }
+
+    public String getId() {
+        return id;
     }
 }

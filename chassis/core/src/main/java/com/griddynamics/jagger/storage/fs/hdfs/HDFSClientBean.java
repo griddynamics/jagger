@@ -20,18 +20,16 @@
 
 package com.griddynamics.jagger.storage.fs.hdfs;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
-
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.storage.fs.hdfs.utils.HadoopUtils;
 import com.griddynamics.jagger.util.BlockingBean;
 import com.griddynamics.jagger.util.ThreadExecutorUtil;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public class HDFSClientBean implements BlockingBean, HDFSClient {
 
@@ -74,6 +72,8 @@ public class HDFSClientBean implements BlockingBean, HDFSClient {
         try {
             if (this.fileSystem != null) {
                 this.fileSystem.close();
+            } else {
+                ready = true;
             }
         } catch (IOException e) {
             throw new TechnicalException(e);

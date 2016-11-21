@@ -1,18 +1,11 @@
 package com.griddynamics.jagger.jaas.rest;
 
-import static com.griddynamics.jagger.jaas.rest.error.ErrorResponse.errorResponse;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-
 import com.griddynamics.jagger.jaas.exceptions.ResourceAlreadyExistsException;
 import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentInvalidIdException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentNoSessionException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentSessionNotFoundException;
-import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentRunningTestSuiteException;
+import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentRunningLoadScenarioException;
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentStatusException;
 import com.griddynamics.jagger.jaas.rest.error.ErrorResponse;
 import org.hibernate.StaleStateException;
@@ -27,9 +20,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static com.griddynamics.jagger.jaas.rest.error.ErrorResponse.errorResponse;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 /**
  * Handles all exceptional situations for all rest controllers.
@@ -115,16 +114,16 @@ public class GlobalControllerExceptionHandler {
     /**
      * Handles:
      * <p>
-     * - {@link WrongTestEnvironmentRunningTestSuiteException} client tries to set runningTestSuite which doesn't belong to that Test
+     * - {@link WrongTestEnvironmentRunningLoadScenarioException} client tries to set runningLoadScenario which doesn't belong to that Test
      * Environment;
      * <p>
-     * - {@link WrongTestEnvironmentStatusException} client tries to set status which doesn't corresponds to runningTestSuite value; <p>
+     * - {@link WrongTestEnvironmentStatusException} client tries to set status which doesn't corresponds to runningLoadScenario value; <p>
      * - {@link TestEnvironmentNoSessionException} client tries to perform PUT /envs/{envId} request without Environment-Session cookie. <p>
      * - {@link TestEnvironmentInvalidIdException} client tries to create TestEnvironment with invalid id. <p>
      */
-    @ExceptionHandler({WrongTestEnvironmentRunningTestSuiteException.class, WrongTestEnvironmentStatusException.class,
+    @ExceptionHandler({WrongTestEnvironmentRunningLoadScenarioException.class, WrongTestEnvironmentStatusException.class,
             TestEnvironmentNoSessionException.class, TestEnvironmentInvalidIdException.class})
-    public ResponseEntity<ErrorResponse> badTestSuite(RuntimeException exception) {
+    public ResponseEntity<ErrorResponse> badLoadScenario(RuntimeException exception) {
         LOGGER.error(exception.getMessage(), exception);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(APPLICATION_JSON);

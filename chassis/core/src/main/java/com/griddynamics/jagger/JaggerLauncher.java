@@ -27,9 +27,13 @@ import com.griddynamics.jagger.launch.LaunchManager;
 import com.griddynamics.jagger.launch.LaunchTask;
 import com.griddynamics.jagger.launch.Launches;
 import com.griddynamics.jagger.master.Master;
+import com.griddynamics.jagger.master.MasterToJaasCoordinator;
+import com.griddynamics.jagger.master.TerminateException;
 import com.griddynamics.jagger.reporting.ReportingService;
+import com.griddynamics.jagger.storage.StorageServerLauncher;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
+import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
@@ -49,6 +53,7 @@ import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -155,38 +160,56 @@ public final class JaggerLauncher {
         LaunchTask masterTask = new LaunchTask() {
             @Override
             public void run() {
-                boolean isStandByMode =
-                        Boolean.parseBoolean(environmentProperties.getProperty("realtime.enable.standby.mode"));
+                try {
+                    boolean isStandByMode = Boolean.parseBoolean(
+                            environmentProperties.getProperty("realtime.enable.standby.mode", "false"));
+        
+                    if (isStandByMode) {
+                        log.info("Starting Master in stand by mode...");
+            
+                        MasterToJaasCoordinator masterToJaasCoordinator = new MasterToJaasCoordinator(
+                                environmentProperties.getProperty("realtime.environment.id"),
+                                environmentProperties.getProperty("realtime.jaas.endpoint"), Integer.parseInt(
+                                environmentProperties.getProperty("realtime.status.report.interval.seconds")),
+                                getAvailableConfigurations(directory)
+                        );
+                        masterToJaasCoordinator.register();
+                        while (masterToJaasCoordinator.isStandBy()) {
                 
-                if (isStandByMode) {
-                    log.info("Starting Master in stand by mode...");
-                    while (isStandByMode) {
-                        environmentProperties.setProperty(TEST_CONFIG_NAME_PROP, getTestConfigName());
+                            environmentProperties
+                                    .setProperty(TEST_CONFIG_NAME_PROP, masterToJaasCoordinator.awaitConfigToExecute());
+                
+                            doLaunchMaster(directory);
+                        }
+                    } else {
+                        log.info("Starting Master in right away mode...");
                         doLaunchMaster(directory);
                     }
-                } else {
-                    log.info("Starting Master in right away mode...");
-                    doLaunchMaster(directory);
+                } catch (TerminateException e) {
+                    log.error("Master has been terminated.");
                 }
             }
         };
         builder.addMainTask(masterTask);
     }
     
+    private static Set<String> getAvailableConfigurations(final URL directory) {
+        AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
+        ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
+        Set<String> availableConfigs = new HashSet<>(configurationGenerator.getUserJTestSuiteNames());
+        context.destroy();
+        return availableConfigs;
+    }
+    
     private static void doLaunchMaster(final URL directory) {
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
         initCoordinator(context);
-        Master master = (Master) context.getBean("master");
+        context.getBean(StorageServerLauncher.class); // to trigger lazy initialization
+        ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
+        configurationGenerator.setJTestSuiteNameToExecute(environmentProperties.getProperty(TEST_CONFIG_NAME_PROP));
+        Master master = context.getBean(Master.class);
         master.run();
         context.destroy();
-    }
-    
-    private static String getTestConfigName() {
-        try {
-            Thread.sleep(100_000); // 100 secs
-        } catch (InterruptedException ignored) {
-        }
-        return environmentProperties.getProperty(TEST_CONFIG_NAME_PROP);
     }
     
     private static void launchReporter(final URL directory) {
