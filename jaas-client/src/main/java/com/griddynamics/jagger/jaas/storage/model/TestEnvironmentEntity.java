@@ -29,15 +29,15 @@ public class TestEnvironmentEntity {
     private String environmentId;
 
     @OneToMany(mappedBy = "testEnvironmentEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TestSuiteEntity> testSuites;
+    private List<LoadScenarioEntity> loadScenarios;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TestEnvironmentStatus status = TestEnvironmentStatus.PENDING;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "`running_test_suite`")
-    private TestSuiteEntity runningTestSuite;
+    @JoinColumn(name = "`running_load_scenario`")
+    private LoadScenarioEntity runningLoadScenario;
 
     @JsonIgnore
     @Column(name = "`expiration_timestamp`")
@@ -55,12 +55,12 @@ public class TestEnvironmentEntity {
         this.environmentId = environmentId;
     }
 
-    public List<TestSuiteEntity> getTestSuites() {
-        return testSuites;
+    public List<LoadScenarioEntity> getLoadScenarios() {
+        return loadScenarios;
     }
 
-    public void setTestSuites(List<TestSuiteEntity> testSuites) {
-        this.testSuites = testSuites;
+    public void setLoadScenarios(List<LoadScenarioEntity> loadScenarios) {
+        this.loadScenarios = loadScenarios;
     }
 
     public TestEnvironmentStatus getStatus() {
@@ -71,12 +71,12 @@ public class TestEnvironmentEntity {
         this.status = status;
     }
 
-    public TestSuiteEntity getRunningTestSuite() {
-        return runningTestSuite;
+    public LoadScenarioEntity getRunningLoadScenario() {
+        return runningLoadScenario;
     }
 
-    public void setRunningTestSuite(TestSuiteEntity runningTestSuite) {
-        this.runningTestSuite = runningTestSuite;
+    public void setRunningLoadScenario(LoadScenarioEntity runningLoadScenario) {
+        this.runningLoadScenario = runningLoadScenario;
     }
 
     public long getExpirationTimestamp() {
@@ -104,20 +104,20 @@ public class TestEnvironmentEntity {
 
         if (!environmentId.equals(that.environmentId)) return false;
         if (sessionId != null ? !sessionId.equals(that.sessionId) : that.sessionId != null) return false;
-        if (testSuites != null && that.testSuites == null || testSuites == null && that.testSuites != null) return false;
-        if (testSuites != null && that.getTestSuites() != null && !isEqualCollection(testSuites, that.testSuites)) return false;
+        if (loadScenarios != null && that.loadScenarios == null || loadScenarios == null && that.loadScenarios != null) return false;
+        if (loadScenarios != null && that.getLoadScenarios() != null && !isEqualCollection(loadScenarios, that.loadScenarios)) return false;
         if (status != that.status) return false;
         if (expirationTimestamp != that.expirationTimestamp) return false;
-        return runningTestSuite != null ? runningTestSuite.equals(that.runningTestSuite) : that.runningTestSuite == null;
+        return runningLoadScenario != null ? runningLoadScenario.equals(that.runningLoadScenario) : that.runningLoadScenario == null;
 
     }
 
     @Override
     public int hashCode() {
         int result = environmentId.hashCode();
-        result = 31 * result + (testSuites != null ? testSuites.hashCode() : 0);
+        result = 31 * result + (loadScenarios != null ? loadScenarios.hashCode() : 0);
         result = 31 * result + status.hashCode();
-        result = 31 * result + (runningTestSuite != null ? runningTestSuite.hashCode() : 0);
+        result = 31 * result + (runningLoadScenario != null ? runningLoadScenario.hashCode() : 0);
         result = 31 * result + Long.hashCode(expirationTimestamp);
         result = 31 * result + sessionId.hashCode();
         return result;
@@ -127,9 +127,9 @@ public class TestEnvironmentEntity {
     public String toString() {
         return "TestEnvironmentEntity{"
                 + "environmentId='" + environmentId + '\''
-                + ", testSuites=" + testSuites
+                + ", loadScenarios=" + loadScenarios
                 + ", status=" + status
-                + ", runningTestSuite=" + runningTestSuite
+                + ", runningLoadScenario=" + runningLoadScenario
                 + ", expirationTimestamp=" + expirationTimestamp
                 + ", sessionId=" + sessionId
                 + '}';

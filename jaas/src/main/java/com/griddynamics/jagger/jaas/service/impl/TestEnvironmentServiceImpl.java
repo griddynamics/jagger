@@ -1,11 +1,11 @@
 package com.griddynamics.jagger.jaas.service.impl;
 
-import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentRunningTestSuiteException;
+import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentRunningLoadScenarioException;
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentStatusException;
 import com.griddynamics.jagger.jaas.service.TestEnvironmentService;
 import com.griddynamics.jagger.jaas.storage.TestEnvironmentDao;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
-import com.griddynamics.jagger.jaas.storage.model.TestSuiteEntity;
+import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,20 +52,20 @@ public class TestEnvironmentServiceImpl implements TestEnvironmentService {
 
     @Override
     public TestEnvironmentEntity create(TestEnvironmentEntity testEnvironment) {
-        fillTestSuites(testEnvironment);
+        fillLoadScenarios(testEnvironment);
         testEnvironment.setExpirationTimestamp(getExpirationTimestamp());
         testEnvironment.setSessionId(UUID.randomUUID().toString());
-        if (testEnvironment.getRunningTestSuite() == null) {
+        if (testEnvironment.getRunningLoadScenario() == null) {
             testEnvironmentDao.create(testEnvironment);
         } else {
-            // Due to unique constraint in TestSuite runningTestSuite cannot be persisted until all test suites are persisted.
-            // Hence, firstly test env is persisted without running test suite and after running test suite can be set
-            TestSuiteEntity runningTestSuite = testEnvironment.getRunningTestSuite();
-            testEnvironment.setRunningTestSuite(null);
+            // Due to unique constraint in LoadScenario runningLoadScenario cannot be persisted until all Load Scenarios are persisted.
+            // Hence, firstly test env is persisted without running Load Scenario and after running Load Scenario can be set
+            LoadScenarioEntity runningLoadScenario = testEnvironment.getRunningLoadScenario();
+            testEnvironment.setRunningLoadScenario(null);
             testEnvironment.setStatus(PENDING);
             testEnvironmentDao.create(testEnvironment);
 
-            testEnvironment.setRunningTestSuite(runningTestSuite);
+            testEnvironment.setRunningLoadScenario(runningLoadScenario);
             testEnvironment.setStatus(RUNNING);
             update(testEnvironment);
         }
@@ -75,34 +75,34 @@ public class TestEnvironmentServiceImpl implements TestEnvironmentService {
     @Override
     public TestEnvironmentEntity update(TestEnvironmentEntity newTestEnv) {
         TestEnvironmentEntity testEnvToUpdate = read(newTestEnv.getEnvironmentId());
-        fillTestSuites(newTestEnv, testEnvToUpdate);
+        fillLoadScenarios(newTestEnv, testEnvToUpdate);
 
-        if (newTestEnv.getRunningTestSuite() != null && newTestEnv.getStatus() == RUNNING
-                || newTestEnv.getRunningTestSuite() == null && newTestEnv.getStatus() == PENDING)
+        if (newTestEnv.getRunningLoadScenario() != null && newTestEnv.getStatus() == RUNNING
+                || newTestEnv.getRunningLoadScenario() == null && newTestEnv.getStatus() == PENDING)
             testEnvToUpdate.setStatus(newTestEnv.getStatus());
         else
-            throw new WrongTestEnvironmentStatusException(newTestEnv.getStatus(), newTestEnv.getRunningTestSuite());
+            throw new WrongTestEnvironmentStatusException(newTestEnv.getStatus(), newTestEnv.getRunningLoadScenario());
 
-        if (testEnvToUpdate.getTestSuites() == null)
-            testEnvToUpdate.setTestSuites(newTestEnv.getTestSuites());
-        else if (newTestEnv.getTestSuites() == null)
-            testEnvToUpdate.getTestSuites().clear();
-        else if (!isEqualCollection(testEnvToUpdate.getTestSuites(), newTestEnv.getTestSuites())) {
-            HashSet<TestSuiteEntity> newTestSuites = newHashSet(testEnvToUpdate.getTestSuites());
-            // add all new test suites
-            newTestSuites.addAll(newTestEnv.getTestSuites());
+        if (testEnvToUpdate.getLoadScenarios() == null)
+            testEnvToUpdate.setLoadScenarios(newTestEnv.getLoadScenarios());
+        else if (newTestEnv.getLoadScenarios() == null)
+            testEnvToUpdate.getLoadScenarios().clear();
+        else if (!isEqualCollection(testEnvToUpdate.getLoadScenarios(), newTestEnv.getLoadScenarios())) {
+            HashSet<LoadScenarioEntity> newLoadScenarios = newHashSet(testEnvToUpdate.getLoadScenarios());
+            // add all new LoadScenarios
+            newLoadScenarios.addAll(newTestEnv.getLoadScenarios());
 
-            // remove all test suites which must be deleted
-            newHashSet(newTestSuites).stream().filter(s -> !newTestEnv.getTestSuites().contains(s)).forEach(newTestSuites::remove);
+            // remove all LoadScenarios which must be deleted
+            newHashSet(newLoadScenarios).stream().filter(s -> !newTestEnv.getLoadScenarios().contains(s)).forEach(newLoadScenarios::remove);
 
-            testEnvToUpdate.getTestSuites().clear();
-            testEnvToUpdate.getTestSuites().addAll(newTestSuites);
+            testEnvToUpdate.getLoadScenarios().clear();
+            testEnvToUpdate.getLoadScenarios().addAll(newLoadScenarios);
         }
 
-        if (testEnvToUpdate.getRunningTestSuite() != newTestEnv.getRunningTestSuite()) {
-            testEnvToUpdate.setRunningTestSuite(getNewRunningTestSuite(newTestEnv, testEnvToUpdate));
+        if (testEnvToUpdate.getRunningLoadScenario() != newTestEnv.getRunningLoadScenario()) {
+            testEnvToUpdate.setRunningLoadScenario(getNewRunningLoadScenario(newTestEnv, testEnvToUpdate));
         }
-        fillTestSuites(testEnvToUpdate);
+        fillLoadScenarios(testEnvToUpdate);
         testEnvToUpdate.setExpirationTimestamp(getExpirationTimestamp());
         testEnvironmentDao.update(testEnvToUpdate);
         return testEnvToUpdate;
@@ -123,36 +123,36 @@ public class TestEnvironmentServiceImpl implements TestEnvironmentService {
         return testEnvironmentDao.existsWithSessionId(envId, sessionId);
     }
 
-    private TestSuiteEntity getNewRunningTestSuite(TestEnvironmentEntity newTestEnv, TestEnvironmentEntity testEnvToUpdate) {
-        if (newTestEnv.getRunningTestSuite() == null)
+    private LoadScenarioEntity getNewRunningLoadScenario(TestEnvironmentEntity newTestEnv, TestEnvironmentEntity testEnvToUpdate) {
+        if (newTestEnv.getRunningLoadScenario() == null)
             return null;
 
-        if (isNotEmpty(testEnvToUpdate.getTestSuites())) {
-            Map<String, TestSuiteEntity> testSuites = testEnvToUpdate.getTestSuites().stream()
-                    .collect(toMap(TestSuiteEntity::getTestSuiteId, identity()));
-            TestSuiteEntity newRunningTestSuite = testSuites.get(newTestEnv.getRunningTestSuite().getTestSuiteId());
+        if (isNotEmpty(testEnvToUpdate.getLoadScenarios())) {
+            Map<String, LoadScenarioEntity> loadScenarios = testEnvToUpdate.getLoadScenarios().stream()
+                    .collect(toMap(LoadScenarioEntity::getLoadScenarioId, identity()));
+            LoadScenarioEntity newRunningLoadScenario = loadScenarios.get(newTestEnv.getRunningLoadScenario().getLoadScenarioId());
 
-            return Optional.ofNullable(newRunningTestSuite).orElseThrow(() -> new WrongTestEnvironmentRunningTestSuiteException(
-                    format("Running TestSuite[id=%s] cannot be set to TestEnvironment[id=%s]. Possible TestSuites: %s.",
-                            newTestEnv.getRunningTestSuite().getTestSuiteId(), newTestEnv.getEnvironmentId(), testSuites.keySet())));
+            return Optional.ofNullable(newRunningLoadScenario).orElseThrow(() -> new WrongTestEnvironmentRunningLoadScenarioException(
+                    format("Running LoadScenario[id=%s] cannot be set to TestEnvironment[id=%s]. Possible LoadScenarios: %s.",
+                            newTestEnv.getRunningLoadScenario().getLoadScenarioId(), newTestEnv.getEnvironmentId(), loadScenarios.keySet())));
         }
 
-        throw new WrongTestEnvironmentRunningTestSuiteException(
-                format("Running TestSuite[id=%s] cannot be set to TestEnvironment[id=%s], since it doesn't belong to it.",
-                        newTestEnv.getRunningTestSuite().getTestSuiteId(), newTestEnv.getEnvironmentId()));
+        throw new WrongTestEnvironmentRunningLoadScenarioException(
+                format("Running LoadScenario[id=%s] cannot be set to TestEnvironment[id=%s], since it doesn't belong to it.",
+                        newTestEnv.getRunningLoadScenario().getLoadScenarioId(), newTestEnv.getEnvironmentId()));
     }
 
-    private void fillTestSuites(TestEnvironmentEntity testEnv) {
-        fillTestSuites(testEnv, testEnv);
+    private void fillLoadScenarios(TestEnvironmentEntity testEnv) {
+        fillLoadScenarios(testEnv, testEnv);
     }
 
-    private void fillTestSuites(TestEnvironmentEntity testEnvToBeFilled, TestEnvironmentEntity testEnvToSet) {
-        if (isNotEmpty(testEnvToBeFilled.getTestSuites()))
-            testEnvToBeFilled.getTestSuites().stream()
+    private void fillLoadScenarios(TestEnvironmentEntity testEnvToBeFilled, TestEnvironmentEntity testEnvToSet) {
+        if (isNotEmpty(testEnvToBeFilled.getLoadScenarios()))
+            testEnvToBeFilled.getLoadScenarios().stream()
                     .filter(suite -> suite.getTestEnvironmentEntity() == null)
                     .forEach(suite -> suite.setTestEnvironmentEntity(testEnvToSet));
-        if (testEnvToBeFilled.getRunningTestSuite() != null && testEnvToBeFilled.getRunningTestSuite().getTestEnvironmentEntity() == null)
-            testEnvToBeFilled.getRunningTestSuite().setTestEnvironmentEntity(testEnvToSet);
+        if (testEnvToBeFilled.getRunningLoadScenario() != null && testEnvToBeFilled.getRunningLoadScenario().getTestEnvironmentEntity() == null)
+            testEnvToBeFilled.getRunningLoadScenario().setTestEnvironmentEntity(testEnvToSet);
     }
 
     private long getExpirationTimestamp() {

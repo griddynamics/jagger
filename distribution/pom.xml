@@ -93,6 +93,11 @@
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>jaas-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.configuration</artifactId>
         </dependency>
 

@@ -10,13 +10,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class ConfigurationGeneratorTest {
     
-    
     @org.junit.Test
-    public void setUserJTestSuites() throws Exception {
+    public void setJaggerLoadScenarios() throws Exception {
     
         ApplicationContext context = new ClassPathXmlApplicationContext("spring/example.test.suite.conf.xml");
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
+        configurationGenerator.setUseBuilders(true);
     
-        Assert.assertTrue(configurationGenerator.getUserJTestSuiteNames().size() == 1);
+        Assert.assertEquals(3, configurationGenerator.getJaggerLoadScenarioNames().size());
     }
 }

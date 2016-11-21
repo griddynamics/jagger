@@ -5,13 +5,12 @@ import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentInvalidIdException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentSessionNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentStatusException;
-import com.griddynamics.jagger.jaas.service.JobExecutionService;
+import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.service.TestEnvironmentService;
-import com.griddynamics.jagger.jaas.storage.model.JobEntity;
-import com.griddynamics.jagger.jaas.storage.model.JobExecutionEntity;
+import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
-import com.griddynamics.jagger.jaas.storage.model.TestSuiteEntity;
+import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -38,6 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -56,12 +56,12 @@ public class TestEnvironmentRestController extends AbstractController {
 
     private final TestEnvironmentService testEnvService;
 
-    private final JobExecutionService jobExecutionService;
+    private final TestExecutionService testExecutionService;
 
     @Autowired
-    public TestEnvironmentRestController(TestEnvironmentService testEnvironmentService, JobExecutionService jobExecutionService) {
+    public TestEnvironmentRestController(TestEnvironmentService testEnvironmentService, TestExecutionService testExecutionService) {
         this.testEnvService = testEnvironmentService;
-        this.jobExecutionService = jobExecutionService;
+        this.testExecutionService = testExecutionService;
     }
 
     @GetMapping(value = "/{envId}", produces = APPLICATION_JSON_VALUE)
@@ -102,35 +102,40 @@ public class TestEnvironmentRestController extends AbstractController {
 
         if (!testEnvService.existsWithSessionId(envId, sessionId))
             throw new TestEnvironmentSessionNotFoundException(envId, sessionId);
+        validateTestEnv(testEnv);
+        TestEnvironmentEntity oldEnv = testEnvService.read(envId);
 
         testEnv.setEnvironmentId(envId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
-        response.addCookie(getSessionCookie(updated));
         if (updated.getStatus() == PENDING) {
-            getTestSuiteNameToExecute(updated).ifPresent(testSuiteName -> setNextConfigToExecuteHeader(response, testSuiteName));
+            getLoadScenarioNameToExecute(updated).ifPresent(loadScenarioName -> setNextConfigToExecuteHeader(response, loadScenarioName));
+            if (oldEnv.getStatus() == RUNNING)
+                testExecutionService.finishExecution(envId, oldEnv.getRunningLoadScenario().getLoadScenarioId());
         }
+        if (oldEnv.getStatus() == PENDING && updated.getStatus() == RUNNING) {
+            testExecutionService.startExecution(envId, testEnv.getRunningLoadScenario().getLoadScenarioId());
+        }
+        response.addCookie(getSessionCookie(updated));
         return ResponseEntity.accepted().build();
     }
 
-    private Optional<String> getTestSuiteNameToExecute(TestEnvironmentEntity testEnv) {
-        List<String> testSuitesNames = testEnv.getTestSuites().stream().map(TestSuiteEntity::getTestSuiteId).collect(toList());
+    private Optional<String> getLoadScenarioNameToExecute(TestEnvironmentEntity testEnv) {
+        List<String> loadScenarioNames = testEnv.getLoadScenarios().stream().map(LoadScenarioEntity::getLoadScenarioId).collect(toList());
 
-        return jobExecutionService.readAllPending().stream()
-                .map(JobExecutionEntity::getJob)
-                .filter(job -> job.getEnvId().equals(testEnv.getEnvironmentId()))
-                .map(JobEntity::getTestSuiteId)
-                .filter(testSuitesNames::contains)
+        return testExecutionService.readAllPending().stream()
+                .filter(testExec -> testExec.getEnvId().equals(testEnv.getEnvironmentId()))
+                .map(TestExecutionEntity::getLoadScenarioId)
+                .filter(loadScenarioNames::contains)
                 .findFirst();
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Creates Test Environment.",
-                  notes = "If operation successful, '" + TestEnvUtils.SESSION_COOKIE
-                          + "' cookie is returned with response, "
+                  notes = "If operation successful, '" + TestEnvUtils.SESSION_COOKIE + "' cookie is returned with response, "
             + "which is required for PUT request. This cookie is valid only for Test Environment with envId which was specified in request body.")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Creation is successful."),
-            @ApiResponse(code = 400, message = "envId doesn't match " + ENV_ID_PATTERN + " OR status is inconsistent with runningTestSuite."),
+            @ApiResponse(code = 400, message = "envId doesn't match " + ENV_ID_PATTERN + " OR status is inconsistent with runningLoadScenario."),
             @ApiResponse(code = 409, message = "Test Environment with provided envId already exists.")})
     public ResponseEntity<?> createTestEnvironment(@RequestBody TestEnvironmentEntity testEnv, HttpServletResponse response) {
         validateTestEnv(testEnv);
@@ -139,8 +144,7 @@ public class TestEnvironmentRestController extends AbstractController {
 
         TestEnvironmentEntity created = testEnvService.create(testEnv);
         response.addCookie(getSessionCookie(created));
-        return ResponseEntity.created(fromCurrentRequest().path("/{envId}")
-                                                          .buildAndExpand(testEnv.getEnvironmentId()).toUri()).build();
+        return ResponseEntity.created(fromCurrentRequest().path("/{envId}").buildAndExpand(testEnv.getEnvironmentId()).toUri()).build();
     }
 
     private void validateTestEnv(TestEnvironmentEntity testEnv) {
@@ -150,17 +154,17 @@ public class TestEnvironmentRestController extends AbstractController {
         if (!matcher.matches())
             throw new TestEnvironmentInvalidIdException(envId, envIdPattern);
 
-        if (testEnv.getRunningTestSuite() == null && testEnv.getStatus() == TestEnvironmentEntity.TestEnvironmentStatus.RUNNING
-                || testEnv.getRunningTestSuite() != null && testEnv.getStatus() == PENDING)
-            throw new WrongTestEnvironmentStatusException(testEnv.getStatus(), testEnv.getRunningTestSuite());
+        if (testEnv.getRunningLoadScenario() == null && testEnv.getStatus() == RUNNING
+                || testEnv.getRunningLoadScenario() != null && testEnv.getStatus() == PENDING)
+            throw new WrongTestEnvironmentStatusException(testEnv.getStatus(), testEnv.getRunningLoadScenario());
     }
 
     private void setExpiresHeader(HttpServletResponse response, TestEnvironmentEntity testEnv) {
         response.addHeader(TestEnvUtils.EXPIRES_HEADER, getFormattedExpirationDate(testEnv));
     }
 
-    private void setNextConfigToExecuteHeader(HttpServletResponse response, String testSuiteName) {
-        response.addHeader(TestEnvUtils.CONFIG_NAME_HEADER, testSuiteName);
+    private void setNextConfigToExecuteHeader(HttpServletResponse response, String loadScenarioName) {
+        response.addHeader(TestEnvUtils.CONFIG_NAME_HEADER, loadScenarioName);
     }
 
     private Cookie getSessionCookie(TestEnvironmentEntity testEnv) {
