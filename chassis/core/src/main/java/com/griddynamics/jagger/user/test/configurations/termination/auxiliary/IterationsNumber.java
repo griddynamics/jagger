@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.user.test.configurations.termination.aux;
+package com.griddynamics.jagger.user.test.configurations.termination.auxiliary;
 
 /**
  * The target number of requests to the system under test.

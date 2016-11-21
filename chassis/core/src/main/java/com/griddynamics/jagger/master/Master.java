@@ -81,7 +81,6 @@ public class Master implements Runnable {
     private KeyValueStorage keyValueStorage;
     private ReportingService reportingService;
     private long reconnectPeriod;
-    private Conditions conditions;
     private ExecutorService executor;
     private TaskIdProvider taskIdProvider;
     private TaskExecutionStatusProvider taskExecutionStatusProvider;
@@ -138,11 +137,6 @@ public class Master implements Runnable {
     @Required
     public void setDynamicPlotGroups(DynamicPlotGroups dynamicPlotGroups) {
         this.dynamicPlotGroups = dynamicPlotGroups;
-    }
-
-    @Required
-    public void setConditions(Conditions conditions) {
-        this.conditions = conditions;
     }
 
     public LogWriter getLogWriter() {
@@ -210,11 +204,13 @@ public class Master implements Runnable {
         configuration.getDistributionListeners().add(decisionMakerDistributionListener);
 
         CountDownLatch agentCountDownLatch = new CountDownLatch(
-                conditions.isMonitoringEnable() ?
-                        conditions.getMinAgentsCount() :
+                configuration.isUseMonitoring() ?
+                        configuration.getMinAgentsNumber() :
                         0
         );
-        CountDownLatch kernelCountDownLatch = new CountDownLatch(conditions.getMinKernelsCount());
+        CountDownLatch kernelCountDownLatch = new CountDownLatch(configuration.getMinKernelsNumber());
+
+
         Map<NodeType, CountDownLatch> countDownLatchMap = Maps.newHashMap();
         countDownLatchMap.put(NodeType.AGENT, agentCountDownLatch);
         countDownLatchMap.put(NodeType.KERNEL, kernelCountDownLatch);
