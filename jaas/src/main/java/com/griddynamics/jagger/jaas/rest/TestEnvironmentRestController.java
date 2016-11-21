@@ -108,10 +108,9 @@ public class TestEnvironmentRestController extends AbstractController {
         testEnv.setEnvironmentId(envId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         if (updated.getStatus() == PENDING) {
+            getLoadScenarioNameToExecute(updated).ifPresent(loadScenarioName -> setNextConfigToExecuteHeader(response, loadScenarioName));
             if (oldEnv.getStatus() == RUNNING)
                 testExecutionService.finishExecution(envId, oldEnv.getRunningLoadScenario().getLoadScenarioId());
-            else
-                getLoadScenarioNameToExecute(updated).ifPresent(loadScenarioName -> setNextConfigToExecuteHeader(response, loadScenarioName));
         }
         if (oldEnv.getStatus() == PENDING && updated.getStatus() == RUNNING) {
             testExecutionService.startExecution(envId, testEnv.getRunningLoadScenario().getLoadScenarioId());

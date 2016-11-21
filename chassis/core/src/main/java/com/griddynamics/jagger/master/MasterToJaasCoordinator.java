@@ -108,6 +108,7 @@ public class MasterToJaasCoordinator {
             try {
                 responseEntity = restTemplate.postForEntity(envsUri, testEnvironmentEntity, String.class);
                 posted = true;
+                LOGGER.info("POST request sent to {} with body {}.", envsUri, testEnvironmentEntity);
             } catch (HttpClientErrorException e) {
                 if (!isEnvIdUnacceptable(e)) {
                     throw e;
@@ -209,6 +210,8 @@ public class MasterToJaasCoordinator {
         }
         
         public void setPendingRequestEntity() {
+            // This cycle is needed to prevent sending PENDING status until RUNNING status is sent in cases when load scenario lasts less
+            // than statusReportIntervalSeconds
             while (standBy && lastStatus == TestEnvironmentStatus.RUNNING && !runningStatusSent) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(100);
@@ -253,6 +256,7 @@ public class MasterToJaasCoordinator {
             LOGGER.debug("Performing status update...");
             try {
                 ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+                LOGGER.info("PUT request sent to {} with body {}.", requestEntity.getUrl(), requestEntity.getBody());
                 tryToOfferNextConfigToExecute(responseEntity);
             } catch (HttpServerErrorException e) {
                 LOGGER.warn("Server error during update", e);
