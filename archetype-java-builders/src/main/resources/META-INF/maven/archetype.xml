@@ -8,6 +8,7 @@
         <source>src/main/java/ExampleEndpointsProvider.java</source>
         <source>src/main/java/ExampleQueriesProvider.java</source>
         <source>src/main/java/ExampleJLoadScenarioProvider.java</source>
+        <source>src/main/java/ExampleSimpleJLoadScenarioProvider.java</source>
         <source>src/main/java/config/JLoadScenariosConfig.java</source>
     </sources>
     <resources>

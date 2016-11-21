@@ -2,6 +2,7 @@ package com.griddynamics.jagger.config;
 
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.ExampleJLoadScenarioProvider;
+import com.griddynamics.jagger.ExampleSimpleJLoadScenarioProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
