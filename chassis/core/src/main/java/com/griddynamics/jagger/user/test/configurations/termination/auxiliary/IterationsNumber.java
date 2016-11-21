@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.user.test.configurations.termination.aux;
+package com.griddynamics.jagger.user.test.configurations.termination.auxiliary;
 
 /**
  * The target number of requests to the system under test.
@@ -14,11 +14,11 @@ public final class IterationsNumber {
         }
         this.iterationsNumber = iterationsNumber;
     }
-    
+
     public static IterationsNumber of(long iterationsNumber) {
         return new IterationsNumber(iterationsNumber);
     }
-    
+
     public long value() {
         return iterationsNumber;
     }

@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations;
 
-import com.griddynamics.jagger.user.test.configurations.aux.Id;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 
 import java.util.ArrayList;
 import java.util.Collections;

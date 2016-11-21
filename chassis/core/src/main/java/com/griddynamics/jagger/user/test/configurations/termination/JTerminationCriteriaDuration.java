@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations.termination;
 
-import com.griddynamics.jagger.user.test.configurations.termination.aux.DurationInSeconds;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.DurationInSeconds;
 
 import java.util.Objects;
 

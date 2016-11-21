@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.termination;
 
-import com.griddynamics.jagger.user.test.configurations.termination.aux.IterationsNumber;
-import com.griddynamics.jagger.user.test.configurations.termination.aux.MaxDurationInSeconds;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 
 import java.util.Objects;
 

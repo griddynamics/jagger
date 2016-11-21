@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.user.test.configurations.load.aux;
+package com.griddynamics.jagger.user.test.configurations.load.auxiliary;
 
 /**
  * The warm up time value in seconds.
@@ -9,7 +9,7 @@ package com.griddynamics.jagger.user.test.configurations.load.aux;
  */
 public final class WarmUpTimeInSeconds {
     private final long warmUpTimeInSeconds;
-    
+
     private WarmUpTimeInSeconds(long warmUpTimeInSeconds) {
         if (warmUpTimeInSeconds < 0) {
             throw new IllegalArgumentException(
@@ -19,11 +19,11 @@ public final class WarmUpTimeInSeconds {
         }
         this.warmUpTimeInSeconds = warmUpTimeInSeconds;
     }
-    
+
     public static WarmUpTimeInSeconds of(long warmUpTimeInSeconds) {
         return new WarmUpTimeInSeconds(warmUpTimeInSeconds);
     }
-    
+
     public long value() {
         return warmUpTimeInSeconds;
     }
