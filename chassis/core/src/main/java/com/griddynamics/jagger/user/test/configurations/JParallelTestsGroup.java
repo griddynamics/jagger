@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations;
 
-import com.griddynamics.jagger.user.test.configurations.aux.Id;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +12,7 @@ import java.util.List;
 public class JParallelTestsGroup {
     private final String id;
     private final List<JLoadTest> tests;
+
 
     public static Builder builder(Id id, List<JLoadTest> tests) {
         return new Builder(id, tests);

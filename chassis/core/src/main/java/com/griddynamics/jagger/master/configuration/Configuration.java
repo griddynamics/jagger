@@ -45,6 +45,10 @@ public class Configuration {
     private MonitoringConfiguration monitoringConfiguration = null;
     private ReportingService report;
 
+    private boolean useMonitoring = false;
+    private int minKernelsNumber = 1;
+    private int minAgentsNumber = 1;
+
     public void setReport(ReportingService report){
         this.report = report;
     }
@@ -93,4 +97,27 @@ public class Configuration {
         this.testSuiteListeners = testSuiteListeners;
     }
 
+    public boolean isUseMonitoring() {
+        return useMonitoring;
+    }
+
+    public void useMonitoring(boolean useMonitoring) {
+        this.useMonitoring = useMonitoring;
+    }
+
+    public int getMinKernelsNumber() {
+        return minKernelsNumber;
+    }
+
+    public void setMinKernelsNumber(int minKernelsNumber) {
+        this.minKernelsNumber = minKernelsNumber;
+    }
+
+    public int getMinAgentsNumber() {
+        return minAgentsNumber;
+    }
+
+    public void setMinAgentsNumber(int minAgentsCount) {
+        this.minAgentsNumber = minAgentsCount;
+    }
 }

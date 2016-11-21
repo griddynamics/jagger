@@ -1,8 +1,8 @@
 package com.griddynamics.jagger.user.test.configurations.load;
 
-import com.griddynamics.jagger.user.test.configurations.load.aux.MaxLoadThreads;
-import com.griddynamics.jagger.user.test.configurations.load.aux.RequestsPerSecond;
-import com.griddynamics.jagger.user.test.configurations.load.aux.WarmUpTimeInSeconds;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.MaxLoadThreads;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.WarmUpTimeInSeconds;
 
 import java.util.Objects;
 

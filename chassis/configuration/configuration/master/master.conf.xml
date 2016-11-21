@@ -52,7 +52,6 @@
         <property name="distributorRegistry" ref="distributorRegistry"/>
         <property name="keyValueStorage" ref="h2KeyValueStorage"/>
         <property name="reportingService" ref="reportingService"/>
-        <property name="conditions" ref="conditions"/>
         <property name="executor" ref="coreExecutor"/>
         <property name="dynamicPlotGroups" ref="monitoringPlotGroupsDyn"/>
         <property name="agentStopManagementProps">
@@ -126,12 +125,6 @@
         <property name="taskIdProvider" ref="taskIdProvider"/>
         <property name="timeoutsConfiguration" ref="timeoutsConfiguration"/>
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>
-    </bean>
-
-    <bean id="conditions" class="com.griddynamics.jagger.master.Conditions">
-        <property name="monitoringEnable" value="${chassis.conditions.monitoring.enable}"/>
-        <property name="minAgentsCount" value="${chassis.conditions.min.agents.count}"/>
-        <property name="minKernelsCount" value="${chassis.conditions.min.kernels.count}"/>
     </bean>
 
     <bean id="taskIdProvider" class="com.griddynamics.jagger.master.ThreadSafeTaskIdProvider"/>

@@ -14,6 +14,7 @@ import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.master.configuration.SessionExecutionListener;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
+import com.griddynamics.jagger.user.test.configurations.monitoring.JMonitoringProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.ManagedList;
 
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  * from {@link JLoadScenario} object.
  */
 public class ConfigurationGenerator {
-    
+
     private BasicSessionCollector basicSessionCollector;
     private MasterWorkloadCollector e1MasterCollector;
     private BasicAggregator basicAggregator;
@@ -41,24 +42,24 @@ public class ConfigurationGenerator {
     private boolean useBuilders;
     private String jLoadScenarioToExecute;
     private Map<String, Configuration> configurations = Collections.emptyMap();
-    
+
     public Set<String> getJaggerLoadScenarioNames() {
         if (useBuilders) {
             return new HashSet<>(jaggerLoadScenarios.keySet());
         }
         return new HashSet<>(configurations.keySet());
     }
-    
+
     @Autowired(required = false)
     public void setJaggerLoadScenarios(List<JLoadScenario> jLoadScenarios) {
         this.jaggerLoadScenarios = jLoadScenarios.stream().collect(Collectors.toMap(JLoadScenario::getId, identity()));
     }
-    
+
     @Autowired(required = false)
     public void setConfigurations(Map<String, Configuration> configurations) {
         this.configurations = configurations;
     }
-    
+
     public Configuration generate() {
         if (useBuilders) {
             JLoadScenario jLoadScenario = jaggerLoadScenarios.get(jLoadScenarioToExecute);
@@ -78,7 +79,7 @@ public class ConfigurationGenerator {
         }
         return configuration;
     }
-    
+
     /**
      * Generates {@link Configuration} from {@link JLoadScenario}.
      *
@@ -88,14 +89,14 @@ public class ConfigurationGenerator {
     public Configuration generate(JLoadScenario jLoadScenario) {
         Configuration configuration = new Configuration();
         List<Task> tasks = jLoadScenario.getTestGroups().stream().map(TestGroupGenerator::generateFromTestGroup)
-                                        .collect(Collectors.toList());
+                .collect(Collectors.toList());
         configuration.setTasks(tasks);
-        
+
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
         seListeners.add(basicSessionCollector);
         seListeners.add(basicAggregator);
-        
-        
+
+
         ManagedList<DistributionListener> teListeners = new ManagedList<>();
         teListeners.add(basicSessionCollector);
         teListeners.add(basicAggregator);
@@ -104,51 +105,61 @@ public class ConfigurationGenerator {
         teListeners.add(metricLogProcessor);
         teListeners.add(profilerLogProcessor);
         teListeners.add(durationLogProcessor);
-        
+
         configuration.setSessionExecutionListeners(seListeners);
         configuration.setTaskExecutionListeners(teListeners);
-        
+
+        JMonitoringProperties jMonitoringProperties = jLoadScenario.getjMonitoringProperties();
+        if (jMonitoringProperties == null) {
+            configuration.useMonitoring(false);
+        } else {
+            configuration.useMonitoring(true);
+            configuration.setMinAgentsNumber(jMonitoringProperties.getMinAgentsNumber());
+            configuration.setMinKernelsNumber(jMonitoringProperties.getMinKernelsNumber());
+        }
         return configuration;
     }
-    
+
     public void setBasicSessionCollector(BasicSessionCollector basicSessionCollector) {
         this.basicSessionCollector = basicSessionCollector;
     }
-    
+
     public void setE1MasterCollector(MasterWorkloadCollector e1MasterCollector) {
         this.e1MasterCollector = e1MasterCollector;
     }
-    
+
     public void setBasicAggregator(BasicAggregator basicAggregator) {
         this.basicAggregator = basicAggregator;
     }
-    
+
     public void setE1ScenarioAggregator(WorkloadAggregator e1ScenarioAggregator) {
         this.e1ScenarioAggregator = e1ScenarioAggregator;
     }
-    
+
     public void setMetricLogProcessor(MetricLogProcessor metricLogProcessor) {
         this.metricLogProcessor = metricLogProcessor;
     }
-    
+
     public void setProfilerLogProcessor(ProfilerLogProcessor profilerLogProcessor) {
         this.profilerLogProcessor = profilerLogProcessor;
     }
-    
+
     public void setDurationLogProcessor(DurationLogProcessor durationLogProcessor) {
         this.durationLogProcessor = durationLogProcessor;
     }
-    
+
     public boolean isUseBuilders() {
         return useBuilders;
     }
-    
+
     public void setUseBuilders(boolean useBuilders) {
         this.useBuilders = useBuilders;
     }
-    
-    public String getjLoadScenarioToExecute() { return jLoadScenarioToExecute; }
-    
+
+    public String getjLoadScenarioToExecute() {
+        return jLoadScenarioToExecute;
+    }
+
     public void setJLoadScenarioIdToExecute(String jLoadScenarioToExecute) {
         this.jLoadScenarioToExecute = jLoadScenarioToExecute;
     }

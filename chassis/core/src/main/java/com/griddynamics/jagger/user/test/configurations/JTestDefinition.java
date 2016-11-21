@@ -3,7 +3,7 @@ package com.griddynamics.jagger.user.test.configurations;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
-import com.griddynamics.jagger.user.test.configurations.aux.Id;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 
 import java.util.Collections;
 import java.util.List;
