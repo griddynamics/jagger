@@ -17,38 +17,38 @@ import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
-import com.griddynamics.jagger.user.test.configurations.JTestDescription;
+import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.beans.factory.support.ManagedList;
 
 /**
  * @author asokol
  *         created 11/6/16
- *         Generate {@link WorkloadTask} entity from user-defined {@link JTestDescription} entity.
+ *         Generate {@link WorkloadTask} entity from user-defined {@link JTestDefinition} entity.
  */
 class TestDescriptionGenerator {
 
-    public static WorkloadTask generatePrototype(JTestDescription jTestDescription) {
+    public static WorkloadTask generatePrototype(JTestDefinition jTestDefinition) {
 
         WorkloadTask prototype = new WorkloadTask();
         prototype.setCalibrator(new OneNodeCalibrator());
-        prototype.setDescription(jTestDescription.getDescription());
+        prototype.setDescription(jTestDefinition.getDescription());
         QueryPoolScenarioFactory scenarioFactory = new QueryPoolScenarioFactory();
-        scenarioFactory.setQueryProvider(jTestDescription.getQueries());
-        scenarioFactory.setEndpointProvider(jTestDescription.getEndpoints());
-        scenarioFactory.setInvokerClazz(jTestDescription.getInvoker());
+        scenarioFactory.setQueryProvider(jTestDefinition.getQueries());
+        scenarioFactory.setEndpointProvider(jTestDefinition.getEndpoints());
+        scenarioFactory.setInvokerClazz(jTestDefinition.getInvoker());
         scenarioFactory.setLoadBalancer(new SimpleCircularLoadBalancer() {{
             setPairSupplierFactory(new RoundRobinPairSupplierFactory());
         }});
         prototype.setScenarioFactory(scenarioFactory);
 
-        prototype.setName(jTestDescription.getId());
+        prototype.setName(jTestDefinition.getId());
 
         ManagedList collectors = new ManagedList();
         collectors.add(getSuccessRateMetric());
         collectors.add(ReflectionProvider.ofClass(DurationCollector.class));
         collectors.add(ReflectionProvider.ofClass(InformationCollector.class));
-        for (Class<? extends ResponseValidator> clazz: jTestDescription.getValidators()) {
+        for (Class<? extends ResponseValidator> clazz: jTestDefinition.getValidators()) {
             ValidationCollectorProvider validationCollectorProvider = new ValidationCollectorProvider();
             validationCollectorProvider.setValidator(ReflectionProvider.ofClass(clazz));
             collectors.add(validationCollectorProvider);

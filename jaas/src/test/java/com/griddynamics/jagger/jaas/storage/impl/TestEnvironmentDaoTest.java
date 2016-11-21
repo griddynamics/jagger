@@ -1,21 +1,10 @@
 package com.griddynamics.jagger.jaas.storage.impl;
 
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
-import static java.time.ZoneOffset.UTC;
-import static java.time.ZonedDateTime.now;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-
 import com.griddynamics.jagger.jaas.config.TestPersistenceConfig;
 import com.griddynamics.jagger.jaas.storage.TestEnvironmentDao;
+import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
-import com.griddynamics.jagger.jaas.storage.model.TestSuiteEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +15,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
+import static java.time.ZoneOffset.UTC;
+import static java.time.ZonedDateTime.now;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestPersistenceConfig.class)
@@ -73,7 +73,7 @@ public class TestEnvironmentDaoTest {
         testEnvironmentDao.create(expected);
 
         expected.setStatus(PENDING);
-        expected.setRunningTestSuite(null);
+        expected.setRunningLoadScenario(null);
         testEnvironmentDao.update(expected);
 
         TestEnvironmentEntity actual = testEnvironmentDao.read(ENVIRONMENT_ID_1);
@@ -84,12 +84,12 @@ public class TestEnvironmentDaoTest {
     }
 
     @Test
-    public void updateRemoveTestSuitesTest() {
+    public void updateRemoveLoadScenariosTest() {
         TestEnvironmentEntity expected = getTestEnvironmentEntity();
         testEnvironmentDao.create(expected);
 
-        expected.setRunningTestSuite(null);
-        expected.getTestSuites().clear();
+        expected.setRunningLoadScenario(null);
+        expected.getLoadScenarios().clear();
         testEnvironmentDao.update(expected);
 
         TestEnvironmentEntity actual = testEnvironmentDao.read(ENVIRONMENT_ID_1);
@@ -100,43 +100,43 @@ public class TestEnvironmentDaoTest {
     }
 
     @Test
-    public void updateSetTestSuitesTest() {
+    public void updateSetLoadScenariosTest() {
         TestEnvironmentEntity expected = new TestEnvironmentEntity();
         expected.setEnvironmentId(ENVIRONMENT_ID_1);
         testEnvironmentDao.create(expected);
 
-        TestSuiteEntity runningTestSuite = new TestSuiteEntity();
-        runningTestSuite.setTestSuiteId(TEST_SUITE_ID_1);
-        runningTestSuite.setTestEnvironmentEntity(expected);
-        expected.setRunningTestSuite(runningTestSuite);
-        expected.setTestSuites(newArrayList(runningTestSuite));
+        LoadScenarioEntity runningLoadScenario = new LoadScenarioEntity();
+        runningLoadScenario.setLoadScenarioId(TEST_SUITE_ID_1);
+        runningLoadScenario.setTestEnvironmentEntity(expected);
+        expected.setRunningLoadScenario(runningLoadScenario);
+        expected.setLoadScenarios(newArrayList(runningLoadScenario));
         testEnvironmentDao.update(expected);
 
         TestEnvironmentEntity actual = testEnvironmentDao.read(ENVIRONMENT_ID_1);
 
         assertThat(actual, is(notNullValue()));
         assertThat(actual, is(expected));
-        assertThat(actual.getTestSuites().size(), is(expected.getTestSuites().size()));
+        assertThat(actual.getLoadScenarios().size(), is(expected.getLoadScenarios().size()));
         assertThat(testEnvironmentDao.readAll().size(), is(1));
     }
 
     @Test
-    public void updateTestSuitesTest() {
+    public void updateLoadScenariosTest() {
         TestEnvironmentEntity expected = getTestEnvironmentEntity();
-        expected.setRunningTestSuite(null);
-        TestSuiteEntity testSuiteEntity1 = new TestSuiteEntity();
-        testSuiteEntity1.setTestSuiteId(TEST_SUITE_ID_3);
-        testSuiteEntity1.setTestEnvironmentEntity(expected);
-        expected.getTestSuites().add(testSuiteEntity1);
+        expected.setRunningLoadScenario(null);
+        LoadScenarioEntity loadScenarioEntity1 = new LoadScenarioEntity();
+        loadScenarioEntity1.setLoadScenarioId(TEST_SUITE_ID_3);
+        loadScenarioEntity1.setTestEnvironmentEntity(expected);
+        expected.getLoadScenarios().add(loadScenarioEntity1);
         testEnvironmentDao.create(expected);
 
-        TestSuiteEntity testSuiteEntity = new TestSuiteEntity();
-        testSuiteEntity.setTestSuiteId(TEST_SUITE_ID_2);
-        testSuiteEntity.setTestEnvironmentEntity(expected);
+        LoadScenarioEntity loadScenarioEntity = new LoadScenarioEntity();
+        loadScenarioEntity.setLoadScenarioId(TEST_SUITE_ID_2);
+        loadScenarioEntity.setTestEnvironmentEntity(expected);
 
-        expected.getTestSuites().clear();
-        expected.getTestSuites().add(testSuiteEntity);
-        expected.getTestSuites().add(testSuiteEntity1);
+        expected.getLoadScenarios().clear();
+        expected.getLoadScenarios().add(loadScenarioEntity);
+        expected.getLoadScenarios().add(loadScenarioEntity1);
         testEnvironmentDao.update(expected);
 
         TestEnvironmentEntity actual = testEnvironmentDao.read(ENVIRONMENT_ID_1);
@@ -147,18 +147,18 @@ public class TestEnvironmentDaoTest {
     }
 
     @Test
-    public void createWithSameTestSuitesTest() {
+    public void createWithSameLoadScenariosTest() {
         TestEnvironmentEntity expected = getTestEnvironmentEntities().get(0);
         testEnvironmentDao.create(expected);
 
         TestEnvironmentEntity expected2 = getTestEnvironmentEntities().get(1);
-        expected2.setRunningTestSuite(null);
-        expected2.getTestSuites().clear();
+        expected2.setRunningLoadScenario(null);
+        expected2.getLoadScenarios().clear();
 
-        TestSuiteEntity testSuiteEntity = new TestSuiteEntity();
-        testSuiteEntity.setTestSuiteId(TEST_SUITE_ID_1);
-        testSuiteEntity.setTestEnvironmentEntity(expected2);
-        expected2.getTestSuites().add(testSuiteEntity);
+        LoadScenarioEntity loadScenarioEntity = new LoadScenarioEntity();
+        loadScenarioEntity.setLoadScenarioId(TEST_SUITE_ID_1);
+        loadScenarioEntity.setTestEnvironmentEntity(expected2);
+        expected2.getLoadScenarios().add(loadScenarioEntity);
 
         testEnvironmentDao.create(expected2);
 
@@ -170,10 +170,10 @@ public class TestEnvironmentDaoTest {
         assertThat(actual2, is(notNullValue()));
         assertThat(actual2, is(expected2));
         assertThat(testEnvironmentDao.readAll().size(), is(2));
-        assertThat(actual1.getTestSuites().size(), is(1));
-        assertThat(actual2.getTestSuites().size(), is(1));
-        assertThat(actual1.getTestSuites().get(0), is(expected.getTestSuites().get(0)));
-        assertThat(actual2.getTestSuites().get(0), is(expected2.getTestSuites().get(0)));
+        assertThat(actual1.getLoadScenarios().size(), is(1));
+        assertThat(actual2.getLoadScenarios().size(), is(1));
+        assertThat(actual1.getLoadScenarios().get(0), is(expected.getLoadScenarios().get(0)));
+        assertThat(actual2.getLoadScenarios().get(0), is(expected2.getLoadScenarios().get(0)));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class TestEnvironmentDaoTest {
         testEnvironmentDao.create(expected);
 
         expected.setStatus(PENDING);
-        expected.setRunningTestSuite(null);
+        expected.setRunningLoadScenario(null);
         testEnvironmentDao.createOrUpdate(expected);
 
         TestEnvironmentEntity actual = testEnvironmentDao.read(ENVIRONMENT_ID_1);
@@ -320,11 +320,11 @@ public class TestEnvironmentDaoTest {
         TestEnvironmentEntity testEnvironmentEntity = new TestEnvironmentEntity();
         testEnvironmentEntity.setEnvironmentId(ENVIRONMENT_ID_1);
         testEnvironmentEntity.setStatus(RUNNING);
-        TestSuiteEntity testSuiteEntity = new TestSuiteEntity();
-        testSuiteEntity.setTestSuiteId(TEST_SUITE_ID_1);
-        testSuiteEntity.setTestEnvironmentEntity(testEnvironmentEntity);
-        testEnvironmentEntity.setTestSuites(newArrayList(testSuiteEntity));
-        testEnvironmentEntity.setRunningTestSuite(testSuiteEntity);
+        LoadScenarioEntity loadScenarioEntity = new LoadScenarioEntity();
+        loadScenarioEntity.setLoadScenarioId(TEST_SUITE_ID_1);
+        loadScenarioEntity.setTestEnvironmentEntity(testEnvironmentEntity);
+        testEnvironmentEntity.setLoadScenarios(newArrayList(loadScenarioEntity));
+        testEnvironmentEntity.setRunningLoadScenario(loadScenarioEntity);
         testEnvironmentEntity.setExpirationTimestamp(now().plusSeconds(5).withZoneSameInstant(UTC).toInstant().toEpochMilli());
         testEnvironmentEntity.setSessionId(SESSION_1);
         return testEnvironmentEntity;
@@ -334,24 +334,24 @@ public class TestEnvironmentDaoTest {
         TestEnvironmentEntity testEnvironmentEntity1 = new TestEnvironmentEntity();
         testEnvironmentEntity1.setEnvironmentId(ENVIRONMENT_ID_1);
         testEnvironmentEntity1.setStatus(RUNNING);
-        TestSuiteEntity testSuiteEntity = new TestSuiteEntity();
-        testSuiteEntity.setTestSuiteId(TEST_SUITE_ID_1);
-        testSuiteEntity.setTestEnvironmentEntity(testEnvironmentEntity1);
-        testEnvironmentEntity1.setTestSuites(newArrayList(testSuiteEntity));
-        testEnvironmentEntity1.setRunningTestSuite(testSuiteEntity);
+        LoadScenarioEntity loadScenarioEntity = new LoadScenarioEntity();
+        loadScenarioEntity.setLoadScenarioId(TEST_SUITE_ID_1);
+        loadScenarioEntity.setTestEnvironmentEntity(testEnvironmentEntity1);
+        testEnvironmentEntity1.setLoadScenarios(newArrayList(loadScenarioEntity));
+        testEnvironmentEntity1.setRunningLoadScenario(loadScenarioEntity);
         testEnvironmentEntity1.setExpirationTimestamp(now().plusSeconds(5).withZoneSameInstant(UTC).toInstant().toEpochMilli());
         testEnvironmentEntity1.setSessionId(SESSION_1);
 
         TestEnvironmentEntity testEnvironmentEntity2 = new TestEnvironmentEntity();
         testEnvironmentEntity2.setEnvironmentId(ENVIRONMENT_ID_2);
         testEnvironmentEntity2.setStatus(PENDING);
-        TestSuiteEntity testSuiteEntity2 = new TestSuiteEntity();
-        testSuiteEntity2.setTestSuiteId(TEST_SUITE_ID_2);
-        testSuiteEntity2.setTestEnvironmentEntity(testEnvironmentEntity2);
-        TestSuiteEntity testSuiteEntity3 = new TestSuiteEntity();
-        testSuiteEntity3.setTestSuiteId(TEST_SUITE_ID_3);
-        testSuiteEntity3.setTestEnvironmentEntity(testEnvironmentEntity2);
-        testEnvironmentEntity2.setTestSuites(newArrayList(testSuiteEntity2, testSuiteEntity3));
+        LoadScenarioEntity loadScenarioEntity2 = new LoadScenarioEntity();
+        loadScenarioEntity2.setLoadScenarioId(TEST_SUITE_ID_2);
+        loadScenarioEntity2.setTestEnvironmentEntity(testEnvironmentEntity2);
+        LoadScenarioEntity loadScenarioEntity3 = new LoadScenarioEntity();
+        loadScenarioEntity3.setLoadScenarioId(TEST_SUITE_ID_3);
+        loadScenarioEntity3.setTestEnvironmentEntity(testEnvironmentEntity2);
+        testEnvironmentEntity2.setLoadScenarios(newArrayList(loadScenarioEntity2, loadScenarioEntity3));
         testEnvironmentEntity2.setExpirationTimestamp(now().withZoneSameInstant(UTC).toInstant().toEpochMilli());
         testEnvironmentEntity2.setSessionId(SESSION_2);
 

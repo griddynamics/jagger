@@ -13,7 +13,7 @@ import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.master.configuration.SessionExecutionListener;
 import com.griddynamics.jagger.master.configuration.Task;
-import com.griddynamics.jagger.user.test.configurations.JTestSuite;
+import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.ManagedList;
 
@@ -24,11 +24,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 /**
  * Generates {@link Configuration} entity
- * from {@link JTestSuite} object.
+ * from {@link JLoadScenario} object.
  */
 public class ConfigurationGenerator {
     
@@ -39,21 +37,21 @@ public class ConfigurationGenerator {
     private MetricLogProcessor metricLogProcessor;
     private ProfilerLogProcessor profilerLogProcessor;
     private DurationLogProcessor durationLogProcessor;
-    private Map<String, JTestSuite> userJTestSuites = Collections.emptyMap();
+    private Map<String, JLoadScenario> jaggerLoadScenarios = Collections.emptyMap();
     private boolean useBuilders;
-    private String jTestSuiteNameToExecute;
+    private String jLoadScenarioToExecute;
     private Map<String, Configuration> configurations = Collections.emptyMap();
     
-    public Set<String> getUserJTestSuiteNames() {
+    public Set<String> getJaggerLoadScenarioNames() {
         if (useBuilders) {
-            return new HashSet<>(userJTestSuites.keySet());
+            return new HashSet<>(jaggerLoadScenarios.keySet());
         }
         return new HashSet<>(configurations.keySet());
     }
     
     @Autowired(required = false)
-    public void setUserJTestSuites(List<JTestSuite> userJTestSuites) {
-        this.userJTestSuites = userJTestSuites.stream().collect(Collectors.toMap(JTestSuite::getId, identity()));
+    public void setJaggerLoadScenarios(List<JLoadScenario> jLoadScenarios) {
+        this.jaggerLoadScenarios = jLoadScenarios.stream().collect(Collectors.toMap(JLoadScenario::getId, identity()));
     }
     
     @Autowired(required = false)
@@ -63,30 +61,34 @@ public class ConfigurationGenerator {
     
     public Configuration generate() {
         if (useBuilders) {
-            JTestSuite jTestSuite = userJTestSuites.get(jTestSuiteNameToExecute);
-            if (jTestSuite == null) {
-                throw new IllegalArgumentException(String.format("No Jagger test suite with name %s", jTestSuiteNameToExecute));
+            JLoadScenario jLoadScenario = jaggerLoadScenarios.get(jLoadScenarioToExecute);
+            if (jLoadScenario == null) {
+                throw new IllegalArgumentException(String.format("No Jagger test suite with name %s",
+                        jLoadScenarioToExecute
+                ));
             }
-            return generate(jTestSuite);
+            return generate(jLoadScenario);
         }
 
-        Configuration configuration = configurations.get(jTestSuiteNameToExecute);
+        Configuration configuration = configurations.get(jLoadScenarioToExecute);
         if (configuration == null) {
-            throw new IllegalArgumentException(String.format("No Jagger configuration with name %s", jTestSuiteNameToExecute));
+            throw new IllegalArgumentException(String.format("No Jagger configuration with name %s",
+                    jLoadScenarioToExecute
+            ));
         }
         return configuration;
     }
     
     /**
-     * Generates {@link Configuration} from {@link JTestSuite}.
+     * Generates {@link Configuration} from {@link JLoadScenario}.
      *
-     * @param jTestSuite user configuration.
+     * @param jLoadScenario user configuration.
      * @return jagger configuration.
      */
-    public Configuration generate(JTestSuite jTestSuite) {
+    public Configuration generate(JLoadScenario jLoadScenario) {
         Configuration configuration = new Configuration();
-        List<Task> tasks = jTestSuite.getTestGroups().stream().map(TestGroupGenerator::generateFromTestGroup)
-                                     .collect(Collectors.toList());
+        List<Task> tasks = jLoadScenario.getTestGroups().stream().map(TestGroupGenerator::generateFromTestGroup)
+                                        .collect(Collectors.toList());
         configuration.setTasks(tasks);
         
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
@@ -145,9 +147,9 @@ public class ConfigurationGenerator {
         this.useBuilders = useBuilders;
     }
     
-    public String getjTestSuiteNameToExecute() { return jTestSuiteNameToExecute; }
+    public String getjLoadScenarioToExecute() { return jLoadScenarioToExecute; }
     
-    public void setJTestSuiteNameToExecute(String jTestSuiteNameToExecute) {
-        this.jTestSuiteNameToExecute = jTestSuiteNameToExecute;
+    public void setJLoadScenarioIdToExecute(String jLoadScenarioToExecute) {
+        this.jLoadScenarioToExecute = jLoadScenarioToExecute;
     }
 }

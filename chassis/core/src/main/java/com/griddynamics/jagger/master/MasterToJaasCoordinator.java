@@ -3,7 +3,7 @@ package com.griddynamics.jagger.master;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus;
-import com.griddynamics.jagger.jaas.storage.model.TestSuiteEntity;
+import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +43,7 @@ public class MasterToJaasCoordinator {
     private final Set<String> availableConfigs;
     private boolean registered = false;
     private StatusExchangeThread statusExchangeThread;
-    
+
     public MasterToJaasCoordinator(String envId, String jaasEndpoint, int statusReportIntervalSeconds,
                                    Set<String> availableConfigs) {
         this.envId = envId;
@@ -108,6 +108,7 @@ public class MasterToJaasCoordinator {
             try {
                 responseEntity = restTemplate.postForEntity(envsUri, testEnvironmentEntity, String.class);
                 posted = true;
+                LOGGER.info("POST request sent to {} with body {}.", envsUri, testEnvironmentEntity);
             } catch (HttpClientErrorException e) {
                 if (!isEnvIdUnacceptable(e)) {
                     throw e;
@@ -127,8 +128,8 @@ public class MasterToJaasCoordinator {
         TestEnvironmentEntity testEnvironmentEntity = new TestEnvironmentEntity();
         testEnvironmentEntity.setEnvironmentId(envId);
         testEnvironmentEntity.setStatus(status);
-        testEnvironmentEntity.setTestSuites(availableConfigs.stream()
-                                                            .map(TestSuiteEntity::new)
+        testEnvironmentEntity.setLoadScenarios(availableConfigs.stream()
+                                                            .map(LoadScenarioEntity::new)
                                                             .collect(Collectors.toList())
         );
         
@@ -183,7 +184,11 @@ public class MasterToJaasCoordinator {
         private final SynchronousQueue<String> nextConfigToExecute = new SynchronousQueue<>();
         
         private volatile RequestEntity<TestEnvironmentEntity> requestEntity;
-    
+
+        private TestEnvironmentStatus lastStatus = TestEnvironmentStatus.PENDING;
+
+        private volatile boolean runningStatusSent = false;
+
         public StatusExchangeThread(String sessionCookie) {
             this.sessionCookie = sessionCookie;
             this.requestEntity = buildPendingRequestEntity();
@@ -205,22 +210,41 @@ public class MasterToJaasCoordinator {
         }
         
         public void setPendingRequestEntity() {
+            // This cycle is needed to prevent sending PENDING status until RUNNING status is sent in cases when load scenario lasts less
+            // than statusReportIntervalSeconds
+            while (standBy && lastStatus == TestEnvironmentStatus.RUNNING && !runningStatusSent) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException e) {
+                    LOGGER.error("Error occurred while sleeping", e);
+                    standBy = false;
+                }
+            }
+
             this.requestEntity = buildPendingRequestEntity();
+            setLastStatus(TestEnvironmentStatus.PENDING);
         }
         
         public void setRunningRequestEntity(String configName) {
             RequestEntity<TestEnvironmentEntity> requestEntity = buildPendingRequestEntity();
             requestEntity.getBody().setStatus(TestEnvironmentStatus.RUNNING);
-            requestEntity.getBody().setRunningTestSuite(new TestSuiteEntity(configName));
+            requestEntity.getBody().setRunningLoadScenario(new LoadScenarioEntity(configName));
     
             this.requestEntity = requestEntity;
+
+            setLastStatus(TestEnvironmentStatus.RUNNING);
         }
-    
+
+        private void setLastStatus(TestEnvironmentStatus lastStatus) {
+            this.lastStatus = lastStatus;
+        }
+
         @Override
         public void run() {
             do {
                 try {
                     updateStatus();
+                    runningStatusSent = lastStatus == TestEnvironmentStatus.RUNNING;
                     Thread.sleep(statusReportIntervalSeconds * 1000);
                 } catch (InterruptedException e) {
                     standBy = false;
@@ -232,6 +256,7 @@ public class MasterToJaasCoordinator {
             LOGGER.debug("Performing status update...");
             try {
                 ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+                LOGGER.info("PUT request sent to {} with body {}.", requestEntity.getUrl(), requestEntity.getBody());
                 tryToOfferNextConfigToExecute(responseEntity);
             } catch (HttpServerErrorException e) {
                 LOGGER.warn("Server error during update", e);
@@ -250,7 +275,7 @@ public class MasterToJaasCoordinator {
             if (requestEntity.getBody().getStatus() == TestEnvironmentStatus.PENDING) {
                 setPendingRequestEntity();
             } else {
-                setRunningRequestEntity(requestEntity.getBody().getRunningTestSuite().getTestSuiteId());
+                setRunningRequestEntity(requestEntity.getBody().getRunningLoadScenario().getLoadScenarioId());
             }
         }
         
