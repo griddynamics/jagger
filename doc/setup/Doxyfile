@@ -664,8 +664,10 @@ WARN_LOGFILE           =
 
 # Important: Order of the references in the a_PageOrder.dox will define order in the documentation tree view
 
-INPUT                  = ./doc/pages/a_PageOrder.dox \
+INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/Invoker.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/user/test/configurations \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleSimpleJLoadScenarioProvider.java \
                          ./doc/pages/a_PageOrder.dox \
                          ./doc/pages/Components.dox \
                          ./doc/pages/GettingStarted.dox \
@@ -681,8 +683,6 @@ INPUT                  = ./doc/pages/a_PageOrder.dox \
 
 #                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/v2 \
 #                         ./doc/pages \
-#                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/Invoker.java \
-#                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -742,21 +742,24 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = ./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/ \
-                         ./test/jagger-test/src/main/resources/configuration/master/session/ \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfInvocationListener.java \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestListener.java \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestSuiteListener.java \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties \
-                         ./doc/setup/JaggerVersion.txt \
-                         ./webclient/src/main/resources/webclient.properties \
-                         ./monitoring/agent/src/main/resources/spring/agent.properties \
-                         ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
-                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
-                         ./chassis/configuration/configuration/basic/default.environment.properties \
-                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/StandardMetricsNamesUtil.java
+EXAMPLE_PATH           = ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleSimpleJLoadScenarioProvider.java \
+                         ./webclient/src/main/resources/webclient.properties
+
+
+#./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/ \
+#                         ./test/jagger-test/src/main/resources/configuration/master/session/ \
+#                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfInvocationListener.java \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestListener.java \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestSuiteListener.java \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties \
+#                         ./doc/setup/JaggerVersion.txt \
+#                         ./monitoring/agent/src/main/resources/spring/agent.properties \
+#                         ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
+#                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
+#                         ./chassis/configuration/configuration/basic/default.environment.properties \
+#                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/StandardMetricsNamesUtil.java
 
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
@@ -834,7 +837,7 @@ USE_MDFILE_AS_MAINPAGE =
 # Note: To get rid of all source code in the generated output, make sure also
 # VERBATIM_HEADERS is set to NO.
 
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 
 # Setting the INLINE_SOURCES tag to YES will include the body
 # of functions and classes directly in the documentation.
@@ -867,11 +870,35 @@ REFERENCES_RELATION    = YES
 
 REFERENCES_LINK_SOURCE = YES
 
-# If the USE_HTAGS tag is set to YES then the references to source code
-# will point to the HTML generated by the htags(1) tool instead of doxygen
-# built-in source browser. The htags tool is part of GNU's global source
-# tagging system (see http://www.gnu.org/software/global/global.html). You
-# will need version 4.8.6 or higher.
+# If SOURCE_TOOLTIPS is enabled (the default) then hovering a hyperlink in the
+# source code will show a tooltip with additional information such as prototype,
+# brief description and links to the definition and documentation. Since this
+# will make the HTML file larger and loading of large files a bit slower, you
+# can opt to disable this feature.
+# The default value is: YES.
+# This tag requires that the tag SOURCE_BROWSER is set to YES.
+
+SOURCE_TOOLTIPS        = YES
+
+# If the USE_HTAGS tag is set to YES then the references to source code will
+# point to the HTML generated by the htags(1) tool instead of doxygen built-in
+# source browser. The htags tool is part of GNU's global source tagging system
+# (see http://www.gnu.org/software/global/global.html). You will need version
+# 4.8.6 or higher.
+#
+# To use it do the following:
+# - Install the latest version of global
+# - Enable SOURCE_BROWSER and USE_HTAGS in the config file
+# - Make sure the INPUT points to the root of the source tree
+# - Run doxygen as normal
+#
+# Doxygen will invoke htags (and that will in turn invoke gtags), so these
+# tools must be available from the command line (i.e. in the search path).
+#
+# The result: instead of the source browser generated by doxygen, the links to
+# source code will now point to the output of htags.
+# The default value is: NO.
+# This tag requires that the tag SOURCE_BROWSER is set to YES.
 
 USE_HTAGS              = NO
 
@@ -1529,18 +1556,6 @@ GENERATE_XML           = NO
 # put in front of it. If left blank `xml' will be used as the default path.
 
 XML_OUTPUT             = xml
-
-# The XML_SCHEMA tag can be used to specify an XML schema,
-# which can be used by a validating XML parser to check the
-# syntax of the XML files.
-
-XML_SCHEMA             =
-
-# The XML_DTD tag can be used to specify an XML DTD,
-# which can be used by a validating XML parser to check the
-# syntax of the XML files.
-
-XML_DTD                =
 
 # If the XML_PROGRAMLISTING tag is set to YES Doxygen will
 # dump the program listings (including syntax highlighting

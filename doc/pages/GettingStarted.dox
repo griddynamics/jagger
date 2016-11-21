@@ -4,9 +4,8 @@
 /// @n
 /// @li @ref section_getting_started_run
 /// @li @ref section_getting_started_project
+/// @li @ref section_getting_started_example
 ///
-/// @n
-/// @n
 /// @section section_getting_started_run Run test project
 /// @n
 /// Before running test project, you will need to run @ref section_installation_local @n
@@ -25,21 +24,22 @@
 /// @n
 /// @section section_getting_started_project Test project components
 /// Created test project will have following test components:
-/// @li Test description. It describes
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JLoadScenario "Load scenario".
+/// It describes the sequence of the parallel test groups execution. This is the entity that can be executed. Test project can contain multiple load scenarios. You can run one of the load scenarios at a time
+///
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup "Parallel test group".
+/// It describes what load tests will be executed in parallel. Parallel test group can contain one or multiple load tests
+///
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JLoadTest "Load test". It describes:
+///     - What load strategy will be used
+///     - When the load test should be terminated
+///
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestDefinition "Test definition". It describes
 ///     - Where and how to read test data
 ///     - What protocol to use for communication with the SUT
 ///     - How to verify if responses from the SUT are valid
 ///
-/// @li Test. It describes:
-///     - What load strategy will be used
-///     - When the load test should be terminated
-///
-/// @li Test group. It describes what tests will be executed in parallel. Tests, belonging to the same test group are executed in parallel
-///
-/// @li Test suite. It describes the order of test group execution. This is the entity that can be executed. Test project can contain multiple test suits. You can run of the test suits at a time
-///
-/// In the code of the template project, you can look for:
-/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestDescription
-/// @li @ref com.griddynamics.jagger.user.test.configurations.JTest
-/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestGroup
-/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestSuite
+/// @section section_getting_started_example Example of load scenario configuration
+/// @dontinclude  ExampleSimpleJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - Load test scenario configuration
+/// @until end: following section is used for docu generation - Load test scenario configuration

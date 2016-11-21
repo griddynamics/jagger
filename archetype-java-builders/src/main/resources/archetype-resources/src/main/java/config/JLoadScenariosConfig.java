@@ -19,9 +19,14 @@ public class JLoadScenariosConfig {
     public JLoadScenario firstJaggerLoadScenario() {
         return ExampleJLoadScenarioProvider.getFirstJaggerLoadScenario();
     }
-    
+
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
         return ExampleJLoadScenarioProvider.getExampleJaggerLoadScenario();
+    }
+
+    @Bean
+    public JLoadScenario exampleSimpleJaggerLoadScenario() {
+        return ExampleSimpleJLoadScenarioProvider.getExampleJaggerLoadScenario();
     }
 }

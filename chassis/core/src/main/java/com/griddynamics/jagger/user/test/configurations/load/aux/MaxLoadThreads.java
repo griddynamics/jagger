@@ -2,9 +2,8 @@ package com.griddynamics.jagger.user.test.configurations.load.aux;
 
 /**
  * The maximum number of threads, which Jagger engine can create to provide the requested load.
- * <p>
- * Created by Andrey Badaev
- * Date: 16/11/16
+ * By default it equals 4000. You can change this value in property file
+ *
  */
 public final class MaxLoadThreads {
     private final long maxLoadThreads;

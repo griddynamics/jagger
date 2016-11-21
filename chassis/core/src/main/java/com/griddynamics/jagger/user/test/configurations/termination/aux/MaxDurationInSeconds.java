@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.termination.aux;
 
 /**
- * The timeout for the test execution.
+ * The timeout for the test execution. If termination criteria was not reached, load test will be stopped by timeout
  */
 public final class MaxDurationInSeconds {
     private final long maxDurationInSeconds;

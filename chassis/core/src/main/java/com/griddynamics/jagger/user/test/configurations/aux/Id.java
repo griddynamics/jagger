@@ -3,10 +3,8 @@ package com.griddynamics.jagger.user.test.configurations.aux;
 import org.springframework.util.StringUtils;
 
 /**
- * Represents an ID for Jagger test description entities.
- * <p>
- * Created by Andrey Badaev
- * Date: 16/11/16
+ * Represents an ID for Jagger load test description entities.
+ *
  */
 public final class Id {
     

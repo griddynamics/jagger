@@ -3,8 +3,6 @@ package com.griddynamics.jagger.user.test.configurations.load.aux;
 /**
  * The number of requests per second Jagger shall perform.
  *
- * Created by Andrey Badaev
- * Date: 16/11/16
  */
 public final class RequestsPerSecond {
     private final long requestsPerSecond;

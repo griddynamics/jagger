@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.termination.aux;
 
 /**
- * Test load execution time in seconds.
+ * Test load execution time in seconds. After this time load test will be terminated
  */
 public final class DurationInSeconds {
     private DurationInSeconds(long durationInSeconds) {
