@@ -1,9 +1,9 @@
 package com.griddynamics.jagger.master;
 
+import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus;
-import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -91,6 +91,9 @@ public class MasterToJaasCoordinator {
                 }
             } while (configName == null);
             statusExchangeThread.setRunningRequestEntity(configName);
+            synchronized (statusExchangeThread.statusLock) {
+                statusExchangeThread.statusLock.wait();
+            }
             return configName;
         } catch (InterruptedException e) {
             statusExchangeThread.interrupt();
@@ -185,9 +188,7 @@ public class MasterToJaasCoordinator {
         
         private volatile RequestEntity<TestEnvironmentEntity> requestEntity;
 
-        private TestEnvironmentStatus lastStatus = TestEnvironmentStatus.PENDING;
-
-        private volatile boolean runningStatusSent = false;
+        private final Object statusLock = new Object();
 
         public StatusExchangeThread(String sessionCookie) {
             this.sessionCookie = sessionCookie;
@@ -210,19 +211,7 @@ public class MasterToJaasCoordinator {
         }
         
         public void setPendingRequestEntity() {
-            // This cycle is needed to prevent sending PENDING status until RUNNING status is sent in cases when load scenario lasts less
-            // than statusReportIntervalSeconds
-            while (standBy && lastStatus == TestEnvironmentStatus.RUNNING && !runningStatusSent) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(100);
-                } catch (InterruptedException e) {
-                    LOGGER.error("Error occurred while sleeping", e);
-                    standBy = false;
-                }
-            }
-
             this.requestEntity = buildPendingRequestEntity();
-            setLastStatus(TestEnvironmentStatus.PENDING);
         }
         
         public void setRunningRequestEntity(String configName) {
@@ -231,12 +220,6 @@ public class MasterToJaasCoordinator {
             requestEntity.getBody().setRunningLoadScenario(new LoadScenarioEntity(configName));
     
             this.requestEntity = requestEntity;
-
-            setLastStatus(TestEnvironmentStatus.RUNNING);
-        }
-
-        private void setLastStatus(TestEnvironmentStatus lastStatus) {
-            this.lastStatus = lastStatus;
         }
 
         @Override
@@ -244,7 +227,9 @@ public class MasterToJaasCoordinator {
             do {
                 try {
                     updateStatus();
-                    runningStatusSent = lastStatus == TestEnvironmentStatus.RUNNING;
+                    synchronized (statusLock) {
+                        statusLock.notifyAll();
+                    }
                     Thread.sleep(statusReportIntervalSeconds * 1000);
                 } catch (InterruptedException e) {
                     standBy = false;
