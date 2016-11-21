@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.load;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,8 +22,12 @@ public class JLoadProfileUserGroups {
         this.tickInterval = 1000;
     }
 
-    public JLoadProfileUserGroups(List<JLoadProfileUsers> userGroups) {
-        this.userGroups = userGroups;
+    public JLoadProfileUserGroups(JLoadProfileUsers userGroup, JLoadProfileUsers... userGroups) {
+        Objects.nonNull(userGroup);
+        ArrayList<JLoadProfileUsers> groups = new ArrayList<>();
+        groups.add(userGroup);
+        Collections.addAll(groups, userGroups);
+        this.userGroups = groups;
     }
 
     public List<JLoadProfileUsers> getUserGroups() {
