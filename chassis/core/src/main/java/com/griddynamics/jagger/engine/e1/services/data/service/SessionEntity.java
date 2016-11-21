@@ -1,33 +1,44 @@
 package com.griddynamics.jagger.engine.e1.services.data.service;
 
+import java.util.Comparator;
 import java.util.Date;
 
-/** Class is a model of session
+/**
+ * Class is a model of session
  *
- * @details
- * SessionEntity is used to get test results from database with use of @ref DataService
- *
- * @author
- * Gribov Kirill
+ * @author Gribov Kirill
+ * @details SessionEntity is used to get test results from database with use of @ref DataService
  */
 public class SessionEntity {
 
-    /** Session id */
+    /**
+     * Session id
+     */
     private String id;
 
-    /** Session comment */
+    /**
+     * Session comment
+     */
     private String comment;
 
-    /** Start time */
+    /**
+     * Start time
+     */
     private Date startDate;
 
-    /** Stop time */
+    /**
+     * Stop time
+     */
     private Date endDate;
 
-    /** Number of kernels used for workload generation */
+    /**
+     * Number of kernels used for workload generation
+     */
     private Integer kernels;
 
-    /** Get session id */
+    /**
+     * Get session id
+     */
     public String getId() {
         return id;
     }
@@ -36,7 +47,9 @@ public class SessionEntity {
         this.id = id;
     }
 
-    /** Get session comment */
+    /**
+     * Get session comment
+     */
     public String getComment() {
         return comment;
     }
@@ -45,7 +58,9 @@ public class SessionEntity {
         this.comment = comment;
     }
 
-    /** Get start time */
+    /**
+     * Get start time
+     */
     public Date getStartDate() {
         return startDate;
     }
@@ -54,7 +69,9 @@ public class SessionEntity {
         this.startDate = startDate;
     }
 
-    /** Get stop time */
+    /**
+     * Get stop time
+     */
     public Date getEndDate() {
         return endDate;
     }
@@ -63,7 +80,9 @@ public class SessionEntity {
         this.endDate = endDate;
     }
 
-    /** Get number of kernels used for workload generation */
+    /**
+     * Get number of kernels used for workload generation
+     */
     public Integer getKernels() {
         return kernels;
     }
@@ -74,16 +93,30 @@ public class SessionEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         SessionEntity that = (SessionEntity) o;
 
-        if (comment != null ? !comment.equals(that.comment) : that.comment != null) return false;
-        if (endDate != null ? !endDate.equals(that.endDate) : that.endDate != null) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (kernels != null ? !kernels.equals(that.kernels) : that.kernels != null) return false;
-        if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null) return false;
+        if (comment != null ? !comment.equals(that.comment) : that.comment != null) {
+            return false;
+        }
+        if (endDate != null ? !endDate.equals(that.endDate) : that.endDate != null) {
+            return false;
+        }
+        if (id != null ? !id.equals(that.id) : that.id != null) {
+            return false;
+        }
+        if (kernels != null ? !kernels.equals(that.kernels) : that.kernels != null) {
+            return false;
+        }
+        if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null) {
+            return false;
+        }
 
         return true;
     }
@@ -107,5 +140,17 @@ public class SessionEntity {
                 ", endDate='" + endDate + '\'' +
                 ", kernels=" + kernels +
                 '}';
+    }
+
+    public static class IdComparator implements Comparator<SessionEntity> {
+
+        @Override
+        public int compare(SessionEntity o1, SessionEntity o2) {
+            Integer id1 = Integer.parseInt(o1.getId());
+            Integer id2 = Integer.parseInt(o2.getId());
+
+            return id2.compareTo(id1);
+        }
+
     }
 }

@@ -19,6 +19,4 @@
         <resource>src/main/resources/suite/test.description.conf.xml</resource>
         <resource>assembly-config.xml</resource>
     </resources>
-
-
 </archetype>

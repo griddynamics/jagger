@@ -61,6 +61,7 @@
         <module>jaas</module>
         <module>rawdata</module>
         <module>jaas-client</module>
+        <module>archetype-java-builders</module>
     </modules>
 
     <scm>

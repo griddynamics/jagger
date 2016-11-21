@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>${groupId}</groupId>
+    <artifactId>${artifactId}</artifactId>
+    <version>${version}</version>
+    <name>${groupId}:${artifactId}</name>
+    <packaging>jar</packaging>
+
+    <properties>
+        <spring.version>spring.version.placeholder</spring.version>
+        <jagger.version>jagger.version.placeholder</jagger.version>
+        <jagger.targetJdkVersion>jagger.java.version.placeholder</jagger.targetJdkVersion>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>gd-jagger-nexus-snapshots</id>
+            <name>gd-jagger-nexus-snapshots</name>
+            <url>https://nexus.griddynamics.net/nexus/content/repositories/jagger-snapshots/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>gd-jagger-nexus-releases</id>
+            <name>gd-jagger-nexus-releases</name>
+            <url>https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>gd-public</id>
+            <name>gd-public</name>
+            <url>https://nexus.griddynamics.net/nexus/content/repositories/public/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Jagger service-->
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>jagger-distribution</artifactId>
+            <type>zip</type>
+            <classifier>full</classifier>
+            <version>${jagger.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.spring.schema</artifactId>
+            <version>${jagger.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.core</artifactId>
+            <version>${jagger.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.griddynamics.jagger</groupId>
+            <artifactId>chassis.invokers</artifactId>
+            <version>${jagger.version}</version>
+        </dependency>
+
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r09</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${jagger.targetJdkVersion}</source>
+                    <target>${jagger.targetJdkVersion}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>assembly-config.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>full</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

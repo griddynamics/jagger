@@ -25,6 +25,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+     <!--to include user defined Jagger Load Test scenarios-->
+    <context:component-scan base-package="com.griddynamics.jagger.config"/>
     <context:annotation-config/>
 
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
@@ -157,7 +159,7 @@
     <bean id="metaDataStorage" class="com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage"/>
 
     <bean id="configurationGenerator" class="com.griddynamics.jagger.util.generators.ConfigurationGenerator">
-        <property name="JTestSuiteNameToExecute" value="${chassis.master.session.configuration.bean.name}"/>
+        <property name="JLoadScenarioIdToExecute" value="${jagger.load.scenario.id.to.execute}"/>
         <property name="basicAggregator" ref="basicAggregator"/>
         <property name="basicSessionCollector" ref="basicSessionCollector"/>
         <property name="e1MasterCollector" ref="e1MasterCollector"/>
