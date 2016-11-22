@@ -49,6 +49,7 @@ public class JLoadProfileUserGroups implements JLoadProfile {
     }
 
     public static class Builder {
+        static final int DEFAULT_TICK_INTERVAL = 1000;
         private final List<JLoadProfileUsers> userGroups;
         private int delayBetweenInvocationsInSeconds;
         private int tickInterval;
@@ -56,7 +57,7 @@ public class JLoadProfileUserGroups implements JLoadProfile {
         private Builder(JLoadProfileUsers userGroup) {
             Objects.nonNull(userGroup);
             this.userGroups = singletonList(userGroup);
-            this.tickInterval = 1000;
+            this.tickInterval = DEFAULT_TICK_INTERVAL;
         }
 
         public Builder(JLoadProfileUsers userGroup, JLoadProfileUsers... userGroups) {
@@ -65,7 +66,7 @@ public class JLoadProfileUserGroups implements JLoadProfile {
             groups.add(userGroup);
             Collections.addAll(groups, userGroups);
             this.userGroups = groups;
-            this.tickInterval = 1000;
+            this.tickInterval = DEFAULT_TICK_INTERVAL;
         }
 
         public JLoadProfileUserGroups build() {
