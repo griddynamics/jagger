@@ -91,8 +91,13 @@ public class MasterToJaasCoordinator {
                 }
             } while (configName == null);
             statusExchangeThread.setRunningRequestEntity(configName);
+            statusExchangeThread.statusSent = false;
             synchronized (statusExchangeThread.statusLock) {
-                statusExchangeThread.statusLock.wait();
+                while (!statusExchangeThread.statusSent) {
+                    statusExchangeThread.statusLock.wait(statusReportIntervalSeconds * 1000);     // waiting until new status is sent
+                    if (!standBy)
+                        throw new TerminateException("Master execution can't be proceeded");
+                }
             }
             return configName;
         } catch (InterruptedException e) {
@@ -190,6 +195,8 @@ public class MasterToJaasCoordinator {
 
         private final Object statusLock = new Object();
 
+        private volatile boolean statusSent = false;
+
         public StatusExchangeThread(String sessionCookie) {
             this.sessionCookie = sessionCookie;
             this.requestEntity = buildPendingRequestEntity();
@@ -227,6 +234,7 @@ public class MasterToJaasCoordinator {
             do {
                 try {
                     updateStatus();
+                    statusSent = true;
                     synchronized (statusLock) {
                         statusLock.notifyAll();
                     }
