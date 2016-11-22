@@ -1,13 +1,6 @@
 /// @page GettingStarted
-/// @brief Start development of the first test project with Jagger
-/// @details
-/// @n
-/// @li @ref section_getting_started_run
-/// @li @ref section_getting_started_project
-/// @li @ref section_getting_started_example
 ///
 /// @section section_getting_started_run Run test project
-/// @n
 /// Before running test project, you will need to run @ref section_installation_local @n
 /// After installation is finished, go to your project directory @n
 /// @n
@@ -22,24 +15,11 @@
 /// ./start.sh profiles/basic/environment.properties
 /// @endcode
 /// @n
-/// @section section_getting_started_project Test project components
-/// Created test project will have following test components:
-/// @li @ref com.griddynamics.jagger.user.test.configurations.JLoadScenario "Load scenario".
-/// It describes the sequence of the parallel test groups execution. This is the entity that can be executed. Test project can contain multiple load scenarios. You can run one of the load scenarios at a time
+/// Verify results @n
+/// @li Examine pdf report generated in the test execution folder
+/// @li View test results @ref WebUiMain "via WebUI". By default `http://localhost:8087/`
+/// @li Access test results or download pdf report @ref JaasMain "via REST API". By default at `http://localhost:8088/jaas/swagger-ui.html#/`
 ///
-/// @li @ref com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup "Parallel test group".
-/// It describes what load tests will be executed in parallel. Parallel test group can contain one or multiple load tests
-///
-/// @li @ref com.griddynamics.jagger.user.test.configurations.JLoadTest "Load test". It describes:
-///     - What load strategy will be used
-///     - When the load test should be terminated
-///
-/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestDefinition "Test definition". It describes
-///     - Where and how to read test data
-///     - What protocol to use for communication with the SUT
-///     - How to verify if responses from the SUT are valid
-///
-/// @section section_getting_started_example Example of load scenario configuration
-/// @dontinclude  ExampleSimpleJLoadScenarioProvider.java
-/// @skip  begin: following section is used for docu generation - Load test scenario configuration
-/// @until end: following section is used for docu generation - Load test scenario configuration
+/// @n
+/// You have learned how to launch the project. Now let's see how to @ref WritingTest "develop a new load scenario"
+

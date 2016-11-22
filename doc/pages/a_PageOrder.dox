@@ -2,4 +2,8 @@
 
 /// @page Installation Installation
 /// @page GettingStarted Getting started
-/// @page Components Framework components
+/// @page WritingTest Creating load test
+/// @page JaggerProperties Jagger configuration
+/// @page MonitoringMain Collecting system and JVM metrics
+/// @page FrameworkComponents Framework components
+///

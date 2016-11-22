@@ -14,7 +14,7 @@ import java.util.List;
  * What load scenario to execute is defined by 'jagger.load.scenario.id.to.execute' property@n
  * You can set it via system properties or in the 'environment.properties' file @n
  * @n
- * See @ref section_getting_started_project for more details @n
+ * See @ref section_writing_test_load_scenario for more details @n
  * @n
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n

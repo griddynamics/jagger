@@ -11,10 +11,10 @@
 /// @n
 /// @section section_main_what_is_jagger Capabilities overview
 /// Main features:
-/// @li Generate load (TODO link to load and termination)
+/// @li @ref WritingTest "Generate load"
 /// @li Collect performance metrics (TODO link to main performance metrics)
 /// @li Validate responses from the system under test
-/// @li Collect monitoring metrics from agents (TODO link to monitoring)
+/// @li @ref MonitoringMain "Collect system and JVM monitoring metrics"
 /// @li Store test results
 /// @li Report test results
 /// @li @ref WebUiMain "Display, compare, share test results via WebUI"
@@ -23,33 +23,6 @@
 /// @li Rise pass/warning/fail alerts in the CI
 /// @li Work with custom components
 /// @li Run in single node or distributed mode
-///
-///
-/// @section section_main_outdated Outdated (TODO remove)
-/// @li @ref Installation
-///
-/// @li @ref GettingStarted
-///
-/// @li @ref Components
-///
-/// @li @ref Main_Test_Flow_group
-///
-/// @li @ref Main_Aggregators_General_group
-/// @li @ref Main_Collectors_General_group
-/// @li @ref Main_Distributors_General_group
-/// @li @ref Main_Listeners_General_group
-/// @li @ref Main_Providers_General_group
-/// @li @ref Main_Services_General_group
-/// @li @ref Main_Decision_Maker_General_group @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
-///
-/// @li @ref Main_Custom_Components_group
-///
-/// @li @ref Main_Properties_group @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
-///
-/// @li @ref WebUiMain
-///
-/// @li @ref MonitoringMain @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
-///
 /// @n
 /// @n
 /// Other documentation <a href='../archive/index.html'>versions</a>

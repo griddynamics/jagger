@@ -25,7 +25,7 @@ import static org.springframework.web.util.UriComponentsBuilder.newInstance;
  * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields. <p>
  *
  * @author Anton Antonenko
- * @since 1.3
+ * @since 2.0
  */
 @SuppressWarnings("unused")
 public class JHttpEndpoint implements Serializable {

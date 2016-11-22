@@ -25,8 +25,11 @@ public class JLoadScenariosConfig {
         return ExampleJLoadScenarioProvider.getExampleJaggerLoadScenario();
     }
 
+    // begin: following section is used for docu generation - Load test scenario registering
     @Bean
     public JLoadScenario exampleSimpleJaggerLoadScenario() {
         return ExampleSimpleJLoadScenarioProvider.getExampleJaggerLoadScenario();
     }
+    // end: following section is used for docu generation - Load test scenario registering
+
 }

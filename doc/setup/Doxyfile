@@ -667,21 +667,26 @@ WARN_LOGFILE           =
 INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/Invoker.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/user/test/configurations \
-                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleSimpleJLoadScenarioProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/v2 \
                          ./doc/pages/a_PageOrder.dox \
+                         ./doc/pages/AgentProperties.dox \
                          ./doc/pages/Components.dox \
                          ./doc/pages/GettingStarted.dox \
                          ./doc/pages/Installation.dox \
+                         ./doc/pages/JaggerProperties.dox \
                          ./doc/pages/JaasInstallation.dox \
                          ./doc/pages/JaaSMain.dox \
                          ./doc/pages/MainPage.dox \
+                         ./doc/pages/MonitoringMain.dox \
+                         ./doc/pages/MonitoringMetricsSetup.dox \
+                         ./doc/pages/MonitoringStartingAgent.dox \
                          ./doc/pages/WebUiInstallation.dox \
                          ./doc/pages/WebUiMain.dox \
                          ./doc/pages/WebUiOverview.dox \
                          ./doc/pages/WebUiProperties.dox \
-                         ./doc/pages/WebUiUserCommentsAndTags.dox
+                         ./doc/pages/WebUiUserCommentsAndTags.dox \
+                         ./doc/pages/WritingTest.dox
 
-#                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/v2 \
 #                         ./doc/pages \
 
 # This tag can be used to specify the character encoding of the source files
@@ -742,8 +747,17 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleSimpleJLoadScenarioProvider.java \
-                         ./webclient/src/main/resources/webclient.properties
+EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleSimpleJLoadScenarioProvider.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/config/JLoadScenariosConfig.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleQueriesProvider.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleEndpointsProvider.java \
+                         ./webclient/src/main/resources/webclient.properties \
+                         ./monitoring/agent/src/main/resources/spring/agent.properties \
+                         ./chassis/configuration/configuration/basic/default.environment.properties \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties
+#                          ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
+#                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
 
 
 #./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \
@@ -753,12 +767,6 @@ EXAMPLE_PATH           = ./archetype-java-builders/src/main/resources/archetype-
 #                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfInvocationListener.java \
 #                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestListener.java \
 #                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestSuiteListener.java \
-#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties \
-#                         ./doc/setup/JaggerVersion.txt \
-#                         ./monitoring/agent/src/main/resources/spring/agent.properties \
-#                         ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
-#                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
-#                         ./chassis/configuration/configuration/basic/default.environment.properties \
 #                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/StandardMetricsNamesUtil.java
 
 

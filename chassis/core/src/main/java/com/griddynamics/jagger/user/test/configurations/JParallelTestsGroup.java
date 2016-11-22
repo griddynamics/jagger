@@ -10,7 +10,7 @@ import java.util.List;
  * @n
  * @par Details:
  * @details Parallel test group is a step in the JLoadScenario execution sequence. It can contain one ore multiple JLoadTest. All JLoadTest inside group will be executed in parallel. @n
- * See @ref section_getting_started_project for more details @n
+ * See @ref section_writing_test_load_scenario for more details @n
  * @n
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n

@@ -6,6 +6,8 @@ import java.util.Objects;
 
 /**
  * Test with such termination strategy will be executed for the defined time - duration.
+ *
+ * @ingroup Main_Termination_criteria_group
  */
 public class JTerminationCriteriaDuration implements JTerminationCriteria {
     

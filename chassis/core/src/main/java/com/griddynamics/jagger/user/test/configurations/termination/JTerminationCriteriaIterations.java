@@ -7,6 +7,8 @@ import java.util.Objects;
 
 /**
  * Test with such termination strategy will last till defined number of requests are executed.
+ *
+ * @ingroup Main_Termination_criteria_group
  */
 public class JTerminationCriteriaIterations implements JTerminationCriteria {
 

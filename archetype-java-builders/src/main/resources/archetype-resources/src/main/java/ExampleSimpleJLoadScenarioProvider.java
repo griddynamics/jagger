@@ -19,9 +19,9 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.aux.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.aux.MaxDurationInSeconds;
 
+// begin: following section is used for docu generation - Load test scenario configuration
 public class ExampleSimpleJLoadScenarioProvider {
 
-    // begin: following section is used for docu generation - Load test scenario configuration
     public static JLoadScenario getExampleJaggerLoadScenario() {
 
         JTestDefinition jTestDefinition = JTestDefinition.builder(Id.of("td_example"), new ExampleEndpointsProvider()).build();
@@ -38,6 +38,6 @@ public class ExampleSimpleJLoadScenarioProvider {
         // You can do it via system properties or in the 'environment.properties' file
         return JLoadScenario.builder(Id.of("ls_example"), jParallelTestsGroup).build();
     }
-    // end: following section is used for docu generation - Load test scenario configuration
-
 }
+// end: following section is used for docu generation - Load test scenario configuration
+

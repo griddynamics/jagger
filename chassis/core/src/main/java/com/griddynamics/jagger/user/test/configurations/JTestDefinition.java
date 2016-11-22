@@ -11,7 +11,7 @@ import java.util.List;
 /** @brief Definition of the load test - describes test data sources and the protocol, used during load test
  * @n
  * @par Details:
- * @details Test definition is the base component of the @ref section_getting_started_project "load test description". With the help of the internal Builder class it allows to setup: @n
+ * @details Test definition is the base component of the @ref section_writing_test_load_scenario "load test description". With the help of the internal Builder class it allows to setup: @n
  * @li source of the endpointsProvider (where to apply load)
  * @li source of queries (what parameters of the load to set)
  * @li what protocol to use for the communication with the system under test (SUT)
@@ -91,7 +91,7 @@ public class JTestDefinition {
         /**
          * Optional: Sets subtypes of {@link com.griddynamics.jagger.invoker.Invoker}
          *
-         * Instances of this class will be used to during Jagger test execution. @n
+         * Instances of this class will be used to during Jagger test execution to send requests to the System under test. @n
          * Example:
          * @code
          * withInvoker(com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker.class)

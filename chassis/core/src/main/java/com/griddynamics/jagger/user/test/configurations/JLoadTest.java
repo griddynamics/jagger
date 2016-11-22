@@ -11,7 +11,7 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
  * @li load strategy - how load will be applied
  * @li termination criteria - when load should be terminated
  *
- * See @ref section_getting_started_project for more details @n
+ * See @ref section_writing_test_load_scenario for more details @n
  * @n
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n
@@ -36,7 +36,7 @@ public class JLoadTest {
 
     /** Builder of the JLoadTest
      * @n
-     * @details Constructor parameters are mandatory for the JParallelTestsGroup. JLoadTest parameters, set by setters are optional
+     * @details Constructor parameters are mandatory for the JLoadTest. JLoadTest parameters, set by setters are optional
      * @n
      * @param id - Unique id of the test definition
      * @param definition - Definition of the load test (sources of the test data and used protocol)

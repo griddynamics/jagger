@@ -8,6 +8,8 @@ import java.util.Objects;
 
 /**
  * This type of load implements an exact number of requests per second performed by Jagger.
+ *
+ * @ingroup Main_Load_profiles_group
  */
 public class JLoadProfileRps implements JLoadProfile {
 
