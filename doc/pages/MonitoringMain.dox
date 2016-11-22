@@ -1,8 +1,8 @@
-/// @page MonitoringMain Jagger Monitoring Metrics
-/// @brief Section provides full information about collection metrics on System Under Test site @n
+/// @page MonitoringMain
+/// @brief Section provides full information about collection system metrics @n
 /// @details
 /// @n
-/// Jagger is able to collect information about resources utilization on System Under Test (SUT) site. @n
+/// Jagger is able to collect information about system and JVM resources utilization @n
 /// For this purpose monitoring agents can be launched. Agent will collect following monitoring metrics: @n
 /// @n
 /// 1. System resources (collected with use of [Sigar](http://www.hyperic.com/products/sigar))
@@ -15,9 +15,7 @@
 ///   * Minor and major GC runs
 ///   * Thread count
 ///
-/// @n
-/// See also: @n
-/// @li @ref MonitoringSetup
-/// @li @ref MonitoringMetricsSetup
+/// @li @subpage MonitoringSetup
+/// @li @subpage MonitoringMetricsSetup
 /// @li @ref section_default_properties_for_monitoring_metrics "List of all monitoring metrics and default settings"
 ///

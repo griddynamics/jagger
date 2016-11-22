@@ -6,17 +6,42 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Describes the group of {@link JLoadTest} instances that will be executed in parallel.
+/** @brief  Describes step in the JLoadScenario execution sequence
+ * @n
+ * @par Details:
+ * @details Parallel test group is a step in the JLoadScenario execution sequence. It can contain one ore multiple JLoadTest. All JLoadTest inside group will be executed in parallel. @n
+ * See @ref section_writing_test_load_scenario for more details @n
+ * @n
+ * More information on the parameter of the test definition, you can find in the Builder documentation @n
+ * @n
+ * Code example:
+ * @dontinclude  ExampleSimpleJLoadScenarioProvider.java
+ * @skip  begin: following section is used for docu generation - Load test scenario configuration
+ * @until end: following section is used for docu generation - Load test scenario configuration
  */
 public class JParallelTestsGroup {
     private final String id;
     private final List<JLoadTest> tests;
 
+    /** Builder of the JParallelTestsGroup
+     * @n
+     * @details Constructor parameters are mandatory for the JParallelTestsGroup. All parameters, set by setters are optional
+     * @n
+     * @param id - Unique id of the parallel test group
+     * @param tests - List of JLoadTest that should run in parallel. Can contain single or multiple elements
+     */
     public static Builder builder(Id id, List<JLoadTest> tests) {
         return new Builder(id, tests);
     }
-    
+
+    /** Builder of the JParallelTestsGroup
+     * @n
+     * @details Constructor parameters are mandatory for the JParallelTestsGroup. All parameters, set by setters are optional
+     * @n
+     * @param id - Unique id of the parallel test group
+     * @param test - Test group should contain at least on JLoadTest
+     * @param tests - List of JLoadTest that should run in parallel. Can contain single or multiple elements
+     */
     public static Builder builder(Id id, JLoadTest test, JLoadTest... tests) {
         
         List<JLoadTest> testList = new ArrayList<>();
@@ -42,9 +67,9 @@ public class JParallelTestsGroup {
         }
 
         /**
-         * Creates the object of {@link JParallelTestsGroup} type with custom parameters.
+         * Creates the object of JParallelTestsGroup type with custom parameters
          *
-         * @return {@link JParallelTestsGroup} object.
+         * @return JParallelTestsGroup object.
          */
         public JParallelTestsGroup build() {
             return new JParallelTestsGroup(this);

@@ -1,0 +1,16 @@
+/* The custom CSS for doxygen 1.8.4 */
+
+div.fragment {
+        padding: 10px;
+        margin: 0px 25px 0px 0px;
+	background-color: #FBFCFD;
+	border: 1px solid #C4CFE5;
+}
+
+body, table, div, p, dl {
+    font: 16px Helvetica Neue,Helvetica,Arial,sans-serif;
+    line-height: 24px;
+    color: #4d4d4d;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 300;
+}

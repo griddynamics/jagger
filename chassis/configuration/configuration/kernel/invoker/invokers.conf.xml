@@ -61,7 +61,7 @@
         <property name="httpClient" ref="httpClient"/>
     </bean>
 
-    <!-- New invoker from 1.3 -->
+    <!-- New invoker from 2.0 -->
     <bean id="defaultHttpInvoker" class="com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker"/>
 
 </beans>

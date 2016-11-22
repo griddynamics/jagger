@@ -33,7 +33,7 @@ import static java.lang.String.format;
  *
  * @author Anton Antonenko
  * @see JHttpClient
- * @since 1.3
+ * @since 2.0
  */
 @SuppressWarnings({"unused", "unchecked"})
 public class SpringBasedHttpClient implements JHttpClient {

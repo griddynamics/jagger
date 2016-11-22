@@ -2,6 +2,7 @@ package ${package}.config;
 
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import ${package}.ExampleJLoadScenarioProvider;
+import ${package}.ExampleSimpleJLoadScenarioProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,9 +19,17 @@ public class JLoadScenariosConfig {
     public JLoadScenario firstJaggerLoadScenario() {
         return ExampleJLoadScenarioProvider.getFirstJaggerLoadScenario();
     }
-    
+
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
         return ExampleJLoadScenarioProvider.getExampleJaggerLoadScenario();
     }
+
+    // begin: following section is used for docu generation - Load test scenario registering
+    @Bean
+    public JLoadScenario exampleSimpleJaggerLoadScenario() {
+        return ExampleSimpleJLoadScenarioProvider.getExampleJaggerLoadScenario();
+    }
+    // end: following section is used for docu generation - Load test scenario registering
+
 }

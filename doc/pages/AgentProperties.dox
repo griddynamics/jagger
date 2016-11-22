@@ -1,9 +1,6 @@
-/// @page AgentProperties Agent properties
+/// @page AgentProperties Agent configuration
 /// @brief Section describes all available properties for Jagger agents @n
 /// @details
-/// @n
-/// Back to <a href="https://github.com/griddynamics/jagger/wiki/Monitoring-Capabilities">GitHub Monitoring Capabilities</a> documentation @n
-/// @n
 /// @n
 /// @section section_agent_properties Agent properties
 /// @n

@@ -7,9 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by Andrey Badaev
- * Date: 10/11/16
+ * Simple example of query provider
+ *
  */
+// begin: following section is used for docu generation - Query provider
 public class ExampleQueriesProvider  implements Iterable {
     @Override
     public Iterator iterator() {
@@ -31,3 +32,5 @@ public class ExampleQueriesProvider  implements Iterable {
         return queries.iterator();
     }
 }
+// end: following section is used for docu generation - Query provider
+
