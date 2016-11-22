@@ -27,34 +27,66 @@ public class JLoadProfileUserGroups implements JLoadProfile {
     /**
      * Delay between invocations in seconds. Default is 0 s.
      */
-    private int delayBetweenInvocationsInSeconds;
+    private final int delayBetweenInvocationsInSeconds;
 
     /**
      * Tick interval (in milliseconds). Default is 1000 ms.
      */
-    private int tickInterval;
+    private final int tickInterval;
 
-    public JLoadProfileUserGroups(JLoadProfileUsers userGroup) {
-        Objects.nonNull(userGroup);
-        this.userGroups = singletonList(userGroup);
-        this.tickInterval = 1000;
+    private JLoadProfileUserGroups(Builder builder) {
+        this.userGroups = builder.userGroups;
+        this.delayBetweenInvocationsInSeconds = builder.delayBetweenInvocationsInSeconds;
+        this.tickInterval = builder.tickInterval;
     }
 
-    public JLoadProfileUserGroups(JLoadProfileUsers userGroup, JLoadProfileUsers... userGroups) {
-        Objects.nonNull(userGroup);
-        ArrayList<JLoadProfileUsers> groups = new ArrayList<>();
-        groups.add(userGroup);
-        Collections.addAll(groups, userGroups);
-        this.userGroups = groups;
-        this.tickInterval = 1000;
+    public static Builder builder(JLoadProfileUsers userGroup) {
+        return new Builder(userGroup);
     }
 
-    public static JLoadProfileUserGroups of(JLoadProfileUsers userGroup) {
-        return new JLoadProfileUserGroups(userGroup);
+    public static Builder builder(JLoadProfileUsers userGroup, JLoadProfileUsers... userGroups) {
+        return new Builder(userGroup, userGroups);
     }
 
-    public static JLoadProfileUserGroups of(JLoadProfileUsers userGroup, JLoadProfileUsers... userGroups) {
-        return new JLoadProfileUserGroups(userGroup, userGroups);
+    public static class Builder {
+        private final List<JLoadProfileUsers> userGroups;
+        private int delayBetweenInvocationsInSeconds;
+        private int tickInterval;
+
+        private Builder(JLoadProfileUsers userGroup) {
+            Objects.nonNull(userGroup);
+            this.userGroups = singletonList(userGroup);
+            this.tickInterval = 1000;
+        }
+
+        public Builder(JLoadProfileUsers userGroup, JLoadProfileUsers... userGroups) {
+            Objects.nonNull(userGroup);
+            ArrayList<JLoadProfileUsers> groups = new ArrayList<>();
+            groups.add(userGroup);
+            Collections.addAll(groups, userGroups);
+            this.userGroups = groups;
+            this.tickInterval = 1000;
+        }
+
+        public JLoadProfileUserGroups build() {
+            return new JLoadProfileUserGroups(this);
+        }
+
+        /**
+         * Delay between invocations in seconds. Default is 0 s.
+         */
+        public Builder withDelayBetweenInvocationsInSeconds(int delayBetweenInvocationsInSeconds) {
+            this.delayBetweenInvocationsInSeconds = delayBetweenInvocationsInSeconds;
+            return this;
+        }
+
+        /**
+         * Tick interval (in ms). Default is 1000 ms.
+         */
+        public Builder withTickInterval(int tickInterval) {
+            this.tickInterval = tickInterval;
+            return this;
+        }
     }
 
     public List<JLoadProfileUsers> getUserGroups() {
@@ -65,23 +97,7 @@ public class JLoadProfileUserGroups implements JLoadProfile {
         return delayBetweenInvocationsInSeconds;
     }
 
-    /**
-     * Delay between invocations in seconds. Default is 0 s.
-     */
-    public JLoadProfileUserGroups withDelayBetweenInvocationsInSeconds(int delayBetweenInvocationsInSeconds) {
-        this.delayBetweenInvocationsInSeconds = delayBetweenInvocationsInSeconds;
-        return this;
-    }
-
     public int getTickInterval() {
         return tickInterval;
-    }
-
-    /**
-     * Tick interval (in ms). Default is 1000 ms.
-     */
-    public JLoadProfileUserGroups withTickInterval(int tickInterval) {
-        this.tickInterval = tickInterval;
-        return this;
     }
 }

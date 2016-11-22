@@ -1,9 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations.load;
 
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.LifeTimeInSeconds;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.NumberOfUsers;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.SlewRateUsersPerSecond;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.StartDelayInSeconds;
 
 import java.util.Objects;
 
@@ -21,28 +18,70 @@ public class JLoadProfileUsers {
     /**
      * Describes how long threads will be alive. Default is 2 days.
      */
-    private long lifeTimeInSeconds;
+    private final long lifeTimeInSeconds;
 
     /**
      * Delay before first thread will start. Default is 0.
      */
-    private long startDelayInSeconds;
+    private final long startDelayInSeconds;
 
     /**
      * Describes how many threads to start during every iteration. Default is numberOfUsers value.
      */
-    private long slewRateUsersPerSecond;
+    private final long slewRateUsersPerSecond;
 
-    public JLoadProfileUsers(NumberOfUsers numberOfUsers) {
-        Objects.nonNull(numberOfUsers);
-
-        this.numberOfUsers = numberOfUsers.value();
-        this.lifeTimeInSeconds = 60 * 60 * 48; // 2 days
-        this.slewRateUsersPerSecond = numberOfUsers.value();
+    private JLoadProfileUsers(Builder builder) {
+        this.numberOfUsers = builder.numberOfUsers.value();
+        this.lifeTimeInSeconds = builder.lifeTimeInSeconds;
+        this.startDelayInSeconds = builder.startDelayInSeconds;
+        this.slewRateUsersPerSecond = builder.slewRateUsersPerSecond;
     }
 
-    public static JLoadProfileUsers of(NumberOfUsers numberOfUsers) {
-        return new JLoadProfileUsers(numberOfUsers);
+    public static Builder builder(NumberOfUsers numberOfUsers) {
+        return new Builder(numberOfUsers);
+    }
+
+    public static class Builder {
+        private final NumberOfUsers numberOfUsers;
+        private long lifeTimeInSeconds;
+        private long startDelayInSeconds;
+        private long slewRateUsersPerSecond;
+
+        private Builder(NumberOfUsers numberOfUsers) {
+            Objects.nonNull(numberOfUsers);
+
+            this.numberOfUsers = numberOfUsers;
+            this.lifeTimeInSeconds = 60 * 60 * 48; // 2 days
+            this.slewRateUsersPerSecond = numberOfUsers.value();
+        }
+
+        public JLoadProfileUsers build() {
+            return new JLoadProfileUsers(this);
+        }
+
+        /**
+         * Describes how long threads will be alive. Default is 2 days.
+         */
+        public Builder withLifeTimeInSeconds(long lifeTimeInSeconds) {
+            this.lifeTimeInSeconds = lifeTimeInSeconds;
+            return this;
+        }
+
+        /**
+         * Delay before first thread will start. Default is 0.
+         */
+        public Builder withStartDelayInSeconds(long startDelayInSeconds) {
+            this.startDelayInSeconds = startDelayInSeconds;
+            return this;
+        }
+
+        /**
+         * Describes how many threads to start during every iteration. Default is numberOfUsers value.
+         */
+        public Builder withSlewRateUsersPerSecond(long slewRateUsersPerSecond) {
+            this.slewRateUsersPerSecond = slewRateUsersPerSecond;
+            return this;
+        }
     }
 
     public long getNumberOfUsers() {
@@ -53,35 +92,11 @@ public class JLoadProfileUsers {
         return lifeTimeInSeconds;
     }
 
-    /**
-     * Describes how long threads will be alive. Default is 2 days.
-     */
-    public JLoadProfileUsers withLifeTimeInSeconds(LifeTimeInSeconds lifeTimeInSeconds) {
-        this.lifeTimeInSeconds = lifeTimeInSeconds.value();
-        return this;
-    }
-
     public long getStartDelayInSeconds() {
         return startDelayInSeconds;
     }
 
-    /**
-     * Delay before first thread will start. Default is 0.
-     */
-    public JLoadProfileUsers withStartDelayInSeconds(StartDelayInSeconds startDelayInSeconds) {
-        this.startDelayInSeconds = startDelayInSeconds.value();
-        return this;
-    }
-
     public long getSlewRateUsersPerSecond() {
         return slewRateUsersPerSecond;
-    }
-
-    /**
-     * Describes how many threads to start during every iteration. Default is numberOfUsers value.
-     */
-    public JLoadProfileUsers withSlewRateUsersPerSecond(SlewRateUsersPerSecond slewRateUsersPerSecond) {
-        this.slewRateUsersPerSecond = slewRateUsersPerSecond.value();
-        return this;
     }
 }
