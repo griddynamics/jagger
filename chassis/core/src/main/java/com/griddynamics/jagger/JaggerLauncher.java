@@ -74,6 +74,7 @@ public final class JaggerLauncher {
     public static final String DEFAULT_ENVIRONMENT_PROPERTIES = "jagger.default.environment.properties";
     public static final String USER_ENVIRONMENT_PROPERTIES = "jagger.user.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
+    public static final String USER_CONFIGS_PACKAGE = "chassis.master.package.to.scan";
     private static final Logger log = LoggerFactory.getLogger(JaggerLauncher.class);
     private static final String DEFAULT_ENVIRONMENT_PROPERTIES_LOCATION =
             "./configuration/basic/default.environment.properties";
@@ -157,6 +158,10 @@ public final class JaggerLauncher {
     }
     
     private static void launchMaster(final URL directory) {
+    
+        // pass this property value for Spring's context:component-scan
+        System.setProperty(USER_CONFIGS_PACKAGE, environmentProperties.getProperty(USER_CONFIGS_PACKAGE));
+        
         LaunchTask masterTask = new LaunchTask() {
             @Override
             public void run() {

@@ -28,19 +28,17 @@ class WorkloadGenerator {
             ((RpsClockConfiguration) clockConfiguration).setWarmUpTime(((JLoadProfileRps) jLoadProfile).getWarmUpTimeInSeconds());
             ((RpsClockConfiguration) clockConfiguration).setMaxThreadNumber((int) ((JLoadProfileRps) jLoadProfile).getMaxLoadThreads());
         } else if (jLoadProfile instanceof JLoadProfileUserGroups) {
-            clockConfiguration = new UserGroupsClockConfiguration();
-            List<User> users = ((JLoadProfileUserGroups) jLoadProfile).getUserGroups().stream()
-                    .map(jLoadUser -> new User(String.valueOf(jLoadUser.getNumberOfUsers()), String.valueOf(jLoadUser.getSlewRateUsersPerSecond()),
-                            jLoadUser.getStartDelayInSeconds() + "s", "1s", jLoadUser.getLifeTimeInSeconds() + "s"))
+            JLoadProfileUserGroups profileUserGroups = (JLoadProfileUserGroups) jLoadProfile;
+            List<User> users = profileUserGroups.getUserGroups().stream()
+                    .map(userGroup -> new User(String.valueOf(userGroup.getNumberOfUsers()), String.valueOf(userGroup.getSlewRateUsersPerSecond()),
+                            userGroup.getStartDelayInSeconds() + "s", "1s", userGroup.getLifeTimeInSeconds() + "s"))
                     .collect(toList());
 
-            ((UserGroupsClockConfiguration) clockConfiguration).setUsers(users);
-
-            FixedDelay delay = new FixedDelay(((JLoadProfileUserGroups) jLoadProfile).getDelayBetweenInvocationsInSeconds());
-            ((UserGroupsClockConfiguration) clockConfiguration).setDelay(delay);
-
-            int tickInterval = ((JLoadProfileUserGroups) jLoadProfile).getTickInterval();
-            ((UserGroupsClockConfiguration) clockConfiguration).setTickInterval(tickInterval);
+            UserGroupsClockConfiguration userGroupsClockConfiguration = new UserGroupsClockConfiguration();
+            userGroupsClockConfiguration.setUsers(users);
+            userGroupsClockConfiguration.setDelay(new FixedDelay(profileUserGroups.getDelayBetweenInvocationsInSeconds()));
+            userGroupsClockConfiguration.setTickInterval(profileUserGroups.getTickInterval());
+            clockConfiguration = userGroupsClockConfiguration;
         }
         return clockConfiguration;
     }

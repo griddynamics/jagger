@@ -1,5 +1,5 @@
 /// @page MonitoringSetup How to start monitoring agent
-/// @brief Section describes how to start monitoring agents to collect metrics on System Under Test site @n
+/// @brief Section describes how to start monitoring agents to collect system and JVM metrics @n
 /// @details
 /// @n
 /// Back to @ref MonitoringMain @n
@@ -61,7 +61,7 @@
 /// Also you can define name for every JMX connection, like: @n
 /// @code -Djmx.services=localhost:9885{tomcat},localhost:9875{jetty} @endcode
 /// @n
-/// There are some more properties for agent setup. You can find them here: @ref section_agent_properties
+/// There are some more properties for agent setup. You can find them here: @subpage AgentProperties
 /// @n
 /// @section section_mon_agent_start_jboss JMX monitoring configuration for JBoss 6 and later
 /// Following section is important if you want to monitor application running with JBoss 6 server or later version. @n

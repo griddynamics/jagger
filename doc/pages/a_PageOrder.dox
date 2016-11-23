@@ -1,0 +1,9 @@
+// file defines order of the pages in the documentation tree view
+
+/// @page Installation Installation
+/// @page GettingStarted Getting started
+/// @page WritingTest Creating load test
+/// @page JaggerProperties Jagger configuration
+/// @page MonitoringMain Collecting system and JVM metrics
+/// @page FrameworkComponents Framework components
+///

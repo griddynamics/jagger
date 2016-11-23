@@ -1,0 +1,13 @@
+///
+/// @section section_main_outdated Outdated (TODO remove)
+///
+/// @li @ref Main_Aggregators_General_group
+/// @li @ref Main_Collectors_General_group
+/// @li @ref Main_Distributors_General_group
+/// @li @ref Main_Listeners_General_group
+/// @li @ref Main_Providers_General_group
+/// @li @ref Main_Services_General_group
+/// @li @ref Main_Decision_Maker_General_group @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
+///
+/// @li @ref Main_Custom_Components_group
+
