@@ -9,6 +9,7 @@ import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.jaas.service.DynamicDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import java.util.Set;
  */
 @RequestMapping(value = "/db")
 @RestController
+@ConditionalOnProperty(name = "jaas.hide.db.access.via.api", havingValue = "true")
 public class DataServiceRestController extends AbstractController {
     
     private final DynamicDataServiceRestController dynamicDataServiceRestController;

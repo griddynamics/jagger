@@ -38,7 +38,7 @@ import java.util.function.Function;
  */
 @RequestMapping(value = "/dbs")
 @RestController
-@ConditionalOnProperty(name = "jaas.hide.db.access.via.api", havingValue = "true")
+@ConditionalOnProperty(name = "jaas.hide.db.access.via.api", havingValue = "false")
 public class DynamicDataServiceRestController extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDataServiceRestController.class);
