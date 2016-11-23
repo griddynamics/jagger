@@ -1,3 +1,6 @@
+/** @package com.griddynamics.jagger.invoker.v2
+ * package for test definition of http load tests
+ */
 package com.griddynamics.jagger.invoker.v2;
 
 import com.griddynamics.jagger.invoker.InvocationException;
@@ -12,7 +15,7 @@ import com.griddynamics.jagger.invoker.Invoker;
  * @param <HTTP_CLIENT> the type of the HTTP-client (look at {@link JHttpClient})<p>
  * @author Anton Antonenko
  * @see Invoker
- * @since 1.3
+ * @since 2.0
  */
 @SuppressWarnings("unused")
 public abstract class AbstractHttpInvoker<HTTP_CLIENT extends JHttpClient> implements Invoker<JHttpQuery, JHttpResponse, JHttpEndpoint> {

@@ -13,7 +13,7 @@ import static java.lang.String.format;
  *
  * @author Anton Antonenko
  * @see AbstractHttpInvoker
- * @since 1.3
+ * @since 2.0
  */
 @SuppressWarnings("unused")
 public class DefaultHttpInvoker extends AbstractHttpInvoker {

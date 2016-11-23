@@ -13,7 +13,7 @@ import java.util.Map;
  * {@link JHttpResponse#body} and {@link JHttpResponse#headers} fields. <p>
  *
  * @author Anton Antonenko
- * @since 1.3
+ * @since 2.0
  */
 public class JHttpResponse<T> implements Serializable {
 

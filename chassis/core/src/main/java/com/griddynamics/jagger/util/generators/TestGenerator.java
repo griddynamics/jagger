@@ -25,6 +25,4 @@ class TestGenerator {
         task.setClockConfiguration(workloadClockConfiguration);
         return task;
     }
-
-
 }

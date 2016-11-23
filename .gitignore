@@ -66,3 +66,5 @@ local.properties
 **/.DS_Store
 **/jaggerworkspace
 **/jaasdb.*
+**/jaggerdb.*
+

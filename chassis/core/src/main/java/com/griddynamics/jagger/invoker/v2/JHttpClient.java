@@ -7,7 +7,7 @@ package com.griddynamics.jagger.invoker.v2;
  * for {@link #execute(JHttpEndpoint endpoint, JHttpQuery query)} method. <br/>
  *
  * @author Anton Antonenko
- * @since 1.3
+ * @since 2.0
  */
 public interface JHttpClient {
 

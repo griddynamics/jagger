@@ -1,0 +1,25 @@
+/// @page JaasInstallation JaaS installation
+/// @brief Section describes installation of the JaaS @n
+/// @details
+/// @n
+/// Back to @ref JaasMain @n
+/// @n
+/// @li @ref section_jaas_installation_docker
+/// @li @ref section_jaas_installation_embedded
+///
+/// @section section_jaas_installation_docker Installation with docker
+/// Fast way to install JaaS - download and run docker image. @n
+/// Details, you can find in @ref section_installation_local
+/// @n
+/// @section section_jaas_installation_embedded Installation with embedded server
+/// JaaS based on Spring Boot, so its properties can be configured using one of Spring Boot ways - @n
+/// <a href="http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html">Boot External Config</a> @n
+/// @n
+/// TODO: where to take JaaS jar? Do we have it in nexus? @n
+/// To launch JaaS just execute: @n
+/// @code
+/// java -jar <JaaS jar>
+/// @endcode
+/// @n
+/// By default JaaS is listening on port 8080.
+/// To change it just override property "server.port".
