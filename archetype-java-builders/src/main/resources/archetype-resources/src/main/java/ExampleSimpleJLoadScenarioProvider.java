@@ -26,7 +26,7 @@ public class ExampleSimpleJLoadScenarioProvider {
 
         JTestDefinition jTestDefinition = JTestDefinition.builder(Id.of("td_example"), new ExampleEndpointsProvider()).build();
 
-        JLoadProfile jLoadProfileRps = JLoadProfileRps.of(RequestsPerSecond.of(10), MaxLoadThreads.of(10), WarmUpTimeInSeconds.of(10));
+        JLoadProfile jLoadProfileRps = JLoadProfileRps.builder(RequestsPerSecond.of(10), MaxLoadThreads.of(10), WarmUpTimeInSeconds.of(10)).build();
         
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(500), MaxDurationInSeconds.of(30));
         
