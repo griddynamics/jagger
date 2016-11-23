@@ -1,15 +1,13 @@
-package com.griddynamics.jagger.user.test.configurations.load.aux;
+package com.griddynamics.jagger.user.test.configurations.load.auxiliary;
 
 /**
  * The warm up time value in seconds.
- * Jagger increases load from 0 to {@code requestPerSecond} by {@code warmUpTimeInSeconds}.
- * <p>
- * Created by Andrey Badaev
- * Date: 16/11/16
+ * Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInSeconds.
+ *
  */
 public final class WarmUpTimeInSeconds {
     private final long warmUpTimeInSeconds;
-    
+
     private WarmUpTimeInSeconds(long warmUpTimeInSeconds) {
         if (warmUpTimeInSeconds < 0) {
             throw new IllegalArgumentException(
@@ -19,11 +17,11 @@ public final class WarmUpTimeInSeconds {
         }
         this.warmUpTimeInSeconds = warmUpTimeInSeconds;
     }
-    
+
     public static WarmUpTimeInSeconds of(long warmUpTimeInSeconds) {
         return new WarmUpTimeInSeconds(warmUpTimeInSeconds);
     }
-    
+
     public long value() {
         return warmUpTimeInSeconds;
     }

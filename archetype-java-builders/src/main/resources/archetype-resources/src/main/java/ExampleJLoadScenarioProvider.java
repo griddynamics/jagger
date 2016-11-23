@@ -1,4 +1,4 @@
-package com.griddynamics.jagger;
+package ${package};
 
 import static java.util.Collections.singletonList;
 
@@ -7,17 +7,17 @@ import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
-import com.griddynamics.jagger.user.test.configurations.aux.Id;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
-import com.griddynamics.jagger.user.test.configurations.load.aux.MaxLoadThreads;
-import com.griddynamics.jagger.user.test.configurations.load.aux.RequestsPerSecond;
-import com.griddynamics.jagger.user.test.configurations.load.aux.WarmUpTimeInSeconds;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.MaxLoadThreads;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.WarmUpTimeInSeconds;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
-import com.griddynamics.jagger.user.test.configurations.termination.aux.IterationsNumber;
-import com.griddynamics.jagger.user.test.configurations.termination.aux.MaxDurationInSeconds;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 
 /**
  * Created by Andrey Badaev
@@ -28,10 +28,10 @@ public class ExampleJLoadScenarioProvider {
     public static JLoadScenario getExampleJaggerLoadScenario() {
         
         JTestDefinition jTestDefinition = JTestDefinition
-                .builder(Id.of("exampleJaggerTestDefinition"), new com.griddynamics.jagger.ExampleEndpointsProvider())
+                .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment("no comments")
-                .withQueryProvider(new com.griddynamics.jagger.ExampleQueriesProvider())
+                .withQueryProvider(new ExampleQueriesProvider())
                 .withValidators(singletonList(NotNullResponseValidator.class))
                 .build();
         
@@ -52,10 +52,10 @@ public class ExampleJLoadScenarioProvider {
     
     public static JLoadScenario getFirstJaggerLoadScenario() {
         JTestDefinition description = JTestDefinition
-                .builder(Id.of("myFirstJaggerTestDefinition"), new com.griddynamics.jagger.ExampleEndpointsProvider())
+                .builder(Id.of("myFirstJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment("no comments")
-                .withQueryProvider(new com.griddynamics.jagger.ExampleQueriesProvider())
+                .withQueryProvider(new ExampleQueriesProvider())
                 .withValidators(singletonList(NotNullResponseValidator.class))
                 .build();
         

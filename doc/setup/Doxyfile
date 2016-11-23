@@ -374,7 +374,7 @@ EXTRACT_PACKAGE        = NO
 # If the EXTRACT_STATIC tag is set to YES all static members of a file
 # will be included in the documentation.
 
-EXTRACT_STATIC         = NO
+EXTRACT_STATIC         = YES
 
 # If the EXTRACT_LOCAL_CLASSES tag is set to YES classes (and structs)
 # defined locally in source files will be included in the documentation.
@@ -662,88 +662,32 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
+# Important: Order of the references in the a_PageOrder.dox will define order in the documentation tree view
+
 INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/Invoker.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/LoadBalancer.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCalculator.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCollector.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateCollector.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/sessioncomparation/DecisionMaker.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/scenario/TerminationStrategy.java \
-                         ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/creators/ObjectCreator.java \
-                         ./chassis/invokers/src/main/java/com/griddynamics/jagger/invoker/http/ApacheAbstractHttpInvoker.java \
-                         ./chassis/invokers/src/main/java/com/griddynamics/jagger/invoker/http/HttpInvoker.java \
-                         ./chassis/invokers/src/main/java/com/griddynamics/jagger/invoker/http/HttpVisitorInvoker.java \
-                         ./chassis/invokers/src/main/java/com/griddynamics/jagger/invoker/http/ApacheHttpInvoker.java \
-                         ./chassis/invokers/src/main/java/com/griddynamics/jagger/invoker/http/TcpTrafficInvoker.java \
-                         ./chassis/invokers/src/main/java/com/griddynamics/jagger/invoker/soap/SOAPInvoker.java \
-                         ./chassis/invokers/src/main/java/com/griddynamics/jagger/invoker/stubs/WaitingInvoker.java \
-                         ./chassis/invoker.hessian/src/main/java/com/griddynamics/jagger/invoker/hessian/HessianInvoker.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/SimpleLoadBalancer.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/SimpleCircularLoadBalancer.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/RoundRobinLoadBalancer.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/QueryPoolLoadBalancer.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/PairSupplierFactoryLoadBalancer.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/OneByOneLoadBalancer.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ConsistencyValidator.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/NotNullResponseValidator.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SimpleMetricCalculator.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/sessioncomparation/WorstCaseDecisionMaker.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/scenario/UserTerminationStrategy.java \
-                         ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/creators/StringCreator.java  \
-                         ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/FileProvider.java  \
-                         ./chassis/providers/src/main/java/com/griddynamics/jagger/providers/CsvProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricCollectorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregator.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorSettings.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateAggregatorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateFailsAggregatorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/AvgMetricAggregatorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/StdDevMetricAggregatorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SumMetricAggregatorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/CumulativeMetricAggregatorProvider.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/JaggerService.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/MetricService.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/DataService.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/SessionInfoService.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricDescription.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/test/TestListener.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testsuite/TestSuiteListener.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/TestGroupListener.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/TestGroupDecisionMakerListener.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/CollectThreadsTestListener.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/invocation/InvocationListener.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/invocation/InvocationInfo.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/test/TestInfo.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testsuite/TestSuiteInfo.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/TestGroupInfo.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/Provider.java \
-                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/TimeUnits.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/MetricEntity.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/MetricSummaryValueEntity.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/MetricPlotPointEntity.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/SessionEntity.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service/TestEntity.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/BasicTGDecisionMakerListener.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/limits/Limit.java \
-                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/Decision.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/TestGroupDecisionMakerInfo.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/limits/DecisionPerTest.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/limits/DecisionPerLimit.java \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/limits/DecisionPerMetric.java \
-                         ./doc/pages/WebUiUserCommentsAndTags.txt \
-                         ./doc/pages/WebUiProperties.txt \
-                         ./doc/pages/WebUiOverview.txt \
-                         ./doc/pages/WebUiInstallation.txt \
-                         ./doc/pages/WebUiMain.txt \
-                         ./doc/pages/JaggerProperties.txt \
-                         ./doc/pages/AgentProperties.txt \
-                         ./doc/pages/DecisionMakerBasedOnLimits.txt \
-                         ./doc/pages/MonitoringMain.txt \
-                         ./doc/pages/MonitoringStartingAgent.txt \
-                         ./doc/pages/MonitoringMetricsSetup.txt
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/user/test/configurations \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/v2 \
+                         ./doc/pages/a_PageOrder.dox \
+                         ./doc/pages/AgentProperties.dox \
+                         ./doc/pages/Components.dox \
+                         ./doc/pages/GettingStarted.dox \
+                         ./doc/pages/Installation.dox \
+                         ./doc/pages/JaggerProperties.dox \
+                         ./doc/pages/JaasInstallation.dox \
+                         ./doc/pages/JaaSMain.dox \
+                         ./doc/pages/MainPage.dox \
+                         ./doc/pages/MonitoringMain.dox \
+                         ./doc/pages/MonitoringMetricsSetup.dox \
+                         ./doc/pages/MonitoringStartingAgent.dox \
+                         ./doc/pages/WebUiInstallation.dox \
+                         ./doc/pages/WebUiMain.dox \
+                         ./doc/pages/WebUiOverview.dox \
+                         ./doc/pages/WebUiProperties.dox \
+                         ./doc/pages/WebUiUserCommentsAndTags.dox \
+                         ./doc/pages/WritingTest.dox
+
+#                         ./doc/pages \
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -761,7 +705,7 @@ INPUT_ENCODING         = UTF-8
 # *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py
 # *.f90 *.f *.for *.vhd *.vhdl
 
-FILE_PATTERNS          = *.java
+FILE_PATTERNS          = *.java *.dox
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -803,21 +747,27 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = ./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/ \
-                         ./test/jagger-test/src/main/resources/configuration/master/session/ \
-                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfInvocationListener.java \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestListener.java \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestSuiteListener.java \
-                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties \
-                         ./doc/setup/JaggerVersion.txt \
+EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleSimpleJLoadScenarioProvider.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/config/JLoadScenariosConfig.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleQueriesProvider.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleEndpointsProvider.java \
                          ./webclient/src/main/resources/webclient.properties \
                          ./monitoring/agent/src/main/resources/spring/agent.properties \
-                         ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
-                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
                          ./chassis/configuration/configuration/basic/default.environment.properties \
-                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/StandardMetricsNamesUtil.java
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties
+#                          ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
+#                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
+
+
+#./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/ \
+#                         ./test/jagger-test/src/main/resources/configuration/master/session/ \
+#                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfInvocationListener.java \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestListener.java \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestSuiteListener.java \
+#                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/StandardMetricsNamesUtil.java
 
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
@@ -895,7 +845,7 @@ USE_MDFILE_AS_MAINPAGE =
 # Note: To get rid of all source code in the generated output, make sure also
 # VERBATIM_HEADERS is set to NO.
 
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 
 # Setting the INLINE_SOURCES tag to YES will include the body
 # of functions and classes directly in the documentation.
@@ -928,11 +878,35 @@ REFERENCES_RELATION    = YES
 
 REFERENCES_LINK_SOURCE = YES
 
-# If the USE_HTAGS tag is set to YES then the references to source code
-# will point to the HTML generated by the htags(1) tool instead of doxygen
-# built-in source browser. The htags tool is part of GNU's global source
-# tagging system (see http://www.gnu.org/software/global/global.html). You
-# will need version 4.8.6 or higher.
+# If SOURCE_TOOLTIPS is enabled (the default) then hovering a hyperlink in the
+# source code will show a tooltip with additional information such as prototype,
+# brief description and links to the definition and documentation. Since this
+# will make the HTML file larger and loading of large files a bit slower, you
+# can opt to disable this feature.
+# The default value is: YES.
+# This tag requires that the tag SOURCE_BROWSER is set to YES.
+
+SOURCE_TOOLTIPS        = YES
+
+# If the USE_HTAGS tag is set to YES then the references to source code will
+# point to the HTML generated by the htags(1) tool instead of doxygen built-in
+# source browser. The htags tool is part of GNU's global source tagging system
+# (see http://www.gnu.org/software/global/global.html). You will need version
+# 4.8.6 or higher.
+#
+# To use it do the following:
+# - Install the latest version of global
+# - Enable SOURCE_BROWSER and USE_HTAGS in the config file
+# - Make sure the INPUT points to the root of the source tree
+# - Run doxygen as normal
+#
+# Doxygen will invoke htags (and that will in turn invoke gtags), so these
+# tools must be available from the command line (i.e. in the search path).
+#
+# The result: instead of the source browser generated by doxygen, the links to
+# source code will now point to the output of htags.
+# The default value is: NO.
+# This tag requires that the tag SOURCE_BROWSER is set to YES.
 
 USE_HTAGS              = NO
 
@@ -1013,7 +987,6 @@ HTML_FILE_EXTENSION    = .html
 
 #doxygen -w html header.html footer.html stylesheet.css ./doc/setup/Doxyfile
 HTML_HEADER            = ./doc/html/header.html
-#HTML_HEADER            =
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for
 # each generated HTML page. If it is left blank doxygen will generate a
@@ -1038,7 +1011,7 @@ HTML_STYLESHEET        =
 # robust against future updates. Doxygen will copy the style sheet file to
 # the output directory.
 
-HTML_EXTRA_STYLESHEET  =
+HTML_EXTRA_STYLESHEET  = ./doc/css/my_customdoxygen.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1266,7 +1239,7 @@ DISABLE_INDEX          = NO
 # Since the tree basically has the same information as the tab index you
 # could consider to set DISABLE_INDEX to NO when enabling this option.
 
-GENERATE_TREEVIEW      = NO
+GENERATE_TREEVIEW      = YES
 
 # The ENUM_VALUES_PER_LINE tag can be used to set the number of enum values
 # (range [0,1..20]) that doxygen will group on one line in the generated HTML
@@ -1591,18 +1564,6 @@ GENERATE_XML           = NO
 # put in front of it. If left blank `xml' will be used as the default path.
 
 XML_OUTPUT             = xml
-
-# The XML_SCHEMA tag can be used to specify an XML schema,
-# which can be used by a validating XML parser to check the
-# syntax of the XML files.
-
-XML_SCHEMA             =
-
-# The XML_DTD tag can be used to specify an XML DTD,
-# which can be used by a validating XML parser to check the
-# syntax of the XML files.
-
-XML_DTD                =
 
 # If the XML_PROGRAMLISTING tag is set to YES Doxygen will
 # dump the program listings (including syntax highlighting

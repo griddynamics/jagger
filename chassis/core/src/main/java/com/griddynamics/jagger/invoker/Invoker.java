@@ -55,59 +55,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 
 /* Below is doxygen documentation for Jagger customization */
 
-/// @mainpage Jagger source code documentation
-/// Documentation version:
-/// @dontinclude  JaggerVersion.txt
-/// @skipline  Version
-/// @n
-/// Back to <a href="https://github.com/griddynamics/jagger/wiki">GitHub</a> documentation @n
-/// @n
-/// @li @ref Main_Test_Suite_Flow_group
-/// @li @ref Main_Test_Flow_group
-///
-/// @li @ref Main_Aggregators_General_group
-/// @li @ref Main_Collectors_General_group
-/// @li @ref Main_Distributors_General_group
-/// @li @ref Main_Listeners_General_group
-/// @li @ref Main_Providers_General_group
-/// @li @ref Main_Services_General_group
-/// @li @ref Main_Decision_Maker_General_group @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
-///
-/// @li @ref Main_Custom_Components_group
-///
-/// @li @ref Main_Properties_group @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
-///
-/// @li @ref WebUiMain
-///
-/// @li @ref MonitoringMain @e @htmlonly <font color="#009900">NEW ver 1.2.5</font>@endhtmlonly
-///
-/// @n
-/// @n
-/// Other documentation <a href='../archive/index.html'>versions</a>
-
-/// @defgroup Main_Test_Suite_Flow_group Test suite execution sequence
-///
-/// @dotfile jagger_flow.dot "Simplified test suite execution sequence"
-
-/// @defgroup Main_Test_Flow_group Test execution sequence
-///
-/// @details
-/// Click on diagram components to learn more about every component:
-/// @li Interface description
-/// @li Interface implementations in Jagger
-/// @li How to customize component
-/// @dotfile jagger_test_flow.dot "Simplified test execution sequence"
-/// @n
-/// @details Main components of test flow :
-/// @li endpoint - where to apply test
-/// @li query - what request to provide during test
-/// @li distributor - how to combine endpoints and queries
-/// @li invoker - how to transfer query to endpoint
-/// @li collector - how to collect data
-/// @n
-///
-/// To see full test suite execution sequence click here @ref Main_Test_Suite_Flow_group
-
 /// @defgroup Main_Custom_Components_group Custom component
 ///
 /// @li @ref Main_HowToCustomizeAggregators_group
@@ -116,10 +63,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @li @ref Main_HowToCustomizeDistributors_group
 /// @li @ref Main_HowToCustomizeCollectors_group
 /// @li @ref Main_HowToCustomizeListeners_group
-
-/// @defgroup Main_Properties_group Jagger properties main page
-///
-/// @details please see @ref JaggerProperties
 
 /* **************** Invokers page *************************  */
 /// @defgroup Main_Invokers_General_group Invokers main page

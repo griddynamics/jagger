@@ -1,0 +1,9 @@
+/// @page WebUiMain Jagger WebUi
+/// @brief Section provides full information about Jagger Web client @n
+/// @details
+/// @n
+/// @li @subpage WebUiOverview
+/// @li @subpage WebUiInstallation
+/// @li @subpage WebUiProperties
+/// @li @subpage WebUiUserCommentsAndTags
+///

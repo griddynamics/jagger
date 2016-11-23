@@ -1,8 +1,7 @@
-package com.griddynamics.jagger.user.test.configurations.termination.aux;
+package com.griddynamics.jagger.user.test.configurations.termination.auxiliary;
 
 /**
- * The target number of requests to the system under test.
- * I.e. at least that number of requests will be performed.
+ * The target number of requests to the system under test. After this number of the requests is reached, load test will be terminated
  */
 public final class IterationsNumber {
     private final long iterationsNumber;
@@ -14,11 +13,11 @@ public final class IterationsNumber {
         }
         this.iterationsNumber = iterationsNumber;
     }
-    
+
     public static IterationsNumber of(long iterationsNumber) {
         return new IterationsNumber(iterationsNumber);
     }
-    
+
     public long value() {
         return iterationsNumber;
     }

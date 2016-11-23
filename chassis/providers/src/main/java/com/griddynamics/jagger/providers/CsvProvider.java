@@ -180,7 +180,7 @@ public class CsvProvider<T> implements Iterable<T>, Serializable  {
 /// Provides are providing list of endpoints and queries to distributors. @n
 /// Endpoint - target for the test (address of System Under Test). @n
 /// Query - request for System Under Test. @n
-/// Providers are executed single time before start of the tests. Test run sequence you can find here: @ref Main_Test_Flow_group @n
+/// Providers are executed single time before start of the tests @n
 ///
 /// @par Example of providers setup in XML:
 /// Below is example of XML @xlink{test-description} section @n

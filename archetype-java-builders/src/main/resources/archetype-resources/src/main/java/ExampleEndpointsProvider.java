@@ -1,17 +1,17 @@
-package com.griddynamics.jagger;
+package ${package};
 
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by Andrey Badaev
- * Date: 10/11/16
+ * Simple example of endpoint provider
+ *
  */
+// begin: following section is used for docu generation - Endpoint provider
 public class ExampleEndpointsProvider implements Iterable {
     private List<JHttpEndpoint> endpoints = new ArrayList<>();
     
@@ -30,3 +30,4 @@ public class ExampleEndpointsProvider implements Iterable {
         return endpoints.iterator();
     }
 }
+// end: following section is used for docu generation - Endpoint provider
