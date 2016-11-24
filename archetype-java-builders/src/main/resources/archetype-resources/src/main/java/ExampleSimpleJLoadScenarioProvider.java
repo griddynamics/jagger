@@ -1,4 +1,4 @@
-package com.griddynamics.jagger;
+package ${package};
 
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
