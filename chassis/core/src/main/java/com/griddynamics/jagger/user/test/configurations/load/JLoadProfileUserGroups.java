@@ -56,6 +56,8 @@ public class JLoadProfileUserGroups implements JLoadProfile {
         static final int DEFAULT_TICK_INTERVAL = 1000;
         private final List<JLoadProfileUsers> userGroups;
         private int delayBetweenInvocationsInSeconds;
+
+        // Tick interval doesn't have setter, since it's unclear if this field is needed. Check https://issues.griddynamics.net/browse/JFG-1000
         private int tickInterval;
 
         /** Builder of the JLoadProfileUserGroups
@@ -104,18 +106,6 @@ public class JLoadProfileUserGroups implements JLoadProfile {
                         String.format("Delay between invocations must be >= 0. Provided value is %s", delayBetweenInvocationsInSeconds));
             }
             this.delayBetweenInvocationsInSeconds = delayBetweenInvocationsInSeconds;
-            return this;
-        }
-
-        /**
-         * Optional: Tick interval (in ms). Default is 1000 ms.
-         * @param tickInterval Tick interval of load
-         */
-        public Builder withTickInterval(int tickInterval) {
-            if (tickInterval <= 0) {
-                throw new IllegalArgumentException(String.format("Tick interval must be > 0. Provided value is %s", tickInterval));
-            }
-            this.tickInterval = tickInterval;
             return this;
         }
     }

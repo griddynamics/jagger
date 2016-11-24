@@ -42,6 +42,8 @@ public class JLoadProfileRps implements JLoadProfile {
         private final long requestsPerSecond;
         private long maxLoadThreads;
         private long warmUpTimeInSeconds;
+
+        // Tick interval doesn't have setter, since it's unclear if this field is needed. Check https://issues.griddynamics.net/browse/JFG-1000
         private int tickInterval;
 
         /** Builder of JLoadProfileRps: request per seconds
@@ -64,17 +66,6 @@ public class JLoadProfileRps implements JLoadProfile {
          */
         public JLoadProfileRps build() {
             return new JLoadProfileRps(this);
-        }
-
-        /** Optional: Tick interval (in ms). Default is 1000 ms.
-         * @param tickInterval Tick interval of load
-         */
-        public Builder withTickInterval(int tickInterval) {
-            if (tickInterval <= 0) {
-                throw new IllegalArgumentException(String.format("Tick interval must be > 0. Provided value is %s", tickInterval));
-            }
-            this.tickInterval = tickInterval;
-            return this;
         }
 
         /** Optional: Max load threads. Default is 4000.
