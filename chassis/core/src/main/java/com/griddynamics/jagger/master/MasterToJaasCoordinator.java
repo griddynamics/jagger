@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -127,9 +128,9 @@ public class MasterToJaasCoordinator implements Closeable {
                 envId = UUID.randomUUID().toString();
                 LOGGER.warn("Changing env id from {} to {}", testEnvironmentEntity.getEnvironmentId(), envId);
                 testEnvironmentEntity.setEnvironmentId(envId);
-            } catch (HttpServerErrorException e) {
-                LOGGER.warn("Didn't manage to reach out JaaS...");
-                TimeUnit.SECONDS.sleep(3);
+            } catch (HttpServerErrorException | ResourceAccessException e) {
+                LOGGER.warn("Error during registration to '{}'", envsUri, e);
+                TimeUnit.SECONDS.sleep(statusReportIntervalSeconds);
             }
         } while (!posted);
     
@@ -262,8 +263,8 @@ public class MasterToJaasCoordinator implements Closeable {
                 ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
                 LOGGER.info("PUT request sent to {} with body {}.", requestEntity.getUrl(), requestEntity.getBody());
                 tryToOfferNextConfigToExecute(responseEntity);
-            } catch (HttpServerErrorException e) {
-                LOGGER.warn("Server error during update", e);
+            } catch (HttpServerErrorException | ResourceAccessException e) {
+                LOGGER.warn("Server error during update by url '{}'", requestEntity.getUrl(), e);
             } catch (HttpClientErrorException e) {
                 if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                     reRegister();
