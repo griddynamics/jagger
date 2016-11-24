@@ -1,12 +1,6 @@
 package com.griddynamics.jagger.invoker.v2;
 
-import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTP;
-import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTPS;
-import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
-import static org.springframework.web.util.UriComponentsBuilder.fromUri;
-import static org.springframework.web.util.UriComponentsBuilder.newInstance;
-
+import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.HttpsURL;
@@ -14,14 +8,19 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import com.google.common.base.Preconditions;
-
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTP;
+import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTPS;
+import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.springframework.web.util.UriComponentsBuilder.fromUri;
+import static org.springframework.web.util.UriComponentsBuilder.newInstance;
 
 /**
  * An object that represents HTTP-endpoint. It consists of {@link JHttpEndpoint#protocol},
@@ -80,7 +79,7 @@ public class JHttpEndpoint implements Serializable {
      * @param port     port of endpoint
      */
     public JHttpEndpoint(Protocol protocol, String hostname, int port) {
-        Objects.nonNull(protocol);
+        Objects.requireNonNull(protocol);
         this.protocol = protocol;
         
         if (org.springframework.util.StringUtils.isEmpty(hostname)) {

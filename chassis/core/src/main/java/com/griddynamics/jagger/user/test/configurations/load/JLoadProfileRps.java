@@ -1,8 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations.load;
 
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.MaxLoadThreads;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.WarmUpTimeInSeconds;
 
 import java.util.Objects;
 
@@ -16,33 +14,84 @@ public class JLoadProfileRps implements JLoadProfile {
     private final long requestsPerSecond;
     private final long maxLoadThreads;
     private final long warmUpTimeInSeconds;
+    private final int tickInterval;
 
-    /** Create load profile: request per seconds
-     * @n
-     * @param requestsPerSecond - The number of requests per second Jagger shall perform
-     * @param maxLoadThreads - The maximum number of threads, which Jagger engine can create to provide the requested load
-     * @param warmUpTimeInSeconds - The warm up time value in seconds. Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInSeconds
-     */
-    public JLoadProfileRps(RequestsPerSecond requestsPerSecond, MaxLoadThreads maxLoadThreads, WarmUpTimeInSeconds warmUpTimeInSeconds) {
-        Objects.requireNonNull(requestsPerSecond);
-        Objects.requireNonNull(maxLoadThreads);
-        Objects.requireNonNull(warmUpTimeInSeconds);
-        
-        this.requestsPerSecond = requestsPerSecond.value();
-        this.maxLoadThreads = maxLoadThreads.value();
-        this.warmUpTimeInSeconds = warmUpTimeInSeconds.value();
+    private JLoadProfileRps(Builder builder) {
+        Objects.requireNonNull(builder);
+
+        this.requestsPerSecond = builder.requestsPerSecond;
+        this.maxLoadThreads = builder.maxLoadThreads;
+        this.warmUpTimeInSeconds = builder.warmUpTimeInSeconds;
+        this.tickInterval = builder.tickInterval;
     }
 
-    /** Create load profile: request per seconds
+    /** Builder of the JLoadProfileRps: request per seconds
      * @n
-     * @param requestsPerSecond - The number of requests per second Jagger shall perform
-     * @param maxLoadThreads - The maximum number of threads, which Jagger engine can create to provide the requested load
-     * @param warmUpTimeInSeconds - The warm up time value in seconds. Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInSeconds
+     * @details Constructor parameters are mandatory for the JLoadProfileRps. All parameters, set by setters are optional
+     * @n
+     * @param requestsPerSecond   - The number of requests per second Jagger shall perform
      */
-    public static JLoadProfileRps of(RequestsPerSecond requestsPerSecond, MaxLoadThreads maxLoadThreads, WarmUpTimeInSeconds warmUpTimeInSeconds) {
-        return new JLoadProfileRps(requestsPerSecond, maxLoadThreads, warmUpTimeInSeconds);
+    public static Builder builder(RequestsPerSecond requestsPerSecond) {
+        return new Builder(requestsPerSecond);
     }
-    
+
+    public static class Builder {
+        static final int DEFAULT_TICK_INTERVAL = 1000;
+        static final int DEFAULT_MAX_LOAD_THREADS = 4000;
+        static final int DEFAULT_WARM_UP_TIME = -1;
+        private final long requestsPerSecond;
+        private long maxLoadThreads;
+        private long warmUpTimeInSeconds;
+
+        // Tick interval doesn't have setter, since it's unclear if this field is needed. Check https://issues.griddynamics.net/browse/JFG-1000
+        private int tickInterval;
+
+        /** Builder of JLoadProfileRps: request per seconds
+         * @n
+         * @details Constructor parameters are mandatory for the JLoadProfileRps. All parameters, set by setters are optional
+         * @n
+         * @param requestsPerSecond   - The number of requests per second Jagger shall perform
+         */
+        public Builder(RequestsPerSecond requestsPerSecond) {
+            Objects.requireNonNull(requestsPerSecond);
+
+            this.requestsPerSecond = requestsPerSecond.value();
+            this.maxLoadThreads = DEFAULT_MAX_LOAD_THREADS;
+            this.warmUpTimeInSeconds = DEFAULT_WARM_UP_TIME;
+            this.tickInterval = DEFAULT_TICK_INTERVAL;
+        }
+
+        /** Creates an object of JLoadProfileRps type with custom parameters.
+         * @return JLoadProfileRps object.
+         */
+        public JLoadProfileRps build() {
+            return new JLoadProfileRps(this);
+        }
+
+        /** Optional: Max load threads. Default is 4000.
+         * @param maxLoadThreads The maximum number of threads, which Jagger engine can create to provide the requested load
+         */
+        public Builder withMaxLoadThreads(long maxLoadThreads) {
+            if (maxLoadThreads <= 0) {
+                throw new IllegalArgumentException(String.format("The maximum number of threads must be > 0. Provided value is %s", maxLoadThreads));
+            }
+            this.maxLoadThreads = maxLoadThreads;
+            return this;
+        }
+
+        /** Optional: Warm up time (in seconds). Default is -1.
+         * @param warmUpTimeInSeconds The warm up time value in seconds. Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInSeconds
+         */
+        public Builder withWarmUpTimeInSeconds(long warmUpTimeInSeconds) {
+            if (warmUpTimeInSeconds < 0) {
+                throw new IllegalArgumentException(
+                        String.format("The warm up time value in seconds. must be >= 0. Provided value is %s", warmUpTimeInSeconds));
+            }
+            this.warmUpTimeInSeconds = warmUpTimeInSeconds;
+            return this;
+        }
+    }
+
     public long getRequestsPerSecond() {
         return requestsPerSecond;
     }
@@ -53,5 +102,9 @@ public class JLoadProfileRps implements JLoadProfile {
 
     public long getWarmUpTimeInSeconds() {
         return warmUpTimeInSeconds;
+    }
+
+    public int getTickInterval() {
+        return tickInterval;
     }
 }
