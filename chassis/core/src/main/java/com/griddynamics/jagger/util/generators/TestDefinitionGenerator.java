@@ -1,7 +1,5 @@
 package com.griddynamics.jagger.util.generators;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
@@ -21,12 +19,14 @@ import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.beans.factory.support.ManagedList;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
  * @author asokol
  *         created 11/6/16
  *         Generate {@link WorkloadTask} entity from user-defined {@link JTestDefinition} entity.
  */
-class TestDescriptionGenerator {
+class TestDefinitionGenerator {
 
     public static WorkloadTask generatePrototype(JTestDefinition jTestDefinition) {
 
