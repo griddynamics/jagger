@@ -48,4 +48,19 @@ public class DownloadServiceImpl implements DownloadService {
             throw new RuntimeException("Errors while creating csv file for plot " + plotHeader, e);
         }
     }
+
+    public String createSummaryTableScvFile(SummaryTableDto summaryTableDto) throws RuntimeException {
+        try {
+            String fileKey = "summaryTable";
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            PlotToCsvGenerator.generateCsvTable(summaryTableDto.getTableData(), byteArrayOutputStream);
+            byte[] fileInBytes = byteArrayOutputStream.toByteArray();
+            fileStorage.store(fileKey, fileInBytes);
+            return fileKey;
+
+        } catch (Exception e) {
+            log.error("Errors while creating csv file for SummaryTable " + summaryTableDto, e);
+            throw new RuntimeException("Errors while creating csv file for SummaryTable " + summaryTableDto, e);
+        }
+    }
 }

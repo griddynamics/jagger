@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
+import com.griddynamics.jagger.dbapi.dto.SummaryTableDto;
 
 import java.util.List;
 
@@ -28,4 +29,6 @@ public interface DownloadService extends RemoteService {
      * @return key of created file
      * @throws RuntimeException */
     public String createPlotCsvFile(List<PlotSingleDto> lines, String plotHeader, String xAxisLabel) throws RuntimeException;
+
+    public String createSummaryTableScvFile(SummaryTableDto summaryTableDto) throws RuntimeException;
 }

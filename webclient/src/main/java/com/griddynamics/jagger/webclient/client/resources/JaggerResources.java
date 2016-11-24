@@ -139,5 +139,7 @@ public interface JaggerResources extends ClientBundle {
 
         String plotButtonsPanel();
 
+        String summaryPanelMenuLabel();
+
     }
 }

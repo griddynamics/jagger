@@ -36,6 +36,7 @@ import java.util.*;
  */
 public class SessionComparisonPanel extends VerticalPanel {
 
+    private static final String SESSION_INFO = "Session Info";
     private final String TEST_DESCRIPTION = "testDescription";
     private final String TEST_NAME = "testName";
     // property to render in Metric column
@@ -90,11 +91,23 @@ public class SessionComparisonPanel extends VerticalPanel {
 
     private boolean allTagsLoadComplete = false;
 
+    private List<String> sessionNames;
+
+    SummaryTableDto summaryTableDto;
+
     public HashMap<MetricNode, SummaryIntegratedDto> getCachedMetrics() {
         return cache;
     }
 
     private final DateTimeFormat dateFormatter;
+
+    //sort sessions by number sessionId
+    private SortedSet<SessionDataDto> sortedSessionsSet = new TreeSet<SessionDataDto>(new Comparator<SessionDataDto>() {
+        @Override
+        public int compare(SessionDataDto o, SessionDataDto o2) {
+            return (Long.parseLong(o.getSessionId()) - Long.parseLong(o2.getSessionId())) > 0 ? 1 : -1;
+        }
+    });
 
     public SessionComparisonPanel(
             Set<SessionDataDto> chosenSessions,
@@ -125,13 +138,8 @@ public class SessionComparisonPanel extends VerticalPanel {
         List<ColumnConfig<TreeItem, ?>> columns = new ArrayList<ColumnConfig<TreeItem, ?>>();
 
         //sort sessions by number sessionId
-        SortedSet<SessionDataDto> sortedSet = new TreeSet<SessionDataDto>(new Comparator<SessionDataDto>() {
-            @Override
-            public int compare(SessionDataDto o, SessionDataDto o2) {
-                return (Long.parseLong(o.getSessionId()) - Long.parseLong(o2.getSessionId())) > 0 ? 1 : -1;
-            }
-        });
-        sortedSet.addAll(chosenSessions);
+        sortedSessionsSet.clear();
+        sortedSessionsSet.addAll(chosenSessions);
 
         ColumnConfig<TreeItem, String> nameColumn =
                 new ColumnConfig<TreeItem, String>(new MapValueProvider(NAME), (int) (colWidth * METRIC_COLUMN_WIDTH_FACTOR));
@@ -140,7 +148,7 @@ public class SessionComparisonPanel extends VerticalPanel {
         nameColumn.setMenuDisabled(true);
         columns.add(nameColumn);
 
-        for (SessionDataDto session : sortedSet) {
+        for (SessionDataDto session : sortedSessionsSet) {
             ColumnConfig<TreeItem, String> column = new ColumnConfig<TreeItem, String>(
                     new MapValueProvider(SESSION_HEADER + session.getSessionId())
             );
@@ -261,7 +269,7 @@ public class SessionComparisonPanel extends VerticalPanel {
 
     public void addSessionInfo() {
         TreeItem sessionInfo = new TreeItem(SESSION_INFO_ID);
-        sessionInfo.put(NAME, "Session Info");
+        sessionInfo.put(NAME, SESSION_INFO);
         treeStore.insert(0, sessionInfo);
 
         String tagsStr = "";
@@ -508,6 +516,100 @@ public class SessionComparisonPanel extends VerticalPanel {
             removeWithParent(testInfo);
     }
 
+    public SummaryTableDto getSummaryTableAsList() {
+        summaryTableDto = new SummaryTableDto();
+        sessionNames = new ArrayList<String>();
+        for (SessionDataDto sdDto : sortedSessionsSet) {
+            sessionNames.add(sdDto.getName());
+        }
+        List<String> sessions = new ArrayList<String>(sessionNames);
+        sessions.add(0, "");
+        summaryTableDto.insertRow(sessions);
+        for (TreeItem rootItem : treeStore.getRootItems()) {
+            collectInfoFromTree(rootItem);
+        }
+        return summaryTableDto;
+    }
+
+    private void collectInfoFromTree(TreeItem aChild) {
+        parseTableRow(aChild);
+        if (treeStore.hasChildren(aChild)) {
+            for (TreeItem treeItem: treeStore.getChildren(aChild)) {
+                collectInfoFromTree(treeItem);
+            }
+        }
+    }
+
+    private void parseTableRow(TreeItem aRow) {
+        List<String> result = new ArrayList<String>();
+        String aName = aRow.get(NAME);
+        // test results
+        if (aRow.containsKey(TEST_DESCRIPTION)) {
+            result.addAll(collectTestInfo(aRow, aName));
+        }
+        //Session Info results OR test description value
+        else {
+            result.addAll(collectSessionInfo(aRow, aName));
+        }
+        summaryTableDto.insertRow(result);
+    }
+
+    private List<String> fillTestLabels(String testLabel, String aName) {
+        List<String> result = new ArrayList<String>();
+        result.add(testLabel);
+        for (int i = 0; i < sessionNames.size(); i++) {
+            result.add(aName);
+        }
+        return result;
+    }
+
+    private List<String> collectSessionInfo(TreeItem aRow, String aName) {
+        if (aName.equals(SESSION_INFO)) {
+            summaryTableDto.insertTableName(aName);
+            return new ArrayList<String>(Arrays.asList(new String[]{aName}));
+        }
+        else {
+            if (aRow.size() == 1) {
+                summaryTableDto.insertRow(Arrays.asList(new String[]{""}));
+                return fillTestLabels("Test description", aName);
+            }
+            else {
+                List<String> result = new ArrayList<String>();
+                result.add(aName);
+                for (String sessionName : sessionNames) {
+                    result.add(clearHtmlTags(aRow.get(sessionName)));
+                }
+                return result;
+            }
+        }
+    }
+
+    private List<String> collectTestInfo(SessionComparisonPanel.TreeItem aRow, String aName) {
+        if (aName.equals(TEST_INFO)) {
+            return new ArrayList<String>(Arrays.asList(new String[]{aName}));
+        }
+        List<String> result = new ArrayList<String>();
+        if (aRow.size() == 2) {
+            summaryTableDto.insertTableName(aName);
+            return fillTestLabels("Test name", aName);
+        }
+        result.add(aName);
+        for (String sessionName : sessionNames) {
+            result.add(clearHtmlTags(aRow.get(sessionName)));
+        }
+        return result;
+    }
+
+    private String clearHtmlTags(String input) {
+        if (input == null) {
+            return "";
+        }
+        String result = input.replaceAll("<br>", " ");
+        if (result.contains("<p title=")) {
+            result = result.substring(result.indexOf("\">") + 2, result.indexOf("</"));
+        }
+        return result;
+    }
 
     private TreeItem getTestItem(TaskDataDto tdd) {
 

@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.griddynamics.jagger.dbapi.dto.PlotSingleDto;
+import com.griddynamics.jagger.dbapi.dto.SummaryTableDto;
 import com.griddynamics.jagger.webclient.client.DownloadService;
 
 import java.util.List;
@@ -31,6 +32,22 @@ public class FileDownLoader {
 
                 String url = GWT.getHostPageBaseURL() + DOWNLOAD_SERVLET_PATH + "?fileKey=" + result;
                 // start downloading
+                Window.Location.assign(url);
+            }
+        });
+    }
+
+    public static void downloadSummaryTableInCsv(final SummaryTableDto summaryTableDto) {
+        DownloadService.Async.getInstance().createSummaryTableScvFile(summaryTableDto, new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                new ExceptionPanel("Failed to create cvs file for " + summaryTableDto + " :\n" + caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                String url = GWT.getHostPageBaseURL() + DOWNLOAD_SERVLET_PATH + "?fileKey=" + result;
+
                 Window.Location.assign(url);
             }
         });

@@ -53,4 +53,20 @@ public class PlotToCsvGenerator {
             writer.close();
         }
     }
+
+    public static void generateCsvTable(List<List<String>> summaryTableData, OutputStream outputStream) throws IOException {
+        OutputStreamWriter osw = new OutputStreamWriter(outputStream);
+
+        CsvListWriter writer = new CsvListWriter(osw, CsvPreference.STANDARD_PREFERENCE);
+
+        try {
+            for (List<String> aLine : summaryTableData) {
+                writer.write(aLine);
+            }
+        } finally {
+            writer.flush();
+            writer.close();
+        }
+
+    }
 }

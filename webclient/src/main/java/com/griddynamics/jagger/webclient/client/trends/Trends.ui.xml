@@ -87,25 +87,19 @@
                     <g:header>
                         <b>Summary</b>
                     </g:header>
-                    <g:ScrollPanel ui:field="summaryPanelScrollPanel">
-                        <custom:SummaryPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
-                    </g:ScrollPanel>
+                    <custom:SummaryPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
                 </g:tab>
                 <g:tab>
                     <g:header>
                         <b>Trends</b>
                     </g:header>
-
                     <custom:PlotsPanel ui:field="plotTrendsPanel"/>
-
                 </g:tab>
                 <g:tab>
                     <g:header>
                         <b>Metrics</b>
                     </g:header>
-
                     <custom:PlotsPanel ui:field="plotPanel"/>
-
                 </g:tab>
                 <g:tab>
                     <g:header>

@@ -39,7 +39,7 @@
 
 .summaryPanel{
     text-align: center;
-    margin:  auto;
+    margin: auto;
 }
 
 .nodesPanel{
@@ -336,4 +336,15 @@ input[type="text"] {
 
 .plotButtonsPanel {
     margin: 5px;
+}
+
+.summaryPanelMenuLabel {
+    background: #d0e4f6;
+    height: 20px;
+    width: 100%;
+}
+
+.summaryPanelMenuLabel img {
+    float: left;
+    height: 15px;
 }
