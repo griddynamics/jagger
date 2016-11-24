@@ -1,7 +1,5 @@
 package com.griddynamics.jagger.util.generators;
 
-import static java.util.function.Function.identity;
-
 import com.griddynamics.jagger.engine.e1.aggregator.session.BasicAggregator;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.MetricLogProcessor;
@@ -23,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
 
 /**
  * Generates {@link Configuration} entity
@@ -86,11 +86,11 @@ public class ConfigurationGenerator {
      * @param jLoadScenario user configuration.
      * @return jagger configuration.
      */
-    public Configuration generate(JLoadScenario jLoadScenario, boolean monitoringEnabled) {
+    public Configuration generate(JLoadScenario jLoadScenario) {
         Configuration configuration = new Configuration();
         List<Task> tasks = jLoadScenario.getTestGroups()
                 .stream()
-                .map(testGroup -> TestGroupGenerator.generateFromTestGroup(testGroup, monitoringEnable))
+                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnabled))
                 .collect(Collectors.toList());
         configuration.setTasks(tasks);
         
