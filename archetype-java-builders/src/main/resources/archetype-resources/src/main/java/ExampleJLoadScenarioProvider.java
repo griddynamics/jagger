@@ -10,19 +10,13 @@ import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.MaxLoadThreads;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.WarmUpTimeInSeconds;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 
-/**
- * Created by Andrey Badaev
- * Date: 10/11/16
- */
 public class ExampleJLoadScenarioProvider {
     
     public static JLoadScenario getExampleJaggerLoadScenario() {
