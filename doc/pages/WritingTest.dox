@@ -1,0 +1,100 @@
+/// @page WritingTest
+///
+/// @li @ref section_writing_test_glossary
+/// @li @ref section_writing_test_project
+/// @li @ref section_writing_test_load_scenario
+/// @li @ref section_writing_test_example
+/// @li @ref section_writing_load_test
+/// @li @ref section_writing_test_definition
+/// @li @ref section_writing_http_test_definition
+///
+///
+/// @section section_writing_test_glossary Main terms
+/// Before discussing load tests development, let's agree on the following terms. These names will be used in the whole documentation @n
+/// @li <b> System under test (SUT) </b> - application (or group of applications) under test
+/// @li <b> Endpoint </b> - where we are applying load. In case of http protocol, it can be URI
+/// @li <b> Endpoint provider </b> - source of the test data (endpoints)
+/// @li <b> Query </b> - what parameters we are sending
+/// @li <b> Query provider </b> - source of the test data (queries)
+/// @li <b> Distributor </b> - component, responsible to combine endpoints and queries in different order (one by one, round robin, unique combinations, etc)
+/// @li <b> Invoker </b> - component, providing requests to SUT during load test. In case of http protocol - http client
+/// @li <b> Validator </b> - component that verifies responses from SUT - decides if response is valid or not. In case of http we can verify that return codes are always 200
+/// @li <b> Metric </b> - component that measures some parameter of the response (response time, throughput, success rate of requests, custom parameters)
+///
+/// @section section_writing_test_project Java test project
+/// We consider that at this point, you have already @ref section_installation_local "installed the framework" and @ref section_getting_started_run "learned how to execute the test" @n
+/// @n
+/// Now let's look inside the test project and review what is there. Created test project will have following components:
+/// @li Load scenario provider(s) - component where load tests are defined
+/// @li Test data provider(s) - endpoint and query providers. Sources of the test data
+/// @li Config - support component, where you should register (create a bean with @@Bean annotation) your scenario to make it visible for the framework
+///
+/// In short, test development will consist of creating test data sources, creating load scenarios, registering load scenarios in the config file @n
+///
+/// @section section_writing_test_load_scenario Load scenario
+/// Load scenario describes the execution sequence of the load tests. While there are multiple scenarios in the test project, only single one can be executed at a time @n
+/// Let's take a look what components does the load scenario consist of @n
+///
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JLoadScenario "Load scenario".
+/// It describes the sequence of the parallel test groups execution. This is the entity that can be executed by the framework
+///
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup "Parallel test group".
+/// It describes what load tests will be executed in parallel. Parallel test group can contain one or multiple load tests
+///
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JLoadTest "Load test". It describes:
+///     - What load profile will be used
+///     - When the load test should be terminated
+/// @n see more information in the @ref section_writing_load_test "section below"
+///
+/// @li @ref com.griddynamics.jagger.user.test.configurations.JTestDefinition "Test definition". It describes
+///     - Where and how to read test data
+///     - What protocol to use for communication with the SUT
+///     - How to verify if responses from the SUT are valid
+/// @n see more information in the @ref section_writing_test_definition "section below"
+///
+/// @section section_writing_test_example Load scenario configuration
+/// @par Create load scenario
+/// @dontinclude  ExampleSimpleJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - Load test scenario configuration
+/// @until end: following section is used for docu generation - Load test scenario configuration
+/// @par Register load scenario in the framework
+/// @dontinclude  JLoadScenariosConfig.java
+/// @skip  begin: following section is used for docu generation - Load test scenario registering
+/// @until end: following section is used for docu generation - Load test scenario registering
+/// @n
+/// @section section_writing_load_test Load test
+/// Below is the list of available load profiles and termination criteria:
+/// @li @ref Main_Load_profiles_group
+/// @li @ref Main_Termination_criteria_group
+///
+/// @n
+/// @section section_writing_test_definition Test definition
+/// @par Test definition components
+/// TODO: image @n
+/// On the image above you can see relation of the different components of the test definition. Test data, provided @n
+/// by endpoint and query providers, is combined by the distributor to the set of the requests. During the load test @n
+/// this set of the requests is passed to the invoker. Invoker is providing communication with the SUT and returning responses. @n
+/// Responses are verified by validators to take pass/fail decision and processed by metrics to collect some measurements. @n
+/// During the run time every virtual user is working with it's own invoker, thus allowing to generate load. @n
+/// TODO: links to jagger components for providers, invokers, etc @n
+/// @n
+/// @section section_writing_http_test_definition Test definition for HTTP configuration
+/// @par Support of Http
+/// Out of the box Jagger support http load tests. To make work with http easier, we have prepared @ref com.griddynamics.jagger.invoker.v2
+/// "set of classes to describe Test definition for HTTP" @n
+/// @li DefaultHttpInvoker - Http invoker. Used by default for all test definitions
+/// @li JHttpEndpoint - Http endpoint.
+/// @li JHttpQuery - Http query.
+/// @li JHttpResponse - Http response. Represents response from the SUT
+/// @li JHttpValidator - TODO in development
+///
+/// To create your first load test using http, you need to create an endpoint provider, like in the example below. @n
+/// Query provider is optional @n
+/// @par Examples of the endpoint provider for Test definition configuration
+/// @dontinclude  ExampleEndpointsProvider.java
+/// @skip  begin: following section is used for docu generation - Endpoint provider
+/// @until end: following section is used for docu generation - Endpoint provider
+/// @par Examples of the query provider for Test definition configuration
+/// @dontinclude  ExampleQueriesProvider.java
+/// @skip  begin: following section is used for docu generation - Query provider
+/// @until end: following section is used for docu generation - Query provider

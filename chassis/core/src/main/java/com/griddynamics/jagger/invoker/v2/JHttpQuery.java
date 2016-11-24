@@ -38,7 +38,7 @@ import static com.google.common.collect.Lists.newArrayList;
  *    .clientParam("client param", new Object())
  *    .body(42);
  * }</pre>
- * @since 1.3
+ * @since 2.0
  */
 @SuppressWarnings("unused")
 public class JHttpQuery<T> implements Serializable {

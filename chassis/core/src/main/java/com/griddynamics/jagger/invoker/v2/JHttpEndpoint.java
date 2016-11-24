@@ -2,6 +2,8 @@ package com.griddynamics.jagger.invoker.v2;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.httpclient.HttpURL;
+import org.apache.commons.httpclient.HttpsURL;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -9,9 +11,9 @@ import org.springframework.util.MultiValueMap;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTP;
 import static com.griddynamics.jagger.invoker.v2.JHttpEndpoint.Protocol.HTTPS;
@@ -25,11 +27,12 @@ import static org.springframework.web.util.UriComponentsBuilder.newInstance;
  * {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields. <p>
  *
  * @author Anton Antonenko
- * @since 1.3
+ * @since 2.0
  */
-@SuppressWarnings("unused")
 public class JHttpEndpoint implements Serializable {
 
+    public static final Protocol DEF_PROTOCOL = Protocol.HTTP;
+    
     /**
      * Enum representing HTTP and HTTPS protocols
      */
@@ -37,15 +40,16 @@ public class JHttpEndpoint implements Serializable {
         HTTP, HTTPS
     }
 
-    private Protocol protocol = HTTP;
+    private Protocol protocol = DEF_PROTOCOL;
     private String hostname;
-    private int port = 80;
+    private int port = HttpURL.DEFAULT_PORT;
 
     /**
      * Parses given uri and sets {@link JHttpEndpoint#protocol}, {@link JHttpEndpoint#hostname} and {@link JHttpEndpoint#port} fields.
      *
      * @param uri URI to parse
      */
+    @SuppressWarnings("unused")
     public JHttpEndpoint(URI uri) {
         try {
             URL url = uri.toURL();
@@ -55,14 +59,18 @@ public class JHttpEndpoint implements Serializable {
 
         if (equalsIgnoreCase(uri.getScheme(), HTTP.name())) {
             this.protocol = HTTP;
+            this.port = HttpURL.DEFAULT_PORT;
         } else if (equalsIgnoreCase(uri.getScheme(), HTTPS.name())) {
             this.protocol = HTTPS;
+            this.port = HttpsURL.DEFAULT_PORT;
         } else {
             throw new IllegalArgumentException(format("Protocol of uri '%s' is unsupported!", uri));
         }
 
         this.hostname = uri.getHost();
-        this.port = uri.getPort() < 0 ? 80 : uri.getPort();
+        if (uri.getPort() > 0) {
+            this.port = uri.getPort();
+        }
     }
 
     /**
@@ -71,8 +79,17 @@ public class JHttpEndpoint implements Serializable {
      * @param port     port of endpoint
      */
     public JHttpEndpoint(Protocol protocol, String hostname, int port) {
+        Objects.requireNonNull(protocol);
         this.protocol = protocol;
+        
+        if (org.springframework.util.StringUtils.isEmpty(hostname)) {
+            throw new IllegalArgumentException(format("hostname must non-empty. Provided value: %s", hostname));
+        }
         this.hostname = hostname;
+        
+        if (port <= 0) {
+            throw new IllegalArgumentException(format("port number must be > 0. Provided value: %s", port));
+        }
         this.port = port;
     }
 
@@ -81,16 +98,14 @@ public class JHttpEndpoint implements Serializable {
      * @param port     port of endpoint
      */
     public JHttpEndpoint(String hostname, int port) {
-        this.hostname = hostname;
-        this.port = port;
+        this(DEF_PROTOCOL, hostname, port);
     }
 
     /**
      * @param endpointURL string with url to be passed to {@link JHttpEndpoint#JHttpEndpoint(URI)} constructor
-     * @throws URISyntaxException if endpointURL is invalid
      */
-    public JHttpEndpoint(String endpointURL) throws URISyntaxException {
-        this(new URI(endpointURL));
+    public JHttpEndpoint(String endpointURL) {
+        this(URI.create(endpointURL));
     }
 
     public Protocol getProtocol() {
@@ -113,7 +128,7 @@ public class JHttpEndpoint implements Serializable {
         Preconditions.checkNotNull(hostname, "Hostname is null!");
 
         if (protocol == null) {
-            protocol = HTTP;
+            protocol = DEF_PROTOCOL;
         }
         return newInstance().scheme(protocol.name().toLowerCase()).host(hostname).port(port).build().toUri();
     }

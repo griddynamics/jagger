@@ -91,7 +91,7 @@ public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 /// @details
 /// @par General info
 /// Collectors calculate information based on invocation response and validate result of invocation. @n
-/// Collectors are executed after every invoke during test run. Test run sequence you can find here: @ref Main_Test_Flow_group @n
+/// Collectors are executed after every invoke during test run @n
 ///
 /// @par Example of collectors setup in XML:
 /// Following XML code should be included in @xlink{test-description} section @n

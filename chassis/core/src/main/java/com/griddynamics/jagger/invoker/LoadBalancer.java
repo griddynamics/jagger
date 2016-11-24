@@ -84,7 +84,7 @@ public interface LoadBalancer<Q, E> extends Iterable<Pair<Q, E>>, Serializable {
 /// Distributors provide pairs of endpoints and queries for invokers @n
 /// Before start of the test distributor is combining all endpoints and queries according to user setup and stores these combination in internal list. @n
 /// \b Important: mentioned list is shared by all threads that produce load. it is not possible to have separate list per workload thread @n
-/// Before every invoke distributor is providing single pair of endpoint / query to invoker. Test run sequence you can find here: @ref Main_Test_Flow_group @n
+/// Before every invoke distributor is providing single pair of endpoint / query to invoker @n
 ///
 /// @par Example of distributor setup in XML:
 /// Following XML code should be included in @xlink{test-description} section @n

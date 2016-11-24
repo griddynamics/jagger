@@ -1,9 +1,9 @@
 package com.griddynamics.jagger.master;
 
+import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus;
-import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -14,9 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
  * Handles Jagger Master node to JaaS communication -
  * initial registration and further status updates with commands parsing from JaaS response.
  */
-public class MasterToJaasCoordinator {
+public class MasterToJaasCoordinator implements Closeable {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MasterToJaasCoordinator.class);
     
@@ -70,35 +72,45 @@ public class MasterToJaasCoordinator {
     
     }
     
-    public void register() {
+    public void register() throws InterruptedException {
         final String sessionCookie = doRegister();
         statusExchangeThread = new StatusExchangeThread(sessionCookie);
         statusExchangeThread.start();
         registered = true;
     }
     
-    public String awaitConfigToExecute() throws TerminateException {
+    public String awaitConfigToExecute() throws TerminateException, InterruptedException {
         if (!registered) {
             throw new IllegalStateException("must be registered");
         }
-        try {
-            statusExchangeThread.setPendingRequestEntity();
-            String configName;
-            do {
-                configName = statusExchangeThread.nextConfigToExecute.poll(1, TimeUnit.MINUTES);
-                if (!standBy) {
-                    throw new TerminateException("Master execution can't be proceeded");
-                }
-            } while (configName == null);
-            statusExchangeThread.setRunningRequestEntity(configName);
-            return configName;
-        } catch (InterruptedException e) {
-            statusExchangeThread.interrupt();
-            throw new TerminateException("Master execution can't be proceeded");
+        statusExchangeThread.setPendingRequestEntity();
+        String configName;
+        do {
+            configName = statusExchangeThread.nextConfigToExecute.poll(1, TimeUnit.MINUTES);
+            if (!standBy) {
+                throw getTerminateException();
+            }
         }
+        while (configName == null);
+        statusExchangeThread.setRunningRequestEntity(configName);
+        statusExchangeThread.statusSent = false;
+        synchronized (statusExchangeThread.statusLock) {
+            while (!statusExchangeThread.statusSent) {
+                statusExchangeThread.statusLock
+                        .wait(statusReportIntervalSeconds * 1000); // waiting until new status is sent
+                if (!standBy) {
+                    throw getTerminateException();
+                }
+            }
+        }
+        return configName;
     }
     
-    private String doRegister() {
+    private TerminateException getTerminateException() throws TerminateException {
+        throw new TerminateException("Master to JaaS communication can't be proceeded");
+    }
+    
+    private String doRegister() throws InterruptedException {
         URI envsUri = UriComponentsBuilder.newInstance().uri(jaasEndpoint).path("/envs").build().toUri();
     
         TestEnvironmentEntity testEnvironmentEntity = buildTestEnvironmentEntityWith(TestEnvironmentStatus.PENDING);
@@ -116,6 +128,9 @@ public class MasterToJaasCoordinator {
                 envId = UUID.randomUUID().toString();
                 LOGGER.warn("Changing env id from {} to {}", testEnvironmentEntity.getEnvironmentId(), envId);
                 testEnvironmentEntity.setEnvironmentId(envId);
+            } catch (HttpServerErrorException | ResourceAccessException e) {
+                LOGGER.warn("Error during registration to '{}'", envsUri, e);
+                TimeUnit.SECONDS.sleep(statusReportIntervalSeconds);
             }
         } while (!posted);
     
@@ -177,6 +192,11 @@ public class MasterToJaasCoordinator {
         return registered;
     }
     
+    @Override
+    public void close() {
+        standBy = false;
+    }
+    
     private final class StatusExchangeThread extends Thread {
         
         private String sessionCookie;
@@ -185,9 +205,9 @@ public class MasterToJaasCoordinator {
         
         private volatile RequestEntity<TestEnvironmentEntity> requestEntity;
 
-        private TestEnvironmentStatus lastStatus = TestEnvironmentStatus.PENDING;
+        private final Object statusLock = new Object();
 
-        private volatile boolean runningStatusSent = false;
+        private volatile boolean statusSent = false;
 
         public StatusExchangeThread(String sessionCookie) {
             this.sessionCookie = sessionCookie;
@@ -210,19 +230,7 @@ public class MasterToJaasCoordinator {
         }
         
         public void setPendingRequestEntity() {
-            // This cycle is needed to prevent sending PENDING status until RUNNING status is sent in cases when load scenario lasts less
-            // than statusReportIntervalSeconds
-            while (standBy && lastStatus == TestEnvironmentStatus.RUNNING && !runningStatusSent) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(100);
-                } catch (InterruptedException e) {
-                    LOGGER.error("Error occurred while sleeping", e);
-                    standBy = false;
-                }
-            }
-
             this.requestEntity = buildPendingRequestEntity();
-            setLastStatus(TestEnvironmentStatus.PENDING);
         }
         
         public void setRunningRequestEntity(String configName) {
@@ -231,12 +239,6 @@ public class MasterToJaasCoordinator {
             requestEntity.getBody().setRunningLoadScenario(new LoadScenarioEntity(configName));
     
             this.requestEntity = requestEntity;
-
-            setLastStatus(TestEnvironmentStatus.RUNNING);
-        }
-
-        private void setLastStatus(TestEnvironmentStatus lastStatus) {
-            this.lastStatus = lastStatus;
         }
 
         @Override
@@ -244,8 +246,11 @@ public class MasterToJaasCoordinator {
             do {
                 try {
                     updateStatus();
-                    runningStatusSent = lastStatus == TestEnvironmentStatus.RUNNING;
-                    Thread.sleep(statusReportIntervalSeconds * 1000);
+                    statusSent = true;
+                    synchronized (statusLock) {
+                        statusLock.notifyAll();
+                    }
+                    TimeUnit.SECONDS.sleep(statusReportIntervalSeconds);
                 } catch (InterruptedException e) {
                     standBy = false;
                 }
@@ -258,8 +263,8 @@ public class MasterToJaasCoordinator {
                 ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
                 LOGGER.info("PUT request sent to {} with body {}.", requestEntity.getUrl(), requestEntity.getBody());
                 tryToOfferNextConfigToExecute(responseEntity);
-            } catch (HttpServerErrorException e) {
-                LOGGER.warn("Server error during update", e);
+            } catch (HttpServerErrorException | ResourceAccessException e) {
+                LOGGER.warn("Server error during update by url '{}'", requestEntity.getUrl(), e);
             } catch (HttpClientErrorException e) {
                 if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                     reRegister();
@@ -270,7 +275,7 @@ public class MasterToJaasCoordinator {
             }
         }
         
-        private void reRegister() {
+        private void reRegister() throws InterruptedException {
             this.sessionCookie = doRegister();
             if (requestEntity.getBody().getStatus() == TestEnvironmentStatus.PENDING) {
                 setPendingRequestEntity();

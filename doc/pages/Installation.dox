@@ -1,0 +1,53 @@
+/// @page Installation
+/// @brief How to setup Jagger locally or on the CI environment
+/// @details
+/// @n
+/// @li @ref section_installation_local
+/// @li @ref section_installation_ci
+///
+/// @n
+/// @n
+/// @section section_installation_local Local installation
+/// @n
+/// @b Requirements: java, maven, docker @n
+/// @n
+/// In general all Jagger components for local installation can be separated to:
+/// @li Results storage and representation  components
+/// @li Load generating components
+///
+/// @par To install and launch <b>Result storage and presentation</b> components you can use docker
+/// Download docker compose .yml file for local installation (TODO replace with nexus link when ready)
+/// @code
+/// wget https://github.com/griddynamics/jagger/blob/master/docker/compose/docker-compose.yml
+/// @endcode
+/// @n
+/// Run docker compose. All necessary images will be downloaded from the DockerHub and launched locally in containers
+/// @code
+/// docker compose up -d
+/// @endcode
+/// @n
+/// More details on docker compose setup in the <a href="https://github.com/griddynamics/jagger/blob/master/docker/compose/readme.txt">readme.txt</a> @n
+/// @n
+/// After the installation you will get following components running as docker containers:
+/// @li MySQL database for test results storage
+/// @li @ref WebUiMain for results representation, comparison, sharing. By default `http://localhost:8087/`
+/// @li MySQL database for Jagger as a Service (JaaS) configuration
+/// @li @ref JaasMain "JaaS REST API". By default at `http://localhost:8088/jaas/swagger-ui.html#/`
+///
+/// @par To install and use <b>Load generating components</b> we are creating a Jagger test project from template
+/// Create new test project from template
+/// @code
+/// mvn archetype:generate -DarchetypeGroupId=com.griddynamics.jagger -DarchetypeArtifactId=jagger-archetype-java-builders -DarchetypeVersion=2.0 -DarchetypeRepository=https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/
+/// @endcode
+/// <b> @e Note: </b> Latest version number `archetypeVersion` you can find in [Release notes](https://github.com/griddynamics/jagger/wiki/Jagger-Release-Notes#jagger-release-notes) @n
+/// @n
+/// Maven will ask you to enter `groupId`, `artifactId`, `version` and `package` name.@n
+/// @n
+/// After the installation you will get following components:
+/// @li Java maven project with `artifactId` name. Project will contain examples of the performance tests
+///
+/// How to run the project and write you first test - @ref section_getting_started_run @n
+///
+/// @n
+/// @section section_installation_ci CI installation
+/// TODO work in progress
