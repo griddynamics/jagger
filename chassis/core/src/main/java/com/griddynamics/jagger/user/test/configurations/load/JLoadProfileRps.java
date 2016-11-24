@@ -24,9 +24,9 @@ public class JLoadProfileRps implements JLoadProfile {
      * @param warmUpTimeInSeconds - The warm up time value in seconds. Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInSeconds
      */
     public JLoadProfileRps(RequestsPerSecond requestsPerSecond, MaxLoadThreads maxLoadThreads, WarmUpTimeInSeconds warmUpTimeInSeconds) {
-        Objects.nonNull(requestsPerSecond);
-        Objects.nonNull(maxLoadThreads);
-        Objects.nonNull(warmUpTimeInSeconds);
+        Objects.requireNonNull(requestsPerSecond);
+        Objects.requireNonNull(maxLoadThreads);
+        Objects.requireNonNull(warmUpTimeInSeconds);
         
         this.requestsPerSecond = requestsPerSecond.value();
         this.maxLoadThreads = maxLoadThreads.value();

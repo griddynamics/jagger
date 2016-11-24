@@ -21,8 +21,8 @@ public class JTerminationCriteriaIterations implements JTerminationCriteria {
      * @param maxDurationInSeconds - The timeout for the test execution. If termination criteria was not reached, load test will be stopped by timeout
      */
     public JTerminationCriteriaIterations(IterationsNumber iterationsNumber, MaxDurationInSeconds maxDurationInSeconds) {
-        Objects.nonNull(iterationsNumber);
-        Objects.nonNull(maxDurationInSeconds);
+        Objects.requireNonNull(iterationsNumber);
+        Objects.requireNonNull(maxDurationInSeconds);
         
         this.iterationsNumber = iterationsNumber.value();
         this.maxDurationInSeconds = maxDurationInSeconds.value();
