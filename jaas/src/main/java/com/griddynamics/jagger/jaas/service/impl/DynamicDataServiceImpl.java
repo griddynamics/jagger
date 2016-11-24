@@ -1,5 +1,9 @@
 package com.griddynamics.jagger.jaas.service.impl;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.contains;
+
 import com.griddynamics.jagger.config.DataServiceConfig;
 import com.griddynamics.jagger.engine.e1.services.DataService;
 import com.griddynamics.jagger.jaas.service.DynamicDataService;
@@ -18,7 +22,6 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
-import javax.annotation.PreDestroy;
 import java.lang.reflect.Field;
 import java.net.ConnectException;
 import java.sql.Connection;
@@ -33,9 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.contains;
+import javax.annotation.PreDestroy;
 
 /**
  * Provides {@link com.griddynamics.jagger.engine.e1.services.DataService} service
@@ -44,6 +45,7 @@ import static org.apache.commons.lang3.StringUtils.contains;
  */
 @Service
 public class DynamicDataServiceImpl implements DynamicDataService {
+    
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDataServiceImpl.class);
 
@@ -51,6 +53,7 @@ public class DynamicDataServiceImpl implements DynamicDataService {
 
     private final ConcurrentMap<Long, AbstractApplicationContext> dataServiceContexts = new ConcurrentHashMap<>();
     private final DbConfigDao jaasDao;
+    private final DbConfigEntity defaultDbConfigEntity;
     private int dataServiceCacheSize = 10;
 
     public DynamicDataServiceImpl(@Autowired DbConfigDao jaasDao,
@@ -66,6 +69,7 @@ public class DynamicDataServiceImpl implements DynamicDataService {
             LOGGER.info("Registering default jagger test db config: {}", defaultDbConfigEntity);
             jaasDao.create(defaultDbConfigEntity);
         }
+        this.defaultDbConfigEntity = defaultDbConfigEntity;
     }
 
     @PreDestroy
@@ -100,16 +104,21 @@ public class DynamicDataServiceImpl implements DynamicDataService {
 
     @Override
     public DataService getDataServiceFor(final Long configId) {
-        return getDynamicContextFor(configId).getBean(DataService.class);
+        ApplicationContext context = getDynamicContextFor(configId);
+        if (Objects.isNull(context)) {
+            return null;
+        }
+        return context.getBean(DataService.class);
     }
 
     @Override
     public ApplicationContext getDynamicContextFor(final Long configId) {
+        
         Objects.requireNonNull(configId);
-    
+        
         ApplicationContext applicationContext = dataServiceContexts.get(configId);
         if (Objects.isNull(applicationContext)) {
-            DbConfigEntity config = jaasDao.read(configId);
+            DbConfigEntity config = read(configId);
             if (Objects.isNull(config)) {
                 return null;
             }
@@ -170,6 +179,9 @@ public class DynamicDataServiceImpl implements DynamicDataService {
 
     @Override
     public DbConfigEntity read(Long configId) {
+        if (DEFAULT_DB_CONFIG_ID.equals(configId)) {
+            return defaultDbConfigEntity;
+        }
         return jaasDao.read(configId);
     }
 
