@@ -90,7 +90,7 @@ public class ConfigurationGenerator {
         Configuration configuration = new Configuration();
         List<Task> tasks = jLoadScenario.getTestGroups()
                 .stream()
-                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnabled))
+                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable))
                 .collect(Collectors.toList());
         configuration.setTasks(tasks);
         
