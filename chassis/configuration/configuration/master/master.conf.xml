@@ -43,7 +43,7 @@
     </bean>
 
     <bean id="master" class="com.griddynamics.jagger.master.Master" lazy-init="true">
-        <property name="configuration" value="#{configurationGenerator.generate()}"/>
+        <property name="configuration" value="#{configurationGenerator.generate(conditions.monitoringEnable)}"/>
         <property name="coordinator" ref="coordinator"/>
         <property name="taskIdProvider" ref="taskIdProvider"/>
         <property name="taskExecutionStatusProvider" ref="taskStatusProvider"/>

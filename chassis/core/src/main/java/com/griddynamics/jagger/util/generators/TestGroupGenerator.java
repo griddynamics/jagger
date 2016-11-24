@@ -6,6 +6,8 @@ import com.griddynamics.jagger.engine.e1.scenario.InfiniteTerminationStrategyCon
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.monitoring.InfiniteDuration;
+import com.griddynamics.jagger.monitoring.MonitoringTask;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 
@@ -17,7 +19,7 @@ import java.util.ArrayList;
  *         Generates {@link Task} entity from user-defined {@link JParallelTestsGroup} entity.
  */
 class TestGroupGenerator {
-    static Task generateFromTestGroup(JParallelTestsGroup jParallelTestsGroup) {
+    static Task generateFromTestGroup(JParallelTestsGroup jParallelTestsGroup, boolean monitoringEnabled) {
         CompositeTask compositeTask = new CompositeTask();
         compositeTask.setLeading(new ArrayList<>());
         compositeTask.setAttendant(new ArrayList<>());
@@ -29,6 +31,11 @@ class TestGroupGenerator {
             } else {
                 compositeTask.getLeading().add(task);
             }
+        }
+        if (monitoringEnabled) {
+            // TODO: GD 11/24/16 there is no number in tasks anymore. What  should be instead of it?
+            MonitoringTask attendantMonitoring = new MonitoringTask(1, jParallelTestsGroup.getId() + " --- monitoring", jParallelTestsGroup.getId(), new InfiniteDuration());
+            compositeTask.getAttendant().add(attendantMonitoring);
         }
         return compositeTask;
     }
