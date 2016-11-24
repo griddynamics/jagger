@@ -68,7 +68,7 @@ public class ConfigurationGenerator {
                         jLoadScenarioToExecute
                 ));
             }
-            return generate(jLoadScenario, monitoringEnable);
+            return generate(jLoadScenario);
         }
 
         Configuration configuration = configurations.get(jLoadScenarioToExecute);
@@ -97,7 +97,6 @@ public class ConfigurationGenerator {
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
         seListeners.add(basicSessionCollector);
         seListeners.add(basicAggregator);
-
         if (jLoadScenario.getPercentileValues() != null) {
             durationLogProcessor.setGlobalPercentilesKeys(jLoadScenario.getPercentileValues());
             durationLogProcessor.setTimeWindowPercentilesKeys(jLoadScenario.getPercentileValues());
