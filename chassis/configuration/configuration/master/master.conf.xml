@@ -167,7 +167,7 @@
         <property name="metricLogProcessor" ref="metricLogProcessor"/>
         <property name="profilerLogProcessor" ref="profilerLogProcessor"/>
         <property name="durationLogProcessor" ref="durationLogProcessor"/>
-        <property name="useBuilders" value="${chassis.master.using.builders:false}"/>
+        <property name="useBuilders" value="${chassis.master.using.builders:true}"/>
     </bean>
 </beans>
 
