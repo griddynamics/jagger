@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * from {@link JLoadScenario} object.
  */
 public class ConfigurationGenerator {
-    
+
     private BasicSessionCollector basicSessionCollector;
     private MasterWorkloadCollector e1MasterCollector;
     private BasicAggregator basicAggregator;
@@ -41,7 +41,8 @@ public class ConfigurationGenerator {
     private boolean useBuilders;
     private String jLoadScenarioToExecute;
     private Map<String, Configuration> configurations = Collections.emptyMap();
-    
+    private boolean monitoringEnable;
+
     public Set<String> getJaggerLoadScenarioNames() {
         if (useBuilders) {
             return new HashSet<>(jaggerLoadScenarios.keySet());
@@ -67,7 +68,7 @@ public class ConfigurationGenerator {
                         jLoadScenarioToExecute
                 ));
             }
-            return generate(jLoadScenario);
+            return generate(jLoadScenario, monitoringEnable);
         }
 
         Configuration configuration = configurations.get(jLoadScenarioToExecute);
@@ -85,10 +86,12 @@ public class ConfigurationGenerator {
      * @param jLoadScenario user configuration.
      * @return jagger configuration.
      */
-    public Configuration generate(JLoadScenario jLoadScenario) {
+    public Configuration generate(JLoadScenario jLoadScenario, boolean monitoringEnabled) {
         Configuration configuration = new Configuration();
-        List<Task> tasks = jLoadScenario.getTestGroups().stream().map(TestGroupGenerator::generateFromTestGroup)
-                                        .collect(Collectors.toList());
+        List<Task> tasks = jLoadScenario.getTestGroups()
+                .stream()
+                .map(testGroup -> TestGroupGenerator.generateFromTestGroup(testGroup, monitoringEnable))
+                .collect(Collectors.toList());
         configuration.setTasks(tasks);
         
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
@@ -155,5 +158,9 @@ public class ConfigurationGenerator {
     
     public void setJLoadScenarioIdToExecute(String jLoadScenarioToExecute) {
         this.jLoadScenarioToExecute = jLoadScenarioToExecute;
+    }
+
+    public void setMonitoringEnable(boolean monitoringEnable) {
+        this.monitoringEnable = monitoringEnable;
     }
 }

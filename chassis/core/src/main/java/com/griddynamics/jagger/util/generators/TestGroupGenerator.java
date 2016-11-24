@@ -19,13 +19,17 @@ import java.util.ArrayList;
  *         Generates {@link Task} entity from user-defined {@link JParallelTestsGroup} entity.
  */
 class TestGroupGenerator {
+    private static int number = 0;
+
     static Task generateFromTestGroup(JParallelTestsGroup jParallelTestsGroup, boolean monitoringEnabled) {
         CompositeTask compositeTask = new CompositeTask();
         compositeTask.setLeading(new ArrayList<>());
         compositeTask.setAttendant(new ArrayList<>());
+        compositeTask.setNumber(number++);
         compositeTask.setName(jParallelTestsGroup.getId() + "-group");
         for (JLoadTest test : jParallelTestsGroup.getTests()) {
             WorkloadTask task = generateFromTest(test);
+            task.setNumber(number);
             if (task.getTerminateStrategyConfiguration() instanceof InfiniteTerminationStrategyConfiguration) {
                 compositeTask.getAttendant().add(task);
             } else {
@@ -33,8 +37,8 @@ class TestGroupGenerator {
             }
         }
         if (monitoringEnabled) {
-            // TODO: GD 11/24/16 there is no number in tasks anymore. What  should be instead of it?
-            MonitoringTask attendantMonitoring = new MonitoringTask(1, jParallelTestsGroup.getId() + " --- monitoring", jParallelTestsGroup.getId(), new InfiniteDuration());
+            MonitoringTask attendantMonitoring = new MonitoringTask(number, jParallelTestsGroup.getId() + " --- monitoring",
+                    jParallelTestsGroup.getId(), new InfiniteDuration());
             compositeTask.getAttendant().add(attendantMonitoring);
         }
         return compositeTask;
