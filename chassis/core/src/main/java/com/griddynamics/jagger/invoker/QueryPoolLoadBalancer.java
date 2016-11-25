@@ -68,6 +68,9 @@ public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> 
     }
 
     public int getIterableSize(Iterable iterable){
+        if (iterable == null)
+            return 0;
+
         Iterator<Q> iterator = iterable.iterator();
         int size = 0;
         while (iterator.hasNext()){

@@ -22,5 +22,5 @@ package com.griddynamics.jagger.invoker;
 
 public interface PairSupplierFactory<Q, E> {
 
-    public PairSupplier<Q, E> create(Iterable<Q> queries, Iterable<E> endpoints);
+    PairSupplier<Q, E> create(Iterable<Q> queries, Iterable<E> endpoints);
 }
