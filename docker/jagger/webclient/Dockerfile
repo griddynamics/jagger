@@ -17,7 +17,7 @@ RUN apk --update add tzdata
 ENV TZ=Europe/Moscow
 
 # Get latest jagger-webclient
-ADD ["http://nexus.vm.griddynamics.net:8081/nexus/service/local/artifact/maven/content?r=jagger-snapshots&g=com.griddynamics.jagger&a=webclient&c=exec-war&v=${project.version}", "/com/griddynamics/jagger/jagger-webclient.jar"] 
+ADD ["http://nexus.vm.griddynamics.net:8081/nexus/service/local/artifact/maven/content?r=jagger-snapshots&g=com.griddynamics.jagger&a=webclient&c=war-exec&v=${project.version}", "/com/griddynamics/jagger/jagger-webclient.jar"]
 
 ADD run.sh /com/griddynamics/jagger/run.sh
 RUN chmod +x /com/griddynamics/jagger/run.sh
