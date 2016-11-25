@@ -19,7 +19,7 @@ import java.util.ArrayList;
  *         Generates {@link Task} entity from user-defined {@link JParallelTestsGroup} entity.
  */
 class TestGroupGenerator {
-    private static int number = 0;
+    private static volatile int number = 0;
 
     static Task generateFromTestGroup(JParallelTestsGroup jParallelTestsGroup, boolean monitoringEnabled) {
         CompositeTask compositeTask = new CompositeTask();
@@ -29,7 +29,7 @@ class TestGroupGenerator {
         compositeTask.setName(jParallelTestsGroup.getId() + "-group");
         for (JLoadTest test : jParallelTestsGroup.getTests()) {
             WorkloadTask task = generateFromTest(test);
-            task.setNumber(number);
+            task.setNumber(compositeTask.getNumber());
             if (task.getTerminateStrategyConfiguration() instanceof InfiniteTerminationStrategyConfiguration) {
                 compositeTask.getAttendant().add(task);
             } else {
