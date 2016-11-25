@@ -51,7 +51,7 @@ services:
       JWC_JDBC_PASS: password
       MYSQL_PORT: 3306
       MYSQL_HOST: jagger-mysql
-      MYSQL_WAIT: 60
+      MYSQL_WAIT: 90
       JWC_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
 
   jagger-jaas:
@@ -70,5 +70,11 @@ services:
       JAAS_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
       MYSQL_PORT: 3306
       MYSQL_HOST: jaas-mysql
-      MYSQL_WAIT: 60
+      MYSQL_WAIT: 90
+      JAGGER_DB_DEFAULT_DESC: default_db
+      JAGGER_DB_DEFAULT_URL: jdbc:mysql://jagger-mysql:3306/jaggerdb
+      JAGGER_DB_DEFAULT_USER: jaggeruser
+      JAGGER_DB_DEFAULT_PASSWORD: password
+      JAGGER_DB_DEFAULT_DRIVER: com.mysql.jdbc.Driver
+      JAGGER_DB_DEFAULT_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
 
