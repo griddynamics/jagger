@@ -20,8 +20,12 @@
 
 package com.griddynamics.jagger.invoker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
+    private final static Logger logger = LoggerFactory.getLogger(PairSupplierFactoryLoadBalancer.class);
     private PairSupplierFactory<Q, E> pairSupplierFactory;
     private PairSupplier<Q, E> pairSupplier;
 
@@ -32,6 +36,9 @@ public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoa
     protected PairSupplier<Q, E> getPairSupplier(){
         if (endpointProvider == null){
             throw new NullPointerException("Init endpoint provider!");
+        }
+        if (queryProvider == null) {
+            logger.warn("Query provider is null!");
         }
 
         if (pairSupplier == null){
