@@ -14,6 +14,8 @@ import org.w3c.dom.Element;
  * Time: 12:35 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 public class TestSuiteDefinitionParser extends ListCustomDefinitionParser {
 
     @Override

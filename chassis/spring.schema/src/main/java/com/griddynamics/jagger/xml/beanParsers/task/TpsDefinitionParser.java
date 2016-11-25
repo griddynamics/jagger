@@ -19,6 +19,8 @@ import java.util.List;
  * Time: 5:27 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 public class TpsDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

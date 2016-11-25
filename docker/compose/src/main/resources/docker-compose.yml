@@ -35,7 +35,7 @@ services:
       MYSQL_DATABASE: jaasdb
 
   jagger-web-client:
-    image: griddynamics/jagger-web-client:snapshot
+    image: griddynamics/jagger-web-client:${project.version}
     container_name: jagger-web-client
     ports:
       - 8087:80
@@ -49,9 +49,13 @@ services:
       JWC_JDBC_URL: jdbc:mysql://jagger-mysql:3306/jaggerdb
       JWC_JDBC_USER: jaggeruser
       JWC_JDBC_PASS: password
+      MYSQL_PORT: 3306
+      MYSQL_HOST: jagger-mysql
+      MYSQL_WAIT: 60
+      JWC_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
 
   jagger-jaas:
-    image: griddynamics/jagger-jaas:snapshot
+    image: griddynamics/jagger-jaas:${project.version}
     container_name: jagger-jaas
     ports:
       - 8088:8080
@@ -64,3 +68,7 @@ services:
       JAAS_DB_USER: jaggeruser
       JAAS_DB_PASS: password
       JAAS_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      MYSQL_PORT: 3306
+      MYSQL_HOST: jaas-mysql
+      MYSQL_WAIT: 60
+

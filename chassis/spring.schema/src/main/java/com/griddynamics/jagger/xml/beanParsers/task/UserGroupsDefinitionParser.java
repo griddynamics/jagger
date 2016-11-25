@@ -10,7 +10,8 @@ import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-
+@Deprecated
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 public class UserGroupsDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

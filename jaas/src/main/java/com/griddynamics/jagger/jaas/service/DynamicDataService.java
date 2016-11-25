@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Properties;
 
 public interface DynamicDataService {
+    
+    Long DEFAULT_DB_CONFIG_ID = -1L;
+    
     DataService getDataServiceFor(Long configId);
 
     ApplicationContext getDynamicContextFor(Long configId);

@@ -5,6 +5,7 @@ import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /** @brief  Describes the execution sequence of the load tests during single run
  * @n
@@ -27,6 +28,13 @@ public class JLoadScenario {
 
     private final String id;
     private final List<JParallelTestsGroup> testGroups;
+    private final List<Double> percentileValues;
+
+    private JLoadScenario(Builder builder) {
+        this.id = builder.id.value();
+        this.testGroups = builder.testGroups;
+        this.percentileValues = builder.percentileValues;
+    }
 
     /** Builder of the JLoadScenario
      * @n
@@ -48,7 +56,6 @@ public class JLoadScenario {
      * @param testGroups - List of JParallelTestsGroup to execute
      */
     public static Builder builder(Id id, JParallelTestsGroup testGroup, JParallelTestsGroup... testGroups) {
-        
         List<JParallelTestsGroup> jParallelTestsGroupList = new ArrayList<>();
         jParallelTestsGroupList.add(testGroup);
         Collections.addAll(jParallelTestsGroupList, testGroups);
@@ -56,18 +63,29 @@ public class JLoadScenario {
         return new Builder(id, jParallelTestsGroupList);
     }
 
-    private JLoadScenario(Builder builder) {
-        this.id = builder.id.value();
-        this.testGroups = builder.testGroups;
-    }
-
     public static class Builder {
         private final Id id;
         private final List<JParallelTestsGroup> testGroups;
-    
+        private List<Double> percentileValues;
         public Builder(Id id, List<JParallelTestsGroup> testGroups) {
             this.id = id;
             this.testGroups = testGroups;
+        }
+
+        /** Optional: Sets list of latency percentile values
+         *
+         * @param percentileValues latency percentile values
+         */
+        public Builder withLatencyPercentiles(List<Double> percentileValues) {
+            Objects.requireNonNull(percentileValues);
+            percentileValues.stream().filter(percentile -> percentile <= 0.0 || percentile >= 100.0)
+                    .findAny()
+                    .ifPresent(badPercentile -> {
+                        throw new IllegalArgumentException("Percentile value must be > 0 and < 100. Provided value is " + badPercentile);
+                    });
+
+            this.percentileValues = percentileValues;
+            return this;
         }
 
         /**
@@ -87,5 +105,9 @@ public class JLoadScenario {
 
     public String getId() {
         return id;
+    }
+
+    public List<Double> getPercentileValues() {
+        return percentileValues;
     }
 }

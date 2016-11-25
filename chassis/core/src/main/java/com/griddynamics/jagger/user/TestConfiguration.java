@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Time: 7:18 PM
  * To change this template use File | Settings | File Templates.
  */
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public class TestConfiguration {
 
     private WorkloadClockConfiguration clockConfiguration;
