@@ -37,7 +37,7 @@ class TestGroupGenerator {
             }
         }
         if (monitoringEnabled) {
-            MonitoringTask attendantMonitoring = new MonitoringTask(number, jParallelTestsGroup.getId() + " --- monitoring",
+            MonitoringTask attendantMonitoring = new MonitoringTask(compositeTask.getNumber(), jParallelTestsGroup.getId() + " --- monitoring",
                     jParallelTestsGroup.getId(), new InfiniteDuration());
             compositeTask.getAttendant().add(attendantMonitoring);
         }
