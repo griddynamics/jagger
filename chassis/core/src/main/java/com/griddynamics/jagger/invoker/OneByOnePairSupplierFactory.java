@@ -32,23 +32,26 @@ public class OneByOnePairSupplierFactory<Q, E> implements PairSupplierFactory<Q,
 
     @Override
     public PairSupplier<Q, E> create(Iterable<Q> queries, Iterable<E> endpoints) {
-
-        LinkedList<Pair<Q, E>> tempList = new LinkedList<Pair<Q, E>>();
+        LinkedList<Pair<Q, E>> tempList = new LinkedList<>();
         Iterator<E> endpointIt = endpoints.iterator();
-        Iterator<Q> queryIt = queries.iterator();
-
         checkState(endpointIt.hasNext(), "Empty EndpointProvider");
-        checkState(queryIt.hasNext(), "Empty QueryProvider");
 
-        while(queryIt.hasNext()) {
-            Q currentQuery = queryIt.next();
-            while(endpointIt.hasNext()) {
-                E currentEndpoint = endpointIt.next();
-                tempList.add(Pair.of(currentQuery, currentEndpoint));
+        if (queries == null) {
+            while (endpointIt.hasNext()) {
+                tempList.add(Pair.of(null, endpointIt.next()));
             }
-            endpointIt = endpoints.iterator();
+        } else {
+            Iterator<Q> queryIt = queries.iterator();
+            while (queryIt.hasNext()) {
+                Q currentQuery = queryIt.next();
+                while (endpointIt.hasNext()) {
+                    E currentEndpoint = endpointIt.next();
+                    tempList.add(Pair.of(currentQuery, currentEndpoint));
+                }
+                endpointIt = endpoints.iterator();
+            }
         }
 
-        return new PairSupplierImpl<Q, E>(ImmutableList.copyOf(tempList));
+        return new PairSupplierImpl<>(ImmutableList.copyOf(tempList));
     }
 }

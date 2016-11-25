@@ -30,8 +30,8 @@ public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoa
     }
 
     protected PairSupplier<Q, E> getPairSupplier(){
-        if (endpointProvider == null || queryProvider == null){
-            throw new NullPointerException("Init query and endpoint providers!");
+        if (endpointProvider == null){
+            throw new NullPointerException("Init endpoint provider!");
         }
 
         if (pairSupplier == null){

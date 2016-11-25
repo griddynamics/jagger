@@ -3,6 +3,7 @@ package com.griddynamics.jagger.invoker.v2;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -92,6 +93,9 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     @Override
     public JHttpResponse execute(JHttpEndpoint endpoint, JHttpQuery query) {
+        if (query == null)
+            return execute(endpoint);
+
         URI endpointURI = endpoint.getURI(query.getPath(), query.getQueryParams());
         RequestEntity requestEntity = mapToRequestEntity(query, endpointURI);
         ResponseEntity responseEntity;
@@ -100,6 +104,13 @@ public class SpringBasedHttpClient implements JHttpClient {
         } else {
             responseEntity = restTemplate.exchange(endpointURI, query.getMethod(), requestEntity, byte[].class);
         }
+        return mapToJHttpResponse(responseEntity);
+    }
+
+    public JHttpResponse execute(JHttpEndpoint endpoint) {
+        URI endpointURI = endpoint.getURI();
+        RequestEntity requestEntity = mapToRequestEntity(endpointURI);
+        ResponseEntity responseEntity = restTemplate.exchange(endpointURI, HttpMethod.GET, requestEntity, byte[].class);
         return mapToJHttpResponse(responseEntity);
     }
 
@@ -132,6 +143,10 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     private <T> RequestEntity<T> mapToRequestEntity(JHttpQuery<T> query, URI endpointURI) {
         return new RequestEntity<>(query.getBody(), query.getHeaders(), query.getMethod(), endpointURI);
+    }
+
+    private <T> RequestEntity<T> mapToRequestEntity(URI endpointURI) {
+        return new RequestEntity<>(HttpMethod.GET, endpointURI);
     }
 
     private <T> JHttpResponse<T> mapToJHttpResponse(ResponseEntity<T> responseEntity) {
