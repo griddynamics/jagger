@@ -20,14 +20,19 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import com.google.common.io.Closeables;
 import com.griddynamics.jagger.storage.FileStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.google.common.io.Closeables;
+
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 /**
  * @author Alexey Kiselyov
@@ -53,32 +58,34 @@ public class ChronologyLogAggregator implements LogAggregator {
     @Override
     public AggregationInfo chronology(String dir, String targetFile) throws IOException {
         log.info("Aggregate {}", targetFile);
-        Collection<Iterable<LogEntry>> readers = new ArrayList<Iterable<LogEntry>>();
-        Set<String> fileNameList = fileStorage.getFileNameList(dir);
-        if (fileNameList.isEmpty()) {
-            log.info("Nothing to aggregate. Directory {} is empty.", dir);
-            fileStorage.create(targetFile);
-            return new AggregationInfo(0, 0, 0);
-        }
-        for (String fileName : fileNameList) {
-            try {
-                readers.add(logReader.read(fileName, LogEntry.class));
-            } catch (Exception e) {
-                // TODO
-                log.warn(e.getMessage(), e);
-            }
-        }
-
-        int count = 0;
-        long minTime = 0;
-        long maxTime = 0;
-        BufferedLogWriter.LogWriterOutput objectOutput=null;
+    
+        BufferedLogWriter.LogWriterOutput objectOutput = null;
         try {
-            if (fileStorage.delete(targetFile, false)) {
+            if (!fileStorage.delete(targetFile, false)) {
                 log.warn("Target file {} was not deleted!", targetFile);
             }
-            objectOutput= logWriter.getOutput(fileStorage.create(targetFile));
-
+    
+            Collection<Iterable<LogEntry>> readers = new ArrayList<Iterable<LogEntry>>();
+            Set<String> fileNameList = fileStorage.getFileNameList(dir);
+            if (fileNameList.isEmpty()) {
+                log.info("Nothing to aggregate. Directory {} is empty.", dir);
+                fileStorage.create(targetFile);
+                return new AggregationInfo(0, 0, 0);
+            }
+            for (String fileName : fileNameList) {
+                try {
+                    readers.add(logReader.read(fileName, LogEntry.class));
+                } catch (Exception e) {
+                    // TODO
+                    log.warn(e.getMessage(), e);
+                }
+            }
+    
+            int count = 0;
+            long minTime = 0;
+            long maxTime = 0;
+            objectOutput = logWriter.getOutput(fileStorage.create(targetFile));
+    
             PriorityQueue<StreamInfo> queue = new PriorityQueue<StreamInfo>();
             for (Iterable<LogEntry> inputStream : readers) {
                 LogEntry logEntry;
@@ -87,7 +94,7 @@ public class ChronologyLogAggregator implements LogAggregator {
                     logEntry = it.next();
                 } else {
                     continue;
-                } 
+                }
                 queue.add(new StreamInfo(it, logEntry));
             }
 
@@ -112,11 +119,11 @@ public class ChronologyLogAggregator implements LogAggregator {
                 streamInfo.lastLogEntry = logEntry;
                 queue.add(streamInfo);
             }
+    
+            return new AggregationInfo(minTime, maxTime, count);
         } finally {
             Closeables.closeQuietly(objectOutput);
         }
-
-        return new AggregationInfo(minTime, maxTime, count);
     }
 
     @Required
