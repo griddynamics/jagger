@@ -20,8 +20,6 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import java.io.IOException;
-
 /**
  * Common interface for log reader
  *

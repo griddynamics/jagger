@@ -20,22 +20,21 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import com.google.common.base.Throwables;
 import com.griddynamics.jagger.storage.FileStorage;
 import com.griddynamics.jagger.storage.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Throwables;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Queue;
+import java.util.NoSuchElementException;
 
-import static com.google.common.collect.Lists.newLinkedList;
-
-public abstract  class BufferedLogReader implements LogReader {
+public abstract class BufferedLogReader implements LogReader {
     private static final Logger log = LoggerFactory.getLogger(BufferedLogReader.class);
     private FileStorage fileStorage;
 
@@ -45,118 +44,97 @@ public abstract  class BufferedLogReader implements LogReader {
         return read(path.toString(), clazz);
     }
 
-    public  <T> FileReader<T> read(String path, Class<T> clazz) {
+    @Override
+    public <T> FileReader<T> read(String path, Class<T> clazz) {
         InputStream in;
         try {
-            if (!fileStorage.exists(path.toString())) {
+            if (!fileStorage.exists(path)) {
                 throw new IllegalArgumentException("Path " + path + " doesn't exist");
             }
-            in = new BufferedInputStream(fileStorage.open(path.toString()));
+            in = new BufferedInputStream(fileStorage.open(path));
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }
         return read(in, clazz);
     }
 
-    public <T> FileReader<T> read(InputStream in, Class<T> clazz) {
-        LogReaderInput input = getInput(in);
-        final IteratorImpl<T> iterator = new IteratorImpl<T>(input, clazz);
-        return new FileReaderImpl<T>(iterator, in);
-    }
+    protected <T> FileReader<T> read(final InputStream is, final Class<T> clazz) {
+        return new FileReader<T>() {
+            final IteratorImpl<T> iterator = new IteratorImpl<T>(getInput(is), clazz);
 
+            @Override
+            public Iterator<T> iterator() {
+                return iterator;
+            }
+
+            @Override
+            public void close() {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    throw Throwables.propagate(e);
+                }
+            }
+        };
+    }
 
     public void setFileStorage(FileStorage fileStorage) {
         this.fileStorage = fileStorage;
     }
 
+    protected abstract LogReaderInput getInput(InputStream in);
+
     protected interface LogReaderInput {
         Object readObject() throws IOException;
     }
 
-    protected abstract LogReaderInput getInput(InputStream in);
-
     /*package*/ static class IteratorImpl<T> implements Iterator<T> {
-        public static final int BUF_SIZE = 1;
 
-        private final LogReaderInput input;
-        private final Class clazz;
+        private final LogReaderInput lr;
+        private final Class<T> clazz;
 
-        private Queue<T> buffer = newLinkedList();
-        private boolean loaded = false;
+        private T next;
+        private boolean isIterationOver = false;
 
-        public IteratorImpl(LogReaderInput input, Class clazz) {
-            this.input = input;
+        public IteratorImpl(LogReaderInput lr, Class<T> clazz) {
+            this.lr = lr;
             this.clazz = clazz;
         }
 
         @Override
         public boolean hasNext() {
-            return !getBuffer().isEmpty();
+            if (isIterationOver) {
+                return false;
+            }
+
+            try {
+                Object entry;
+                do {
+                    entry = lr.readObject();
+                } while (entry == null); // TODO some bug with JBoss reader
+                if (!clazz.isInstance(entry)) {
+                    throw new IllegalStateException("entry " + entry + " is not instance of class " + clazz);
+                }
+                next = clazz.cast(entry);
+            } catch (EOFException e) {
+                isIterationOver = true;
+            } catch (IOException e) {
+                throw Throwables.propagate(e);
+            }
+            return !isIterationOver;
         }
 
         @Override
         public T next() {
-            return getBuffer().poll();
-        }
-
-        private Queue<T> getBuffer() {
-            if (buffer.isEmpty()) {
-                update();
+            if (isIterationOver) {
+                throw new NoSuchElementException();
             }
-            return buffer;
+            return next;
         }
 
         @Override
         public void remove() {
             throw new UnsupportedOperationException("Read only iterator!");
-        }
-
-        private void update() {
-            if (loaded) {
-                return;
-            }
-
-            while(buffer.size()<BUF_SIZE) {
-                try {
-                    Object entry = input.readObject();
-                    if (entry == null) {
-                            continue; // TODO some bug with JBoss reader
-                    }
-                    if (!clazz.isInstance(entry)) {
-                        throw new IllegalStateException("entry " + entry + " is not instance of class " + clazz);
-                    }
-                    buffer.add((T) entry);
-                } catch (EOFException e) {
-                    loaded = true;
-                    break;
-                } catch (IOException e) {
-                    throw Throwables.propagate(e);
-                }
-            }
-        }
-    }
-
-    private static class FileReaderImpl<T> implements FileReader<T> {
-        private final Iterator<T> iterator;
-        private final InputStream inputStream;
-
-        private FileReaderImpl(Iterator<T> iterator, InputStream inputStream) {
-            this.iterator = iterator;
-            this.inputStream = inputStream;
-        }
-
-        @Override
-        public void close() {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                throw Throwables.propagate(e);
-            }
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            return iterator;
         }
     }
 }

@@ -61,7 +61,7 @@ class GroovyPageVisitorInvoker implements Invoker{
     @Override
     Object invoke(Object query, Object endpoint) throws InvocationException {
         try {
-            return doHttpGet(getUrl((String)endpoint, (String)endpoint));
+            return doHttpGet(getUrl((String)endpoint, (String)query));
         } catch (Exception e) {
             throw new InvocationException(e.getMessage(), e);
         }

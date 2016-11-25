@@ -20,16 +20,28 @@
 
 package com.griddynamics.jagger.coordinator.memory;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.griddynamics.jagger.coordinator.*;
+import com.griddynamics.jagger.coordinator.AbstractRemoteExecutor;
+import com.griddynamics.jagger.coordinator.Command;
+import com.griddynamics.jagger.coordinator.CommandExecutor;
+import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.coordinator.CoordinatorException;
+import com.griddynamics.jagger.coordinator.NodeCommandExecutionListener;
+import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.NodeType;
+import com.griddynamics.jagger.coordinator.Qualifier;
+import com.griddynamics.jagger.coordinator.RemoteExecutor;
+import com.griddynamics.jagger.coordinator.StatusChangeListener;
+import com.griddynamics.jagger.coordinator.Worker;
 import com.griddynamics.jagger.coordinator.async.AsyncCallback;
 import com.griddynamics.jagger.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -70,7 +82,7 @@ public class MemoryCoordinator implements Coordinator {
         for (Worker worker : workers) {
             for (CommandExecutor<?, ?> executor : worker.getExecutors()) {
                 Qualifier<?> qualifier = executor.getQualifier();
-                if (qualifiers.contains(qualifier)) {
+                if (qualifiers.contains(qualifier)) { // TODO: it is always true. Doesn't check anything.
                     throw new CoordinatorException("Executor for qualifier " + qualifier + " is already registered");
                 }
 

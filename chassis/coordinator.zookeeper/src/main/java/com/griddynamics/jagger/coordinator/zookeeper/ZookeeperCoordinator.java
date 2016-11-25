@@ -86,7 +86,7 @@ public class ZookeeperCoordinator implements Coordinator {
         for (Worker worker : workers) {
             for (CommandExecutor<?, ?> executor : worker.getExecutors()) {
                 Qualifier<?> qualifier = executor.getQualifier();
-                if (qualifiers.contains(qualifier)) {
+                if (qualifiers.contains(qualifier)) { // TODO: it is always true. Doesn't check anything.
                     throw new CoordinatorException("Executor for qualifier " + qualifier + " is already registered");
                 }
 
