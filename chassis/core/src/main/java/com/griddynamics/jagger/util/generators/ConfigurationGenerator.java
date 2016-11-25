@@ -94,8 +94,12 @@ public class ConfigurationGenerator {
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
         seListeners.add(basicSessionCollector);
         seListeners.add(basicAggregator);
-        
-        
+
+        if (jLoadScenario.getPercentileValues() != null) {
+            durationLogProcessor.setGlobalPercentilesKeys(jLoadScenario.getPercentileValues());
+            durationLogProcessor.setTimeWindowPercentilesKeys(jLoadScenario.getPercentileValues());
+        }
+
         ManagedList<DistributionListener> teListeners = new ManagedList<>();
         teListeners.add(basicSessionCollector);
         teListeners.add(basicAggregator);

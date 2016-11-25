@@ -16,22 +16,13 @@ import static java.util.Collections.singletonList;
  *     - startDelayInSeconds - Delay before first thread will start. Default is 0.<p>
  *     - slewRateUsersPerSecond - Describes how many threads to start during every iteration. Default is numberOfUsers value.<p>
  * You can set optional attribute delayBetweenInvocationsInSeconds to specify delay in seconds between invocations (default value is 0s).
+ *
+ * @ingroup Main_Load_profiles_group
  */
 public class JLoadProfileUserGroups implements JLoadProfile {
 
-    /**
-     * List of user groups {@link JLoadProfileUsers}.
-     */
     private final List<JLoadProfileUsers> userGroups;
-
-    /**
-     * Delay between invocations in seconds. Default is 0 s.
-     */
     private final int delayBetweenInvocationsInSeconds;
-
-    /**
-     * Tick interval (in milliseconds). Default is 1000 ms.
-     */
     private final int tickInterval;
 
     private JLoadProfileUserGroups(Builder builder) {
@@ -40,10 +31,23 @@ public class JLoadProfileUserGroups implements JLoadProfile {
         this.tickInterval = builder.tickInterval;
     }
 
+    /** Builder of the JLoadProfileUserGroups
+     * @n
+     * @details Constructor parameters are mandatory for the JLoadProfileUserGroups. All parameters, set by setters are optional
+     * @n
+     * @param userGroup   - User group which Jagger will imitate
+     */
     public static Builder builder(JLoadProfileUsers userGroup) {
         return new Builder(userGroup);
     }
 
+    /** Builder of the JLoadProfileUserGroups
+     * @n
+     * @details Constructor parameters are mandatory for the JLoadProfileUserGroups. All parameters, set by setters are optional
+     * @n
+     * @param userGroup   - User group which Jagger will imitate
+     * @param userGroups  - User groups which Jagger will imitate
+     */
     public static Builder builder(JLoadProfileUsers userGroup, JLoadProfileUsers... userGroups) {
         return new Builder(userGroup, userGroups);
     }
@@ -52,16 +56,31 @@ public class JLoadProfileUserGroups implements JLoadProfile {
         static final int DEFAULT_TICK_INTERVAL = 1000;
         private final List<JLoadProfileUsers> userGroups;
         private int delayBetweenInvocationsInSeconds;
+
+        // Tick interval doesn't have setter, since it's unclear if this field is needed. Check https://issues.griddynamics.net/browse/JFG-1000
         private int tickInterval;
 
+        /** Builder of the JLoadProfileUserGroups
+         * @n
+         * @details Constructor parameters are mandatory for the JLoadProfileUserGroups. All parameters, set by setters are optional
+         * @n
+         * @param userGroup   - User group which Jagger will imitate
+         */
         private Builder(JLoadProfileUsers userGroup) {
-            Objects.nonNull(userGroup);
+            Objects.requireNonNull(userGroup);
             this.userGroups = singletonList(userGroup);
             this.tickInterval = DEFAULT_TICK_INTERVAL;
         }
 
+        /** Builder of the JLoadProfileUserGroups
+         * @n
+         * @details Constructor parameters are mandatory for the JLoadProfileUserGroups. All parameters, set by setters are optional
+         * @n
+         * @param userGroup   - User group which Jagger will imitate
+         * @param userGroups  - User groups which Jagger will imitate
+         */
         public Builder(JLoadProfileUsers userGroup, JLoadProfileUsers... userGroups) {
-            Objects.nonNull(userGroup);
+            Objects.requireNonNull(userGroup);
             ArrayList<JLoadProfileUsers> groups = new ArrayList<>();
             groups.add(userGroup);
             Collections.addAll(groups, userGroups);
@@ -69,23 +88,24 @@ public class JLoadProfileUserGroups implements JLoadProfile {
             this.tickInterval = DEFAULT_TICK_INTERVAL;
         }
 
+
+        /** Creates an object of JLoadProfileUserGroups type with custom parameters.
+         * @return JLoadProfileUserGroups object.
+         */
         public JLoadProfileUserGroups build() {
             return new JLoadProfileUserGroups(this);
         }
 
         /**
-         * Delay between invocations in seconds. Default is 0 s.
+         * Optional: Delay between invocations in seconds. Default is 0 s.
+         * @param delayBetweenInvocationsInSeconds Delay between invocations in seconds
          */
         public Builder withDelayBetweenInvocationsInSeconds(int delayBetweenInvocationsInSeconds) {
+            if (delayBetweenInvocationsInSeconds < 0) {
+                throw new IllegalArgumentException(
+                        String.format("Delay between invocations must be >= 0. Provided value is %s", delayBetweenInvocationsInSeconds));
+            }
             this.delayBetweenInvocationsInSeconds = delayBetweenInvocationsInSeconds;
-            return this;
-        }
-
-        /**
-         * Tick interval (in ms). Default is 1000 ms.
-         */
-        public Builder withTickInterval(int tickInterval) {
-            this.tickInterval = tickInterval;
             return this;
         }
     }

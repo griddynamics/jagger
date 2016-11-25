@@ -35,7 +35,7 @@ services:
       MYSQL_DATABASE: jaasdb
 
   jagger-web-client:
-    image: griddynamics/jagger-web-client:1.2.6-SNAPSHOT
+    image: griddynamics/jagger-web-client:${project.version}
     container_name: jagger-web-client
     ports:
       - 8087:80
@@ -55,7 +55,7 @@ services:
       JWC_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
 
   jagger-jaas:
-    image: griddynamics/jagger-jaas:1.2.6-SNAPSHOT
+    image: griddynamics/jagger-jaas:${project.version}
     container_name: jagger-jaas
     ports:
       - 8088:8080
