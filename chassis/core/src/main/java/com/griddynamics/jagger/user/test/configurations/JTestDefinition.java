@@ -38,6 +38,9 @@ public class JTestDefinition {
         this.endpoints = builder.endpointsProvider;
         
         this.comment = builder.comment;
+        if (this.comment == null) {
+            this.comment = "";
+        }
         this.queries = builder.queries;
         this.invoker = builder.invoker;
         this.validators = builder.validators;
@@ -58,7 +61,7 @@ public class JTestDefinition {
         private final Id id;
         private final Iterable endpointsProvider;
         
-        private String comment;
+        private String comment = "";
         private Iterable queries;
         private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
         private List<Class<? extends ResponseValidator>> validators = Collections.emptyList();
