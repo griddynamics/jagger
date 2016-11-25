@@ -1,7 +1,5 @@
 package com.griddynamics.jagger.util.generators;
 
-import static java.util.function.Function.identity;
-
 import com.griddynamics.jagger.engine.e1.aggregator.session.BasicAggregator;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.MetricLogProcessor;
@@ -24,12 +22,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.function.Function.identity;
+
 /**
  * Generates {@link Configuration} entity
  * from {@link JLoadScenario} object.
  */
 public class ConfigurationGenerator {
-    
+
     private BasicSessionCollector basicSessionCollector;
     private MasterWorkloadCollector e1MasterCollector;
     private BasicAggregator basicAggregator;
@@ -41,7 +41,8 @@ public class ConfigurationGenerator {
     private boolean useBuilders;
     private String jLoadScenarioToExecute;
     private Map<String, Configuration> configurations = Collections.emptyMap();
-    
+    private boolean monitoringEnable;
+
     public Set<String> getJaggerLoadScenarioNames() {
         if (useBuilders) {
             return new HashSet<>(jaggerLoadScenarios.keySet());
@@ -87,14 +88,15 @@ public class ConfigurationGenerator {
      */
     public Configuration generate(JLoadScenario jLoadScenario) {
         Configuration configuration = new Configuration();
-        List<Task> tasks = jLoadScenario.getTestGroups().stream().map(TestGroupGenerator::generateFromTestGroup)
-                                        .collect(Collectors.toList());
+        List<Task> tasks = jLoadScenario.getTestGroups()
+                .stream()
+                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable))
+                .collect(Collectors.toList());
         configuration.setTasks(tasks);
         
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
         seListeners.add(basicSessionCollector);
         seListeners.add(basicAggregator);
-
         if (jLoadScenario.getPercentileValues() != null) {
             durationLogProcessor.setGlobalPercentilesKeys(jLoadScenario.getPercentileValues());
             durationLogProcessor.setTimeWindowPercentilesKeys(jLoadScenario.getPercentileValues());
@@ -155,5 +157,9 @@ public class ConfigurationGenerator {
     
     public void setJLoadScenarioIdToExecute(String jLoadScenarioToExecute) {
         this.jLoadScenarioToExecute = jLoadScenarioToExecute;
+    }
+
+    public void setMonitoringEnable(boolean monitoringEnable) {
+        this.monitoringEnable = monitoringEnable;
     }
 }

@@ -14,7 +14,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public class TestGroupConfiguration {
 
     private String id;

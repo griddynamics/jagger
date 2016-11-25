@@ -25,5 +25,7 @@ import java.io.Serializable;
 /**
  * UserGroup: dkotlyarov
  */
+// TODO: GD 11/25/16 might be removed as soon as possible. There is no use of this class.
+@Deprecated
 public class InfrastructureConfig implements Serializable {
 }
