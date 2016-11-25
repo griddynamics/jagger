@@ -25,5 +25,6 @@ import java.io.Serializable;
 /**
  * UserGroup: dkotlyarov
  */
+@Deprecated
 public class InfrastructureConfig implements Serializable {
 }

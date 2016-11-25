@@ -4,7 +4,8 @@ import com.griddynamics.jagger.master.configuration.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public class TestSuitConfiguration {
 
     private List<TestGroupConfiguration> testGroups;

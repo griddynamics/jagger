@@ -20,6 +20,8 @@ import org.w3c.dom.Element;
  * Time: 11:21 AM
  * To change this template use File | Settings | File Templates.
  */
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
 
     private boolean monitoringEnable = false;

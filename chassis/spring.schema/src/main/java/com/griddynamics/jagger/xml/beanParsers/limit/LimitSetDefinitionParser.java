@@ -10,7 +10,8 @@ import org.w3c.dom.Element;
 
 import java.util.List;
 
-
+@Deprecated
+// TODO: GD 11/25/16 Should be removed as soon as limits with java configuration are implemented
 public class LimitSetDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
