@@ -23,8 +23,8 @@ package com.griddynamics.jagger.invoker;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.Pair;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -32,7 +32,7 @@ public class OneByOnePairSupplierFactory<Q, E> implements PairSupplierFactory<Q,
 
     @Override
     public PairSupplier<Q, E> create(Iterable<Q> queries, Iterable<E> endpoints) {
-        LinkedList<Pair<Q, E>> tempList = new LinkedList<>();
+        ArrayList<Pair<Q, E>> tempList = new ArrayList<>();
         Iterator<E> endpointIt = endpoints.iterator();
         checkState(endpointIt.hasNext(), "Empty EndpointProvider");
 
