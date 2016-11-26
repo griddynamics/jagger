@@ -9,7 +9,7 @@
 : "${JAAS_HIBERNATE_DIALECT:?Need to set JAAS_HIBERNATE_DIALECT non-empty}"   
 
 # Wait for database to get available
-echo "Waiting for mysal start - sleep 60"
+echo "Waiting for mysql start - sleep 60"
 sleep 60
 
 
