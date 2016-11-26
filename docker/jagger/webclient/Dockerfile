@@ -1,4 +1,4 @@
-FROM openjdk:8u92-jdk-alpine
+FROM openjdk:8
 
 ENV JWC_HTTP_PORT 80
 ENV JWC_JDBC_DRIVER com.mysql.jdbc.Driver
@@ -10,8 +10,6 @@ ENV JWC_HIBERNATE_DIALECT org.hibernate.dialect.MySQLDialect
 
 ENV MYSQL_HOST mysql
 ENV MYSQL_PORT 3306
-
-RUN apk --update add tzdata
 
 # Set default timezone
 ENV TZ=Europe/Moscow
