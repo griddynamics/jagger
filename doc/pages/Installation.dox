@@ -16,14 +16,12 @@
 /// @li Load generating components
 ///
 /// @par To install and launch <b>Result storage and presentation</b> components you can use docker
-/// Download docker compose .yml file for local installation (TODO replace with nexus link when ready)
-/// @code
-/// wget https://github.com/griddynamics/jagger/blob/master/docker/compose/docker-compose.yml
-/// @endcode
+/// Download docker compose .yml file for local installation `compose-2.0-*-package.zip` from
+/// `http://nexus.griddynamics.net/nexus/content//repositories/jagger-snapshots/com/griddynamics/jagger/compose/2.0/` and unzip it @n
 /// @n
 /// Run docker compose. All necessary images will be downloaded from the DockerHub and launched locally in containers
 /// @code
-/// docker compose up -d
+/// docker-compose -f docker-compose.yml up
 /// @endcode
 /// @n
 /// More details on docker compose setup in the <a href="https://github.com/griddynamics/jagger/blob/master/docker/compose/readme.txt">readme.txt</a> @n

@@ -1,37 +1,55 @@
 Jagger
 ======
 
-Jagger is a free application suite for continuous performance testing.
+Jagger is a free application suite for continuous performance testing
 
-Jagger features:
-----------------
+======
 
-* <b>Full Automation</b>
-  Fully automated test run from CI tools, results tracking and alerting.
+Requirements for local installation: java, maven, docker
 
-* <b>Distributed Testing</b>
-  Distributed workload generation and monitoring.
+All Jagger components for local installation can be separated to:
+- Results storage and representation  components
+- Load generating components
 
-* <b>Embedded Monitoring</b>
-  Collection of system metrics and JVM metrics via JMX or SNMP.
+### Result storage and presentation components installation
+Download docker compose .yml file for local installation `compose-2.0-*-package.zip` from
+`http://nexus.griddynamics.net/nexus/content//repositories/jagger-snapshots/com/griddynamics/jagger/compose/2.0/` and unzip it
 
-* <b>Embedded JVM Profiler</b>
-  Sampling profiler for Java applications and hot spots detection.
+Run docker compose. All necessary images will be downloaded from the DockerHub and launched locally in containers
 
-* <b>Results Warehousing and Browsing</b>
-  Test results saving to DB and web console for results browsing.
+`docker-compose -f docker-compose.yml up`
 
-* <b>Advanced Workload Management</b>
-  Specify workload as a function of time, CPU utilization, memory usage and more.
+After the installation you will get following components running as docker containers:
+- MySQL database for test results storage
+- Web UI for results representation, comparison, sharing. By default [http://localhost:8087/](http://localhost:8087/)
+- MySQL database for Jagger as a Service (JaaS) configuration
+- JaaS REST API. By default at [http://localhost:8088/jaas/swagger-ui.html#/](http://localhost:8088/jaas/swagger-ui.html#/)
 
-* <b>Passive Performance Measurements</b>
-  Load arbitrary metrics from external sources to Jagger and involve them into analysis.
+### Load generating components installation
+Create new test project from template
 
-* <b>Functional Validation under Workload</b>
-  Automatic capturing of expected results before performance test.
+`mvn archetype:generate -DarchetypeGroupId=com.griddynamics.jagger -DarchetypeArtifactId=jagger-archetype-java-builders -DarchetypeVersion=2.0 -DarchetypeRepository=https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/`
 
-* <b>Open Configuration</b>
-  Override any component and write test scenarios in Java, Groovy, or JRuby.
+Maven will ask you to enter `groupId`, `artifactId`, `version` and `package` name
 
-* <b>Simulation of Network Failures and Maintenance Operations</b>
-  Simulate packet losses, communication delays, nodes restart in cluster environment.
+After the installation you will get following components:
+- Java maven project with `artifactId` name. Project will contain examples of the performance tests
+
+### Running project
+
+Compile
+
+`mvn clean install`
+
+Run test project
+
+`cd ./target/{artifactdId}-{version}-full/`
+`./start.sh profiles/basic/environment.properties`
+
+Verify results
+- Examine pdf report generated in the test execution folder
+- View test results via Web UI. By default [http://localhost:8087/](http://localhost:8087/)
+- Access test results or download pdf report via REST API. By default at [http://localhost:8088/jaas/swagger-ui.html#/](http://localhost:8088/jaas/swagger-ui.html#/)
+
+### User manual
+[http://griddynamics.github.io/jagger/doc/index.html](http://griddynamics.github.io/jagger/doc/index.html)
