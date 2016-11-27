@@ -31,7 +31,8 @@ import org.w3c.dom.Element;
  * @author Nikolay Musienko
  *         Date: 28.06.13
  */
-
+@Deprecated
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 public class RpsDefinitionParser  extends CustomBeanDefinitionParser {
 
 

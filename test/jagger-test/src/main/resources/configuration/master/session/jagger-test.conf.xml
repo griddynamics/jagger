@@ -1046,7 +1046,7 @@
                             <bean parent="abstractSleepRandom50to150msTask">
                                 <property name="name" value="sleep-service-random-50-150ms-5-min-rps"/>
                                 <property name="clockConfiguration">
-                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.QpsClockConfiguration">
                                         <property name="tps" value="500"/>
                                         <property name="tickInterval" value="500"/>
                                     </bean>

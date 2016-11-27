@@ -1,25 +1,27 @@
-FROM openjdk:8u92-jdk-alpine
+FROM openjdk:8
 
 ENV JWC_HTTP_PORT 80
 ENV JWC_JDBC_DRIVER com.mysql.jdbc.Driver
 ENV JWC_JDBC_URL jdbc:mysql://localhost:3306/jaggerdb
 ENV JWC_JDBC_USER root
 ENV JWC_JDBC_PASS root
+ENV MYSQL_WAIT 20
+ENV JWC_HIBERNATE_DIALECT org.hibernate.dialect.MySQLDialect
 
-RUN apk --update add tzdata
+ENV MYSQL_HOST mysql
+ENV MYSQL_PORT 3306
 
 # Set default timezone
 ENV TZ=Europe/Moscow
 
 # Get latest jagger-webclient
-ADD ["http://nexus.vm.griddynamics.net:8081/nexus/service/local/artifact/maven/content?r=jagger-snapshots&g=com.griddynamics.jagger&a=webclient&c=exec-war&v=${project.version}", "/com/griddynamics/jagger/jagger-webclient.jar"] 
+ADD ["http://nexus.vm.griddynamics.net:8081/nexus/service/local/artifact/maven/content?r=jagger-snapshots&g=com.griddynamics.jagger&a=webclient&c=war-exec&v=${project.version}", "/com/griddynamics/jagger/jagger-webclient.jar"]
+
+ADD run.sh /com/griddynamics/jagger/run.sh
+RUN chmod +x /com/griddynamics/jagger/run.sh
 
 WORKDIR /com/griddynamics/jagger
 
 EXPOSE ${JWC_HTTP_PORT}
 
-# Command "sleep 10" needed for initialisation of database. Watch JFG-939.
-CMD sleep 10 && java -jar jagger-webclient.jar -httpPort=${JWC_HTTP_PORT} -Djdbc.driver=${JWC_JDBC_DRIVER} \
-                                                            -Djdbc.url=${JWC_JDBC_URL} \
-                                                            -Djdbc.user=${JWC_JDBC_USER} \
-                                                            -Djdbc.password=${JWC_JDBC_PASS}
+CMD ./run.sh

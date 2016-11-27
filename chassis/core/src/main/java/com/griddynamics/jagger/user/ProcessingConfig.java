@@ -34,6 +34,8 @@ import java.util.List;
 /**
  * User: dkotlyarov
  */
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 @Root(name = "processing")
 public class ProcessingConfig implements Serializable {
     private List<Test> tests;

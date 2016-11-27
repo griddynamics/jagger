@@ -28,7 +28,6 @@ public class DefaultHttpInvoker extends AbstractHttpInvoker {
 
     @Override
     public JHttpResponse invoke(JHttpQuery query, JHttpEndpoint endpoint) throws InvocationException {
-        Preconditions.checkNotNull(query, "JHttpQuery is null!");
         Preconditions.checkNotNull(endpoint, "JHttpEndpoint is null!");
         try {
             return httpClient.execute(endpoint, query);

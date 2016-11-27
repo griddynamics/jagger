@@ -6,7 +6,7 @@ import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 
 import static com.griddynamics.jagger.util.generators.TerminationGenerator.generateTermination;
-import static com.griddynamics.jagger.util.generators.TestDescriptionGenerator.generatePrototype;
+import static com.griddynamics.jagger.util.generators.TestDefinitionGenerator.generatePrototype;
 import static com.griddynamics.jagger.util.generators.WorkloadGenerator.generateLoad;
 
 /**
@@ -25,6 +25,4 @@ class TestGenerator {
         task.setClockConfiguration(workloadClockConfiguration);
         return task;
     }
-
-
 }
