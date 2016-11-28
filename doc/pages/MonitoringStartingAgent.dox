@@ -51,15 +51,14 @@
 /// @n
 /// Example how to start agent with enable JMX monitoring:
 /// @code
-/// ./start_agent.sh -Dchassis.coordination.http.url=http://192.168.56.1:8089 -Djmx.enabled=true -Dagent.name=someAgentOnSUT
-/// -Djmx.services=localhost:9885,localhost:9875
+/// ./start_agent.sh -Dchassis.coordination.http.url=http://192.168.56.1:8089 -Djmx.enabled=true -Dagent.name=someAgentOnSUT -Djmx.services=localhost:9870,localhost:9875
 /// @endcode
 /// @n
 /// `jmx.enabled` - flag to enable/disable JMX monitoring @n
 /// `jmx.services` - host:port of JMX service(s) @n
 /// @n
 /// Also you can define name for every JMX connection, like: @n
-/// @code -Djmx.services=localhost:9885{tomcat},localhost:9875{jetty} @endcode
+/// @code -Djmx.services=localhost:9870{tomcat},localhost:9875{jetty} @endcode
 /// @n
 /// There are some more properties for agent setup. You can find them here: @subpage AgentProperties
 /// @n
