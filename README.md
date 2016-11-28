@@ -13,7 +13,7 @@ All Jagger components for local installation can be separated to:
 
 ### Result storage and presentation components installation
 Download docker compose .yml file for local installation `compose-2.0-m1-package.zip` from
-`http://nexus.griddynamics.net/nexus/content//repositories/jagger-snapshots/com/griddynamics/jagger/compose/2.0-m1/` and unzip it
+`https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/com/griddynamics/jagger/compose/2.0-m1/` and unzip it
 
 Run docker compose. All necessary images will be downloaded from the DockerHub and launched locally in containers
 
