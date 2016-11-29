@@ -40,7 +40,6 @@
     </util:list>
 
     <util:list id="comparators_false">
-        <ref bean="workloadFeatureComparator"/>
         <ref bean="limitsBasedFeatureComparator"/>
     </util:list>
 
@@ -49,21 +48,6 @@
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.limits.LimitsBasedFeatureComparator">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="databaseService" ref="databaseService"/>
-    </bean>
-
-    <bean id="workloadFeatureComparator"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadFeatureComparator">
-        <property name="workloadDecisionMaker">
-            <bean class="com.griddynamics.jagger.engine.e1.sessioncomparation.workload.ThroughputWorkloadDecisionMaker">
-                <property name="fatalDeviationThreshold"
-                          value="${chassis.engine.e1.reporting.session.comparison.decision.maker.fatal.deviation.threshold}"/>
-                <property name="warningDeviationThreshold"
-                          value="${chassis.engine.e1.reporting.session.comparison.decision.maker.warning.deviation.threshold}"/>
-            </bean>
-        </property>
-        <property name="databaseService" ref="databaseService"/>
-        <property name="summaryReporter" ref="summaryReporter"/>
-        <property name="baselineSummaryReporter" ref="summaryReporter"/>
     </bean>
 
     <bean id="limitSetConfig" class="com.griddynamics.jagger.engine.e1.collector.limits.LimitSetConfig">
@@ -77,13 +61,6 @@
 
     <!-- Monitoring -->
     <!-- Deprecated. Not used starting from 1.2.5 -->
-    <bean id="monitoringFeatureComparator"
-          class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringFeatureComparator">
-
-        <property name="monitoringParameterDecisionMaker" ref="stdDevMonitoringParameterDecisionMaker"/>
-        <property name="monitoringSummaryRetriever" ref="monitoringSummaryRetriever"/>
-        <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
     <bean id="stdDevMonitoringParameterDecisionMaker"
           class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.StdDevMonitoringParameterDecisionMaker">
 

@@ -320,17 +320,6 @@
 
             <report outputReportLocation="report.pdf">
                 <session-comparators baselineId="115" strategy="worstCase">
-
-                    <comparator-workload>
-                        <decision-maker xsi:type="decision-maker-workload-throughput"
-                                        fatalDeviationThreshold="0.8" warningDeviationThreshold="0.6"/>
-                    </comparator-workload>
-
-                    <comparator-monitoring>
-                        <decision-maker xsi:type="decision-maker-monitoring-stddev"
-                                        fatalDeviationThreshold="0.8" warningDeviationThreshold="0.6"/>
-                    </comparator-monitoring>
-
                 </session-comparators>
             </report>
 
