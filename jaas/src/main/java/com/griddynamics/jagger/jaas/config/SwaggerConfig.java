@@ -54,7 +54,7 @@ public class SwaggerConfig {
                         + "JaaS based on Spring Boot, so its properties can be configured using one of Spring Boot ways"
                         + "by default JaaS is listening on port 8080.\n"
                         + "to change it just override property \"server.port\".")
-                .license("GNU LESSER GENERAL PUBLIC LICENSE Version 2.1")
+                .license("Apache License, Version 2.0")
                 .licenseUrl("https://github.com/griddynamics/jagger/blob/master/license.txt")
                 .version(version)
                 .build();

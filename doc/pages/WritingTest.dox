@@ -70,7 +70,8 @@
 /// @n
 /// @section section_writing_test_definition Test definition
 /// @par Test definition components
-/// TODO: image @n
+/// @image html writing_test_test_definition.png "Test definition components"
+/// @n
 /// On the image above you can see relation of the different components of the test definition. Test data, provided @n
 /// by endpoint and query providers, is combined by the distributor to the set of the requests. During the load test @n
 /// this set of the requests is passed to the invoker. Invoker is providing communication with the SUT and returning responses. @n
