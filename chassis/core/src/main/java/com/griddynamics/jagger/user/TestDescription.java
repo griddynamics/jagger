@@ -28,12 +28,14 @@ import static com.google.common.collect.Lists.newArrayList;
  * Time: 2:35 PM
  * To change this template use File | Settings | File Templates.
  */
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public class TestDescription {
 
     private List<KernelSideObjectProvider<Validator>> validators;
 
-    private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> metrics;
-    private List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> standardCollectors;
+    private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> metrics;
+    private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> standardCollectors;
     private List<Provider<InvocationListener<Object, Object, Object>>> listeners;
 
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
@@ -42,7 +44,7 @@ public class TestDescription {
     private String version;
     private String name;
 
-    public List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> getStandardCollectors() {
+    public List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> getStandardCollectors() {
         return standardCollectors;
     }
 
@@ -74,11 +76,11 @@ public class TestDescription {
         this.validators = validators;
     }
 
-    public List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> getMetrics() {
+    public List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> getMetrics() {
         return metrics;
     }
 
-    public void setMetrics(List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> metrics) {
+    public void setMetrics(List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> metrics) {
         this.metrics = metrics;
     }
 
@@ -114,7 +116,7 @@ public class TestDescription {
         this.listeners = listeners;
     }
 
-    public WorkloadTask generatePrototype(){
+    public WorkloadTask generatePrototype() {
         WorkloadTask prototype = new WorkloadTask();
         prototype.setCalibrator(calibrator);
         prototype.setDescription(description);
@@ -125,7 +127,7 @@ public class TestDescription {
         prototype.setListeners(listeners);
         prototype.setTestListeners(newArrayList(new CollectThreadsTestListener()));
 
-        List<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>> allMetrics = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object,Object,Object>>>(metrics.size()+ standardCollectors.size());
+        List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> allMetrics = new ArrayList<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>>(metrics.size() + standardCollectors.size());
         allMetrics.addAll(standardCollectors);
         allMetrics.addAll(metrics);
         allMetrics.add(getSuccessRateMetric());

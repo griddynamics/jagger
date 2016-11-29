@@ -1,23 +1,17 @@
-package com.griddynamics.jagger;
+package ${package};
 
-import static java.util.Collections.singletonList;
-
-import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
-import com.griddynamics.jagger.user.test.configurations.aux.Id;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
-import com.griddynamics.jagger.user.test.configurations.load.aux.MaxLoadThreads;
-import com.griddynamics.jagger.user.test.configurations.load.aux.RequestsPerSecond;
-import com.griddynamics.jagger.user.test.configurations.load.aux.WarmUpTimeInSeconds;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
-import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
-import com.griddynamics.jagger.user.test.configurations.termination.aux.IterationsNumber;
-import com.griddynamics.jagger.user.test.configurations.termination.aux.MaxDurationInSeconds;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 
 // begin: following section is used for docu generation - Load test scenario configuration
 public class ExampleSimpleJLoadScenarioProvider {
@@ -26,7 +20,7 @@ public class ExampleSimpleJLoadScenarioProvider {
 
         JTestDefinition jTestDefinition = JTestDefinition.builder(Id.of("td_example"), new ExampleEndpointsProvider()).build();
 
-        JLoadProfile jLoadProfileRps = JLoadProfileRps.of(RequestsPerSecond.of(10), MaxLoadThreads.of(10), WarmUpTimeInSeconds.of(10));
+        JLoadProfile jLoadProfileRps = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
         
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(500), MaxDurationInSeconds.of(30));
         

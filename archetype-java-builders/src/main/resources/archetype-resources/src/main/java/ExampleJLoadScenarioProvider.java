@@ -10,19 +10,13 @@ import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.MaxLoadThreads;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.WarmUpTimeInSeconds;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 
-/**
- * Created by Andrey Badaev
- * Date: 10/11/16
- */
 public class ExampleJLoadScenarioProvider {
     
     public static JLoadScenario getExampleJaggerLoadScenario() {
@@ -35,8 +29,7 @@ public class ExampleJLoadScenarioProvider {
                 .withValidators(singletonList(NotNullResponseValidator.class))
                 .build();
         
-        JLoadProfile jLoadProfileRps = JLoadProfileRps
-                .of(RequestsPerSecond.of(10), MaxLoadThreads.of(10), WarmUpTimeInSeconds.of(10));
+        JLoadProfile jLoadProfileRps = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
         
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(1000), MaxDurationInSeconds.of(20));
         
@@ -59,10 +52,8 @@ public class ExampleJLoadScenarioProvider {
                 .withValidators(singletonList(NotNullResponseValidator.class))
                 .build();
         
-        JLoadProfile load = JLoadProfileRps
-                .of(RequestsPerSecond.of(10), MaxLoadThreads.of(10), WarmUpTimeInSeconds.of(10));
-        JLoadProfile load2 = JLoadProfileRps
-                .of(RequestsPerSecond.of(20), MaxLoadThreads.of(20), WarmUpTimeInSeconds.of(20));
+        JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
+        JLoadProfile load2 = JLoadProfileRps.builder(RequestsPerSecond.of(20)).withMaxLoadThreads(20).withWarmUpTimeInSeconds(20).build();
         
         JTerminationCriteria termination = JTerminationCriteriaIterations
                 .of(IterationsNumber.of(500), MaxDurationInSeconds.of(60));

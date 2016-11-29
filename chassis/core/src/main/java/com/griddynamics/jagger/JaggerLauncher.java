@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -165,33 +165,30 @@ public final class JaggerLauncher {
         LaunchTask masterTask = new LaunchTask() {
             @Override
             public void run() {
-                try {
-                    boolean isStandByMode = Boolean.parseBoolean(
-                            environmentProperties.getProperty("realtime.enable.standby.mode", "false"));
+                boolean isStandByMode = Boolean.parseBoolean(
+                        environmentProperties.getProperty("realtime.enable.standby.mode", "false"));
+    
+                if (isStandByMode) {
+                    log.info("Starting Master in stand by mode...");
         
-                    if (isStandByMode) {
-                        log.info("Starting Master in stand by mode...");
-            
-                        MasterToJaasCoordinator masterToJaasCoordinator = new MasterToJaasCoordinator(
-                                environmentProperties.getProperty("realtime.environment.id"),
-                                environmentProperties.getProperty("realtime.jaas.endpoint"), Integer.parseInt(
-                                environmentProperties.getProperty("realtime.status.report.interval.seconds")),
-                                getAvailableConfigurations(directory)
-                        );
+                    try (MasterToJaasCoordinator masterToJaasCoordinator = new MasterToJaasCoordinator(
+                            environmentProperties.getProperty("realtime.environment.id"),
+                            environmentProperties.getProperty("realtime.jaas.endpoint"), Integer.parseInt(
+                            environmentProperties.getProperty("realtime.status.report.interval.seconds")),
+                            getAvailableConfigurations(directory)
+                    )) {
                         masterToJaasCoordinator.register();
                         while (masterToJaasCoordinator.isStandBy()) {
-                
                             environmentProperties
                                     .setProperty(TEST_CONFIG_NAME_PROP, masterToJaasCoordinator.awaitConfigToExecute());
-                
                             doLaunchMaster(directory);
                         }
-                    } else {
-                        log.info("Starting Master in right away mode...");
-                        doLaunchMaster(directory);
+                    } catch (TerminateException | InterruptedException e) {
+                        log.error("Master has been terminated.");
                     }
-                } catch (TerminateException e) {
-                    log.error("Master has been terminated.");
+                } else {
+                    log.info("Starting Master in right away mode...");
+                    doLaunchMaster(directory);
                 }
             }
         };

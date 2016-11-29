@@ -13,7 +13,9 @@ import org.w3c.dom.Element;
 
 import java.util.List;
 
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 //Test-Group
+@Deprecated
 public class TestDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

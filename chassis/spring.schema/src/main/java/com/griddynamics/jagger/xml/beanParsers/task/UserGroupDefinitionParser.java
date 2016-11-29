@@ -13,7 +13,8 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Deprecated
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 public class UserGroupDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

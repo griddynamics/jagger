@@ -10,24 +10,9 @@ import java.util.Objects;
  */
 public class JLoadProfileUsers {
 
-    /**
-     * A goal number of threads.
-     */
     private final long numberOfUsers;
-
-    /**
-     * Describes how long threads will be alive. Default is 2 days.
-     */
     private final long lifeTimeInSeconds;
-
-    /**
-     * Delay before first thread will start. Default is 0.
-     */
     private final long startDelayInSeconds;
-
-    /**
-     * Describes how many threads to start during every iteration. Default is numberOfUsers value.
-     */
     private final long slewRateUsersPerSecond;
 
     private JLoadProfileUsers(Builder builder) {
@@ -37,6 +22,12 @@ public class JLoadProfileUsers {
         this.slewRateUsersPerSecond = builder.slewRateUsersPerSecond;
     }
 
+    /** Builder of the JLoadProfileUsers
+     * @n
+     * @details Constructor parameters are mandatory for the JLoadProfileUsers. All parameters, set by setters are optional
+     * @n
+     * @param numberOfUsers   - The number of users in user group
+     */
     public static Builder builder(NumberOfUsers numberOfUsers) {
         return new Builder(numberOfUsers);
     }
@@ -47,38 +38,60 @@ public class JLoadProfileUsers {
         private long startDelayInSeconds;
         private long slewRateUsersPerSecond;
 
+        /** Builder of the JLoadProfileUsers
+         * @n
+         * @details Constructor parameters are mandatory for the JLoadProfileUsers. All parameters, set by setters are optional
+         * @n
+         * @param numberOfUsers   - The number of users in user group
+         */
         private Builder(NumberOfUsers numberOfUsers) {
-            Objects.nonNull(numberOfUsers);
+            Objects.requireNonNull(numberOfUsers);
 
             this.numberOfUsers = numberOfUsers;
             this.lifeTimeInSeconds = 60 * 60 * 48; // 2 days
             this.slewRateUsersPerSecond = numberOfUsers.value();
         }
 
+        /** Creates an object of JLoadProfileUsers type with custom parameters.
+         * @return JLoadProfileUsers object.
+         */
         public JLoadProfileUsers build() {
             return new JLoadProfileUsers(this);
         }
 
         /**
-         * Describes how long threads will be alive. Default is 2 days.
+         * Optional: Life time in seconds. Default is 2 days.
+         * @param lifeTimeInSeconds Describes how long threads will be alive
          */
         public Builder withLifeTimeInSeconds(long lifeTimeInSeconds) {
+            if (lifeTimeInSeconds <= 0) {
+                throw new IllegalArgumentException(String.format("Life time must be > 0. Provided value is %s", lifeTimeInSeconds));
+            }
             this.lifeTimeInSeconds = lifeTimeInSeconds;
             return this;
         }
 
         /**
-         * Delay before first thread will start. Default is 0.
+         * Optional: Start delay in secondsStart delay in seconds. Default is 0.
+         * @param startDelayInSeconds Delay before first thread will start
          */
         public Builder withStartDelayInSeconds(long startDelayInSeconds) {
+            if (startDelayInSeconds < 0) {
+                throw new IllegalArgumentException(String.format("Start delay must be >= 0. Provided value is %s", startDelayInSeconds));
+            }
             this.startDelayInSeconds = startDelayInSeconds;
             return this;
         }
 
         /**
-         * Describes how many threads to start during every iteration. Default is numberOfUsers value.
+         * Optional: Slew rate users per second. Default is numberOfUsers value.
+         * @param slewRateUsersPerSecond Describes how many threads to start during every iteration
          */
         public Builder withSlewRateUsersPerSecond(long slewRateUsersPerSecond) {
+            if (slewRateUsersPerSecond <= 0) {
+                throw new IllegalArgumentException(
+                        String.format("Slew rate users per second must be > 0. Provided value is %s", slewRateUsersPerSecond));
+            }
             this.slewRateUsersPerSecond = slewRateUsersPerSecond;
             return this;
         }

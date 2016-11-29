@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -23,8 +23,8 @@ package com.griddynamics.jagger.invoker;
 import com.google.common.collect.ImmutableList;
 import com.griddynamics.jagger.util.Pair;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -32,23 +32,26 @@ public class OneByOnePairSupplierFactory<Q, E> implements PairSupplierFactory<Q,
 
     @Override
     public PairSupplier<Q, E> create(Iterable<Q> queries, Iterable<E> endpoints) {
-
-        LinkedList<Pair<Q, E>> tempList = new LinkedList<Pair<Q, E>>();
+        ArrayList<Pair<Q, E>> tempList = new ArrayList<>();
         Iterator<E> endpointIt = endpoints.iterator();
-        Iterator<Q> queryIt = queries.iterator();
-
         checkState(endpointIt.hasNext(), "Empty EndpointProvider");
-        checkState(queryIt.hasNext(), "Empty QueryProvider");
 
-        while(queryIt.hasNext()) {
-            Q currentQuery = queryIt.next();
-            while(endpointIt.hasNext()) {
-                E currentEndpoint = endpointIt.next();
-                tempList.add(Pair.of(currentQuery, currentEndpoint));
+        if (queries == null) {
+            while (endpointIt.hasNext()) {
+                tempList.add(Pair.of(null, endpointIt.next()));
             }
-            endpointIt = endpoints.iterator();
+        } else {
+            Iterator<Q> queryIt = queries.iterator();
+            while (queryIt.hasNext()) {
+                Q currentQuery = queryIt.next();
+                while (endpointIt.hasNext()) {
+                    E currentEndpoint = endpointIt.next();
+                    tempList.add(Pair.of(currentQuery, currentEndpoint));
+                }
+                endpointIt = endpoints.iterator();
+            }
         }
 
-        return new PairSupplierImpl<Q, E>(ImmutableList.copyOf(tempList));
+        return new PairSupplierImpl<>(ImmutableList.copyOf(tempList));
     }
 }

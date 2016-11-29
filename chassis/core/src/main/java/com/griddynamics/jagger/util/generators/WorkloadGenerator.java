@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.util.generators;
 
 import com.griddynamics.jagger.engine.e1.scenario.FixedDelay;
-import com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration;
+import com.griddynamics.jagger.engine.e1.scenario.QpsClockConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.UserGroupsClockConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadClockConfiguration;
 import com.griddynamics.jagger.user.ProcessingConfig.Test.Task.User;
@@ -23,10 +23,13 @@ class WorkloadGenerator {
     static WorkloadClockConfiguration generateLoad(JLoadProfile jLoadProfile) {
         WorkloadClockConfiguration clockConfiguration = null;
         if (jLoadProfile instanceof JLoadProfileRps) {
-            clockConfiguration = new RpsClockConfiguration();
-            ((RpsClockConfiguration) clockConfiguration).setValue(((JLoadProfileRps) jLoadProfile).getRequestsPerSecond());
-            ((RpsClockConfiguration) clockConfiguration).setWarmUpTime(((JLoadProfileRps) jLoadProfile).getWarmUpTimeInSeconds());
-            ((RpsClockConfiguration) clockConfiguration).setMaxThreadNumber((int) ((JLoadProfileRps) jLoadProfile).getMaxLoadThreads());
+            JLoadProfileRps loadProfileRps = (JLoadProfileRps) jLoadProfile;
+            QpsClockConfiguration qpsClockConfiguration = new QpsClockConfiguration();
+            qpsClockConfiguration.setValue(loadProfileRps.getRequestsPerSecond());
+            qpsClockConfiguration.setWarmUpTime(loadProfileRps.getWarmUpTimeInSeconds());
+            qpsClockConfiguration.setMaxThreadNumber((int) loadProfileRps.getMaxLoadThreads());
+            qpsClockConfiguration.setTickInterval(loadProfileRps.getTickInterval());
+            clockConfiguration = qpsClockConfiguration;
         } else if (jLoadProfile instanceof JLoadProfileUserGroups) {
             JLoadProfileUserGroups profileUserGroups = (JLoadProfileUserGroups) jLoadProfile;
             List<User> users = profileUserGroups.getUserGroups().stream()
