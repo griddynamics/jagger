@@ -33,7 +33,6 @@ public class JTestDefinition {
     private Iterable queries;
     private Class<? extends Invoker> invoker;
     private List<Class<? extends ResponseValidator>> validators;
-    private List<JLimit> limits;
 
 
     private JTestDefinition(Builder builder) {
