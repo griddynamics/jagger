@@ -97,7 +97,7 @@ public class LimitSet {
             if (limit.getLowerErrorThreshold() > limit.getLowerWarningThreshold()) {
                 limitsWithErrors.add(limit);
                 log.error("Limit with metricName '" + limit.getMetricName() +
-                        "' has wrong relation of thresholds. LowerErrorThreshold "+ limit.getLowerErrorThreshold() +
+                        "' has wrong relation of thresholds. LowErrThres "+ limit.getLowerErrorThreshold() +
                         " should be less than LowerWarningThreshold " + limit.getLowerWarningThreshold());
                 continue;
             }
@@ -105,14 +105,14 @@ public class LimitSet {
                 limitsWithErrors.add(limit);
                 log.error("Limit with metricName '" + limit.getMetricName() +
                         "' has wrong relation of thresholds. LowerWarningThreshold " + limit.getLowerWarningThreshold() +
-                        " should be less than UpperWarningThreshold " + limit.getUpperWarningThreshold());
+                        " should be less than UpWarnThresh " + limit.getUpperWarningThreshold());
                 continue;
             }
             if (limit.getUpperWarningThreshold() > limit.getUpperErrorThreshold()) {
                 limitsWithErrors.add(limit);
                 log.error("Limit with metricName '" + limit.getMetricName() +
-                        "' has wrong relation of thresholds. UpperWarningThreshold " + limit.getUpperWarningThreshold() +
-                        " should be less than UpperErrorThreshold " + limit.getUpperErrorThreshold());
+                        "' has wrong relation of thresholds. UpWarnThresh " + limit.getUpperWarningThreshold() +
+                        " should be less than UpErrThresh " + limit.getUpperErrorThreshold());
                 continue;
             }
         }

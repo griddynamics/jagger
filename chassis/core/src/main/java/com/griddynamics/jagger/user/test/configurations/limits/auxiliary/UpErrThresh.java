@@ -4,19 +4,18 @@ package com.griddynamics.jagger.user.test.configurations.limits.auxiliary;
  * @author asokol
  *         created 11/29/16
  */
-public class LowerErrorThreshold {
+public class UpErrThresh {
     private final Double value;
 
-    private LowerErrorThreshold(Double value) {
+    private UpErrThresh(Double value) {
         this.value = value;
     }
 
-    public static LowerErrorThreshold of(Double value) {
-        return new LowerErrorThreshold(value);
+    public static UpErrThresh of(Double value) {
+        return new UpErrThresh(value);
     }
 
     public Double value() {
         return value;
     }
-
 }

@@ -5,6 +5,7 @@ import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
 import com.griddynamics.jagger.engine.e1.collector.limits.LimitSetConfig;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
+import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,11 +17,12 @@ import java.util.stream.Collectors;
 public class LimitGenerator {
     private static int count;
 
-    public static LimitSet generate(List<JLimit> limits, BaselineSessionProvider baselineSessionProvider, LimitSetConfig limitSetConfig) {
+    public static LimitSet generate(List<JLimit> jLimits, BaselineSessionProvider baselineSessionProvider, LimitSetConfig limitSetConfig) {
         LimitSet limitSet = new LimitSet();
         limitSet.setId(count++ + "--limit_set");
         limitSet.setBaselineSessionProvider(baselineSessionProvider);
         limitSet.setLimitSetConfig(limitSetConfig);
+        limitSet.setLimits(generateListOfLimits(jLimits));
 
         return limitSet;
     }
@@ -35,11 +37,11 @@ public class LimitGenerator {
     private static Limit generateLimit(JLimit jLimit) {
         Limit limit = new Limit();
         limit.setMetricName(jLimit.getMetricName());
-        limit.setLimitDescription(jLimit.getLimitDescription());
-        limit.setRefValue(jLimit.getRefValue());
-
+        if (jLimit instanceof JLimitVsRefValue) {
+            limit.setRefValue(((JLimitVsRefValue) jLimit).getRefValue());
+        }
         limit.setLowerErrorThreshold(jLimit.getLowerErrorThreshold());
-        limit.setLowerWarningThreshold(jLimit.getLowerWarningThreshold());
+        limit.setLowerWarningThreshold(jLimit.getLowWarnThresh());
         limit.setUpperErrorThreshold(jLimit.getUpperErrorThreshold());
         limit.setUpperWarningThreshold(jLimit.getUpperWarningThreshold());
 

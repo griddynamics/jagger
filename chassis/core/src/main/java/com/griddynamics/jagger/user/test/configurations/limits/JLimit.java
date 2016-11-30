@@ -1,139 +1,142 @@
 package com.griddynamics.jagger.user.test.configurations.limits;
 
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowerErrorThreshold;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowerWarningThreshold;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpperErrorThreshold;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpperWarningThreshold;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowErrThres;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowWarnThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpErrThresh;
+
+import java.util.Objects;
 
 /**
- * @author asokol
- *         created 11/29/16
+ *
  */
-public class JLimit {
+public abstract class JLimit {
 
-    private final String metricName;
-    private String limitDescription;
-    private Double refValue;
-    private final Double lowerWarningThreshold;
-    private final Double upperWarningThreshold;
-    private final Double lowerErrorThreshold;
-    private final Double upperErrorThreshold;
+    private String metricName;
+    private Double lowWarnThresh;
+    private Double upperWarningThreshold;
+    private Double lowerErrorThreshold;
+    private Double upperErrorThreshold;
 
-    public static Builder builder() {
-        return new Builder();
-    }
 
-    public static Builder builder(LowerWarningThreshold lowerWarningThreshold,
-                                  UpperWarningThreshold upperWarningThreshold,
-                                  LowerErrorThreshold lowerErrorThreshold,
-                                  UpperErrorThreshold upperErrorThreshold) {
-        return new Builder(lowerWarningThreshold, upperWarningThreshold, lowerErrorThreshold, upperErrorThreshold);
-
-    }
-
-    private JLimit(Builder builder) {
+    JLimit(Builder builder) {
         this.metricName = builder.metricName;
-        this.limitDescription = builder.limitDescription;
-        this.refValue = builder.refValue.value();
-        this.lowerWarningThreshold = builder.lowerWarningThreshold.value();
-        this.upperWarningThreshold = builder.upperWarningThreshold.value();
-        this.lowerErrorThreshold = builder.lowerErrorThreshold.value();
-        this.upperErrorThreshold = builder.upperErrorThreshold.value();
+        this.lowWarnThresh = builder.lowWarnThresh.value();
+        this.upperWarningThreshold = builder.upWarnThresh.value();
+        this.lowerErrorThreshold = builder.lowErrThres.value();
+        this.upperErrorThreshold = builder.upErrThresh.value();
     }
 
-    public static class Builder {
-        private String metricName;
-        private String limitDescription = "";
-        private RefValue refValue = RefValue.of(null);
-        private LowerWarningThreshold lowerWarningThreshold;
-        private UpperWarningThreshold upperWarningThreshold;
-        private LowerErrorThreshold lowerErrorThreshold;
-        private UpperErrorThreshold upperErrorThreshold;
 
-        public Builder() {
-        }
+    public abstract static class Builder {
+        String metricName;
+        LowWarnThresh lowWarnThresh = LowWarnThresh.of(1.0);
+        UpWarnThresh upWarnThresh = UpWarnThresh.of(1.0);
+        LowErrThres lowErrThres = LowErrThres.of(1.0);
+        UpErrThresh upErrThresh = UpErrThresh.of(1.0);
 
-        public Builder(LowerWarningThreshold lowerWarningThreshold,
-                       UpperWarningThreshold upperWarningThreshold,
-                       LowerErrorThreshold lowerErrorThreshold,
-                       UpperErrorThreshold upperErrorThreshold) {
-            this.lowerErrorThreshold = lowerErrorThreshold;
-            this.upperErrorThreshold = upperErrorThreshold;
-            this.lowerWarningThreshold = lowerWarningThreshold;
-            this.upperWarningThreshold = upperWarningThreshold;
-        }
+        // I'm really sorry for that, but I have no idea how to do it better.
+        private boolean initialized;
 
 
-        public Builder withMetricName(String metricName) {
-            this.metricName = metricName;
+        public Builder onlyWarnings(LowWarnThresh lowWarnThresh, UpWarnThresh upWarnThresh) {
+            if (initialized) {
+                throw new IllegalArgumentException("The limits cannot be initialized more than once.");
+            }
+            Objects.requireNonNull(lowWarnThresh);
+            Objects.requireNonNull(upWarnThresh);
+
+            this.lowErrThres = LowErrThres.of(Double.NEGATIVE_INFINITY);
+            this.upErrThresh = UpErrThresh.of(Double.POSITIVE_INFINITY);
+            this.lowWarnThresh = lowWarnThresh;
+            this.upWarnThresh = upWarnThresh;
+
+            initialized = true;
+
             return this;
         }
 
-        public Builder withLimitDescription(String limitDescription) {
-            this.limitDescription = limitDescription;
+        public Builder onlyErrors(LowErrThres lowErrThres, UpErrThresh upErrThresh) {
+            if (initialized) {
+                throw new IllegalArgumentException("The limits cannot be initialized more than once.");
+            }
+            Objects.requireNonNull(lowErrThres);
+            Objects.requireNonNull(upErrThresh);
+
+            this.lowErrThres = lowErrThres;
+            this.upErrThresh = upErrThresh;
+            this.lowWarnThresh = LowWarnThresh.of(Double.NEGATIVE_INFINITY);
+            this.upWarnThresh = UpWarnThresh.of(Double.POSITIVE_INFINITY);
+
+            initialized = true;
+
             return this;
         }
 
-        public Builder withRefValue(Double refValue) {
-            this.refValue = RefValue.of(refValue);
+        public Builder onlyUpperThresholds(UpWarnThresh upWarnThresh, UpErrThresh upErrThresh) {
+            if (initialized) {
+                throw new IllegalArgumentException("The limits cannot be initialized more than once.");
+            }
+            Objects.requireNonNull(upWarnThresh);
+            Objects.requireNonNull(upErrThresh);
+
+            this.lowErrThres = LowErrThres.of(Double.NEGATIVE_INFINITY);
+            this.upErrThresh = upErrThresh;
+            this.lowWarnThresh = LowWarnThresh.of(Double.NEGATIVE_INFINITY);
+            this.upWarnThresh = upWarnThresh;
+
+            initialized = true;
+
             return this;
         }
 
-        public Builder onlyWarnings(LowerWarningThreshold lowerWarningThreshold, UpperWarningThreshold upperWarningThreshold) {
-            this.lowerErrorThreshold = LowerErrorThreshold.of(Double.NEGATIVE_INFINITY);
-            this.upperErrorThreshold = UpperErrorThreshold.of(Double.POSITIVE_INFINITY);
-            this.lowerWarningThreshold = lowerWarningThreshold;
-            this.upperWarningThreshold = upperWarningThreshold;
+        public Builder onlyLowerThresholds(LowWarnThresh lowWarnThresh, LowErrThres lowErrThres) {
+            if (initialized) {
+                throw new IllegalArgumentException("The limits cannot be initialized more than once.");
+            }
+            Objects.requireNonNull(lowWarnThresh);
+            Objects.requireNonNull(lowErrThres);
+
+            this.lowErrThres = lowErrThres;
+            this.upErrThresh = UpErrThresh.of(Double.POSITIVE_INFINITY);
+            this.lowWarnThresh = lowWarnThresh;
+            this.upWarnThresh = UpWarnThresh.of(Double.POSITIVE_INFINITY);
+
+            initialized = true;
+
             return this;
         }
 
-        public Builder onlyErrors(LowerErrorThreshold lowerErrorThreshold, UpperErrorThreshold upperErrorThreshold) {
-            this.lowerErrorThreshold = lowerErrorThreshold;
-            this.upperErrorThreshold = upperErrorThreshold;
-            this.lowerWarningThreshold = LowerWarningThreshold.of(Double.NEGATIVE_INFINITY);
-            this.upperWarningThreshold = UpperWarningThreshold.of(Double.POSITIVE_INFINITY);
-            return this;
-        }
+        public Builder exactLimits(LowWarnThresh lowWarnThresh, LowErrThres lowErrThres, UpWarnThresh upWarnThresh, UpErrThresh upErrThresh) {
+            if (initialized) {
+                throw new IllegalArgumentException("The limits cannot be initialized more than once.");
+            }
+            Objects.requireNonNull(lowWarnThresh);
+            Objects.requireNonNull(lowErrThres);
+            Objects.requireNonNull(upWarnThresh);
+            Objects.requireNonNull(upErrThresh);
 
-        public Builder onlyUpperThresholds(UpperWarningThreshold upperWarningThreshold, UpperErrorThreshold upperErrorThreshold) {
-            this.lowerErrorThreshold = LowerErrorThreshold.of(Double.NEGATIVE_INFINITY);
-            this.upperErrorThreshold = upperErrorThreshold;
-            this.lowerWarningThreshold = LowerWarningThreshold.of(Double.NEGATIVE_INFINITY);
-            this.upperWarningThreshold = upperWarningThreshold;
-            return this;
-        }
+            this.lowErrThres = lowErrThres;
+            this.upErrThresh = upErrThresh;
+            this.lowWarnThresh = lowWarnThresh;
+            this.upWarnThresh = upWarnThresh;
 
-        public Builder onlyLowerThresholds(LowerWarningThreshold lowerWarningThreshold, LowerErrorThreshold lowerErrorThreshold) {
-            this.lowerErrorThreshold = lowerErrorThreshold;
-            this.upperErrorThreshold = UpperErrorThreshold.of(Double.POSITIVE_INFINITY);
-            this.lowerWarningThreshold = lowerWarningThreshold;
-            this.upperWarningThreshold = UpperWarningThreshold.of(Double.POSITIVE_INFINITY);
+            initialized = true;
+
             return this;
         }
 
 
-        public JLimit build() {
-            return new JLimit(this);
-        }
+        public abstract JLimit build();
 
     }
-
 
     public String getMetricName() {
         return metricName;
     }
 
-    public String getLimitDescription() {
-        return limitDescription;
-    }
-
-    public Double getRefValue() {
-        return refValue;
-    }
-
-    public Double getLowerWarningThreshold() {
-        return lowerWarningThreshold;
+    public Double getLowWarnThresh() {
+        return lowWarnThresh;
     }
 
     public Double getUpperWarningThreshold() {
