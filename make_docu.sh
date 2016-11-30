@@ -21,6 +21,9 @@ if [ ! -z "$version" ]; then
     cp -r ./doc/html ./doc_$version
 fi
 
+# generate swagger docs
+mvn -pl jaas clean test
+
 # copy swagger docs
 swagger_html_path="./jaas/target/asciidoc/html/index.html"
 swagger_pdf_path="./jaas/target/asciidoc/pdf/index.pdf"
