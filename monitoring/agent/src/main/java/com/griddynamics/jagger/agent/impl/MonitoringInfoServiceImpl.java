@@ -22,8 +22,16 @@ package com.griddynamics.jagger.agent.impl;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.Futures;
-import com.griddynamics.jagger.agent.model.*;
+import com.google.common.util.concurrent.Uninterruptibles;
+import com.griddynamics.jagger.agent.model.AgentContext;
+import com.griddynamics.jagger.agent.model.CpuData;
+import com.griddynamics.jagger.agent.model.DisksData;
+import com.griddynamics.jagger.agent.model.MonitoringInfoService;
+import com.griddynamics.jagger.agent.model.SystemInfo;
+import com.griddynamics.jagger.agent.model.SystemInfoCollector;
+import com.griddynamics.jagger.agent.model.SystemUnderTestInfo;
+import com.griddynamics.jagger.agent.model.SystemUnderTestService;
+import com.griddynamics.jagger.agent.model.TcpData;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.dbapi.parameter.MonitoringParameter;
 import com.griddynamics.jagger.util.TimeUtils;
@@ -33,7 +41,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.griddynamics.jagger.util.Units.bytesToKiB;
 import static com.griddynamics.jagger.util.Units.bytesToMiB;
@@ -151,7 +165,7 @@ public class MonitoringInfoServiceImpl implements MonitoringInfoService {
         if (jmxThreadPoolExecutor.getActiveCount() == 0) {
             Future<T> future = jmxThreadPoolExecutor.submit(response);
             try {
-                result = Futures.makeUninterruptible(future).get(jmxTimeout.getValue(), TimeUnit.MILLISECONDS);
+                result = Uninterruptibles.getUninterruptibly(future, jmxTimeout.getValue(), TimeUnit.MILLISECONDS);
             } catch (ExecutionException e) {
                 log.error("Execution failed {}", e);
                 throw Throwables.propagate(e);

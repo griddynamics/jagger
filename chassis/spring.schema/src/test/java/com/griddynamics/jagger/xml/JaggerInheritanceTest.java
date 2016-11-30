@@ -1,10 +1,7 @@
 package com.griddynamics.jagger.xml;
 
-import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
-
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.engine.e1.aggregator.workload.DurationLogProcessor;
-import com.griddynamics.jagger.engine.e1.collector.ConsistencyValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.IterationsOrDurationStrategyConfiguration;
@@ -29,6 +26,8 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
 
 /**
  * User: kgribov
@@ -111,10 +110,8 @@ public class JaggerInheritanceTest {
         //check validators queue
         List< KernelSideObjectProvider<Validator>> validators = description.getValidators();
         KernelSideObjectProvider validatorProvider0 = ((ValidatorProvider)validators.get(0)).getValidatorProvider();
-        KernelSideObjectProvider validatorProvider1 = ((ValidatorProvider)validators.get(1)).getValidatorProvider();
 
         Assert.assertEquals(validatorProvider0 instanceof ReflectionProvider, true);
-        Assert.assertEquals(validatorProvider1 instanceof ConsistencyValidatorProvider, true);
 
         QueryPoolScenarioFactory scenario = (QueryPoolScenarioFactory) description.getScenarioFactory();
         Iterable endpoints = scenario.getEndpointProvider();
