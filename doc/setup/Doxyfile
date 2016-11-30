@@ -676,6 +676,7 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./doc/pages/JaggerProperties.dox \
                          ./doc/pages/JaasInstallation.dox \
                          ./doc/pages/JaaSMain.dox \
+                         ./doc/pages/Licence.dox \
                          ./doc/pages/MainPage.dox \
                          ./doc/pages/MonitoringMain.dox \
                          ./doc/pages/MonitoringMetricsSetup.dox \
@@ -755,7 +756,9 @@ EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
                          ./webclient/src/main/resources/webclient.properties \
                          ./monitoring/agent/src/main/resources/spring/agent.properties \
                          ./chassis/configuration/configuration/basic/default.environment.properties \
-                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties \
+                         ./license.txt
+
 #                          ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
 #                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
 
@@ -776,6 +779,7 @@ EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
 # blank all files are included.
 
 EXAMPLE_PATTERNS       = *.java \
+                         *.txt \
                          *.xml
 
 # If the EXAMPLE_RECURSIVE tag is set to YES then subdirectories will be

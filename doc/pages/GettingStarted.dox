@@ -15,6 +15,9 @@
 /// ./start.sh profiles/basic/environment.properties
 /// @endcode
 /// @n
+/// <b> @e Note: </b> By default the framework will save test results to the docker MySQL database.
+/// You can @ref JaggerProperties "switch to H2 data base" and run test project without @ref section_installation_local "installation of Result storage and presentation components" @n
+/// @n
 /// Verify results @n
 /// @li Examine pdf report generated in the test execution folder
 /// @li View test results @ref WebUiMain "via WebUI". By default `http://localhost:8087/`
