@@ -1,6 +1,8 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
@@ -33,6 +35,7 @@ public class JTestDefinition {
     private Iterable queries;
     private Class<? extends Invoker> invoker;
     private List<Class<? extends ResponseValidator>> validators;
+    private List<Provider<InvocationListener>> listeners;
 
 
     private JTestDefinition(Builder builder) {
@@ -46,6 +49,7 @@ public class JTestDefinition {
         this.queries = builder.queries;
         this.invoker = builder.invoker;
         this.validators = builder.validators;
+        this.listeners = builder.listeners;
     }
 
     /**
@@ -69,6 +73,7 @@ public class JTestDefinition {
         private Iterable queries;
         private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
         private List<Class<? extends ResponseValidator>> validators = Collections.emptyList();
+        private List<Provider<InvocationListener>> listeners = Collections.emptyList();
 
         private Builder(Id id, Iterable endpointsProvider) {
             this.id = id;
@@ -123,6 +128,21 @@ public class JTestDefinition {
             this.validators = validators;
             return this;
         }
+    
+        /**
+         * Optional: Sets instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider<InvocationListener>}
+         * @b IMPORTANT: listener code will be executed during every invocation = every request to SUT @n
+         * Try to avoid slow operations in invocation listener code. They will slow down your workload @n
+         * Example:
+         * @code
+         * withListeners(Arrays.asList(new NotNullInvocationListener()))
+         * @endcode
+         * @see com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener for example
+         */
+        public Builder withListeners(List<Provider<InvocationListener>> listeners) {
+            this.listeners = listeners;
+            return this;
+        }
 
         /**
          * Creates the object of JTestDefinition type with custom parameters.
@@ -160,5 +180,9 @@ public class JTestDefinition {
 
     public List<Class<? extends ResponseValidator>> getValidators() {
         return validators;
+    }
+    
+    public List<Provider<InvocationListener>> getListeners() {
+        return listeners;
     }
 }

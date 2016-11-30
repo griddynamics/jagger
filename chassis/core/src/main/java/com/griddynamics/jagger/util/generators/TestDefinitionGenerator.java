@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.util.generators;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
@@ -19,7 +21,7 @@ import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.beans.factory.support.ManagedList;
 
-import static com.google.common.collect.Lists.newArrayList;
+import java.util.List;
 
 /**
  * @author asokol
@@ -53,8 +55,9 @@ class TestDefinitionGenerator {
             validationCollectorProvider.setValidator(ReflectionProvider.ofClass(clazz));
             collectors.add(validationCollectorProvider);
         }
-
+        
         prototype.setCollectors(collectors);
+        prototype.setListeners((List) jTestDefinition.getListeners());
         prototype.setTestListeners(newArrayList(new CollectThreadsTestListener()));
 
 

@@ -1,6 +1,9 @@
 package com.griddynamics.jagger;
 
+import static java.util.Collections.singletonList;
+
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
@@ -15,7 +18,7 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 
-import static java.util.Collections.singletonList;
+import java.util.Collections;
 
 /**
  * Created by Andrey Badaev
@@ -24,13 +27,14 @@ import static java.util.Collections.singletonList;
 public class ExampleJLoadScenarioProvider {
     
     public static JLoadScenario getExampleJaggerLoadScenario() {
-        
+    
         JTestDefinition jTestDefinition = JTestDefinition
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .withValidators(singletonList(NotNullResponseValidator.class))
+                .withValidators(Collections.singletonList(NotNullResponseValidator.class))
+                .withListeners(Collections.singletonList(new NotNullInvocationListener()))
                 .build();
         
         JLoadProfile jLoadProfileRps = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();

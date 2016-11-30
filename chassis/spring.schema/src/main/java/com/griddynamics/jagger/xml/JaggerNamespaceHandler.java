@@ -180,6 +180,5 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         //limits
         registerBeanDefinitionParser("limits", new LimitSetDefinitionParser());
         registerBeanDefinitionParser("limit", new LimitDefinitionParser());
-
     }
 }
