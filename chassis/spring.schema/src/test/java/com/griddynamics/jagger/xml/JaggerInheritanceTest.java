@@ -102,7 +102,7 @@ public class JaggerInheritanceTest {
         TestDescription description = (TestDescription) ctx.getBean("desc1");
 
         //check collectors
-        Assert.assertEquals(description.getValidators().size(), 2);
+        Assert.assertEquals(description.getValidators().size(), 1);
         Assert.assertEquals(description.getStandardCollectors().size(), XMLConstants.STANDARD_WORKLOAD_LISTENERS.size());
         Assert.assertEquals(description.getMetrics().size(), 2);
         Assert.assertEquals(description.getListeners().size(), 2);
