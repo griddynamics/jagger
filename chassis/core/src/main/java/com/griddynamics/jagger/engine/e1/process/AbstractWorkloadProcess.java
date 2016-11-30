@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.engine.e1.process;
 
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.Provider;
@@ -14,15 +13,15 @@ import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.invoker.Scenario;
-import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Abstract workload process to simplify status collection process.
@@ -87,14 +86,14 @@ public abstract class AbstractWorkloadProcess implements WorkloadProcess {
     public void stop() {
 
         log.debug("Going to terminate");
-        List<ListenableFuture<Service.State>> futures = Lists.newLinkedList();
+        List<Service> services = Lists.newLinkedList();
         for (WorkloadService thread : threads) {
-            ListenableFuture<Service.State> stop = thread.stop();
-            futures.add(stop);
+            Service stop = thread.stopAsync();
+            services.add(stop);
         }
 
-        for (ListenableFuture<Service.State> future : futures) {
-            Service.State state = Futures.get(future, timeoutsConfiguration.getWorkloadStopTimeout());
+        for (Service service : services) {
+            Service.State state = service.state();
             log.debug("stopped workload thread with status {}", state);
         }
         log.debug("All threads were terminated");
@@ -152,8 +151,13 @@ public abstract class AbstractWorkloadProcess implements WorkloadProcess {
         WorkloadService thread = getService(builder);
         thread.changeDelay(delay);
         log.debug("Starting workload");
-        Future<Service.State> future = thread.start();
-        Service.State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
+        Service service = thread.startAsync();
+        try {
+            service.awaitTerminated(timeoutsConfiguration.getWorkloadStartTimeout().getValue(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            log.error("TimeoutException occurred while running thread!", e);
+        }
+        Service.State state = service.state();
         log.debug("Workload thread was started with state {}", state);
         threads.add(thread);
     }

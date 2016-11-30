@@ -20,16 +20,23 @@
 
 package com.griddynamics.jagger.util;
 
-import java.io.*;
-import java.util.concurrent.atomic.AtomicLong;
-
 import biz.source_code.base64Coder.Base64Coder;
+import com.google.common.io.Closeables;
 import com.griddynamics.jagger.exception.TechnicalException;
 import org.jboss.serial.io.JBossObjectInputStream;
 import org.jboss.serial.io.JBossObjectOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.io.Closeables;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static com.google.common.io.Closeables.closeQuietly;
 
 // TODO Avoid static code. Extract interface and make this one default implementation.
 public class SerializationUtils {
@@ -65,7 +72,7 @@ public class SerializationUtils {
             log.error("Deserialization exception ", e);
             throw new TechnicalException(e);
         } finally {
-            Closeables.closeQuietly(ois);
+            closeQuietly(ois);
         }
     }
 
@@ -88,7 +95,11 @@ public class SerializationUtils {
             if (s.isEmpty()) {
                 log.info("toString({}, '{}', '{}')", new Object[] {toStringCount.getAndIncrement(), s, o});
             }
-            Closeables.closeQuietly(oos);
+            try {
+                Closeables.close(oos, true);
+            } catch (IOException e) {
+                log.warn("IOException should not have been thrown.", e);
+            }
             return s;
         }
     }
@@ -109,8 +120,16 @@ public class SerializationUtils {
         } catch (Exception e) {
             throw new RuntimeException("Error during " + obj + " serialization", e);
         }  finally {
-            Closeables.closeQuietly(ous);
-            Closeables.closeQuietly(baos);
+            try {
+                Closeables.close(ous, true);
+            } catch (IOException e) {
+                log.warn("IOException should not have been thrown.", e);
+            }
+            try {
+                Closeables.close(baos, true);
+            } catch (IOException e) {
+                log.warn("IOException should not have been thrown.", e);
+            }
         }
     }
 
@@ -130,7 +149,7 @@ public class SerializationUtils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            Closeables.closeQuietly(ois);
+            closeQuietly(ois);
         }
     }
 

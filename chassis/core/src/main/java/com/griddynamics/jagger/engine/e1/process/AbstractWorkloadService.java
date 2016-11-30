@@ -20,12 +20,10 @@
 
 package com.griddynamics.jagger.engine.e1.process;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import com.google.common.util.concurrent.AbstractListenableFuture;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.AbstractService;
+import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.Flushable;
@@ -37,7 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -258,11 +258,11 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
              * if workload service is locked - workload will not start
              *
              * @return null, if workload service is locked or state is not TERMINATED
-             *         ListenableFuture<State>, if workload was started
+             *         Service, if workload was started
              *
              */
             @Override
-            public ListenableFuture<State> start() {
+            public Service startAsync() {
 
                 if (lock.tryLock()) {
                     try {
@@ -284,7 +284,7 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
                         };
                         delegate.changeDelay(delay.get());
 
-                        return delegate.start();
+                        return delegate.startAsync();
                     } finally {
                         lock.unlock();
                     }
@@ -294,58 +294,67 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
             }
 
             @Override
-            public State startAndWait() {
-                try {
-                    return Futures.makeUninterruptible(start()).get();
-                } catch (ExecutionException e) {
-                    throw Throwables.propagate(e.getCause());
-                }
-            }
-
-            @Override
-            public ListenableFuture<State> stop() {
-
+            public Service stopAsync() {
                 lock.lock();
                 try {
-                    final ListenableFuture<State> lfs = delegate != null ? delegate.stop() : new AbstractListenableFuture<State>() {
-                    };
-
-                    Callable<State> foo = new Callable<State>() {
+                    final Service service = delegate != null ? delegate.stopAsync() : new AbstractService() {
                         @Override
-                        public State call() throws Exception {
-                            try {
-                                // wait till execution stops
-                                lfs.get();
-                            } catch (Exception e) {
-                                log.error("Exception during stopping workload service", e);
-                            }
+                        protected void doStart() {
+                        }
 
-                            try {
-                                for (Flushable flushable : flushables) {
-                                    flushable.flush();
-                                }
-                                return State.TERMINATED;
-                            } catch (Throwable error) {
-                                log.error("Error during flushing", error);
-                                return State.FAILED;
-                            }
+                        @Override
+                        protected void doStop() {
                         }
                     };
 
-                    return Futures.makeListenable(Executors.newSingleThreadExecutor().submit(foo));
+                    try {
+                        // wait till execution stops
+                        service.awaitTerminated();
+                    } catch (Exception e) {
+                        log.error("Exception during stopping workload service", e);
+                    }
 
+                    try {
+                        for (Flushable flushable : flushables) {
+                            flushable.flush();
+                        }
+                    } catch (Throwable error) {
+                        log.error("Error during flushing", error);
+                    }
+                    return service;
                 } finally {
                     lock.unlock();
                 }
             }
 
             @Override
-            public State stopAndWait() {
-                try {
-                    return Futures.makeUninterruptible(stop()).get();
-                } catch (ExecutionException e) {
-                    throw Throwables.propagate(e.getCause());
-                }
+            public void awaitRunning() {
+
+            }
+
+            @Override
+            public void awaitRunning(long timeout, TimeUnit unit) throws TimeoutException {
+
+            }
+
+            @Override
+            public void awaitTerminated() {
+
+            }
+
+            @Override
+            public void awaitTerminated(long timeout, TimeUnit unit) throws TimeoutException {
+
+            }
+
+            @Override
+            public Throwable failureCause() {
+                return null;
+            }
+
+            @Override
+            public void addListener(Listener listener, Executor executor) {
+
             }
 
             @Override

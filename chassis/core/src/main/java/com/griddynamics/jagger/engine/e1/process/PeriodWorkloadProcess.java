@@ -3,16 +3,15 @@ package com.griddynamics.jagger.engine.e1.process;
 import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadConfiguration;
-import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Workload process that perform invocation with given period.
@@ -51,9 +50,14 @@ public class PeriodWorkloadProcess extends AbstractWorkloadProcess {
     protected void startNewThread(int delay) {
 
         for (WorkloadService thread : threads) {
-            Future<Service.State> future = thread.start();
-            if (future != null) {
-                Service.State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
+            Service service = thread.startAsync();
+            if (service != null) {
+                try {
+                    service.awaitTerminated(timeoutsConfiguration.getWorkloadStartTimeout().getValue(), TimeUnit.MILLISECONDS);
+                } catch (TimeoutException e) {
+                    log.error("TimeoutException occurred while running thread!", e);
+                }
+                Service.State state = service.state();
                 log.debug("Workload thread with is started with state {}", state);
                 return;
             }

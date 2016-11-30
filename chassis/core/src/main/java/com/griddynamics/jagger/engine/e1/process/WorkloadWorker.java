@@ -22,7 +22,6 @@ package com.griddynamics.jagger.engine.e1.process;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.griddynamics.jagger.agent.model.GetGeneralNodeInfo;
@@ -35,7 +34,11 @@ import com.griddynamics.jagger.invoker.Scenario;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.kernel.WorkloadWorkerCommandExecutor;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
-import com.griddynamics.jagger.util.*;
+import com.griddynamics.jagger.util.ExceptionLogger;
+import com.griddynamics.jagger.util.GeneralInfoCollector;
+import com.griddynamics.jagger.util.GeneralNodeInfo;
+import com.griddynamics.jagger.util.Pair;
+import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -46,6 +49,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Adapts {@link PerThreadWorkloadProcess} and {@link PeriodWorkloadProcess} to coordination API.
@@ -206,9 +211,12 @@ public class WorkloadWorker extends ConfigurableWorker {
                         .useExecutor(executor)
                         .buildServiceWithPredefinedSamples(calibrationSamplesCount);
 
-                ListenableFuture<Service.State> start = calibrationThread.start();
-
-                Futures.get(start, timeoutsConfiguration.getCalibrationStartTimeout());
+                Service service = calibrationThread.startAsync();
+                try {
+                    service.awaitTerminated(timeoutsConfiguration.getCalibrationStartTimeout().getValue(), TimeUnit.MILLISECONDS);
+                } catch (TimeoutException e) {
+                    log.error("TimeoutException occurred while running calibrationThread!", e);
+                }
 
                 Services.awaitTermination(calibrationThread, timeoutsConfiguration.getCalibrationTimeout().getValue());
 

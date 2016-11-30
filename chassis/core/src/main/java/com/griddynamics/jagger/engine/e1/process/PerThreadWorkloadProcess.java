@@ -6,15 +6,15 @@ import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadConfiguration;
 import com.griddynamics.jagger.exception.TechnicalException;
-import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PerThreadWorkloadProcess extends AbstractWorkloadProcess {
@@ -109,16 +109,20 @@ public class PerThreadWorkloadProcess extends AbstractWorkloadProcess {
         Preconditions.checkState(!threads.isEmpty());
         Preconditions.checkState(threads.size() >= count);
 
-        Collection<Future<Service.State>> futures = Lists.newLinkedList();
+        Collection<Service> services = Lists.newLinkedList();
 
         Iterator<WorkloadService> iterator = threads.iterator();
         for (int i=0; i<count; i++){
             WorkloadService service = iterator.next();
-            futures.add(service.stop());
+            services.add(service.stopAsync());
         }
 
-        for (Future<Service.State> future : futures){
-            Futures.get(future, timeoutsConfiguration.getWorkloadStopTimeout());
+        for (Service service : services){
+            try {
+                service.awaitTerminated(timeoutsConfiguration.getWorkloadStopTimeout().getValue(), TimeUnit.MILLISECONDS);
+            } catch (TimeoutException e) {
+                log.error("TimeoutException occurred while stopping thread!", e);
+            }
         }
     }
 }
