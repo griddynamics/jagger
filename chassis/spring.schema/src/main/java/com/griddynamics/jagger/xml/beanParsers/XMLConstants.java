@@ -12,10 +12,6 @@ import java.util.List;
  */
 public class XMLConstants {
 
-    public static final String FATAL_DEVIATION_THRESHOLD = "fatalDeviationThreshold";
-    public static final String WARNING_DEVIATION_THRESHOLD = "warningDeviationThreshold";
-    public static final String WORKLOAD_DECISION_MAKER = "workloadDecisionMaker";
-    public static final String WORKLOAD_FEATURE_COMPARATOR = "workloadFeatureComparator";
     public static final String MONITORING = "monitoring";
     public static final String ID = "id";
     public static final String DEFAULT_REPORTING_SERVICE = "defaultReportingService";
