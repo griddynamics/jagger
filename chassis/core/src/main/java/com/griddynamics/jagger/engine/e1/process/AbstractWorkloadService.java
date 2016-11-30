@@ -23,9 +23,11 @@ package com.griddynamics.jagger.engine.e1.process;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import com.google.common.util.concurrent.AbstractListenableFuture;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.AbstractFuture;
+import com.google.common.util.concurrent.JdkFutureAdapters;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Service;
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.Flushable;
@@ -37,7 +39,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -296,10 +303,15 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
             @Override
             public State startAndWait() {
                 try {
-                    return Futures.makeUninterruptible(start()).get();
+                    return Uninterruptibles.getUninterruptibly(start());
                 } catch (ExecutionException e) {
                     throw Throwables.propagate(e.getCause());
                 }
+            }
+
+            @Override
+            public Service startAsync() {
+                return null;
             }
 
             @Override
@@ -307,7 +319,7 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
 
                 lock.lock();
                 try {
-                    final ListenableFuture<State> lfs = delegate != null ? delegate.stop() : new AbstractListenableFuture<State>() {
+                    final ListenableFuture<State> lfs = delegate != null ? delegate.stop() : new AbstractFuture<State>() {
                     };
 
                     Callable<State> foo = new Callable<State>() {
@@ -332,7 +344,7 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
                         }
                     };
 
-                    return Futures.makeListenable(Executors.newSingleThreadExecutor().submit(foo));
+                    return JdkFutureAdapters.listenInPoolThread(Executors.newSingleThreadExecutor().submit(foo));
 
                 } finally {
                     lock.unlock();
@@ -340,9 +352,44 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
             }
 
             @Override
+            public Service stopAsync() {
+                return null;
+            }
+
+            @Override
+            public void awaitRunning() {
+
+            }
+
+            @Override
+            public void awaitRunning(long l, TimeUnit timeUnit) throws TimeoutException {
+
+            }
+
+            @Override
+            public void awaitTerminated() {
+
+            }
+
+            @Override
+            public void awaitTerminated(long l, TimeUnit timeUnit) throws TimeoutException {
+
+            }
+
+            @Override
+            public Throwable failureCause() {
+                return null;
+            }
+
+            @Override
+            public void addListener(Listener listener, Executor executor) {
+
+            }
+
+            @Override
             public State stopAndWait() {
                 try {
-                    return Futures.makeUninterruptible(stop()).get();
+                    return Uninterruptibles.getUninterruptibly(stop());
                 } catch (ExecutionException e) {
                     throw Throwables.propagate(e.getCause());
                 }

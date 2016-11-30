@@ -113,7 +113,11 @@ public class ChronologyLogAggregator implements LogAggregator {
                 queue.add(streamInfo);
             }
         } finally {
-            Closeables.closeQuietly(objectOutput);
+            try {
+                Closeables.close(objectOutput, true);
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
         }
 
         return new AggregationInfo(minTime, maxTime, count);
