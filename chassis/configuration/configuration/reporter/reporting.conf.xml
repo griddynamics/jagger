@@ -56,7 +56,6 @@
           class="com.griddynamics.jagger.engine.e1.reporting.DefaultSessionStatusDecisionMaker">
         <property name="description"
                   value="Status is based on success rate. Session status is a status of the worst test."/>
-        <property name="successRateThreshold" value="${chassis.master.reporting.successrate.threshold}"/>
     </bean>
 
     <bean id="abstractReportProviderBean" class="com.griddynamics.jagger.reporting.AbstractReportProviderBean"

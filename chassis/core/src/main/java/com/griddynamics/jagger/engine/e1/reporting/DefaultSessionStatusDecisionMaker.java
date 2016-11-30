@@ -30,11 +30,11 @@ import java.util.List;
 
 public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionMaker {
     private static final Logger log = LoggerFactory.getLogger(DefaultSessionStatusDecisionMaker.class);
-    private double successRateThreshold = 1.0;
     private String description;
 
     @Override
     public Decision decideOnTest(WorkloadTaskData workloadTaskData) {
+        // ignore this decision maker
         return Decision.OK;
     }
 
@@ -47,7 +47,6 @@ public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionM
                 worstResult = decision;
             }
         }
-
         return worstResult;
     }
 
@@ -58,16 +57,6 @@ public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionM
     @Required
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public double getSuccessRateThreshold() {
-        return successRateThreshold;
-    }
-
-    @Required
-    public void setSuccessRateThreshold(double successRateThreshold) {
-        log.info("setting successRateThreshold= {}", successRateThreshold);
-        this.successRateThreshold = successRateThreshold;
     }
 }
 
