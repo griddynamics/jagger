@@ -66,22 +66,22 @@ public class ListenableService<T extends Task> implements Service {
 
     @Override
     public State startAndWait() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Service startAsync() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isRunning() {
-        return false;
+        return service.isRunning();
     }
 
     @Override
     public State state() {
-        return null;
+        return service.state();
     }
 
 
@@ -114,41 +114,41 @@ public class ListenableService<T extends Task> implements Service {
 
     @Override
     public State stopAndWait() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Service stopAsync() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void awaitRunning() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void awaitRunning(long timeout, TimeUnit unit) throws TimeoutException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void awaitTerminated() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void awaitTerminated(long timeout, TimeUnit unit) throws TimeoutException {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Throwable failureCause() {
-        return null;
+        return service.failureCause();
     }
 
     @Override
     public void addListener(Listener listener, Executor executor) {
-
+        service.addListener(listener, executor);
     }
 }

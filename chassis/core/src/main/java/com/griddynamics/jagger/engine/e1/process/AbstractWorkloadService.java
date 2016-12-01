@@ -311,7 +311,7 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
 
             @Override
             public Service startAsync() {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -353,37 +353,37 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
 
             @Override
             public Service stopAsync() {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void awaitRunning() {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void awaitRunning(long l, TimeUnit timeUnit) throws TimeoutException {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void awaitTerminated() {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void awaitTerminated(long l, TimeUnit timeUnit) throws TimeoutException {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public Throwable failureCause() {
-                return null;
+                throw new UnsupportedOperationException();
             }
 
             @Override
             public void addListener(Listener listener, Executor executor) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
