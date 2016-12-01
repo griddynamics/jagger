@@ -17,7 +17,7 @@ import java.util.Objects;
  * @details JLoadTest describes an instance of the load test, build with JTestDefinition. JLoadTest sets following parameters:
  * @li load strategy - how load will be applied
  * @li termination criteria - when load should be terminated
- * <p>
+ *
  * See @ref section_writing_test_load_scenario for more details @n
  * @n More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n Code example:
