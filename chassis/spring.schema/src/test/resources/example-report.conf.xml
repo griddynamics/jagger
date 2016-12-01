@@ -18,11 +18,6 @@
         <constructor-arg index="0" value="1101"/>
     </bean>
 
-    <bean id="refDecisionMaker" class="com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.StdDevMonitoringParameterDecisionMaker">
-        <property name="fatalDeviationThreshold" value="0.5"/>
-        <property name="warningDeviationThreshold" value="0.9"/>
-    </bean>
-
     <jgr:report id="report1" rootTemplateLocation="custom-root-template.jrxml"
 				outputReportLocation="custom-report.pdf">
 
@@ -37,22 +32,6 @@
         </jgr:extensions>
 
         <jgr:session-comparators baselineId="4444" strategy="worstCase">
-
-            <jgr:comparator-monitoring>
-                <jgr:decision-maker xsi:type="jgr:decision-maker-monitoring-stddev"
-                        fatalDeviationThreshold="0.7" warningDeviationThreshold="0.5"/>
-            </jgr:comparator-monitoring>
-
-            <jgr:comparator-workload>
-                <jgr:decision-maker xsi:type="jgr:decision-maker-workload-throughput"
-                        fatalDeviationThreshold="0.7" warningDeviationThreshold="0.2"/>
-            </jgr:comparator-workload>
-
-            <jgr:comparator-monitoring>
-                <jgr:decision-maker xsi:type="jgr:decision-maker-monitoring-ref"
-                         ref="refDecisionMaker"/>
-            </jgr:comparator-monitoring>
-
         </jgr:session-comparators>
     </jgr:report>
 
