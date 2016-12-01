@@ -10,6 +10,7 @@
         <source>src/main/java/ExampleJLoadScenarioProvider.java</source>
         <source>src/main/java/ExampleSimpleJLoadScenarioProvider.java</source>
         <source>src/main/java/config/JLoadScenariosConfig.java</source>
+        <source>src/main/java/config/JaggerPropertiesProvider.java</source>
     </sources>
     <resources>
         <resource>src/main/resources/profiles/basic/environment.properties</resource>
