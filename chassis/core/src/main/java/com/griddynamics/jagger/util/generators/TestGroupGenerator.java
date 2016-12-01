@@ -32,6 +32,7 @@ class TestGroupGenerator {
         compositeTask.setAttendant(new ArrayList<>());
         compositeTask.setNumber(++number);
         compositeTask.setName(jParallelTestsGroup.getId() + "-group");
+        compositeTask.setListeners(jParallelTestsGroup.getListeners());
         for (JLoadTest test : jParallelTestsGroup.getTests()) {
             WorkloadTask task = generateFromTest(test, baselineSessionProvider, limitSetConfig);
             task.setNumber(compositeTask.getNumber());
