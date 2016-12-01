@@ -14,7 +14,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class JLoadScenariosConfig {
-    
+
+    /**
+     * This bean is needed to provide Jagger environment properties.
+     * It must be injected to class where properties are needed, or this class can extend it.
+     * In both cases that class must be a valid spring bean.
+     */
+    @Bean
+    public JaggerPropertiesProvider jaggerPropertiesProvider() {
+        return new JaggerPropertiesProvider();
+    }
+
     @Bean
     public JLoadScenario firstJaggerLoadScenario() {
         return ExampleJLoadScenarioProvider.getFirstJaggerLoadScenario();
@@ -22,7 +32,7 @@ public class JLoadScenariosConfig {
 
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
-        return ExampleJLoadScenarioProvider.getExampleJaggerLoadScenario();
+        return new ExampleJLoadScenarioProvider(jaggerPropertiesProvider()).getExampleJaggerLoadScenario();
     }
 
     // begin: following section is used for docu generation - Load test scenario registering

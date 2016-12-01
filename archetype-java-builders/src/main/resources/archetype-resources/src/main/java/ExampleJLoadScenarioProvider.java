@@ -16,10 +16,20 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
+import ${package}.config.JaggerPropertiesProvider;
 
 public class ExampleJLoadScenarioProvider {
+
+    private final JaggerPropertiesProvider propertiesProvider;
+
+    public ExampleJLoadScenarioProvider(JaggerPropertiesProvider propertiesProvider) {
+        this.propertiesProvider = propertiesProvider;
+    }
     
-    public static JLoadScenario getExampleJaggerLoadScenario() {
+    public JLoadScenario getExampleJaggerLoadScenario() {
+
+        // Example of using JaggerPropertiesProvider
+        String propertyValue = propertiesProvider.getPropertyValue("chassis.storage.rdb.client.url");
         
         JTestDefinition jTestDefinition = JTestDefinition
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
