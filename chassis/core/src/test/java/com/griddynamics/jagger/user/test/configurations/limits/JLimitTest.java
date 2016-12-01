@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations.limits;
 
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowErrThres;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowErrThresh;
 import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowWarnThresh;
 import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
 import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh;
@@ -60,10 +60,10 @@ public class JLimitTest {
                 .build();
 
         customLimitsForBaseLine = JLimitVsBaseline.builder(metricName)
-                .exactLimits(LowWarnThresh.of(lwt), LowErrThres.of(let), UpWarnThresh.of(uwt), UpErrThresh.of(uet))
+                .withExactLimits(LowWarnThresh.of(lwt), LowErrThresh.of(let), UpWarnThresh.of(uwt), UpErrThresh.of(uet))
                 .build();
         customLimitsForRefValue = JLimitVsRefValue.builder(metricName, RefValue.of(refValue))
-                .exactLimits(LowWarnThresh.of(lwt), LowErrThres.of(let), UpWarnThresh.of(uwt), UpErrThresh.of(uet))
+                .withExactLimits(LowWarnThresh.of(lwt), LowErrThresh.of(let), UpWarnThresh.of(uwt), UpErrThresh.of(uet))
                 .build();
     }
 
@@ -109,16 +109,16 @@ public class JLimitTest {
     @Test(expected = IllegalArgumentException.class)
     public void multipleCreationForBaseline() throws Exception {
         limitsForBLMultDef = JLimitVsBaseline.builder(metricName)
-                .onlyErrors(LowErrThres.of(1.0), UpErrThresh.of(42D))
-                .onlyWarnings(LowWarnThresh.of(1.0), UpWarnThresh.of(42D))
+                .withOnlyErrors(LowErrThresh.of(1.0), UpErrThresh.of(42D))
+                .withOnlyWarnings(LowWarnThresh.of(1.0), UpWarnThresh.of(42D))
                 .build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void multipleCreationForRefVal() throws Exception {
         limitsForRVMultDef = JLimitVsRefValue.builder(metricName, RefValue.of(refValue))
-                .onlyLowerThresholds(LowWarnThresh.of(0.00001), LowErrThres.of(0.1))
-                .onlyUpperThresholds(UpWarnThresh.of(42D), UpErrThresh.of(42.5))
+                .withOnlyLowerThresholds(LowWarnThresh.of(0.00001), LowErrThresh.of(0.1))
+                .withOnlyUpperThresholds(UpWarnThresh.of(42D), UpErrThresh.of(42.5))
                 .build();
     }
 

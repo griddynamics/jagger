@@ -1,8 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.limits.auxiliary;
 
 /**
- * @author asokol
- *         created 11/29/16
+ * Upper warning criterion for a performance test.
  */
 public class UpWarnThresh {
 
@@ -20,4 +19,8 @@ public class UpWarnThresh {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return "UpWarnThresh: " + value;
+    }
 }

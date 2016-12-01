@@ -1,8 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.limits.auxiliary;
 
 /**
- * @author asokol
- *         created 11/29/16
+ * Lower warning criterion for a performance test.
  */
 public class LowWarnThresh {
     private final Double value;
@@ -19,4 +18,8 @@ public class LowWarnThresh {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return "LowWarnThresh: " + value;
+    }
 }

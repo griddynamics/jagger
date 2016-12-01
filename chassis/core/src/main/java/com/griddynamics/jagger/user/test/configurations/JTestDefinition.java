@@ -17,7 +17,7 @@ import java.util.List;
  * @li source of the endpointsProvider (where to apply load)
  * @li source of queries (what parameters of the load to set)
  * @li what protocol to use for the communication with the system under test (SUT)
- * <p>
+ *
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n Code example:
  * @dontinclude ExampleSimpleJLoadScenarioProvider.java

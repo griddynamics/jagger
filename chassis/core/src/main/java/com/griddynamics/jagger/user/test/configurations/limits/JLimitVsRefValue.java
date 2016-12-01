@@ -5,8 +5,7 @@ import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValu
 import java.util.Objects;
 
 /**
- * @author asokol
- *         created 11/30/16
+ * Allow to compare a performance test with some reference value.
  */
 public class JLimitVsRefValue extends JLimit {
 

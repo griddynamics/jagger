@@ -3,8 +3,7 @@ package com.griddynamics.jagger.user.test.configurations.limits;
 import java.util.Objects;
 
 /**
- * @author asokol
- *         created 11/30/16
+ * Allow to compare a performance test with some baseline (another performance test, which was saved in the database).
  */
 public class JLimitVsBaseline extends JLimit {
 

@@ -1,8 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.limits.auxiliary;
 
 /**
- * @author asokol
- *         created 11/29/16
+ * Upper acceptance criterion for a performance test.
  */
 public class UpErrThresh {
     private final Double value;
@@ -17,5 +16,10 @@ public class UpErrThresh {
 
     public Double value() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "UpErrThresh: " + value;
     }
 }
