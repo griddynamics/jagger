@@ -16,20 +16,18 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
-import ${package}.config.JaggerPropertiesProvider;
+import com.griddynamics.jagger.util.JaggerPropertiesProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-public class ExampleJLoadScenarioProvider {
+@Configuration
+public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
-    private final JaggerPropertiesProvider propertiesProvider;
-
-    public ExampleJLoadScenarioProvider(JaggerPropertiesProvider propertiesProvider) {
-        this.propertiesProvider = propertiesProvider;
-    }
-    
-    public JLoadScenario getExampleJaggerLoadScenario() {
+    @Bean
+    public JLoadScenario exampleJaggerLoadScenario() {
 
         // Example of using JaggerPropertiesProvider
-        String propertyValue = propertiesProvider.getPropertyValue("chassis.storage.rdb.client.url");
+        String propertyValue = getPropertyValue("chassis.storage.rdb.client.url");
         
         JTestDefinition jTestDefinition = JTestDefinition
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
@@ -52,8 +50,9 @@ public class ExampleJLoadScenarioProvider {
         // For JLoadScenario which is supposed to be executed by Jagger its ID must be set to 'jagger.load.scenario.id.to.execute' property's value
         return JLoadScenario.builder(Id.of("exampleJaggerLoadScenario"), jParallelTestsGroup).build();
     }
-    
-    public static JLoadScenario getFirstJaggerLoadScenario() {
+
+    @Bean
+    public JLoadScenario myFirstJaggerLoadScenario() {
         JTestDefinition description = JTestDefinition
                 .builder(Id.of("myFirstJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
