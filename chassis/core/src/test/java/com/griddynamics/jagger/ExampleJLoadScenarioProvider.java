@@ -2,6 +2,7 @@ package com.griddynamics.jagger;
 
 import static java.util.Collections.singletonList;
 
+import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
@@ -18,8 +19,6 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 
-import java.util.Collections;
-
 /**
  * Created by Andrey Badaev
  * Date: 10/11/16
@@ -33,15 +32,17 @@ public class ExampleJLoadScenarioProvider {
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .withValidators(Collections.singletonList(NotNullResponseValidator.class))
-                .withListeners(Collections.singletonList(new NotNullInvocationListener()))
+                .addValidator(NotNullResponseValidator.class)
+                .addListener(new NotNullInvocationListener())
                 .build();
         
         JLoadProfile jLoadProfileRps = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
         
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(1000), MaxDurationInSeconds.of(20));
         
-        JLoadTest jLoadTest = JLoadTest.builder(Id.of("exampleJaggerLoadTest"), jTestDefinition, jLoadProfileRps, jTerminationCriteria).build();
+        JLoadTest jLoadTest = JLoadTest.builder(Id.of("exampleJaggerLoadTest"), jTestDefinition, jLoadProfileRps, jTerminationCriteria)
+                                       .addTestListener(new CollectThreadsTestListener())
+                                       .build();
         
         JParallelTestsGroup jParallelTestsGroup = JParallelTestsGroup.builder(Id.of("exampleJaggerParallelTestsGroup"), jLoadTest).build();
     
@@ -55,7 +56,7 @@ public class ExampleJLoadScenarioProvider {
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .withValidators(singletonList(NotNullResponseValidator.class))
+                .addValidators(singletonList(NotNullResponseValidator.class))
                 .build();
         
         JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();

@@ -1,8 +1,5 @@
 package com.griddynamics.jagger.util.generators;
 
-import static com.google.common.collect.Lists.newArrayList;
-
-import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
@@ -58,7 +55,6 @@ class TestDefinitionGenerator {
         
         prototype.setCollectors(collectors);
         prototype.setListeners((List) jTestDefinition.getListeners());
-        prototype.setTestListeners(newArrayList(new CollectThreadsTestListener()));
 
 
         return prototype;
