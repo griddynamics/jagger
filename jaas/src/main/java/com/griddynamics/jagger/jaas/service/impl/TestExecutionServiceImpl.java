@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.jaas.service.impl;
 
-import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.storage.TestExecutionDao;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionAuditEntity;
