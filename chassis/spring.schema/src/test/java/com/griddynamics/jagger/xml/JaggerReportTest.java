@@ -1,17 +1,10 @@
 package com.griddynamics.jagger.xml;
 
-import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
-import static org.junit.Assert.assertEquals;
-
 import com.griddynamics.jagger.JaggerLauncher;
 import com.griddynamics.jagger.engine.e1.reporting.OverallSessionComparisonReporter;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.ConfigurableSessionComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.WorstCaseDecisionMaker;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.MonitoringFeatureComparator;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.monitoring.StdDevMonitoringParameterDecisionMaker;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.ThroughputWorkloadDecisionMaker;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadFeatureComparator;
 import com.griddynamics.jagger.extension.ExtensionExporter;
 import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.reporting.ReportProvider;
@@ -25,6 +18,9 @@ import org.springframework.context.ApplicationContext;
 
 import java.net.URL;
 import java.util.Properties;
+
+import static com.griddynamics.jagger.JaggerLauncher.RDB_CONFIGURATION;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -88,29 +84,5 @@ public class JaggerReportTest {
 
         WorstCaseDecisionMaker worstMaker = (WorstCaseDecisionMaker)comparatorChain.getDecisionMaker();
         Assert.assertNotNull(worstMaker);
-
-        MonitoringFeatureComparator monitoringComparator = (MonitoringFeatureComparator)comparatorChain.getComparatorChain().get(0);
-        Assert.assertNotNull(monitoringComparator);
-
-        StdDevMonitoringParameterDecisionMaker monitoringMaker = (StdDevMonitoringParameterDecisionMaker)monitoringComparator.getMonitoringParameterDecisionMaker();
-        Assert.assertNotNull(monitoringMaker);
-        Assert.assertEquals(monitoringMaker.getFatalDeviationThreshold(), 0.7, 0.0);
-        Assert.assertEquals(monitoringMaker.getWarningDeviationThreshold(), 0.5, 0.0);
-
-        WorkloadFeatureComparator workloadComparator = (WorkloadFeatureComparator)comparatorChain.getComparatorChain().get(1);
-        Assert.assertNotNull(workloadComparator);
-
-        ThroughputWorkloadDecisionMaker workloadMaker = (ThroughputWorkloadDecisionMaker) workloadComparator.getWorkloadDecisionMaker();
-        Assert.assertNotNull(workloadMaker);
-        Assert.assertEquals(workloadMaker.getFatalDeviationThreshold(), 0.7, 0.0);
-        Assert.assertEquals(workloadMaker.getWarningDeviationThreshold(), 0.2, 0.0);
-
-        MonitoringFeatureComparator monitoringComparatorRef = (MonitoringFeatureComparator)comparatorChain.getComparatorChain().get(2);
-        Assert.assertNotNull(monitoringComparatorRef);
-
-        StdDevMonitoringParameterDecisionMaker monitoringMakerRef = (StdDevMonitoringParameterDecisionMaker)monitoringComparatorRef.getMonitoringParameterDecisionMaker();
-        Assert.assertNotNull(monitoringMakerRef);
-        Assert.assertEquals(monitoringMakerRef.getFatalDeviationThreshold(), 0.5, 0.0);
-        Assert.assertEquals(monitoringMakerRef.getWarningDeviationThreshold(), 0.9, 0.0);
     }
 }
