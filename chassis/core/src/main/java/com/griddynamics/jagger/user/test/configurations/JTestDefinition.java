@@ -98,7 +98,7 @@ public class JTestDefinition {
 
         /**
          * Optional: Sets subtypes of {@link com.griddynamics.jagger.invoker.Invoker}
-         * <p>
+         *
          * Instances of this class will be used to during Jagger test execution to send requests to the System under test. @n
          * Example:
          *
