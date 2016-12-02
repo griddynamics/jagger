@@ -57,8 +57,6 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.STA
 import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TERMINATION;
 import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_DURATION;
 import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_SQR_DURATION;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_SEC;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
