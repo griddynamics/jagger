@@ -57,6 +57,8 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.STA
 import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TERMINATION;
 import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_DURATION;
 import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_SQR_DURATION;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_SEC;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
@@ -205,6 +207,10 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
 
         MetricDescriptionEntity failuresDescription = persistMetricDescription(FAIL_COUNT_ID, FAIL_COUNT, taskData);
         persistAggregatedMetricValue(failed, failuresDescription);
+
+        MetricDescriptionEntity durationDescription = persistMetricDescription(DURATION_ID, DURATION_SEC, taskData);
+        Double duration = (endTime - startTime) / 1000.0;
+        persistAggregatedMetricValue(duration, durationDescription);
 
         for (Map.Entry<String, ValidationResult> entry : validationResults.entrySet()) {
             ValidationResultEntity entity = new ValidationResultEntity();
