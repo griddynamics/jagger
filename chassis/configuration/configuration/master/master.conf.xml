@@ -168,6 +168,13 @@
         <property name="durationLogProcessor" ref="durationLogProcessor"/>
         <property name="monitoringEnable" value="${chassis.conditions.monitoring.enable}"/>
         <property name="useBuilders" value="${chassis.master.using.builders:true}"/>
+        <property name="baselineSessionProvider">
+            <bean class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
+                <property name="baselineSessionId"
+                          value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
+            </bean>
+        </property>
+        <property name="limitSetConfig" ref="limitSetConfig"/>
     </bean>
 </beans>
 

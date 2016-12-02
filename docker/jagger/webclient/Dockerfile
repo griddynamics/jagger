@@ -20,6 +20,9 @@ ADD ["http://nexus.vm.griddynamics.net:8081/nexus/service/local/artifact/maven/c
 ADD run.sh /com/griddynamics/jagger/run.sh
 RUN chmod +x /com/griddynamics/jagger/run.sh
 
+# Update and install nc:
+RUN apt-get update && apt-get install -y netcat
+
 WORKDIR /com/griddynamics/jagger
 
 EXPOSE ${JWC_HTTP_PORT}
