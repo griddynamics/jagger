@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,7 +22,6 @@ package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 import com.griddynamics.jagger.util.Decision;
-import org.apache.commons.math.util.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -31,24 +30,12 @@ import java.util.List;
 
 public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionMaker {
     private static final Logger log = LoggerFactory.getLogger(DefaultSessionStatusDecisionMaker.class);
-    private final double EPSILON = 0.0000001;
-    private double successRateThreshold = 1.0;
-    // key to avoid additional verification of success rate to set status of test
-    // recommended way to use limits based decision making for this purpose
-    private boolean doNotUseDeprecatedMethodToSetTestStatus = false;
-
     private String description;
 
     @Override
     public Decision decideOnTest(WorkloadTaskData workloadTaskData) {
-        if (doNotUseDeprecatedMethodToSetTestStatus) {
-            // ignore this decision maker
-            return Decision.OK;
-        }
-        if (MathUtils.compareTo(workloadTaskData.getSuccessRate().doubleValue(), successRateThreshold, EPSILON) >= 0) {
-            return Decision.OK;
-        }
-        return Decision.FATAL;
+        // ignore this decision maker
+        return Decision.OK;
     }
 
     @Override
@@ -60,7 +47,6 @@ public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionM
                 worstResult = decision;
             }
         }
-
         return worstResult;
     }
 
@@ -72,21 +58,5 @@ public class DefaultSessionStatusDecisionMaker implements SessionStatusDecisionM
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public double getSuccessRateThreshold() {
-        return successRateThreshold;
-    }
-
-    @Required
-    public void setSuccessRateThreshold(double successRateThreshold) {
-        log.info("setting successRateThreshold= {}", successRateThreshold);
-        this.successRateThreshold = successRateThreshold;
-    }
-
-    @Required
-    public void setDoNotUseDeprecatedMethodToSetTestStatus(boolean doNotUseDeprecatedMethodToSetTestStatus) {
-        this.doNotUseDeprecatedMethodToSetTestStatus = doNotUseDeprecatedMethodToSetTestStatus;
-    }
-
 }
 

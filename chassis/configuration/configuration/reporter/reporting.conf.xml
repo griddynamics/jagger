@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -57,9 +56,6 @@
           class="com.griddynamics.jagger.engine.e1.reporting.DefaultSessionStatusDecisionMaker">
         <property name="description"
                   value="Status is based on success rate. Session status is a status of the worst test."/>
-        <property name="successRateThreshold" value="${chassis.master.reporting.successrate.threshold}"/>
-        <property name="doNotUseDeprecatedMethodToSetTestStatus"
-                  value="${chassis.decision.maker.with.limits.is.only.decision.maker}"/>
     </bean>
 
     <bean id="abstractReportProviderBean" class="com.griddynamics.jagger.reporting.AbstractReportProviderBean"
@@ -152,14 +148,6 @@
                           parent="abstractReportProviderBean">
                         <property name="template"
                                   value="/reporting/workload-session-comparison-report.jrxml"/>
-                        <property name="statusImageProvider" ref="statusImageProvider"/>
-                    </bean>
-                </entry>
-                <entry key="monitoringSessionComparison">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.MonitoringSessionComparisonReporter"
-                          parent="abstractReportProviderBean">
-                        <property name="template"
-                                  value="/reporting/monitoring-session-comparison-report.jrxml"/>
                         <property name="statusImageProvider" ref="statusImageProvider"/>
                     </bean>
                 </entry>
