@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.jaas.config;
 
+import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,9 +39,9 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build()
+                    .apis(RequestHandlerSelectors.any())
+                    .paths(Predicates.not(PathSelectors.regex("/error")))
+                    .build()
                 .useDefaultResponseMessages(false)
                 .globalResponseMessage(RequestMethod.GET, responseMessages());
     }
@@ -52,8 +53,7 @@ public class SwaggerConfig {
                         + "It provides different information through its REST API.\n\n"
                         + "JaaS artifact packed as an all in jar (with all dependencies inside) with embedded Tomcat.\n\n"
                         + "JaaS based on Spring Boot, so its properties can be configured using one of Spring Boot ways"
-                        + "by default JaaS is listening on port 8080.\n"
-                        + "to change it just override property \"server.port\".")
+                        + "by default JaaS is listening on port 8080. To change it just override property \"server.port\".")
                 .license("Apache License, Version 2.0")
                 .licenseUrl("https://github.com/griddynamics/jagger/blob/master/license.txt")
                 .version(version)
@@ -66,7 +66,7 @@ public class SwaggerConfig {
                 .add(new ResponseMessageBuilder()
                         .code(500)
                         .message("500 - Internal server error.\n\n"
-                                + "There is a problem with the resource you are looking for, and it can not be dispayed.")
+                                + "There is a problem with the resource you are looking for, and it can not be displayed.")
                         .responseModel(new ModelRef("Error"))
                         .build());
         return responseMessages;

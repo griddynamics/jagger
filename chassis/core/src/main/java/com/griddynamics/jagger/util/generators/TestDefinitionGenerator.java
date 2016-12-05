@@ -57,6 +57,7 @@ class TestDefinitionGenerator {
         prototype.setCollectors(collectors);
         prototype.setTestListeners(newArrayList(new CollectThreadsTestListener()));
 
+
         return prototype;
     }
 

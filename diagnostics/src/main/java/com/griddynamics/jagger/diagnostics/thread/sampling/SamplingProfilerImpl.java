@@ -23,8 +23,8 @@ package com.griddynamics.jagger.diagnostics.thread.sampling;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
+import com.google.common.util.concurrent.Uninterruptibles;
 import com.griddynamics.jagger.util.TimeUtils;
 import com.griddynamics.jagger.util.Timeout;
 import org.slf4j.Logger;
@@ -35,7 +35,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -117,7 +121,7 @@ public class SamplingProfilerImpl implements SamplingProfiler {
                         }
                     });
                     try {
-                        threadInfos = Futures.makeUninterruptible(future).get(jmxTimeout.getValue(), TimeUnit.MILLISECONDS);
+                        threadInfos = Uninterruptibles.getUninterruptibly(future, jmxTimeout.getValue(), TimeUnit.MILLISECONDS);
                     } catch (ExecutionException e) {
                         log.error("Execution failed {}", e);
                         throw Throwables.propagate(e);
