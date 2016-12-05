@@ -126,7 +126,7 @@ public class JTestDefinition {
         }
     
         /**
-         * Optional: Adds a subtypes of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidator}
+         * Optional: Adds a subtype of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidator}
          * Instances of those subtypes will be used to validate responses during Jagger test execution
          * @n
          * Example:

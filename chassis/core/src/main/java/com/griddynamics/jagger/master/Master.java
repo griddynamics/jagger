@@ -36,7 +36,7 @@ import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator;
 import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteInfo;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
+import com.griddynamics.jagger.engine.e1.collector.testsuite.LoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.process.Services;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
 import com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage;
@@ -243,7 +243,8 @@ public class Master implements Runnable {
                 processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
             }
 
-            TestSuiteListener testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
+            LoadScenarioListener
+                    loadScenarioListener = LoadScenarioListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
                     sessionId,
                     "session",
                     context,
@@ -253,12 +254,12 @@ public class Master implements Runnable {
             TestSuiteInfo testSuiteInfo = new TestSuiteInfo(sessionId, generalNodeInfo);
             long startTime = System.currentTimeMillis();
 
-            testSuiteListener.onStart(testSuiteInfo);
+            loadScenarioListener.onStart(testSuiteInfo);
             // tests execution
             SessionExecutionStatus status = runConfiguration(allNodes, context);
             testSuiteInfo.setDuration(System.currentTimeMillis() - startTime);
             log.info("Configuration work finished!!");
-            testSuiteListener.onStop(testSuiteInfo);
+            loadScenarioListener.onStop(testSuiteInfo);
 
             for (SessionExecutionListener listener : configuration.getSessionExecutionListeners()) {
                 if (listener instanceof SessionListener) {

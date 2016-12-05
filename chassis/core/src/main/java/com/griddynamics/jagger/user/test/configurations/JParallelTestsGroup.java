@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations;
 
 import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 
@@ -27,7 +28,8 @@ import java.util.List;
 public class JParallelTestsGroup {
     private final String id;
     private final List<JLoadTest> tests;
-    private List<Provider<TestGroupListener>> listeners;
+    private final List<Provider<TestGroupListener>> listeners;
+    private final List<Provider<TestGroupDecisionMakerListener>> decisionMakerListeners;
 
     /**
      * Builder of the JParallelTestsGroup
@@ -63,6 +65,7 @@ public class JParallelTestsGroup {
         this.id = builder.id.value();
         this.tests = builder.tests;
         this.listeners = builder.listeners;
+        this.decisionMakerListeners = builder.decisionMakerListeners;
     }
 
     public static class Builder {
@@ -70,6 +73,7 @@ public class JParallelTestsGroup {
         private final Id id;
         private final List<JLoadTest> tests;
         private List<Provider<TestGroupListener>> listeners = Lists.newArrayList();
+        private List<Provider<TestGroupDecisionMakerListener>> decisionMakerListeners = Lists.newArrayList();
     
         public Builder(Id id, List<JLoadTest> tests) {
             this.id = id;
@@ -103,6 +107,36 @@ public class JParallelTestsGroup {
             this.listeners.addAll(listeners);
             return this;
         }
+    
+        /**
+         * Optional: Adds a subtype instance of {@link com.griddynamics.jagger.engine.e1.Provider<TestGroupDecisionMakerListener>}
+         * @n
+         * This type of listener is intended to make decision about test group execution status.
+         * Example:
+         * @code
+         *      addDecisionMakerListener(new com.griddynamics.jagger.engine.e1.BasicTGDecisionMakerListener())
+         * @endcode
+         * @see com.griddynamics.jagger.engine.e1.BasicTGDecisionMakerListener for example
+         */
+        public Builder addDecisionMakerListener(Provider<TestGroupDecisionMakerListener> listener) {
+            this.decisionMakerListeners.add(listener);
+            return this;
+        }
+    
+        /**
+         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider<TestGroupDecisionMakerListener>}
+         * @n
+         * This type of listener is intended to make decision about test group execution status.
+         * Example:
+         * @code
+         *      addDecisionMakerListeners(Arrays.asList(new com.griddynamics.jagger.engine.e1.BasicTGDecisionMakerListener()))
+         * @endcode
+         * @see com.griddynamics.jagger.engine.e1.BasicTGDecisionMakerListener for example
+         */
+        public Builder addDecisionMakerListeners(List<Provider<TestGroupDecisionMakerListener>> listeners) {
+            this.decisionMakerListeners.addAll(listeners);
+            return this;
+        }
 
         /**
          * Creates the object of JParallelTestsGroup type with custom parameters
@@ -125,5 +159,9 @@ public class JParallelTestsGroup {
     
     public List<Provider<TestGroupListener>> getListeners() {
         return listeners;
+    }
+    
+    public List<Provider<TestGroupDecisionMakerListener>> getDecisionMakerListeners() {
+        return decisionMakerListeners;
     }
 }

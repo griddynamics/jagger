@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations;
 
 import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
@@ -16,11 +17,6 @@ import java.util.Objects;
 
 /**
  * @brief Describes the instance of a load test performed by Jagger
-import com.google.common.collect.Lists;
-
-import java.util.List;
-
-/** @brief  Describes the instance of a load test performed by Jagger
  * @n
  * @par Details:
  * @details JLoadTest describes an instance of the load test, build with JTestDefinition. JLoadTest sets following parameters:
@@ -52,6 +48,7 @@ public class JLoadTest {
         this.termination = builder.termination;
         this.limits = builder.limits;
         this.testListeners = builder.testListeners;
+        this.testListeners.add(new CollectThreadsTestListener());
     }
 
     /**
@@ -91,11 +88,11 @@ public class JLoadTest {
          * @n
          * Example:
          * @code
-         * addTestListeners(Arrays.asList(new CollectThreadsTestListener()))
+         *      addListeners(Arrays.asList(new CollectThreadsTestListener()))
          * @endcode
          * @see com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener for example
          */
-        public Builder addTestListeners(List<Provider<TestListener>> testListeners) {
+        public Builder addListeners(List<Provider<TestListener>> testListeners) {
             this.testListeners.addAll(testListeners);
             return this;
         }
@@ -106,11 +103,11 @@ public class JLoadTest {
          * @n
          * Example:
          * @code
-         * addTestListener(new CollectThreadsTestListener())
+         *      addListener(new CollectThreadsTestListener())
          * @endcode
          * @see com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener for example
          */
-        public Builder addTestListener(Provider<TestListener> testListener) {
+        public Builder addListener(Provider<TestListener> testListener) {
             this.testListeners.add(testListener);
             return this;
         }
