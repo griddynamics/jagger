@@ -74,7 +74,6 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
 
         //validators listeners
         registerBeanDefinitionParser("validator-not-null-response", new NotNullResponseDefinitionParser());
-        registerBeanDefinitionParser("validator-consistency", new ConsistencyDefinitionParser());
         registerBeanDefinitionParser("validator-custom", new CustomValidatorDefinitionParser());
 
         //metric

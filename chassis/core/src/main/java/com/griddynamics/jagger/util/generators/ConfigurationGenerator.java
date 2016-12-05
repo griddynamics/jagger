@@ -7,6 +7,8 @@ import com.griddynamics.jagger.engine.e1.aggregator.workload.ProfilerLogProcesso
 import com.griddynamics.jagger.engine.e1.aggregator.workload.WorkloadAggregator;
 import com.griddynamics.jagger.engine.e1.collector.BasicSessionCollector;
 import com.griddynamics.jagger.engine.e1.collector.MasterWorkloadCollector;
+import com.griddynamics.jagger.engine.e1.collector.limits.LimitSetConfig;
+import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.configuration.Configuration;
 import com.griddynamics.jagger.master.configuration.SessionExecutionListener;
@@ -42,6 +44,8 @@ public class ConfigurationGenerator {
     private String jLoadScenarioToExecute;
     private Map<String, Configuration> configurations = Collections.emptyMap();
     private boolean monitoringEnable;
+    private BaselineSessionProvider baselineSessionProvider;
+    private LimitSetConfig limitSetConfig;
 
     public Set<String> getJaggerLoadScenarioNames() {
         if (useBuilders) {
@@ -49,17 +53,17 @@ public class ConfigurationGenerator {
         }
         return new HashSet<>(configurations.keySet());
     }
-    
+
     @Autowired(required = false)
     public void setJaggerLoadScenarios(List<JLoadScenario> jLoadScenarios) {
         this.jaggerLoadScenarios = jLoadScenarios.stream().collect(Collectors.toMap(JLoadScenario::getId, identity()));
     }
-    
+
     @Autowired(required = false)
     public void setConfigurations(Map<String, Configuration> configurations) {
         this.configurations = configurations;
     }
-    
+
     public Configuration generate() {
         if (useBuilders) {
             JLoadScenario jLoadScenario = jaggerLoadScenarios.get(jLoadScenarioToExecute);
@@ -79,7 +83,7 @@ public class ConfigurationGenerator {
         }
         return configuration;
     }
-    
+
     /**
      * Generates {@link Configuration} from {@link JLoadScenario}.
      *
@@ -90,10 +94,10 @@ public class ConfigurationGenerator {
         Configuration configuration = new Configuration();
         List<Task> tasks = jLoadScenario.getTestGroups()
                 .stream()
-                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable))
+                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable, baselineSessionProvider, limitSetConfig))
                 .collect(Collectors.toList());
         configuration.setTasks(tasks);
-        
+
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
         seListeners.add(basicSessionCollector);
         seListeners.add(basicAggregator);
@@ -110,56 +114,66 @@ public class ConfigurationGenerator {
         teListeners.add(metricLogProcessor);
         teListeners.add(profilerLogProcessor);
         teListeners.add(durationLogProcessor);
-        
+
         configuration.setSessionExecutionListeners(seListeners);
         configuration.setTaskExecutionListeners(teListeners);
-        
+
         return configuration;
     }
-    
+
     public void setBasicSessionCollector(BasicSessionCollector basicSessionCollector) {
         this.basicSessionCollector = basicSessionCollector;
     }
-    
+
     public void setE1MasterCollector(MasterWorkloadCollector e1MasterCollector) {
         this.e1MasterCollector = e1MasterCollector;
     }
-    
+
     public void setBasicAggregator(BasicAggregator basicAggregator) {
         this.basicAggregator = basicAggregator;
     }
-    
+
     public void setE1ScenarioAggregator(WorkloadAggregator e1ScenarioAggregator) {
         this.e1ScenarioAggregator = e1ScenarioAggregator;
     }
-    
+
     public void setMetricLogProcessor(MetricLogProcessor metricLogProcessor) {
         this.metricLogProcessor = metricLogProcessor;
     }
-    
+
     public void setProfilerLogProcessor(ProfilerLogProcessor profilerLogProcessor) {
         this.profilerLogProcessor = profilerLogProcessor;
     }
-    
+
     public void setDurationLogProcessor(DurationLogProcessor durationLogProcessor) {
         this.durationLogProcessor = durationLogProcessor;
     }
-    
+
     public boolean isUseBuilders() {
         return useBuilders;
     }
-    
+
     public void setUseBuilders(boolean useBuilders) {
         this.useBuilders = useBuilders;
     }
-    
-    public String getjLoadScenarioToExecute() { return jLoadScenarioToExecute; }
-    
+
+    public String getjLoadScenarioToExecute() {
+        return jLoadScenarioToExecute;
+    }
+
     public void setJLoadScenarioIdToExecute(String jLoadScenarioToExecute) {
         this.jLoadScenarioToExecute = jLoadScenarioToExecute;
     }
 
     public void setMonitoringEnable(boolean monitoringEnable) {
         this.monitoringEnable = monitoringEnable;
+    }
+
+    public void setBaselineSessionProvider(BaselineSessionProvider baselineSessionProvider) {
+        this.baselineSessionProvider = baselineSessionProvider;
+    }
+
+    public void setLimitSetConfig(LimitSetConfig limitSetConfig) {
+        this.limitSetConfig = limitSetConfig;
     }
 }
