@@ -34,10 +34,8 @@
 
     <bean id="sin" class="metric.SinMetric"/>
 
-    <!--begin: following section is used for docu generation - custom aggregator-->
-    <bean id="maxAggregator" class="metric.aggregator.MaxMetricAggregatorProvider"/>
-    <!--end: following section is used for docu generation - custom aggregator-->
+    <bean id="maxAggregator" class="com.griddynamics.jagger.engine.e1.collector.MaxMetricAggregatorProvider"/>
 
-    <bean id="minAggregator" class="metric.aggregator.MinMetricAggregatorProvider"/>
+    <bean id="minAggregator" class="com.griddynamics.jagger.engine.e1.collector.MinMetricAggregatorProvider"/>
 
 </beans>

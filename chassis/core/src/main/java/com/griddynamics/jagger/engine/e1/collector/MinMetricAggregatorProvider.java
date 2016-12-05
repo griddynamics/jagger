@@ -1,18 +1,6 @@
-package metric.aggregator;
+package com.griddynamics.jagger.engine.e1.collector;
 
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregator;
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
-
-import java.util.ArrayList;
-
-/**
- * Created with IntelliJ IDEA.
- * User: kgribov
- * Date: 10/21/13
- * Time: 7:04 PM
- * To change this template use File | Settings | File Templates.
- */
-public class MinMetricAggregatorProvider implements MetricAggregatorProvider{
+public class MinMetricAggregatorProvider implements MetricAggregatorProvider {
 
     @Override
     public MetricAggregator provide() {
@@ -27,9 +15,8 @@ public class MinMetricAggregatorProvider implements MetricAggregatorProvider{
         public void append(Number calculated) {
             if (value == null) {
                 value = calculated.doubleValue();
-            }
-            else {
-                value = Math.min(value,calculated.doubleValue());
+            } else {
+                value = Math.min(value, calculated.doubleValue());
             }
         }
 
