@@ -20,7 +20,14 @@
 
 package com.griddynamics.jagger.util;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class is used in chassis, web UI server and web UI client
@@ -38,6 +45,7 @@ public class StandardMetricsNamesUtil {
     public static final String DURATION_SEC = "Duration, sec";
     public static final String TIME_LATENCY_PERCENTILE = "Time Latency Percentile";
     public static final String FAIL_COUNT = "Number of failures";
+    public static final String VIRTUAL_USERS = "Virtual users";
 
     //begin: following section is used for docu generation - standard metrics ids
     public static final String THROUGHPUT_ID = "throughput";
@@ -47,6 +55,7 @@ public class StandardMetricsNamesUtil {
     public static final String SUCCESS_RATE_ID = "successRate";
     public static final String DURATION_ID = "duration";
     public static final String ITERATION_SAMPLES_ID = "samples";
+    public static final String VIRTUAL_USERS_ID = "Jagger.Threads";
     //end: following section is used for docu generation - standard metrics ids
 
     // ids for standard metrics saved with old model (in WorkloadTaskData, TimeLatencyPercentile, etc)

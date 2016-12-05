@@ -36,6 +36,7 @@ public class TreeViewGroupRuleProvider {
                 "^" + StandardMetricsNamesUtil.DURATION_SEC + "$|" +
                 "^" + StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE + "$|" +
                 "^" + StandardMetricsNamesUtil.FAIL_COUNT + "$|" +
+                "^" + StandardMetricsNamesUtil.VIRTUAL_USERS + " [avg]" + "$|" +
                 ")";
 
         // Filter for Jagger main metrics. Space in display name will help to keep main parameters in the
