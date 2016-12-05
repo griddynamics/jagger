@@ -193,6 +193,19 @@
                         <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
                             <constructor-arg index="0">
                                 <util:constant
+                                        static-field="com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS"/>
+                            </constructor-arg>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultWorkloadParameters">
+                        <value>VIRTUAL_USERS</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0">
+                                <util:constant
                                         static-field="com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY"/>
                             </constructor-arg>
                         </bean>
@@ -232,6 +245,15 @@
         </property>
         <property name="metricDisplayName">
             <util:constant static-field="com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_TPS"/>
+        </property>
+        <property name="origin" value="STANDARD_METRICS"/>
+    </bean>
+    <bean id="virtualUsersDto" class="com.griddynamics.jagger.dbapi.dto.MetricNameDto">
+        <property name="metricName">
+            <util:constant static-field="com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS_ID"/>
+        </property>
+        <property name="metricDisplayName">
+            <util:constant static-field="com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS"/>
         </property>
         <property name="origin" value="STANDARD_METRICS"/>
     </bean>
@@ -298,5 +320,6 @@
         <ref bean="samplesMetricNameDto"/>
         <ref bean="latencyStdDevMetricNameDto"/>
         <ref bean="failsMetricNameDto"/>
+        <ref bean="virtualUsersDto"/>
     </util:list>
 </beans>
