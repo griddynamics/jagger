@@ -24,7 +24,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-     <!--to include user defined Jagger Load Test scenarios-->
+    <!--to include user defined Jagger Load Test scenarios-->
     <context:component-scan base-package="${chassis.master.package.to.scan:com.griddynamics.jagger}.config"/>
     <context:annotation-config/>
 
@@ -168,6 +168,13 @@
         <property name="durationLogProcessor" ref="durationLogProcessor"/>
         <property name="monitoringEnable" value="${chassis.conditions.monitoring.enable}"/>
         <property name="useBuilders" value="${chassis.master.using.builders:true}"/>
+        <property name="baselineSessionProvider">
+            <bean class="com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider">
+                <property name="baselineSessionId"
+                          value="${chassis.engine.e1.reporting.session.comparison.baseline.session.id}"/>
+            </bean>
+        </property>
+        <property name="limitSetConfig" ref="limitSetConfig"/>
     </bean>
 </beans>
 
