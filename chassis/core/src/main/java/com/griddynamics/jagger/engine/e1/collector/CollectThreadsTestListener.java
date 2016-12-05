@@ -5,6 +5,9 @@ import com.griddynamics.jagger.engine.e1.collector.test.TestInfo;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS_ID;
+
 /**
  * Listener, executed periodically during test to collect number of workload threads
  *
@@ -26,16 +29,13 @@ import com.griddynamics.jagger.engine.e1.services.ServicesAware;
  */
 public class CollectThreadsTestListener extends ServicesAware implements Provider<TestListener> {
 
-    private static final String METRIC_ID = "Jagger.Threads";
-    private static final String METRIC_DISPLAY_NAME = "Virtual users";
-
     /**
      * Method is executed single time when listener is created
      */
     @Override
     protected void init() {
-        MetricDescription metricDescription = new MetricDescription(METRIC_ID)
-                .displayName(METRIC_DISPLAY_NAME)
+        MetricDescription metricDescription = new MetricDescription(VIRTUAL_USERS_ID)
+                .displayName(VIRTUAL_USERS)
                 .plotData(true)
                 .showSummary(true)
                 .addAggregator(new AvgMetricAggregatorProvider());
@@ -49,14 +49,16 @@ public class CollectThreadsTestListener extends ServicesAware implements Provide
     public TestListener provide() {
         return new TestListener() {
             @Override
-            public void onStart(TestInfo testInfo) {}
+            public void onStart(TestInfo testInfo) {
+            }
 
             @Override
-            public void onStop(TestInfo testInfo) {}
+            public void onStop(TestInfo testInfo) {
+            }
 
             @Override
             public void onRun(TestInfo status) {
-                getMetricService().saveValue(METRIC_ID, status.getThreads());
+                getMetricService().saveValue(VIRTUAL_USERS_ID, status.getThreads());
             }
         };
     }

@@ -6,12 +6,11 @@ import com.griddynamics.jagger.util.MonitoringIdUtils;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
 
 @Component
 public class TreeViewGroupMetricsToNodeRuleProvider {
@@ -148,6 +147,15 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
                 StandardMetricsNamesUtil.SUCCESS_RATE_ID,
                 StandardMetricsNamesUtil.SUCCESS_RATE,
                 regex));
+        //Virtual Users
+        regex = "^(" +
+                StandardMetricsNamesUtil.VIRTUAL_USERS_ID +
+                ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(
+                Rule.By.ID,
+                StandardMetricsNamesUtil.VIRTUAL_USERS_ID,
+                StandardMetricsNamesUtil.VIRTUAL_USERS,
+                regex));
 
         if ((percentiles != null) && (!percentiles.isEmpty())) {
             for (Double percentile : percentiles) {
@@ -181,6 +189,17 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
                 Rule.By.ID,
                 StandardMetricsNamesUtil.THROUGHPUT_ID,
                 StandardMetricsNamesUtil.THROUGHPUT,
+                regex));
+
+        // Virtual Users
+        regex = "^(" +
+                StandardMetricsNamesUtil.VIRTUAL_USERS_ID + "|" +
+                StandardMetricsNamesUtil.VIRTUAL_USERS + " [avg]" +
+                ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(
+                Rule.By.ID,
+                StandardMetricsNamesUtil.VIRTUAL_USERS_ID,
+                StandardMetricsNamesUtil.VIRTUAL_USERS,
                 regex));
 
         // Latency

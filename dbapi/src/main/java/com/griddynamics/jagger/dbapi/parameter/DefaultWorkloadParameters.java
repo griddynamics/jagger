@@ -18,7 +18,8 @@ public enum DefaultWorkloadParameters {
     TIME_LATENCY_PERCENTILE_80("80.0", true, MetricNameDto.Origin.LATENCY_PERCENTILE),
     TIME_LATENCY_PERCENTILE_90("90.0", true, MetricNameDto.Origin.LATENCY_PERCENTILE),
     TIME_LATENCY_PERCENTILE_95("95.0", true, MetricNameDto.Origin.LATENCY_PERCENTILE),
-    TIME_LATENCY_PERCENTILE_99("99.0", true, MetricNameDto.Origin.LATENCY_PERCENTILE);
+    TIME_LATENCY_PERCENTILE_99("99.0", true, MetricNameDto.Origin.LATENCY_PERCENTILE),
+    VIRTUAL_USERS(StandardMetricsNamesUtil.VIRTUAL_USERS + " [avg]", false, MetricNameDto.Origin.VIRTUAL_USERS);
 
     private final String description;
     private final boolean isCumulativeCounter;
