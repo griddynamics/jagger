@@ -122,7 +122,11 @@ public class ChronologyLogAggregator implements LogAggregator {
     
             return new AggregationInfo(minTime, maxTime, count);
         } finally {
-            Closeables.closeQuietly(objectOutput);
+            try {
+                Closeables.close(objectOutput, true);
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
         }
     }
 

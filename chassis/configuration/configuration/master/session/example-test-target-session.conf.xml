@@ -62,12 +62,6 @@
                         </bean>
                     </property>
                 </bean>
-                <bean id="validationCollectorProvider"
-                      class="com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider">
-                    <property name="validator">
-                        <bean class="com.griddynamics.jagger.engine.e1.collector.ConsistencyValidatorProvider"/>
-                    </property>
-                </bean>
             </list>
         </property>
     </bean>

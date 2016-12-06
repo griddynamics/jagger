@@ -1,7 +1,11 @@
 package com.griddynamics.jagger.master;
 
-import com.google.common.base.Function;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.JdkFutureAdapters;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Service;
+import com.google.common.util.concurrent.SettableFuture;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.master.configuration.Task;
@@ -9,7 +13,10 @@ import com.griddynamics.jagger.util.Nothing;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,7 +25,7 @@ import java.util.concurrent.ExecutorService;
  * Time: 12:57 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ListenableService<T extends Task> extends ForwardingService{
+public class ListenableService<T extends Task> implements Service {
 
     private final ExecutorService executor;
     private final String sessionId;
@@ -38,10 +45,9 @@ public class ListenableService<T extends Task> extends ForwardingService{
         this.service = delegate;
     }
 
-    @Override
     public ListenableFuture<State> start() {
 
-        ListenableFuture<Nothing> runListener = Futures.makeListenable(executor.submit(new Callable<Nothing>() {
+        ListenableFuture<Nothing> runListener = JdkFutureAdapters.listenInPoolThread(executor.submit(new Callable<Nothing>() {
             @Override
             public Nothing call() {
                 listener.onDistributionStarted(sessionId, taskId, task, remotes.keySet());
@@ -50,7 +56,7 @@ public class ListenableService<T extends Task> extends ForwardingService{
         }));
 
 
-        return Futures.chain(runListener, new Function<Nothing, ListenableFuture<State>>() {
+        return Futures.transform(runListener, new AsyncFunction<Nothing, State>() {
             @Override
             public ListenableFuture<State> apply(Nothing input) {
                 return doStart();
@@ -58,21 +64,35 @@ public class ListenableService<T extends Task> extends ForwardingService{
         });
     }
 
+    @Override
+    public State startAndWait() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Service startAsync() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isRunning() {
+        return service.isRunning();
+    }
+
+    @Override
+    public State state() {
+        return service.state();
+    }
+
 
     private ListenableFuture<State> doStart() {
-        return super.start();
+        return service.start();
     }
 
-    @Override
-    protected Service delegate() {
-        return service;
-    }
-
-    @Override
     public ListenableFuture<State> stop() {
-        ListenableFuture<State> stop = super.stop();
+        ListenableFuture<State> stop = service.stop();
 
-        return Futures.chain(stop, new Function<State, ListenableFuture<State>>() {
+        return Futures.transform(stop, new AsyncFunction<State, State>() {
             @Override
             public ListenableFuture<State> apply(final State input) {
 
@@ -90,5 +110,45 @@ public class ListenableService<T extends Task> extends ForwardingService{
                 return result;
             }
         });
+    }
+
+    @Override
+    public State stopAndWait() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Service stopAsync() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void awaitRunning() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void awaitRunning(long timeout, TimeUnit unit) throws TimeoutException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void awaitTerminated() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void awaitTerminated(long timeout, TimeUnit unit) throws TimeoutException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Throwable failureCause() {
+        return service.failureCause();
+    }
+
+    @Override
+    public void addListener(Listener listener, Executor executor) {
+        service.addListener(listener, executor);
     }
 }

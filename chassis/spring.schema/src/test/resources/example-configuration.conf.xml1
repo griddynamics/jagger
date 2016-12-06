@@ -153,7 +153,6 @@
 
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
-            <validator xsi:type="validator-consistency"/>
             <metric id="sampleMetric" xsi:type="metric-not-null-response" plotData="true">
                 <metric-aggregator xsi:type="metric-aggregator-avg"/>
             </metric>
