@@ -191,12 +191,6 @@ public class WorkloadComparisonResult {
         } else {
             workloadTaskData.setThroughput(new BigDecimal(0));
         }
-        Double failuresCount = getStandardMetricValueById(StandardMetricsNamesUtil.FAIL_COUNT_ID,standardMetricsMap).getValue();
-        if (failuresCount != null) {
-            workloadTaskData.setFailuresCount(failuresCount.intValue());
-        } else {
-            workloadTaskData.setFailuresCount(0);
-        }
         Double successRate = getStandardMetricValueById(StandardMetricsNamesUtil.SUCCESS_RATE_ID,standardMetricsMap).getValue();
         if (successRate != null) {
             workloadTaskData.setSuccessRate(new BigDecimal(successRate));

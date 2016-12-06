@@ -71,7 +71,7 @@ class TestDefinitionGenerator {
                 .addAggregator(new SuccessRateFailsAggregatorProvider());
         SuccessRateCollectorProvider successRateCollectorProvider = new SuccessRateCollectorProvider();
         successRateCollectorProvider.setMetricDescription(metricDescriptions);
-        successRateCollectorProvider.setName(SUCCESS_RATE);
+        successRateCollectorProvider.setName(SUCCESS_RATE_ID);
         return successRateCollectorProvider;
     }
 }
