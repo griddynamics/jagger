@@ -88,7 +88,7 @@ public class StandardMetricsNamesUtil {
 
         // hard coded synonyms
         if (synonyms.containsKey(metricName)) {
-            return new ArrayList<>(synonyms.get(metricName));
+            return new ArrayList<String>(synonyms.get(metricName));
         }
 
         // dynamic synonyms for latency percentiles
@@ -96,9 +96,9 @@ public class StandardMetricsNamesUtil {
             Double value = parseLatencyPercentileKey(metricName);
             String percentileNewModelMetricName = getLatencyMetricName(value, false);
             if (metricName.equals(percentileNewModelMetricName)) {
-                return new ArrayList<>(Arrays.asList(getLatencyMetricName(value, true), TIME_LATENCY_PERCENTILE));
+                return new ArrayList<String>(Arrays.asList(getLatencyMetricName(value, true), TIME_LATENCY_PERCENTILE));
             } else {
-                return new ArrayList<>(Collections.singletonList(percentileNewModelMetricName));
+                return new ArrayList<String>(Arrays.asList(percentileNewModelMetricName));
             }
 
         }
