@@ -60,7 +60,8 @@ public class TestExecutionRestController extends AbstractController {
             try {
                 new URL(testExecution.getTestProjectURL());
             } catch (MalformedURLException e) {
-                throw new InvalidTestExecutionException(format("Test project URL '%s' is not valid URL! %s", testExecution.getTestProjectURL(), e.getMessage()), e);
+                throw new InvalidTestExecutionException(
+                        format("Test project URL '%s' is not valid URL! %s", testExecution.getTestProjectURL(), e.getMessage()), e);
             }
         } else {
             throw new InvalidTestExecutionException("Test project URL must not be null!");
