@@ -115,17 +115,6 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
                 regex));
 
 
-        // Fail count
-        regex = "^(" +
-                StandardMetricsNamesUtil.FAIL_COUNT_ID + "|" +
-                StandardMetricsNamesUtil.FAIL_COUNT_OLD_ID +
-                ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.FAIL_COUNT_ID,
-                StandardMetricsNamesUtil.FAIL_COUNT,
-                regex));
-
         // Samples
         regex = "^(" +
                 StandardMetricsNamesUtil.ITERATION_SAMPLES_ID + "|" +
@@ -194,7 +183,7 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
         // Virtual Users
         regex = "^(" +
                 StandardMetricsNamesUtil.VIRTUAL_USERS_ID + "|" +
-                StandardMetricsNamesUtil.VIRTUAL_USERS + " [avg]" +
+                StandardMetricsNamesUtil.VIRTUAL_USERS + ".*" +
                 ")$";
         result.add(new TreeViewGroupMetricsToNodeRule(
                 Rule.By.ID,

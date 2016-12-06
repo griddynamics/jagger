@@ -303,15 +303,6 @@
         </property>
         <property name="origin" value="STANDARD_METRICS"/>
     </bean>
-    <bean id="failsMetricNameDto" class="com.griddynamics.jagger.dbapi.dto.MetricNameDto">
-        <property name="metricName">
-            <util:constant static-field="com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT_OLD_ID"/>
-        </property>
-        <property name="metricDisplayName">
-            <util:constant static-field="com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT"/>
-        </property>
-        <property name="origin" value="STANDARD_METRICS"/>
-    </bean>
     <util:list id="standardMetricNameDtoList">
         <ref bean="throughputMetricNameDto"/>
         <ref bean="latencyMetricNameDto"/>
@@ -319,7 +310,6 @@
         <ref bean="successRateMetricNameDto"/>
         <ref bean="samplesMetricNameDto"/>
         <ref bean="latencyStdDevMetricNameDto"/>
-        <ref bean="failsMetricNameDto"/>
         <ref bean="virtualUsersDto"/>
     </util:list>
 </beans>
