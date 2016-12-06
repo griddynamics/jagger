@@ -20,15 +20,17 @@ import com.griddynamics.jagger.util.JaggerPropertiesProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties, which you can use
+ * for configuration of JLoadScenario.<p>
+ * Benefit of this approach is that you can change JLoadScenario configuration by changing properties file and no recompilation is needed.
+ */
 @Configuration
 public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
 
-        // Example of using JaggerPropertiesProvider
-        String propertyValue = getPropertyValue("chassis.storage.rdb.client.url");
-        
         JTestDefinition jTestDefinition = JTestDefinition
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
@@ -38,8 +40,13 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .build();
         
         JLoadProfile jLoadProfileRps = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
-        
-        JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(1000), MaxDurationInSeconds.of(20));
+
+        // Example of using JaggerPropertiesProvider
+        Long iterationsNumber = Long.valueOf(getPropertyValue("example.jagger.load.scenario.termination.iterations"));
+        Long maxDurationInSeconds = Long.valueOf(getPropertyValue("example.jagger.load.scenario.termination.max.duration.seconds"));
+
+        JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(iterationsNumber),
+                MaxDurationInSeconds.of(maxDurationInSeconds));
         
         JLoadTest jLoadTest = JLoadTest
                 .builder(Id.of("exampleJaggerLoadTest"), jTestDefinition, jLoadProfileRps, jTerminationCriteria).build();
