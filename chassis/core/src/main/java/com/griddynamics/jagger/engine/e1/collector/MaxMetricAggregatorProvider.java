@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+// begin: following section is used for docu generation - custom aggregator source
 public class MaxMetricAggregatorProvider implements MetricAggregatorProvider {
 
     @Override
@@ -36,3 +37,4 @@ public class MaxMetricAggregatorProvider implements MetricAggregatorProvider {
         }
     }
 }
+// end: following section is used for docu generation - custom aggregator source
