@@ -93,7 +93,6 @@ public class MetricNameDto extends MetricName {
         DURATION,
         STANDARD_METRICS,             /* success rate, iterations, etc */
         VALIDATOR,
-        SESSION_SCOPE_TG,             /* custom test-group metrics for session scope */
-        VIRTUAL_USERS
+        SESSION_SCOPE_TG             /* custom test-group metrics for session scope */
     }
 }

@@ -172,6 +172,7 @@ public class SummaryReporter {
             standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_ID));
             standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID));
             standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.ITERATION_SAMPLES_ID));
+            standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.VIRTUAL_USERS_ID));
 
             LocalRankingProvider localRankingProvider = new LocalRankingProvider();
             DataService dataService = new DefaultDataService(databaseService);
@@ -279,9 +280,6 @@ public class SummaryReporter {
                     workloadTaskData.setThroughput(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
                     dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.THROUGHPUT_ID, metricsForThisTest.get(metricEntity).getValue());
                 }
-                if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.SUCCESS_RATE_ID).contains(metricEntity.getMetricId())) {
-                    workloadTaskData.setSuccessRate(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
-                }
                 if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_ID).contains(metricEntity.getMetricId())) {
                     workloadTaskData.setAvgLatency(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
                     dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.LATENCY_ID, metricsForThisTest.get(metricEntity).getValue());
@@ -294,13 +292,6 @@ public class SummaryReporter {
 
             String testStatusComment = "";
             Decision testStatus = Decision.OK;
-
-            // Success rate
-            Decision testSuccessRateStatus = decisionMaker.decideOnTest(workloadTaskData);
-            if (testSuccessRateStatus.ordinal() > testStatus.ordinal()) {
-                testStatusComment = "Test status is based on success rate. Success rate is below the threshold defined by the property: 'chassis.master.reporting.successrate.threshold'";
-                testStatus = testSuccessRateStatus;
-            }
 
             // Errors during workload configuration
             Decision testExecutionStatus = testEntity.getTestExecutionStatus();
