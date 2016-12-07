@@ -43,6 +43,7 @@ public class StandardMetricsNamesUtil {
     public static final String LATENCY_PERCENTILE_REGEX = "Latency\\s\\S+\\s%(-old)?";
     public static final String ITERATIONS_SAMPLES = "Iterations, samples";
     public static final String SUCCESS_RATE = "Success rate";
+    public static final String SUCCESS_RATE_FAILURES = "Number of fails";
     public static final String DURATION_SEC = "Duration, sec";
     public static final String TIME_LATENCY_PERCENTILE = "Time Latency Percentile";
     public static final String VIRTUAL_USERS = "Virtual users";
@@ -127,7 +128,6 @@ public class StandardMetricsNamesUtil {
         synonyms.put(THROUGHPUT_OLD_ID, Arrays.asList(THROUGHPUT_ID, THROUGHPUT));
         synonyms.put(LATENCY_OLD_ID, Arrays.asList(LATENCY_ID, LATENCY));
         synonyms.put(LATENCY_STD_DEV_OLD_ID, Arrays.asList(LATENCY_STD_DEV_ID));
-        synonyms.put(SUCCESS_RATE_OLD_ID, Arrays.asList(SUCCESS_RATE_ID, SUCCESS_RATE));
         synonyms.put(DURATION_OLD_ID, Arrays.asList(DURATION_ID, "Duration"));
         synonyms.put(ITERATION_SAMPLES_OLD_ID, Arrays.asList(ITERATION_SAMPLES_ID, "Iterations"));
 
@@ -135,7 +135,6 @@ public class StandardMetricsNamesUtil {
         synonyms.put(THROUGHPUT_ID, Arrays.asList(THROUGHPUT_OLD_ID, THROUGHPUT));
         synonyms.put(LATENCY_ID, Arrays.asList(LATENCY_OLD_ID, LATENCY));
         synonyms.put(LATENCY_STD_DEV_ID, Arrays.asList(LATENCY_STD_DEV_OLD_ID));
-        synonyms.put(SUCCESS_RATE_ID, Arrays.asList(SUCCESS_RATE_OLD_ID, SUCCESS_RATE));
         synonyms.put(DURATION_ID, Arrays.asList(DURATION_OLD_ID, "Duration"));
         synonyms.put(ITERATION_SAMPLES_ID, Arrays.asList(ITERATION_SAMPLES_OLD_ID, "Iterations"));
     }

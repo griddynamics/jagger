@@ -62,13 +62,13 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
                 dto.setStdDevLatencyDeviation(details.getStdDevLatencyDeviation());
                 dto.setThroughputDeviation(details.getThroughputDeviation());
                 dto.setTotalDurationDeviation(details.getTotalDurationDeviation());
-                dto.setSuccessRateDeviation(details.getSuccessRateDeviation());
+//                dto.setSuccessRateDeviation(details.getSuccessRateDeviation());
             } else {
                 dto.setAvgLatencyDeviation(0.0);
                 dto.setStdDevLatencyDeviation(0.0);
                 dto.setThroughputDeviation(0.0);
                 dto.setTotalDurationDeviation(0.0);
-                dto.setSuccessRateDeviation(0.0);
+//                dto.setSuccessRateDeviation(0.0);
             }
 
             result.add(dto);

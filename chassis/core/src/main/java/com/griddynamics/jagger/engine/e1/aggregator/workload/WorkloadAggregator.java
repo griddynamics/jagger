@@ -61,8 +61,6 @@ import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_SEC;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
 
 /**
  * Aggregates recorded e1 scenario data from key-value storage to relational
@@ -196,9 +194,6 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         workloadTaskData.setKernels(kernels.size());
 
         getHibernateTemplate().persist(workloadTaskData);
-
-        MetricDescriptionEntity successRateDescription = persistMetricDescription(SUCCESS_RATE_ID, SUCCESS_RATE, taskData);
-        persistAggregatedMetricValue(successRate, successRateDescription);
 
         MetricDescriptionEntity samplesDescription = persistMetricDescription(ITERATION_SAMPLES_ID, ITERATIONS_SAMPLES, taskData);
         persistAggregatedMetricValue(invoked, samplesDescription);

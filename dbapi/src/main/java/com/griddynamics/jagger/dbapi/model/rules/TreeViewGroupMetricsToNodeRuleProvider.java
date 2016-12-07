@@ -128,9 +128,7 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
 
         // Success rate
         regex = "^(" +
-                StandardMetricsNamesUtil.SUCCESS_RATE_ID + "|" +
-                StandardMetricsNamesUtil.SUCCESS_RATE_OLD_ID +
-                ")$";
+                StandardMetricsNamesUtil.SUCCESS_RATE_ID + ")$";
         result.add(new TreeViewGroupMetricsToNodeRule(
                 Rule.By.ID,
                 StandardMetricsNamesUtil.SUCCESS_RATE_ID,
