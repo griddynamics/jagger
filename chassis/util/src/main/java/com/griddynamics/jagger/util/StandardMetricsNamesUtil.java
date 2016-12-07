@@ -62,7 +62,6 @@ public class StandardMetricsNamesUtil {
     public static final String THROUGHPUT_OLD_ID = "throughput-old";
     public static final String LATENCY_OLD_ID = "avgLatency-old";
     public static final String LATENCY_STD_DEV_OLD_ID = "stdDevLatency-old";
-    public static final String SUCCESS_RATE_OLD_ID = "successRate-old";
     public static final String DURATION_OLD_ID = "duration-old";
     public static final String ITERATION_SAMPLES_OLD_ID = "samples-old";
 

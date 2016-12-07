@@ -169,9 +169,7 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
 
         // Throughput
         String regex = "^(" +
-                StandardMetricsNamesUtil.THROUGHPUT_ID + "|" +
-                StandardMetricsNamesUtil.THROUGHPUT +
-                ")$";
+                StandardMetricsNamesUtil.THROUGHPUT_ID + ")$";
         result.add(new TreeViewGroupMetricsToNodeRule(
                 Rule.By.ID,
                 StandardMetricsNamesUtil.THROUGHPUT_ID,
@@ -180,9 +178,7 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
 
         // Virtual Users
         regex = "^(" +
-                StandardMetricsNamesUtil.VIRTUAL_USERS_ID + "|" +
-                StandardMetricsNamesUtil.VIRTUAL_USERS + ".*" +
-                ")$";
+                StandardMetricsNamesUtil.VIRTUAL_USERS_ID + ".*" + ")$";
         result.add(new TreeViewGroupMetricsToNodeRule(
                 Rule.By.ID,
                 StandardMetricsNamesUtil.VIRTUAL_USERS_ID,
@@ -192,8 +188,7 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
         // Latency
         regex = "^(" +
                 StandardMetricsNamesUtil.LATENCY_ID + "|" +
-                StandardMetricsNamesUtil.LATENCY_STD_DEV_ID + "|" +
-                StandardMetricsNamesUtil.LATENCY +
+                StandardMetricsNamesUtil.LATENCY_STD_DEV_ID +
                 ")$";
         result.add(new TreeViewGroupMetricsToNodeRule(
                 Rule.By.ID,
