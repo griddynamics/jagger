@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
@@ -39,7 +38,7 @@ public class JLoadTest {
     private final JTestDefinition testDescription;
     private final JTerminationCriteria termination;
     private final List<JLimit> limits;
-    private final List<Provider<TestListener>> testListeners;
+    private final List<Provider<TestListener>> listeners;
 
     private JLoadTest(Builder builder) {
         this.id = builder.id.value();
@@ -47,8 +46,7 @@ public class JLoadTest {
         this.load = builder.load;
         this.termination = builder.termination;
         this.limits = builder.limits;
-        this.testListeners = builder.testListeners;
-        this.testListeners.add(new CollectThreadsTestListener());
+        this.listeners = builder.testListeners;
     }
 
     /**
@@ -164,7 +162,7 @@ public class JLoadTest {
         return limits;
     }
     
-    public List<Provider<TestListener>> getTestListeners() {
-        return testListeners;
+    public List<Provider<TestListener>> getListeners() {
+        return listeners;
     }
 }

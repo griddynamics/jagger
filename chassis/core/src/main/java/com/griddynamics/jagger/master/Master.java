@@ -36,7 +36,7 @@ import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator;
 import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteInfo;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.LoadScenarioListener;
+import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
 import com.griddynamics.jagger.engine.e1.process.Services;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
 import com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage;
@@ -243,8 +243,8 @@ public class Master implements Runnable {
                 processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
             }
 
-            LoadScenarioListener
-                    loadScenarioListener = LoadScenarioListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
+            TestSuiteListener
+                    testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
                     sessionId,
                     "session",
                     context,
@@ -254,12 +254,12 @@ public class Master implements Runnable {
             TestSuiteInfo testSuiteInfo = new TestSuiteInfo(sessionId, generalNodeInfo);
             long startTime = System.currentTimeMillis();
 
-            loadScenarioListener.onStart(testSuiteInfo);
+            testSuiteListener.onStart(testSuiteInfo);
             // tests execution
             SessionExecutionStatus status = runConfiguration(allNodes, context);
             testSuiteInfo.setDuration(System.currentTimeMillis() - startTime);
             log.info("Configuration work finished!!");
-            loadScenarioListener.onStop(testSuiteInfo);
+            testSuiteListener.onStop(testSuiteInfo);
 
             for (SessionExecutionListener listener : configuration.getSessionExecutionListeners()) {
                 if (listener instanceof SessionListener) {

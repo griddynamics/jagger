@@ -1,8 +1,8 @@
 package com.griddynamics.jagger.user.test.configurations;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.ExampleLoadScenarioListener;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.LoadScenarioListener;
+import com.griddynamics.jagger.engine.e1.collector.testsuite.ExampleTestSuiteListener;
+import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 
 import com.google.common.collect.Lists;
@@ -35,7 +35,7 @@ public class JLoadScenario {
     private final String id;
     private final List<JParallelTestsGroup> testGroups;
     private final List<Double> percentileValues;
-    private final List<Provider<LoadScenarioListener>> listeners;
+    private final List<Provider<TestSuiteListener>> listeners;
 
     private JLoadScenario(Builder builder) {
         this.id = builder.id.value();
@@ -75,7 +75,7 @@ public class JLoadScenario {
         private final Id id;
         private final List<JParallelTestsGroup> testGroups;
         private List<Double> percentileValues;
-        private List<Provider<LoadScenarioListener>> listeners = Lists.newArrayList();
+        private List<Provider<TestSuiteListener>> listeners = Lists.newArrayList();
         
         public Builder(Id id, List<JParallelTestsGroup> testGroups) {
             this.id = id;
@@ -100,29 +100,29 @@ public class JLoadScenario {
         }
     
         /**
-         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider< LoadScenarioListener >}
-         * These listeners are executed before and after load scenario.
+         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider<TestSuiteListener>}
+         * These listeners are executed before and after test suite.
          * Example:
          * @code
-         *      addListener(new ExampleLoadScenarioListener())
+         *      addListener(new ExampleTestSuiteListener())
          * @endcode
-         * @see ExampleLoadScenarioListener for example
+         * @see ExampleTestSuiteListener for example
          */
-        public Builder addListener(Provider<LoadScenarioListener> listener) {
+        public Builder addListener(Provider<TestSuiteListener> listener) {
             this.listeners.add(listener);
             return this;
         }
     
         /**
-         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider< LoadScenarioListener >}
-         * These listeners are executed before and after load scenario.
+         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider<TestSuiteListener>}
+         * These listeners are executed before and after test suite.
          * Example:
          * @code
-         *      addListeners(Arrays.asList(new ExampleLoadScenarioListener()))
+         *      addListeners(Arrays.asList(new ExampleTestSuiteListener()))
          * @endcode
-         * @see ExampleLoadScenarioListener for example
+         * @see ExampleTestSuiteListener for example
          */
-        public Builder addListeners(List<Provider<LoadScenarioListener>> listeners) {
+        public Builder addListeners(List<Provider<TestSuiteListener>> listeners) {
             this.listeners.addAll(listeners);
             return this;
         }
@@ -150,7 +150,7 @@ public class JLoadScenario {
         return percentileValues;
     }
     
-    public List<Provider<LoadScenarioListener>> getListeners() {
+    public List<Provider<TestSuiteListener>> getListeners() {
         return listeners;
     }
 }

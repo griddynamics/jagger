@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
  * Created by Andrey Badaev
  * Date: 05/12/16
  */
-public class ExampleLoadScenarioListener extends ServicesAware implements Provider<LoadScenarioListener> {
+public class ExampleTestSuiteListener extends ServicesAware implements Provider<TestSuiteListener> {
     
-    private final static Logger log = LoggerFactory.getLogger(ExampleLoadScenarioListener.class);
+    private final static Logger log = LoggerFactory.getLogger(ExampleTestSuiteListener.class);
     
     @Override
     protected void init() {
@@ -20,8 +20,8 @@ public class ExampleLoadScenarioListener extends ServicesAware implements Provid
     }
     
     @Override
-    public LoadScenarioListener provide() {
-        return new LoadScenarioListener() {
+    public TestSuiteListener provide() {
+        return new TestSuiteListener() {
             @Override
             public void onStart(TestSuiteInfo testSuiteInfo) {
                 log.info("Started {} session execution", testSuiteInfo.getSessionId());

@@ -4,19 +4,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Listener, executed before and after load scenario
+ * Listener, executed before and after test suite
  * @author Gribov Kirill
  * @n
  * @par Details:
- * @details Possible applications for load scenario listener: @n
- * @li Check some setup before executing of load scenario (f.e. via properties)
- * @li Provide smoke tests before load scenario
- * @li Add some resume to session comment after load scenario is over
+ * @details Possible applications for test suite listener: @n
+ * @li Check some setup before executing of test suite (f.e. via properties)
+ * @li Provide smoke tests before test suite
+ * @li Add some resume to session comment after test suite is over
  *
  * @n
  * @ingroup Main_Listeners_Base_group
  */
-public abstract class LoadScenarioListener {
+public abstract class TestSuiteListener {
 
     /** Method is executed before test suite starts
      * @param testSuiteInfo - describes start test suite information*/
@@ -30,22 +30,22 @@ public abstract class LoadScenarioListener {
 
     /** Class is used by Jagger for sequential execution of several listeners @n
      *  Not required for custom test listeners */
-    public static class Composer extends LoadScenarioListener {
+    public static class Composer extends TestSuiteListener {
         private static Logger log = LoggerFactory.getLogger(Composer.class);
 
-        private Iterable<LoadScenarioListener> listeners;
+        private Iterable<TestSuiteListener> listeners;
 
-        public Composer(Iterable<LoadScenarioListener> listeners) {
+        public Composer(Iterable<TestSuiteListener> listeners) {
             this.listeners = listeners;
         }
 
-        public static LoadScenarioListener compose(Iterable<LoadScenarioListener> collectors){
+        public static TestSuiteListener compose(Iterable<TestSuiteListener> collectors){
             return new Composer(collectors);
         }
 
         @Override
         public void onStart(TestSuiteInfo testSuiteInfo) {
-            for (LoadScenarioListener listener : listeners){
+            for (TestSuiteListener listener : listeners){
                 try{
                     listener.onStart(testSuiteInfo);
                 }catch (RuntimeException ex){
@@ -56,7 +56,7 @@ public abstract class LoadScenarioListener {
 
         @Override
         public void onStop(TestSuiteInfo testSuiteInfo) {
-            for (LoadScenarioListener listener : listeners){
+            for (TestSuiteListener listener : listeners){
                 try{
                     listener.onStop(testSuiteInfo);
                 }catch (RuntimeException ex){
