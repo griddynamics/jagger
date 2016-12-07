@@ -51,6 +51,7 @@ import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -70,7 +71,7 @@ public final class JaggerLauncher {
     public static final String RDB_CONFIGURATION = "chassis.rdb.configuration";
     public static final String INCLUDE_SUFFIX = ".include";
     public static final String EXCLUDE_SUFFIX = ".exclude";
-    public static final String TEST_CONFIG_NAME_PROP = "jagger.load.scenario.id.to.execute";
+    public static final String LOAD_SCENARIO_ID_PROP = "jagger.load.scenario.id.to.execute";
     public static final String DEFAULT_ENVIRONMENT_PROPERTIES = "jagger.default.environment.properties";
     public static final String USER_ENVIRONMENT_PROPERTIES = "jagger.user.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
@@ -179,9 +180,13 @@ public final class JaggerLauncher {
                     )) {
                         masterToJaasCoordinator.register();
                         while (masterToJaasCoordinator.isStandBy()) {
-                            environmentProperties
-                                    .setProperty(TEST_CONFIG_NAME_PROP, masterToJaasCoordinator.awaitConfigToExecute());
-                            doLaunchMaster(directory);
+                            masterToJaasCoordinator.awaitConfigToExecute();
+                            
+                            try {
+                                executeNextLoadScenario("runtimeJaggerLoadScenario", "org.test", "file:///Users/abadaev/.m2/repository/org/test/load-scenario/1.0-SNAPSHOT/load-scenario-1.0-SNAPSHOT.jar", directory);
+                            } catch (IOException e) {
+                                log.error("I/O Error during load scenario execution launching.", e);
+                            }
                         }
                     } catch (TerminateException | InterruptedException e) {
                         log.error("Master has been terminated.");
@@ -195,6 +200,27 @@ public final class JaggerLauncher {
         builder.addMainTask(masterTask);
     }
     
+    private static void executeNextLoadScenario(String loadScenarioId, String loadScenarioPackage,
+                                                String customClassesUrl, URL directory
+    ) throws IOException {
+        
+        environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, loadScenarioId);
+    
+        // pass this property value for Spring's context:component-scan
+        System.setProperty(USER_CONFIGS_PACKAGE, loadScenarioPackage);
+    
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        URL customClasses = new URL(customClassesUrl);
+        try (URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{customClasses})) {
+            Thread.currentThread().setContextClassLoader(urlClassLoader);
+                             
+            doLaunchMaster(directory, urlClassLoader);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        }
+        
+    }
+    
     private static Set<String> getAvailableConfigurations(final URL directory) {
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
@@ -203,15 +229,19 @@ public final class JaggerLauncher {
         return availableConfigs;
     }
     
-    private static void doLaunchMaster(final URL directory) {
-        AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
+    private static void doLaunchMaster(final URL directory, final ClassLoader classLoader) {
+        AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties, classLoader);
         initCoordinator(context);
         context.getBean(StorageServerLauncher.class); // to trigger lazy initialization
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
-        configurationGenerator.setJLoadScenarioIdToExecute(environmentProperties.getProperty(TEST_CONFIG_NAME_PROP));
+        configurationGenerator.setJLoadScenarioIdToExecute(environmentProperties.getProperty(LOAD_SCENARIO_ID_PROP));
         Master master = context.getBean(Master.class);
         master.run();
         context.destroy();
+    }
+    
+    private static void doLaunchMaster(final URL directory) {
+        doLaunchMaster(directory, JaggerLauncher.class.getClassLoader());
     }
     
     private static void launchReporter(final URL directory) {
@@ -327,7 +357,8 @@ public final class JaggerLauncher {
         builder.addMainTask(jettyRunner);
     }
     
-    public static AbstractXmlApplicationContext loadContext(URL directory, String role, Properties environmentProperties) {
+    public static AbstractXmlApplicationContext
+    loadContext(URL directory, String role, Properties environmentProperties, ClassLoader classLoader) {
         String[] includePatterns = StringUtils.split(environmentProperties.getProperty(role + INCLUDE_SUFFIX), ", ");
         String[] excludePatterns = StringUtils.split(environmentProperties.getProperty(role + EXCLUDE_SUFFIX), ", ");
         
@@ -338,7 +369,11 @@ public final class JaggerLauncher {
         }
         
         return new JaggerXmlApplicationContext(
-                directory, environmentProperties, descriptors.toArray(new String[descriptors.size()]));
+                directory, environmentProperties, descriptors.toArray(new String[descriptors.size()]), classLoader);
+    }
+    
+    public static AbstractXmlApplicationContext loadContext(URL directory, String role, Properties environmentProperties) {
+        return loadContext(directory, role, environmentProperties, JaggerLauncher.class.getClassLoader());
     }
     
     private static List<String> discoverResources(URL directory, String[] includePatterns, String[] excludePatterns) {

@@ -38,7 +38,13 @@ public class DefaultNodeContext implements NodeContext {
 
     @Override
     public <T> T getService(Class<T> clazz) {
-        return (T) services.get(clazz);
+        if (services.containsKey(clazz)) {
+            return (T) services.get(clazz);
+        }
+        try {
+            return clazz.newInstance();
+        } catch (Exception e) {}
+        return null;
     }
 
     @Override
