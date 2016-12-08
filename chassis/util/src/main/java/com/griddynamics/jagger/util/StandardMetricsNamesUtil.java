@@ -23,7 +23,6 @@ package com.griddynamics.jagger.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +55,14 @@ public class StandardMetricsNamesUtil {
     public static final String DURATION_ID = "duration";
     public static final String ITERATION_SAMPLES_ID = "samples";
     public static final String VIRTUAL_USERS_ID = "Jagger.Threads";
+
+
+
+    public static final String SUCCESS_RATE_OK_ID = "Success rate";
+    public static final String SUCCESS_RATE_FAILED_ID = "failureCount";
+
+
+
     //end: following section is used for docu generation - standard metrics ids
 
     // ids for standard metrics saved with old model (in WorkloadTaskData, TimeLatencyPercentile, etc)

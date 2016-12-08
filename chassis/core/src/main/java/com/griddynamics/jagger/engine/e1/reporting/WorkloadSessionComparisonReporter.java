@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadComparisonResult;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
@@ -28,18 +29,16 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.google.common.collect.Lists;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvider<Collection<Verdict<WorkloadComparisonResult>>> {
-    
+
     public static final Comparator<WorkloadSessionComparisonDto> BY_NAME =
             Comparator.comparing(WorkloadSessionComparisonDto::getName);
-    
+
     private StatusImageProvider statusImageProvider;
 
     @Override
@@ -62,16 +61,18 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
                 dto.setStdDevLatencyDeviation(details.getStdDevLatencyDeviation());
                 dto.setThroughputDeviation(details.getThroughputDeviation());
                 dto.setTotalDurationDeviation(details.getTotalDurationDeviation());
+                dto.setSuccessRateDeviation(details.getSuccessRateDeviation());
             } else {
                 dto.setAvgLatencyDeviation(0.0);
                 dto.setStdDevLatencyDeviation(0.0);
                 dto.setThroughputDeviation(0.0);
                 dto.setTotalDurationDeviation(0.0);
+                dto.setSuccessRateDeviation(0.0);
             }
 
             result.add(dto);
         }
-    
+
         Collections.sort(result, BY_NAME);
         return new JRBeanCollectionDataSource(result);
     }
@@ -82,7 +83,7 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
     }
 
     public static class WorkloadSessionComparisonDto {
-        
+
         private String name;
         private Decision decision;
         private double throughputDeviation;

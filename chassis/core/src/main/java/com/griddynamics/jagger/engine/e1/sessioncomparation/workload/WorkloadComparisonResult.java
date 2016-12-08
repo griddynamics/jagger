@@ -37,6 +37,7 @@ public class WorkloadComparisonResult {
     @Deprecated
     /** @deprecated starting from version 1.2.6 this parameter is always zero */
     private final double totalDurationDeviation;
+    private final double successRateDeviation;
     private final double avgLatencyDeviation;
     private final double stdDevLatencyDeviation;
 
@@ -52,13 +53,14 @@ public class WorkloadComparisonResult {
         return new WorkloadComparisonResultBuilder();
     }
 
-    public WorkloadComparisonResult(double throughputDeviation, double totalDurationDeviation,
+    public WorkloadComparisonResult(double throughputDeviation, double totalDurationDeviation, double successRateDeviation,
                                     double avgLatencyDeviation, double stdDevLatencyDeviation,
                                     SessionEntity currentSessionEntity, SessionEntity baselineSessionEntity,
                                     TestEntity currentTestEntity, TestEntity baselineTestEntity,
                                     Map<MetricEntity, MetricSummaryValueEntity> currentStandardMetrics, Map<MetricEntity, MetricSummaryValueEntity> baselineStandardMetrics) {
         this.throughputDeviation = throughputDeviation;
         this.totalDurationDeviation = totalDurationDeviation;
+        this.successRateDeviation = successRateDeviation;
         this.avgLatencyDeviation = avgLatencyDeviation;
         this.stdDevLatencyDeviation = stdDevLatencyDeviation;
         this.currentSessionEntity = currentSessionEntity;
@@ -78,6 +80,10 @@ public class WorkloadComparisonResult {
     /** @deprecated starting from version 1.2.6 this function will always return zero */
     public double getTotalDurationDeviation() {
         return totalDurationDeviation;
+    }
+
+    public double getSuccessRateDeviation() {
+        return successRateDeviation;
     }
 
     public double getAvgLatencyDeviation() {
@@ -185,6 +191,18 @@ public class WorkloadComparisonResult {
         } else {
             workloadTaskData.setThroughput(new BigDecimal(0));
         }
+        Double failuresCount = getStandardMetricValueById(StandardMetricsNamesUtil.SUCCESS_RATE_FAILED_ID,standardMetricsMap).getValue();
+        if (failuresCount != null) {
+            workloadTaskData.setFailuresCount(failuresCount.intValue());
+        } else {
+            workloadTaskData.setFailuresCount(0);
+        }
+        Double successRate = getStandardMetricValueById(StandardMetricsNamesUtil.SUCCESS_RATE_OK_ID,standardMetricsMap).getValue();
+        if (successRate != null) {
+            workloadTaskData.setSuccessRate(new BigDecimal(successRate));
+        } else {
+            workloadTaskData.setSuccessRate(new BigDecimal(0));
+        }
         Double avgLatency =  getStandardMetricValueById(StandardMetricsNamesUtil.LATENCY_ID,standardMetricsMap).getValue();
         if (avgLatency != null) {
             workloadTaskData.setAvgLatency(new BigDecimal(avgLatency));
@@ -207,6 +225,7 @@ public class WorkloadComparisonResult {
         return "WorkloadComparisonResult{" +
                 ", throughputDeviation=" + throughputDeviation +
                 ", totalDurationDeviation=" + totalDurationDeviation +
+                ", successRateDeviation=" + successRateDeviation +
                 ", avgLatencyDeviation=" + avgLatencyDeviation +
                 ", stdDevLatencyDeviation=" + stdDevLatencyDeviation +
                 ", currentSessionEntity=" + currentSessionEntity +
@@ -227,6 +246,7 @@ public class WorkloadComparisonResult {
 
         if (Double.compare(that.avgLatencyDeviation, avgLatencyDeviation) != 0) return false;
         if (Double.compare(that.stdDevLatencyDeviation, stdDevLatencyDeviation) != 0) return false;
+        if (Double.compare(that.successRateDeviation, successRateDeviation) != 0) return false;
         if (Double.compare(that.throughputDeviation, throughputDeviation) != 0) return false;
         if (Double.compare(that.totalDurationDeviation, totalDurationDeviation) != 0) return false;
         if (baselineSessionEntity != null ? !baselineSessionEntity.equals(that.baselineSessionEntity) : that.baselineSessionEntity != null)
@@ -253,6 +273,7 @@ public class WorkloadComparisonResult {
         result = (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(totalDurationDeviation);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(successRateDeviation);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(avgLatencyDeviation);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
@@ -272,6 +293,7 @@ public class WorkloadComparisonResult {
         @Deprecated
         /** @deprecated starting from version 1.2.6 this parameter is always zero */
         private double totalDurationDeviation;
+        private double successRateDeviation;
         private double avgLatencyDeviation;
         private double stdDevLatencyDeviation;
 
@@ -297,6 +319,10 @@ public class WorkloadComparisonResult {
             return this;
         }
 
+        public WorkloadComparisonResultBuilder successRateDeviation(double successRateDeviation) {
+            this.successRateDeviation = successRateDeviation;
+            return this;
+        }
 
         public WorkloadComparisonResultBuilder avgLatencyDeviation(double avgLatencyDeviation) {
             this.avgLatencyDeviation = avgLatencyDeviation;
@@ -340,7 +366,8 @@ public class WorkloadComparisonResult {
 
 
         public WorkloadComparisonResult build() {
-            return new WorkloadComparisonResult(throughputDeviation, totalDurationDeviation, avgLatencyDeviation, stdDevLatencyDeviation,
+            return new WorkloadComparisonResult(throughputDeviation, totalDurationDeviation,
+                    successRateDeviation, avgLatencyDeviation, stdDevLatencyDeviation,
                     currentSessionEntity, baselineSessionEntity,
                     currentTestEntity, baselineTestEntity,
                     currentStandardMetrics, baselineStandardMetrics);
