@@ -197,7 +197,6 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
 
         MetricDescriptionEntity samplesDescription = persistMetricDescription(ITERATION_SAMPLES_ID, ITERATIONS_SAMPLES, taskData);
         persistAggregatedMetricValue(invoked, samplesDescription);
-
         MetricDescriptionEntity durationDescription = persistMetricDescription(DURATION_ID, DURATION_SEC, taskData);
         Double duration = (endTime - startTime) / 1000.0;
         persistAggregatedMetricValue(duration, durationDescription);
