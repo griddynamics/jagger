@@ -1,13 +1,19 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.testsuite.ExampleTestSuiteListener;
+import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-/** @brief  Describes the execution sequence of the load tests during single run
+/**
+ * @brief  Describes the execution sequence of the load tests during single run
  * @n
  * @par Details:
  * @details JLoadScenario describes the execution sequence of the load tests. Only single load scenario can be executed at a time @n
@@ -29,11 +35,13 @@ public class JLoadScenario {
     private final String id;
     private final List<JParallelTestsGroup> testGroups;
     private final List<Double> percentileValues;
+    private final List<Provider<TestSuiteListener>> listeners;
 
     private JLoadScenario(Builder builder) {
         this.id = builder.id.value();
         this.testGroups = builder.testGroups;
         this.percentileValues = builder.percentileValues;
+        this.listeners = builder.listeners;
     }
 
     /** Builder of the JLoadScenario
@@ -67,12 +75,15 @@ public class JLoadScenario {
         private final Id id;
         private final List<JParallelTestsGroup> testGroups;
         private List<Double> percentileValues;
+        private List<Provider<TestSuiteListener>> listeners = Lists.newArrayList();
+        
         public Builder(Id id, List<JParallelTestsGroup> testGroups) {
             this.id = id;
             this.testGroups = testGroups;
         }
 
-        /** Optional: Sets list of latency percentile values
+        /**
+         * Optional: Sets list of latency percentile values
          *
          * @param percentileValues latency percentile values
          */
@@ -85,6 +96,34 @@ public class JLoadScenario {
                     });
 
             this.percentileValues = percentileValues;
+            return this;
+        }
+    
+        /**
+         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider<TestSuiteListener>}
+         * These listeners are executed before and after test suite.
+         * Example:
+         * @code
+         *      addListener(new ExampleTestSuiteListener())
+         * @endcode
+         * @see ExampleTestSuiteListener for example
+         */
+        public Builder addListener(Provider<TestSuiteListener> listener) {
+            this.listeners.add(listener);
+            return this;
+        }
+    
+        /**
+         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider<TestSuiteListener>}
+         * These listeners are executed before and after test suite.
+         * Example:
+         * @code
+         *      addListeners(Arrays.asList(new ExampleTestSuiteListener()))
+         * @endcode
+         * @see ExampleTestSuiteListener for example
+         */
+        public Builder addListeners(List<Provider<TestSuiteListener>> listeners) {
+            this.listeners.addAll(listeners);
             return this;
         }
 
@@ -109,5 +148,9 @@ public class JLoadScenario {
 
     public List<Double> getPercentileValues() {
         return percentileValues;
+    }
+    
+    public List<Provider<TestSuiteListener>> getListeners() {
+        return listeners;
     }
 }

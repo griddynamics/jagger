@@ -1,14 +1,18 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 
-import java.util.Collections;
+import com.google.common.collect.Lists;
+
 import java.util.List;
 
-/** @brief Definition of the load test - describes test data sources and the protocol, used during load test
+/**
+ * @brief Definition of the load test - describes test data sources and the protocol, used during load test
  * @n
  * @par Details:
  * @details Test definition is the base component of the @ref section_writing_test_load_scenario "load test description". With the help of the internal Builder class it allows to setup: @n
@@ -17,41 +21,41 @@ import java.util.List;
  * @li what protocol to use for the communication with the system under test (SUT)
  *
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
- * @n
- * Code example:
- * @dontinclude  ExampleSimpleJLoadScenarioProvider.java
- * @skip  begin: following section is used for docu generation - Load test scenario configuration
+ * @n Code example:
+ * @dontinclude ExampleSimpleJLoadScenarioProvider.java
+ * @skip begin: following section is used for docu generation - Load test scenario configuration
  * @until end: following section is used for docu generation - Load test scenario configuration
  */
 public class JTestDefinition {
 
     private final String id;
     private final Iterable endpoints;
-    
-    private String comment;
-    private Iterable queries;
-    private Class<? extends Invoker> invoker;
-    private List<Class<? extends ResponseValidator>> validators;
+
+    private final String comment;
+    private final Iterable queries;
+    private final Class<? extends Invoker> invoker;
+    private final List<Class<? extends ResponseValidator>> validators;
+    private final List<Provider<InvocationListener>> listeners;
 
     private JTestDefinition(Builder builder) {
         this.id = builder.id.value();
         this.endpoints = builder.endpointsProvider;
-        
-        this.comment = builder.comment;
-        if (this.comment == null) {
-            this.comment = "";
-        }
+
+        this.comment = (builder.comment == null) ? "" : builder.comment;
         this.queries = builder.queries;
         this.invoker = builder.invoker;
         this.validators = builder.validators;
+        this.listeners = builder.listeners;
     }
 
-    /** Builder of the JTestDefinition
+    /**
+     * Builder of the JTestDefinition
+     * @n
+     * @param id                - Unique id of the test definition
+     * @param endpointsProvider - Source of the test data: endpoint - where load will be applied
      * @n
      * @details Constructor parameters are mandatory for the JTestDefinition. All parameters, set by setters are optional
      * @n
-     * @param id - Unique id of the test definition
-     * @param endpointsProvider - Source of the test data: endpoint - where load will be applied
      */
     public static Builder builder(Id id, Iterable endpointsProvider) {
         return new Builder(id, endpointsProvider);
@@ -60,18 +64,20 @@ public class JTestDefinition {
     public static class Builder {
         private final Id id;
         private final Iterable endpointsProvider;
-        
+
         private String comment = "";
         private Iterable queries;
         private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
-        private List<Class<? extends ResponseValidator>> validators = Collections.emptyList();
+        private List<Class<? extends ResponseValidator>> validators = Lists.newArrayList();
+        private List<Provider<InvocationListener>> listeners = Lists.newArrayList();
 
         private Builder(Id id, Iterable endpointsProvider) {
             this.id = id;
             this.endpointsProvider = endpointsProvider;
         }
 
-        /** Optional: Sets human readable comment for the test definition
+        /**
+         * Optional: Sets human readable comment for the test definition
          *
          * @param comment the comment of the test definition
          */
@@ -97,28 +103,77 @@ public class JTestDefinition {
          * Instances of this class will be used to during Jagger test execution to send requests to the System under test. @n
          * Example:
          * @code
-         * withInvoker(com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker.class)
+         *      withInvoker(com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker.class)
          * @endcode
          */
         public Builder withInvoker(Class<? extends Invoker> invoker) {
             this.invoker = invoker;
             return this;
         }
-    
+
         /**
-         * Optional: Sets a list of subtypes of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidator}
+         * Optional: Adds a list of subtypes of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidator}
          * Instances of those subtypes will be used to validate responses during Jagger test execution @n
          * Example:
          * @code
-         * withValidators(Arrays.asList(com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator.class))
+         *      addValidators(Arrays.asList(com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator.class))
          * @endcode
          * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
          */
-        public Builder withValidators(List<Class<? extends ResponseValidator>> validators) {
-            this.validators = validators;
+        public Builder addValidators(List<Class<? extends ResponseValidator>> validators) {
+            this.validators.addAll(validators);
             return this;
         }
-
+    
+        /**
+         * Optional: Adds a subtype of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidator}
+         * Instances of those subtypes will be used to validate responses during Jagger test execution
+         * @n
+         * Example:
+         * @code
+         *      addValidator(com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator.class)
+         * @endcode
+         * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
+         */
+        public Builder addValidator(Class<? extends ResponseValidator> validator) {
+            this.validators.add(validator);
+            return this;
+        }
+    
+        /**
+         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider<InvocationListener>}
+         * @b IMPORTANT: listener code will be executed during every invocation = every request to SUT
+         * @n
+         * Try to avoid slow operations in invocation listener code. They will slow down your workload
+         * @n
+         * Example:
+         * @code
+         *      addListeners(Arrays.asList(new NotNullInvocationListener()))
+         * @endcode
+         * @see com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener for example
+         */
+        public Builder addListeners(List<Provider<InvocationListener>> listeners) {
+            this.listeners.addAll(listeners);
+            return this;
+        }
+    
+        /**
+         * Optional: Adds a subtype instance of {@link com.griddynamics.jagger.engine.e1.Provider<InvocationListener>}
+         * @b IMPORTANT: listener code will be executed during every invocation = every request to SUT
+         * @n
+         * Try to avoid slow operations in invocation listener code. They will slow down your workload
+         * @n
+         * Example:
+         * @code
+         *      addListener(new NotNullInvocationListener())
+         * @endcode
+         * @see com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener for example
+         */
+        public Builder addListener(Provider<InvocationListener> listener) {
+            this.listeners.add(listener);
+            return this;
+        }
+    
         /**
          * Creates the object of JTestDefinition type with custom parameters.
          *
@@ -144,16 +199,20 @@ public class JTestDefinition {
     public Iterable getQueries() {
         return queries;
     }
-    
+
     public Class<? extends Invoker> getInvoker() {
         return invoker;
     }
-    
+
     public String getComment() {
         return comment;
     }
-    
+
     public List<Class<? extends ResponseValidator>> getValidators() {
         return validators;
+    }
+    
+    public List<Provider<InvocationListener>> getListeners() {
+        return listeners;
     }
 }

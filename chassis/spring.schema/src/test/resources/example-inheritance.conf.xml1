@@ -122,7 +122,6 @@
             <metric xsi:type="metric-not-null-response">
                 <metric-aggregator xsi:type="metric-aggregator-sum"/>
             </metric>
-            <validator xsi:type="validator-consistency"/>
             <listener-invocation xsi:type="listener-invocation-not-null-response"/>
         </info-collectors>
         <scenario xsi:type="scenario-ref" ref="sc2"/>

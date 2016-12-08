@@ -49,12 +49,8 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("extensions", new ExtensionsDefinitionParser());
         registerBeanDefinitionParser("session-comparators", new SessionComparatorsDefinitionParser());
         registerBeanDefinitionParser("comparator", findTypeParser);
-        registerBeanDefinitionParser("comparator-workload", new WorkloadComparatorDefinitionParser());
-        registerBeanDefinitionParser("comparator-monitoring", new MonitoringComparatorDefinitionParser());
 
         registerBeanDefinitionParser("decision-maker", findTypeParser);
-        registerBeanDefinitionParser("decision-maker-workload-throughput", new ThroughputDMDefinitionParser());
-        registerBeanDefinitionParser("decision-maker-monitoring-stddev", new StdDevDefinitionParser());
 
         //TASKS
         registerBeanDefinitionParser("test", new TaskDefinitionParser());
@@ -78,7 +74,6 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
 
         //validators listeners
         registerBeanDefinitionParser("validator-not-null-response", new NotNullResponseDefinitionParser());
-        registerBeanDefinitionParser("validator-consistency", new ConsistencyDefinitionParser());
         registerBeanDefinitionParser("validator-custom", new CustomValidatorDefinitionParser());
 
         //metric
@@ -185,6 +180,5 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         //limits
         registerBeanDefinitionParser("limits", new LimitSetDefinitionParser());
         registerBeanDefinitionParser("limit", new LimitDefinitionParser());
-
     }
 }
