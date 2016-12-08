@@ -26,10 +26,13 @@ public class TestExecutionsTerminatingService {
 
     @Scheduled(fixedRateString = "${test.execution.termination.periodicity.milliseconds}")
     public void terminateOutdatedTestExecutionsTask() {
-        testExecutionDao.readAllPending().stream()
+        long deleted = testExecutionDao.readAllPending().stream()
                 .filter(this::isOutdated)
                 .peek(this::terminate)
-                .peek(testExec -> LOGGER.info("{} has been terminated.", testExec));
+                .peek(testExec -> LOGGER.info("Test execution {} has been terminated.", testExec.getId()))
+                .count();
+        if (deleted > 0)
+            LOGGER.info("{} test executions has been terminated.", deleted);
     }
 
     private boolean isOutdated(TestExecutionEntity testExec) {

@@ -35,6 +35,8 @@
         <property name="useJBoss" value="${chassis.util.usejboss}"/>
     </bean>
 
+    <bean id="jaggerPropertiesProvider" class="com.griddynamics.jagger.util.JaggerPropertiesProvider"/>
+
 </beans>
 
 

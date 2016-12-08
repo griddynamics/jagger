@@ -97,7 +97,8 @@ public class ConfigurationGenerator {
                 .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable, baselineSessionProvider, limitSetConfig))
                 .collect(Collectors.toList());
         configuration.setTasks(tasks);
-
+        configuration.setTestSuiteListeners(jLoadScenario.getListeners());
+        
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
         seListeners.add(basicSessionCollector);
         seListeners.add(basicAggregator);
@@ -105,6 +106,7 @@ public class ConfigurationGenerator {
             durationLogProcessor.setGlobalPercentilesKeys(jLoadScenario.getPercentileValues());
             durationLogProcessor.setTimeWindowPercentilesKeys(jLoadScenario.getPercentileValues());
         }
+        configuration.setSessionExecutionListeners(seListeners);
 
         ManagedList<DistributionListener> teListeners = new ManagedList<>();
         teListeners.add(basicSessionCollector);
@@ -114,8 +116,6 @@ public class ConfigurationGenerator {
         teListeners.add(metricLogProcessor);
         teListeners.add(profilerLogProcessor);
         teListeners.add(durationLogProcessor);
-
-        configuration.setSessionExecutionListeners(seListeners);
         configuration.setTaskExecutionListeners(teListeners);
 
         return configuration;
