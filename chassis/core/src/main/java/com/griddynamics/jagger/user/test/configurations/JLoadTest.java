@@ -46,7 +46,7 @@ public class JLoadTest {
         this.load = builder.load;
         this.termination = builder.termination;
         this.limits = builder.limits;
-        this.listeners = builder.testListeners;
+        this.listeners = builder.listeners;
     }
 
     /**
@@ -70,7 +70,7 @@ public class JLoadTest {
         private final JTerminationCriteria termination;
         private List<JLimit> limits;
 
-        private List<Provider<TestListener>> testListeners = Lists.newArrayList();
+        private List<Provider<TestListener>> listeners = Lists.newArrayList();
     
         private Builder(Id id, JTestDefinition jTestDefinition, JLoadProfile load, JTerminationCriteria termination) {
             this.id = id;
@@ -90,8 +90,8 @@ public class JLoadTest {
          * @endcode
          * @see com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener for example
          */
-        public Builder addListeners(List<Provider<TestListener>> testListeners) {
-            this.testListeners.addAll(testListeners);
+        public Builder addListeners(List<Provider<TestListener>> listeners) {
+            this.listeners.addAll(listeners);
             return this;
         }
     
@@ -105,8 +105,8 @@ public class JLoadTest {
          * @endcode
          * @see com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener for example
          */
-        public Builder addListener(Provider<TestListener> testListener) {
-            this.testListeners.add(testListener);
+        public Builder addListener(Provider<TestListener> listener) {
+            this.listeners.add(listener);
             return this;
         }
 
