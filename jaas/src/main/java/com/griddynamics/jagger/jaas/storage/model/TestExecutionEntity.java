@@ -33,6 +33,9 @@ public class TestExecutionEntity {
     @Column(name = "`load_scenario_id`", nullable = false)
     private String loadScenarioId;
 
+    @Column(name = "`test_project_url`", nullable = false)
+    private String testProjectURL;
+
     @Column(name = "`execution_start_timeout_in_seconds`")
     private Long executionStartTimeoutInSeconds;
 
@@ -66,6 +69,14 @@ public class TestExecutionEntity {
 
     public void setLoadScenarioId(String loadScenarioId) {
         this.loadScenarioId = loadScenarioId;
+    }
+
+    public String getTestProjectURL() {
+        return testProjectURL;
+    }
+
+    public void setTestProjectURL(String testProjectURL) {
+        this.testProjectURL = testProjectURL;
     }
 
     public Long getExecutionStartTimeoutInSeconds() {
@@ -107,9 +118,9 @@ public class TestExecutionEntity {
 
         if (envId != null ? !envId.equals(that.envId) : that.envId != null) return false;
         if (loadScenarioId != null ? !loadScenarioId.equals(that.loadScenarioId) : that.loadScenarioId != null) return false;
-        if (executionStartTimeoutInSeconds != null ? !executionStartTimeoutInSeconds.equals(that.executionStartTimeoutInSeconds) : that
-                .executionStartTimeoutInSeconds != null)
-            return false;
+        if (executionStartTimeoutInSeconds != null ? !executionStartTimeoutInSeconds.equals(that.executionStartTimeoutInSeconds) :
+                that.executionStartTimeoutInSeconds != null) return false;
+        if (testProjectURL != null ? !testProjectURL.equals(that.testProjectURL) : that.testProjectURL != null) return false;
         return status == that.status;
 
     }
@@ -118,6 +129,7 @@ public class TestExecutionEntity {
     public int hashCode() {
         int result = envId != null ? envId.hashCode() : 0;
         result = 31 * result + (loadScenarioId != null ? loadScenarioId.hashCode() : 0);
+        result = 31 * result + (testProjectURL != null ? testProjectURL.hashCode() : 0);
         result = 31 * result + (executionStartTimeoutInSeconds != null ? executionStartTimeoutInSeconds.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
@@ -129,6 +141,7 @@ public class TestExecutionEntity {
                 "id=" + id +
                 ", envId='" + envId + '\'' +
                 ", loadScenarioId='" + loadScenarioId + '\'' +
+                ", testProjectURL='" + testProjectURL + '\'' +
                 ", executionStartTimeoutInSeconds=" + executionStartTimeoutInSeconds +
                 ", status=" + status +
                 ", auditEntities=" + auditEntities +
