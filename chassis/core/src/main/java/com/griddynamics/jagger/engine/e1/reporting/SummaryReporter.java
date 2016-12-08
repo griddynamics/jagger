@@ -175,7 +175,6 @@ public class SummaryReporter {
 
             Set<String> standardMetricsIds = new HashSet<String>();
             standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.THROUGHPUT_ID));
-            standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.SUCCESS_RATE_FAILED_ID));
             standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.SUCCESS_RATE_ID));
             standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_ID));
             standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID));
@@ -287,9 +286,6 @@ public class SummaryReporter {
                 if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.THROUGHPUT_ID).contains(metricEntity.getMetricId())) {
                     workloadTaskData.setThroughput(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
                     dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.THROUGHPUT_ID, metricsForThisTest.get(metricEntity).getValue());
-                }
-                if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.SUCCESS_RATE_FAILED_ID).contains(metricEntity.getMetricId())) {
-                    workloadTaskData.setFailuresCount(metricsForThisTest.get(metricEntity).getValue().intValue());
                 }
                 if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.SUCCESS_RATE_ID).contains(metricEntity.getMetricId())) {
                     workloadTaskData.setSuccessRate(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));

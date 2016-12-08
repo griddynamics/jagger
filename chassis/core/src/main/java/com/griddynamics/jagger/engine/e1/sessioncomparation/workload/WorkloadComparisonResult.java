@@ -140,7 +140,6 @@ public class WorkloadComparisonResult {
      *                         StandardMetricsNamesUtil.LATENCY_ID @n
      *                         StandardMetricsNamesUtil.LATENCY_STD_DEV_ID @n
      *                         StandardMetricsNamesUtil.SUCCESS_RATE_ID @n
-     *                         StandardMetricsNamesUtil.FAIL_COUNT_ID @n
      *                         StandardMetricsNamesUtil.ITERATION_SAMPLES_ID @n
      * @param standardMetricsMap - map of standard metrics, returned by @ref getCurrentStandardMetrics or @ref getBaselineStandardMetrics function @n
      *
