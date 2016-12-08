@@ -293,13 +293,6 @@ public class SummaryReporter {
             String testStatusComment = "";
             Decision testStatus = Decision.OK;
 
-            // Success rate
-            Decision testSuccessRateStatus = decisionMaker.decideOnTest(workloadTaskData);
-            if (testSuccessRateStatus.ordinal() > testStatus.ordinal()) {
-                testStatusComment = "Test status is based on success rate. Success rate is below the threshold defined by the property: 'chassis.master.reporting.successrate.threshold'";
-                testStatus = testSuccessRateStatus;
-            }
-
             // Errors during workload configuration
             Decision testExecutionStatus = testEntity.getTestExecutionStatus();
             if (testExecutionStatus.ordinal() > testStatus.ordinal()) {
