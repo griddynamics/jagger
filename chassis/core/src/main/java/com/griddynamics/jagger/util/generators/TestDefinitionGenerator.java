@@ -21,6 +21,7 @@ import org.springframework.beans.factory.support.ManagedList;
 import java.util.List;
 
 /**
+ *
  * @author asokol
  *         created 11/6/16
  *         Generate {@link WorkloadTask} entity from user-defined {@link JTestDefinition} entity.
