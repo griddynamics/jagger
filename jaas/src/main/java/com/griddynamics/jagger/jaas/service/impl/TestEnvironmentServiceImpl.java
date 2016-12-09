@@ -1,31 +1,25 @@
 package com.griddynamics.jagger.jaas.service.impl;
 
-import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentRunningLoadScenarioException;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
+import static java.time.ZonedDateTime.now;
+import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentStatusException;
 import com.griddynamics.jagger.jaas.service.TestEnvironmentService;
 import com.griddynamics.jagger.jaas.storage.TestEnvironmentDao;
-import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
+import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
-import static java.lang.String.format;
-import static java.time.ZonedDateTime.now;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Service
 public class TestEnvironmentServiceImpl implements TestEnvironmentService {
@@ -100,7 +94,7 @@ public class TestEnvironmentServiceImpl implements TestEnvironmentService {
         }
 
         if (testEnvToUpdate.getRunningLoadScenario() != newTestEnv.getRunningLoadScenario()) {
-            testEnvToUpdate.setRunningLoadScenario(getNewRunningLoadScenario(newTestEnv, testEnvToUpdate));
+            testEnvToUpdate.setRunningLoadScenario(newTestEnv.getRunningLoadScenario());
         }
         fillLoadScenarios(testEnvToUpdate);
         testEnvToUpdate.setExpirationTimestamp(getExpirationTimestamp());
@@ -121,25 +115,6 @@ public class TestEnvironmentServiceImpl implements TestEnvironmentService {
     @Override
     public boolean existsWithSessionId(String envId, String sessionId) {
         return testEnvironmentDao.existsWithSessionId(envId, sessionId);
-    }
-
-    private LoadScenarioEntity getNewRunningLoadScenario(TestEnvironmentEntity newTestEnv, TestEnvironmentEntity testEnvToUpdate) {
-        if (newTestEnv.getRunningLoadScenario() == null)
-            return null;
-
-        if (isNotEmpty(testEnvToUpdate.getLoadScenarios())) {
-            Map<String, LoadScenarioEntity> loadScenarios = testEnvToUpdate.getLoadScenarios().stream()
-                    .collect(toMap(LoadScenarioEntity::getLoadScenarioId, identity()));
-            LoadScenarioEntity newRunningLoadScenario = loadScenarios.get(newTestEnv.getRunningLoadScenario().getLoadScenarioId());
-
-            return Optional.ofNullable(newRunningLoadScenario).orElseThrow(() -> new WrongTestEnvironmentRunningLoadScenarioException(
-                    format("Running LoadScenario[id=%s] cannot be set to TestEnvironment[id=%s]. Possible LoadScenarios: %s.",
-                            newTestEnv.getRunningLoadScenario().getLoadScenarioId(), newTestEnv.getEnvironmentId(), loadScenarios.keySet())));
-        }
-
-        throw new WrongTestEnvironmentRunningLoadScenarioException(
-                format("Running LoadScenario[id=%s] cannot be set to TestEnvironment[id=%s], since it doesn't belong to it.",
-                        newTestEnv.getRunningLoadScenario().getLoadScenarioId(), newTestEnv.getEnvironmentId()));
     }
 
     private void fillLoadScenarios(TestEnvironmentEntity testEnv) {

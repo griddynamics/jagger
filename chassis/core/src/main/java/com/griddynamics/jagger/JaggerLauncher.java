@@ -180,12 +180,18 @@ public final class JaggerLauncher {
                     )) {
                         masterToJaasCoordinator.register();
                         while (masterToJaasCoordinator.isStandBy()) {
-                            masterToJaasCoordinator.awaitConfigToExecute();
-                            
-                            try {
-                                executeNextLoadScenario("runtimeJaggerLoadScenario", "org.test", "file:///Users/abadaev/.m2/repository/org/test/load-scenario/1.0-SNAPSHOT/load-scenario-1.0-SNAPSHOT.jar", directory);
-                            } catch (IOException e) {
-                                log.error("I/O Error during load scenario execution launching.", e);
+                            MasterToJaasCoordinator.JaasResponse jaasResponse =
+                                    masterToJaasCoordinator.awaitConfigToExecute();
+                            if (jaasResponse.getTestProjectUrl() == null) {
+                                environmentProperties
+                                        .setProperty(LOAD_SCENARIO_ID_PROP, jaasResponse.getLoadScenarioName());
+                                System.setProperty(
+                                        USER_CONFIGS_PACKAGE, environmentProperties.getProperty(USER_CONFIGS_PACKAGE));
+                                doLaunchMaster(directory);
+                            } else {
+                                // "file:///Users/abadaev/.m2/repository/org/test/load-scenario/1.0-SNAPSHOT/load-scenario-1.0-SNAPSHOT.jar"
+                                executeDynamicLoadScenario(jaasResponse.getLoadScenarioName(),
+                                        jaasResponse.getTestProjectUrl(), directory);
                             }
                         }
                     } catch (TerminateException | InterruptedException e) {
@@ -200,25 +206,40 @@ public final class JaggerLauncher {
         builder.addMainTask(masterTask);
     }
     
-    private static void executeNextLoadScenario(String loadScenarioId, String loadScenarioPackage,
-                                                String customClassesUrl, URL directory
-    ) throws IOException {
-        
+    private static void executeDynamicLoadScenario(String loadScenarioId, String customClassesUrl, URL directory) {
+    
         environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, loadScenarioId);
     
-        // pass this property value for Spring's context:component-scan
-        System.setProperty(USER_CONFIGS_PACKAGE, loadScenarioPackage);
-    
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        URL customClasses = new URL(customClassesUrl);
-        try (URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{customClasses})) {
-            Thread.currentThread().setContextClassLoader(urlClassLoader);
-                             
-            doLaunchMaster(directory, urlClassLoader);
-        } finally {
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
+        try {
+            final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            final URL customClasses = new URL(customClassesUrl);
+            try (URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{customClasses})) {
+                Thread.currentThread().setContextClassLoader(urlClassLoader);
+            
+                Properties userProps = new Properties();
+                String userPropsPath = "profiles/basic/environment.properties";
+                URL userPropsUrl = urlClassLoader.findResource(userPropsPath);
+                if (userPropsUrl == null) {
+                    throw new IOException(String.format(
+                            "Provided artifact %s is not properly formatted. There is no %s file inside.",
+                            customClassesUrl, userPropsPath
+                    ));
+                }
+                userProps.load(userPropsUrl.openStream());
+                // pass this property value for Spring's context:component-scan
+                System.setProperty(USER_CONFIGS_PACKAGE, userProps.getProperty(USER_CONFIGS_PACKAGE));
+            
+                if (StringUtils.isEmpty(loadScenarioId)) {
+                    environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, userProps.getProperty(LOAD_SCENARIO_ID_PROP));
+                }
+                
+                doLaunchMaster(directory, urlClassLoader);
+            } finally {
+                Thread.currentThread().setContextClassLoader(contextClassLoader);
+            }
+        } catch (IOException e) {
+            log.error("I/O Error during load scenario execution launching.", e);
         }
-        
     }
     
     private static Set<String> getAvailableConfigurations(final URL directory) {
