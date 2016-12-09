@@ -8,8 +8,8 @@ import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider;
-import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
+import com.griddynamics.jagger.engine.e1.scenario.SkipCalibration;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
@@ -30,7 +30,7 @@ class TestDefinitionGenerator {
     public static WorkloadTask generatePrototype(JTestDefinition jTestDefinition) {
 
         WorkloadTask prototype = new WorkloadTask();
-        prototype.setCalibrator(new OneNodeCalibrator());
+        prototype.setCalibrator(new SkipCalibration());
         prototype.setDescription(jTestDefinition.getDescription());
         QueryPoolScenarioFactory scenarioFactory = new QueryPoolScenarioFactory();
         scenarioFactory.setQueryProvider(jTestDefinition.getQueries());
