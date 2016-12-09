@@ -9,7 +9,6 @@ import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
-import com.griddynamics.jagger.engine.e1.scenario.SkipCalibration;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
