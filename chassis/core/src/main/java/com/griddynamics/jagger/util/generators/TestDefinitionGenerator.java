@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.util.generators;
 
-import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
@@ -9,8 +8,8 @@ import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider;
-import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
+import com.griddynamics.jagger.engine.e1.scenario.SkipCalibration;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
@@ -19,7 +18,7 @@ import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.beans.factory.support.ManagedList;
 
-import static com.google.common.collect.Lists.newArrayList;
+import java.util.List;
 
 /**
  * @author asokol
@@ -31,7 +30,7 @@ class TestDefinitionGenerator {
     public static WorkloadTask generatePrototype(JTestDefinition jTestDefinition) {
 
         WorkloadTask prototype = new WorkloadTask();
-        prototype.setCalibrator(new OneNodeCalibrator());
+        prototype.setCalibrator(new SkipCalibration());
         prototype.setDescription(jTestDefinition.getDescription());
         QueryPoolScenarioFactory scenarioFactory = new QueryPoolScenarioFactory();
         scenarioFactory.setQueryProvider(jTestDefinition.getQueries());
@@ -53,9 +52,9 @@ class TestDefinitionGenerator {
             validationCollectorProvider.setValidator(ReflectionProvider.ofClass(clazz));
             collectors.add(validationCollectorProvider);
         }
-
+        
         prototype.setCollectors(collectors);
-        prototype.setTestListeners(newArrayList(new CollectThreadsTestListener()));
+        prototype.setListeners((List) jTestDefinition.getListeners());
 
 
         return prototype;

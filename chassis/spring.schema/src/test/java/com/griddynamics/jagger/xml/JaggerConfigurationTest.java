@@ -183,7 +183,7 @@ public class JaggerConfigurationTest {
     @Test
     public void testGroupListenerTest() {
         ArrayList<TestGroupConfiguration> suitConfiguration = (ArrayList)ctx.getBean("test-plan-1");
-       Assert.assertEquals(1, suitConfiguration.get(1).getListeners().size());
+        Assert.assertEquals(1, suitConfiguration.get(1).getListeners().size());
         Assert.assertEquals(11,((ExampleTestGroupListener)suitConfiguration.
                 get(1).
                 getListeners().

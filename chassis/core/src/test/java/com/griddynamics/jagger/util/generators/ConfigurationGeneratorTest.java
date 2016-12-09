@@ -17,6 +17,6 @@ public class ConfigurationGeneratorTest {
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
         configurationGenerator.setUseBuilders(true);
     
-        Assert.assertEquals(3, configurationGenerator.getJaggerLoadScenarioNames().size());
+        Assert.assertEquals(2, configurationGenerator.getJaggerLoadScenarioNames().size());
     }
 }
