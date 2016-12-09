@@ -114,11 +114,6 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                     log.info(report);
                     log.info("Going to distribute workload task {}", task);
 
-                    log.debug("Going to do calibration");
-                    Calibrator calibrator = task.getCalibrator();
-                    calibrator.calibrate(sessionId, taskId, task.getScenarioFactory(), remotes, timeoutsConfiguration.getCalibrationTimeout().getValue());
-                    log.debug("Calibrator completed");
-
                     if (task.getStartDelay() > 0) {
                         log.info("Going to sleep '{}' ms before execute task: {}", task.getStartDelay(), task.getName());
                         TimeUtils.sleepMillis(task.getStartDelay());
