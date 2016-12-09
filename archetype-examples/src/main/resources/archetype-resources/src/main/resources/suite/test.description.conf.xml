@@ -187,11 +187,9 @@
         <!--custom validator below will always fail, because it compares responce from site: HTML page to-->
         <!--contents of file. They do not match => test with this test description will fail -->
 
-        <!-- begin: following section is used for docu generation - validator-custom -->
         <info-collectors parent="defaultCollectors">
             <validator xsi:type="validator-custom" validator="${package}.validator.ResponseFromFileValidator"/>
         </info-collectors>
-        <!-- end: following section is used for docu generation - validator-custom -->
 
     </test-description>
 

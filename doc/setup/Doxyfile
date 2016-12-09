@@ -666,6 +666,7 @@ WARN_LOGFILE           =
 
 INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/Invoker.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/NotNullResponseValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/user/test/configurations \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/v2 \
                          ./doc/pages/a_PageOrder.dox \
@@ -678,6 +679,9 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./doc/pages/JaaSMain.dox \
                          ./doc/pages/Licence.dox \
                          ./doc/pages/MainPage.dox \
+                         ./doc/pages/MetricsMain.dox \
+                         ./doc/pages/MetricsCustom.dox \
+                         ./doc/pages/MetricsPerformance.dox \
                          ./doc/pages/MonitoringMain.dox \
                          ./doc/pages/MonitoringMetricsSetup.dox \
                          ./doc/pages/MonitoringStartingAgent.dox \
@@ -750,7 +754,7 @@ EXCLUDE_SYMBOLS        =
 
 EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleSimpleJLoadScenarioProvider.java \
-                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/config/JLoadScenariosConfig.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleJLoadScenarioProvider.java \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleQueriesProvider.java \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleEndpointsProvider.java \
                          ./webclient/src/main/resources/webclient.properties \

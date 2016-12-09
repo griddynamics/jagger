@@ -23,7 +23,6 @@ package com.griddynamics.jagger.engine.e1.collector;
 import com.griddynamics.jagger.coordinator.NodeContext;
 
 /** Validates that invocation result is not null.@n
- * To use this validator add @xlink{validator} element with type @xlink{validator-not-null-response} in @xlink{test-description,info-collectors} block.
  * @author Dmitry Kotlyarov
  * @n
  *
@@ -31,7 +30,7 @@ import com.griddynamics.jagger.coordinator.NodeContext;
  * @param <R> - Result type
  * @param <E> - Endpoint type
  *
- * @ingroup Main_Collectors_group */
+ */
 public class NotNullResponseValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
     public NotNullResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
