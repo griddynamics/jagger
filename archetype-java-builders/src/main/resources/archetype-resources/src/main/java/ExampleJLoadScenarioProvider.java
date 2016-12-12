@@ -75,7 +75,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
     
         // For JLoadScenario which is supposed to be executed by Jagger its ID must be set to 'jagger.load.scenario.id.to.execute' property's value
         return JLoadScenario.builder(Id.of("exampleJaggerLoadScenario"), jParallelTestsGroup)
-                            .addListener(new ExampleLoadScenarioListener())
+                            .addListener(new ExampleTestSuiteListener())
                             .build();
     }
     // end: following section is used for docu generation - Detailed load test scenario configuration
