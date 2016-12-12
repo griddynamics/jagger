@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations.limits;
 
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.MetricName;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName;
 
 import java.util.Objects;
 
@@ -29,7 +29,7 @@ public class JLimitVsBaseline extends JLimit {
      * @param metricName name of standard metric.
      * @return builder for {@link JLimit}.
      */
-    public static Builder builder(MetricName metricName) {
+    public static Builder builder(JMetricName metricName) {
         return new Builder(metricName.transformToString());
     }
 

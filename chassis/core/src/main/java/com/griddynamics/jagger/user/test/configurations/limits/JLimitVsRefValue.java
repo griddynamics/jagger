@@ -1,6 +1,6 @@
 package com.griddynamics.jagger.user.test.configurations.limits;
 
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.MetricName;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName;
 import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
 
 import java.util.Objects;
@@ -36,7 +36,7 @@ public class JLimitVsRefValue extends JLimit {
      * @param refValue   the for comparison.
      * @return builder for {@link JLimit}.
      */
-    public static Builder builder(MetricName metricName, RefValue refValue) {
+    public static Builder builder(JMetricName metricName, RefValue refValue) {
         return new Builder(metricName.transformToString(), refValue);
     }
 
