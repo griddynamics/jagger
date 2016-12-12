@@ -1,1 +1,0 @@
-get_text;get_data;get_all
