@@ -55,8 +55,8 @@ public class StandardMetricsNamesUtil {
     public static final String LATENCY_ID = "avgLatency";
     public static final String LATENCY_STD_DEV_ID = "stdDevLatency";
     public static final String SUCCESS_RATE_ID = "successRate";
-    public static final String SUCCESS_RATE_OK_ID = SUCCESS_RATE_ID + " [" + SUCCESS_RATE_AGGREGATOR_OK_ID + "]";
-    public static final String SUCCESS_RATE_FAILED_ID = SUCCESS_RATE_ID + " [" + SUCCESS_RATE_AGGREGATOR_FAILED_ID + "]";
+    public static final String SUCCESS_RATE_OK_ID = "successRate-Success rate";
+    public static final String SUCCESS_RATE_FAILED_ID = "successRate-Number of fails";
     public static final String DURATION_ID = "duration";
     public static final String ITERATION_SAMPLES_ID = "samples";
 
