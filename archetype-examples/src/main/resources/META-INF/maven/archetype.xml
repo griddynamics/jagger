@@ -16,7 +16,7 @@
         <source>src/main/java/provider/ProviderOfExampleSuccessRateAggregator.java</source>
         <source>src/main/java/provider/ProviderOfExampleSuccessRateCollector.java</source>
         <source>src/main/java/listener/ProviderOfTestListener.java</source>
-        <source>src/main/java/listener/ProviderOfTestSuiteListener.java</source>
+        <source>src/main/java/listener/ProviderOfLoadScenarioListener.java</source>
         <source>src/main/java/listener/ProviderOfInvocationListener.java</source>
     </sources>
     <resources>

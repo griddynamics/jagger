@@ -51,8 +51,8 @@ public abstract class ServicesAware implements ServicesInitializable {
             dataService         = new DefaultDataService(context);                              /* Available */
         }
         /* Services available for test suite listener */
-        if (environment.equals(JaggerPlace.TEST_SUITE_LISTENER)){
-            metricService       = new EmptyMetricService(JaggerPlace.TEST_SUITE_LISTENER);      /* NOT AVAILABLE */
+        if (environment.equals(JaggerPlace.LOAD_SCENARIO_LISTENER)){
+            metricService       = new EmptyMetricService(JaggerPlace.LOAD_SCENARIO_LISTENER);   /* NOT AVAILABLE */
             sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
             dataService         = new DefaultDataService(context);                              /* Available */
         }

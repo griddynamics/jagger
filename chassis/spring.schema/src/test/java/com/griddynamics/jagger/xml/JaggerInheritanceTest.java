@@ -78,13 +78,6 @@ public class JaggerInheritanceTest {
         Assert.assertEquals(latencyValues.getTimeWindowPercentilesKeys().size(), 2);
     }
 
-//    @Test
-//    public void testTestSuiteInheritance(){
-//        Configuration config1 = (Configuration) ctx.getBean("config1");
-//        Assert.assertNotNull(config1.getTasks());
-//        Assert.assertEquals(config1.getTasks().size(), 2);
-//    }
-
     @Test
     public void testScenarioInheritance(){
         QueryPoolScenarioFactory scenario = (QueryPoolScenarioFactory) ctx.getBean("sc1");

@@ -62,13 +62,6 @@
             <ref bean="durationCollector"/>
             <ref bean="informationCollector"/>
             <ref bean="diagnosticCollector"/>
-            <bean class="com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider">
-                <property name="validator">
-                    <bean class="com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider">
-                        <property name="clazz" value="com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator" />
-                    </bean>
-                </property>
-            </bean>
         </list>
     </property>
 </bean>
