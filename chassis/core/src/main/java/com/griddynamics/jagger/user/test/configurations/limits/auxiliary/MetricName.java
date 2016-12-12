@@ -3,8 +3,7 @@ package com.griddynamics.jagger.user.test.configurations.limits.auxiliary;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 
 /**
- * @author asokol
- *         created 12/12/16
+ * Enum for standard metrics.
  */
 public enum MetricName {
 
@@ -17,6 +16,11 @@ public enum MetricName {
     AVG_LATENCY;
 
 
+    /**
+     * Convert {@link MetricName} to String.
+     *
+     * @return String value of current metric name.
+     */
     public String transformToString() {
         String name = null;
         switch (this) {
