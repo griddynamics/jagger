@@ -243,7 +243,8 @@ public class Master implements Runnable {
                 processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
             }
 
-            TestSuiteListener testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
+            TestSuiteListener
+                    testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
                     sessionId,
                     "session",
                     context,

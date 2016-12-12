@@ -3,7 +3,8 @@ package com.griddynamics.jagger.engine.e1.collector.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Listener, executed before, after test and periodically during test
+/**
+ * Listener, executed before and after a test and periodically during a test
  * @author Gribov Kirill
  * @n
  * @par Details:
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * To view test listener implementations click here @ref Main_Listeners_group
  * @n
  * @ingroup Main_Listeners_Base_group */
-public abstract class TestListener{
+public abstract class TestListener {
 
     /** Method is executed before test starts
      * @param testInfo - describes start test information*/

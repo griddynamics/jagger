@@ -3,7 +3,8 @@ package com.griddynamics.jagger.engine.e1.collector.testsuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Listener, executed before and after test suite
+/**
+ * Listener, executed before and after test suite
  * @author Gribov Kirill
  * @n
  * @par Details:
@@ -13,7 +14,8 @@ import org.slf4j.LoggerFactory;
  * @li Add some resume to session comment after test suite is over
  *
  * @n
- * @ingroup Main_Listeners_Base_group */
+ * @ingroup Main_Listeners_Base_group
+ */
 public abstract class TestSuiteListener {
 
     /** Method is executed before test suite starts

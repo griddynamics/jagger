@@ -67,8 +67,4 @@ public class GroovyScenarioSupplier implements ScenarioFactory, Serializable {
         }
     }
 
-    @Override
-    public int getCalibrationSamplesCount() {
-        return 0;
-    }
 }
