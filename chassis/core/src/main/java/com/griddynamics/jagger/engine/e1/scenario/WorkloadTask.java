@@ -49,7 +49,6 @@ public class WorkloadTask implements CompositableTask {
     private WorkloadClockConfiguration clockConfiguration;
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
     private String parentTaskId;
-    private Calibrator calibrator = new OneNodeCalibrator();
     private long startDelay = 0;
     private List<Provider<TestListener>> testListeners = Lists.newLinkedList();
     private LimitSet limits = null;
@@ -160,7 +159,6 @@ public class WorkloadTask implements CompositableTask {
         task.setScenarioFactory(scenarioFactory);
         task.setClockConfiguration(clockConfiguration);
         task.setTerminateStrategyConfiguration(terminateStrategyConfiguration);
-        task.setCalibrator(calibrator);
         task.setStartDelay(startDelay);
         task.setDescription(description);
         return task;
@@ -174,15 +172,6 @@ public class WorkloadTask implements CompositableTask {
     @Override
     public void setParentTaskId(String taskId) {
         this.parentTaskId = taskId;
-    }
-
-
-    public Calibrator getCalibrator() {
-        return calibrator;
-    }
-
-    public void setCalibrator(Calibrator calibrator) {
-        this.calibrator = calibrator;
     }
 
     public List<Provider<TestListener>> getTestListeners() {

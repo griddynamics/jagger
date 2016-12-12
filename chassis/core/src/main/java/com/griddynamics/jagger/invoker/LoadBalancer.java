@@ -53,8 +53,6 @@ public interface LoadBalancer<Q, E> extends Iterable<Pair<Q, E>>, Serializable {
     /** Returns number of queries
      * @author Grid Dynamics
      * @n
-     * @par Details:
-     * @details Can be used by calibrator to create calibration process
      *
      *  @return number of queries */
     int querySize();
@@ -62,8 +60,6 @@ public interface LoadBalancer<Q, E> extends Iterable<Pair<Q, E>>, Serializable {
     /** Returns number of endpoints
      * @author Grid Dynamics
      * @n
-     * @par Details:
-     * @details Can be used by calibrator to create calibration process
      *
      *  @return number of endpoints*/
     int endpointSize();
