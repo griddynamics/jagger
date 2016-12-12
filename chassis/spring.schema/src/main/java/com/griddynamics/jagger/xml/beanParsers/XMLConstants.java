@@ -104,8 +104,6 @@ public class XMLConstants {
     public static final String TIME_WINDOW_PERCENTILES_KEYS = "timeWindowPercentilesKeys";
     public static final String GLOBAL_PERCENTILES_KEYS = "globalPercentilesKeys";
     public static final String REPORT = "report";
-    public static final String CALIBRATOR = "calibrator";
-    public static final String CALIBRATION = "calibration";
     public static final String NAME = "name";
     public static final String CLASS = "class";
     public static final String TEST_DESCRIPTION = "testDescription";

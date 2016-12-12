@@ -59,8 +59,4 @@ class GroovyExampleScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, E>,
         }
     }
 
-    @Override
-    int getCalibrationSamplesCount() {
-        return 1
-    }
 }

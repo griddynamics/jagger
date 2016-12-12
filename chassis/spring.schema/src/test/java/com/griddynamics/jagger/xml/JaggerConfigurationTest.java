@@ -122,16 +122,6 @@ public class JaggerConfigurationTest {
     }
 
     @Test
-    public void conf1CalibrationSamplesCountTest(){
-        Configuration config1 = (Configuration) ctx.getBean("config1");
-        // DANGER! CLASS CAST MAGIC!!!
-        ScenarioFactory scenarioFactory =
-                ((WorkloadTask)((CompositeTask) config1.getTasks().get(0)).getAttendant().get(0)).getScenarioFactory();
-        int calibrationSamplesCount = scenarioFactory.getCalibrationSamplesCount();
-        Assert.assertEquals(1101, calibrationSamplesCount);
-    }
-
-    @Test
     public void conf1ReportTest(){
         Configuration config1 = (Configuration) ctx.getBean("config1");
 

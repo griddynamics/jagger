@@ -41,10 +41,6 @@ public class QueryPoolScenarioDefinitionParser extends CustomBeanDefinitionParse
         Element queryProviderElement = DomUtils.getChildElementByTagName(element, XMLConstants.QUERY_PROVIDER_ELEMENT);
         setBeanProperty(XMLConstants.QUERY_PROVIDER, queryProviderElement, parserContext, builder.getBeanDefinition());
 
-        // calibrationSamplesCount
-        if(element.hasAttribute("calibrationSamplesCount")){
-            builder.addPropertyValue("calibrationSamplesCount", element.getAttribute("calibrationSamplesCount"));
-        }
     }
 
 }

@@ -8,9 +8,7 @@ import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
-import com.griddynamics.jagger.engine.e1.scenario.Calibrator;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
-import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -39,7 +37,6 @@ public class TestDescription {
     private List<Provider<InvocationListener<Object, Object, Object>>> listeners;
 
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
-    private Calibrator calibrator = new OneNodeCalibrator();
     private String description = "";
     private String version;
     private String name;
@@ -50,14 +47,6 @@ public class TestDescription {
 
     public void setStandardCollectors(List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> standardCollectors) {
         this.standardCollectors = standardCollectors;
-    }
-
-    public Calibrator getCalibrator() {
-        return calibrator;
-    }
-
-    public void setCalibrator(Calibrator calibrator) {
-        this.calibrator = calibrator;
     }
 
     public String getDescription() {
@@ -118,7 +107,6 @@ public class TestDescription {
 
     public WorkloadTask generatePrototype() {
         WorkloadTask prototype = new WorkloadTask();
-        prototype.setCalibrator(calibrator);
         prototype.setDescription(description);
         prototype.setScenarioFactory(scenarioFactory);
         prototype.setName(name);
