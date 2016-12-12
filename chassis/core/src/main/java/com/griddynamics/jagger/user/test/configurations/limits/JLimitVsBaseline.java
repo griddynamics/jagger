@@ -13,10 +13,22 @@ public class JLimitVsBaseline extends JLimit {
         super(builder);
     }
 
+    /**
+     * Builder for {@link JLimit} to compare with baseline.
+     *
+     * @param metricName metric name.
+     * @return builder for {@link JLimit}.
+     */
     public static Builder builder(String metricName) {
         return new Builder(metricName);
     }
 
+    /**
+     * Builder for {@link JLimit} to compare with baseline.
+     *
+     * @param metricName name of standard metric.
+     * @return builder for {@link JLimit}.
+     */
     public static Builder builder(MetricName metricName) {
         return new Builder(metricName.transformToString());
     }

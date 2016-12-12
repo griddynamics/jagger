@@ -18,10 +18,24 @@ public class JLimitVsRefValue extends JLimit {
         this.refValue = builder.refValue.value();
     }
 
+    /**
+     * Builder for {@link JLimit} to compare with current value.
+     *
+     * @param metricName name of metric.
+     * @param refValue   the for comparison.
+     * @return builder for {@link JLimit}.
+     */
     public static Builder builder(String metricName, RefValue refValue) {
         return new Builder(metricName, refValue);
     }
 
+    /**
+     * Builder for {@link JLimit} to compare with current value.
+     *
+     * @param metricName standard metric name.
+     * @param refValue   the for comparison.
+     * @return builder for {@link JLimit}.
+     */
     public static Builder builder(MetricName metricName, RefValue refValue) {
         return new Builder(metricName.transformToString(), refValue);
     }
