@@ -292,40 +292,22 @@ public class DecisionMakerDistributionListener extends HibernateDaoSupport imple
                         log.error(errorText, metricEntity.toString(), decision);
                         break;
                 }
-            }
-            else {
-                if ((refValue > 0.0) || (refValue.equals(0D))) {
-                    if (value < limit.getLowerErrorThreshold()*refValue) {
-                        decision = Decision.FATAL;
-                    }
-                    else if (value < limit.getLowerWarningThreshold()*refValue) {
-                        decision = Decision.WARNING;
-                    }
-                    else if (value < limit.getUpperWarningThreshold()*refValue) {
+            } else {
+                if(refValue.equals(0D)){
+                    if(value.equals(0D)){
                         decision = Decision.OK;
-                    }
-                    else if (value < limit.getUpperErrorThreshold()*refValue) {
-                        decision = Decision.WARNING;
-                    }
-                    else {
+                    }else{
                         decision = Decision.FATAL;
                     }
-                }
-                else {
-                    if (value < limit.getUpperErrorThreshold()*refValue) {
+                    log.warn("Limit thresholds are skipped due to refValue = 0. Limit: {}", limit);
+                }else {
+                    Double rate = value / refValue;
+                    if (rate < limit.getLowerErrorThreshold() || rate > limit.getUpperErrorThreshold()) {
                         decision = Decision.FATAL;
-                    }
-                    else if (value < limit.getUpperWarningThreshold()*refValue) {
+                    } else if (rate < limit.getLowerWarningThreshold() || rate > limit.getUpperWarningThreshold()) {
                         decision = Decision.WARNING;
-                    }
-                    else if (value < limit.getLowerWarningThreshold()*refValue) {
+                    } else {
                         decision = Decision.OK;
-                    }
-                    else if (value < limit.getLowerErrorThreshold()*refValue) {
-                        decision = Decision.WARNING;
-                    }
-                    else {
-                        decision = Decision.FATAL;
                     }
                 }
             }

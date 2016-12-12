@@ -1,7 +1,5 @@
 package com.griddynamics.jagger.xml.beanParsers.workload;
 
-import com.griddynamics.jagger.engine.e1.scenario.OneNodeCalibrator;
-import com.griddynamics.jagger.engine.e1.scenario.SkipCalibration;
 import com.griddynamics.jagger.user.TestDescription;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
@@ -16,6 +14,7 @@ import org.w3c.dom.Element;
 import java.util.List;
 
 /**
+ *
  * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 1/21/13
@@ -77,14 +76,6 @@ public class TestDescriptionDefinitionParser extends CustomBeanDefinitionParser 
 
     @Override
     protected void preParseAttributes(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        Boolean calibration = false;
-        if (!element.getAttribute(XMLConstants.CALIBRATION).isEmpty())
-            calibration = Boolean.parseBoolean(element.getAttribute(XMLConstants.CALIBRATION));
-        element.removeAttribute(XMLConstants.CALIBRATION);
-
-        if (calibration)
-            builder.addPropertyValue(XMLConstants.CALIBRATOR, new OneNodeCalibrator());
-        else
-            builder.addPropertyValue(XMLConstants.CALIBRATOR, new SkipCalibration());
+        element.removeAttribute("calibration");
     }
 }
