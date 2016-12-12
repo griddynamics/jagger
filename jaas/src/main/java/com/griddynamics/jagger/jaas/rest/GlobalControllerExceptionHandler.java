@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.jaas.rest;
 
+import com.griddynamics.jagger.jaas.exceptions.InvalidTestExecutionException;
 import com.griddynamics.jagger.jaas.exceptions.ResourceAlreadyExistsException;
 import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentInvalidIdException;
@@ -120,10 +121,11 @@ public class GlobalControllerExceptionHandler {
      * - {@link WrongTestEnvironmentStatusException} client tries to set status which doesn't corresponds to runningLoadScenario value; <p>
      * - {@link TestEnvironmentNoSessionException} client tries to perform PUT /envs/{envId} request without Environment-Session cookie. <p>
      * - {@link TestEnvironmentInvalidIdException} client tries to create TestEnvironment with invalid id. <p>
+     * - {@link InvalidTestExecutionException} client tries to create not valid TestExecution. <p>
      */
     @ExceptionHandler({WrongTestEnvironmentRunningLoadScenarioException.class, WrongTestEnvironmentStatusException.class,
-            TestEnvironmentNoSessionException.class, TestEnvironmentInvalidIdException.class})
-    public ResponseEntity<ErrorResponse> badLoadScenario(RuntimeException exception) {
+            TestEnvironmentNoSessionException.class, TestEnvironmentInvalidIdException.class, InvalidTestExecutionException.class})
+    public ResponseEntity<ErrorResponse> badRequest(RuntimeException exception) {
         LOGGER.error(exception.getMessage(), exception);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(APPLICATION_JSON);
