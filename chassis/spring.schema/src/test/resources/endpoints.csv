@@ -1,4 +1,0 @@
-path,host
-sleep/5,http://localhost:8090/
-sleep/10,http://localhost:8090/
-sleep/50,http://localhost:8080/
