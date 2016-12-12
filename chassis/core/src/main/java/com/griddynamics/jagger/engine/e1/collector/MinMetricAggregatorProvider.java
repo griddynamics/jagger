@@ -1,5 +1,8 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+/**
+ * Calculates minimum value on interval
+ */
 public class MinMetricAggregatorProvider implements MetricAggregatorProvider {
 
     @Override
