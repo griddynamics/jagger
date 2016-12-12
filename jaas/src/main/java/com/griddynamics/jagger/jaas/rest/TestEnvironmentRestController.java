@@ -105,6 +105,7 @@ public class TestEnvironmentRestController extends AbstractController {
         TestEnvironmentEntity oldEnv = testEnvService.read(envId);
 
         testEnv.setEnvironmentId(envId);
+        testEnv.setSessionId(sessionId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         if (updated.getStatus() == PENDING) {
             getTestExecutionToExecute(updated).ifPresent(execution -> {

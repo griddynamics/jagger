@@ -4,7 +4,6 @@ import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus;
-import com.sun.istack.internal.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -47,8 +46,8 @@ public class MasterToJaasCoordinator implements Closeable {
     private boolean registered = false;
     private StatusExchangeThread statusExchangeThread;
     
-    public MasterToJaasCoordinator(@NotNull String envId,
-                                   @NotNull String jaasEndpoint,
+    public MasterToJaasCoordinator(String envId,
+                                   String jaasEndpoint,
                                    int statusReportIntervalSeconds,
                                    Set<String> availableConfigs) {
         this.envId = envId;
@@ -212,7 +211,7 @@ public class MasterToJaasCoordinator implements Closeable {
 
         private volatile boolean statusSent = false;
 
-        public StatusExchangeThread(@NotNull String sessionCookie) {
+        public StatusExchangeThread(String sessionCookie) {
             this.sessionCookie = sessionCookie;
             this.requestEntity = buildPendingRequestEntity();
 

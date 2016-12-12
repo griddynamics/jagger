@@ -25,16 +25,11 @@ import com.griddynamics.jagger.coordinator.CommandExecutor;
 import com.griddynamics.jagger.coordinator.ConfigurableWorker;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.Qualifier;
-import com.griddynamics.jagger.engine.e1.scenario.CalibrationInfoCollector;
-import com.griddynamics.jagger.invoker.Scenario;
-import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.kernel.WorkloadWorkerCommandExecutor;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.ExceptionLogger;
-import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.GeneralInfoCollector;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
-import com.griddynamics.jagger.util.Pair;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +37,6 @@ import org.springframework.beans.factory.annotation.Required;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.Collection;
@@ -179,53 +172,6 @@ public class WorkloadWorker extends ConfigurableWorker {
                 processes.remove(command.getProcessId());
                 logWriter.flush();
                 return process.getStatus();
-            }
-        });
-
-        onCommandReceived(PerformCalibration.class).execute(
-                new WorkloadWorkerCommandExecutor<PerformCalibration, Boolean>() {
-
-            @Override
-            public Qualifier<PerformCalibration> getQualifier() {
-                return Qualifier.of(PerformCalibration.class);
-            }
-
-            @Override
-            public Boolean doExecute(PerformCalibration command, NodeContext nodeContext) {
-                ScenarioFactory<Object, Object, Object> scenarioFactory = command.getScenarioFactory();
-
-                Scenario<Object, Object, Object> scenario = scenarioFactory.get(nodeContext);
-                int calibrationSamplesCount = scenarioFactory.getCalibrationSamplesCount();
-
-                CalibrationInfoCollector calibrationInfoCollector = new CalibrationInfoCollector(command.getSessionId(),
-                        command.getTaskId(),
-                        nodeContext);
-                
-                ExecutorService executor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
-                        .setNameFormat("workload-calibration-thread %d")
-                        .setUncaughtExceptionHandler(ExceptionLogger.INSTANCE)
-                        .build());
-                WorkloadService calibrationThread = AbstractWorkloadService
-                        .builder(scenario)
-                        .addCollector(calibrationInfoCollector)
-                        .useExecutor(executor)
-                        .buildServiceWithPredefinedSamples(calibrationSamplesCount);
-
-                ListenableFuture<Service.State> start = calibrationThread.start();
-
-                Futures.get(start, timeoutsConfiguration.getCalibrationStartTimeout());
-
-                Services.awaitTermination(calibrationThread, timeoutsConfiguration.getCalibrationTimeout().getValue());
-
-                final Map<Pair<Object, Object>, Throwable> errors = calibrationInfoCollector.getErrors();
-                if (!errors.isEmpty()) {
-                    log.error("Calibration failed for {} samples", errors.size());
-                    return false;
-                }
-
-                executor.shutdown();
-                logWriter.flush();
-                return true;
             }
         });
 
