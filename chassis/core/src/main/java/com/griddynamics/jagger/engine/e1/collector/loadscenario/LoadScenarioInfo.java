@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.engine.e1.collector.testsuite;
+package com.griddynamics.jagger.engine.e1.collector.loadscenario;
 
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
@@ -13,13 +13,13 @@ import java.util.Map;
  * @details
  * @n
  * */
-public class TestSuiteInfo {
+public class LoadScenarioInfo {
     private String sessionId;
     private Map<NodeId,GeneralNodeInfo> generalNodeInfo = new HashMap<NodeId,GeneralNodeInfo>();
 
     private long duration;
 
-    public TestSuiteInfo(String sessionId, Map<NodeId,GeneralNodeInfo> generalNodeInfo){
+    public LoadScenarioInfo(String sessionId, Map<NodeId,GeneralNodeInfo> generalNodeInfo){
         this.sessionId = sessionId;
         this.generalNodeInfo = generalNodeInfo;
     }

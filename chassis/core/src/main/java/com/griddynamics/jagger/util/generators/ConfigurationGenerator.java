@@ -97,7 +97,7 @@ public class ConfigurationGenerator {
                 .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable, baselineSessionProvider, limitSetConfig))
                 .collect(Collectors.toList());
         configuration.setTasks(tasks);
-        configuration.setTestSuiteListeners(jLoadScenario.getListeners());
+        configuration.setLoadScenarioListeners(jLoadScenario.getListeners());
         
         ManagedList<SessionExecutionListener> seListeners = new ManagedList<>();
         seListeners.add(basicSessionCollector);
