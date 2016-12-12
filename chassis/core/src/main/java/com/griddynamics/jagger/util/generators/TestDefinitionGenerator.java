@@ -14,9 +14,10 @@ import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
-import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.beans.factory.support.ManagedList;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ class TestDefinitionGenerator {
         collectors.add(getSuccessRateMetric());
         collectors.add(ReflectionProvider.ofClass(DurationCollector.class));
         collectors.add(ReflectionProvider.ofClass(InformationCollector.class));
-        for (Class<? extends ResponseValidator> clazz: jTestDefinition.getValidators()) {
+        for (Class<? extends ResponseValidator> clazz : jTestDefinition.getValidators()) {
             ValidationCollectorProvider validationCollectorProvider = new ValidationCollectorProvider();
             validationCollectorProvider.setValidator(ReflectionProvider.ofClass(clazz));
             collectors.add(validationCollectorProvider);
@@ -59,15 +60,15 @@ class TestDefinitionGenerator {
     }
 
     private static SuccessRateCollectorProvider getSuccessRateMetric() {
-        MetricDescription metricDescriptions = new MetricDescription("SR")
-                .displayName(StandardMetricsNamesUtil.SUCCESS_RATE)
+        MetricDescription metricDescriptions = new MetricDescription(SUCCESS_RATE_ID)
+                .displayName(SUCCESS_RATE)
                 .plotData(true)
                 .showSummary(true)
                 .addAggregator(new SuccessRateAggregatorProvider())
                 .addAggregator(new SuccessRateFailsAggregatorProvider());
         SuccessRateCollectorProvider successRateCollectorProvider = new SuccessRateCollectorProvider();
         successRateCollectorProvider.setMetricDescription(metricDescriptions);
-        successRateCollectorProvider.setName("SR");
+        successRateCollectorProvider.setName(SUCCESS_RATE_ID);
         return successRateCollectorProvider;
     }
 }
