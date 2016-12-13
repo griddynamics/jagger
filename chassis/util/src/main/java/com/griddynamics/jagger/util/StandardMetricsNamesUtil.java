@@ -77,10 +77,12 @@ public class StandardMetricsNamesUtil {
     public static final String MON_CPULA_1 = "mon_cpula_1";
     public static final String MON_CPULA_5 = "mon_cpula_5";
     public static final String MON_CPULA_15 = "mon_cpula_15";
+
     public static final String MON_GC_MINOR_TIME = "mon_gc_minor_time";
     public static final String MON_GC_MAJOR_TIME = "mon_gc_major_time";
     public static final String MON_GC_MINOR_UNIT = "mon_gc_minor_unit";
     public static final String MON_GC_MAJOR_UNIT = "mon_gc_major_unit";
+
     public static final String MON_MEM_RAM = "mon_mem_ram";
     public static final String MON_MEM_TOTAL = "mon_mem_total";
     public static final String MON_MEM_USED = "mon_mem_used";
@@ -88,30 +90,39 @@ public class StandardMetricsNamesUtil {
     public static final String MON_MEM_FREE_PRCNT = "mon_mem_free_prcnt";
     public static final String MON_MEM_ACTUAL_FREE = "mon_mem_actual_free";
     public static final String MON_MEM_FREE = "mon_mem_free";
+
     public static final String MON_TCP_EST = "mon_tcp_est";
     public static final String MON_TCP_LISTEN = "mon_tcp_listen";
     public static final String MON_SYNC_RECEIVED = "mon_sync_received";
     public static final String MON_INBOUND_TOTAL = "mon_inbound_total";
     public static final String MON_OUTBOUND_TOTAL = "mon_outbound_total";
+
     public static final String MON_DISK_READ_BYTES = "mon_disk_read_bytes";
     public static final String MON_DISK_WRITE_BYTES = "mon_disk_write_bytes";
+
     public static final String MON_DISK_SERVICE_TIME = "mon_disk_service_time";
     public static final String MON_DISK_QUEUE_SIZE_TOTAL = "mon_disk_queue_size_total";
+
     public static final String MON_CPU_USER = "mon_cpu_user";
     public static final String MON_CPU_SYS_PRCNT = "mon_cpu_sys_prcnt";
     public static final String MON_CPU_IDLE_PRCNT = "mon_cpu_idle_prcnt";
     public static final String MON_CPU_WAIT = "mon_cpu_wait";
     public static final String MON_CPU_COMBINED = "mon_cpu_combined";
+
     public static final String MON_HEAP_INIT = "mon_heap_init";
     public static final String MON_HEAP_USED = "mon_heap_used";
     public static final String MON_HEAP_COMMITTED = "mon_heap_committed";
     public static final String MON_HEAP_MAX = "mon_heap_max";
+
     public static final String MON_NONHEAP_INIT = "mon_nonheap_init";
     public static final String MON_NONHEAP_USED = "mon_nonheap_used";
     public static final String MON_NONHEAP_COMMITTED = "mon_nonheap_committed";
     public static final String MON_NONHEAP_MAX = "mon_nonheap_max";
+
     public static final String MON_THREAD_COUNT = "mon_thread_count";
     public static final String MON_THREAD_PEAK_COUNT = "mon_thread_peak_count";
+
+    public static final String MON_FILE_DESCRIPTORS = "mon_file_descriptors";
 
 
     public static String getLatencyMetricName(double latencyKey, boolean isOldModel) {

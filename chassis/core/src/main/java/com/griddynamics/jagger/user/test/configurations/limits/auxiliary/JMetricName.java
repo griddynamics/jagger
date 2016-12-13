@@ -52,7 +52,8 @@ public enum JMetricName {
     MON_NONHEAP_COMMITTED,
     MON_NONHEAP_MAX,
     MON_THREAD_COUNT,
-    MON_THREAD_PEAK_COUNT;
+    MON_THREAD_PEAK_COUNT,
+    MON_FILE_DESCRIPTORS;
 
 
     /**
@@ -201,6 +202,8 @@ public enum JMetricName {
             case MON_THREAD_PEAK_COUNT:
                 name = StandardMetricsNamesUtil.MON_THREAD_PEAK_COUNT;
                 break;
+            case MON_FILE_DESCRIPTORS:
+                name = StandardMetricsNamesUtil.MON_FILE_DESCRIPTORS;
             default:
                 break;
 
