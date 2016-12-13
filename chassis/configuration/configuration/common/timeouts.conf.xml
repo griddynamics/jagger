@@ -38,20 +38,10 @@
         <property name="value" value="${workload.polling.timeout}"/>
         <property name="name"  value="workload.polling.timeout"/>
     </bean>
-    <bean id="calibrationTimeout" class="com.griddynamics.jagger.util.Timeout">
-        <property name="value" value="${calibration.timeout}"/>
-        <property name="name"  value="calibration.timeout"/>
-    </bean>
-    <bean id="calibrationStartTimeout" class="com.griddynamics.jagger.util.Timeout">
-        <property name="value" value="${calibration.start.timeout}"/>
-        <property name="name"  value="calibration.start.timeout"/>
-    </bean>
 
     <bean id="timeoutsConfiguration" class="com.griddynamics.jagger.util.TimeoutsConfiguration">
         <constructor-arg ref="workloadStartTimeout"/>
         <constructor-arg ref="workloadStopTimeout"/>
         <constructor-arg ref="workloadPollingTimeout"/>
-        <constructor-arg ref="calibrationTimeout"/>
-        <constructor-arg ref="calibrationStartTimeout"/>
     </bean>
 </beans>

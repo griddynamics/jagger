@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_AGGREGATOR_FAILED_ID;
+
 /** Calculates accumulative number of failed invokes from data collected by @ref SuccessRateCollector<Q,R,E>
  * @author Dmitry Latnikov
  * @n
@@ -42,7 +44,7 @@ public class SuccessRateFailsAggregatorProvider implements MetricAggregatorProvi
 
         @Override
         public String getName() {
-            return "Number of fails";
+            return SUCCESS_RATE_AGGREGATOR_FAILED_ID;
         }
     }
 }

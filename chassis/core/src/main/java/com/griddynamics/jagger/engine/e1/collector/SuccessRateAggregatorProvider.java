@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_AGGREGATOR_OK_ID;
+
 /** Calculates accumulative success rate from data collected by @ref SuccessRateCollector<Q,R,E>
  * @author Dmitry Latnikov
  * @n
@@ -38,9 +40,9 @@ public class SuccessRateAggregatorProvider implements MetricAggregatorProvider {
         @Override
         public Double getAggregated() {
             if ((failNum + passNum) == 0)
-                return new Double(0.0);
+                return 0.0;
             else
-                return new Double((double) (passNum) / (double) (failNum + passNum));
+                return (double) (passNum) / (double) (failNum + passNum);
         }
 
         @Override
@@ -49,7 +51,7 @@ public class SuccessRateAggregatorProvider implements MetricAggregatorProvider {
 
         @Override
         public String getName() {
-            return "Success rate";
+            return SUCCESS_RATE_AGGREGATOR_OK_ID;
         }
     }
 }

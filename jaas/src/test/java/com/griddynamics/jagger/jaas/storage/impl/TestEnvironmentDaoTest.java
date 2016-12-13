@@ -33,9 +33,9 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 public class TestEnvironmentDaoTest {
     private static final String ENVIRONMENT_ID_1 = "env1";
     private static final String ENVIRONMENT_ID_2 = "env2";
-    private static final String TEST_SUITE_ID_1 = "test1";
-    private static final String TEST_SUITE_ID_2 = "test2";
-    private static final String TEST_SUITE_ID_3 = "test3";
+    private static final String LOAD_SCENARIO_ID_1 = "test1";
+    private static final String LOAD_SCENARIO_ID_2 = "test2";
+    private static final String LOAD_SCENARIO_ID_3 = "test3";
     private static final String SESSION_1 = "session1";
     private static final String SESSION_2 = "session2";
 
@@ -106,7 +106,7 @@ public class TestEnvironmentDaoTest {
         testEnvironmentDao.create(expected);
 
         LoadScenarioEntity runningLoadScenario = new LoadScenarioEntity();
-        runningLoadScenario.setLoadScenarioId(TEST_SUITE_ID_1);
+        runningLoadScenario.setLoadScenarioId(LOAD_SCENARIO_ID_1);
         runningLoadScenario.setTestEnvironmentEntity(expected);
         expected.setRunningLoadScenario(runningLoadScenario);
         expected.setLoadScenarios(newArrayList(runningLoadScenario));
@@ -125,13 +125,13 @@ public class TestEnvironmentDaoTest {
         TestEnvironmentEntity expected = getTestEnvironmentEntity();
         expected.setRunningLoadScenario(null);
         LoadScenarioEntity loadScenarioEntity1 = new LoadScenarioEntity();
-        loadScenarioEntity1.setLoadScenarioId(TEST_SUITE_ID_3);
+        loadScenarioEntity1.setLoadScenarioId(LOAD_SCENARIO_ID_3);
         loadScenarioEntity1.setTestEnvironmentEntity(expected);
         expected.getLoadScenarios().add(loadScenarioEntity1);
         testEnvironmentDao.create(expected);
 
         LoadScenarioEntity loadScenarioEntity = new LoadScenarioEntity();
-        loadScenarioEntity.setLoadScenarioId(TEST_SUITE_ID_2);
+        loadScenarioEntity.setLoadScenarioId(LOAD_SCENARIO_ID_2);
         loadScenarioEntity.setTestEnvironmentEntity(expected);
 
         expected.getLoadScenarios().clear();
@@ -156,7 +156,7 @@ public class TestEnvironmentDaoTest {
         expected2.getLoadScenarios().clear();
 
         LoadScenarioEntity loadScenarioEntity = new LoadScenarioEntity();
-        loadScenarioEntity.setLoadScenarioId(TEST_SUITE_ID_1);
+        loadScenarioEntity.setLoadScenarioId(LOAD_SCENARIO_ID_1);
         loadScenarioEntity.setTestEnvironmentEntity(expected2);
         expected2.getLoadScenarios().add(loadScenarioEntity);
 
@@ -321,7 +321,7 @@ public class TestEnvironmentDaoTest {
         testEnvironmentEntity.setEnvironmentId(ENVIRONMENT_ID_1);
         testEnvironmentEntity.setStatus(RUNNING);
         LoadScenarioEntity loadScenarioEntity = new LoadScenarioEntity();
-        loadScenarioEntity.setLoadScenarioId(TEST_SUITE_ID_1);
+        loadScenarioEntity.setLoadScenarioId(LOAD_SCENARIO_ID_1);
         loadScenarioEntity.setTestEnvironmentEntity(testEnvironmentEntity);
         testEnvironmentEntity.setLoadScenarios(newArrayList(loadScenarioEntity));
         testEnvironmentEntity.setRunningLoadScenario(loadScenarioEntity);
@@ -335,7 +335,7 @@ public class TestEnvironmentDaoTest {
         testEnvironmentEntity1.setEnvironmentId(ENVIRONMENT_ID_1);
         testEnvironmentEntity1.setStatus(RUNNING);
         LoadScenarioEntity loadScenarioEntity = new LoadScenarioEntity();
-        loadScenarioEntity.setLoadScenarioId(TEST_SUITE_ID_1);
+        loadScenarioEntity.setLoadScenarioId(LOAD_SCENARIO_ID_1);
         loadScenarioEntity.setTestEnvironmentEntity(testEnvironmentEntity1);
         testEnvironmentEntity1.setLoadScenarios(newArrayList(loadScenarioEntity));
         testEnvironmentEntity1.setRunningLoadScenario(loadScenarioEntity);
@@ -346,10 +346,10 @@ public class TestEnvironmentDaoTest {
         testEnvironmentEntity2.setEnvironmentId(ENVIRONMENT_ID_2);
         testEnvironmentEntity2.setStatus(PENDING);
         LoadScenarioEntity loadScenarioEntity2 = new LoadScenarioEntity();
-        loadScenarioEntity2.setLoadScenarioId(TEST_SUITE_ID_2);
+        loadScenarioEntity2.setLoadScenarioId(LOAD_SCENARIO_ID_2);
         loadScenarioEntity2.setTestEnvironmentEntity(testEnvironmentEntity2);
         LoadScenarioEntity loadScenarioEntity3 = new LoadScenarioEntity();
-        loadScenarioEntity3.setLoadScenarioId(TEST_SUITE_ID_3);
+        loadScenarioEntity3.setLoadScenarioId(LOAD_SCENARIO_ID_3);
         loadScenarioEntity3.setTestEnvironmentEntity(testEnvironmentEntity2);
         testEnvironmentEntity2.setLoadScenarios(newArrayList(loadScenarioEntity2, loadScenarioEntity3));
         testEnvironmentEntity2.setExpirationTimestamp(now().withZoneSameInstant(UTC).toInstant().toEpochMilli());

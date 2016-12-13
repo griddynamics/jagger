@@ -32,8 +32,6 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
     private Iterable<Q> queryProvider;
     private Iterable<E> endpointProvider;
 
-    private int calibrationSamplesCount = -1;
-
     @Override
     public Scenario<Q, R, E> get(NodeContext nodeContext) {
         Invoker<Q, R, E> invoker = nodeContext.getService(invokerClazz);
@@ -58,18 +56,6 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
 
     public void setSystemClock(SystemClock systemClock) {
         this.systemClock = systemClock;
-    }
-
-    @Override
-    public int getCalibrationSamplesCount() {
-        if(calibrationSamplesCount != -1){
-            return calibrationSamplesCount;
-        }
-        return loadBalancer.querySize();
-    }
-
-    public void setCalibrationSamplesCount(int calibrationSamplesCount) {
-        this.calibrationSamplesCount = calibrationSamplesCount;
     }
 
     public Iterable<Q> getQueryProvider() {

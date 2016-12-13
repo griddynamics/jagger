@@ -140,7 +140,6 @@ public class WorkloadComparisonResult {
      *                         StandardMetricsNamesUtil.LATENCY_ID @n
      *                         StandardMetricsNamesUtil.LATENCY_STD_DEV_ID @n
      *                         StandardMetricsNamesUtil.SUCCESS_RATE_ID @n
-     *                         StandardMetricsNamesUtil.FAIL_COUNT_ID @n
      *                         StandardMetricsNamesUtil.ITERATION_SAMPLES_ID @n
      * @param standardMetricsMap - map of standard metrics, returned by @ref getCurrentStandardMetrics or @ref getBaselineStandardMetrics function @n
      *
@@ -191,13 +190,13 @@ public class WorkloadComparisonResult {
         } else {
             workloadTaskData.setThroughput(new BigDecimal(0));
         }
-        Double failuresCount = getStandardMetricValueById(StandardMetricsNamesUtil.FAIL_COUNT_ID,standardMetricsMap).getValue();
+        Double failuresCount = getStandardMetricValueById(StandardMetricsNamesUtil.SUCCESS_RATE_FAILED_ID,standardMetricsMap).getValue();
         if (failuresCount != null) {
             workloadTaskData.setFailuresCount(failuresCount.intValue());
         } else {
             workloadTaskData.setFailuresCount(0);
         }
-        Double successRate = getStandardMetricValueById(StandardMetricsNamesUtil.SUCCESS_RATE_ID,standardMetricsMap).getValue();
+        Double successRate = getStandardMetricValueById(StandardMetricsNamesUtil.SUCCESS_RATE_OK_ID,standardMetricsMap).getValue();
         if (successRate != null) {
             workloadTaskData.setSuccessRate(new BigDecimal(successRate));
         } else {

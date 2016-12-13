@@ -59,12 +59,8 @@ import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOT
 import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TOTAL_SQR_DURATION;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_SEC;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.FAIL_COUNT_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
 
 /**
  * Aggregates recorded e1 scenario data from key-value storage to relational
@@ -199,15 +195,8 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
 
         getHibernateTemplate().persist(workloadTaskData);
 
-        MetricDescriptionEntity successRateDescription = persistMetricDescription(SUCCESS_RATE_ID, SUCCESS_RATE, taskData);
-        persistAggregatedMetricValue(successRate, successRateDescription);
-
         MetricDescriptionEntity samplesDescription = persistMetricDescription(ITERATION_SAMPLES_ID, ITERATIONS_SAMPLES, taskData);
         persistAggregatedMetricValue(invoked, samplesDescription);
-
-        MetricDescriptionEntity failuresDescription = persistMetricDescription(FAIL_COUNT_ID, FAIL_COUNT, taskData);
-        persistAggregatedMetricValue(failed, failuresDescription);
-
         MetricDescriptionEntity durationDescription = persistMetricDescription(DURATION_ID, DURATION_SEC, taskData);
         Double duration = (endTime - startTime) / 1000.0;
         persistAggregatedMetricValue(duration, durationDescription);

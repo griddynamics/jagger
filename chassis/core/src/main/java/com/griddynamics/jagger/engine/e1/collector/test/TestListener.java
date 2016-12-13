@@ -126,8 +126,8 @@ public abstract class TestListener {
 /// To add custom listener (f.e. test suite listener) you need to do -
 /// 1. Create class which extends @ref com.griddynamics.jagger.engine.e1.services.ServicesAware "ServicesAware" and implements interface @ref Provider<T> @n
 /// Where @b T is listener type (all types: @ref Main_Listeners_Base_group)
-/// @dontinclude  ProviderOfTestSuiteListener.java
-/// @skipline  public class ProviderOfTestSuiteListener
+/// @dontinclude  ProviderOfLoadScenarioListener.java
+/// @skipline  public class ProviderOfLoadScenarioListener
 /// @n
 ///
 /// 2. Create bean in XML file with some id
@@ -174,7 +174,7 @@ public abstract class TestListener {
 /// @until end: following section is used for docu generation - custom test listener
 /// @example_end_content
 /// @example_begin_content{1}
-/// @dontinclude  ProviderOfTestSuiteListener.java
+/// @dontinclude  ProviderOfLoadScenarioListener.java
 /// @skip  begin: following section is used for docu generation - custom test suite listener
 /// @until end: following section is used for docu generation - custom test suite listener
 /// @example_end_content

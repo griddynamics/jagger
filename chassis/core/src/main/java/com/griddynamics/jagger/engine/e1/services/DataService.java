@@ -21,7 +21,7 @@ import java.util.Set;
  * @details Where this service is available you can find in chapter: @ref Main_ListenersAndServices_group @n
  * @n
  * @par Example - get results from Jagger database:
- * @dontinclude ProviderOfTestSuiteListener.java
+ * @dontinclude ProviderOfLoadScenarioListener.java
  * @skip begin: following section is used for docu generation - access to Jagger results in database
  * @until end: following section is used for docu generation - access to Jagger results in database
  * @n Full example code you can find in chapter @ref Main_CustomListenersExamples_group @n

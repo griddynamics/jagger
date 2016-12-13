@@ -10,8 +10,7 @@ public class MetricNamesRankingProvider {
             "^" + StandardMetricsNamesUtil.THROUGHPUT + ".*",
             "^" + StandardMetricsNamesUtil.LATENCY + ".*",
             "^" + StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE + ".*",
-            "^" + StandardMetricsNamesUtil.SUCCESS_RATE + ".*",
-            "^" + StandardMetricsNamesUtil.FAIL_COUNT + ".*"
+            "^" + StandardMetricsNamesUtil.SUCCESS_RATE + ".*"
     );
 
     protected static int compare(String o1, String o2){
