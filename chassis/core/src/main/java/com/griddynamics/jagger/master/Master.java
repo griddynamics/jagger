@@ -35,8 +35,8 @@ import com.griddynamics.jagger.dbapi.DatabaseService;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteInfo;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo;
 import com.griddynamics.jagger.engine.e1.process.Services;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
 import com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage;
@@ -243,23 +243,23 @@ public class Master implements Runnable {
                 processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
             }
 
-            TestSuiteListener
-                    testSuiteListener = TestSuiteListener.Composer.compose(ProviderUtil.provideElements(configuration.getTestSuiteListeners(),
+            LoadScenarioListener
+                    loadScenarioListener = LoadScenarioListener.Composer.compose(ProviderUtil.provideElements(configuration.getLoadScenarioListeners(),
                     sessionId,
                     "session",
                     context,
-                    JaggerPlace.TEST_SUITE_LISTENER));
+                    JaggerPlace.LOAD_SCENARIO_LISTENER));
             // collect information about environment on kernel and agent nodes
             Map<NodeId, GeneralNodeInfo> generalNodeInfo = generalNodeInfoAggregator.getGeneralNodeInfo(sessionId, coordinator);
-            TestSuiteInfo testSuiteInfo = new TestSuiteInfo(sessionId, generalNodeInfo);
+            LoadScenarioInfo loadScenarioInfo = new LoadScenarioInfo(sessionId, generalNodeInfo);
             long startTime = System.currentTimeMillis();
 
-            testSuiteListener.onStart(testSuiteInfo);
+            loadScenarioListener.onStart(loadScenarioInfo);
             // tests execution
             SessionExecutionStatus status = runConfiguration(allNodes, context);
-            testSuiteInfo.setDuration(System.currentTimeMillis() - startTime);
+            loadScenarioInfo.setDuration(System.currentTimeMillis() - startTime);
             log.info("Configuration work finished!!");
-            testSuiteListener.onStop(testSuiteInfo);
+            loadScenarioListener.onStop(loadScenarioInfo);
 
             for (SessionExecutionListener listener : configuration.getSessionExecutionListeners()) {
                 if (listener instanceof SessionListener) {

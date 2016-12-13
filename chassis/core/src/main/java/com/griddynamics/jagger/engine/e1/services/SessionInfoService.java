@@ -9,12 +9,12 @@ import java.util.Set;
  * @details Where this service is available you can find in chapter: @ref Main_ListenersAndServices_group @n
  * @n
  * @par Example - working with session comments:
- * @dontinclude ProviderOfTestSuiteListener.java
+ * @dontinclude ProviderOfLoadScenarioListener.java
  * @skip  begin: following section is used for docu generation - work with session comments
  * @until end: following section is used for docu generation - work with session comments
  * @n
  * @par Example - working with session tags:
- * @dontinclude ProviderOfTestSuiteListener.java
+ * @dontinclude ProviderOfLoadScenarioListener.java
  * @skip  begin: following section is used for docu generation - work with session tags
  * @until end: following section is used for docu generation - work with session tags
  *

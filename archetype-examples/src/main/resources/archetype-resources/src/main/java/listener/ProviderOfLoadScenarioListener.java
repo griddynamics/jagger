@@ -6,8 +6,8 @@ package ${package}.listener;
 
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteInfo;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 /* begin: following section is used for docu generation - custom test suite listener */
-public class ProviderOfTestSuiteListener extends ServicesAware implements Provider<TestSuiteListener> {
+public class ProviderOfLoadScenarioListener extends ServicesAware implements Provider<LoadScenarioListener> {
 
-    private static final Logger log = LoggerFactory.getLogger(ProviderOfTestSuiteListener.class);
+    private static final Logger log = LoggerFactory.getLogger(ProviderOfLoadScenarioListener.class);
 
     // Method will be executed single time, when listener provider is initiated
     @Override
@@ -50,12 +50,12 @@ public class ProviderOfTestSuiteListener extends ServicesAware implements Provid
 
     // Method will provide custom test suite listener to Jagger
     @Override
-    public TestSuiteListener provide() {
+    public LoadScenarioListener provide() {
 
-        return new TestSuiteListener() {
+        return new LoadScenarioListener() {
             // Method will be executed before starting of test suite
             @Override
-            public void onStart(TestSuiteInfo testSuiteInfo) {
+            public void onStart(LoadScenarioInfo loadScenarioInfo) {
                 /* begin: following section is used for docu generation - work with session comments */
 
                 // Here you can f.e.:
@@ -65,7 +65,7 @@ public class ProviderOfTestSuiteListener extends ServicesAware implements Provid
                 // In this example we will append names of nodes participating in test to session comment
                 // We will also print OS name and CPU model
                 String comment = "";
-                for (Map.Entry<NodeId,GeneralNodeInfo> entry : testSuiteInfo.getGeneralNodeInfo().entrySet()) {
+                for (Map.Entry<NodeId,GeneralNodeInfo> entry : loadScenarioInfo.getGeneralNodeInfo().entrySet()) {
                     comment += "\nNode: " + entry.getKey() + " (OS: " + entry.getValue().getOsName() + ", " + entry.getValue().getCpuModel() + ")";
                 }
 
@@ -76,7 +76,7 @@ public class ProviderOfTestSuiteListener extends ServicesAware implements Provid
 
             // Method will be executed after finishing test suite
             @Override
-            public void onStop(TestSuiteInfo testSuiteInfo) {
+            public void onStop(LoadScenarioInfo loadScenarioInfo) {
                 /* begin: following section is used for docu generation - work with session tags */
 
                 // In this example we will create tags
@@ -97,14 +97,14 @@ public class ProviderOfTestSuiteListener extends ServicesAware implements Provid
                 // SessionEntity sessionEntity = getDataService().getSession("1");
 
                 // Get all tests for this session
-                Set<TestEntity> testEntities = getDataService().getTests(testSuiteInfo.getSessionId());
+                Set<TestEntity> testEntities = getDataService().getTests(loadScenarioInfo.getSessionId());
 
                 // Get all metrics for every test
                 Map<TestEntity,Set<MetricEntity>> metricsPerTest = getDataService().getMetricsByTests(testEntities);
 
                 // Get summary values for metrics
                 for (Map.Entry<TestEntity,Set<MetricEntity>> entry : metricsPerTest.entrySet()) {
-                    //System.out.println("\nTest " + entry.getKey().getName() + " from session " + testSuiteInfo.getSessionId());
+                    //System.out.println("\nTest " + entry.getKey().getName() + " from session " + loadScenarioInfo.getSessionId());
                     Map<MetricEntity,MetricSummaryValueEntity> metricValues = getDataService().getMetricSummary(entry.getValue());
                     //System.out.println(String.format("   %-40s   %s","Metric id","Value"));
                     for (Map.Entry<MetricEntity,MetricSummaryValueEntity> valueEntry : metricValues.entrySet()) {

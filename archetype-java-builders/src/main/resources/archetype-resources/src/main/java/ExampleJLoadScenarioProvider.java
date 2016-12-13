@@ -1,41 +1,42 @@
 package ${package};
 
-        import static java.util.Collections.singletonList;
 
-        import com.griddynamics.jagger.engine.e1.BasicTGDecisionMakerListener;
-        import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
-        import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
-        import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
-        import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
-        import com.griddynamics.jagger.engine.e1.collector.testsuite.ExampleTestSuiteListener;
-        import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
-        import com.griddynamics.jagger.user.test.configurations.JLoadTest;
-        import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
-        import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
-        import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-        import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
-        import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
-        import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowErrThresh;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowWarnThresh;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpErrThresh;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpErrThresh;
-        import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh;
-        import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
-        import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
-        import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
-        import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
-        import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
-        import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
-        import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
-        import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
-        import com.griddynamics.jagger.util.JaggerPropertiesProvider;
-        import org.springframework.context.annotation.Bean;
-        import org.springframework.context.annotation.Configuration;
+import static java.util.Collections.singletonList;
+
+import com.griddynamics.jagger.engine.e1.BasicTGDecisionMakerListener;
+import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
+import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
+import com.griddynamics.jagger.engine.e1.collector.testsuite.ExampleTestSuiteListener;
+import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
+import com.griddynamics.jagger.user.test.configurations.JLoadTest;
+import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
+import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
+import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
+import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowErrThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowWarnThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpErrThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpErrThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh;
+import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
+import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
+import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
+import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
+import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
+import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
+import com.griddynamics.jagger.util.JaggerPropertiesProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties, which you can use
@@ -97,8 +98,8 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
         // For JLoadScenario which is supposed to be executed by Jagger its ID must be set to 'jagger.load.scenario.id.to.execute' property's value
         return JLoadScenario.builder(Id.of("exampleJaggerLoadScenario"), jParallelTestsGroup)
-                .addListener(new ExampleTestSuiteListener())
-                .build();
+                            .addListener(new ExampleLoadScenarioListener())
+                            .build();
     }
 
     @Bean

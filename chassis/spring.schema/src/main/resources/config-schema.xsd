@@ -384,7 +384,7 @@
 
     <xsd:complexType name="listener-test-suite-ref">
         <xsd:annotation><xsd:documentation>
-            A reference to listener-test-suite element or TestSuiteListener provider bean.
+            A reference to listener-test-suite element or LoadScenarioListener provider bean.
         </xsd:documentation></xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="listenerTestSuiteAbstract">

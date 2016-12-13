@@ -23,7 +23,7 @@ package com.griddynamics.jagger.master.configuration;
 import java.util.List;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.reporting.ReportingService;
 
@@ -40,7 +40,7 @@ public class Configuration {
 	private List<SessionExecutionListener> sessionExecutionListeners = Lists.newLinkedList();
 	private List<DistributionListener> distributionListeners = Lists.newLinkedList();
 
-    private List<Provider<TestSuiteListener>> testSuiteListeners = Lists.newLinkedList();
+    private List<Provider<LoadScenarioListener>> loadScenarioListeners = Lists.newLinkedList();
 
     private MonitoringConfiguration monitoringConfiguration = null;
     private ReportingService report;
@@ -85,12 +85,12 @@ public class Configuration {
         return distributionListeners;
     }
 
-    public List<Provider<TestSuiteListener>> getTestSuiteListeners() {
-        return testSuiteListeners;
+    public List<Provider<LoadScenarioListener>> getLoadScenarioListeners() {
+        return loadScenarioListeners;
     }
 
-    public void setTestSuiteListeners(List<Provider<TestSuiteListener>> testSuiteListeners) {
-        this.testSuiteListeners = testSuiteListeners;
+    public void setLoadScenarioListeners(List<Provider<LoadScenarioListener>> loadScenarioListeners) {
+        this.loadScenarioListeners = loadScenarioListeners;
     }
 
 }
