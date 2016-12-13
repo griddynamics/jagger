@@ -42,7 +42,7 @@ import org.springframework.core.env.Environment;
  * the Jagger environment. To use them, annotate load scenario provider class with @PropertySource("classpath:test.properties") annotation and autowire
  * {@link Environment}, which is used for obtaining properties.<p>
  *
- * Properties in test.properties does not override properties from environment.properties.
+ * Properties in test.properties does not override properties from environment.properties and not available in JaggerPropertiesProvider.
  */
 @Configuration
 @PropertySource("classpath:test.properties")
