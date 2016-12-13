@@ -182,14 +182,13 @@ public final class JaggerLauncher {
                         while (masterToJaasCoordinator.isStandBy()) {
                             MasterToJaasCoordinator.JaasResponse jaasResponse =
                                     masterToJaasCoordinator.awaitConfigToExecute();
-                            if (jaasResponse.getTestProjectUrl() == null) {
+                            if (jaasResponse.getTestProjectUrl() == null) { // then execute existing load scenario
                                 environmentProperties
                                         .setProperty(LOAD_SCENARIO_ID_PROP, jaasResponse.getLoadScenarioName());
                                 System.setProperty(
                                         USER_CONFIGS_PACKAGE, environmentProperties.getProperty(USER_CONFIGS_PACKAGE));
                                 doLaunchMaster(directory);
-                            } else {
-                                // "file:///Users/abadaev/.m2/repository/org/test/load-scenario/1.0-SNAPSHOT/load-scenario-1.0-SNAPSHOT.jar"
+                            } else { // then execute a load scenario from provided artifact
                                 executeDynamicLoadScenario(jaasResponse.getLoadScenarioName(),
                                         jaasResponse.getTestProjectUrl(), directory);
                             }
