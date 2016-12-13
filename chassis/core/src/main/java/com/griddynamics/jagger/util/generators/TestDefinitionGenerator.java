@@ -7,7 +7,7 @@ import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
-import com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider;
+import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
@@ -21,6 +21,7 @@ import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE
 import java.util.List;
 
 /**
+ *
  * @author asokol
  *         created 11/6/16
  *         Generate {@link WorkloadTask} entity from user-defined {@link JTestDefinition} entity.
@@ -46,13 +47,16 @@ class TestDefinitionGenerator {
         collectors.add(getSuccessRateMetric());
         collectors.add(ReflectionProvider.ofClass(DurationCollector.class));
         collectors.add(ReflectionProvider.ofClass(InformationCollector.class));
-        for (Class<? extends ResponseValidator> clazz : jTestDefinition.getValidators()) {
-            ValidationCollectorProvider validationCollectorProvider = new ValidationCollectorProvider();
-            validationCollectorProvider.setValidator(ReflectionProvider.ofClass(clazz));
-            collectors.add(validationCollectorProvider);
-        }
-        
         prototype.setCollectors(collectors);
+
+        ManagedList validators = new ManagedList();
+        for (Class<? extends ResponseValidator> clazz: jTestDefinition.getValidators()) {
+            ValidatorProvider validatorProvider = new ValidatorProvider();
+            validatorProvider.setValidator(ReflectionProvider.ofClass(clazz));
+            validators.add(validatorProvider);
+        }
+        prototype.setValidators(validators);
+
         prototype.setListeners((List) jTestDefinition.getListeners());
 
 

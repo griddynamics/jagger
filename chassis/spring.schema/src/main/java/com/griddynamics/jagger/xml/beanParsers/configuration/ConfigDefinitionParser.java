@@ -43,12 +43,12 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
         initListeners(element,parserContext, builder);
 
         //parse test-plan
-        Element testPlan = DomUtils.getChildElementByTagName(element, XMLConstants.TEST_SUITE);
+        Element testPlan = DomUtils.getChildElementByTagName(element, XMLConstants.LOAD_SCENARIO);
 
         if (testPlan != null){
-            Element testSuiteListeners = DomUtils.getChildElementByTagName(testPlan, XMLConstants.TEST_SUITE_LISTENERS);
-            if (testSuiteListeners!=null){
-                setBeanListProperty("testSuiteListeners", true, true, testSuiteListeners, parserContext, builder.getBeanDefinition());
+            Element loadScenarioListeners = DomUtils.getChildElementByTagName(testPlan, XMLConstants.LOAD_SCENARIO_LISTENERS);
+            if (loadScenarioListeners!=null){
+                setBeanListProperty("loadScenarioListeners", true, true, loadScenarioListeners, parserContext, builder.getBeanDefinition());
             }
         }
 

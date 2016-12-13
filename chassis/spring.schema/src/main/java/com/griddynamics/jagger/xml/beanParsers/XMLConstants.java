@@ -30,7 +30,7 @@ public class XMLConstants {
     public static final String WORST_CASE = "worstCase";
     public static final String BASELINE_SESSION_ID = "baselineSessionId";
     public static final String BASELINE_SESSION_PROVIDER = "baselineSessionProvider";
-    public static final String TEST_SUITE = "test-suite";
+    public static final String LOAD_SCENARIO = "test-suite";
     public static final String TEST_GROUP = "test-group";
     public static final String TASKS = "tasks";
     public static final String TESTS = "tests";
@@ -63,7 +63,7 @@ public class XMLConstants {
     public static final String TEST_LISTENER = "listener-test";
     public static final String TEST_GROUP_LISTENERS = "listeners-test-group";
     public static final String TEST_GROUP_LISTENER = "listener-test-group";
-    public static final String TEST_SUITE_LISTENERS = "listeners-test-suite";
+    public static final String LOAD_SCENARIO_LISTENERS = "listeners-test-suite";
     public static final String INVOCATION_LISTENER = "listener-invocation";
     public static final String TEST_GROUP_DECISION_MAKER_LISTENERS = "listeners-test-group-decision-maker";
 

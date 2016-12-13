@@ -17,5 +17,5 @@ public interface TestExecutionService {
 
     void finishExecution(String environmentId, String loadScenarioId);
 
-    void startExecution(String environmentId, String testSuiteId);
+    void startExecution(String environmentId, String loadScenarioId);
 }
