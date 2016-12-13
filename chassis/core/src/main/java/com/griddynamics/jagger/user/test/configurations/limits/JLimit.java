@@ -83,8 +83,8 @@ public abstract class JLimit {
 
             this.lowErrThresh = lowErrThresh;
             this.upErrThresh = upErrThresh;
-            this.lowWarnThresh = LowWarnThresh.of(Double.NEGATIVE_INFINITY);
-            this.upWarnThresh = UpWarnThresh.of(Double.POSITIVE_INFINITY);
+            this.lowWarnThresh = LowWarnThresh.of(this.lowErrThresh.value());
+            this.upWarnThresh = UpWarnThresh.of(this.upErrThresh.value());
 
             initialized = true;
 
