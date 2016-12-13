@@ -22,14 +22,12 @@ package com.griddynamics.jagger.engine.e1.aggregator.workload;
 
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.dbapi.entity.DiagnosticResultEntity;
 import com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.dbapi.entity.ValidationResultEntity;
 import com.griddynamics.jagger.dbapi.entity.WorkloadData;
 import com.griddynamics.jagger.dbapi.entity.WorkloadDetails;
 import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
-import com.griddynamics.jagger.engine.e1.collector.DiagnosticResult;
 import com.griddynamics.jagger.engine.e1.collector.ValidationResult;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.master.DistributionListener;
@@ -111,10 +109,9 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         Integer failed = 0;
         Integer invoked = 0;
         Map<String, ValidationResult> validationResults = Maps.newHashMap();
-        Map<String, Double> diagnosticResults = Maps.newHashMap();
         for (String kernelId : kernels) {
             KernelProcessor kernelProcessor = new KernelProcessor(taskNamespace, totalDuration, totalSqrDuration, failed, invoked,
-                    validationResults, diagnosticResults, kernelId).process();
+                    validationResults, kernelId).process();
             invoked = kernelProcessor.getInvoked();
             failed = kernelProcessor.getFailed();
             totalDuration = kernelProcessor.getTotalDuration();
@@ -156,12 +153,12 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         log.debug("Success rate: {}", successRate);
 
         persistValues(sessionId, taskId, workloadTask, clock, clockValue, termination, startTime, endTime, kernels, failed, invoked,
-                validationResults, diagnosticResults, successRate);
+                validationResults, successRate);
     }
 
     private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination,
                                Long startTime, Long endTime, Collection<String> kernels, Integer failed, Integer invoked,
-                               Map<String, ValidationResult> validationResults, Map<String, Double> diagnosticResults, double successRate) {
+                               Map<String, ValidationResult> validationResults, double successRate) {
         String parentId = workloadTask.getParentTaskId();
 
         TaskData taskData = getTaskData(taskId, sessionId);
@@ -212,14 +209,6 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
             getHibernateTemplate().persist(entity);
         }
 
-        for (Map.Entry<String, Double> entry : diagnosticResults.entrySet()) {
-            DiagnosticResultEntity entity = new DiagnosticResultEntity();
-            entity.setName(entry.getKey());
-            entity.setTotal(entry.getValue());
-            entity.setWorkloadData(testData);
-
-            getHibernateTemplate().persist(entity);
-        }
     }
 
     @Required
@@ -251,18 +240,16 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         private Integer failed;
         private Integer invoked;
         private Map<String, ValidationResult> validationResults;
-        private Map<String, Double> diagnosticResults;
         private String kernelId;
 
         public KernelProcessor(Namespace taskNamespace, double totalDuration, double totalSqrDuration, Integer failed, Integer invoked, Map<String,
-                ValidationResult> validationResults, Map<String, Double> diagnosticResults, String kernelId) {
+                ValidationResult> validationResults, String kernelId) {
             this.taskNamespace = taskNamespace;
             this.totalDuration = totalDuration;
             this.totalSqrDuration = totalSqrDuration;
             this.failed = failed;
             this.invoked = invoked;
             this.validationResults = validationResults;
-            this.diagnosticResults = diagnosticResults;
             this.kernelId = kernelId;
         }
 
@@ -342,17 +329,6 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
                 }
             }
 
-            Namespace diagnosticNamespace = taskNamespace.child("DiagnosticCollector", kernelId);
-            @SuppressWarnings("unchecked")
-            Collection<DiagnosticResult> diagnostic = (Collection) keyValueStorage.fetchAll(diagnosticNamespace, "metric");
-            for (DiagnosticResult diagnosticResult : diagnostic) {
-                Double stat = diagnosticResults.get(diagnosticResult.getName());
-                if (stat == null) {
-                    diagnosticResults.put(diagnosticResult.getName(), diagnosticResult.getTotal());
-                } else {
-                    diagnosticResults.put(diagnosticResult.getName(), stat + diagnosticResult.getTotal());
-                }
-            }
             return this;
         }
     }
