@@ -1,5 +1,8 @@
 package com.griddynamics.jagger.util.generators;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
+
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
@@ -8,6 +11,7 @@ import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
+import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
@@ -16,8 +20,6 @@ import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import org.springframework.beans.factory.support.ManagedList;
 
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
 import java.util.List;
 
 /**
@@ -50,9 +52,10 @@ class TestDefinitionGenerator {
         prototype.setCollectors(collectors);
 
         ManagedList validators = new ManagedList();
-        for (Class<? extends ResponseValidator> clazz: jTestDefinition.getValidators()) {
+        for (KernelSideObjectProvider<ResponseValidator<Object, Object, Object>> responseValidatorProvider:
+                jTestDefinition.getValidators()) {
             ValidatorProvider validatorProvider = new ValidatorProvider();
-            validatorProvider.setValidator(ReflectionProvider.ofClass(clazz));
+            validatorProvider.setValidator(responseValidatorProvider);
             validators.add(validatorProvider);
         }
         prototype.setValidators(validators);

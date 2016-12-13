@@ -4,11 +4,9 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 8/15/13
  * Time: 4:38 PM
- * To change this template use File | Settings | File Templates.
  */
 public class ValidatorProvider implements KernelSideObjectProvider<Validator>{
 
