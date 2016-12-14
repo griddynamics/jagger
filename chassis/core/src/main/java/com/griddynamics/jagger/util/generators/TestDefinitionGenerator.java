@@ -6,12 +6,11 @@ import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
-import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
-import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
@@ -52,8 +51,7 @@ class TestDefinitionGenerator {
         prototype.setCollectors(collectors);
 
         ManagedList validators = new ManagedList();
-        for (KernelSideObjectProvider<ResponseValidator<Object, Object, Object>> responseValidatorProvider:
-                jTestDefinition.getValidators()) {
+        for (ResponseValidatorProvider responseValidatorProvider: jTestDefinition.getValidators()) {
             ValidatorProvider validatorProvider = new ValidatorProvider();
             validatorProvider.setValidator(responseValidatorProvider);
             validators.add(validatorProvider);

@@ -4,7 +4,7 @@ import static java.util.Collections.singletonList;
 
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
-import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
@@ -50,7 +50,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .addValidator(ResponseValidatorProvider.of(NotNullResponseValidator.class))
+                .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())
                 .build();
         
@@ -105,7 +105,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .addValidators(singletonList(ResponseValidatorProvider.of(NotNullResponseValidator.class)))
+                .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
                 .build();
         
         JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();

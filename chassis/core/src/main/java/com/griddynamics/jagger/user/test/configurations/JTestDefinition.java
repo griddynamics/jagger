@@ -1,9 +1,8 @@
 package com.griddynamics.jagger.user.test.configurations;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
-import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
@@ -35,7 +34,7 @@ public class JTestDefinition {
     private final String comment;
     private final Iterable queries;
     private final Class<? extends Invoker> invoker;
-    private final List<KernelSideObjectProvider<ResponseValidator<Object, Object, Object>>> validators;
+    private final List<ResponseValidatorProvider> validators;
     private final List<Provider<InvocationListener>> listeners;
 
     private JTestDefinition(Builder builder) {
@@ -69,7 +68,7 @@ public class JTestDefinition {
         private String comment = "";
         private Iterable queries;
         private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
-        private List<KernelSideObjectProvider<ResponseValidator<Object, Object, Object>>> validators = Lists.newArrayList();
+        private List<ResponseValidatorProvider> validators = Lists.newArrayList();
         private List<Provider<InvocationListener>> listeners = Lists.newArrayList();
 
         private Builder(Id id, Iterable endpointsProvider) {
@@ -113,30 +112,30 @@ public class JTestDefinition {
         }
 
         /**
-         * Optional: Adds a list of subtypes of {@link com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider<ResponseValidator>}
+         * Optional: Adds a list of subtypes of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider}
          * Instances of those subtypes will be used to validate responses during Jagger test execution @n
          * Example:
          * @code
-         *      addValidator(ResponseValidatorProvider.of(NotNullResponseValidator.class))
+         *      addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
          * @endcode
-         * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
+         * @see com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider for example
          */
-        public Builder addValidators(List<KernelSideObjectProvider<ResponseValidator<Object, Object, Object>>> validators) {
+        public Builder addValidators(List<ResponseValidatorProvider> validators) {
             this.validators.addAll(validators);
             return this;
         }
     
         /**
-         * Optional: Adds a subtype of {@link com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider<ResponseValidator>}
+         * Optional: Adds a subtype of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider}
          * Instances of those subtypes will be used to validate responses during Jagger test execution
          * @n
          * Example:
          * @code
-         *      .addValidators(singletonList(ResponseValidatorProvider.of(NotNullResponseValidator.class)))
+         *      addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
          * @endcode
-         * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
+         * @see com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider for example
          */
-        public Builder addValidator(KernelSideObjectProvider<ResponseValidator<Object, Object, Object>> validator) {
+        public Builder addValidator(ResponseValidatorProvider validator) {
             this.validators.add(validator);
             return this;
         }
@@ -209,7 +208,7 @@ public class JTestDefinition {
         return comment;
     }
 
-    public List<KernelSideObjectProvider<ResponseValidator<Object, Object, Object>>> getValidators() {
+    public List<ResponseValidatorProvider> getValidators() {
         return validators;
     }
     
