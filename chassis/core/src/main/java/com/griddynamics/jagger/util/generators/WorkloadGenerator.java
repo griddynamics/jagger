@@ -44,13 +44,16 @@ class WorkloadGenerator {
             userGroupsClockConfiguration.setDelay(new FixedDelay(profileUserGroups.getDelayBetweenInvocationsInSeconds()));
             userGroupsClockConfiguration.setTickInterval(profileUserGroups.getTickInterval());
             clockConfiguration = userGroupsClockConfiguration;
-        } else if(jLoadProfile instanceof JLoadProfileInvocation){
+        } else if (jLoadProfile instanceof JLoadProfileInvocation) {
             JLoadProfileInvocation loadProfileInvocation = (JLoadProfileInvocation) jLoadProfile;
             ExactInvocationsClockConfiguration exactInvocationsClockConfiguration = new ExactInvocationsClockConfiguration();
             exactInvocationsClockConfiguration.setSamplesCount(loadProfileInvocation.getInvocationCount());
             exactInvocationsClockConfiguration.setThreads(loadProfileInvocation.getThreadCount());
             exactInvocationsClockConfiguration.setDelay(loadProfileInvocation.getDelay());
-            exactInvocationsClockConfiguration.setPeriod(loadProfileInvocation.getPeriod() + "s");
+            String period = String.valueOf(loadProfileInvocation.getPeriod());
+            exactInvocationsClockConfiguration.setPeriod("-1".equals(period) ? "-1" :
+                    loadProfileInvocation.getPeriod() + "s");
+
             exactInvocationsClockConfiguration.setTickInterval(loadProfileInvocation.getTickInterval());
         }
         return clockConfiguration;
