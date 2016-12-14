@@ -25,38 +25,48 @@ class WorkloadGenerator {
     static WorkloadClockConfiguration generateLoad(JLoadProfile jLoadProfile) {
         WorkloadClockConfiguration clockConfiguration = null;
         if (jLoadProfile instanceof JLoadProfileRps) {
-            JLoadProfileRps loadProfileRps = (JLoadProfileRps) jLoadProfile;
-            QpsClockConfiguration qpsClockConfiguration = new QpsClockConfiguration();
-            qpsClockConfiguration.setValue(loadProfileRps.getRequestsPerSecond());
-            qpsClockConfiguration.setWarmUpTime(loadProfileRps.getWarmUpTimeInSeconds());
-            qpsClockConfiguration.setMaxThreadNumber((int) loadProfileRps.getMaxLoadThreads());
-            qpsClockConfiguration.setTickInterval(loadProfileRps.getTickInterval());
-            clockConfiguration = qpsClockConfiguration;
+            clockConfiguration = generateRps((JLoadProfileRps) jLoadProfile);
         } else if (jLoadProfile instanceof JLoadProfileUserGroups) {
-            JLoadProfileUserGroups profileUserGroups = (JLoadProfileUserGroups) jLoadProfile;
-            List<User> users = profileUserGroups.getUserGroups().stream()
-                    .map(userGroup -> new User(String.valueOf(userGroup.getNumberOfUsers()), String.valueOf(userGroup.getSlewRateUsersPerSecond()),
-                            userGroup.getStartDelayInSeconds() + "s", "1s", userGroup.getLifeTimeInSeconds() + "s"))
-                    .collect(toList());
-
-            UserGroupsClockConfiguration userGroupsClockConfiguration = new UserGroupsClockConfiguration();
-            userGroupsClockConfiguration.setUsers(users);
-            userGroupsClockConfiguration.setDelay(new FixedDelay(profileUserGroups.getDelayBetweenInvocationsInSeconds()));
-            userGroupsClockConfiguration.setTickInterval(profileUserGroups.getTickInterval());
-            clockConfiguration = userGroupsClockConfiguration;
+            clockConfiguration = generateUserGroup((JLoadProfileUserGroups) jLoadProfile);
         } else if (jLoadProfile instanceof JLoadProfileInvocation) {
-            JLoadProfileInvocation loadProfileInvocation = (JLoadProfileInvocation) jLoadProfile;
-            ExactInvocationsClockConfiguration exactInvocationsClockConfiguration = new ExactInvocationsClockConfiguration();
-            exactInvocationsClockConfiguration.setSamplesCount(loadProfileInvocation.getInvocationCount());
-            exactInvocationsClockConfiguration.setThreads(loadProfileInvocation.getThreadCount());
-            exactInvocationsClockConfiguration.setDelay(loadProfileInvocation.getDelay());
-            String period = String.valueOf(loadProfileInvocation.getPeriod());
-            exactInvocationsClockConfiguration.setPeriod("-1".equals(period) ? "-1" :
-                    loadProfileInvocation.getPeriod() + "s");
-
-            exactInvocationsClockConfiguration.setTickInterval(loadProfileInvocation.getTickInterval());
-            clockConfiguration = exactInvocationsClockConfiguration;
+            clockConfiguration = generateInvocation((JLoadProfileInvocation) jLoadProfile);
         }
         return clockConfiguration;
+    }
+
+
+    private static WorkloadClockConfiguration generateRps(JLoadProfileRps jLoadProfile) {
+        QpsClockConfiguration qpsClockConfiguration = new QpsClockConfiguration();
+        qpsClockConfiguration.setValue(jLoadProfile.getRequestsPerSecond());
+        qpsClockConfiguration.setWarmUpTime(jLoadProfile.getWarmUpTimeInSeconds());
+        qpsClockConfiguration.setMaxThreadNumber((int) jLoadProfile.getMaxLoadThreads());
+        qpsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
+        return qpsClockConfiguration;
+    }
+
+    private static WorkloadClockConfiguration generateUserGroup(JLoadProfileUserGroups jLoadProfile) {
+        List<User> users = jLoadProfile.getUserGroups().stream()
+                .map(userGroup -> new User(String.valueOf(userGroup.getNumberOfUsers()), String.valueOf(userGroup.getSlewRateUsersPerSecond()),
+                        userGroup.getStartDelayInSeconds() + "s", "1s", userGroup.getLifeTimeInSeconds() + "s"))
+                .collect(toList());
+
+        UserGroupsClockConfiguration userGroupsClockConfiguration = new UserGroupsClockConfiguration();
+        userGroupsClockConfiguration.setUsers(users);
+        userGroupsClockConfiguration.setDelay(new FixedDelay(jLoadProfile.getDelayBetweenInvocationsInSeconds()));
+        userGroupsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
+        return userGroupsClockConfiguration;
+    }
+
+    private static WorkloadClockConfiguration generateInvocation(JLoadProfileInvocation jLoadProfile) {
+        ExactInvocationsClockConfiguration exactInvocationsClockConfiguration = new ExactInvocationsClockConfiguration();
+        exactInvocationsClockConfiguration.setSamplesCount(jLoadProfile.getInvocationCount());
+        exactInvocationsClockConfiguration.setThreads(jLoadProfile.getThreadCount());
+        exactInvocationsClockConfiguration.setDelay(jLoadProfile.getDelay());
+        String period = String.valueOf(jLoadProfile.getPeriod());
+        exactInvocationsClockConfiguration.setPeriod("-1".equals(period) ? "-1" :
+                jLoadProfile.getPeriod() + "s");
+
+        exactInvocationsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
+        return exactInvocationsClockConfiguration;
     }
 }
