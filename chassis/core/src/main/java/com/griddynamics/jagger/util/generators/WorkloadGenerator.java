@@ -55,6 +55,7 @@ class WorkloadGenerator {
                     loadProfileInvocation.getPeriod() + "s");
 
             exactInvocationsClockConfiguration.setTickInterval(loadProfileInvocation.getTickInterval());
+            clockConfiguration = exactInvocationsClockConfiguration;
         }
         return clockConfiguration;
     }
