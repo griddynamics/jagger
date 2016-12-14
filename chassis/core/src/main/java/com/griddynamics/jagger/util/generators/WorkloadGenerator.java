@@ -1,11 +1,13 @@
 package com.griddynamics.jagger.util.generators;
 
+import com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.FixedDelay;
 import com.griddynamics.jagger.engine.e1.scenario.QpsClockConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.UserGroupsClockConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadClockConfiguration;
 import com.griddynamics.jagger.user.ProcessingConfig.Test.Task.User;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
+import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileInvocation;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUserGroups;
 
@@ -42,6 +44,14 @@ class WorkloadGenerator {
             userGroupsClockConfiguration.setDelay(new FixedDelay(profileUserGroups.getDelayBetweenInvocationsInSeconds()));
             userGroupsClockConfiguration.setTickInterval(profileUserGroups.getTickInterval());
             clockConfiguration = userGroupsClockConfiguration;
+        } else if(jLoadProfile instanceof JLoadProfileInvocation){
+            JLoadProfileInvocation loadProfileInvocation = (JLoadProfileInvocation) jLoadProfile;
+            ExactInvocationsClockConfiguration exactInvocationsClockConfiguration = new ExactInvocationsClockConfiguration();
+            exactInvocationsClockConfiguration.setSamplesCount(loadProfileInvocation.getInvocationCount());
+            exactInvocationsClockConfiguration.setThreads(loadProfileInvocation.getThreadCount());
+            exactInvocationsClockConfiguration.setDelay(loadProfileInvocation.getDelay());
+            exactInvocationsClockConfiguration.setPeriod(loadProfileInvocation.getPeriod() + "s");
+            exactInvocationsClockConfiguration.setTickInterval(loadProfileInvocation.getTickInterval());
         }
         return clockConfiguration;
     }
