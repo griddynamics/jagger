@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.test.javabuilders;
 
+import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
@@ -26,7 +27,7 @@ public class JaggerSmokeTest {
                 .builder(Id.of("smoke-test-definition"), getEndpoints())
                 .withComment("smoke test")
                 .withQueryProvider(getQueries())
-                .addValidator(NotNullResponseValidator.class)
+                .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
 //   TODO add the following things after clarifying
 //  .addListeners(new NotNullInvocationListener()) TODO JFG-979
 //  .addMetrics("metric-success-rate", "metric-not-null-response") TODO JFG-979

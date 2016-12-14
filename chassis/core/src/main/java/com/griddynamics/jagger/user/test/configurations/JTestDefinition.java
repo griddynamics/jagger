@@ -116,9 +116,9 @@ public class JTestDefinition {
          * Instances of those subtypes will be used to validate responses during Jagger test execution @n
          * Example:
          * @code
-         *      addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
+         *      addValidator(new ExampleResponseValidatorProvider("we are always good"))
          * @endcode
-         * @see com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider for example
+         * @see com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider for example
          */
         public Builder addValidators(List<ResponseValidatorProvider> validators) {
             this.validators.addAll(validators);
@@ -131,9 +131,9 @@ public class JTestDefinition {
          * @n
          * Example:
          * @code
-         *      addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
+         *      addValidator(new ExampleResponseValidatorProvider("we are always good"))
          * @endcode
-         * @see com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider for example
+         * @see com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider for example
          */
         public Builder addValidator(ResponseValidatorProvider validator) {
             this.validators.add(validator);

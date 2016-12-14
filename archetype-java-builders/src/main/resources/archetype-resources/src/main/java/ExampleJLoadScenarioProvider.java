@@ -3,8 +3,9 @@ package ${package};
 import static java.util.Collections.singletonList;
 
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
+import com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
-import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
@@ -47,22 +48,23 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
-
+        
         JTestDefinition jTestDefinition = JTestDefinition
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .addValidator(ResponseValidatorProvider.of(NotNullResponseValidator.class))
+                .addValidator(new ExampleResponseValidatorProvider("we are always good"))
+                .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())
                 .build();
-
+        
         // Example of using JaggerPropertiesProvider
         Long iterationsNumber = Long.valueOf(getPropertyValue("example.jagger.load.scenario.termination.iterations"));
         Long maxDurationInSeconds = Long.valueOf(getPropertyValue("example.jagger.load.scenario.termination.max.duration.seconds"));
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations
                 .of(IterationsNumber.of(iterationsNumber), MaxDurationInSeconds.of(maxDurationInSeconds));
-
+        
         JLoadProfile jLoadProfileRps = JLoadProfileRps
                 .builder(RequestsPerSecond.of(10))
                 .withMaxLoadThreads(10)
@@ -89,12 +91,12 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .addListener(new CollectThreadsTestListener())
                 .withLimits(successrateLimit, throughputLimit)
                 .build();
-
+        
         JParallelTestsGroup jParallelTestsGroup = JParallelTestsGroup
                 .builder(Id.of("exampleJaggerParallelTestsGroup"), jLoadTest)
                 .addListener(new ExampleTestGroupListener())
                 .build();
-
+        
         // For JLoadScenario which is supposed to be executed by Jagger its ID must be set to 'jagger.load.scenario.id.to.execute' property's value
         return JLoadScenario.builder(Id.of("exampleJaggerLoadScenario"), jParallelTestsGroup)
                             .addListener(new ExampleLoadScenarioListener())
@@ -108,7 +110,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .addValidators(singletonList(ResponseValidatorProvider.of(NotNullResponseValidator.class)))
+                .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
                 .build();
 
         JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
