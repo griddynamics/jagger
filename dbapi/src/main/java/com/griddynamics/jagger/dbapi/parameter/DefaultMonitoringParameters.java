@@ -20,56 +20,59 @@
 
 package com.griddynamics.jagger.dbapi.parameter;
 
+
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+
 public enum DefaultMonitoringParameters implements MonitoringParameter {
-    MEM_RAM("mon_mem_ram","RAM, MiB", false, MonitoringParameterLevel.BOX),
-    MEM_TOTAL("mon_mem_total","Total memory, MiB", false, MonitoringParameterLevel.BOX),
-    MEM_USED("mon_mem_used","Memory used, MiB", false, MonitoringParameterLevel.BOX),
-    MEM_ACTUAL_USED("mon_mem_actual_used","Memory actual used, MiB", false, MonitoringParameterLevel.BOX),
-    MEM_FREE_PERCENT("mon_mem_free_prcnt","Memory free, %", false, MonitoringParameterLevel.BOX),
-    MEM_ACTUAL_FREE("mon_mem_actual_free","Memory actual free, MiB", false, MonitoringParameterLevel.BOX),
-    MEM_FREE("mon_mem_free","Memory free, MiB", false, MonitoringParameterLevel.BOX),
+    MEM_RAM(StandardMetricsNamesUtil.MON_MEM_RAM, "RAM, MiB", false, MonitoringParameterLevel.BOX),
+    MEM_TOTAL(StandardMetricsNamesUtil.MON_MEM_TOTAL, "Total memory, MiB", false, MonitoringParameterLevel.BOX),
+    MEM_USED(StandardMetricsNamesUtil.MON_MEM_USED, "Memory used, MiB", false, MonitoringParameterLevel.BOX),
+    MEM_ACTUAL_USED(StandardMetricsNamesUtil.MON_MEM_ACTUAL_USED, "Memory actual used, MiB", false, MonitoringParameterLevel.BOX),
+    MEM_FREE_PERCENT(StandardMetricsNamesUtil.MON_MEM_FREE_PRCNT, "Memory free, %", false, MonitoringParameterLevel.BOX),
+    MEM_ACTUAL_FREE(StandardMetricsNamesUtil.MON_MEM_ACTUAL_FREE, "Memory actual free, MiB", false, MonitoringParameterLevel.BOX),
+    MEM_FREE(StandardMetricsNamesUtil.MON_MEM_FREE, "Memory free, MiB", false, MonitoringParameterLevel.BOX),
 
-    TCP_ESTABLISHED("mon_tcp_est","Tcp established connections, count", false, MonitoringParameterLevel.BOX),
-    TCP_LISTEN("mon_tcp_listen","TCP listen, count", false, MonitoringParameterLevel.BOX),
-    TCP_SYNCHRONIZED_RECEIVED("mon_sync_received","TCP synchronized received, count", false, MonitoringParameterLevel.BOX),
-    TCP_INBOUND_TOTAL("mon_inbound_total","TCP inbound total, KiB", true, MonitoringParameterLevel.BOX),
-    TCP_OUTBOUND_TOTAL("mon_outbound_total","TCP outbound total, KiB", true, MonitoringParameterLevel.BOX),
+    TCP_ESTABLISHED(StandardMetricsNamesUtil.MON_TCP_EST, "Tcp established connections, count", false, MonitoringParameterLevel.BOX),
+    TCP_LISTEN(StandardMetricsNamesUtil.MON_TCP_LISTEN, "TCP listen, count", false, MonitoringParameterLevel.BOX),
+    TCP_SYNCHRONIZED_RECEIVED(StandardMetricsNamesUtil.MON_SYNC_RECEIVED, "TCP synchronized received, count", false, MonitoringParameterLevel.BOX),
+    TCP_INBOUND_TOTAL(StandardMetricsNamesUtil.MON_INBOUND_TOTAL, "TCP inbound total, KiB", true, MonitoringParameterLevel.BOX),
+    TCP_OUTBOUND_TOTAL(StandardMetricsNamesUtil.MON_OUTBOUND_TOTAL, "TCP outbound total, KiB", true, MonitoringParameterLevel.BOX),
 
-    DISKS_READ_BYTES_TOTAL("mon_disk_read_bytes","Disks read bytes total, KiB", true, MonitoringParameterLevel.BOX),
-    DISKS_WRITE_BYTES_TOTAL("mon_disk_write_bytes","Disks write bytes total, KiB", true, MonitoringParameterLevel.BOX),
+    DISKS_READ_BYTES_TOTAL(StandardMetricsNamesUtil.MON_DISK_READ_BYTES, "Disks read bytes total, KiB", true, MonitoringParameterLevel.BOX),
+    DISKS_WRITE_BYTES_TOTAL(StandardMetricsNamesUtil.MON_DISK_WRITE_BYTES, "Disks write bytes total, KiB", true, MonitoringParameterLevel.BOX),
 
-    DISKS_SERVICE_TIME_TOTAL("mon_disk_service_time","Disks service time", false, MonitoringParameterLevel.BOX),
-    DISKS_AVERAGE_QUEUE_SIZE_TOTAL("mon_disk_queue_size_total","Disks queue", false, MonitoringParameterLevel.BOX),
+    DISKS_SERVICE_TIME_TOTAL(StandardMetricsNamesUtil.MON_DISK_SERVICE_TIME, "Disks service time", false, MonitoringParameterLevel.BOX),
+    DISKS_AVERAGE_QUEUE_SIZE_TOTAL(StandardMetricsNamesUtil.MON_DISK_QUEUE_SIZE_TOTAL, "Disks queue", false, MonitoringParameterLevel.BOX),
 
-    CPU_STATE_USER_PERC("mon_cpu_user","CPU user, %", false, MonitoringParameterLevel.BOX),
-    CPU_STATE_SYSTEM_PERC("mon_cpu_sys_prcnt","CPU system, %", false, MonitoringParameterLevel.BOX),
-    CPU_STATE_IDLE_PERC("mon_cpu_idle_prcnt","CPU idle, %", false, MonitoringParameterLevel.BOX),
-    CPU_STATE_IDLE_WAIT("mon_cpu_wait","CPU wait, %", false, MonitoringParameterLevel.BOX),
-    CPU_STATE_COMBINED("mon_cpu_combined","CPU combined, %", false, MonitoringParameterLevel.BOX),
+    CPU_STATE_USER_PERC(StandardMetricsNamesUtil.MON_CPU_USER, "CPU user, %", false, MonitoringParameterLevel.BOX),
+    CPU_STATE_SYSTEM_PERC(StandardMetricsNamesUtil.MON_CPU_SYS_PRCNT, "CPU system, %", false, MonitoringParameterLevel.BOX),
+    CPU_STATE_IDLE_PERC(StandardMetricsNamesUtil.MON_CPU_IDLE_PRCNT, "CPU idle, %", false, MonitoringParameterLevel.BOX),
+    CPU_STATE_IDLE_WAIT(StandardMetricsNamesUtil.MON_CPU_WAIT, "CPU wait, %", false, MonitoringParameterLevel.BOX),
+    CPU_STATE_COMBINED(StandardMetricsNamesUtil.MON_CPU_COMBINED, "CPU combined, %", false, MonitoringParameterLevel.BOX),
 
-    CPU_LOAD_AVERAGE_1("mon_cpula_1","CPU load average for the past 1 minute, %", false, MonitoringParameterLevel.BOX),
-    CPU_LOAD_AVERAGE_5("mon_cpula_5","CPU load average for the past 5 minutes, %", false, MonitoringParameterLevel.BOX),
-    CPU_LOAD_AVERAGE_15("mon_cpula_15","CPU load average for the past 15 minutes, %", false, MonitoringParameterLevel.BOX),
+    CPU_LOAD_AVERAGE_1(StandardMetricsNamesUtil.MON_CPULA_1, "CPU load average for the past 1 minute, %", false, MonitoringParameterLevel.BOX),
+    CPU_LOAD_AVERAGE_5(StandardMetricsNamesUtil.MON_CPULA_5, "CPU load average for the past 5 minutes, %", false, MonitoringParameterLevel.BOX),
+    CPU_LOAD_AVERAGE_15(StandardMetricsNamesUtil.MON_CPULA_15, "CPU load average for the past 15 minutes, %", false, MonitoringParameterLevel.BOX),
 
-    JMX_GC_MINOR_TIME("mon_gc_minor_time","All GC minor time", true, MonitoringParameterLevel.SUT),
-    JMX_GC_MINOR_UNIT("mon_gc_minor_unit","All GC minor unit", true, MonitoringParameterLevel.SUT),
-    JMX_GC_MAJOR_TIME("mon_gc_major_time","All GC major time", true, MonitoringParameterLevel.SUT),
-    JMX_GC_MAJOR_UNIT("mon_gc_major_unit","All GC major unit", true, MonitoringParameterLevel.SUT),
+    JMX_GC_MINOR_TIME(StandardMetricsNamesUtil.MON_GC_MINOR_TIME, "All GC minor time", true, MonitoringParameterLevel.SUT),
+    JMX_GC_MINOR_UNIT(StandardMetricsNamesUtil.MON_GC_MINOR_UNIT, "All GC minor unit", true, MonitoringParameterLevel.SUT),
+    JMX_GC_MAJOR_TIME(StandardMetricsNamesUtil.MON_GC_MAJOR_TIME, "All GC major time", true, MonitoringParameterLevel.SUT),
+    JMX_GC_MAJOR_UNIT(StandardMetricsNamesUtil.MON_GC_MAJOR_UNIT, "All GC major unit", true, MonitoringParameterLevel.SUT),
 
-    HEAP_MEMORY_INIT("mon_heap_init","Heap init memory", false, MonitoringParameterLevel.SUT),
-    HEAP_MEMORY_USED("mon_heap_used","Heap used memory", false, MonitoringParameterLevel.SUT),
-    HEAP_MEMORY_COMMITTED("mon_heap_committed","Heap committed memory, MiB", false, MonitoringParameterLevel.SUT),
-    HEAP_MEMORY_MAX("mon_heap_max","Heap max memory, MiB", false, MonitoringParameterLevel.SUT),
+    HEAP_MEMORY_INIT(StandardMetricsNamesUtil.MON_HEAP_INIT, "Heap init memory", false, MonitoringParameterLevel.SUT),
+    HEAP_MEMORY_USED(StandardMetricsNamesUtil.MON_HEAP_USED, "Heap used memory", false, MonitoringParameterLevel.SUT),
+    HEAP_MEMORY_COMMITTED(StandardMetricsNamesUtil.MON_HEAP_COMMITTED, "Heap committed memory, MiB", false, MonitoringParameterLevel.SUT),
+    HEAP_MEMORY_MAX(StandardMetricsNamesUtil.MON_HEAP_MAX, "Heap max memory, MiB", false, MonitoringParameterLevel.SUT),
 
-    NON_HEAP_MEMORY_INIT("mon_nonheap_init","Non heap init memory, MiB", false, MonitoringParameterLevel.SUT),
-    NON_HEAP_MEMORY_USED("mon_nonheap_used","Non heap used memory, MiB", false, MonitoringParameterLevel.SUT),
-    NON_HEAP_MEMORY_COMMITTED("mon_nonheap_committed","Non heap committed memory, MiB", false, MonitoringParameterLevel.SUT),
-    NON_HEAP_MEMORY_MAX("mon_nonheap_max","Non heap max memory, MiB", false, MonitoringParameterLevel.SUT),
+    NON_HEAP_MEMORY_INIT(StandardMetricsNamesUtil.MON_NONHEAP_INIT, "Non heap init memory, MiB", false, MonitoringParameterLevel.SUT),
+    NON_HEAP_MEMORY_USED(StandardMetricsNamesUtil.MON_NONHEAP_USED, "Non heap used memory, MiB", false, MonitoringParameterLevel.SUT),
+    NON_HEAP_MEMORY_COMMITTED(StandardMetricsNamesUtil.MON_NONHEAP_COMMITTED, "Non heap committed memory, MiB", false, MonitoringParameterLevel.SUT),
+    NON_HEAP_MEMORY_MAX(StandardMetricsNamesUtil.MON_NONHEAP_MAX, "Non heap max memory, MiB", false, MonitoringParameterLevel.SUT),
 
-    OPEN_FILE_DESCRIPTOR_COUNT("mon_file_descriptors","Count of open file descriptors", false, MonitoringParameterLevel.SUT),
+    OPEN_FILE_DESCRIPTOR_COUNT(StandardMetricsNamesUtil.MON_FILE_DESCRIPTORS, "Count of open file descriptors", false, MonitoringParameterLevel.SUT),
 
-    THREAD_COUNT("mon_thread_count","Live threads", false, MonitoringParameterLevel.SUT),
-    THREAD_PEAK_COUNT("mon_thread_peak_count","Peak thread count", false, MonitoringParameterLevel.SUT);
+    THREAD_COUNT(StandardMetricsNamesUtil.MON_THREAD_COUNT, "Live threads", false, MonitoringParameterLevel.SUT),
+    THREAD_PEAK_COUNT(StandardMetricsNamesUtil.MON_THREAD_PEAK_COUNT, "Peak thread count", false, MonitoringParameterLevel.SUT);
 
     private String id = "";
     private String description;
@@ -85,7 +88,7 @@ public enum DefaultMonitoringParameters implements MonitoringParameter {
 
     /**
      * @return true if monitoring parameter is a continuously growing counter (like total transferred bytes)
-     *         Such parameter should be differentiated in plots. False otherwise.
+     * Such parameter should be differentiated in plots. False otherwise.
      */
     @Override
     public boolean isCumulativeCounter() {

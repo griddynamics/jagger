@@ -13,14 +13,19 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
 import java.util.Properties;
+
+import javax.sql.DataSource;
 
 @TestConfiguration
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"com.griddynamics.jagger.jaas.storage"})
 public class TestPersistenceConfig {
-
+    
+    public TestPersistenceConfig() {
+        System.setProperty("environments.ttl.minutes", "1");
+    }
+    
     public static final String PACKAGES_TO_SCAN = "com.griddynamics.jagger.jaas.storage.model";
 
     @Bean

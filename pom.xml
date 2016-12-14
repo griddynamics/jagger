@@ -62,7 +62,6 @@
         <module>rawdata</module>
         <module>jaas-client</module>
         <module>archetype-java-builders</module>
-        <module>test/java-builder-tests</module>
     </modules>
 
     <scm>

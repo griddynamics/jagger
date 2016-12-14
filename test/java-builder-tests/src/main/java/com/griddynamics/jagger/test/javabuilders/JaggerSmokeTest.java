@@ -26,7 +26,7 @@ public class JaggerSmokeTest {
                 .builder(Id.of("smoke-test-definition"), getEndpoints())
                 .withComment("smoke test")
                 .withQueryProvider(getQueries())
-                .withValidators(Collections.singletonList(NotNullResponseValidator.class))
+                .addValidator(NotNullResponseValidator.class)
 //   TODO add the following things after clarifying
 //  .addListeners(new NotNullInvocationListener()) TODO JFG-979
 //  .addMetrics("metric-success-rate", "metric-not-null-response") TODO JFG-979

@@ -21,6 +21,14 @@ public interface TestEnvironmentDao extends CrudDao<TestEnvironmentEntity, Strin
      * @return list of expired test environments.
      */
     List<TestEnvironmentEntity> readExpired(long timestamp);
+    
+    /**
+     * Deletes and creates {@link TestEnvironmentEntity} entity.
+     * Could be used as a replacement for cascade update.
+     *
+     * @param testEnvironment entity to re create
+     */
+    void reCreate(TestEnvironmentEntity testEnvironment);
 
     /**
      * Deletes test environments which expirationTimestamp < timestamp.

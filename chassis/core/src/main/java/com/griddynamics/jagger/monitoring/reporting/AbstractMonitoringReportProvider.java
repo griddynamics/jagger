@@ -19,47 +19,15 @@
  */
 package com.griddynamics.jagger.monitoring.reporting;
 
-import com.griddynamics.jagger.dbapi.entity.PerformedMonitoring;
 import com.griddynamics.jagger.dbapi.entity.WorkloadData;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
 
-import com.google.common.collect.Maps;
-
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractMonitoringReportProvider<T> extends AbstractMappedReportProvider<T> {
 
     public void clearCache() {
     }
-
-    @Deprecated
-    protected Map<String, String> loadMonitoringMap() {
-        
-
-        String sessionId = getSessionIdProvider().getSessionId();
-        List<PerformedMonitoring> list = (List<PerformedMonitoring>) getHibernateTemplate().find("select pf from PerformedMonitoring pf where pf.sessionId =? and pf.parentId is not null", sessionId);
-        Map<String, String> result = Maps.newTreeMap();
-
-        for (PerformedMonitoring performedMonitoring : list) {
-            result.put(performedMonitoring.getParentId(), performedMonitoring.getMonitoringId());
-        }
-
-        return result;
-    }
-
-    @Deprecated
-    protected String relatedMonitoringTask(String taskId, Map<String, String> monitoringMap) {
-        String parentId = parentOf(taskId);
-
-        if (parentId == null) {
-            return null;
-        }
-
-        return monitoringMap.get(parentId);
-
-    }
-
 
     protected String parentOf(String workloadTaskId) {
         String sessionId = getSessionIdProvider().getSessionId();
