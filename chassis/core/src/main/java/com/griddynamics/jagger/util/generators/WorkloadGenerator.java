@@ -63,9 +63,10 @@ class WorkloadGenerator {
         exactInvocationsClockConfiguration.setThreads(jLoadProfile.getThreadCount());
         exactInvocationsClockConfiguration.setDelay(jLoadProfile.getDelay());
         String period = String.valueOf(jLoadProfile.getPeriod());
-        exactInvocationsClockConfiguration.setPeriod("-1".equals(period) ? "-1" :
-                jLoadProfile.getPeriod() + "s");
-
+        if (jLoadProfile.getPeriod() > 0) {
+            period += "s";
+        }
+        exactInvocationsClockConfiguration.setPeriod(period);
         exactInvocationsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
         return exactInvocationsClockConfiguration;
     }
