@@ -7,7 +7,6 @@ import java.util.Objects;
  */
 public class JLimitVsBaseline extends JLimit {
 
-
     private JLimitVsBaseline(Builder builder) {
         super(builder);
     }
@@ -28,5 +27,4 @@ public class JLimitVsBaseline extends JLimit {
             return new JLimitVsBaseline(this);
         }
     }
-
 }

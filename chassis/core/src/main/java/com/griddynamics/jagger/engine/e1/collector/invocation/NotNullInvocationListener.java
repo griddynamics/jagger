@@ -7,11 +7,8 @@ import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 import com.griddynamics.jagger.invoker.InvocationException;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 2/6/14
- * Time: 12:03 PM
- * To change this template use File | Settings | File Templates.
  */
 public class NotNullInvocationListener extends ServicesAware implements Provider<InvocationListener> {
 

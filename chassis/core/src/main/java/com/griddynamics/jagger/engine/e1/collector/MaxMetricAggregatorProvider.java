@@ -1,19 +1,7 @@
-package metric.aggregator;
+package com.griddynamics.jagger.engine.e1.collector;
 
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregator;
-import com.griddynamics.jagger.engine.e1.collector.MetricAggregatorProvider;
-
-import java.util.ArrayList;
-
-/**
- * Created with IntelliJ IDEA.
- * User: kgribov
- * Date: 10/21/13
- * Time: 7:04 PM
- * To change this template use File | Settings | File Templates.
- */
 // begin: following section is used for docu generation - custom aggregator source
-public class MaxMetricAggregatorProvider implements MetricAggregatorProvider{
+public class MaxMetricAggregatorProvider implements MetricAggregatorProvider {
 
     @Override
     public MetricAggregator provide() {
@@ -28,9 +16,8 @@ public class MaxMetricAggregatorProvider implements MetricAggregatorProvider{
         public void append(Number calculated) {
             if (value == null) {
                 value = calculated.doubleValue();
-            }
-            else {
-                value = Math.max(value,calculated.doubleValue());
+            } else {
+                value = Math.max(value, calculated.doubleValue());
             }
         }
 

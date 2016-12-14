@@ -24,8 +24,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!--to include user defined Jagger Load Test scenarios-->
-    <context:component-scan base-package="${chassis.master.package.to.scan:com.griddynamics.jagger}.config"/>
+     <!--to include user defined Jagger Load Test scenarios-->
+    <context:component-scan base-package="${chassis.master.package.to.scan:com.griddynamics.jagger}"/>
     <context:annotation-config/>
 
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>

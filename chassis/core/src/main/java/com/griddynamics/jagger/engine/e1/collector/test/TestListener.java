@@ -3,7 +3,8 @@ package com.griddynamics.jagger.engine.e1.collector.test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Listener, executed before, after test and periodically during test
+/**
+ * Listener, executed before and after a test and periodically during a test
  * @author Gribov Kirill
  * @n
  * @par Details:
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * To view test listener implementations click here @ref Main_Listeners_group
  * @n
  * @ingroup Main_Listeners_Base_group */
-public abstract class TestListener{
+public abstract class TestListener {
 
     /** Method is executed before test starts
      * @param testInfo - describes start test information*/
@@ -125,8 +126,8 @@ public abstract class TestListener{
 /// To add custom listener (f.e. test suite listener) you need to do -
 /// 1. Create class which extends @ref com.griddynamics.jagger.engine.e1.services.ServicesAware "ServicesAware" and implements interface @ref Provider<T> @n
 /// Where @b T is listener type (all types: @ref Main_Listeners_Base_group)
-/// @dontinclude  ProviderOfTestSuiteListener.java
-/// @skipline  public class ProviderOfTestSuiteListener
+/// @dontinclude  ProviderOfLoadScenarioListener.java
+/// @skipline  public class ProviderOfLoadScenarioListener
 /// @n
 ///
 /// 2. Create bean in XML file with some id
@@ -173,7 +174,7 @@ public abstract class TestListener{
 /// @until end: following section is used for docu generation - custom test listener
 /// @example_end_content
 /// @example_begin_content{1}
-/// @dontinclude  ProviderOfTestSuiteListener.java
+/// @dontinclude  ProviderOfLoadScenarioListener.java
 /// @skip  begin: following section is used for docu generation - custom test suite listener
 /// @until end: following section is used for docu generation - custom test suite listener
 /// @example_end_content

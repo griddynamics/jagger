@@ -1,8 +1,8 @@
 package com.griddynamics.jagger.test.jaas.listener;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteInfo;
-import com.griddynamics.jagger.engine.e1.collector.testsuite.TestSuiteListener;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
@@ -23,15 +23,15 @@ import java.util.Set;
  *
  * Created by ELozovan on 2016-09-27.
  */
-public class TestSuiteConfigListener extends ServicesAware implements Provider<TestSuiteListener> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteConfigListener.class);
+public class LoadScenarioConfigListener extends ServicesAware implements Provider<LoadScenarioListener> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoadScenarioConfigListener.class);
 
     @Override
-    public TestSuiteListener provide() {
-        return new TestSuiteListener() {
+    public LoadScenarioListener provide() {
+        return new LoadScenarioListener() {
             @Override
-            public void onStart(TestSuiteInfo testSuiteInfo) {
-                super.onStart(testSuiteInfo);
+            public void onStart(LoadScenarioInfo loadScenarioInfo) {
+                super.onStart(loadScenarioInfo);
                 // TODO: Ids are hard-coded for now. Re-factor once JFG-908 is ready.
                 Set<SessionEntity> sessionsAvailable = getDataService().getSessions(Arrays.asList("5", "15", "42", "32", "17", "28", "45", "50", "12"));
                 sessionsAvailable.stream().forEach(this::correctDateFieldValue);

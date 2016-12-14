@@ -121,7 +121,6 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
     
         Map<String, List<SysUnderTestDTO>> sysUnderTests = loadData(sessionId);
     
-        Map<String, String> monitoringMap = loadMonitoringMap();
 
         List<SysUnderTestDTO> data = null;
         String taskId = null;
@@ -135,10 +134,6 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
         if (taskId != null) {
 
              data = sysUnderTests.get(taskId);
-
-            if (data == null) {
-                data = sysUnderTests.get(relatedMonitoringTask(taskId, monitoringMap));
-            }
 
             // required after monitoring moved to metrics
             if (data == null) {

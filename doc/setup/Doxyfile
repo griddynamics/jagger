@@ -769,7 +769,7 @@ EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
 #                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
 #                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfInvocationListener.java \
 #                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestListener.java \
-#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfTestSuiteListener.java \
+#                         ./archetype-examples/src/main/resources/archetype-resources/src/main/java/listener/ProviderOfLoadScenarioListener.java \
 #                         ./chassis/util/src/main/java/com/griddynamics/jagger/util/StandardMetricsNamesUtil.java
 
 
