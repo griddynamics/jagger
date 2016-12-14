@@ -21,17 +21,14 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
-import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
-import com.griddynamics.jagger.invoker.v2.JHttpQuery;
-import com.griddynamics.jagger.invoker.v2.JHttpResponse;
 
 /**
  * Validates that invocation result is not null.@n
  * To use this validator add @xlink{validator} element with type @xlink{validator-not-null-response} in @xlink{test-description,info-collectors} block.
  * @author Dmitry Kotlyarov
- * @ingroup Main_Collectors_group
- */
-public class NotNullResponseValidator extends ResponseValidator<JHttpQuery, JHttpEndpoint, JHttpResponse> {
+ * @n
+ * @ingroup Main_Collectors_group */
+public class NotNullResponseValidator extends ResponseValidator<Object, Object, Object> {
     
     public NotNullResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
@@ -41,18 +38,19 @@ public class NotNullResponseValidator extends ResponseValidator<JHttpQuery, JHtt
     public String getName() {
         return "Not-null Validator";
     }
-    
-    
+
     /** Return false if invocation result is null
      * @author Dmitry Kotlyarov
      * @n
+     *
      * @param query     - the query of current invocation
      * @param endpoint  - the endpoint of current invocation
      * @param result    - the result of invocation
      * @param duration  - the duration of invocation
+     *
      * @return false if invocation result is null */
     @Override
-    public boolean validate(JHttpQuery query, JHttpEndpoint endpoint, JHttpResponse result, long duration) {
+    public boolean validate(Object query, Object endpoint, Object result, long duration) {
         return result != null;
     }
 }
