@@ -38,10 +38,9 @@ import org.springframework.context.annotation.Configuration;
 import ${package}.util.JaggerPropertiesProvider;
 
 /**
- * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties and test properties, which are needed for load scenario
- * configuration, but must not get to the Jagger environment. You can use them for configuration of JLoadScenario.<p>
+ * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties and test properties. You can use them for configuration of JLoadScenario.<p>
  * Benefit of this approach is that you can change JLoadScenario configuration by changing properties file and no recompilation is needed.<p>
- * Properties in test.properties does not override properties from environment.properties.
+ * Properties in test.properties do not override properties from environment.properties.
  */
 @Configuration
 public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {

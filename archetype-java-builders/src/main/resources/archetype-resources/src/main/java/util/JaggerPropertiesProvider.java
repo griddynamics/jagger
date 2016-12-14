@@ -11,7 +11,7 @@ import org.springframework.core.env.Environment;
  * This class is needed to provide Jagger environment properties and test properties.<br>
  * It must be injected to class where properties are needed, or this class can extend JaggerPropertiesProvider.
  * In both cases that class must be a valid spring bean.<p>
- * Properties from test.properties does not override properties from environment.properties.
+ * Properties from test.properties do not override properties from environment.properties.
  */
 @Configuration
 @PropertySource("classpath:test.properties")
