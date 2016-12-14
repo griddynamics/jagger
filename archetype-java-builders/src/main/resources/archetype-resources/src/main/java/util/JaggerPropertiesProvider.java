@@ -23,7 +23,7 @@ public class JaggerPropertiesProvider {
     @Autowired
     private Environment testEnv;
 
-    public String getPropertyValue(String key) {
+    public String getEnvPropertyValue(String key) {
         return ((JaggerXmlApplicationContext) jaggerContext).getEnvironmentProperties().getProperty(key);
     }
 
