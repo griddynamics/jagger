@@ -18,8 +18,8 @@ import java.util.List;
  * @par Details:
  * @details It is executed when decision making based on limits is used. Details: @ref DecisionMakerBasedOnLimits @n
  * It is used by default as soon as limit set is attached to test
- * @n
- * @ingroup Main_Listeners_group */
+ *
+ */
 public class BasicTGDecisionMakerListener extends ServicesAware implements Provider<TestGroupDecisionMakerListener> {
     private static final Logger log = LoggerFactory.getLogger(BasicTGDecisionMakerListener.class);
 

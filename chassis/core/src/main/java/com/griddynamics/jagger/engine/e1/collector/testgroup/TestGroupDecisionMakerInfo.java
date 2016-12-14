@@ -10,8 +10,9 @@ import java.util.Set;
  * @n
  * @par Details:
  * @details
- * @n
- * */
+ *
+ * @ingroup Main_Listeners_group
+ */
 public class TestGroupDecisionMakerInfo {
     private CompositeTask testGroup;
     private String sessionId;

@@ -6,10 +6,15 @@ import com.griddynamics.jagger.engine.e1.collector.SumMetricAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 import com.griddynamics.jagger.invoker.InvocationException;
 
-/**
- * User: kgribov
- * Date: 2/6/14
- */
+/** Example of the invocation listener
+ * @author Gribov Kirill
+ * @n
+ * @par Details:
+ * @details
+ * Will collect number of not null responses from the SUT
+ *
+ * @ingroup Main_Listeners_group */
+/* begin: following section is used for docu generation - example of the invocation listener with metric service */
 public class NotNullInvocationListener extends ServicesAware implements Provider<InvocationListener> {
 
     private final String metricName = "not-null-responses";
@@ -17,7 +22,7 @@ public class NotNullInvocationListener extends ServicesAware implements Provider
     @Override
     protected void init() {
         getMetricService().createMetric(new MetricDescription(metricName).
-                                            displayName("Not null responses").
+                                            displayName("Number of not null responses").
                                             showSummary(true).
                                             plotData(false).
                                             addAggregator(new SumMetricAggregatorProvider()));
@@ -47,3 +52,4 @@ public class NotNullInvocationListener extends ServicesAware implements Provider
         };
     }
 }
+/* end: following section is used for docu generation - example of the invocation listener with metric service */

@@ -44,6 +44,7 @@ Compile
 Run test project
 
 `cd ./target/{artifactdId}-{version}-full/`
+
 `./start.sh profiles/basic/environment.properties`
 
 Verify results

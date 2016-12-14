@@ -6,7 +6,7 @@ import java.util.Set;
  * @author Gribov Kirill
  * @n
  * @par Details:
- * @details Where this service is available you can find in chapter: @ref Main_ListenersAndServices_group @n
+ * @details Where this service is available you can find in chapter: @ref section_listeners_services @n
  * @n
  * @par Example - working with session comments:
  * @dontinclude ProviderOfLoadScenarioListener.java
@@ -19,7 +19,7 @@ import java.util.Set;
  * @until end: following section is used for docu generation - work with session tags
  *
  * @n
- * Full example code you can find in chapter @ref Main_CustomListenersExamples_group @n
+ * Full example code you can find in chapter @ref TODO JFG-993 add correct link @n
  * @n
  * @ingroup Main_Services_group */
 public interface SessionInfoService extends JaggerService{

@@ -5,11 +5,16 @@ import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
+/* begin: following section is used for docu generation - example of the test group listener */
+
+/** Example of the test group listener
+ * @author Andrey Badaev
+ * @n
+ * @par Details:
+ * @details
  * Does nothing but logging at test group execution start and stop
- * Created by Andrey Badaev
- * Date: 01/12/16
- */
+ *
+ * @ingroup Main_Listeners_group */
 public class ExampleTestGroupListener extends ServicesAware implements Provider<TestGroupListener> {
     
     private final static Logger log = LoggerFactory.getLogger(ExampleTestGroupListener.class);
@@ -34,3 +39,5 @@ public class ExampleTestGroupListener extends ServicesAware implements Provider<
         };
     }
 }
+
+/* end: following section is used for docu generation - example of the test group listener */

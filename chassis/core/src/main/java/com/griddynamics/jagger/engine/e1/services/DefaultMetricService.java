@@ -13,13 +13,13 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kgribov
- * Date: 10/30/13
- * Time: 8:38 AM
- * To change this template use File | Settings | File Templates.
- */
+/** Implementation of the @ref MetricService
+ * @n
+ * @par Details:
+ * @details  Service gives an ability to create and describe metrics, save metric values.@n
+ * Where this service is available you can find in chapter: @ref section_listeners_services @n
+ * @n
+ * @ingroup Main_Services_group */
 public class DefaultMetricService implements MetricService {
     private static final Logger log = LoggerFactory.getLogger(DefaultMetricService.class);
 

@@ -2,13 +2,14 @@ package com.griddynamics.jagger.engine.e1.collector.testgroup;
 
 import com.griddynamics.jagger.master.CompositeTask;
 
-/** Class, which contains some information about test-group execution
+/** Class, which contains information about test-group execution
  * @author Gribov Kirill
  * @n
  * @par Details:
  * @details
- * @n
- * */
+ *
+ * @ingroup Main_Listeners_group
+ */
 public class TestGroupInfo {
     private CompositeTask testGroup;
     private String sessionId;
