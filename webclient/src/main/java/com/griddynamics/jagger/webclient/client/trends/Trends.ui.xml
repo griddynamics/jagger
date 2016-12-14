@@ -2,116 +2,120 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:c="urn:import:com.google.gwt.user.cellview.client"
              xmlns:datepicker="urn:import:com.google.gwt.user.datepicker.client"
-             xmlns:custom="urn:import:com.griddynamics.jagger.webclient.client.components">
+             xmlns:custom="urn:import:com.griddynamics.jagger.webclient.client.components"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client">
 
     <ui:with type="com.griddynamics.jagger.webclient.client.resources.JaggerResources" field="res"/>
+    <!--<ui:with type="com.sencha.gxt.data.shared.TreeStore" field="controlTreeStore" />
+    <ui:with type="com.sencha.gxt.core.client.ValueProvider" field="valueProvider" />-->
 
     <g:SplitLayoutPanel ui:field="widget">
+        <g:west size="350">
+            <g:SplitLayoutPanel>
+                <g:center>
+                    <g:SimplePanel ui:field="controlTreePanel" height="100%" width="100%"/>
+                </g:center>
+                <g:south size="250" >
+                    <gxt:ContentPanel ui:field="sessionDataGridContainer" headerVisible="false" height="250"
+                                      bodyBorder="false" borders="false">
+                        <g:DockLayoutPanel>
+                            <g:north size="34">
+                                <g:FlowPanel addStyleNames="{res.css.toolBar}">
+                                    <g:Image resource="{res.getShowChecked}" title="Show Checked Sessions" ui:field="showCheckedSessionsButton"/>
+                                    <g:Image resource="{res.getUncheckAll}" title="Uncheck sessions" ui:field="uncheckSessionsButton"/>
+                                    <g:Image resource="{res.getClearImage}" title="Clear session filters" ui:field="clearSessionFiltersButton"/>
+                                    <g:Image resource="{res.getHyperlinkImage}" title="Hyperlink" ui:field="getHyperlink"/>
+                                </g:FlowPanel>
+                            </g:north>
+
+                            <g:center>
+                                <c:DataGrid addStyleNames="{res.css.toolBar}" ui:field="sessionsDataGrid" width="100%"
+                                            title="Sessions"/>
+                            </g:center>
+
+
+                            <g:south size="55">
+                                <g:TabLayoutPanel barHeight="1.5" barUnit="EM"
+                                                  ui:field="searchTabPanel" addStyleNames="{res.css.searchTabPanel}" >
+
+                                    <g:tab>
+                                        <g:header>
+                                            <b>Session number</b>
+                                        </g:header>
+                                        <g:HorizontalPanel addStyleNames="{res.css.searchPanel}"
+                                                           ui:field="idsPanel" borderWidth="0"/>
+                                    </g:tab>
+
+                                    <g:tab>
+                                        <g:header>
+                                            <b>Tags</b>
+                                        </g:header>
+                                        <g:HorizontalPanel addStyleNames="{res.css.searchPanel}"
+                                                           ui:field="tagsPanel" borderWidth="0"/>
+                                    </g:tab>
+
+                                    <g:tab>
+                                        <g:header>
+                                            <b>Date range</b>
+                                        </g:header>
+                                        <g:HorizontalPanel addStyleNames="{res.css.searchPanel}"
+                                                           ui:field="datesPanel" borderWidth="0"/>
+                                    </g:tab>
+                                </g:TabLayoutPanel>
+
+
+                            </g:south>
+                            <g:south size="34" >
+                                <g:HTMLPanel addStyleNames="{res.css.toolBar}" >
+                                    <table width="100%">
+                                        <tr>
+                                            <td align="center">
+                                                <c:SimplePager ui:field="sessionsPager"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </g:HTMLPanel>
+                            </g:south>
+                        </g:DockLayoutPanel>
+                    </gxt:ContentPanel>
+                </g:south>
+            </g:SplitLayoutPanel>
+        </g:west>
         <g:center>
-            <g:TabLayoutPanel barHeight="20" ui:field="mainTabPanel">
+            <g:TabLayoutPanel barHeight="1.5" barUnit="EM" ui:field="mainTabPanel" addStyleNames="{res.css.mainTabPanel}">
                 <g:tab>
-                    <g:header> <b>Summary</b> </g:header>
-                    <g:ScrollPanel>
+                    <g:header>
+                        <b>Summary</b>
+                    </g:header>
+                    <g:ScrollPanel ui:field="summaryPanelScrollPanel">
                         <custom:SummaryPanel addStyleNames="{res.css.summaryPanel}" ui:field="summaryPanel"/>
                     </g:ScrollPanel>
                 </g:tab>
                 <g:tab>
-                    <g:header> <b>Trends</b> </g:header>
-                    <g:ScrollPanel ui:field="scrollPanelTrends">
-                        <g:HTMLPanel addStyleNames="{res.css.plotPanel}" ui:field="plotPanel"/>
+                    <g:header>
+                        <b>Trends</b>
+                    </g:header>
+
+                    <custom:PlotsPanel ui:field="plotTrendsPanel"/>
+
+                </g:tab>
+                <g:tab>
+                    <g:header>
+                        <b>Metrics</b>
+                    </g:header>
+
+                    <custom:PlotsPanel ui:field="plotPanel"/>
+
+                </g:tab>
+                <g:tab>
+                    <g:header>
+                        <b>Nodes</b>
+                    </g:header>
+                    <g:ScrollPanel>
+                        <custom:NodesPanel addStyleNames="{res.css.nodesPanel}" ui:field="nodesPanel"/>
                     </g:ScrollPanel>
                 </g:tab>
             </g:TabLayoutPanel>
         </g:center>
-        <g:south size="250">
-            <g:SplitLayoutPanel ui:field="settingsPanel">
-                <g:west size="600">
-                    <g:DockLayoutPanel>
-                        <g:north size="34">
-                            <g:FlowPanel addStyleNames="{res.css.toolBar}">
-                                <g:Image resource="{res.getShowChecked}" title="Show Checked Sessions" ui:field="showCheckedSessionsButton"/>
-                                <g:Image resource="{res.getUncheckAll}" title="Uncheck sessions" ui:field="uncheckSessionsButton"/>
-                                <g:Image resource="{res.getClearImage}" title="Clear session filters" ui:field="clearSessionFiltersButton"/>
-                                <g:Image resource="{res.getHyperlinkImage}" title="Hyperlink" ui:field="getHyperlink"/>
-                            </g:FlowPanel>
-                        </g:north>
-                        <g:center>
-                            <c:DataGrid ui:field="sessionsDataGrid" width="100%" title="Sessions"/>
-                        </g:center>
-                        <g:south size="90">
-                            <g:HTMLPanel>
-                                <table width="100%">
-                                    <tr>
-                                        <td align="center">
-                                            <c:SimplePager ui:field="sessionsPager"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <table width="100%">
-                                                <tr>
-                                                    <td style="white-space: nowrap;">Select by Session Number:</td>
-                                                    <td colspan="3">
-                                                        <g:TextBox ui:field="sessionIdsTextBox" width="99%"/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="white-space: nowrap;">Select by Date Range</td>
-                                                    <td>
-                                                        <datepicker:DateBox ui:field="sessionsFrom" width="98%"/>
-                                                    </td>
-                                                    <td class="{res.css.centered}">-</td>
-                                                    <td style="text-align: right;">
-                                                        <datepicker:DateBox ui:field="sessionsTo" width="98%"/>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </g:HTMLPanel>
-                        </g:south>
-                    </g:DockLayoutPanel>
-                </g:west>
-                <g:center>
-                    <g:DockLayoutPanel>
-                        <g:center>
-                            <g:DockLayoutPanel width="100%" height="100%">
-                                <g:center>
-                                    <g:SplitLayoutPanel  height="100%" width="100%" visible="true">
-                                        <g:center>
-                                            <g:ScrollPanel width="100%" height="100%">
-                                                <c:CellTable ui:field="testDataGrid" width="100%" height="100%" title="Tests"/>
-                                            </g:ScrollPanel>
-                                        </g:center>
-                                        <g:east size="400">
-                                            <g:DeckPanel width="100%" height="100%" ui:field="testsMetricsPanel">
-
-                                                <custom:MetricPanel ui:field="metricPanel"/>
-
-                                                <g:DockLayoutPanel height="100%" width="100%" ui:field="trendsDetails">
-                                                    <g:north size="20">
-                                                        <g:Label text="Trends"/>
-                                                    </g:north>
-                                                    <g:center>
-                                                        <g:ScrollPanel width="100%" height="100%">
-                                                            <g:VerticalPanel width="100%" height="100%">
-                                                                <g:VerticalPanel ui:field="sessionScopePlotList" width="100%" height="100%"/>
-                                                                <c:CellTree title="Task Details" ui:field="taskDetailsTree" height="100%" width="100%"/>
-                                                            </g:VerticalPanel>
-                                                        </g:ScrollPanel>
-                                                    </g:center>
-                                                </g:DockLayoutPanel>
-
-                                            </g:DeckPanel>
-                                        </g:east>
-                                    </g:SplitLayoutPanel>
-                                </g:center>
-                            </g:DockLayoutPanel>
-                        </g:center>
-                    </g:DockLayoutPanel>
-                </g:center>
-            </g:SplitLayoutPanel>
-        </g:south>
     </g:SplitLayoutPanel>
 </ui:UiBinder>

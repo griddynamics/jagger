@@ -3,8 +3,8 @@
 * http://www.griddynamics.com
 *
 * This library is free software; you can redistribute it and/or modify it under the terms of
-* the GNU Lesser General Public License as published by the Free Software Foundation; either
-* version 2.1 of the License, or any later version.
+* the Apache License; either
+* version 2.0 of the License, or any later version.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -25,6 +25,11 @@ import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URISyntaxException;
 
+/** Creates GET request from row data
+ * @author Nikolay Musienko
+ * @n
+ *
+ * @ingroup Main_Providers_group */
 public class SimpleHttpQueryCreator implements ObjectCreator<HttpGet> {
 
     private String paramName;
@@ -43,6 +48,12 @@ public class SimpleHttpQueryCreator implements ObjectCreator<HttpGet> {
         this.paramName = paramName;
     }
 
+    /** Creates GET request from row data
+     * @author Nikolay Musienko
+     * @n
+     *
+     * @param strings - row data
+     * @return new HttpGet object*/
     @Override
     public HttpGet createObject(String... strings) {
         URIBuilder builder = new URIBuilder();
@@ -62,6 +73,11 @@ public class SimpleHttpQueryCreator implements ObjectCreator<HttpGet> {
         }
     }
 
+    /** Does nothing
+     * @author Nikolay Musienko
+     * @n
+     *
+     * @param header - array of columns names*/
     @Override
     public void setHeader(String[] header) {
         //To change body of implemented methods use File | Settings | File Templates.

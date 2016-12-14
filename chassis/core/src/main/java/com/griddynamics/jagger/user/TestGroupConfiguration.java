@@ -1,5 +1,8 @@
 package com.griddynamics.jagger.user;
 
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
 import com.griddynamics.jagger.master.CompositableTask;
 import com.griddynamics.jagger.master.CompositeTask;
 import com.griddynamics.jagger.master.configuration.Task;
@@ -7,14 +10,18 @@ import com.griddynamics.jagger.monitoring.InfiniteDuration;
 import com.griddynamics.jagger.monitoring.MonitoringTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public class TestGroupConfiguration {
 
     private String id;
     private List<TestConfiguration> tests;
+    private List<Provider<TestGroupListener>> listeners = Collections.EMPTY_LIST;
+    private List<Provider<TestGroupDecisionMakerListener>> testGroupDecisionMakerListeners = Collections.EMPTY_LIST;
     private boolean monitoringEnabled;
     private int number;
 
@@ -54,6 +61,22 @@ public class TestGroupConfiguration {
         this.tests = tests;
     }
 
+    public List<Provider<TestGroupListener>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<TestGroupListener>> listeners) {
+        this.listeners = listeners;
+    }
+
+    public List<Provider<TestGroupDecisionMakerListener>> getTestGroupDecisionMakerListeners() {
+        return testGroupDecisionMakerListeners;
+    }
+
+    public void setTestGroupDecisionMakerListeners(List<Provider<TestGroupDecisionMakerListener>> testGroupDecisionMakerListeners) {
+        this.testGroupDecisionMakerListeners = testGroupDecisionMakerListeners;
+    }
+
     public Task generate() {
         HashSet<String> names = new HashSet<String>();
 
@@ -61,6 +84,9 @@ public class TestGroupConfiguration {
         compositeTask.setLeading(new ArrayList<CompositableTask>());
         compositeTask.setAttendant(new ArrayList<CompositableTask>());
         compositeTask.setNumber(number);
+        compositeTask.setListeners(listeners);
+        compositeTask.setDecisionMakerListeners(testGroupDecisionMakerListeners);
+        compositeTask.setName(id+"-group");
 
         for (TestConfiguration testConfig : tests) {
             testConfig.setTestGroupName(id);

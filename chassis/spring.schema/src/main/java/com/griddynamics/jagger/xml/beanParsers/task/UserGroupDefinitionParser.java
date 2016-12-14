@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.xml.beanParsers.task;
 
+import com.griddynamics.jagger.engine.e1.scenario.FixedDelay;
 import com.griddynamics.jagger.engine.e1.scenario.UserGroupsClockConfiguration;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
@@ -12,7 +13,8 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Deprecated
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 public class UserGroupDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
@@ -28,6 +30,10 @@ public class UserGroupDefinitionParser extends CustomBeanDefinitionParser {
             builder.addPropertyValue(XMLConstants.TICK_INTERVAL, element.getAttribute("tickInterval"));
         }
         element.removeAttribute(XMLConstants.TICK_INTERVAL);
+        if (!element.getAttribute(XMLConstants.DELAY).isEmpty()){
+            builder.addPropertyValue(XMLConstants.DELAY, new FixedDelay(Integer.parseInt(element.getAttribute(XMLConstants.DELAY))));
+        }
+        element.removeAttribute(XMLConstants.DELAY);
 
         BeanDefinition bd = new UserDefinitionParser().parse(element, parserContext);
         ManagedList users = new ManagedList();

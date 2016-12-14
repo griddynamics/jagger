@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -38,11 +38,8 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
@@ -65,7 +62,7 @@ public class SimpleKernel extends Kernel implements ApplicationContextAware {
     public SimpleKernel(Coordinator coordinator) {
         super(coordinator);
         lock = new CountDownLatch(1);
-        this.nodeId = NodeId.kernelNode(NodeType.KERNEL.toString() + "-" + new Random().nextInt() + " [" + getLocalHostAddress() + "]");
+        this.nodeId = NodeId.kernelNode();
     }
 
     @Override
@@ -159,13 +156,5 @@ public class SimpleKernel extends Kernel implements ApplicationContextAware {
 
         log.debug("Invokers found {}", result);
         return result;
-    }
-
-    private static String getLocalHostAddress() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

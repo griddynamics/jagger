@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -56,11 +55,13 @@
     <bean id="agentWorker" class="com.griddynamics.jagger.agent.worker.AgentWorker">
         <constructor-arg ref="agent"/>
         <property name="monitoringInfoService" ref="monitoringService"/>
+        <property name="profilerEnabled" value="${profiler.enabled}"/>
         <property name="profiler">
             <bean class="com.griddynamics.jagger.agent.Profiler">
                 <property name="samplingProfiler" ref="samplingProfiler"/>
             </bean>
         </property>
+        <property name="generalInfoCollector" ref="generalInfoCollector"/>
     </bean>
 
     <bean id="sigarAgent" class="com.griddynamics.jagger.agent.impl.SigarSystemInfoCollector">
@@ -80,8 +81,9 @@
 
     <bean id="jmxAgentImpl" class="com.griddynamics.jagger.agent.impl.JMXSystemUnderTestImpl" init-method="init"
           lazy-init="true">
-        <property name="jmxServices" value="${jmx.services}"/>
         <property name="name" value="#{agentConfig.getName()}"/>
+        <property name="executor" ref="agentExecutor"/>
+        <property name="jmxConnector" ref="jmxConnector"/>
     </bean>
 
     <!--bean id="jvmSnmpCollector" class="com.griddynamics.jagger.agent.impl.SNMPProvider">
@@ -123,7 +125,12 @@
     <bean id="monitoringService" class="com.griddynamics.jagger.agent.impl.MonitoringInfoServiceImpl">
         <property name="systemInfoService" ref="sigarAgent"/>
         <property name="systemUnderTestService" ref="jmxAgent"/>
-        <property name="jmxTimeout" value="${jmx.monitoring.timeout}"/>
+        <property name="jmxTimeout" ref="monitoringServiceTimeout"/>
+    </bean>
+
+    <bean id="monitoringServiceTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${jmx.monitoring.timeout}"/>
+        <property name="name"  value="jmx.monitoring.timeout"/>
     </bean>
 
     <bean id="defaultExchanger" class="com.griddynamics.jagger.coordinator.http.DefaultPackExchanger">
@@ -139,6 +146,10 @@
 
     <bean id="agentConfig" class="com.griddynamics.jagger.agent.AgentConfig">
         <property name="name" value="${agent.name}"/>
+    </bean>
+
+    <bean id="generalInfoCollector" class="com.griddynamics.jagger.agent.GeneralAgentInfoCollector">
+        <property name="monitoringInfoService" ref="monitoringService"/>
     </bean>
 
 </beans>

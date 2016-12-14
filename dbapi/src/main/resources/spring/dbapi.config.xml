@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.griddynamics.jagger.dbapi"/>
+
+    <bean id="executorService" class="java.util.concurrent.Executors"
+          factory-method="newCachedThreadPool"
+          destroy-method="shutdownNow">
+    </bean>
+
+    <bean id="monitoringPlotGroups" class="java.util.LinkedHashMap">
+        <constructor-arg index="0">
+            <map>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="CPU Utilization"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>CPU_STATE_SYSTEM_PERC</value>
+                        <value>CPU_STATE_USER_PERC</value>
+                        <value>CPU_STATE_IDLE_PERC</value>
+                        <value>CPU_STATE_IDLE_WAIT</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="CPU Load Average"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>CPU_LOAD_AVERAGE_1</value>
+                        <value>CPU_LOAD_AVERAGE_5</value>
+                        <value>CPU_LOAD_AVERAGE_15</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="System Memory"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>MEM_TOTAL</value>
+                        <value>MEM_USED</value>
+                        <value>MEM_FREE</value>
+                        <value>MEM_ACTUAL_USED</value>
+                        <value>MEM_ACTUAL_FREE</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="TCP Connections"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>TCP_LISTEN</value>
+                        <value>TCP_ESTABLISHED</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="TCP Traffic"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>TCP_INBOUND_TOTAL</value>
+                        <value>TCP_OUTBOUND_TOTAL</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="GC major count"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>JMX_GC_MAJOR_UNIT</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="GC major time"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>JMX_GC_MAJOR_TIME</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="GC minor count"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>JMX_GC_MINOR_UNIT</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="GC minor time"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>JMX_GC_MINOR_TIME</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="Heap Memory"/>
+                            <constructor-arg index="1" value="Heap Memory, MiB"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>HEAP_MEMORY_INIT</value>
+                        <value>HEAP_MEMORY_USED</value>
+                        <value>HEAP_MEMORY_COMMITTED</value>
+                        <value>HEAP_MEMORY_MAX</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="Non Heap Memory"/>
+                            <constructor-arg index="1" value="Non Heap Memory, MiB"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>NON_HEAP_MEMORY_INIT</value>
+                        <value>NON_HEAP_MEMORY_USED</value>
+                        <value>NON_HEAP_MEMORY_COMMITTED</value>
+                        <value>NON_HEAP_MEMORY_MAX</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="Disks IO"/>
+                            <constructor-arg index="1" value="Disks IO, KiB/sec"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>DISKS_READ_BYTES_TOTAL</value>
+                        <value>DISKS_WRITE_BYTES_TOTAL</value>
+                    </array>
+                </entry>
+                <entry>
+                    <key>
+                        <bean class="com.griddynamics.jagger.dbapi.parameter.GroupKey">
+                            <constructor-arg index="0" value="Thread Count"/>
+                        </bean>
+                    </key>
+                    <array value-type="com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters">
+                        <value>THREAD_COUNT</value>
+                        <value>THREAD_PEAK_COUNT</value>
+                    </array>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+
+
+</beans>

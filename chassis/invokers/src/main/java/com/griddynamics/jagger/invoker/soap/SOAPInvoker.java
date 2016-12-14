@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,20 +27,19 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.soap.*;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
-/// @todo Lowercase SOAP
+// @todo Lowercase SOAP
+// @todo Refactor code
 
-/** ??? Some short description
- * @author Alexey Kiselyov
+/** Create a SOAP request to SuT
+ * @author Mairbek Khadikov
  * @n
- * @par Details:
- * @details ???
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class SOAPInvoker implements Invoker<SOAPQuery, String, String> {
     private static final Logger log = LoggerFactory.getLogger(SOAPInvoker.class);
 

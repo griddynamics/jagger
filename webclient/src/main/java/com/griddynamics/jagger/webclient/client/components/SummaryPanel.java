@@ -1,16 +1,18 @@
 package com.griddynamics.jagger.webclient.client.components;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
-import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
-import com.griddynamics.jagger.webclient.client.dto.SessionDataDto;
-import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.griddynamics.jagger.dbapi.dto.SummaryIntegratedDto;
+import com.griddynamics.jagger.dbapi.model.MetricNode;
+import com.griddynamics.jagger.dbapi.model.WebClientProperties;
+import com.griddynamics.jagger.dbapi.dto.SessionDataDto;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,7 +31,6 @@ public class SummaryPanel extends Composite {
     @UiField
     VerticalPanel pane;
 
-    private SessionSummaryPanel sessionSummaryPanel;
     private SessionComparisonPanel sessionComparisonPanel;
 
     private Set<SessionDataDto> active = Collections.EMPTY_SET;
@@ -38,38 +39,24 @@ public class SummaryPanel extends Composite {
         initWidget(ourUiBinder.createAndBindUi(this));
     }
 
-    public void updateSessions(Set<SessionDataDto> chosenSessions){
-        if (chosenSessions.size() == 1){
-            //show session summary
+    public HashMap<MetricNode, SummaryIntegratedDto> getCachedMetrics() {
+        return sessionComparisonPanel.getCachedMetrics();
+    }
+
+    public SessionComparisonPanel getSessionComparisonPanel() {
+        return sessionComparisonPanel;
+    }
+
+    public void updateSessions(Set<SessionDataDto> chosenSessions, WebClientProperties webClientProperties, DateTimeFormat dateFormatter) {
+        if (chosenSessions.size() > 0){
+            //show sessions comparison
             pane.clear();
-            sessionSummaryPanel = new SessionSummaryPanel(chosenSessions.iterator().next());
-            sessionComparisonPanel = null;
-            pane.add(sessionSummaryPanel);
+            sessionComparisonPanel = new SessionComparisonPanel(chosenSessions, pane.getOffsetWidth(), webClientProperties, dateFormatter);
+            pane.add(sessionComparisonPanel);
         }else{
-            if (chosenSessions.size() > 1){
-                //show sessions comparison
-                pane.clear();
-                sessionComparisonPanel = new SessionComparisonPanel(chosenSessions);
-                sessionSummaryPanel = null;
-                pane.add(sessionComparisonPanel);
-            }else{
-                pane.clear();
-            }
+            pane.clear();
         }
         active = chosenSessions;
-    }
-
-
-    public void updateTests(Set<TaskDataDto> tests) {
-        if(sessionSummaryPanel != null){
-            sessionSummaryPanel.updateTests(tests);
-        }
-    }
-
-    public void updataMetrics(Set<MetricNameDto> metrics){
-        if (sessionComparisonPanel != null){
-            sessionComparisonPanel.updateMetrics(metrics);
-        }
     }
 
     public Set<String> getSessionIds(){

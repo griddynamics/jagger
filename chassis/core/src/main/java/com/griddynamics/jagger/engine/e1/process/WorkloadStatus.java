@@ -3,8 +3,8 @@ package com.griddynamics.jagger.engine.e1.process;/*
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,10 +27,12 @@ import java.io.Serializable;
 public class WorkloadStatus implements Serializable {
     private final int startedSamples;
     private final int finishedSamples;
+    private final int currentThreadNumber;
 
-    public WorkloadStatus(int startedSamples, int finishedSamples) {
+    public WorkloadStatus(int startedSamples, int finishedSamples, int currentThreadNumber) {
         this.startedSamples = startedSamples;
         this.finishedSamples = finishedSamples;
+        this.currentThreadNumber = currentThreadNumber;
     }
 
     public int getStartedSamples() {
@@ -41,11 +43,16 @@ public class WorkloadStatus implements Serializable {
         return finishedSamples;
     }
 
+    public int getCurrentThreadNumber() {
+        return currentThreadNumber;
+    }
+
     @Override
     public String toString() {
         return "WorkloadStatus{" +
                 "startedSamples=" + startedSamples +
                 ", finishedSamples=" + finishedSamples +
+                ", currentThreadNumber=" + currentThreadNumber +
                 '}';
     }
 }

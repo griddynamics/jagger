@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -35,10 +35,17 @@ public class FileProviderTest {
 
     @Test
     public static void test() throws Exception {
-        FileProvider<String> firstProvider = new FileProvider<String>("src/test/resources/file-reader.txt");
+        final String file;
+        if (System.lineSeparator().equals("\r\n")) {
+            file = FileProviderTest.class.getResource("/file-reader-windows.txt").getFile();
+        } else {
+            file = FileProviderTest.class.getResource("/file-reader-unix.txt").getFile();
+        }
+
+        FileProvider<String> firstProvider = new FileProvider<String>(file);
         testIterable(firstProvider);
         testIterable(firstProvider);
-        FileProvider<String> secondProvider = new FileProvider<String>("src/test/resources/file-reader.txt");
+        FileProvider<String> secondProvider = new FileProvider<String>(file);
         testIterable(secondProvider);
         testIterable(firstProvider);
     }

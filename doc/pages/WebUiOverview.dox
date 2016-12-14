@@ -1,0 +1,35 @@
+/// @page WebUiOverview WebUi features overview
+/// @brief Section describes main features of Jagger Web client @n
+/// @details
+/// @n
+/// Back to @ref WebUiMain @n
+/// @n
+/// Jagger WebUI features available from the box
+/// @n
+/// @li @ref section_webui_session_comparison
+/// @li @ref section_webui_trends
+/// @li @ref section_webui_details
+/// @li @ref section_webui_nodes
+///
+/// @n
+/// @n
+/// @section section_webui_session_comparison Session comparison
+/// @n
+///    @image html webUI_sessions.png "Compare sessions"
+/// @n
+///
+/// @section section_webui_trends Trends for measured results
+/// @n
+///    @image html webUI_trends.png "Compare sessions. Trends for measured parameters"
+/// @n
+///
+/// @section section_webui_details Metric details
+/// @n
+///    @image html webUI_metrics.png "Metric details"
+/// @n
+///
+/// @section section_webui_nodes Information about test nodes
+/// @n
+///    @image html webUI_nodes.png "Nodes information"
+/// @n
+///

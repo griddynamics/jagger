@@ -11,29 +11,24 @@ public class ExactInvocationsClock implements WorkloadClock {
 
     private static final Logger log = LoggerFactory.getLogger(ExactInvocationsClock.class);
 
-    private static final int SAMPLES_COUNT_SPLITTING_FACTOR = 4;
-
     private int threadCount;
 
     private int samplesCount;
 
     private int samplesSubmitted;
 
-    private int totalSamples;
-
     private int delay;
-
-    private int tickCount = 0;
-
-    private Map<NodeId, WorkloadConfiguration> submittedConfigurations = new HashMap<NodeId, WorkloadConfiguration>();
 
     private int tickInterval;
 
-    public ExactInvocationsClock(int samplesCount, int threadCount, int delay, int tickInterval) {
+    private long period;
+
+    public ExactInvocationsClock(int samplesCount, int threadCount, int delay, int tickInterval, long period) {
         this.samplesCount = samplesCount;
         this.threadCount  = threadCount;
         this.delay        = delay;
         this.tickInterval = tickInterval;
+        this.period = period;
     }
 
     @Override
@@ -46,75 +41,74 @@ public class ExactInvocationsClock implements WorkloadClock {
         return result;
     }
 
+    private long startTime = 0;
+
     @Override
     public void tick(WorkloadExecutionStatus status, WorkloadAdjuster adjuster) {
         log.debug("Going to perform tick with status {}", status);
 
-        tickCount ++;
-        totalSamples = status.getTotalSamples();
-        int avgSamplesPerTick = totalSamples / tickCount;
+        if (isPeriodic()) {
 
-        int samplesLeft = samplesCount - samplesSubmitted;
+            long currentTime = System.currentTimeMillis();
+            if (startTime == 0) {
+                startTime = currentTime - period;
+            }
+            long difference = currentTime - startTime;
+            if(difference >= period) {
+                if (status.getTotalSamples() < samplesSubmitted) {
+                    log.warn("Can not create such load with {} invocations with {} ms period", samplesCount, period);
+                }
+                startTime = startTime + period;
+                sendSamples(samplesCount, status, adjuster);
+            }
+        } else {
+
+            int samplesLeft = samplesCount - samplesSubmitted;
+            sendSamples(samplesLeft, status, adjuster);
+        }
+    }
+
+
+    private void sendSamples(int samplesLeft, WorkloadExecutionStatus status, WorkloadAdjuster adjuster) {
+
         if (samplesLeft <= 0) {
             return;
         }
 
-        if (status.getTotalSamples() < samplesSubmitted / 2) {
-            return;
-        }
-
         Set<NodeId> nodes = status.getNodes();
-        int threads =  threadCount / nodes.size();
-        int residue = threadCount % nodes.size();
-        int samplesToAdd = (samplesLeft <= SAMPLES_COUNT_SPLITTING_FACTOR || samplesLeft < avgSamplesPerTick * 1.5) ?
-                samplesLeft : samplesLeft / SAMPLES_COUNT_SPLITTING_FACTOR;
-        if (samplesLeft > nodes.size() && samplesToAdd < nodes.size()) {
-            samplesToAdd = nodes.size();
-        }
-        Map<NodeId, Double>  factors = calculateFactors(status, submittedConfigurations);
+        int nodesSize = nodes.size();
+        int threadsForOneNode =  threadCount / nodesSize;                      // how many threads should be distributed for one node(kernel)
+        int threadsResidue = threadCount % nodesSize;                          // residue of threads
+
+        int samplesForOneThread = samplesLeft / threadCount;                   //how many samples should be distributed for ont thread
+
+        int samplesResidueByThreads = samplesLeft % threadCount;               // residue samples of threads
+        int additionalSamplesForOneNode = samplesResidueByThreads / nodesSize; // how many samples should be added for each node(kernel)
+        int samplesResidue = samplesResidueByThreads % nodesSize;              // residue samples of nodes
+
         int s = 0;
         for (NodeId node : nodes) {
-            int samples = submittedConfigurations.get(node) != null ? submittedConfigurations.get(node).getSamples() : 0;
-            int curThreads = threads;
-            if (residue > 0) {
+            int curSamples = status.getSamples(node);
+            int curThreads = threadsForOneNode;
+            if (threadsResidue > 0) {
                 curThreads ++;
-                residue --;
-            }
-            if (samplesToAdd > 0 && samplesToAdd < nodes.size()) {
-                samples ++;
-                samplesToAdd --;
-            } else {
-                samples += samplesToAdd * factors.get(node);
+                threadsResidue --;
             }
 
-            WorkloadConfiguration workloadConfiguration = WorkloadConfiguration.with(curThreads, delay, samples);
+            curSamples += samplesForOneThread * curThreads + additionalSamplesForOneNode;
+            if (samplesResidue > 0) {
+                curSamples ++;
+                samplesResidue --;
+            }
+            WorkloadConfiguration workloadConfiguration = WorkloadConfiguration.with(curThreads, delay, curSamples);
             adjuster.adjustConfiguration(node, workloadConfiguration);
-            s += samples;
-            submittedConfigurations.put(node, workloadConfiguration);
+            s += curSamples;
         }
         samplesSubmitted = s;
     }
 
-    private Map<NodeId, Double> calculateFactors(WorkloadExecutionStatus status, Map<NodeId, WorkloadConfiguration> configurations) {
-        Map<NodeId, Double> result = new HashMap<NodeId, Double>();
-
-        Map<NodeId, Double> scores = new HashMap<NodeId, Double>();
-        int nodesCount = status.getNodes().size();
-        double scoreSum = 0;
-        for (NodeId nodeId: status.getNodes()) {
-            double totalSamplesRate = (status.getTotalSamples() == 0) ?
-                    (1d / nodesCount) :
-                    (double) status.getSamples(nodeId) / status.getTotalSamples();
-
-            double score = totalSamplesRate;
-            scores.put(nodeId, score);
-            scoreSum += score;
-        }
-
-        for (NodeId nodeId: status.getNodes()) {
-            result.put(nodeId, scores.get(nodeId) / scoreSum);
-        }
-        return result;
+    private boolean isPeriodic() {
+        return period != -1;
     }
 
     @Override

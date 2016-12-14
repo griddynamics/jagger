@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -30,11 +29,14 @@
                 <value>spring/root.properties</value>
             </list>
         </property>
-        <property name="priorityResources">
-            <list>
-                <value>spring/priority.properties</value>
-            </list>
-        </property>
+        <property name="priorityResources" ref="allPropertiesFiles"/>
+    </bean>
+    <bean id="userPropertiesFiles" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray">
+        <constructor-arg type="java.lang.String" value="#{systemProperties['test.properties.resolver.test']}"/>
+    </bean>
+    <bean id="allPropertiesFiles" class="org.springframework.util.StringUtils" factory-method="concatenateStringArrays">
+        <constructor-arg index="0" value="spring/priority.properties"/>
+        <constructor-arg index="1" ref="userPropertiesFiles"/>
     </bean>
 
     <bean class="com.griddynamics.jagger.util.PropertiesResolver">
@@ -75,4 +77,11 @@
         <constructor-arg value="${spec-4}"/>
     </bean>
 
+    <bean id="stringF" class="java.lang.String">
+        <constructor-arg value="${a}"/>
+    </bean>
+
+    <bean id="stringG" class="java.lang.String">
+        <constructor-arg value="${b}"/>
+    </bean>
 </beans>

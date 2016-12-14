@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -21,6 +20,8 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="monitoring.metrics.conf.xml"/>
 
     <bean id="kernel" class="com.griddynamics.jagger.kernel.SimpleKernel">
         <constructor-arg ref="coordinator"/>
@@ -53,18 +54,22 @@
         <property name="monitoringProcessor" ref="loggingMonitoringProcessor"/>
         <property name="logWriter" ref="bufferedLogWriter"/>
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="ttl" value="${chassis.monitoring.command.execution.ttl}"/>
+        <property name="ttl" ref="monitoringWorkerTimeout"/>
     </bean>
 
     <bean id="loggingMonitoringProcessor" class="com.griddynamics.jagger.monitoring.LoggingMonitoringProcessor">
-        <property name="logWriter" ref="bufferedLogWriter"/>
-
+        <property name="monitoringMetricsDescription" ref="monitoringMetricsDescription"/>
     </bean>
 
     <bean id="monitoringExecutor" class="com.griddynamics.jagger.util.ConfigurableExecutor">
         <property name="corePoolSize" value="${chassis.monitoring.executor.pool.core}"/>
         <property name="maximumPoolSize" value="${chassis.monitoring.executor.pool.max}"/>
         <property name="nameFormat" value="monitoring-pool-%d"/>
+    </bean>
+
+    <bean id="monitoringWorkerTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${chassis.monitoring.command.execution.ttl}"/>
+        <property name="name"  value="chassis.monitoring.command.execution.ttl"/>
     </bean>
 
 </beans>

@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,6 +22,8 @@ package com.griddynamics.jagger.master.configuration;
 
 import java.util.List;
 
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.reporting.ReportingService;
 
@@ -38,6 +40,7 @@ public class Configuration {
 	private List<SessionExecutionListener> sessionExecutionListeners = Lists.newLinkedList();
 	private List<DistributionListener> distributionListeners = Lists.newLinkedList();
 
+    private List<Provider<LoadScenarioListener>> loadScenarioListeners = Lists.newLinkedList();
 
     private MonitoringConfiguration monitoringConfiguration = null;
     private ReportingService report;
@@ -81,4 +84,13 @@ public class Configuration {
     public List<DistributionListener> getDistributionListeners() {
         return distributionListeners;
     }
+
+    public List<Provider<LoadScenarioListener>> getLoadScenarioListeners() {
+        return loadScenarioListeners;
+    }
+
+    public void setLoadScenarioListeners(List<Provider<LoadScenarioListener>> loadScenarioListeners) {
+        this.loadScenarioListeners = loadScenarioListeners;
+    }
+
 }

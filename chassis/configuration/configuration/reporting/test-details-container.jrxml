@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -28,12 +27,14 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
-    <field name="testId" class="java.lang.String"/>
+    <parameter name="sessionId" class="java.lang.String"/>
     <field name="testName" class="java.lang.String"/>
+    <field name="id" class="java.lang.String"/>
+
     <group name="test" isStartNewPage="false">
-        <groupExpression><![CDATA[$F{testId}]]></groupExpression>
+        <groupExpression><![CDATA[$F{id}]]></groupExpression>
     </group>
     <title>
         <band height="50" splitType="Prevent">
@@ -52,7 +53,7 @@
         </band>
     </title>
     <detail>
-        <band height="70" splitType="Stretch">
+        <band height="90" splitType="Stretch">
             <frame>
                 <reportElement x="0" y="0" width="550" height="70"/>
                 <rectangle>
@@ -66,45 +67,34 @@
                     <textElement textAlignment="Center" verticalAlignment="Middle"/>
                     <textFieldExpression><![CDATA[$F{testName}]]></textFieldExpression>
                 </textField>
+                <staticText>
+                    <reportElement style="Header_Bold" x="0" y="20" width="500" height="20" forecolor="#000000"/>
+                    <textElement textAlignment="Left"/>
+                    <text><![CDATA[Validators]]></text>
+                </staticText>
                 <subreport>
-                    <reportElement positionType="Float" x="0" y="20" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <reportElement positionType="Float" x="0" y="45" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("validationResults").getDataSource( $F{testId} )]]></dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("validationResults").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("validationResults").getReport( $F{testId} )]]></subreportExpression>
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("validationResults").getReport( $F{id} )]]></subreportExpression>
                 </subreport>
                 <subreport>
-                    <reportElement positionType="Float" x="0" y="30" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <reportElement positionType="Float" x="0" y="55" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("metricsResults").getDataSource( $F{testId} )]]></dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("metricsResults").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("metricsResults").getReport( $F{testId} )]]></subreportExpression>
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("metricsResults").getReport( $F{id} )]]></subreportExpression>
                 </subreport>
                 <subreport>
-                    <reportElement positionType="Float" x="0" y="40" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                    <reportElement positionType="Float" x="0" y="65" width="550" height="10"/>
+                    <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                     <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("testTimePlots").getDataSource( $F{testId} )]]></dataSourceExpression>
+                        <![CDATA[$P{context}.getMappedProvider("profiler").getDataSource( $F{id} , $P{sessionId} )]]></dataSourceExpression>
                     <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("testTimePlots").getReport( $F{testId} )]]></subreportExpression>
-                </subreport>
-                <subreport>
-                    <reportElement positionType="Float" x="0" y="50" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
-                    <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("sysUTPlots").getDataSource( $F{testId} )]]></dataSourceExpression>
-                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("sysUTPlots").getReport( $F{testId} )]]></subreportExpression>
-                </subreport>
-                <subreport>
-                    <reportElement positionType="Float" x="0" y="60" width="550" height="10"/>
-                    <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
-                    <dataSourceExpression>
-                        <![CDATA[$P{context}.getMappedProvider("profiler").getDataSource( $F{testId} )]]></dataSourceExpression>
-                    <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
-                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("profiler").getReport( $F{testId} )]]></subreportExpression>
+                        <![CDATA[(net.sf.jasperreports.engine.JasperReport) $P{context}.getMappedProvider("profiler").getReport( $F{id} )]]></subreportExpression>
                 </subreport>
             </frame>
         </band>

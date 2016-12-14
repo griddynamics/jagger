@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,39 +20,30 @@
 
 package com.griddynamics.jagger.engine.e1.sessioncomparation;
 
-import com.google.common.base.Objects;
-import com.griddynamics.jagger.master.SessionIdProvider;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.google.common.base.Objects;
 
 public class BaselineSessionProvider {
     public static final String IDENTITY_SESSION = "#IDENTITY";
-
-    private String sessionId;
-    private SessionIdProvider sessionIdProvider;
-
-    public String getBaselineSession() {
-
-        if (IDENTITY_SESSION.equals(sessionId)) {
-            return sessionIdProvider.getSessionId();
-        }
-
-        return sessionId;
+    
+    private String baselineSessionId;
+    
+    public String getBaselineSession(String currentSession) {
+        return IDENTITY_SESSION.equals(baselineSessionId) ? currentSession : baselineSessionId;
     }
-
+    
     @Required
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setBaselineSessionId(String baselineSessionId) {
+        this.baselineSessionId = baselineSessionId;
+        if (StringUtils.isBlank(baselineSessionId)) {
+            this.baselineSessionId = IDENTITY_SESSION;
+        }
     }
-
+    
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("sessionId", sessionId)
-                .toString();
-    }
-
-    @Required
-    public void setSessionIdProvider(SessionIdProvider sessionIdProvider) {
-        this.sessionIdProvider = sessionIdProvider;
+        return Objects.toStringHelper(this).add("baselineSessionId", baselineSessionId).toString();
     }
 }

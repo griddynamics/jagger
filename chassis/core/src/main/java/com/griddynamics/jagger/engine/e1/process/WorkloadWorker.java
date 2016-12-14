@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,20 +22,17 @@ package com.griddynamics.jagger.engine.e1.process;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.griddynamics.jagger.agent.model.GetGeneralNodeInfo;
 import com.griddynamics.jagger.coordinator.CommandExecutor;
 import com.griddynamics.jagger.coordinator.ConfigurableWorker;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.Qualifier;
-import com.griddynamics.jagger.engine.e1.scenario.CalibrationInfoCollector;
-import com.griddynamics.jagger.invoker.Scenario;
-import com.griddynamics.jagger.invoker.ScenarioFactory;
+import com.griddynamics.jagger.kernel.WorkloadWorkerCommandExecutor;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.ExceptionLogger;
-import com.griddynamics.jagger.util.Futures;
-import com.griddynamics.jagger.util.Pair;
+import com.griddynamics.jagger.util.GeneralInfoCollector;
+import com.griddynamics.jagger.util.GeneralNodeInfo;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,15 +41,17 @@ import org.springframework.beans.factory.annotation.Required;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * Adapts {@link WorkloadProcess} to coordination API.
+ * Adapts {@link PerThreadWorkloadProcess} and {@link PeriodWorkloadProcess} to coordination API.
  */
 public class WorkloadWorker extends ConfigurableWorker {
     private static final Logger log = LoggerFactory.getLogger(WorkloadWorker.class);
     private TimeoutsConfiguration timeoutsConfiguration;
+
+    private GeneralInfoCollector generalInfoCollector = new GeneralInfoCollector();
 
     private Map<String, WorkloadProcess> processes = Maps.newConcurrentMap();
     private Map<String, Integer> pools = Maps.newConcurrentMap();
@@ -71,12 +70,16 @@ public class WorkloadWorker extends ConfigurableWorker {
 
     @Override
     public void configure() {
-        onCommandReceived(StartWorkloadProcess.class).execute(new CommandExecutor<StartWorkloadProcess, String>() {
+        onCommandReceived(StartWorkloadProcess.class).execute(
+                new WorkloadWorkerCommandExecutor<StartWorkloadProcess, String>() {
+
+            @Override
             public Qualifier<StartWorkloadProcess> getQualifier() {
                 return Qualifier.of(StartWorkloadProcess.class);
             }
 
-            public String execute(StartWorkloadProcess command, NodeContext nodeContext) {
+            @Override
+            public String doExecute(StartWorkloadProcess command, NodeContext nodeContext) {
                 log.debug("Processing command {}", command);
                 int poolSize = command.getPoolSize();
 
@@ -84,13 +87,18 @@ public class WorkloadWorker extends ConfigurableWorker {
                     throw new IllegalStateException("Error! Pool size is less then thread count");
                 }
 
-                WorkloadProcess process = new WorkloadProcess(command.getSessionId(), command, nodeContext,
-                        Executors.newFixedThreadPool(poolSize,
-                                new ThreadFactoryBuilder()
-                                        .setNameFormat("workload-thread %d")
-                                        .setUncaughtExceptionHandler(ExceptionLogger.INSTANCE)
-                                        .build()
-                        ), timeoutsConfiguration);
+                WorkloadProcess process;
+
+                if (command.getScenarioContext().getWorkloadConfiguration().getPeriod() > 0) {
+                    log.info("start periodic load process");
+                    // start periodic process
+                    process = new PeriodWorkloadProcess(command.getSessionId(), command, nodeContext,
+                            getFixedThreadPoolExecutor(poolSize), timeoutsConfiguration);
+                } else {
+                    log.info("start per thread load process");
+                    process = new PerThreadWorkloadProcess(command.getSessionId(), command, nodeContext,
+                            getFixedThreadPoolExecutor(poolSize), timeoutsConfiguration);
+                }
                 String processId = generateId();
                 processes.put(processId, process);
                 pools.put(processId, poolSize);
@@ -100,12 +108,16 @@ public class WorkloadWorker extends ConfigurableWorker {
         }
         );
 
-        onCommandReceived(ChangeWorkloadConfiguration.class).execute(new CommandExecutor<ChangeWorkloadConfiguration, Boolean>() {
+        onCommandReceived(ChangeWorkloadConfiguration.class).execute(
+                new WorkloadWorkerCommandExecutor<ChangeWorkloadConfiguration, Boolean>() {
+
+            @Override
             public Qualifier<ChangeWorkloadConfiguration> getQualifier() {
                 return Qualifier.of(ChangeWorkloadConfiguration.class);
             }
 
-            public Boolean execute(ChangeWorkloadConfiguration command, NodeContext nodeContext) {
+            @Override
+            public Boolean doExecute(ChangeWorkloadConfiguration command, NodeContext nodeContext) {
                 Preconditions.checkArgument(command.getProcessId() != null, "Process id cannot be null");
 
                 Integer poolSize = pools.get(command.getProcessId());
@@ -122,13 +134,16 @@ public class WorkloadWorker extends ConfigurableWorker {
         }
         );
 
-        onCommandReceived(PollWorkloadProcessStatus.class).execute(new CommandExecutor<PollWorkloadProcessStatus, WorkloadStatus>() {
+        onCommandReceived(PollWorkloadProcessStatus.class).execute(
+                new WorkloadWorkerCommandExecutor<PollWorkloadProcessStatus, WorkloadStatus>() {
 
-            public Qualifier<PollWorkloadProcessStatus> getQualifier() {
+            @Override
+            public Qualifier getQualifier() {
                 return Qualifier.of(PollWorkloadProcessStatus.class);
             }
 
-            public WorkloadStatus execute(PollWorkloadProcessStatus command, NodeContext nodeContext) {
+            @Override
+            public WorkloadStatus doExecute(PollWorkloadProcessStatus command, NodeContext nodeContext) {
                 Preconditions.checkArgument(command.getProcessId() != null, "Process id cannot be null");
 
                 WorkloadProcess process = getProcess(command.getProcessId());
@@ -137,12 +152,16 @@ public class WorkloadWorker extends ConfigurableWorker {
         }
         );
 
-        onCommandReceived(StopWorkloadProcess.class).execute(new CommandExecutor<StopWorkloadProcess, WorkloadStatus>() {
+        onCommandReceived(StopWorkloadProcess.class).execute(
+                new WorkloadWorkerCommandExecutor<StopWorkloadProcess, WorkloadStatus>() {
+
+            @Override
             public Qualifier<StopWorkloadProcess> getQualifier() {
                 return Qualifier.of(StopWorkloadProcess.class);
             }
 
-            public WorkloadStatus execute(StopWorkloadProcess command, NodeContext nodeContext) {
+            @Override
+            public WorkloadStatus doExecute(StopWorkloadProcess command, NodeContext nodeContext) {
                 log.debug("Going to stop process {} on kernel {}", command.getProcessId(), nodeContext.getId().getIdentifier());
 
                 Preconditions.checkArgument(command.getProcessId() != null, "Process id cannot be null");
@@ -155,51 +174,37 @@ public class WorkloadWorker extends ConfigurableWorker {
             }
         });
 
-        onCommandReceived(PerformCalibration.class).execute(new CommandExecutor<PerformCalibration, Boolean>() {
-            @Override
-            public Qualifier<PerformCalibration> getQualifier() {
-                return Qualifier.of(PerformCalibration.class);
-            }
+        onCommandReceived(GetGeneralNodeInfo.class).execute(
+                new WorkloadWorkerCommandExecutor<GetGeneralNodeInfo, GeneralNodeInfo>() {
 
-            @Override
-            public Boolean execute(PerformCalibration command, NodeContext nodeContext) {
-                ScenarioFactory<Object, Object, Object> scenarioFactory = command.getScenarioFactory();
+                    @Override
+                    public Qualifier<GetGeneralNodeInfo> getQualifier() {
+                        return Qualifier.of(GetGeneralNodeInfo.class);
+                    }
 
-                Scenario<Object, Object, Object> scenario = scenarioFactory.get(nodeContext);
-                int calibrationSamplesCount = scenarioFactory.getCalibrationSamplesCount();
+                    @Override
+                    public GeneralNodeInfo doExecute(GetGeneralNodeInfo command, NodeContext nodeContext) {
+                        long startTime = System.currentTimeMillis();
+                        log.debug("start GetGeneralNodeInfo on kernel {}", nodeContext.getId());
+                        GeneralNodeInfo generalNodeInfo = generalInfoCollector.getGeneralNodeInfo();
+                        log.debug("finish GetGeneralNodeInfo on kernel {} time {} ms", nodeContext.getId(), System.currentTimeMillis() - startTime);
+                        return generalNodeInfo;
+                    }
+                });
 
-                CalibrationInfoCollector calibrationInfoCollector = new CalibrationInfoCollector(command.getSessionId(),
-                        command.getTaskId(),
-                        nodeContext);
+    }
 
-                ExecutorService executor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
-                        .setNameFormat("workload-calibration-thread %d")
+    /**
+     * @param poolSize size of fixed thread pool to create
+     * @return {@link ThreadPoolExecutor} instance with given pool size
+     */
+    private ThreadPoolExecutor getFixedThreadPoolExecutor(int poolSize) {
+        return (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize,
+                new ThreadFactoryBuilder()
+                        .setNameFormat("workload-thread %d")
                         .setUncaughtExceptionHandler(ExceptionLogger.INSTANCE)
-                        .build());
-                WorkloadService calibrationThread = WorkloadService
-                        .builder(scenario)
-                        .addCollector(calibrationInfoCollector)
-                        .useExecutor(executor)
-                        .buildServiceWithPredefinedSamples(calibrationSamplesCount);
-
-                ListenableFuture<Service.State> start = calibrationThread.start();
-
-                Futures.get(start, timeoutsConfiguration.getCalibrationStartTimeout());
-
-                Services.awaitTermination(calibrationThread, timeoutsConfiguration.getCalibrationTimeout());
-
-                final Map<Pair<Object, Object>, Throwable> errors = calibrationInfoCollector.getErrors();
-                if (!errors.isEmpty()) {
-                    log.error("Calibration failed for {} samples", errors.size());
-                    return false;
-                }
-
-                executor.shutdown();
-                logWriter.flush();
-                return true;
-            }
-        });
-
+                        .build()
+        );
     }
 
     private String generateId() {

@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,8 +20,11 @@
 
 package com.griddynamics.jagger.invoker;
 
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.griddynamics.jagger.invoker.Invokers.doNothing;
+import static com.griddynamics.jagger.invoker.Invokers.emptyListener;
 
 /**
  * Encapsulates algorithm of load testing.
@@ -29,15 +32,30 @@ import static com.griddynamics.jagger.invoker.Invokers.doNothing;
  * @author Mairbek Khadikov
  */
 public abstract class Scenario<Q, R, E> {
-    private LoadInvocationListener<Q, R, E> listener = doNothing();
 
+    // strange program design - listeners look like foreign elements
+    private LoadInvocationListener<Q, R, E> listener = doNothing();
+    private InvocationListener<Q, R, E> invocationListener = emptyListener();
+
+    @Deprecated
     protected LoadInvocationListener<Q, R, E> getListener() {
         return listener;
     }
 
+    // from 1.2.4 all listeners are wrapped in loadInvocationListener
+    @Deprecated
     public void setListener(LoadInvocationListener<Q, R, E> listener) {
         checkNotNull(listener);
         this.listener = Invokers.logErrors(listener);
+    }
+
+    protected InvocationListener<Q, R, E> getInvocationListener(){
+        return invocationListener;
+    }
+
+    public void setInvocationListener(InvocationListener<Q, R, E> invocationListener) {
+        checkNotNull(invocationListener);
+        this.invocationListener = invocationListener;
     }
 
     public abstract void doTransaction();

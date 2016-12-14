@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.util;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.Uninterruptibles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +33,14 @@ import java.util.concurrent.TimeoutException;
 public class Futures {
     private final static Logger log = LoggerFactory.getLogger(Futures.class);
 
-    public static <V> V get(Future<V> future, long millis) {
+    public static <V> V get(Future<V> future, Timeout millis) {
         try {
-            return com.google.common.util.concurrent.Futures.makeUninterruptible(future).get(millis, TimeUnit.MILLISECONDS);
+            return Uninterruptibles.getUninterruptibly(future, millis.getValue(), TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             log.error("Execution failed {}", e);
             throw Throwables.propagate(e);
         } catch (TimeoutException e) {
-            log.error("Timeout of {} millis failed {}", millis, e);
+            log.error("Timeout of {} failed \n{}", millis.toString(), e);
             throw Throwables.propagate(e);
         }
 

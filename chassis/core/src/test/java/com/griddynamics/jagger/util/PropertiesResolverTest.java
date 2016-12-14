@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -32,6 +32,8 @@ public class PropertiesResolverTest {
 
     @Test
     public void testPropertiesResolver() throws MalformedURLException {
+        System.setProperty("test.properties.resolver.test","spring/priority.user-1.properties,spring/priority.user-2.properties");
+
         ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"spring/test-properties-resolver.xml"});
         // test
         Assert.assertEquals(context.getBean("stringA"), "x-override");
@@ -39,5 +41,7 @@ public class PropertiesResolverTest {
         Assert.assertEquals(context.getBean("stringC"), "x-override/y-default/ex");
         Assert.assertEquals(context.getBean("stringD"), "x-override+y-default");
         Assert.assertEquals(context.getBean("stringE"), "z-priority+x-override+y-default");
+        Assert.assertEquals(context.getBean("stringF"), "a-priority-user-1-override");
+        Assert.assertEquals(context.getBean("stringG"), "b-priority-user-2-override");
     }
 }

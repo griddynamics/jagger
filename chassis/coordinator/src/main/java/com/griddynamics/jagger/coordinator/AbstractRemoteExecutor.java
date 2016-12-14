@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,14 +20,20 @@
 
 package com.griddynamics.jagger.coordinator;
 
+import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.SettableFuture;
 import com.griddynamics.jagger.coordinator.async.*;
 import com.griddynamics.jagger.util.Futures;
+import com.griddynamics.jagger.util.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.concurrent.Future;
 
 public abstract class AbstractRemoteExecutor implements RemoteExecutor {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractRemoteExecutor.class);
 
     @Override
     public <C extends Command<R>, R extends Serializable> Future<R> run(C command, NodeCommandExecutionListener<C> listener) {
@@ -38,7 +44,19 @@ public abstract class AbstractRemoteExecutor implements RemoteExecutor {
 
     @Override
     public <C extends Command<R>, R extends Serializable> R runSyncWithTimeout(C command, NodeCommandExecutionListener<C> listener, long millis) {
+        return runSyncWithTimeout(command, listener, new Timeout(millis,"no_name"));
+    }
+
+    @Override
+    public <C extends Command<R>, R extends Serializable> R runSyncWithTimeout(C command, NodeCommandExecutionListener<C> listener, Timeout millis) {
         Future<R> future = run(command, listener);
-        return Futures.get(future, millis);
+
+        try{
+            return Futures.get(future, millis);
+        }catch (Exception e){
+            log.error("Going to shutdown execution of command {}", command.getClass().getCanonicalName());
+            future.cancel(true);
+            throw Throwables.propagate(e);
+        }
     }
 }

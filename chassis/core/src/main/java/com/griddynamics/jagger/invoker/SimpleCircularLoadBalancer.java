@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -25,16 +25,6 @@ import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
 
-/** LoadBalancer that share PairSupplier (list of pairs (query, endpoint)) with threads on kernel.
- * @author ???
- * @n
- * @par Details:
- * @details Each thread has it's own Iterator that comes from provide() method. ???
- *
- * @param <Q> query
- * @param <E> endpoint
- *
- * @ingroup Main_Distributors_group */
 public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
 
     @Override
@@ -42,7 +32,8 @@ public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBal
 
         return new AbstractIterator<Pair<Q,E>> () {
 
-            private int size = pairSupplier.size();
+            private PairSupplier<Q, E> pairs = getPairSupplier();
+            private int size = pairs.size();
             private int index = 0;
 
             @Override
@@ -50,7 +41,7 @@ public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBal
                 if(index >= size) {
                     index = 0;
                 }
-                return pairSupplier.get(index++);
+                return pairs.get(index++);
             }
 
             @Override

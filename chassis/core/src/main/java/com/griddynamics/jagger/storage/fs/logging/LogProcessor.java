@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,22 +20,12 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import com.google.common.collect.Lists;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.*;
-import com.griddynamics.jagger.util.statistics.StatisticsCalculator;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import com.griddynamics.jagger.dbapi.DatabaseService;
+import com.griddynamics.jagger.dbapi.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * @author Alexey Kiselyov
@@ -43,85 +33,32 @@ import java.util.List;
  */
 public class LogProcessor extends HibernateDaoSupport {
 
-    private static final Logger log = LoggerFactory.getLogger(LogProcessor.class);
-
-    private List<Double> timeWindowPercentilesKeys;
-    private List<Double> globalPercentilesKeys;
-
-
-    protected TaskData getTaskData(final String taskId, final String sessionId) {
-        return getHibernateTemplate().execute(new HibernateCallback<TaskData>() {
-            @Override
-            public TaskData doInHibernate(Session session) throws HibernateException, SQLException {
-                return (TaskData) session.createQuery("select t from TaskData t where sessionId=? and taskId=?")
-                        .setParameter(0, sessionId)
-                        .setParameter(1, taskId)
-                        .uniqueResult();
-            }
-        });
-    }
-
-    protected TimeInvocationStatistics assembleInvocationStatistics(long time, StatisticsCalculator calculator,
-                                                                    Double throughput, TaskData taskData) {
-        TimeInvocationStatistics statistics = new TimeInvocationStatistics(
-                time,
-                calculator.getMean() / 1000,
-                calculator.getStandardDeviation() / 1000,
-                throughput,
-                taskData
-        );
-
-        List<TimeLatencyPercentile> percentiles = new ArrayList<TimeLatencyPercentile>();
-        for (double percentileKey : getTimeWindowPercentilesKeys()) {
-            double percentileValue = calculator.getPercentile(percentileKey);
-            TimeLatencyPercentile percentile = new TimeLatencyPercentile(percentileKey, percentileValue);
-            percentile.setTimeInvocationStatistics(statistics);
-            percentiles.add(percentile);
-        }
-        if (!percentiles.isEmpty()) {
-            statistics.setPercentiles(percentiles);
-        }
-
-        return statistics;
-    }
-
-    protected WorkloadProcessDescriptiveStatistics assembleDescriptiveScenarioStatistics(StatisticsCalculator calculator, TaskData taskData) {
-        WorkloadProcessDescriptiveStatistics statistics = new WorkloadProcessDescriptiveStatistics();
-        statistics.setTaskData(taskData);
-
-        List<WorkloadProcessLatencyPercentile> percentiles = Lists.newArrayList();
-        for (double percentileKey : getGlobalPercentilesKeys()) {
-            double percentileValue = calculator.getPercentile(percentileKey);
-            if (Double.isNaN(percentileKey) || Double.isNaN(percentileValue)) {
-                log.error("Percentile has NaN values : key={}, value={}", percentileKey, percentileValue);
-                continue;
-            }
-            WorkloadProcessLatencyPercentile percentile = new WorkloadProcessLatencyPercentile(percentileKey, percentileValue);
-            percentile.setWorkloadProcessDescriptiveStatistics(statistics);
-            percentiles.add(percentile);
-        }
-        if (!percentiles.isEmpty()) {
-            statistics.setPercentiles(percentiles);
-        }
-        return statistics;
-    }
+    protected DatabaseService databaseService;
 
     @Required
-    public void setTimeWindowPercentilesKeys(List<Double> timeWindowPercentilesKeys) {
-        this.timeWindowPercentilesKeys = new ArrayList<Double>(new HashSet<Double>(timeWindowPercentilesKeys));
+    public void setDatabaseService(DatabaseService databaseService) {
+        this.databaseService = databaseService;
     }
 
-    @Required
-    public void setGlobalPercentilesKeys(List<Double> globalPercentilesKeys) {
-        this.globalPercentilesKeys = new ArrayList<Double>(new HashSet<Double>(globalPercentilesKeys));
+    protected TaskData getTaskData(String taskId, String sessionId) {
+        return databaseService.getTaskData(taskId, sessionId);
     }
 
+    protected void persistAggregatedMetricValue(Number value, MetricDescriptionEntity md) {
+        MetricSummaryEntity entity = new MetricSummaryEntity();
+        entity.setTotal(value.doubleValue());
+        entity.setMetricDescription(md);
 
-    public List<Double> getTimeWindowPercentilesKeys() {
-        return timeWindowPercentilesKeys;
+        getHibernateTemplate().persist(entity);
     }
 
-    public List<Double> getGlobalPercentilesKeys() {
-        return globalPercentilesKeys;
+    protected MetricDescriptionEntity persistMetricDescription(String metricId, String displayName, TaskData taskData) {
+
+        MetricDescriptionEntity metricDescription = new MetricDescriptionEntity();
+        metricDescription.setMetricId(metricId);
+        metricDescription.setDisplayName(displayName);
+        metricDescription.setTaskData(taskData);
+        getHibernateTemplate().persist(metricDescription);
+        return metricDescription;
     }
 }

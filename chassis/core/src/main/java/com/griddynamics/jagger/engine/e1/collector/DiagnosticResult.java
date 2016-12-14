@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -24,13 +24,13 @@ import java.io.Serializable;
 
 public class DiagnosticResult implements Serializable {
     private final String name;
-    private final int total;
+    private final Double total;
 
-    public static DiagnosticResult create(String name, int total) {
+    public static DiagnosticResult create(String name, Double total) {
         return new DiagnosticResult(name, total);
     }
 
-    private DiagnosticResult(String name, int total) {
+    private DiagnosticResult(String name, Double total) {
         this.name = name;
         this.total = total;
     }
@@ -39,7 +39,7 @@ public class DiagnosticResult implements Serializable {
         return name;
     }
 
-    public int getTotal() {
+    public Double getTotal() {
         return total;
     }
 
@@ -60,7 +60,7 @@ public class DiagnosticResult implements Serializable {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + total;
+        result = 31 * result + total.intValue();
         return result;
     }
 

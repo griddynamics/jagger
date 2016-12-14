@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,11 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** ??? Some short description
+/** Terminate workload by time or when exact number of samples is reached
  * @author dkotlyarov
  * @n
  * @par Details:
- * @details ???
+ * @details Can work in two ways - terminate workload by time or terminate workload by number of samples. If duration doesn't equal -1, workload will terminate by time.
  *
  * @ingroup Main_Terminators_group */
 public class UserTerminationStrategy implements TerminationStrategy {
@@ -63,7 +63,15 @@ public class UserTerminationStrategy implements TerminationStrategy {
             return taskConfig.getSample();
         }
     }
-
+    /** Terminate workload by time or samples
+     * @author dkotlyarov
+     * @n
+     * @par Details:
+     * @details If duration doesn't equal -1, workload will terminate by time.
+     *
+     * @param status - current jagger execution status. Contains such info - number of threads, finished samples, current samples.
+     *
+     * @return true if termination is required */
     @Override
     public boolean isTerminationRequired(WorkloadExecutionStatus status) {
         if (stopTime != -1) {

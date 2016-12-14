@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -19,7 +19,6 @@
  */
 package com.griddynamics.jagger.invoker.http;
 
-import com.griddynamics.jagger.invoker.Invoker;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
@@ -38,12 +37,22 @@ import java.util.*;
  * @author Alexey Kiselyov
  * @n
  * @par Details:
- * @details ???
+ * @details Invoker uses HttpQuery as query and String as endpoint. Can do POST, GET and etc. request. @n
+ *
+ * See @xlink{invoker-http} for details on how-to use this element in xml-configuration
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {
     private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 
+    /** Creates http request with method params from query and with url equals endpoint
+     * @author Alexey Kiselyov
+     * @n
+     * @param query    - contains method params
+     * @param endpoint - url of target service
+     *
+     * @return http request for http-client */
     @Override
     protected HttpRequestBase getHttpMethod(HttpQuery query, String endpoint) {
 
@@ -62,6 +71,12 @@ public class HttpInvoker extends ApacheAbstractHttpInvoker<HttpQuery> {
         }
     }
 
+    /** Creates http request with method params from query and with url equals endpoint
+     * @author Alexey Kiselyov
+     * @n
+     * @param query - contains client params
+     *
+     * @return http params for http-client */
     @Override
     protected HttpParams getHttpClientParams(HttpQuery query) {
         HttpParams clientParams = new BasicHttpParams();

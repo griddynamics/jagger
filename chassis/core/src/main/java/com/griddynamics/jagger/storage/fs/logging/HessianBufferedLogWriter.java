@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.storage.fs.logging;
 
 import com.caucho.hessian.io.Hessian2Output;
+import com.griddynamics.jagger.storage.FileStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,10 @@ import java.io.OutputStream;
 public class HessianBufferedLogWriter extends BufferedLogWriter {
 
     private final Logger log = LoggerFactory.getLogger(HessianBufferedLogWriter.class);
+
+    public HessianBufferedLogWriter(int flushSize, int bufferSize, FileStorage fileStorage) {
+        super(flushSize, bufferSize, fileStorage);
+    }
 
     private static class HessianLogWriterOutput implements LogWriterOutput {
         private final Hessian2Output out;

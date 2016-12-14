@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -21,16 +21,24 @@
 package com.griddynamics.jagger.engine.e1.sessioncomparation;
 
 import com.google.common.collect.Multimap;
+import com.griddynamics.jagger.util.Decision;
 
-/** ??? Some short description
- * @author ???
+import java.util.List;
+
+/** Returns the worst decision of comparisons
+ * @author Dmitry Kotlyarov
  * @n
- * @par Details:
- * @details ???
  *
- * @ingroup Main_DecisionMakers_group */
+ */
 public class WorstCaseDecisionMaker implements DecisionMaker {
 
+    /** Returns the worst decision of comparisons
+     * @author Dmitry Kotlyarov
+     * @n
+     *
+     * @param verdicts - verdicts of comparisons between current test and test from baseline session
+     *
+     * @return the worst decision */
     @Override
     public Decision makeDecision(Multimap<String, Verdict> verdicts) {
         Decision worstResult = Decision.OK;
@@ -47,4 +55,17 @@ public class WorstCaseDecisionMaker implements DecisionMaker {
         return worstResult;
     }
 
+    /** Returns the worst decision from list of input decisions
+     * @return the worst decision */
+    public Decision getDecision(List<Decision> decisions) {
+        Decision worstCaseDecision = Decision.OK;
+
+        for (Decision decision : decisions) {
+            if (decision.ordinal() > worstCaseDecision.ordinal()) {
+                worstCaseDecision = decision;
+            }
+        }
+
+        return worstCaseDecision;
+    }
 }

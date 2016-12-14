@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,65 +19,14 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="hibernate.conf.xml"/>
 
     <bean id="h2KeyValueStorage" class="com.griddynamics.jagger.storage.rdb.HibernateKeyValueStorage">
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="hibernateBatchSize" value="${chassis.storage.hibernate.batch_size}"/>
+        <property name="sessionTempDataCount" value="${chassis.storage.temporary.data.session.count}"/>
     </bean>
-
-	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="dataSource"/>
-	</bean>
-
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="driverClassName" value="${chassis.storage.rdb.client.driver}" />
-		<property name="url" value="${chassis.storage.rdb.client.url}" />
-		<property name="username" value="${chassis.storage.rdb.username}" />
-		<property name="password" value="${chassis.storage.rdb.password}" />
-        <property name="testOnBorrow" value="true"/>
-        <property name="validationQuery" value="SELECT 1;"/>
-        <property name="minIdle" value="5"/>
-        <property name="maxIdle" value="5"/>
-        <property name="initialSize" value="5"/>
-        <property name="maxActive" value="40"/>
-	</bean>
-
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
-				<prop key="hibernate.dialect">${chassis.storage.hibernate.dialect}</prop>
-				<prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.jdbc.batch_size">${chassis.storage.hibernate.batch_size}</prop>
-			</props>
-		</property>
-		<property name="annotatedClasses">
-			<list>
-				<!--TODO not extensible solution -->
-				<value>com.griddynamics.jagger.master.Session</value>
-				<value>com.griddynamics.jagger.storage.rdb.KeyValue</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadData</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadDetails</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData</value>
-                <value>com.griddynamics.jagger.monitoring.model.MonitoringStatistics</value>
-				<value>com.griddynamics.jagger.monitoring.model.ProfilingSuT</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.Percentile</value>
-				<value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeInvocationStatistics</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.TimeLatencyPercentile</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessDescriptiveStatistics</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadProcessLatencyPercentile</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.ValidationResultEntity</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.DiagnosticResultEntity</value>
-                <value>com.griddynamics.jagger.engine.e1.aggregator.workload.model.MetricDetails</value>
-                <value>com.griddynamics.jagger.monitoring.model.PerformedMonitoring</value>
-			</list>
-		</property>
-	</bean>
-
 </beans>

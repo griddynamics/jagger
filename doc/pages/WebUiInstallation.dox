@@ -1,0 +1,84 @@
+/// @page WebUiInstallation WebUi installation
+/// @brief Section describes installation of Jagger Web client @n
+/// @details
+/// @n
+/// Back to @ref WebUiMain @n
+/// @n
+/// @li @ref section_webui_installation_docker
+/// @li @ref section_webui_installation_embedded
+/// @li @ref section_webui_installation_app_server
+///
+/// @section section_webui_installation_docker Installation with docker
+/// Fast way to install WebUI - download and run docker image. @n
+/// Details, you can find in @ref section_installation_local
+/// @n
+/// @section section_webui_installation_embedded Installation with embedded server
+/// <b> @e Note: </b> Starting Jagger version 2.0 WebUI can be run with embedded server.@n
+/// To configure web client you can use java parameters. For example:
+/// @code
+/// java -jar jagger-${build.finalName}.jar -Djdbc.driver=com.mysql.jdbc.Driver
+///                                         -Djdbc.url=jdbc:mysql://localhost:3306/jaggerdb
+///                                         -Djdbc.user=User
+///                                         -Djdbc.password=password
+/// @endcode
+/// The option -extractDirectory specifies the path where the war archive will be unpacked. @n
+/// The option -resetExtract erases the folder, if exists, with unpacked war archive. @n
+/// @n
+/// @section section_webui_installation_app_server Installation with application server
+/// Web client is a java web application, which works with a lot of [java web containers](http://en.wikipedia.org/wiki/Web_container). @n
+/// I will show you how to launch jagger web client with [Apache Tomcat](http://tomcat.apache.org/) @n
+/// @n
+/// @li Download jagger war file from the next link - @n
+/// https://nexus.griddynamics.net/nexus/content/repositories/public/com/griddynamics/jagger/webclient/1.2.5/webclient-1.2.5.war @n
+/// <b> @e Note: </b> Latest version number you can find in [Release notes](https://github.com/griddynamics/jagger/wiki/Jagger-Release-Notes#jagger-release-notes) @n
+/// @n
+/// @li Rename `webclient-X.X.X.war` file to `ROOT.war` @n
+///    @image html webUI_install_rename_to_ROOT.png "Rename file to ROOT.war"
+/// @n
+/// @li Open `{Apache Tomcat root folder}/bin/webapps` and remove all files, which have names equal `ROOT` @n
+///    @image html webUI_install_clean.png "Remove Root folder and Root.war(if such exist)"
+/// @n
+/// @li Copy your `Root.war` to the current folder. @n
+/// @n
+///    @image html webUI_install_copy.png "Paste Root.war"
+/// @n
+/// @li If your `Tomcat` is not running, execute next command : @n
+///    for Windows
+///    @code
+///    {Apache Tomcat root folder}/bin/startup.bat
+///    @endcode
+///    for Linux
+///    @code
+///    {Apache Tomcat root folder}/bin/startup.sh
+///    @endcode
+/// @n
+/// @li Tomcat will create folder `ROOT`@n
+///    Open next file : `/ROOT/WEB-INF/classes/webclient.properties` and set database properties @n
+///    More about client properties you can read here @ref WebUiProperties @n
+/// @n
+/// @li Shutdown `Apache Tomcat` -
+///    for Windows
+///    @code
+///    {Apache Tomcat root folder}/bin/shutdown.bat
+///    @endcode
+///    for Linux
+///    @code
+///    {Apache Tomcat root folder}/bin/shutdown.sh
+///    @endcode
+/// @n
+/// @li And launch **again** @n
+/// @n
+/// @li Now open link `localhost:8080` in your favorite browser. Web client is ready for use!
+///    @image html webUI_sessions.png "Compare sessions"
+/// @n
+/// @li @b Note: Web client will write logs to path defined in log properties `/ROOT/WEB-INF/classes/log4j.properties` @n
+///     By default logs will be stored in the same directory where Web client is installed. If you don't have permissions @n
+///     to write there - redefine path @n
+/// @n
+/// @n
+/// It is possible to store Web client properties file in separate file to simplify updating of Web Client. @ref WebUiProperties "[More ...]" @n
+/// @n
+/// How to configure storage of test results you can read [here ...](https://github.com/griddynamics/jagger/wiki/Jagger-Deployment#external-rdbms-for-storing-test-results) @n
+/// @n
+/// @n
+

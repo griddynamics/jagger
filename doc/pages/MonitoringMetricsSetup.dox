@@ -1,0 +1,13 @@
+/// @page MonitoringMetricsSetup Monitoring metrics settings
+/// @brief Section describes available settings for monitoring metrics @n
+/// @details
+/// @n
+/// Back to @ref MonitoringMain @n
+/// @n
+/// Jagger provides access to some settings of monitoring metrics. Settings are available via properties. @n
+/// Default settings you can find here: @ref section_default_properties_for_monitoring_metrics @n
+/// Below is fragment of @e environment.properties file, explaining monitoring metrics setup: @n
+/// @dontinclude  environment.properties
+/// @skip  begin: following section is used for docu generation - Monitoring metrics ids
+/// @until end: following section is used for docu generation - Monitoring metrics ids
+///

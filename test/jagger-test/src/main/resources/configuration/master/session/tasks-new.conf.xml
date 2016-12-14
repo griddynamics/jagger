@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -32,12 +31,26 @@
         >
 
     <beans:import resource="../provider/object-creators.conf.xml" />
+    <beans:import resource="../metric/calculatorsAndAggregators.conf.xml" />
 
     <beans:bean id="endpointsIterable-sleep-5ms" class="java.util.LinkedList">
         <beans:constructor-arg value="#{endpointConfigurator.getEndpoints('/sleep/5')}"/>
     </beans:bean>
 
     <test-description id="sleep-service-5ms-simple-http-query-provider" name="sleep-service-5ms-simple-http-query-provider" version="1">
+
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <validator xsi:type="validator-custom" validator="metric.TrueValidator"/>
+
+            <!--Standard metrics-->
+            <metric xsi:type="metric-success-rate" plotData="true"/>
+
+            <metric xsi:type="metric-not-null-response" plotData="true"/>
+
+            <listener-invocation xsi:type="listener-invocation-not-null-response"/>
+        </info-collectors>
 
         <scenario  xsi:type="scenario-query-pool">
 
@@ -56,6 +69,53 @@
     </test-description>
 
     <test-description id="sleep-service-5ms" name="sleep-service-5ms" version="1">
+
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <validator xsi:type="validator-custom" validator="metric.TrueValidator"/>
+
+            <!--Math functions with standard aggregators-->
+            <metric id="constant1" xsi:type="metric-custom" calculator="constant" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-avg"/>
+                <metric-aggregator xsi:type="metric-aggregator-std"/>
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
+
+            <metric id="increase1" xsi:type="metric-custom" calculator="alwaysIncrease" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-avg"/>
+                <metric-aggregator xsi:type="metric-aggregator-std"/>
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
+
+            <metric id="sin1" xsi:type="metric-custom" calculator="sin" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-avg"/>
+                <metric-aggregator xsi:type="metric-aggregator-std"/>
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
+
+            <!-- begin: following section is used for docu generation - metrics with aggregators -->
+            <!-- Note: to use this example, you shall implement custom metric calculators "constant", "alwaysIncrease" and "sin". -->
+
+            <!-- Math functions with aggregators with settings -->
+            <!-- Normalize metric value by seconds -->
+            <metric id="constant1-sum-normalized-1s" xsi:type="metric-custom" calculator="constant" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-sum" normalizeBy="SECOND"/>
+            </metric>
+
+            <!-- Set number of points in the plots for this metric -->
+            <metric id="increase1-sum-point-count-10" xsi:type="metric-custom" calculator="alwaysIncrease" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-sum" pointCount="10"/>
+            </metric>
+
+            <!-- Set exact interval between points in the plots for this metric -->
+            <metric id="sin1-sum-point-interval-2s" xsi:type="metric-custom" calculator="sin" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-sum" pointInterval="2000"/>
+            </metric>
+
+            <!-- end: following section is used for docu generation - metrics with aggregators -->
+
+        </info-collectors>
 
         <scenario  xsi:type="scenario-query-pool">
 
@@ -81,6 +141,31 @@
 
     <test-description id="sleep-service-50ms" name="sleep-service-50ms" version="1">
 
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <validator xsi:type="validator-custom" validator="metric.TrueValidator"/>
+
+            <!--Math functions with custom aggregators-->
+            <metric id="constant2" xsi:type="metric-custom" calculator="constant" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-ref" ref="maxAggregator"/>
+                <metric-aggregator xsi:type="metric-aggregator-ref" ref="minAggregator"/>
+            </metric>
+
+            <metric id="increase2" xsi:type="metric-custom" calculator="alwaysIncrease" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-ref" ref="maxAggregator"/>
+                <metric-aggregator xsi:type="metric-aggregator-ref" ref="minAggregator"/>
+            </metric>
+
+            <!--begin: following section is used for docu generation - custom aggregator usage-->
+            <metric id="sin2" xsi:type="metric-custom" calculator="sin" plotData="true" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-ref" ref="maxAggregator"/>
+                <metric-aggregator xsi:type="metric-aggregator-ref" ref="minAggregator"/>
+            </metric>
+            <!--end: following section is used for docu generation - custom aggregator usage-->
+
+        </info-collectors>
+
         <scenario  xsi:type="scenario-query-pool">
             <query-distributor xsi:type="query-distributor-round-robin"/>
             <invoker xsi:type="invoker-http"/>
@@ -102,6 +187,45 @@
 
     <test-description id="sleep-service-50-150ms" name="sleep-service-50-150ms" version="1">
 
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <validator xsi:type="validator-custom" validator="metric.TrueValidator"/>
+
+            <!--Success rate metrics-->
+            <!-- begin: following section is used for docu generation - metric-success-rate -->
+
+            <!--    Example #1: Success rate metric with default aggregators
+                    plotData = true => metric vs time data will be saved (displayed in WebUI and PDF report)
+                    saveSummary = true => summary value for summary page will be not saved -->
+            <metric xsi:type="metric-success-rate" plotData="true" saveSummary="false"/>
+
+
+
+            <!--    Example #2: Success rate metric with custom name and default aggregators -->
+            <metric id="CustomNameSuccessRate" xsi:type="metric-success-rate" plotData="true" saveSummary="false"/>
+
+
+
+            <!--    Example #3: Success rate metric with custom name and custom aggregators
+                    With this setup success rate will be aggregated on interval like on picture below -->
+            <metric id="CustomSuccessRatePlot" xsi:type="metric-success-rate" plotData="true" saveSummary="false">
+                <metric-aggregator xsi:type="metric-aggregator-avg"/>
+            </metric>
+
+            <!-- end: following section is used for docu generation - metric-success-rate -->
+
+            <!-- begin: following section is used for docu generation - standard aggregator usage -->
+            <metric id="CustomSuccessRateSummary" xsi:type="metric-success-rate" saveSummary="true">
+                <metric-aggregator xsi:type="metric-aggregator-avg"/>
+            </metric>
+            <!-- end: following section is used for docu generation - standard aggregator usage -->
+
+
+
+
+        </info-collectors>
+
         <scenario  xsi:type="scenario-query-pool">
             <query-distributor xsi:type="query-distributor-round-robin"/>
             <invoker xsi:type="invoker-http"/>
@@ -122,6 +246,23 @@
     </beans:bean>
 
     <test-description id="pulse-service-30000-500-abstract" name="pulse-service-30000-500" version="1" >
+
+        <info-collectors>
+            <validator xsi:type="validator-not-null-response"/>
+
+            <validator xsi:type="validator-custom" validator="metric.TrueValidator"/>
+
+            <!--Response metrics-->
+            <metric id="BodySize" xsi:type="metric-custom" calculator="responseSize" plotData="true">
+                <metric-aggregator xsi:type="metric-aggregator-avg"/>
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
+
+            <metric id="ReturnCode" xsi:type="metric-custom" calculator="returnCode" plotData="true">
+                <metric-aggregator xsi:type="metric-aggregator-avg"/>
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
+        </info-collectors>
 
          <scenario  xsi:type="scenario-query-pool">
              <query-distributor xsi:type="query-distributor-round-robin"/>

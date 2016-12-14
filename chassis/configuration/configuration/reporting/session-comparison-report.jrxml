@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -29,8 +28,9 @@
     <property name="ireport.y" value="0"/>
     <import value="com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
+    <parameter name="sessionId" class="java.lang.String"/>
     <variable name="sessionVerdict" class="com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict">
         <initialValueExpression><![CDATA[$P{context}.getParameters().get("jagger.verdict")]]></initialValueExpression>
     </variable>
@@ -78,9 +78,9 @@
 
             <subreport>
                 <reportElement positionType="Float" x="0" y="89" width="550" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
-                    <![CDATA[$P{context}.getMappedProvider("workloadSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Workload") )]]>
+                    <![CDATA[$P{context}.getMappedProvider("workloadSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Workload"), $P{sessionId} )]]>
                 </dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                     <![CDATA[$P{context}.getMappedProvider("workloadSessionComparison").getReport( ($V{sessionVerdict}).getDetails().get("Workload") )]]>
@@ -88,9 +88,9 @@
             </subreport>
             <subreport>
                 <reportElement positionType="Float" x="0" y="99" width="550" height="10"/>
-                <parametersMapExpression><![CDATA[$P{context}.getAsMap()]]></parametersMapExpression>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
                 <dataSourceExpression>
-                    <![CDATA[$P{context}.getMappedProvider("monitoringSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Monitoring") )]]>
+                    <![CDATA[$P{context}.getMappedProvider("monitoringSessionComparison").getDataSource( ($V{sessionVerdict}).getDetails().get("Monitoring"), $P{sessionId} )]]>
                 </dataSourceExpression>
                 <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
                     <![CDATA[$P{context}.getMappedProvider("monitoringSessionComparison").getReport( ($V{sessionVerdict}).getDetails().get("Monitoring") )]]>

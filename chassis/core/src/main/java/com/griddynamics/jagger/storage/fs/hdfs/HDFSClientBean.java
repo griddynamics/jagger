@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,18 +20,16 @@
 
 package com.griddynamics.jagger.storage.fs.hdfs;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
-
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.storage.fs.hdfs.utils.HadoopUtils;
 import com.griddynamics.jagger.util.BlockingBean;
 import com.griddynamics.jagger.util.ThreadExecutorUtil;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public class HDFSClientBean implements BlockingBean, HDFSClient {
 
@@ -74,6 +72,8 @@ public class HDFSClientBean implements BlockingBean, HDFSClient {
         try {
             if (this.fileSystem != null) {
                 this.fileSystem.close();
+            } else {
+                ready = true;
             }
         } catch (IOException e) {
             throw new TechnicalException(e);

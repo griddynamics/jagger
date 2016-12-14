@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.webclient.client;
 
-import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
+import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
+import com.griddynamics.jagger.dbapi.model.MetricNode;
 
 /**
  * @author "Artem Kirillov" (akirillov@griddynamics.com)
@@ -8,33 +9,12 @@ import com.griddynamics.jagger.webclient.client.dto.PlotNameDto;
  */
 public abstract class PlotsServingBase {
 
-    protected String generateTaskScopePlotId(PlotNameDto plotNameDto) {
-        return "" + plotNameDto.getTaskId() + "#task-scope-plot-" + plotNameDto.getPlotName().toLowerCase().replaceAll("\\s+", "-");
+    protected String generatePlotId(MetricNode metricNode) {
+        return "#plot-" + metricNode.getId().toLowerCase().replaceAll("\\s+", "-");
     }
 
-    protected String generateCrossSessionsTaskScopePlotId(PlotNameDto plotNameDto) {
-        String ids = plotNameDto.getTaskIds().toString().replaceAll("\\s+", "");
-        return "" + ids + "#cross-sessions-task-scope-plot-" + plotNameDto.getPlotName().toLowerCase().replaceAll("\\s+", "-");
-    }
-
-    protected boolean isTaskScopePlotId(String domId) {
-        return domId.contains("#task-scope-plot-");
-    }
-
-    protected boolean isCrossSessionsTaskScopePlotId(String domId) {
-        return domId.contains("#cross-sessions-task-scope-plot-");
-    }
-
-    protected boolean isSessionScopePlotId(String domId) {
-        return domId.contains("#session-scope-plot-");
-    }
-
-    protected String generateSessionScopePlotId(String sessionId, String plotName) {
-        return sessionId + "#session-scope-plot-" + plotName.toLowerCase().replaceAll("\\s+", "-");
-    }
-
-    protected String extractEntityIdFromDomId(String plotId) {
-        return plotId.substring(0, plotId.indexOf("#"));
+    protected String generateMetricPlotId(MetricNameDto metricNameDto) {
+        return "" + metricNameDto.getTest().hashCode() + "#metric-scope-plot-" + metricNameDto.getMetricName().toLowerCase().replaceAll("\\s+", "-");
     }
 
 }

@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.Nothing;
+import com.griddynamics.jagger.util.Timeout;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class MonitoringWorker extends ConfigurableWorker {
     private LogWriter logWriter;
     private Map<String, MonitorProcess> processes = Maps.newConcurrentMap();
     private SessionFactory sessionFactory;
-    private long ttl;
+    private Timeout ttl;
 
     @Override
     public void configure() {
@@ -61,7 +62,7 @@ public class MonitoringWorker extends ConfigurableWorker {
 
             @Override
             public String execute(StartMonitoring command, NodeContext nodeContext) {
-                MonitorProcess process = Monitoring.createProcess(command.getSessionId(), command.getAgentNode(),
+                MonitorProcess process = new MonitorProcess(command.getSessionId(), command.getAgentNode(),
                         nodeContext, coordinator, executor, pollingInterval, profilerPollingInterval, monitoringProcessor, command.getTaskId(),
                         logWriter, sessionFactory, ttl);
 
@@ -149,11 +150,11 @@ public class MonitoringWorker extends ConfigurableWorker {
         return sessionFactory;
     }
 
-    public void setTtl(long ttl) {
+    public void setTtl(Timeout ttl) {
         this.ttl = ttl;
     }
 
-    public long getTtl() {
+    public Timeout getTtl() {
         return ttl;
     }
 }

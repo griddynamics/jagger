@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,7 +26,14 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <!-- Import DatabaseService definition-->
+    <import resource="classpath*:/spring/dbapi.config.xml"/>
+
     <context:annotation-config/>
+
+    <!--/////////////////////////-->
+    <!--////WebUI settings///////-->
+    <!--/////////////////////////-->
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="ignoreResourceNotFound" value="true" />
@@ -48,87 +54,54 @@
             <map>
                 <entry key="/PlotProviderService" value-ref="plotProviderService"/>
                 <entry key="/SessionDataService" value-ref="sessionDataService"/>
-                <entry key="/TaskDataService" value-ref="taskDataService"/>
-                <entry key="/WorkloadService" value-ref="workloadDataService"/>
-                <entry key="/WorkloadTaskDataService" value-ref="workloadTaskDataService"/>
                 <entry key="/MetricDataService" value-ref="metricDataService"/>
+                <entry key="/ControlTreeCreatorService" value-ref="controlTreeCreatorService"/>
+                <entry key="/NodeInfoService" value-ref="nodeInfoService"/>
+                <entry key="/CommonDataService" value-ref="commonDataService"/>
+                <entry key="/TestInfoService" value-ref="testInfoService"/>
+                <entry key="/DownloadService" value-ref="downloadService"/>
             </map>
         </property>
     </bean>
 
-    <bean id="dataPointCompressingProcessor" class="com.griddynamics.jagger.webclient.server.plot.DataPointCompressingProcessor">
-        <constructor-arg index="0" value="${plot.data.compressing.threshold}"/>
-        <constructor-arg index="1" value="${plot.data.compressing.minCountForProcessing}"/>
+    <bean id="downloadService" class="com.griddynamics.jagger.webclient.server.DownloadServiceImpl">
+        <property name="fileStorage" ref="fileStore"/>
     </bean>
 
     <bean id="plotProviderService" class="com.griddynamics.jagger.webclient.server.PlotProviderServiceImpl">
-        <property name="compressingProcessor" ref="dataPointCompressingProcessor"/>
-        <property name="monitoringPlotGroups" ref="monitoringPlotGroups"/>
-        <property name="workloadPlotGroups" ref="workloadPlotGroups"/>
-        <property name="monitoringPlotDataProviders" ref="monitoringPlotDataProviders"/>
-        <property name="workloadPlotDataProviders" ref="workloadPlotDataProviders"/>
-        <property name="customMetricPlotDataProvider" ref="customMetricPlotDataProvider"/>
+        <property name="databaseService" ref="databaseService"/>
     </bean>
 
-    <bean id="sessionDataService" class="com.griddynamics.jagger.webclient.server.SessionDataServiceImpl"/>
-    <bean id="taskDataService" class="com.griddynamics.jagger.webclient.server.TaskDataServiceImpl"/>
-
-    <bean id="workloadDataService" class="com.griddynamics.jagger.webclient.server.WorkloadServiceImpl"/>
-    <bean id="workloadTaskDataService" class="com.griddynamics.jagger.webclient.server.WorkloadTaskDataServiceImpl"/>
-    <bean id="metricDataService" class="com.griddynamics.jagger.webclient.server.MetricDataServiceImpl"/>
-
-    <!--==========Legend Provider==========-->
-    <bean id="legendProvider" class="com.griddynamics.jagger.webclient.server.LegendProvider"/>
-
-    <!--==========Workload Plot Data Providers-->
-    <bean id="throughputPlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.ThroughputPlotDataProvider">
-        <property name="legendProvider" ref="legendProvider"/>
-    </bean>
-    <bean id="latencyPlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.LatencyPlotDataProvider">
-        <property name="legendProvider" ref="legendProvider"/>
-    </bean>
-    <bean id="timeLatencyPercentilePlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.TimeLatencyPercentilePlotDataProvider">
-        <property name="legendProvider" ref="legendProvider"/>
+    <bean id="sessionDataService" class="com.griddynamics.jagger.webclient.server.SessionDataServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
     </bean>
 
-    <bean id="customMetricPlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.CustomMetricPlotDataProvider">
-        <property name="legendProvider" ref="legendProvider"/>
+    <bean id="metricDataService" class="com.griddynamics.jagger.webclient.server.MetricDataServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
     </bean>
 
-    <bean id="workloadPlotDataProviders" class="java.util.LinkedHashMap">
-        <constructor-arg index="0">
-            <map>
-                <entry key="Throughput" value-ref="throughputPlotDataProvider"/>
-                <entry key="Latency" value-ref="latencyPlotDataProvider"/>
-                <entry key="Time Latency Percentile" value-ref="timeLatencyPercentilePlotDataProvider"/>
-            </map>
-        </constructor-arg>
+    <bean id="controlTreeCreatorService" class="com.griddynamics.jagger.webclient.server.ControlTreeCreatorServiceImpl" >
+        <property name="databaseService" ref="databaseService"/>
     </bean>
 
-    <!--===========Monitoring Plot Data Providers===========-->
-    <bean id="monitoringPlotDataProvider" class="com.griddynamics.jagger.webclient.server.plot.MonitoringPlotDataProvider">
-        <constructor-arg index="0" ref="monitoringPlotGroups"/>
-        <property name="legendProvider" ref="legendProvider"/>
-        <property name="renderTaskBoundaries" value="${plot.rendering.taskBoundariesEnabled}"/>
+    <bean id="nodeInfoService" class="com.griddynamics.jagger.webclient.server.NodeInfoServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
     </bean>
 
-    <bean id="monitoringPlotDataProviders" class="java.util.LinkedHashMap">
-        <constructor-arg index="0">
-            <map>
-                <entry key="CPU Utilization" value-ref="monitoringPlotDataProvider"/>
-                <entry key="CPU Load Average" value-ref="monitoringPlotDataProvider"/>
-                <entry key="System Memory" value-ref="monitoringPlotDataProvider"/>
-                <entry key="TCP Connections" value-ref="monitoringPlotDataProvider"/>
-                <entry key="TCP Traffic" value-ref="monitoringPlotDataProvider"/>
+    <bean id="commonDataService" class="com.griddynamics.jagger.webclient.server.CommonDataServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
+        <property name="webClientProperties" ref="webClientProperties"/>
+    </bean>
 
-                <entry key="GC major count" value-ref="monitoringPlotDataProvider"/>
-                <entry key="GC major time" value-ref="monitoringPlotDataProvider"/>
-                <entry key="GC minor count" value-ref="monitoringPlotDataProvider"/>
-                <entry key="GC minor time" value-ref="monitoringPlotDataProvider"/>
-                <entry key="Heap Memory" value-ref="monitoringPlotDataProvider"/>
-                <entry key="Non Heap Memory" value-ref="monitoringPlotDataProvider"/>
-                <entry key="Disks IO" value-ref="monitoringPlotDataProvider"/>
-            </map>
-        </constructor-arg>
+    <bean id="testInfoService" class="com.griddynamics.jagger.webclient.server.TestInfoServiceImpl">
+        <property name="databaseService" ref="databaseService"/>
+    </bean>
+
+    <bean id="webClientProperties" class="com.griddynamics.jagger.dbapi.model.WebClientProperties">
+        <property name="userCommentEditAvailable" value="${webui.user.comment.available:true}"/>
+        <property name="userCommentMaxLength" value="${webui.user.comment.max.length:1000}"/>
+        <property name="tagsAvailable" value="${webui.tags.available:true}"/>
+        <property name="showOnlyMatchedTests" value="${webui.show.matched.tests.only:true}"/>
+        <property name="enableDecisionsPerMetricHighlighting" value="${webui.enable.decisions.per.metric.highlighting:true}"/>
     </bean>
 </beans>

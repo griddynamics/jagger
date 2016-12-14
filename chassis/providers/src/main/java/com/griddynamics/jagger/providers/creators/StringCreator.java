@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,15 +22,19 @@ package com.griddynamics.jagger.providers.creators;
 
 import com.google.common.base.Preconditions;
 
-/** ??? Some short description
+/** Takes row data and returns concatenation of it
  * @author Nikolay Musienko
  * @n
- * @par Details:
- * @details ???
  *
- * @ingroup Main_Providers_group */
+ * @ingroup Main_Providers_Base_group */
 public class StringCreator implements ObjectCreator<String> {
 
+    /** Creates string of concatenation
+     * @author Nikolay Musienko
+     * @n
+     *
+     * @param strings - row data
+     * @return some string*/
     @Override
     public String createObject(final String... strings) {
         Preconditions.checkNotNull(strings);
@@ -41,6 +45,13 @@ public class StringCreator implements ObjectCreator<String> {
         return buildString(strings);
     }
 
+    /** Do nothing
+     * @author Nikolay Musienko
+     * @n
+     * @par Details:
+     * @details There is no case to use header
+     *
+     * @param header - array of columns names*/
     @Override
     public void setHeader(final String[] header) {
     }

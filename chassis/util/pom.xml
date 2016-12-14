@@ -3,8 +3,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -21,7 +20,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.griddynamics.jagger</groupId>
     <artifactId>chassis.util</artifactId>
     <packaging>jar</packaging>
 
@@ -31,9 +29,14 @@
     <parent>
         <groupId>com.griddynamics.jagger</groupId>
         <artifactId>chassis.parent</artifactId>
-        <version>1.2.2-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
+    <properties>
+        <sigar.version>1.6.3.82</sigar.version>
+        <sigar.native.libs.dest>${project.build.directory}/lib/native</sigar.native.libs.dest>
+    </properties>
 
     <dependencies>
 
@@ -75,5 +78,82 @@
             <groupId>trove</groupId>
             <artifactId>trove</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.hyperic</groupId>
+            <artifactId>sigar</artifactId>
+            <version>${sigar.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hyperic</groupId>
+            <artifactId>sigar-dist</artifactId>
+            <version>${sigar.version}</version>
+            <type>zip</type>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-native-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/native.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.hyperic</groupId>
+                                    <artifactId>sigar-dist</artifactId>
+                                    <version>${sigar.version}</version>
+                                    <type>zip</type>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${sigar.native.libs.dest}</outputDirectory>
+                            <includes>hyperic-sigar-1.6.3/sigar-bin/lib/*.*</includes>
+                            <excludes>hyperic-sigar-1.6.3/sigar-bin/lib/*.jar</excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--necessary to use utils on webui client side-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>2.5.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

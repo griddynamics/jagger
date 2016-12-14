@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.monitoring;
 
+import com.google.common.base.Throwables;
 import com.griddynamics.jagger.agent.model.GetCollectedProfileFromSuT;
 import com.griddynamics.jagger.agent.model.GetSystemInfo;
 import com.griddynamics.jagger.agent.model.ManageCollectionProfileFromSuT;
@@ -31,6 +32,7 @@ import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.util.SerializationUtils;
 import com.griddynamics.jagger.util.TimeUtils;
+import com.griddynamics.jagger.util.Timeout;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,12 +66,12 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
     private volatile boolean alive;
     private LogWriter logWriter;
     private CountDownLatch latch;
-    private final long ttl;
+    private final Timeout ttl;
 
     /*package*/ MonitorProcess(String sessionId, NodeId agentId, NodeContext nodeContext, Coordinator coordinator,
                                ExecutorService executor, long pollingInterval, long profilerPollingInterval,
                                MonitoringProcessor monitoringProcessor, String taskId, LogWriter logWriter,
-                               SessionFactory sessionFactory, long ttl) {
+                               SessionFactory sessionFactory, Timeout ttl) {
         this.sessionId = sessionId;
         this.agentId = agentId;
         this.nodeContext = nodeContext;
@@ -106,11 +108,11 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
                             log.debug("GetSystemInfo got on kernel {} from {} time {} ms",
                                     new Object[]{nodeContext.getId(), agentId, System.currentTimeMillis() - startTime});
                             for (SystemInfo systemInfo : info) {
-                                monitoringProcessor.process(sessionId, taskId, agentId, systemInfo);
+                                monitoringProcessor.process(sessionId, taskId, agentId, nodeContext, systemInfo);
                             }
                             log.debug("monitoring logged to file storage on kernel {}", nodeContext.getId());
                         } catch (Throwable e) {
-                            // ignore this poll
+                            log.error("Ignore GetSystemInfo from agent " + agentId + " due to error", e);
                         }
                         TimeUtils.sleepMillis(pollingInterval);
                     }
@@ -119,30 +121,45 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
                     log.debug("monitoring flushed on kernel {}", nodeContext.getId());
                     if (!voidResult.hasException()) {
                         log.debug("try to manage monitoring on agent {} from kernel {}", agentId, nodeContext.getId());
-                        voidResult = remote.runSyncWithTimeout(new ManageCollectionProfileFromSuT(sessionId, ManageHotSpotMethodsFromSuT.STOP_POLLING,
-                                profilerPollingInterval), Coordination.<ManageCollectionProfileFromSuT>doNothing(), ttl);
-                        log.debug("manage monitoring has done on agent {} from kernel {}", agentId, nodeContext.getId());
-                        if (voidResult.hasException())
-                            log.error("Remote exception raised during stopping profiling from SuT", voidResult.getException());
-                        log.debug("try to get collected profiler from agent {} from kernel {}", agentId, nodeContext.getId());
-                        final ProfileDTO profileDTO =
-                                remote.runSyncWithTimeout(GetCollectedProfileFromSuT.create(sessionId), Coordination.<GetCollectedProfileFromSuT>doNothing(), ttl);
-                        log.debug("got collected profiler from agent {} from kernel {}", agentId, nodeContext.getId());
-                        logWriter.log(sessionId, taskId + "/" + PROFILER_MARKER, agentId.getIdentifier(), SerializationUtils.toString(profileDTO));
-                        log.debug("Profiler {} received from agent {} and has been written to FileStorage", profileDTO, agentId);
-                        logWriter.flush();
-                        log.debug("Flushing performed on kernel {}", nodeContext.getId());
 
+                        try {
+                            voidResult = remote.runSyncWithTimeout(new ManageCollectionProfileFromSuT(sessionId, ManageHotSpotMethodsFromSuT.STOP_POLLING,
+                                    profilerPollingInterval), Coordination.<ManageCollectionProfileFromSuT>doNothing(), ttl);
+                            log.debug("manage monitoring has done on agent {} from kernel {}", agentId, nodeContext.getId());
+                            if (voidResult.hasException())
+                                log.error("Remote exception raised during stopping profiling from SuT", voidResult.getException());
+                            log.debug("try to get collected profiler from agent {} from kernel {}", agentId, nodeContext.getId());
+
+                            try {
+                                final ProfileDTO profileDTO =
+                                        remote.runSyncWithTimeout(GetCollectedProfileFromSuT.create(sessionId), Coordination.<GetCollectedProfileFromSuT>doNothing(), ttl);
+                                if (profileDTO.getRuntimeGraphs().isEmpty()) {
+                                    log.info("Profiler of {} turned off. There is no profiler data for recording", agentId);
+                                } else {
+                                    log.debug("got collected profiler from agent {} from kernel {}", agentId, nodeContext.getId());
+                                    logWriter.log(sessionId, taskId + "/" + PROFILER_MARKER, agentId.getIdentifier(), SerializationUtils.toString(profileDTO));
+                                    log.debug("Profiler {} received from agent {} and has been written to FileStorage", profileDTO, agentId);
+                                    logWriter.flush();
+                                    log.debug("Flushing performed on kernel {}", nodeContext.getId());
+                                }
+                            } catch (Throwable e) {
+                                log.error("Get collected profile failed for agent " + agentId + "\n" + Throwables.getStackTraceAsString(e));
+                            }
+                        } catch (Throwable e) {
+                            log.error("Stop polling failed for agent " + agentId + "\n" + Throwables.getStackTraceAsString(e));
+                        }
                     } else {
-                        log.warn("Collection profiling from SuT didn't started.");
+                        log.warn("Collection profiling from SuT didn't start");
                     }
+                } catch (Throwable e) {
+                    log.error("Start polling failed for agent " + agentId + "\n" + Throwables.getStackTraceAsString(e));
                 } finally {
                     log.debug("releasing a latch");
                     if (latch != null) {
                         log.debug("latch is available");
                         latch.countDown();
                     }
-                    alive=false;
+                    alive = false;
                     log.debug("latch released");
 
                 }
@@ -159,8 +176,8 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
 
     @Override
     public void stop() {
-        log.debug("Stop of monitoring requested. agent {}", agentId);
-        if(alive){
+        log.info("Stop of monitoring requested. agent {}", agentId);
+        if (alive) {
             latch = new CountDownLatch(1);
             alive = false;
             try {
@@ -169,13 +186,12 @@ public class MonitorProcess extends LogProcessor implements NodeProcess<Monitori
                 log.warn("Interrupted {}", e);
             }
             log.info("Kernel {} has stopped monitoring on agent {}", nodeContext.getId(), agentId);
-        }
-        else {
-            log.warn("Monitoring on agent {} is not running.  Skipping StopMonitoring",agentId);
+        } else {
+            log.warn("Monitoring on agent {} is not running.  Skipping StopMonitoring", agentId);
         }
     }
 
-    public long getTtl() {
+    public Timeout getTtl() {
         return ttl;
     }
 }

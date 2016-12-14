@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,9 +20,15 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.collect.Lists;
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
+import com.griddynamics.jagger.engine.e1.collector.limits.LimitSet;
+import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 import com.griddynamics.jagger.master.CompositableTask;
+
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -37,11 +43,23 @@ public class WorkloadTask implements CompositableTask {
     private String version;
     private String description = "";
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
+    private List<KernelSideObjectProvider<Validator>> validators = Lists.newLinkedList();
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors = Lists.newLinkedList();
+    private List<Provider<InvocationListener<Object, Object, Object>>> listeners = Lists.newLinkedList();
     private WorkloadClockConfiguration clockConfiguration;
     private TerminateStrategyConfiguration terminateStrategyConfiguration;
     private String parentTaskId;
-    private Calibrator calibrator = new OneNodeCalibrator();
+    private long startDelay = 0;
+    private List<Provider<TestListener>> testListeners = Lists.newLinkedList();
+    private LimitSet limits = null;
+
+    public long getStartDelay() {
+        return startDelay;
+    }
+
+    public void setStartDelay(long waitBefore) {
+        this.startDelay = waitBefore;
+    }
 
     @Override
     public String getTaskName() {
@@ -53,6 +71,7 @@ public class WorkloadTask implements CompositableTask {
         return number;
     }
 
+    @Override
     public void setNumber(int number) {
         this.number = number;
     }
@@ -113,16 +132,34 @@ public class WorkloadTask implements CompositableTask {
         return terminateStrategyConfiguration.getTerminateStrategy();
     }
 
+    public List<KernelSideObjectProvider<Validator>> getValidators() {
+        return validators;
+    }
+
+    public void setValidators(List<KernelSideObjectProvider<Validator>> validators) {
+        this.validators = validators;
+    }
+
+    public List<Provider<InvocationListener<Object, Object, Object>>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<InvocationListener<Object, Object, Object>>> listeners) {
+        this.listeners = listeners;
+    }
+
     public WorkloadTask copy() {
         WorkloadTask task = new WorkloadTask();
         task.setNumber(number);
         task.setName(name);
         task.setVersion(version);
+        task.setValidators(validators);
         task.setCollectors(collectors);
+        task.setListeners(listeners);
         task.setScenarioFactory(scenarioFactory);
         task.setClockConfiguration(clockConfiguration);
         task.setTerminateStrategyConfiguration(terminateStrategyConfiguration);
-        task.setCalibrator(calibrator);
+        task.setStartDelay(startDelay);
         task.setDescription(description);
         return task;
     }
@@ -137,27 +174,28 @@ public class WorkloadTask implements CompositableTask {
         this.parentTaskId = taskId;
     }
 
-
-    public Calibrator getCalibrator() {
-        return calibrator;
+    public List<Provider<TestListener>> getTestListeners() {
+        return testListeners;
     }
 
-    public void setCalibrator(Calibrator calibrator) {
-        this.calibrator = calibrator;
+    public void setTestListeners(List<Provider<TestListener>> testListeners) {
+        this.testListeners = testListeners;
     }
 
     @Override
     public String toString() {
-        return "\nWorkloadTask {\n" +
-                "   number                           = '" + number + "\',\n" +
-                "   name                             = '" + name + "\',\n" +
-                "   version                          = '" + version + "\',\n" +
-                "   scenarioFactory                  = " + scenarioFactory + ",\n" +
-                "   collectors                       = " + collectors + ",\n" +
-                "   clockConfiguration               = " + clockConfiguration + ",\n" +
-                "   terminateStrategyConfiguration   = " + terminateStrategyConfiguration + ",\n" +
-                "   parentTaskId                     = '" + parentTaskId +
-                '}';
+        return "WorkloadTask {\n" +
+                "   number                          = '" + number + "\',\n" +
+                "   name                            = '" + name + "\',\n" +
+                "   version                         = '" + version + "\',\n" +
+                "   scenarioFactory                 = " + scenarioFactory + ",\n" +
+                "   listeners                       = " + listeners + ",\n" +
+                "   collectors                      = " + collectors + ",\n" +
+                "   clockConfiguration              = " + clockConfiguration + ",\n" +
+                "   terminateStrategyConfiguration  = " + terminateStrategyConfiguration + ",\n" +
+                "   parentTaskId                    = '" + parentTaskId + "',\n" +
+                "   startDelay                      = '" + startDelay +
+                "'}";
     }
 
     public String getDescription() {
@@ -167,4 +205,13 @@ public class WorkloadTask implements CompositableTask {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public LimitSet getLimits() {
+        return limits;
+    }
+
+    public void setLimits(LimitSet limits) {
+        this.limits = limits;
+    }
+
 }

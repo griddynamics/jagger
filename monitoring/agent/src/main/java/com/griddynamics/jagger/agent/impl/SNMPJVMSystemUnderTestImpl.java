@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,14 +22,16 @@ package com.griddynamics.jagger.agent.impl;
 
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.*;
+import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.smi.OID;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static com.griddynamics.jagger.util.Units.bytesToMiB;
-import static com.griddynamics.jagger.agent.model.DefaultMonitoringParameters.*;
+import static com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters.*;
 
 /**
  * User: dkotlyarov
@@ -103,5 +105,11 @@ public class SNMPJVMSystemUnderTestImpl implements SystemUnderTestService {
         } catch(Exception e) {
             log.error("Failed to collect metrics from " + snmpProvider.getAddress(), e);
         }
+    }
+
+    @Override
+    public Map<String, Map<String, String>> getSystemProperties() {
+        log.warn("System properties a not available for SNMP");
+        return Collections.EMPTY_MAP;
     }
 }

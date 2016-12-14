@@ -1,0 +1,28 @@
+/// @page GettingStarted
+///
+/// @section section_getting_started_run Run test project
+/// Before running test project, you will need to run @ref section_installation_local @n
+/// After installation is finished, go to your project directory @n
+/// @n
+/// Build Jagger test project
+/// @code
+/// mvn clean install
+/// @endcode
+/// @n
+/// Run test project
+/// @code
+/// cd ./target/{artifactdId}-{version}-full/
+/// ./start.sh profiles/basic/environment.properties
+/// @endcode
+/// @n
+/// <b> @e Note: </b> By default the framework will save test results to the docker MySQL database.
+/// You can @ref JaggerProperties "switch to H2 data base" and run test project without @ref section_installation_local "installation of Result storage and presentation components" @n
+/// @n
+/// Verify results @n
+/// @li Examine pdf report generated in the test execution folder
+/// @li View test results @ref WebUiMain "via WebUI". By default `http://localhost:8087/`
+/// @li Access test results or download pdf report @ref JaasMain "via REST API". By default at `http://localhost:8088/jaas/swagger-ui.html#/`
+///
+/// @n
+/// You have learned how to launch the project. Now let's see how to @ref WritingTest "develop a new load scenario"
+

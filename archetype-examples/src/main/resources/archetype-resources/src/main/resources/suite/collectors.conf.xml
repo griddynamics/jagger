@@ -1,4 +1,4 @@
- #set( $symbol_pound = '#' )
+#set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
 <?xml version="1.0" encoding="UTF-8"?>
@@ -8,8 +8,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -29,6 +28,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-lazy-init="true">
 
+    <!-- begin: following section is used for docu generation - metric calculator -->
     <bean id="responseSize" class="${package}.calculator.ResponseSize"/>
+    <!-- end: following section is used for docu generation - metric calculator -->
+
+    <!-- begin: following section is used for docu generation - custom collector -->
+    <bean id="successRateCollector" class="${package}.provider.ProviderOfExampleSuccessRateCollector"/>
+    <!-- end: following section is used for docu generation - custom collector -->
 
 </beans>

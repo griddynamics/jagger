@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -69,7 +69,7 @@ public class MasterWorkloadCollector implements DistributionListener {
 
         Namespace scenarioNamespace = Namespace.of(sessionId, taskId);
         Multimap<String, Object> objectsMap = HashMultimap.create();
-        objectsMap.put(START_TIME, System.currentTimeMillis());
+        objectsMap.put(START_TIME, System.currentTimeMillis() + workload.getStartDelay());
 
         objectsMap.put(CLOCK, workload.getClock().toString());
         objectsMap.put(CLOCK_VALUE, workload.getClock().getValue());

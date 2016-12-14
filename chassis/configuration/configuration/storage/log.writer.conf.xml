@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -23,9 +22,20 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="HessianBufferedLogWriter" class="com.griddynamics.jagger.storage.fs.logging.HessianBufferedLogWriter">
-        <property name="fileStorage" ref="fileStorage"/>
-        <property name="flushSize" value="${chassis.log.storage.buffer.flushing.size}"/>
+    <bean id="HessianBufferedLogWriter" class="com.griddynamics.jagger.storage.fs.logging.HessianBufferedLogWriter" >
+        <constructor-arg>
+            <value>
+                ${chassis.log.storage.buffer.flushing.size}
+            </value>
+        </constructor-arg>
+        <constructor-arg>
+            <value>
+                ${chassis.log.storage.buffer.size}
+            </value>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="fileStorage"/>
+        </constructor-arg>
     </bean>
 
     <bean id="HessianBufferedLogReader" class="com.griddynamics.jagger.storage.fs.logging.HessianBufferedLogReader">
@@ -33,8 +43,19 @@
     </bean>
 
     <bean id="JBossBufferedLogWriter" class="com.griddynamics.jagger.storage.fs.logging.JBossBufferedLogWriter">
-        <property name="fileStorage" ref="fileStorage"/>
-        <property name="flushSize" value="${chassis.log.storage.buffer.flushing.size}"/>
+        <constructor-arg>
+            <value>
+                ${chassis.log.storage.buffer.flushing.size}
+            </value>
+        </constructor-arg>
+        <constructor-arg>
+            <value>
+                ${chassis.log.storage.buffer.size}
+            </value>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="fileStorage"/>
+        </constructor-arg>
     </bean>
 
     <bean id="JBossBufferedLogReader" class="com.griddynamics.jagger.storage.fs.logging.JBossBufferedLogReader">

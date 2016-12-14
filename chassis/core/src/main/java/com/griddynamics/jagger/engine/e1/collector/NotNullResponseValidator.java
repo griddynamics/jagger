@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,17 +22,15 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
 
-/** ??? Some short description
- * @author ???
+/** Validates that invocation result is not null.@n
+ * @author Dmitry Kotlyarov
  * @n
- * @par Details:
- * @details ???
  *
  * @param <Q> - Query type
  * @param <R> - Result type
  * @param <E> - Endpoint type
  *
- * @ingroup Main_Collectors_group */
+ */
 public class NotNullResponseValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
     public NotNullResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
@@ -43,6 +41,16 @@ public class NotNullResponseValidator<Q, E, R> extends ResponseValidator<Q, E, R
         return "Not-null Validator";
     }
 
+    /** Return false if invocation result is null
+     * @author Dmitry Kotlyarov
+     * @n
+     *
+     * @param query     - the query of current invocation
+     * @param endpoint  - the endpoint of current invocation
+     * @param result    - the result of invocation
+     * @param duration  - the duration of invocation
+     *
+     * @return false if invocation result is null */
     @Override
     public boolean validate(Q query, E endpoint, R result, long duration) {
         return result != null;

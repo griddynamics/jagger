@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2012 Grid Dynamics Consulting Services, Inc, All Rights Reserved
+  ~ http://www.griddynamics.com
+  ~
+  ~ This library is free software; you can redistribute it and/or modify it under the terms of
+  ~ Apache License; either version 2.0 of the License, or any later version
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  ~ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  ~ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+  ~ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  ~ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  ~ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  ~ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="MonitoringReport" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="550"
+              leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <template class="java.io.InputStream">
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
+    <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
+    <field name="metricPlotDTOs" class="java.util.Collection"/>
+
+        <title>
+        <band height="50" splitType="Prevent">
+            <rectangle>
+                <reportElement x="0" y="0" width="550" height="40" backcolor="#AAE600"/>
+                <graphicElement>
+                    <pen lineWidth="0.0" lineStyle="Solid"/>
+                </graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement style="Large_Header_Bold" positionType="Float" x="0" y="0" width="550" height="40"
+                               forecolor="#336600"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Session scope plots]]></text>
+            </staticText>
+        </band>
+    </title>
+    <detail>
+        <band height="60" splitType="Stretch">
+            <subreport>
+                <reportElement positionType="Float" x="0" y="45" width="550" height="10"/>
+                <parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+                <dataSourceExpression>
+                    <![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{metricPlotDTOs})]]></dataSourceExpression>
+                <subreportExpression class="net.sf.jasperreports.engine.JasperReport">
+                    <![CDATA[$P{context}.getReport("/reporting/metrics/metric-plot.jrxml")]]></subreportExpression>
+            </subreport>
+        </band>
+    </detail>
+</jasperReport>

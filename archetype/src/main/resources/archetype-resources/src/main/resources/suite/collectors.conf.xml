@@ -4,6 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-lazy-init="true">
 
-    <bean id="responseSize" class="${package}.ResponseSize"/>
+    <!--This xml file will contain bean declaration of custom collectors:-->
+    <!--custom validators, custom metrics, custom collectors -->
+    <bean id="responseSize" class="${package}.Metric_ResponseSize"/>
 
 </beans>

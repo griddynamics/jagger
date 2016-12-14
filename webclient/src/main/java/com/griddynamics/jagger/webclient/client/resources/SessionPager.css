@@ -1,0 +1,16 @@
+.pageDetails {
+    padding: 4px 8px;
+    text-align: center;
+    font: normal 13px arial, tahoma, helvetica, sans-serif !important;
+    color: black !important;
+}
+
+.button {
+    padding: 4px;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.disabledButton {
+    cursor: default;
+}

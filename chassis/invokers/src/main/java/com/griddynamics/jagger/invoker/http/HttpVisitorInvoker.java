@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,6 +20,10 @@
 
 package com.griddynamics.jagger.invoker.http;
 
+import com.griddynamics.jagger.invoker.InvocationException;
+import com.griddynamics.jagger.invoker.Invoker;
+import com.griddynamics.jagger.util.Nothing;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,22 +31,28 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.griddynamics.jagger.invoker.InvocationException;
-import com.griddynamics.jagger.invoker.Invoker;
-import com.griddynamics.jagger.util.Nothing;
-
-/** ??? Some short description
- * @author ???
+/** Creates http request via java.net.URL
+ * @author Dmitry Kotlyarov
  * @n
  * @par Details:
- * @details ???
+ * @details Creates http request(GET request) to endpoint. Return response of http service. In common ways returns http page.
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class HttpVisitorInvoker implements Invoker<Nothing, String, String> {
 
     public HttpVisitorInvoker() {
     }
 
+    /** Create GET http request to endpoint
+     * @author Mairbek Khadikov
+     * @n
+     *
+     * @param query - query of type Nothing
+     * @param endpoint - target url
+     *
+     * @return text of http response
+     * @throws InvocationException when invocation failed*/
     @Override
 	public String invoke(Nothing query, String endpoint) throws InvocationException {
 		try {

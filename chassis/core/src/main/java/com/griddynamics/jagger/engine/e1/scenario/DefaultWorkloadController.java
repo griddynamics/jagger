@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -40,7 +40,7 @@ public class DefaultWorkloadController implements WorkloadController {
     private final String sessionId;
     private final String taskId;
     private final Map<NodeId, RemoteExecutor> remotes;
-
+    private final Long startTime;
     private final TimeoutsConfiguration timeoutsConfiguration;
     private final WorkloadTask task;
     private Progress progress;
@@ -49,13 +49,13 @@ public class DefaultWorkloadController implements WorkloadController {
     private Map<NodeId, Integer> delays;
     private Map<NodeId, Integer> poolSize;
 
-    public DefaultWorkloadController(String sessionId, String taskId, WorkloadTask task, Map<NodeId, RemoteExecutor> remotes, TimeoutsConfiguration timeoutsConfiguration) {
+    public DefaultWorkloadController(String sessionId, String taskId, WorkloadTask task, Map<NodeId, RemoteExecutor> remotes, TimeoutsConfiguration timeoutsConfiguration, Long startTime) {
         this.sessionId = Preconditions.checkNotNull(sessionId);
         this.taskId = Preconditions.checkNotNull(taskId);
         this.task = Preconditions.checkNotNull(task);
         this.remotes = ImmutableMap.copyOf(remotes);
         this.timeoutsConfiguration = timeoutsConfiguration;
-
+        this.startTime = startTime;
         progress = Progress.IDLE;
         processes = Maps.newHashMap();
         threads = Maps.newHashMap();
@@ -76,7 +76,7 @@ public class DefaultWorkloadController implements WorkloadController {
 
         for (Map.Entry<NodeId, RemoteExecutor> entry : remotes.entrySet()) {
             Long pollTime = System.currentTimeMillis();
-
+            Long durationTime = System.currentTimeMillis()-startTime;
             NodeId id = entry.getKey();
             RemoteExecutor remote = entry.getValue();
 
@@ -85,7 +85,7 @@ public class DefaultWorkloadController implements WorkloadController {
             if (processId != null) {
                 status = remote.runSyncWithTimeout(PollWorkloadProcessStatus.create(sessionId, processId), Coordination.<Command<WorkloadStatus>>doNothing(), timeoutsConfiguration.getWorkloadPollingTimeout());
             } else {
-                status = new WorkloadStatus(0,0);
+                status = new WorkloadStatus(0,0,0);
             }
 
             Integer threadsOnNode = threads.get(id);
@@ -93,7 +93,7 @@ public class DefaultWorkloadController implements WorkloadController {
 
             log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}", new Object[]{pollTime, id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay});
 
-            builder.addNodeInfo(id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay, pollTime);
+            builder.addNodeInfo(id, status.getCurrentThreadNumber(), status.getStartedSamples(), status.getFinishedSamples(), delay, pollTime, durationTime);
         }
 
         return builder.build();
@@ -171,6 +171,8 @@ public class DefaultWorkloadController implements WorkloadController {
         StartWorkloadProcess start = StartWorkloadProcess.create(sessionId, scenarioContext, nodePoolSize);
         start.setScenarioFactory(task.getScenarioFactory());
         start.setCollectors(task.getCollectors());
+        start.setValidators(task.getValidators());
+        start.setListeners(task.getListeners());
 
         log.debug("Going to start process {} on node {}", start, node);
 

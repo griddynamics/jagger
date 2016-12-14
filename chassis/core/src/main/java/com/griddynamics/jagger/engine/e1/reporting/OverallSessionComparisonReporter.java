@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,8 +20,6 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.google.common.collect.Lists;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionComparator;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.SessionVerdict;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
@@ -30,6 +28,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+
+import com.google.common.collect.Lists;
 
 public class OverallSessionComparisonReporter extends AbstractReportProvider {
 
@@ -41,17 +41,13 @@ public class OverallSessionComparisonReporter extends AbstractReportProvider {
 
     private SessionComparator sessionComparator;
     private StatusImageProvider statusImageProvider;
-    private BaselineSessionProvider baselineSessionProvider;
-
 
     @Override
-    public JRDataSource getDataSource() {
-
+    public JRDataSource getDataSource(String currentSession) {
+    
         log.debug("Going to build session comparison report");
-
-        String currentSession = getSessionIdProvider().getSessionId();
-        String baselineSession = baselineSessionProvider.getBaselineSession();
-
+        
+        String baselineSession = getContext().getBaselineSessionProvider().getBaselineSession(currentSession);
         SessionVerdict verdict = sessionComparator.compare(currentSession, baselineSession);
 
         getContext().getParameters().put(JAGGER_VERDICT, verdict);
@@ -71,16 +67,7 @@ public class OverallSessionComparisonReporter extends AbstractReportProvider {
     public void setSessionComparator(SessionComparator sessionComparator) {
         this.sessionComparator = sessionComparator;
     }
-
-    @Required
-    public void setBaselineSessionProvider(BaselineSessionProvider baselineSessionProvider) {
-        this.baselineSessionProvider = baselineSessionProvider;
-    }
-
-    public BaselineSessionProvider getBaselineSessionProvider(){
-        return baselineSessionProvider;
-    }
-
+    
     public SessionComparator getSessionComparator(){
         return sessionComparator;
     }

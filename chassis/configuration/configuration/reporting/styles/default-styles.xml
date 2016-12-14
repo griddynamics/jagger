@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -36,4 +35,10 @@
            fontSize="12" isBold="true" isItalic="false" isUnderline="false"
            isStrikeThrough="false" pdfFontName="Helvetica-Bold"
            pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+
+    <style name="Header_Italic" isDefault="false" fontName="sans-serif"
+           fontSize="8" isBold="false" isItalic="true" isUnderline="false"
+           isStrikeThrough="false" pdfFontName="Helvetica-Bold"
+           pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+
 </jasperTemplate>

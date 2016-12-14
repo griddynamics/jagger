@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -49,8 +48,9 @@
                 <ref bean="e1MasterCollector"/>
                 <ref bean="basicAggregator"/>
                 <ref bean="e1ScenarioAggregator"/>
-                <ref bean="monitoringAggregator"/>
                 <ref bean="durationLogProcessor"/>
+                <ref bean="metricLogProcessor"/>
+                <ref bean="profilerLogProcessor"/>
             </list>
         </property>
     </bean>
@@ -62,19 +62,6 @@
             <ref bean="durationCollector"/>
             <ref bean="informationCollector"/>
             <ref bean="diagnosticCollector"/>
-            <bean class="com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider">
-                <property name="validator">
-                    <bean class="com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider">
-                        <property name="clazz" value="com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator" />
-                    </bean>
-                </property>
-            </bean>
-            <bean id="validationCollectorProvider"
-                  class="com.griddynamics.jagger.engine.e1.collector.ValidationCollectorProvider">
-                <property name="validator">
-                    <bean class="com.griddynamics.jagger.engine.e1.collector.ConsistencyValidatorProvider"/>
-                </property>
-            </bean>
         </list>
     </property>
 </bean>
@@ -688,6 +675,136 @@
                         </list>
                     </property>
                 </bean>
+
+                <!-- Invocation -->
+
+                <!-- sleep 50ms/1 samples/ 1 virtual users -->
+                <bean parent="abstractComposite">
+                    <property name="leading">
+                        <list>
+                            <bean parent="abstractSleep50msTask">
+                                <property name="name" value="sleep-service-50ms-invocations-1-sample-1-thread"/>
+                                <property name="clockConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration">
+                                        <property name="exactcount" value="1"/>
+                                        <property name="threads" value="1"/>
+                                        <property name="tickInterval" value="500"/>
+                                    </bean>
+                                </property>
+                                <property name="terminateStrategyConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.TerminateByTotalSampling">
+                                        <property name="samples" value="1"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+                <!-- sleep 50ms/100 samples/ 5 virtual users -->
+                <bean parent="abstractComposite">
+                    <property name="leading">
+                        <list>
+                            <bean parent="abstractSleep50msTask">
+                                <property name="name" value="sleep-service-50ms-invocations-100-sample-5-thread"/>
+                                <property name="clockConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration">
+                                        <property name="exactcount" value="100"/>
+                                        <property name="threads" value="5"/>
+                                        <property name="tickInterval" value="500"/>
+                                    </bean>
+                                </property>
+                                <property name="terminateStrategyConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.TerminateByTotalSampling">
+                                        <property name="samples" value="100"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+
+                <!-- Periodic -->
+
+                <!-- sleep 50ms/1 samples/ 1 virtual users/ 5s period -->
+                <bean parent="abstractComposite">
+                    <property name="leading">
+                        <list>
+                            <bean parent="abstractSleep50msTask">
+                                <property name="name" value="sleep-service-50ms-invocation-1-sample-1-thread-5s-period"/>
+                                <property name="clockConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration">
+                                        <property name="exactcount" value="1"/>
+                                        <property name="threads" value="1"/>
+                                        <property name="period" value="5s"/>
+                                        <property name="tickInterval" value="500"/>
+                                    </bean>
+                                </property>
+                                <property name="terminateStrategyConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.TerminateByTotalSampling">
+                                        <property name="samples" value="5"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+
+                <!-- sleep 50ms/10 samples/ 5 virtual users/ 5s period -->
+                <bean parent="abstractComposite">
+                    <property name="leading">
+                        <list>
+                            <bean parent="abstractSleep50msTask">
+                                <property name="name" value="sleep-service-50ms-invocation-10-sample-5-thread-5s-period"/>
+                                <property name="clockConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration">
+                                        <property name="exactcount" value="10"/>
+                                        <property name="threads" value="5"/>
+                                        <property name="period" value="5s"/>
+                                        <property name="tickInterval" value="500"/>
+                                    </bean>
+                                </property>
+                                <property name="terminateStrategyConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.TerminateByDuration">
+                                        <property name="seconds" value="30"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+
+                <!--Period less then invocation time-->
+
+                <!-- sleep 50ms/10 samples/ 1 virtual users/ 5s period/ 1s delay-->
+                <bean parent="abstractComposite">
+                    <property name="leading">
+                        <list>
+                            <bean parent="abstractSleep50msTask">
+                                <property name="name" value="sleep-service-50ms-invocation-10-sample-1-thread-5s-period-1s-delay"/>
+                                <property name="clockConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration">
+                                        <property name="exactcount" value="10"/>
+                                        <property name="threads" value="1"/>
+                                        <property name="period" value="5s"/>
+                                        <property name="delay" value="1000"/>
+                                        <property name="tickInterval" value="500"/>
+                                    </bean>
+                                </property>
+                                <property name="terminateStrategyConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.TerminateByDuration">
+                                        <property name="seconds" value="30"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+
+
                 <!-- Pulse -->
                 <!--pulse/30000-500/5 min/10 virtual users -->
                 <bean parent="abstractComposite">
@@ -915,7 +1032,7 @@
                             <bean parent="abstractSleepRandom50to150msTask">
                                 <property name="name" value="sleep-service-random-50-150ms-5-min-rps"/>
                                 <property name="clockConfiguration">
-                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.RpsClockConfiguration">
+                                    <bean class="com.griddynamics.jagger.engine.e1.scenario.QpsClockConfiguration">
                                         <property name="tps" value="500"/>
                                         <property name="tickInterval" value="500"/>
                                     </bean>

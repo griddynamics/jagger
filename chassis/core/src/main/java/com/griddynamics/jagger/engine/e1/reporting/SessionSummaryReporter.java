@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,7 +20,7 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
+import com.griddynamics.jagger.dbapi.entity.SessionData;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -38,18 +38,17 @@ public class SessionSummaryReporter extends AbstractReportProvider {
     private static final Logger log = LoggerFactory.getLogger(SessionSummaryReporter.class);
 
     @Override
-    public JRDataSource getDataSource() {
+    public JRDataSource getDataSource(String sessionId) {
         @SuppressWarnings("unchecked")
-        List<SessionData> all = getHibernateTemplate().find("from SessionData sd where sd.sessionId=?",
-                getSessionIdProvider().getSessionId());
+        List<SessionData> all = (List<SessionData>) getHibernateTemplate().find("from SessionData sd where sd.sessionId=?", sessionId);
 
         if (all.size() > 1) {
-            throw new IllegalStateException("To much session data was stored for the session.");
+            throw new IllegalStateException("To much session data was stored for the session " + sessionId);
         }
         if (all.isEmpty()) {
-            throw new IllegalStateException("Data was not stored");
+            throw new IllegalStateException("Session data for session " + sessionId + " was not stored");
         }
-        all.get(0).setSessionName(getSessionIdProvider().getSessionName());
+        all.get(0).setSessionName(sessionId);
 
         return new JRBeanCollectionDataSource(all);
     }

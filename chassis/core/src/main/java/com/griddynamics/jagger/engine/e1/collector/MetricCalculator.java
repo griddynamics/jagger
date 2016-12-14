@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,30 +22,26 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import java.io.Serializable;
 
-/** ??? Some short description
- * @author ???
+/** Calculates information based on invocation response
+ * @author Grid Dynamics
  * @n
  * @par Details:
- * @details ???
+ * @details Simplified type of collector. @n
+ * Such kind of collector is helpful, when you would like to calculate some info from response. The result of calculation will be stored in database. @n
+ * @n
+ * To view default implementations of collectors click here @ref Main_Collectors_group
  *
- * @param <R> - ???
+ * @param <R> - type of response
  *
- * @ingroup Main_Calculators_Base_group */
-public interface MetricCalculator<R> extends Serializable {
-    /** ??? Some short description
-     * @author ???
-     * @n
-     * @par Details:
-     * @details ???
-     *
-     *  @param response - ???
-     *
-     *  @return ??? */
-	Integer calculate(R response);
-}
+ * @ingroup Main_Collectors_Base_group */
+public interface MetricCalculator<R> extends AbstractMetricCalculator<R, Number>, Serializable {
 
-/* **************** How to customize metric calculator ************************* */
-/// @defgroup Main_HowToCustomizeCalculators_group Custom calculators
-///
-/// @details
-/// @todo finish docu section Custom calculators
+    /**Returns a number, which was calculated from response
+     * @author Grid Dynamics
+     * @n
+     *
+     * @param response - response of invocation
+     *
+     * @return the result of calculation */
+	Number calculate(R response);
+}

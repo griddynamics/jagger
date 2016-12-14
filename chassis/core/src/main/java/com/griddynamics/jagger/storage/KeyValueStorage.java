@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,25 +27,29 @@ import com.google.common.collect.Multimap;
 
 /**
  * Used for storing data in key-value format.
- * 
+ *
  * @author Mairbek Khadikov
- * 
+ *
  */
 public interface KeyValueStorage {
 
-	boolean isAvailable();
+    boolean isAvailable();
 
-	void initialize();
+    void initialize();
 
-	void put(Namespace namespace, String key, Object value);
+    void setSessionId(String sessionId);
+
+    void put(Namespace namespace, String key, Object value);
 
     void putAll(Namespace namespace, Multimap<String, Object> valuesMap);
-	
-	Object fetch(Namespace namespace, String key);
-	
-	Object fetchNotNull(Namespace namespace, String key);
-	
-	Collection<Object> fetchAll(Namespace namespace, String key);
-	
-	Multimap<String, Object> fetchAll(Namespace namespace);
+
+    void deleteAll();
+
+    Object fetch(Namespace namespace, String key);
+
+    Object fetchNotNull(Namespace namespace, String key);
+
+    Collection<Object> fetchAll(Namespace namespace, String key);
+
+    Multimap<String, Object> fetchAll(Namespace namespace);
 }

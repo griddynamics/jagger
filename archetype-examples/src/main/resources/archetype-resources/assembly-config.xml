@@ -31,7 +31,8 @@
                     <exclude>com.griddynamics.jagger:*</exclude>
                 </excludes>
             </dependencySet>
-        </dependencySets>
+    </dependencySets>
+
         <fileSets>
             <fileSet>
                 <directory>target</directory>
@@ -45,4 +46,5 @@
                 <outputDirectory>/</outputDirectory>
             </fileSet>
         </fileSets>
+
 </assembly>

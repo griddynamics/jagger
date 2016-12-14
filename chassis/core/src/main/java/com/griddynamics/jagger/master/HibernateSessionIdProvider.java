@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,12 +22,13 @@ package com.griddynamics.jagger.master;
 
 import java.util.List;
 
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import com.griddynamics.jagger.exception.TechnicalException;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import com.griddynamics.jagger.exception.TechnicalException;
+import java.util.List;
 
 public class HibernateSessionIdProvider extends HibernateDaoSupport implements SessionIdProvider {
-	private final Object lock = new Object();
 	private String sessionId;
     private String sessionName;
     private String sessionComment;
@@ -35,7 +36,7 @@ public class HibernateSessionIdProvider extends HibernateDaoSupport implements S
 	@Override
 	public String getSessionId() {
 		if (sessionId == null) {
-			synchronized (lock) {
+			synchronized (this) {
 				if (sessionId == null) {
 					getHibernateTemplate().persist(new Session());
 					sessionId = loadLastSession().getId().toString();
@@ -65,7 +66,8 @@ public class HibernateSessionIdProvider extends HibernateDaoSupport implements S
 
     @SuppressWarnings("unchecked")
 	private Session loadLastSession() {
-		List<Session> sessions = getHibernateTemplate().find("from Session s order by s.id desc");
+		HibernateTemplate hibernateTemplate = getHibernateTemplate();
+		List<Session> sessions = (List<Session>) hibernateTemplate.find("from Session s order by s.id desc");
 
 		if (sessions.isEmpty()) {
 			throw new TechnicalException("No session detected");

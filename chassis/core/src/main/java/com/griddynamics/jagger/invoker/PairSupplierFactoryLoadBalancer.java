@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,40 +20,32 @@
 
 package com.griddynamics.jagger.invoker;
 
-/** Provides ability to share pairs(pairSupplier) via threads on kernel.
- * @author ???
- * @n
- * @par Details:
- * @details ???
- *
- * @param <Q> query
- * @param <E> endpoint
- *
- * @ingroup Main_Distributors_group */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
-    protected PairSupplierFactory<Q, E> pairSupplierFactory;
-
-    protected PairSupplier<Q, E> pairSupplier;
+    private final static Logger logger = LoggerFactory.getLogger(PairSupplierFactoryLoadBalancer.class);
+    private PairSupplierFactory<Q, E> pairSupplierFactory;
+    private PairSupplier<Q, E> pairSupplier;
 
     public void setPairSupplierFactory(PairSupplierFactory<Q, E> pairSupplierFactory) {
         this.pairSupplierFactory = pairSupplierFactory;
     }
 
-    @Override
-    public void setEndpointProvider(Iterable<E> endpointProvider) {
-        super.setEndpointProvider(endpointProvider);
-        if (this.endpointProvider != null && this.queryProvider != null) {
-            pairSupplier = pairSupplierFactory.create(this.queryProvider, this.endpointProvider);
+    protected PairSupplier<Q, E> getPairSupplier(){
+        if (endpointProvider == null){
+            throw new NullPointerException("Init endpoint provider!");
         }
-    }
+        if (queryProvider == null) {
+            logger.warn("Query provider is null!");
+        }
 
-    @Override
-    public void setQueryProvider(Iterable<Q> queryProvider) {
-        super.setQueryProvider(queryProvider);
-        if (this.endpointProvider != null && this.queryProvider != null) {
-            pairSupplier = pairSupplierFactory.create(this.queryProvider, this.endpointProvider);
+        if (pairSupplier == null){
+            pairSupplier = pairSupplierFactory.create(queryProvider, endpointProvider);
         }
+
+        return pairSupplier;
     }
 
 }

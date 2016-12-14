@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -35,6 +35,7 @@ public class DefaultWorkloadCollectorTest {
     private String taskId;
     private WorkloadTask task;
     private Map<NodeId, RemoteExecutor> remotes;
+    private Long startTime;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -42,7 +43,8 @@ public class DefaultWorkloadCollectorTest {
         taskId = "testWorkload";
         task = new WorkloadTask();
         remotes = Maps.newHashMap();
-        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, TimeoutsConfiguration.getDefaultTimeouts());
+        startTime = System.currentTimeMillis();
+        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, TimeoutsConfiguration.getDefaultTimeouts(), startTime);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)

@@ -1,0 +1,21 @@
+/// @page MonitoringMain
+/// @brief Section provides full information about collection system metrics @n
+/// @details
+/// @n
+/// Jagger is able to collect information about system and JVM resources utilization @n
+/// For this purpose monitoring agents can be launched. Agent will collect following monitoring metrics: @n
+/// @n
+/// 1. System resources (collected with use of [Sigar](http://www.hyperic.com/products/sigar))
+///   * CPU
+///   * Memory
+///   * Network
+///   * Disk
+/// 2. JVM resources (collected via JMX)
+///   * Heap memory and non heap memory
+///   * Minor and major GC runs
+///   * Thread count
+///
+/// @li @subpage MonitoringSetup
+/// @li @subpage MonitoringMetricsSetup
+/// @li @ref section_default_properties_for_monitoring_metrics "List of all monitoring metrics and default settings"
+///

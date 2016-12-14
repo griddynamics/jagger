@@ -1,5 +1,5 @@
 .mainPanel {
-    margin: 60px 10px 10px 10px;
+    margin: 10px 10px 10px 10px;
 }
 
 .navPanel {
@@ -38,6 +38,11 @@
 }
 
 .summaryPanel{
+    text-align: center;
+    margin:  auto;
+}
+
+.nodesPanel{
     text-align: center;
     margin:  auto;
 }
@@ -86,13 +91,11 @@
     border-radius: 5px;
 }
 
-.plotPanel {
-    margin: 5px;
-}
 
 .xAxisLabel {
     text-align: center;
     color: #545454;
+    font: normal 13px arial, tahoma, helvetica, sans-serif !important;
 }
 
 .taskDetailsTree div div div div div {
@@ -118,17 +121,24 @@ input[type="text"] {
     border-radius: 3px;
 }
 
-.plotHeader, .plotLegend {
+.plotLegend {
     text-align: center;
+    font: normal 11px arial, tahoma, helvetica, sans-serif !important;
 }
 
 .plotHeader {
-    font-weight: bold;
+    font: bold 13px arial, tahoma, helvetica, sans-serif !important;
+    vertical-align: middle;
+    float: left;
+    background-color: transparent;
+    width: 100%;
+    border: transparent !important;
 }
 
 .plotLegend {
     border: 1px solid #575757;
     margin-bottom: .3em;
+    font: normal 13px arial, tahoma, helvetica, sans-serif !important;
 }
 
 .centered {
@@ -141,20 +151,23 @@ input[type="text"] {
 }
 
 .zoomLabel {
-    font-size: smaller;
     color: #999;
     background-color: #eee;
     padding: .2em .5em .4em .5em;
     cursor: pointer;
     display: inline-block;
+    height: 16px;
+    font: normal 13px arial, tahoma, helvetica, sans-serif !important;
 }
 
 .panLabel {
     color: #999;
     background-color: #eee;
-    padding: 0 .5em .2em .5em;
+    padding: .2em .5em .4em .5em;
     cursor: pointer;
+    height: 16px;
     display: inline-block;
+    font: normal 13px arial, tahoma, helvetica, sans-serif !important;
 }
 
 .panLabel img {
@@ -197,17 +210,130 @@ input[type="text"] {
 }
 
 .toolBar {
-    margin: 0 0 2px 0;
     padding: 0;
     background-color: #F6F6F6;
     border-bottom: 1px dotted #E8E6E5;
 }
 
+.controlFont {
+    font: normal 11px arial, tahoma, helvetica, sans-serif !important;
+    color: #000000 !important;
+}
+
 .toolBar img {
+    font: normal 11px arial;
     cursor: pointer;
+    resize: none;
+}
+
+.searchTabPanel{
+    font: normal 11px arial;
+    border-spacing: 0;
+
+    color : black;
+    background-color: #F6F6F6;
+    vertical-align: middle;
+
+}
+
+.searchPanel{
+    font: normal 11px arial;
+    border: 0;
+    background-color: #F6F6F6;
+    color: #000000;
+}
+
+.tagButton{
+    font: normal 11px arial;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .gwt-CheckBox label {
     display: inline-block;
     vertical-align: bottom;
+}
+
+.exceptionPanel {
+    max-width: 600px;
+    text-wrap: normal
+}
+
+.exceptionPanel i {
+    font-size: x-small;
+}
+
+.userCommentBox {
+    font-size: 14px;
+}
+
+.abstractWindow {
+    font-size: 14px;
+}
+
+.descriptionPanel{
+    background: #ffffff;
+    border: #ffffff;
+    font-weight: bold;
+    font: normal 11px arial;
+    resize: none;
+}
+
+.textAreaPanel{
+    resize: none;
+}
+
+.gwt-DialogBox .Caption {
+    padding: 4px 8px 4px 4px;
+    cursor: default;
+    font-size: 14px;
+}
+
+.dragLabel {
+    background: #d0e4f6;
+    width: 100%;
+}
+
+.dragLabel img {
+    float: left;
+    height: 15px;
+}
+
+.mainTabPanel {
+    font: normal 13px arial;
+    border-spacing: 0;
+
+    color : black;
+    vertical-align: middle;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.draggable {
+    cursor: move;
+}
+
+.plotSettingsMenu {
+
+}
+
+.legendPanel {
+    background: rgba(240, 240, 240, 0.50);
+
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+}
+
+.padding2px {
+    padding: 2px;
+}
+
+.overflowYScroll {
+    overflow-y: scroll !important;
+}
+
+.plotButtonsPanel {
+    margin: 5px;
 }

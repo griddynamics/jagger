@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+
+<ruleset name="PMD-Rules">
+    <description>
+        The rulesets we want to use in pmd. For a detailed description of pmd rulesets: http://pmd.sourceforge.net/rules/index.html
+    </description>
+
+
+    <rule ref="rulesets/java/basic.xml/AvoidBranchingStatementAsLastInLoop">		<priority>2</priority></rule>
+    <rule ref="rulesets/java/basic.xml/BooleanInstantiation">						<priority>5</priority></rule>
+    <rule ref="rulesets/java/basic.xml/BrokenNullCheck">			                <priority>2</priority></rule>
+    <rule ref="rulesets/java/basic.xml/CollapsibleIfStatements">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/basic.xml/DoubleCheckedLocking">						<priority>5</priority></rule>
+    <rule ref="rulesets/java/basic.xml/ForLoopShouldBeWhileLoop">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/basic.xml/JumbledIncrementer">						    <priority>5</priority></rule>
+    <rule ref="rulesets/java/basic.xml/MisplacedNullCheck">				            <priority>2</priority></rule>
+    <rule ref="rulesets/java/basic.xml/OverrideBothEqualsAndHashcode">				<priority>1</priority></rule>
+    <rule ref="rulesets/java/basic.xml/ReturnFromFinallyBlock">					    <priority>5</priority></rule>
+    <rule ref="rulesets/java/basic.xml/UnconditionalIfStatement">					<priority>5</priority></rule>
+
+    <rule ref="rulesets/java/empty.xml/EmptyCatchBlock">							<priority>1</priority></rule>
+    <rule ref="rulesets/java/empty.xml/EmptyFinallyBlock">							<priority>5</priority></rule>
+    <rule ref="rulesets/java/empty.xml/EmptyIfStmt">								<priority>1</priority></rule>
+    <rule ref="rulesets/java/empty.xml/EmptyStatementNotInLoop">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/empty.xml/EmptyStaticInitializer">					    <priority>5</priority></rule>
+    <rule ref="rulesets/java/empty.xml/EmptySwitchStatements">						<priority>5</priority></rule>
+    <rule ref="rulesets/java/empty.xml/EmptySynchronizedBlock">					    <priority>5</priority></rule>
+    <rule ref="rulesets/java/empty.xml/EmptyTryBlock">								<priority>5</priority></rule>
+    <rule ref="rulesets/java/empty.xml/EmptyWhileStmt">							    <priority>5</priority></rule>
+
+    <rule ref="rulesets/java/clone.xml/CloneMethodMustImplementCloneable">			<priority>1</priority></rule>
+    <rule ref="rulesets/java/clone.xml/CloneThrowsCloneNotSupportedException">		<priority>5</priority></rule>
+    <rule ref="rulesets/java/clone.xml/ProperCloneImplementation">					<priority>5</priority></rule>
+
+    <rule ref="rulesets/java/codesize.xml/ExcessiveClassLength">			        <priority>5</priority></rule>
+    <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/codesize.xml/ExcessiveParameterList">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/codesize.xml/ExcessivePublicCount">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/codesize.xml/TooManyFields">							<priority>5</priority></rule>
+
+    <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor"> 			<priority>5</priority></rule>
+    <rule ref="rulesets/java/controversial.xml/NullAssignment"> 					<priority>5</priority></rule>
+
+    <rule ref="rulesets/java/coupling.xml/CouplingBetweenObjects">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/coupling.xml/LooseCoupling">							<priority>5</priority></rule>
+
+    <rule ref="rulesets/java/design.xml/SimplifyBooleanReturns">					<priority>3</priority></rule>
+    <rule ref="rulesets/java/design.xml/SimplifyBooleanExpressions">				<priority>3</priority></rule>
+    <rule ref="rulesets/java/design.xml/SwitchStmtsShouldHaveDefault">				<priority>3</priority></rule>
+
+    <rule ref="rulesets/java/design.xml/CloseResource">   				            <priority>3</priority></rule>
+    <rule ref="rulesets/java/design.xml/FinalFieldCouldBeStatic">   				<priority>3</priority></rule>
+    <rule ref="rulesets/java/design.xml/CompareObjectsWithEquals">   				<priority>3</priority></rule>
+    <rule ref="rulesets/java/design.xml/UseCollectionIsEmpty">   			    	<priority>3</priority></rule>
+    <rule ref="rulesets/java/design.xml/ReturnEmptyArrayRatherThanNull">   			<priority>3</priority></rule>
+
+    <rule ref="rulesets/java/finalizers.xml/EmptyFinalizer">						<priority>5</priority></rule>
+    <rule ref="rulesets/java/finalizers.xml/FinalizeOnlyCallsSuperFinalize">		<priority>5</priority></rule>
+    <rule ref="rulesets/java/finalizers.xml/FinalizeOverloaded">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/finalizers.xml/FinalizeDoesNotCallSuperFinalize">		<priority>5</priority></rule>
+    <rule ref="rulesets/java/finalizers.xml/FinalizeShouldBeProtected">			    <priority>5</priority></rule>
+    <rule ref="rulesets/java/finalizers.xml/AvoidCallingFinalize">					<priority>5</priority></rule>
+
+    <rule ref="rulesets/java/imports.xml/DuplicateImports">						    <priority>1</priority></rule>
+    <rule ref="rulesets/java/imports.xml/DontImportJavaLang">						<priority>5</priority></rule>
+    <rule ref="rulesets/java/imports.xml/UnusedImports">							<priority>1</priority></rule>
+    <rule ref="rulesets/java/imports.xml/ImportFromSamePackage">					<priority>5</priority></rule>
+
+    <rule ref="rulesets/java/strings.xml/StringToString"> 							<priority>1</priority></rule>
+    <rule ref="rulesets/java/strings.xml/StringInstantiation"> 					    <priority>5</priority></rule>
+
+    <rule ref="rulesets/java/sunsecure.xml/MethodReturnsInternalArray">			    <priority>5</priority></rule>
+    <rule ref="rulesets/java/sunsecure.xml/ArrayIsStoredDirectly">					<priority>5</priority></rule>
+
+    <rule ref="rulesets/java/typeresolution.xml/LooseCoupling">                     <priority>3</priority></rule>
+
+    <rule ref="rulesets/java/unusedcode.xml/UnusedLocalVariable">					<priority>1</priority></rule>
+    <rule ref="rulesets/java/unusedcode.xml/UnusedPrivateField">					<priority>1</priority></rule>
+    <rule ref="rulesets/java/unusedcode.xml/UnusedPrivateMethod">					<priority>1</priority></rule>
+    <rule ref="rulesets/java/unusedcode.xml/UnusedFormalParameter">                 <priority>1</priority></rule>
+    <rule ref="rulesets/java/unnecessary.xml/UnnecessaryConversionTemporary">		<priority>5</priority></rule>
+    <rule ref="rulesets/java/unnecessary.xml/UnnecessaryFinalModifier">				<priority>5</priority></rule>
+    <rule ref="rulesets/java/unnecessary.xml/UnnecessaryReturn">					<priority>5</priority></rule>
+    <rule ref="rulesets/java/unnecessary.xml/UselessOverridingMethod">				<priority>5</priority></rule>
+
+</ruleset>

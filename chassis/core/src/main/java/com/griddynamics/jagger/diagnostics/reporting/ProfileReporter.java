@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -23,18 +23,17 @@ package com.griddynamics.jagger.diagnostics.reporting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.griddynamics.jagger.agent.model.MethodElement;
+import com.griddynamics.jagger.dbapi.DatabaseService;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.diagnostics.thread.sampling.InvocationProfile;
 import com.griddynamics.jagger.diagnostics.thread.sampling.MethodProfile;
 import com.griddynamics.jagger.diagnostics.thread.sampling.RuntimeGraph;
 import com.griddynamics.jagger.diagnostics.visualization.GraphVisualizationHelper;
-import com.griddynamics.jagger.monitoring.model.ProfilingSuT;
+import com.griddynamics.jagger.dbapi.entity.ProfilingSuT;
 import com.griddynamics.jagger.monitoring.reporting.AbstractMonitoringReportProvider;
-import com.griddynamics.jagger.reporting.MappedReportProvider;
-import com.griddynamics.jagger.reporting.ReportingContext;
 import com.griddynamics.jagger.util.SerializationUtils;
 import edu.uci.ics.jung.graph.Graph;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -59,13 +58,11 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
     private int callGraphImageWidth;
     private int callGraphImageHeight;
     private boolean renderGraph;
-    private Map<String, List<SysUnderTestDTO>> sysUnderTests;
+    private DatabaseService databaseService;
 
     @Override
     public void clearCache() {
         super.clearCache();
-
-        sysUnderTests = null;
     }
 
     public boolean isRenderGraph() {
@@ -117,39 +114,55 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
     }
 
     @Override
-    public JRDataSource getDataSource(String testId) {
+    public JRDataSource getDataSource(String id, String sessionId) {
         if (!enable) {
             return new JRBeanCollectionDataSource(Collections.emptySet());
         }
+    
+        Map<String, List<SysUnderTestDTO>> sysUnderTests = loadData(sessionId);
+    
+        Map<String, String> monitoringMap = loadMonitoringMap();
 
-        if (sysUnderTests == null) {
-            sysUnderTests = loadData();
+        List<SysUnderTestDTO> data = null;
+        String taskId = null;
+
+        Long longId = Long.valueOf(id);
+        Map<Long,TaskData> taskDataMap = databaseService.getTaskData(Arrays.asList(longId));
+        if (taskDataMap.keySet().contains(longId)) {
+            taskId = taskDataMap.get(longId).getTaskId();
         }
 
-        loadMonitoringMap();
+        if (taskId != null) {
 
-        List<SysUnderTestDTO> data = sysUnderTests.get(testId);
+             data = sysUnderTests.get(taskId);
 
+            if (data == null) {
+                data = sysUnderTests.get(relatedMonitoringTask(taskId, monitoringMap));
+            }
 
-        if (data == null) {
-            data = sysUnderTests.get(relatedMonitoringTask(testId));
+            // required after monitoring moved to metrics
+            if (data == null) {
+                data = sysUnderTests.get(parentOf(taskId));
+            }
         }
 
         return new JRBeanCollectionDataSource(data);
     }
 
-    private Map<String, List<SysUnderTestDTO>> loadData() {
-        final String sessionId = getSessionIdProvider().getSessionId();
-        Map<String, List<SysUnderTestDTO>> result = Maps.newHashMap();
+    @Deprecated
+    private Map<String, List<SysUnderTestDTO>> loadData(String sessionId) {
+        Map<String, List<SysUnderTestDTO>> result = Maps.newTreeMap();
+
+        //todo JFG-722 We should delete all queries from reporting-part jagger
         @SuppressWarnings("unchecked")
-        List<ProfilingSuT> profilingSuTListFull =
-                getHibernateTemplate().find("from ProfilingSuT where sessionId=? and taskData_id is not null order by taskData, sysUnderTestUrl", sessionId);
+        List<ProfilingSuT> profilingSuTListFull = (List<ProfilingSuT>) getHibernateTemplate()
+                .find("from ProfilingSuT where sessionId=? and taskData_id is not null order by taskData, sysUnderTestUrl", sessionId);
 
         for (ProfilingSuT profilingSuT : profilingSuTListFull) {
             String taskId = profilingSuT.getTaskData().getTaskId();
             List<SysUnderTestDTO> sysUnderTestDTOs = result.get(taskId);
             if (sysUnderTestDTOs == null) {
-                sysUnderTestDTOs = Lists.newLinkedList();
+                sysUnderTestDTOs = Lists.newArrayList();
                 result.put(taskId, sysUnderTestDTOs);
             }
 
@@ -200,14 +213,6 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
 
     public void setEnable(boolean enable) {
         this.enable = enable;
-    }
-
-    public Map<String, List<SysUnderTestDTO>> getSysUnderTests() {
-        return sysUnderTests;
-    }
-
-    public void setSysUnderTests(Map<String, List<SysUnderTestDTO>> sysUnderTests) {
-        this.sysUnderTests = sysUnderTests;
     }
 
     public static class SysUnderTestDTO extends MethodElement {
@@ -291,4 +296,10 @@ public class ProfileReporter extends AbstractMonitoringReportProvider<String> {
 
         return dto;
     }
+
+    @Required
+    public void setDatabaseService(DatabaseService databaseService) {
+        this.databaseService = databaseService;
+    }
+
 }

@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,25 +20,30 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
-import com.griddynamics.jagger.util.DecimalUtil;
 import com.griddynamics.jagger.util.Pair;
 import com.griddynamics.jagger.util.TimeUtils;
+import org.apache.commons.math.stat.regression.SimpleRegression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.SortedMap;
 
 import static com.griddynamics.jagger.util.DecimalUtil.areEqual;
 
 public class DefaultWorkloadSuggestionMaker implements WorkloadSuggestionMaker {
     private static final Logger log = LoggerFactory.getLogger(DefaultWorkloadSuggestionMaker.class);
 
-    private static final WorkloadConfiguration CALIBRATION_CONFIGURATION = WorkloadConfiguration.with(1, 0);
+    private static final WorkloadConfiguration FIRST_POINT_CONFIGURATION = WorkloadConfiguration.with(1, 0);
     private static final int MIN_DELAY = 10;
+    // critical. if delay is too long we are not able to stop threads fast during balancing =>
+    // change workload configuration fails by timeout
+    private static final int MAX_DELAY = 1000;
 
     private final int maxDiff;
 
@@ -60,18 +65,18 @@ public class DefaultWorkloadSuggestionMaker implements WorkloadSuggestionMaker {
             throw new IllegalArgumentException("Cannot suggest workload configuration");
         }
 
-        if (!threadDelayStats.contains(CALIBRATION_CONFIGURATION.getThreads(), CALIBRATION_CONFIGURATION.getDelay())) {
-            log.debug("Statistics is empty. Going to return calibration info.");
-            return CALIBRATION_CONFIGURATION;
+        if (!threadDelayStats.contains(FIRST_POINT_CONFIGURATION.getThreads(), FIRST_POINT_CONFIGURATION.getDelay())) {
+            log.debug("Statistics is empty. Injecting empty entry");
+            return FIRST_POINT_CONFIGURATION;
         }
         if (threadDelayStats.size() == 2 && areEqual(threadDelayStats.get(1, 0).getSecond(), BigDecimal.ZERO)) {
-            log.warn("No calibration info. Going to retry.");
-            return CALIBRATION_CONFIGURATION;
+            log.warn("Statistics is still empty. Injecting empty entry");
+            return FIRST_POINT_CONFIGURATION;
         }
 
         Map<Integer, Pair<Long, BigDecimal>> noDelays = threadDelayStats.column(0);
 
-
+        log.debug("Calculate next thread count");
         Integer threadCount = findClosestPoint(desiredTps, noDelays);
 
         if (threadCount == 0) {
@@ -90,39 +95,60 @@ public class DefaultWorkloadSuggestionMaker implements WorkloadSuggestionMaker {
             return WorkloadConfiguration.with(currentThreads + maxDiff, 0);
         }
 
-        if (noDelays.containsKey(threadCount) && noDelays.get(threadCount).getSecond().compareTo(desiredTps) < 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("Statistics for current point has been already calculated and it is less then desired one" +
-                        "\nLook like we have achieved maximum for this node." +
-                        "\nGoing to help max tps detector.");
+        diff = currentThreads - threadCount;
+        if (diff > maxDiff) {
+            log.debug("Decreasing to {} is required current thread count is {} max allowed diff is {}", new Object[]{threadCount, currentThreads, maxDiff});
+            if ((currentThreads - maxDiff) > 1) {
+                return WorkloadConfiguration.with(currentThreads - maxDiff, 0);
             }
-            int threads = currentThreads;
-            if (threads < maxThreads) {
-                threads++;
+            else {
+                return WorkloadConfiguration.with(1, 0);
             }
-            return WorkloadConfiguration.with(threads, 0);
         }
 
         if (!threadDelayStats.contains(threadCount, 0)) {
             return WorkloadConfiguration.with(threadCount, 0);
         }
 
+        // <delay, <timestamp,tps>>
         Map<Integer, Pair<Long, BigDecimal>> delays = threadDelayStats.row(threadCount);
 
+        // not enough statistics to calculate
         if (delays.size() == 1) {
-            int delay = suggestDelay(delays.get(0).getSecond(), threadCount, desiredTps);
+            int delay = 0;
+            BigDecimal tpsFromStat = delays.get(0).getSecond();
 
+            // try to guess
+            // tpsFromStat can be zero if no statistics was captured till this time
+            if ((tpsFromStat.compareTo(BigDecimal.ZERO) > 0) &&
+                    (desiredTps.compareTo(BigDecimal.ZERO) > 0)) {
+
+                BigDecimal oneSecond = new BigDecimal(TimeUtils.secondsToMillis(1));
+                BigDecimal result = oneSecond.multiply(new BigDecimal(threadCount)).divide(desiredTps, 3, BigDecimal.ROUND_HALF_UP);
+                result = result.subtract(oneSecond.multiply(new BigDecimal(threadCount)).divide(tpsFromStat, 3, BigDecimal.ROUND_HALF_UP));
+
+                delay = result.intValue();
+            }
+            // to have some non zero point in statistics
+            if (delay == 0) {
+                delay = MIN_DELAY;
+            }
+
+            delay = checkDelayInRange(delay);
             return WorkloadConfiguration.with(threadCount, delay);
         }
 
+        log.debug("Calculate next delay");
         Integer delay = findClosestPoint(desiredTps, threadDelayStats.row(threadCount));
 
-
+        delay = checkDelayInRange(delay);
         return WorkloadConfiguration.with(threadCount, delay);
 
     }
 
     private static Integer findClosestPoint(BigDecimal desiredTps, Map<Integer, Pair<Long, BigDecimal>> stats) {
+        final int MAX_POINTS_FOR_REGRESSION = 10;
+
         SortedMap<Long, Integer> map = Maps.newTreeMap(new Comparator<Long>() {
             @Override
             public int compare(Long first, Long second) {
@@ -137,87 +163,67 @@ public class DefaultWorkloadSuggestionMaker implements WorkloadSuggestionMaker {
             throw new IllegalArgumentException("Not enough stats to calculate point");
         }
 
+        // <time><number of threads> - sorted by time
         Iterator<Map.Entry<Long, Integer>> iterator = map.entrySet().iterator();
-        Integer firstPoint = iterator.next().getValue();
-        Integer secondPoint = iterator.next().getValue();
 
+        SimpleRegression regression = new SimpleRegression();
+        Integer tempIndex;
+        double previousValue = -1.0;
+        double value;
+        double measuredTps;
 
-        if (firstPoint > secondPoint) {
-            Integer temp = secondPoint;
-            secondPoint = firstPoint;
-            firstPoint = temp;
+        log.debug("Selecting next point for balancing");
+        int indx = 0;
+        while (iterator.hasNext()) {
+
+            tempIndex = iterator.next().getValue();
+
+            if (previousValue < 0.0) {
+                previousValue = tempIndex.floatValue();
+            }
+            value = tempIndex.floatValue();
+            measuredTps = stats.get(tempIndex).getSecond().floatValue();
+
+            regression.addData(value, measuredTps);
+
+            log.debug(String.format("   %7.2f    %7.2f",value,measuredTps));
+
+            indx++;
+            if (indx > MAX_POINTS_FOR_REGRESSION) {
+                break;
+            }
         }
 
-        BigDecimal x1 = new BigDecimal(firstPoint);
-        BigDecimal z1 = stats.get(firstPoint).getSecond();
+        double intercept = regression.getIntercept();
+        double slope = regression.getSlope();
 
-        BigDecimal x2 = new BigDecimal(secondPoint);
-        BigDecimal z2 = stats.get(secondPoint).getSecond();
+        double approxPoint;
 
-        BigDecimal a = x2.subtract(x1);
-        BigDecimal c = z2.subtract(z1);
-
-        if (areEqual(c, BigDecimal.ZERO)) {
-            return firstPoint;
+        // if no slope => use previous number of threads
+        if (Math.abs(slope) > 1e-12) {
+            approxPoint = (desiredTps.doubleValue() - intercept) / slope;
+        } else {
+            approxPoint = previousValue;
         }
 
-        // Line equation
-        // y - y1 = ((y2 - y1)/(x2 - x1))*(x-x1)
-        BigDecimal approxPoint = desiredTps.subtract(z1).multiply(a).divide(c, 3, BigDecimal.ROUND_HALF_UP)
-                .add(x1);
-
-        Integer result = 0;
-        if (DecimalUtil.compare(approxPoint, BigDecimal.ZERO) > 0) {
-            approxPoint = approxPoint.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_UP);
-            result = approxPoint.intValue();
+        // if approximation point is negative - ignore it
+        if (approxPoint < 0) {
+            approxPoint = previousValue;
         }
-        return result;
+
+        log.debug(String.format("Next point   %7d    (target tps: %7.2f)",(int)Math.round(approxPoint),desiredTps.doubleValue()));
+
+        return (int)Math.round(approxPoint);
     }
 
-    private static int suggestDelay(BigDecimal tpsFromStat, Integer threadCount, BigDecimal desiredTps) {
-        BigDecimal oneSecond = new BigDecimal(TimeUtils.secondsToMillis(1));
-        BigDecimal result = oneSecond.multiply(new BigDecimal(threadCount)).divide(desiredTps, 3, BigDecimal.ROUND_HALF_UP);
-        result = result.subtract(oneSecond.multiply(new BigDecimal(threadCount)).divide(tpsFromStat, 3, BigDecimal.ROUND_HALF_UP));
-
-        int i = result.intValue();
-        if (i == 0) {
-            i = MIN_DELAY;
+    private static int checkDelayInRange(int delay) {
+        if (delay < 0) {
+            delay = 0;
         }
-        return i;
-    }
-
-    private static Integer findClosestPoint(Set<Integer> points, Integer point) {
-        List<Integer> list = Lists.newArrayList(points);
-        Collections.sort(list);
-
-        int index = list.indexOf(point);
-        if (index == -1) {
-            throw new IllegalStateException("Point is not found");
+        if (delay > MAX_DELAY) {
+            delay = MAX_DELAY;
         }
-
-        Integer left = null;
-        if (index != 0) {
-            left = list.get(index - 1);
-        }
-
-        Integer right = null;
-        if (index != (list.size() - 1)) {
-            right = list.get(index + 1);
-        }
-
-        if (left == null) {
-            return right;
-        }
-
-        if (right == null) {
-            return left;
-        }
-
-        if ((right - index) < (index - left)) {
-            return right;
-        }
-
-        return left;
+        return delay;
     }
 
 }

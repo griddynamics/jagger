@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.xml.beanParsers.task;
 
+import com.griddynamics.jagger.engine.e1.scenario.FixedDelay;
 import com.griddynamics.jagger.engine.e1.scenario.UserGroupsClockConfiguration;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
@@ -9,7 +10,8 @@ import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-
+@Deprecated
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 public class UserGroupsDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override
@@ -22,6 +24,10 @@ public class UserGroupsDefinitionParser extends CustomBeanDefinitionParser {
         if (element.getAttribute(XMLConstants.TICK_INTERVAL).isEmpty()){
             builder.addPropertyValue(XMLConstants.TICK_INTERVAL, XMLConstants.DEFAULT_TICK_INTERVAL);
         }
+        if (!element.getAttribute(XMLConstants.DELAY).isEmpty()){
+            builder.addPropertyValue(XMLConstants.DELAY, new FixedDelay(Integer.parseInt(element.getAttribute(XMLConstants.DELAY))));
+        }
+        element.removeAttribute(XMLConstants.DELAY);
     }
 
     @Override

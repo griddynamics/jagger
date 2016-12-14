@@ -1,0 +1,58 @@
+/// @page WebUiProperties WebUi configuration
+/// @brief Section describes jagger Web client properties @n
+/// @details
+/// @n
+/// Back to @ref WebUiMain @n
+/// @n
+/// @n
+/// @li @ref section_webui_properties
+/// @li @ref section_webui_property_file
+///
+/// @n
+/// @n
+/// @section section_webui_properties WebUI properties
+/// @n
+/// You can set following properties for Jagger WebUI:
+/// @dontinclude webclient.properties
+/// @skip begin: following section is used for docu generation - Jagger Web UI properties
+/// @until end: following section is used for docu generation - Jagger Web Ui properties
+/// @n
+/// @n
+/// @section section_webui_property_file Jagger with stand alone property file
+/// This is an example of launching Web Client with stand alone properties file using [Apache Tomcat](http://tomcat.apache.org/). @n
+/// We recommend to use stand alone property file to store setup of DB connection. It will simplify updating of Web Client to new versions.
+/// @n
+/// > ! <b> \e Note </b> that this ability appeared **since version 1.2.1** @n
+/// @n
+/// We assume you have already downloaded and started Jagger Web Client like described in @ref WebUiInstallation @n
+/// @n
+/// #### 1. Create jagger webclient properties file
+/// @n
+///   @image html webUI_property_file.png "Creating properties file"
+/// @n
+/// Insert DB connection properties to this file: @n
+/// @code
+///  jdbc.driver=com.mysql.jdbc.Driver
+///  jdbc.url=jdbc:mysql://localhost:3306/jaggerdb
+///  jdbc.user=jagger
+///  jdbc.password=rocks
+/// @endcode
+/// @n
+/// #### 2. Add jagger.webclient.properties to catalina.properties
+/// @n
+/// @code
+/// jagger.webclient.properties=${catalina.home}/conf/jagger.properties
+/// @endcode
+/// @n
+///   @image html webUI_property_catalina.png "Adding Jagger webclient property to Catalina"
+/// @n
+/// #### 3. Restart Tomcat to let resolution of new property
+/// @n
+/// @code
+/// cd ${tomcat-home}
+/// ./bin/shutdown.sh
+/// ./startup.sh
+/// @endcode
+/// @n
+/// @n
+/// > ! Note that if webclient can not resolve standalone properties file, @ref section_webui_properties "default properties" will be used

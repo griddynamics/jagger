@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -28,7 +27,7 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="sessionId" class="java.lang.String"/>
     <field name="sessionName" class="java.lang.String"/>
@@ -55,7 +54,7 @@
         </band>
     </title>
     <detail>
-        <band height="92" splitType="Stretch">
+        <band height="112" splitType="Stretch">
             <staticText>
                 <reportElement style="Header_Bold" positionType="Float" x="0" y="0" width="300" height="10"
                                forecolor="#AAAAAA"/>
@@ -63,7 +62,7 @@
                 <text><![CDATA[Session id]]></text>
             </staticText>
             <textField>
-                <reportElement style="Header_Bold" x="300" y="0" width="200" height="10"/>
+                <reportElement style="Header_Bold" positionType="Float" x="300" y="0" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression><![CDATA[$F{sessionId}]]></textFieldExpression>
             </textField>
@@ -74,7 +73,7 @@
                 <text><![CDATA[Session name]]></text>
             </staticText>
             <textField>
-                <reportElement style="Header_Bold" x="300" y="10" width="200" height="10"/>
+                <reportElement style="Header_Bold" positionType="Float" x="300" y="10" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression>
                     <![CDATA[$F{sessionName} != null ? $F{sessionName} : $F{sessionId}]]></textFieldExpression>
@@ -83,78 +82,78 @@
                 <reportElement style="Header_Bold" positionType="Float" x="0" y="20" width="300" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
-                <text><![CDATA[Session comment]]></text>
+                <text><![CDATA[Session start time]]></text>
             </staticText>
-            <textField>
-                <reportElement style="Header_Bold" x="300" y="20" width="200" height="10"/>
+            <textField pattern="HH:mm:ss.SSS, dd MMMMM yyyy (EEEEE)">
+                <reportElement style="Header_Bold" positionType="Float" x="300" y="20" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
-                <textFieldExpression>
-                    <![CDATA[$F{comment} != null ? $F{comment} : ""]]></textFieldExpression>
+                <textFieldExpression class="java.util.Date"><![CDATA[$F{startTime}]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Header_Bold" positionType="Float" x="0" y="30" width="300" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
-                <text><![CDATA[Session start time]]></text>
+                <text><![CDATA[Session end time]]></text>
             </staticText>
             <textField pattern="HH:mm:ss.SSS, dd MMMMM yyyy (EEEEE)">
-                <reportElement style="Header_Bold" x="300" y="30" width="200" height="10"/>
+                <reportElement style="Header_Bold" positionType="Float" x="300" y="30" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
-                <textFieldExpression class="java.util.Date"><![CDATA[$F{startTime}]]></textFieldExpression>
+                <textFieldExpression class="java.util.Date"><![CDATA[$F{endTime}]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Header_Bold" positionType="Float" x="0" y="40" width="300" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
-                <text><![CDATA[Session end time]]></text>
-            </staticText>
-            <textField pattern="HH:mm:ss.SSS, dd MMMMM yyyy (EEEEE)">
-                <reportElement style="Header_Bold" x="300" y="40" width="200" height="10"/>
-                <textElement textAlignment="Left"/>
-                <textFieldExpression class="java.util.Date"><![CDATA[$F{endTime}]]></textFieldExpression>
-            </textField>
-            <staticText>
-                <reportElement style="Header_Bold" positionType="Float" x="0" y="50" width="300" height="10"
-                               forecolor="#AAAAAA"/>
-                <textElement textAlignment="Left" verticalAlignment="Middle"/>
                 <text><![CDATA[Session duration]]></text>
             </staticText>
             <textField>
-                <reportElement style="Header_Bold" x="300" y="50" width="200" height="10"/>
+                <reportElement style="Header_Bold" positionType="Float" x="300" y="40" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression>
                     <![CDATA[com.griddynamics.jagger.util.TimeUtils.formatDuration( $F{endTime}.getTime() - $F{startTime}.getTime() )]]></textFieldExpression>
             </textField>
             <staticText>
-                <reportElement style="Header_Bold" positionType="Float" x="0" y="60" width="200" height="10"
+                <reportElement style="Header_Bold" positionType="Float" x="0" y="50" width="300" height="10"
+                               forecolor="#AAAAAA"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle"/>
+                <text><![CDATA[Session comment]]></text>
+            </staticText>
+            <textField isStretchWithOverflow="true">
+                <reportElement style="Header_Bold" positionType="Float" x="0" y="62" width="550" height="2"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression class="java.lang.String">
+                    <![CDATA[($F{comment} != null) ? $F{comment} : "" ]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement style="Header_Bold" positionType="Float" x="0" y="66" width="200" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
                 <text><![CDATA[Number of tasks]]></text>
             </staticText>
             <textField>
-                <reportElement style="Header_Bold" x="300" y="60" width="200" height="10"/>
+                <reportElement style="Header_Bold" positionType="Float" x="300" y="66" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression class="java.lang.Integer"><![CDATA[$F{taskExecuted}]]></textFieldExpression>
             </textField>
             <staticText>
-                <reportElement style="Header_Bold" positionType="Float" x="0" y="70" width="300" height="10"
+                <reportElement style="Header_Bold" positionType="Float" x="0" y="76" width="300" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
                 <text><![CDATA[Number of task failures]]></text>
             </staticText>
             <textField>
-                <reportElement style="Header_Bold" x="300" y="70" width="200" height="10"/>
+                <reportElement style="Header_Bold" positionType="Float" x="300" y="76" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression class="java.lang.Integer"><![CDATA[$F{taskFailed}]]></textFieldExpression>
             </textField>
             <staticText>
-                <reportElement style="Header_Bold" positionType="Float" x="0" y="80" width="300" height="10"
+                <reportElement style="Header_Bold" positionType="Float" x="0" y="86" width="300" height="10"
                                forecolor="#AAAAAA"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
                 <text><![CDATA[Number of active kernels]]></text>
             </staticText>
             <textField>
-                <reportElement style="Header_Bold" x="300" y="80" width="200" height="10"/>
+                <reportElement style="Header_Bold" positionType="Float" x="300" y="86" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression class="java.lang.Integer"><![CDATA[$F{activeKernels}]]></textFieldExpression>
             </textField>

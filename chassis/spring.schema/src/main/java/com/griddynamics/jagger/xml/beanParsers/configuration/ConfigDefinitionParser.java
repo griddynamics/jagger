@@ -20,6 +20,8 @@ import org.w3c.dom.Element;
  * Time: 11:21 AM
  * To change this template use File | Settings | File Templates.
  */
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
 
     private boolean monitoringEnable = false;
@@ -41,7 +43,14 @@ public class ConfigDefinitionParser extends CustomBeanDefinitionParser {
         initListeners(element,parserContext, builder);
 
         //parse test-plan
-        Element testPlan = DomUtils.getChildElementByTagName(element, XMLConstants.TEST_SUITE);
+        Element testPlan = DomUtils.getChildElementByTagName(element, XMLConstants.LOAD_SCENARIO);
+
+        if (testPlan != null){
+            Element loadScenarioListeners = DomUtils.getChildElementByTagName(testPlan, XMLConstants.LOAD_SCENARIO_LISTENERS);
+            if (loadScenarioListeners!=null){
+                setBeanListProperty("loadScenarioListeners", true, true, loadScenarioListeners, parserContext, builder.getBeanDefinition());
+            }
+        }
 
         TaskGeneratorBean generator = new TaskGeneratorBean();
         generator.getBean().getPropertyValues().addPropertyValue(XMLConstants.TEST_GROUPS, parseCustomElement(testPlan, parserContext, builder.getBeanDefinition()));

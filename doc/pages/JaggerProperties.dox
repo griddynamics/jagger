@@ -1,0 +1,61 @@
+/// @page JaggerProperties
+/// @brief Section provides full information about Jagger configuration @n
+///
+/// @li @ref section_properties_overview
+/// @li @ref section_properties_files_and_hierarchy
+/// @li @ref section_jagger_properties
+/// @li @ref section_default_properties_for_monitoring_metrics
+///
+/// @section section_properties_overview Overview
+/// Configuration of all Jagger components is provided via properties. Framework contains set of default property values and allows to overwrite nearly all of them. @n
+/// When you are @ref section_installation_local "creating load test project from template", project will contain 'environment.properties' file with
+/// all configuration properties. This file is passed to the jagger start script @ref section_getting_started_run "when you are launching test". @n
+/// @n
+/// You can change values directly in this file or add your own properties file like described below or use system properties for configuration. @n
+///
+/// see also:
+/// @li @ref AgentProperties
+/// @li @ref WebUiProperties
+///
+/// @n
+/// @section section_properties_files_and_hierarchy Properties files and hierarchy
+/// @n
+/// @details Jagger property resolver will use properties from following sources: @n
+/// @n
+/// low priority @n
+/// @li default.environment.properties file defined by property below
+/// @li environment.properties file passed to jagger launcher in command line
+/// @li files with user properties defined by property below
+/// @li system properties
+///
+/// high priority @n
+/// @n
+/// Properties with higher priority will overrider properties with lower one @n
+/// @n
+/// @dontinclude  environment.properties
+/// @skip  begin: following section is used for docu generation - Properties files and hierarchy
+/// @until end: following section is used for docu generation - Properties files and hierarchy
+///
+///
+///
+/// @n
+/// @section section_jagger_properties Jagger configuration properties
+/// @n
+/// @details Below is copy of environment.properties file from Jagger archetype. @n
+/// This file contains all configurable Jagger properties. @n
+/// @n
+/// @dontinclude  environment.properties
+/// @skip  begin: following section is used for docu generation - Jagger properties
+/// @until end: following section is used for docu generation - Jagger properties
+///
+///
+///
+/// @n
+/// @section section_default_properties_for_monitoring_metrics Default settings for monitoring metrics
+/// @n
+/// @details Below is list of default settings for monitoring metrics @n
+/// You can change them via your properties files or via system properties @n
+/// @n
+/// @dontinclude  default.environment.properties
+/// @skip  begin: following section is used for docu generation - Default setup for monitoring metrics
+/// @until end: following section is used for docu generation - Default setup for monitoring metrics

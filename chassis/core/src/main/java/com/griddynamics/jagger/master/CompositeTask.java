@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,8 +20,12 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.collect.ImmutableList;
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.master.configuration.Task;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -33,10 +37,29 @@ import java.util.List;
 public class CompositeTask implements Task {
     private List<CompositableTask> leading;
     private List<CompositableTask> attendant = ImmutableList.of();
+    private List<Provider<TestGroupListener>> listeners = ImmutableList.of();
+    private List<Provider<TestGroupDecisionMakerListener>> decisionMakerListeners = ImmutableList.of();
     private int number;
+    private String name;
 
     public List<CompositableTask> getLeading() {
         return leading;
+    }
+
+    public List<Provider<TestGroupListener>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<TestGroupListener>> listeners) {
+        this.listeners = listeners;
+    }
+
+    public List<Provider<TestGroupDecisionMakerListener>> getDecisionMakerListeners() {
+        return decisionMakerListeners;
+    }
+
+    public void setDecisionMakerListeners(List<Provider<TestGroupDecisionMakerListener>> decisionMakerListeners) {
+        this.decisionMakerListeners = decisionMakerListeners;
     }
 
     public void setLeading(List<CompositableTask> leading) {
@@ -53,15 +76,20 @@ public class CompositeTask implements Task {
 
     @Override
     public String getTaskName() {
-        return "Composite task";
+        return name;
     }
 
     @Override
     public int getNumber() {
         return number;
     }
-
+    
+    @Override
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

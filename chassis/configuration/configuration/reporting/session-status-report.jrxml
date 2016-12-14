@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -28,7 +27,7 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="statusImage" class="java.awt.Image"/>
     <field name="message" class="java.lang.String"/>
@@ -54,8 +53,8 @@
                 <reportElement x="25" y="0" width="25" height="40"/>
                 <imageExpression class="java.awt.Image"><![CDATA[$F{statusImage}]]></imageExpression>
             </image>
-            <textField>
-                <reportElement style="Header_Bold" x="65" y="0" width="300" height="40"/>
+            <textField isStretchWithOverflow="true">
+                <reportElement style="Header_Bold" x="65" y="0" width="500" height="40"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[$F{message}]]></textFieldExpression>
             </textField>

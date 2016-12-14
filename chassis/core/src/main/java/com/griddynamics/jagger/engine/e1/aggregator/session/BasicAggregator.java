@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,32 +20,47 @@
 
 package com.griddynamics.jagger.engine.e1.aggregator.session;
 
-import com.google.common.collect.Multimap;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.ERROR_MESSAGE;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.FAILED;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.KERNELS_COUNT;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.SESSION;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.TASK_EXECUTED;
+
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.NodeType;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData;
-import com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData;
+import com.griddynamics.jagger.dbapi.entity.SessionData;
+import com.griddynamics.jagger.dbapi.entity.TagEntity;
+import com.griddynamics.jagger.dbapi.entity.TaskData;
+import com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage;
 import com.griddynamics.jagger.master.DistributionListener;
 import com.griddynamics.jagger.master.TaskExecutionStatusProvider;
 import com.griddynamics.jagger.master.configuration.SessionExecutionStatus;
 import com.griddynamics.jagger.master.configuration.SessionListener;
 import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.monitoring.MonitoringTask;
 import com.griddynamics.jagger.storage.KeyValueStorage;
 import com.griddynamics.jagger.storage.Namespace;
+import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import com.google.common.collect.Multimap;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
-
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.*;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Aggregates generic session/task data from key-value storage and stores to
- * relation structure. See {@link com.griddynamics.jagger.engine.e1.aggregator.session.model.SessionData},
- * {@link com.griddynamics.jagger.engine.e1.aggregator.session.model.TaskData} for table structure.
+ * relation structure. See {@link com.griddynamics.jagger.dbapi.entity.SessionData},
+ * {@link com.griddynamics.jagger.dbapi.entity.TaskData} for table structure.
  *
  * @author Mairbek Khadikov
  */
@@ -53,6 +68,7 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
     private static final Logger log = LoggerFactory.getLogger(BasicAggregator.class);
 
     private KeyValueStorage keyValueStorage;
+    private SessionMetaDataStorage sessionMetaDataStorage;
 
     TaskExecutionStatusProvider taskExecutionStatusProvider;
 
@@ -78,6 +94,7 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
         Multimap<String, Object> all = keyValueStorage.fetchAll(namespace);
 
         SessionData sessionData = new SessionData();
+
         sessionData.setSessionId(sessionId);
         sessionData.setComment(sessionComment);
 
@@ -98,12 +115,16 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
         String errorMessage = (String) getFirst(all, ERROR_MESSAGE);
         sessionData.setErrorMessage(errorMessage);
-
         getHibernateTemplate().persist(sessionData);
+        persistTags(sessionId, sessionMetaDataStorage);
     }
 
     public void setKeyValueStorage(KeyValueStorage keyValueStorage) {
         this.keyValueStorage = keyValueStorage;
+    }
+
+    public void setSessionMetaDataStorage(SessionMetaDataStorage sessionMetaDataStorage) {
+        this.sessionMetaDataStorage = sessionMetaDataStorage;
     }
 
     private static Object getFirst(Multimap<String, Object> all, String key) {
@@ -121,6 +142,10 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
 
     @Override
     public void onTaskDistributionCompleted(String sessionId, String taskId, Task task) {
+        if (task instanceof MonitoringTask){
+            return;
+        }
+
         log.debug("onTaskFinished invoked {} {}", sessionId, taskId);
         persistData(sessionId, taskId, task);
     }
@@ -134,4 +159,34 @@ public class BasicAggregator extends HibernateDaoSupport implements Distribution
         taskData.setStatus(taskExecutionStatusProvider.getStatus(taskId));
         getHibernateTemplate().persist(taskData);
     }
+
+    public void persistTags(String sessionId, SessionMetaDataStorage metaDataStorage) {
+        HibernateTemplate hibernateTemplate = getHibernateTemplate();
+        for (TagEntity tagEntity : metaDataStorage.getTagsForSaveOrUpdate()) {
+            try {
+                hibernateTemplate.saveOrUpdate(tagEntity);
+            } catch (HibernateException e) {
+                log.error("Cannot add new tag", e);
+            }
+        }
+
+        if (!metaDataStorage.getSessionTags().isEmpty()) {
+            Set<TagEntity> sessionTagList = new HashSet<TagEntity>();
+            sessionTagList.addAll((Collection<? extends TagEntity>) hibernateTemplate.findByNamedParam("select tags from TagEntity as tags " +
+                    "where tags.name in (:sTagsName)", "sTagsName", metaDataStorage.getSessionTags()));
+
+            if (!sessionTagList.isEmpty()) {
+                List<SessionData> sessionsById = (List<SessionData>) hibernateTemplate.find("from SessionData s where s.sessionId=?", sessionId);
+                if (sessionsById.size()==1)
+                    for (SessionData sessionData : sessionsById) {
+                        sessionData.setTags(sessionTagList);
+                        hibernateTemplate.saveOrUpdate(sessionData);
+                    }
+                else
+                    log.error("Must be one session's id which is equals {}, but got {} ids",sessionId,sessionsById.size());
+            } else
+                log.info("No tags for mark session {}", sessionId);
+        }
+    }
+
 }

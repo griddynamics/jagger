@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -22,15 +22,21 @@ package com.griddynamics.jagger.providers.csv;
 
 import com.griddynamics.jagger.providers.creators.ObjectCreator;
 
-/**
+/** Creates urls(host+path) from row data
  * @author Nikolay Musienko
- *         Date: 22.04.13
- */
-
+ * @n
+ *
+ * @ingroup Main_Providers_group */
 public class RequestPathCvsWrapper implements ObjectCreator<RequestPath> {
 
     String[] header;
 
+    /** Creates urls(host+path) from row data
+     * @author Nikolay Musienko
+     * @n
+     *
+     * @param strings - row data
+     * @return new RequestPath object*/
     @Override
     public RequestPath createObject(String... strings) {
         RequestPath ret = new RequestPath();

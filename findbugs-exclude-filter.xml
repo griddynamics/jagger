@@ -1,0 +1,11 @@
+<FindBugsFilter>
+    <Match>
+        <Bug pattern="DP_DO_INSIDE_DO_PRIVILEGED"/>
+    </Match>
+    <Match>
+        <Bug pattern="REC_CATCH_EXCEPTION"/>
+    </Match>
+    <Match>
+        <Package name="com.griddynamics.jagger.rawdata.protobuf"/>
+    </Match>
+</FindBugsFilter>

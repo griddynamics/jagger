@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -21,6 +21,9 @@
 package com.griddynamics.jagger.engine.e1.process;
 
 import com.griddynamics.jagger.coordinator.Command;
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.Validator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
@@ -31,7 +34,9 @@ public class StartWorkloadProcess implements Command<String> {
     private ScenarioFactory<Object, Object, Object> scenarioFactory;
     private String sessionId;
     private ScenarioContext scenarioContext;
+    private List<KernelSideObjectProvider<Validator>> validators;
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors;
+    private List<Provider<InvocationListener<Object, Object, Object>>> listeners;
     private int poolSize;
 
     public static StartWorkloadProcess create(String sessionId, ScenarioContext scenarioContext, int poolSize) {
@@ -77,6 +82,22 @@ public class StartWorkloadProcess implements Command<String> {
         this.collectors = collectors;
     }
 
+    public List<KernelSideObjectProvider<Validator>> getValidators() {
+        return validators;
+    }
+
+    public void setValidators(List<KernelSideObjectProvider<Validator>> validators) {
+        this.validators = validators;
+    }
+
+    public List<Provider<InvocationListener<Object, Object, Object>>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<Provider<InvocationListener<Object, Object, Object>>> listeners) {
+        this.listeners = listeners;
+    }
+
     public String getTaskId() {
         return scenarioContext.getTaskId();
     }
@@ -92,6 +113,7 @@ public class StartWorkloadProcess implements Command<String> {
                 ", sessionId='" + sessionId + '\'' +
                 ", scenarioContext=" + scenarioContext +
                 ", collectors=" + collectors +
+                ", listeners=" + listeners +
                 ", poolSize=" + poolSize +
                 '}';
     }

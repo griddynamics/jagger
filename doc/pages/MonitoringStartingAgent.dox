@@ -1,0 +1,99 @@
+/// @page MonitoringSetup How to start monitoring agent
+/// @brief Section describes how to start monitoring agents to collect system and JVM metrics @n
+/// @details
+/// @n
+/// Back to @ref MonitoringMain @n
+/// @n
+/// @li @ref section_mon_terms
+/// @li @ref section_mon_server_setup
+/// @li @ref section_mon_agent_start
+/// @li @ref section_mon_agent_start_jboss
+///
+/// @n
+/// @section section_mon_terms Terms
+/// @b Agent - stand alone client application, started on SUT site to collect monitoring metrics. Agent will connect to @n
+/// Jagger server node (COORDINATION_SERVER), register there, post collected data and follow commands, received from server. @n
+/// @n
+/// @section section_mon_server_setup Jagger server setup
+/// To make Jagger server ready for agent(s) connection set properties in corresponding `environment.properties` file @n
+/// @code
+/// chassis.conditions.monitoring.enable=true
+/// chassis.conditions.min.agents.count=2
+/// @endcode
+/// @n
+/// There are some more properties for monitoring setup. You can find them here: @ref section_jagger_properties
+/// @n
+/// @section section_mon_agent_start Starting agent
+/// After you test program compilation, you will get @e .zip file in @e target folder, containing compiled code to start agent. @n
+/// Copy this file to SUT site and unzip it there. @n
+///
+/// @par Agent with system resources monitoring
+/// Simpliest example how to start agent:
+/// @code
+/// ./start_agent.sh -Dchassis.coordination.http.url=http://192.168.56.1:8089 -Djmx.enabled=false -Dagent.name=someAgentOnSUT
+/// @endcode
+/// @n
+/// `chassis.coordination.http.url` - URL of Jagger server node @n
+/// `jmx.enabled` - flag to enable/disable JMX monitoring @n
+/// `agent.name` - name of agent. Will be displayed in all reports @n
+///
+/// @par Agent with system resources and JVM monitoring
+/// To monitor JVM of the SUT, it is necessary to open JMX connection. Such connection should be allowed by SUT. @n
+/// To enable JMX connection to JVM - set following properties when starting SUT or application server JVM: @n
+/// @code
+/// -Dcom.sun.management.jmxremote
+/// -Dcom.sun.management.jmxremote.port=9870
+/// -Dcom.sun.management.jmxremote.ssl=false
+/// -Dcom.sun.management.jmxremote.authenticate=false
+/// -Djava.rmi.server.hostname=192.168.1.1
+/// @endcode
+/// last property - IP of SUT host @n
+/// @n
+/// Example how to start agent with enable JMX monitoring:
+/// @code
+/// ./start_agent.sh -Dchassis.coordination.http.url=http://192.168.56.1:8089 -Djmx.enabled=true -Dagent.name=someAgentOnSUT -Djmx.services=localhost:9870,localhost:9875
+/// @endcode
+/// @n
+/// `jmx.enabled` - flag to enable/disable JMX monitoring @n
+/// `jmx.services` - host:port of JMX service(s) @n
+/// @n
+/// Also you can define name for every JMX connection, like: @n
+/// @code -Djmx.services=localhost:9870{tomcat},localhost:9875{jetty} @endcode
+/// @n
+/// There are some more properties for agent setup. You can find them here: @subpage AgentProperties
+/// @n
+/// @section section_mon_agent_start_jboss JMX monitoring configuration for JBoss 6 and later
+/// Following section is important if you want to monitor application running with JBoss 6 server or later version. @n
+/// Section is describing feature available starting from **Jagger 1.2.4** @n
+/// @n
+/// Some day JBoss Application Server decided to introduce it's own JMX. Starting from that time it became tricky @n
+/// to connect to JBoss JMX MBeanServer from normal JConsole. Jagger agents faced same problem. @n
+/// @n
+/// Below is example how to monitor application running with JBoss EAP 6.0.0 by Jagger agent. @n
+/// @n
+/// 1.First your project will require new dependencies in pom.xml file. Dependencies below are for JBoss 6.0. @n
+/// Other JBoss versions will require other versions of libraries. Smile @n
+/// @code
+/// <dependency>
+///   <groupId>org.jboss.remotingjmx</groupId>
+///   <artifactId>remoting-jmx</artifactId>
+///   <version>1.0.3.Final</version>
+/// </dependency>
+/// <dependency>
+///   <groupId>org.jboss.remoting3</groupId>
+///   <artifactId>jboss-remoting</artifactId>
+///   <version>3.2.8.GA</version>
+/// </dependency>
+/// @endcode
+/// @n
+/// 2.Second during agent start you will require to set new property to specify JBoss specific JMX service URL
+/// @code
+/// ./start_agent.sh -Dchassis.coordination.http.url=http://192.168.56.1:8089 -Djmx.enabled=true -Djmx.url.format=service:jmx:remoting-jmx://%s
+///    -Djmx.services=localhost:9885 -Dagent.name=someAgentOnSUT
+/// @endcode
+/// `jmx.url.format` - new property available since Jagger **1.2.4** - JMX service URL format for JBoss @n
+/// @n
+/// More reading: @n
+/// [JBoss Using jconsole to connect to JMX on AS7](https://community.jboss.org/wiki/UsingJconsoleToConnectToJMXOnAS7) @n
+/// [JBoss JMX subsystem configuration](https://docs.jboss.org/author/display/AS71/JMX+subsystem+configuration) @n
+///

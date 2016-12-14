@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,16 +27,24 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
-/** ??? Some short description
- * @author ???
+/** Invoker that invokes services of SuT via http protocol
+ * @author Evelina Stepanova
  * @n
  * @par Details:
- * @details ???
+ * @details Uses HttpRequestBase as query param type unlike HttpInvoker which uses HttpQuery. That allows you to create complex requests.
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public class ApacheHttpInvoker extends ApacheAbstractHttpInvoker<HttpRequestBase> {
     private static final Logger log = LoggerFactory.getLogger(ApacheHttpInvoker.class);
 
+    /** Makes http request for apache http-client
+     * @author Mairbek Khadikov
+     * @n
+     * @param query    - input data for http request
+     * @param endpoint - url of SuT
+     *
+     * @return http query for apache http-client*/
     @Override
     protected HttpRequestBase getHttpMethod(HttpRequestBase query, String endpoint) {
         try {
@@ -59,6 +67,12 @@ public class ApacheHttpInvoker extends ApacheAbstractHttpInvoker<HttpRequestBase
         }
     }
 
+    /** Takes client params from query
+     * @author Mairbek Khadikov
+     * @n
+     * @param query - apache http query
+     *
+     * @return client params for apache http-client*/
     @Override
     protected HttpParams getHttpClientParams(HttpRequestBase query) {
         return query.getParams();

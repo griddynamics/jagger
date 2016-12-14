@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -23,6 +23,9 @@ package com.griddynamics.jagger.coordinator;
 import com.google.common.base.Preconditions;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Random;
 
 /**
  * Presents node identifier in cluster. Contains of type and some unique string identifier.
@@ -33,8 +36,16 @@ public class NodeId implements Serializable {
     private final NodeType type;
     private final String identifier;
 
+    public static NodeId masterNode() {
+        return NodeId.of(NodeType.MASTER, "MASTER ["+getLocalHostAddress()+"]");
+    }
+
     public static NodeId masterNode(String identifier) {
         return NodeId.of(NodeType.MASTER, identifier);
+    }
+
+    public static NodeId kernelNode(){
+        return kernelNode(NodeType.KERNEL.toString() + "-" + new Random().nextInt() + " [" + getLocalHostAddress() + "]");
     }
 
     public static NodeId kernelNode(String identifier) {
@@ -50,6 +61,14 @@ public class NodeId implements Serializable {
         Preconditions.checkNotNull(identifier);
 
         return new NodeId(type, identifier);
+    }
+
+    private static String getLocalHostAddress() {
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private NodeId(NodeType type, String identifier) {

@@ -6,7 +6,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:spring/persistence.conf.xml, classpath:spring/reporting.conf.xml</param-value>
+        <param-value>classpath:spring/persistence.conf.xml, classpath:spring/applicationContext.xml</param-value>
     </context-param>
     <context-param>
         <param-name>log4jConfigLocation</param-name>
@@ -20,6 +20,16 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+    <servlet>
+        <servlet-name>downloadServlet</servlet-name>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>downloadServlet</servlet-name>
+        <url-pattern>/download</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>gwt</servlet-name>

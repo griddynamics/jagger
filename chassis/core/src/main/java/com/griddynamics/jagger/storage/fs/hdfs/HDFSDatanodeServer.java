@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -64,12 +64,11 @@ public class HDFSDatanodeServer implements BlockingBean, AttendantServer {
             public void run() {
                 log.info("Starting DataNode...");
 
-                for (; ; ) {
+                while (!ready) {
                     try {
                         if (startupProperties != null) {
                             dataNode = DataNode.createDataNode(null, HadoopUtils.toConfiguration(startupProperties));
                             ready = true;
-                            break;
                         } else Thread.sleep(10000);
                     } catch (Exception e) {
                         log.warn("Failed start DataNode: {}", e);
@@ -96,6 +95,8 @@ public class HDFSDatanodeServer implements BlockingBean, AttendantServer {
     public void shutdown() {
         if (dataNode != null) {
             dataNode.shutdown();
+        } else {
+            ready = true;
         }
     }
 

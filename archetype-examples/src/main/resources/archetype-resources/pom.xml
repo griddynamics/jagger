@@ -9,8 +9,9 @@
     <packaging>jar</packaging>
 
     <properties>
-        <spring.version>3.0.5.RELEASE</spring.version>
+        <spring.version>spring.version.placeholder</spring.version>
         <jagger.version>jagger.version.placeholder</jagger.version>
+        <jagger.targetJdkVersion>jagger.java.version.placeholder</jagger.targetJdkVersion>
     </properties>
 
     <repositories>
@@ -81,7 +82,26 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>r09</version>
+            <version>16.0</version>
+        </dependency>
+
+        <!-- POM parsing -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <!-- Custom http requests -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.5</version>
         </dependency>
 
     </dependencies>
@@ -91,8 +111,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${jagger.targetJdkVersion}</source>
+                    <target>${jagger.targetJdkVersion}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -115,5 +135,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

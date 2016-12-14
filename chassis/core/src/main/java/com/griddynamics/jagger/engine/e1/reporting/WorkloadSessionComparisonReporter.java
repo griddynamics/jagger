@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -21,31 +21,33 @@
 package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.google.common.collect.Lists;
-import com.griddynamics.jagger.engine.e1.sessioncomparation.Decision;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.Verdict;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.workload.WorkloadComparisonResult;
 import com.griddynamics.jagger.reporting.AbstractMappedReportProvider;
-import com.griddynamics.jagger.reporting.AbstractReportProviderBean;
-import com.griddynamics.jagger.reporting.MappedReportProvider;
+import com.griddynamics.jagger.util.Decision;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvider<Collection<Verdict<WorkloadComparisonResult>>> {
 
+    public static final Comparator<WorkloadSessionComparisonDto> BY_NAME =
+            Comparator.comparing(WorkloadSessionComparisonDto::getName);
+
     private StatusImageProvider statusImageProvider;
 
     @Override
-    public JRDataSource getDataSource(Collection<Verdict<WorkloadComparisonResult>> key) {
+    public JRDataSource getDataSource(Collection<Verdict<WorkloadComparisonResult>> key, String sessionId) {
         getContext().getParameters().put("jagger.workloadsessioncomparator.statusImageProvider", statusImageProvider);
 
+        List<WorkloadSessionComparisonDto> result = Lists.newArrayList();
 
-        List<WorkloadSessionComparisonDto> result = Lists.newLinkedList();
-
-        for (Verdict<WorkloadComparisonResult> verdict: key) {
+        for (Verdict<WorkloadComparisonResult> verdict : key) {
             WorkloadSessionComparisonDto dto = new WorkloadSessionComparisonDto();
 
             dto.setName(verdict.getDescription());
@@ -53,15 +55,25 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
 
             WorkloadComparisonResult details = verdict.getDetails();
 
-            dto.setAvgLatencyDeviation(details.getAvgLatencyDeviation());
-            dto.setStdDevLatencyDeviation(details.getStdDevLatencyDeviation());
-            dto.setThroughputDeviation(details.getThroughputDeviation());
-            dto.setTotalDurationDeviation(details.getTotalDurationDeviation());
-            dto.setSuccessRateDeviation(details.getSuccessRateDeviation());
+            // null will come in case of errors - f.e. when compared sessions do not match
+            if (details != null) {
+                dto.setAvgLatencyDeviation(details.getAvgLatencyDeviation());
+                dto.setStdDevLatencyDeviation(details.getStdDevLatencyDeviation());
+                dto.setThroughputDeviation(details.getThroughputDeviation());
+                dto.setTotalDurationDeviation(details.getTotalDurationDeviation());
+                dto.setSuccessRateDeviation(details.getSuccessRateDeviation());
+            } else {
+                dto.setAvgLatencyDeviation(0.0);
+                dto.setStdDevLatencyDeviation(0.0);
+                dto.setThroughputDeviation(0.0);
+                dto.setTotalDurationDeviation(0.0);
+                dto.setSuccessRateDeviation(0.0);
+            }
 
             result.add(dto);
         }
 
+        Collections.sort(result, BY_NAME);
         return new JRBeanCollectionDataSource(result);
     }
 
@@ -71,9 +83,15 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
     }
 
     public static class WorkloadSessionComparisonDto {
+
         private String name;
         private Decision decision;
         private double throughputDeviation;
+        /**
+         * @deprecated We don't show a total duration in the WebUI and a report, but we decided to keep a total duration deviation for a session's comparison.
+         *             Afterwords, we should remove it.
+         */
+        @Deprecated
         private double totalDurationDeviation;
         private double successRateDeviation;
         private double avgLatencyDeviation;
@@ -104,10 +122,18 @@ public class WorkloadSessionComparisonReporter extends AbstractMappedReportProvi
             this.throughputDeviation = throughputDeviation;
         }
 
+        /**
+         * @deprecated we don't show a total duration in the WebUI and a report
+         */
+        @Deprecated
         public double getTotalDurationDeviation() {
             return totalDurationDeviation;
         }
 
+        /**
+         * @deprecated we don't show a total duration in the WebUI and a report
+         */
+        @Deprecated
         public void setTotalDurationDeviation(double totalDurationDeviation) {
             this.totalDurationDeviation = totalDurationDeviation;
         }

@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,26 +20,49 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
-import com.griddynamics.jagger.engine.e1.aggregator.workload.model.WorkloadTaskData;
+import com.griddynamics.jagger.dbapi.DatabaseService;
+import com.griddynamics.jagger.engine.e1.services.DataService;
+import com.griddynamics.jagger.engine.e1.services.DefaultDataService;
+import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class TestDetailsReporter extends AbstractReportProvider {
+    
+    public static final Comparator<TestDetailsDTO> BY_TEST_NAME = Comparator.comparing(TestDetailsDTO::getTestName);
+    
+    private DataService dataService;
+
+    @Override
+    public JRDataSource getDataSource(String sessionId) {
+
+        Set<TestEntity> testEntities = dataService.getTests(sessionId);
+
+        List<TestDetailsDTO> result = new ArrayList<>();
+
+        for(TestEntity testEntity : testEntities) {
+            TestDetailsDTO testDetailsDTO = new TestDetailsDTO();
+            testDetailsDTO.setTestName(testEntity.getName());
+            testDetailsDTO.setId(testEntity.getId().toString());
+            result.add(testDetailsDTO);
+        }
+    
+    
+        result.sort(BY_TEST_NAME);
+        return new JRBeanCollectionDataSource(result);
+    }
+
     public static class TestDetailsDTO {
-        private String testId;
+        
         private String testName;
-
-        public String getTestId() {
-            return testId;
-        }
-
-        public void setTestId(String testId) {
-            this.testId = testId;
-        }
+        private String id;
 
         public String getTestName() {
             return testName;
@@ -48,26 +71,18 @@ public class TestDetailsReporter extends AbstractReportProvider {
         public void setTestName(String testName) {
             this.testName = testName;
         }
-    }
 
-    @Override
-    public JRDataSource getDataSource() {
-        @SuppressWarnings("unchecked")
-        List<WorkloadTaskData> tests = getHibernateTemplate().find("from WorkloadTaskData d where d.sessionId=? order by d.number asc, d.scenario.name asc",
-				getSessionIdProvider().getSessionId());
-
-        List<TestDetailsDTO> result = new ArrayList<TestDetailsDTO>();
-        for(WorkloadTaskData test : tests) {
-            TestDetailsDTO testDetailsDTO = new TestDetailsDTO();
-            testDetailsDTO.setTestId(test.getTaskId());
-            testDetailsDTO.setTestName(getTestHumanReadableName(test));
-            result.add(testDetailsDTO);
+        public String getId() {
+            return id;
         }
 
-        return new JRBeanCollectionDataSource(result);
+        public void setId(String id) {
+            this.id = id;
+        }
     }
 
-    private static String getTestHumanReadableName(WorkloadTaskData workloadTaskData) {
-        return workloadTaskData.getNumber() + ") " + workloadTaskData.getScenario().getName() + ", " + workloadTaskData.getClock();
+    @Required
+    public void setDatabaseService(DatabaseService databaseService) {
+        this.dataService = new DefaultDataService(databaseService);
     }
 }

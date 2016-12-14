@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -24,11 +24,15 @@ import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
 
-/** ??? Some short description
- * @author ???
+// @todo add an ability to use in xml configuration
+/** Contains only one query and endpoint
+ * @author Dmitry Kotlyarov
  * @n
  * @par Details:
- * @details ???
+ * @details Creates an iterator over one pair of query and endpoint
+ *
+ * @param <Q> - Query type
+ * @param <E> - Endpoint type
  *
  * @ingroup Main_Distributors_group */
 public class SimpleLoadBalancer<Q, E> implements LoadBalancer<Q, E> {
@@ -40,6 +44,11 @@ public class SimpleLoadBalancer<Q, E> implements LoadBalancer<Q, E> {
         this.endpoint = endpoint;
     }
 
+    /** Always returns an exact pair of endpoint and query
+     * @author Grid Dynamics
+     * @n
+     *
+     *  @return iterator over pair */
     @Override
     public Iterator<Pair<Q, E>> provide() {
         return new Iterator<Pair<Q, E>>() {

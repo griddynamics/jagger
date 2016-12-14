@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,20 +20,26 @@
 
 package com.griddynamics.jagger.coordinator.http.client;
 
+import com.google.common.base.Throwables;
 import com.griddynamics.jagger.coordinator.Command;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.coordinator.async.AsyncRunner;
 import com.griddynamics.jagger.coordinator.http.*;
 import com.griddynamics.jagger.util.SerializationUtils;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.SocketException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.Executor;
 
 public class ExchangeClient {
@@ -94,30 +100,42 @@ public class ExchangeClient {
             }
             Pack in = packResponse.getPack();
             packExchanger.process(in);
-        } catch (SocketException e) {
-            packExchanger.getCommandsToSend().addAll(out.getCommands());
-            packExchanger.getResultsToSend().addAll(out.getResults());
-            log.warn("Connection lost! Pack {} will be sent again in the next exchange session!", out);
         } catch (IOException e) {
-            log.error("IOException during deserialization of this data ({})", str);
-            throw e;
+            if (!out.isEmpty()){
+                packExchanger.getCommandsToSend().addAll(out.getCommands());
+                packExchanger.getResultsToSend().addAll(out.getResults());
+                log.warn("Connection lost! Pack {} will be sent again in the next exchange session!", out);
+            }else{
+                log.warn("Connection lost! Waiting for the next exchange session!");
+            }
+            log.warn(e.toString());
         }
         return packResponse;
     }
 
     private String exchangeData(String url, Serializable obj) throws IOException {
-        PostMethod method = new PostMethod(urlBase + url);
-        NameValuePair pair = new NameValuePair();
-        pair.setName(MESSAGE);
-        pair.setValue(SerializationUtils.toString(obj));
+        HttpPost method = new HttpPost(urlBase + url);
+        URIBuilder uri = new URIBuilder(URI.create(urlBase + url));
+        uri.setParameter(MESSAGE, SerializationUtils.toString(obj));
 
-        method.setQueryString(new NameValuePair[]{pair});
+        HttpEntity entity = null;
         try {
-            int returnCode = httpClient.executeMethod(method);
+            method.setURI(uri.build());
+            HttpResponse response = httpClient.execute(method);
+            int returnCode = response.getStatusLine().getStatusCode();
+            entity = response.getEntity();
             log.debug("Exchange response code {}", returnCode);
-            return method.getResponseBodyAsString();
+            return EntityUtils.toString(entity);
+        } catch (URISyntaxException e) {
+            log.error("URIException while building uri with: \nurlBase: " + urlBase +
+                    "\nurl: " + url + "\nobj: " + obj.toString());
+            throw Throwables.propagate(e);
+        } catch (IOException e) {
+            log.error("Exception during HTTP request execution "+e.toString());
+            throw e;
         } finally {
             try {
+                EntityUtils.consumeQuietly(entity);
                 method.releaseConnection();
             } catch (Throwable e) {
                 log.error("Cannot release connection", e);

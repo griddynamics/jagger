@@ -5,8 +5,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -107,15 +106,50 @@
         <query xsi:type="query-ref" ref="httpQ1"/>
     </query-provider>
 
-    <test-description id="desc2">
+    <test-description id="desc2" version="1">
         <info-collectors>
             <validator xsi:type="validator-not-null-response"/>
+            <metric xsi:type="metric-not-null-response">
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
+            <listener-invocation xsi:type="listener-invocation-not-null-response"/>
         </info-collectors>
         <scenario xsi:type="scenario-ref" ref="sc2"/>
     </test-description>
 
     <test-description id="desc1" parent="desc2">
+        <info-collectors>
+            <metric xsi:type="metric-not-null-response">
+                <metric-aggregator xsi:type="metric-aggregator-sum"/>
+            </metric>
+            <listener-invocation xsi:type="listener-invocation-not-null-response"/>
+        </info-collectors>
         <scenario xsi:type="scenario-ref" ref="sc2"/>
     </test-description>
+
+    <test-description id="testIntDescrParent" calibration="false"/>
+    <test-description id="testIntDescrChild" calibration="false"/>
+
+    <test id="testParent" startDelay="5" testDescription="testIntDescrParent">
+        <load xsi:type="load-tps" value="100"/>
+        <termination xsi:type="termination-iterations" iterations="255" maxDuration="1h"/>
+        <listeners-test>
+            <listener-test xsi:type="listener-test-threads"/>
+        </listeners-test>
+    </test>
+
+    <test id="testChild1" parent="testParent">
+        <load xsi:type="load-tps" value="50"/>
+    </test>
+
+    <test id="testChild2" parent="testParent" startDelay="10" testDescription="testIntDescrChild">
+        <load xsi:type="load-tps" value="20"/>
+        <termination xsi:type="termination-iterations" iterations="25" maxDuration="2h"/>
+        <listeners-test>
+            <listener-test xsi:type="listener-test-ref" ref="testListenerStud"/>
+        </listeners-test>
+    </test>
+
+    <beans:bean name="testListenerStud" class="com.griddynamics.jagger.xml.stubs.xml.ExampleTestListener"/>
 
 </beans:beans>

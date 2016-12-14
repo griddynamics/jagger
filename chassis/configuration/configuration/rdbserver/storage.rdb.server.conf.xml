@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -23,7 +22,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="databaseServer" class="com.griddynamics.jagger.storage.rdb.H2DatabaseServer" lazy-init="true">
+	<bean id="databaseServer" class="com.griddynamics.jagger.storage.rdb.H2DatabaseServer" lazy-init="true" destroy-method="terminate">
 		<property name="startupProperties" value="#{propertiesResolverRegistry.resolve('configuration/rdbserver/storage.h2server.properties')}" />
 	</bean>
 

@@ -6,13 +6,23 @@ package ${package}.validator;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
 import com.griddynamics.jagger.exception.TechnicalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/* Will compare result of invokation with expected result, read from file
+ * @author Grid Dynamics
+ *
+ * @param <Q> - Query type
+ * @param <E> - Endpoint type
+ * @param <R> - Result type
+ */
 public class ResponseFromFileValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
 
+    private static final Logger log = LoggerFactory.getLogger(ResponseFromFileValidator.class);
 
     private String filePath= "suite/validator/resources/response.txt";
     private String expectedResponse;
@@ -45,6 +55,14 @@ public class ResponseFromFileValidator<Q, E, R> extends ResponseValidator<Q, E, 
         expectedResponse=sb.toString();
     }
 
+    /* Following method will be called after every successful invoke to validate result
+     * @author Grid Dynamics
+     *
+     * @param query    - Query that was sent to endpoint
+     * @param endpoint - Endpoint - service under test
+     * @param result   - Result returned from endpoint
+     * @param duration - Duration of invoke
+     * */
     @Override
     public boolean validate(Q query, E endpoint, R result, long duration) {
         if(expectedResponse==null){
@@ -54,6 +72,12 @@ public class ResponseFromFileValidator<Q, E, R> extends ResponseValidator<Q, E, 
                 }
             }
         }
-        return expectedResponse.equals(result);
+        if (expectedResponse.equals(result)) {
+            return true;
+        }
+        else {
+            log.warn("Validator {} failed",getName());
+            return false;
+        }
     }
 }

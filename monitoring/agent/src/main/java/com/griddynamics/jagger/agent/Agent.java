@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -30,7 +30,7 @@ import com.griddynamics.jagger.coordinator.http.client.ExchangeClient;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.util.ConfigurableExecutor;
 import com.griddynamics.jagger.util.TimeUtils;
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -214,7 +214,7 @@ public class Agent {
                     AgentStarter.resetAgent(Agent.this);
                 } catch (Throwable e) {
                     alive = false;
-                    log.error("Agent {} got an exception from coordinator", e);
+                    log.error("Agent "+nodeContext.getId()+" got an exception from coordinator", e);
                 }
 
                 log.debug("Pack exchange completed. Poll rate on agent {} is {} ms", nodeContext.getId(), pollRate);

@@ -1,0 +1,11 @@
+/// @page AgentProperties Agent configuration
+/// @brief Section describes all available properties for Jagger agents @n
+/// @details
+/// @n
+/// @section section_agent_properties Agent properties
+/// @n
+/// You can set following properties for Jagger agents:
+/// @dontinclude agent.properties
+/// @skip begin: following section is used for docu generation - Jagger Agent properties
+/// @until end: following section is used for docu generation - Jagger Agent properties
+/// @n

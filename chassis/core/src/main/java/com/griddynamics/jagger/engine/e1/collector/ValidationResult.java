@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -26,19 +26,29 @@ public class ValidationResult implements Serializable {
     private final String name;
     private final int invoked;
     private final int failed;
+    private final String displayName;
 
     public static ValidationResult create(String name, int invoked, int failed) {
-        return new ValidationResult(name, invoked, failed);
+        return new ValidationResult(name, null, invoked, failed);
     }
 
-    private ValidationResult(String name, int invoked, int failed) {
+    public static ValidationResult create(String name, String displayName, int invoked, int failed) {
+        return new ValidationResult(name, displayName, invoked, failed);
+    }
+
+    private ValidationResult(String name, String displayName, int invoked, int failed) {
         this.name = name;
+        this.displayName = displayName;
         this.invoked = invoked;
         this.failed = failed;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public int getInvoked() {
@@ -75,6 +85,7 @@ public class ValidationResult implements Serializable {
     public String toString() {
         return "ValidationResult{" +
                 "name='" + name + '\'' +
+                "displayName='" + displayName + '\'' +
                 ", invoked=" + invoked +
                 ", failed=" + failed +
                 '}';

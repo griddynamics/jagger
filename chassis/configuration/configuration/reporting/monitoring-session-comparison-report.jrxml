@@ -19,11 +19,11 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
-        <![CDATA[$P{context}.getResource("configuration/reporting/styles/default-styles.xml")]]></template>
+        <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
 
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="name" class="java.lang.String"/>
-    <field name="decision" class="com.griddynamics.jagger.engine.e1.sessioncomparation.Decision"/>
+    <field name="decision" class="com.griddynamics.jagger.util.Decision"/>
     <field name="firstStdDev" class="java.lang.Double"/>
     <field name="secondStdDev" class="java.lang.Double"/>
 

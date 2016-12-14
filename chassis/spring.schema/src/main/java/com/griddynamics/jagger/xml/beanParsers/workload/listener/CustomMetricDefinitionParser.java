@@ -13,12 +13,10 @@ import org.w3c.dom.Element;
  * Time: 8:04 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CustomMetricDefinitionParser extends AbstractCollectorDefinitionParser {
-
+public class CustomMetricDefinitionParser extends AbstractCalculatorBasedDefinitionParser {
 
     @Override
-    protected void parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        builder.addPropertyValue(XMLConstants.NAME, getID(element,XMLConstants.DEFAULT_METRIC_NAME));
-        builder.addPropertyValue(XMLConstants.METRIC_CALCULATOR, new RuntimeBeanReference(element.getAttribute(XMLConstants.CALCULATOR)));
+    protected Object getMetricCalculator(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        return new RuntimeBeanReference(element.getAttribute(XMLConstants.CALCULATOR));
     }
 }

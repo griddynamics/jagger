@@ -2,21 +2,23 @@ package com.griddynamics.jagger.xml;
 
 import com.griddynamics.jagger.xml.beanParsers.*;
 import com.griddynamics.jagger.xml.beanParsers.configuration.*;
+import com.griddynamics.jagger.xml.beanParsers.limit.LimitDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.limit.LimitSetDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.JmxMetricsDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringSutDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.jmxMetrixGroupDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.report.*;
 import com.griddynamics.jagger.xml.beanParsers.task.*;
-import com.griddynamics.jagger.xml.beanParsers.workload.WorkloadDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.TestDescriptionDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.OneByOneBalancerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.RoundRobinBalancerDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.calibration.DefaultCalibratorDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ApacheHttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.listener.*;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.*;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.CsvProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.FileProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryDefinitionParser;
@@ -34,7 +36,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
 
         //CONFIGURATION
         registerBeanDefinitionParser("configuration", new ConfigDefinitionParser());
-        registerBeanDefinitionParser("test-suite", listCustomDefinitionParser);
+        registerBeanDefinitionParser("test-suite", new TestSuiteDefinitionParser());
         registerBeanDefinitionParser("test-group", new TestDefinitionParser());
         registerBeanDefinitionParser("latency-percentiles", listCustomDefinitionParser);
         registerBeanDefinitionParser("percentile", primitiveParser);
@@ -46,12 +48,8 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("extensions", new ExtensionsDefinitionParser());
         registerBeanDefinitionParser("session-comparators", new SessionComparatorsDefinitionParser());
         registerBeanDefinitionParser("comparator", findTypeParser);
-        registerBeanDefinitionParser("comparator-workload", new WorkloadComparatorDefinitionParser());
-        registerBeanDefinitionParser("comparator-monitoring", new MonitoringComparatorDefinitionParser());
 
         registerBeanDefinitionParser("decision-maker", findTypeParser);
-        registerBeanDefinitionParser("decision-maker-workload-throughput", new ThroughputDMDefinitionParser());
-        registerBeanDefinitionParser("decision-maker-monitoring-stddev", new StdDevDefinitionParser());
 
         //TASKS
         registerBeanDefinitionParser("test", new TaskDefinitionParser());
@@ -68,16 +66,13 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("load-threads", new VirtualUserDefinitionParser());
 
         //Test-description
-        registerBeanDefinitionParser("test-description" , new WorkloadDefinitionParser());
-
-        //listeners
+        registerBeanDefinitionParser("test-description" , new TestDescriptionDefinitionParser());
 
         //validator
         registerBeanDefinitionParser("validator", findTypeParser);
 
         //validators listeners
         registerBeanDefinitionParser("validator-not-null-response", new NotNullResponseDefinitionParser());
-        registerBeanDefinitionParser("validator-consistency", new ConsistencyDefinitionParser());
         registerBeanDefinitionParser("validator-custom", new CustomValidatorDefinitionParser());
 
         //metric
@@ -86,6 +81,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         //metric calculators
         registerBeanDefinitionParser("metric-not-null-response", new SimpleMetricDefinitionParser());
         registerBeanDefinitionParser("metric-custom", new CustomMetricDefinitionParser());
+        registerBeanDefinitionParser("metric-success-rate", new SuccessRateCollectorDefinitionParser());
 
         //scenario
         registerBeanDefinitionParser("scenario",  findTypeParser);
@@ -135,12 +131,6 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("client-params", mapCustomDefinitionParser);
         registerBeanDefinitionParser("method-params", mapCustomDefinitionParser);
 
-        //calibrators
-        registerBeanDefinitionParser("calibrator", findTypeParser);
-        registerBeanDefinitionParser("defaultCalibrator", new DefaultCalibratorDefinitionParser());
-
-
-
         //termination strategy
         registerBeanDefinitionParser("termination",  findTypeParser);
         registerBeanDefinitionParser("termination-iterations", new IterationsOrDurationTerminationStrategyDefinitionParser());
@@ -152,5 +142,36 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("monitoring-sut", new MonitoringSutDefinitionParser());
         registerBeanDefinitionParser("jmx-metrics"  , new JmxMetricsDefinitionParser());
         registerBeanDefinitionParser("jmx-metrics-group", new jmxMetrixGroupDefinitionParser());
+
+
+        //metric aggregators
+        registerBeanDefinitionParser("metric-aggregator", findTypeParser);
+        registerBeanDefinitionParser("metric-aggregator-avg", new AvgMetricAggregatorDefinitionParser());
+        registerBeanDefinitionParser("metric-aggregator-sum", new SumMetricAggregatorDefinitionParser());
+        registerBeanDefinitionParser("metric-aggregator-std", new StdDevMetricAggregatorDefinitionParser());
+        registerBeanDefinitionParser("metric-aggregator-ref", new RefMetricAggregatorDefinitionParser());
+
+
+        //listeners
+        registerBeanDefinitionParser("listener-invocation", findTypeParser);
+        registerBeanDefinitionParser("listener-invocation-not-null-response", new NotNullInvocationListenerDefinitionParser());
+
+        registerBeanDefinitionParser("listener-test", findTypeParser);
+        registerBeanDefinitionParser("listeners-test", listCustomDefinitionParser);
+        registerBeanDefinitionParser("listener-test-threads", new ThreadsTestListenerDefinitionParser());
+
+        registerBeanDefinitionParser("listener-test-group", findTypeParser);
+        registerBeanDefinitionParser("listeners-test-group", listCustomDefinitionParser);
+
+        registerBeanDefinitionParser("listener-test-suite", findTypeParser);
+        registerBeanDefinitionParser("listeners-test-suite", listCustomDefinitionParser);
+
+        registerBeanDefinitionParser("listener-test-group-decision-maker", findTypeParser);
+        registerBeanDefinitionParser("listeners-test-group-decision-maker", listCustomDefinitionParser);
+        registerBeanDefinitionParser("listener-test-group-decision-maker-basic", new BasicTGDecisionMakerListenerDefinitionParser());
+
+        //limits
+        registerBeanDefinitionParser("limits", new LimitSetDefinitionParser());
+        registerBeanDefinitionParser("limit", new LimitDefinitionParser());
     }
 }

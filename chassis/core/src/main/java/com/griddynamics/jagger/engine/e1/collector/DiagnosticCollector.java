@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -40,7 +40,7 @@ public class DiagnosticCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
 	private final MetricCalculator<R> metricCalculator;
     private final String name;
 
-	private int metric = 0;
+	private double metric = 0;
 
     public DiagnosticCollector(String sessionId, String taskId, NodeContext kernelContext, MetricCalculator<R> metricCalculator, String name) {
         super(sessionId, taskId, kernelContext);
@@ -63,7 +63,7 @@ public class DiagnosticCollector<Q, R, E> extends ScenarioCollector<Q, R, E> {
 
     @Override
     public void onSuccess(Q query, E endpoint, R result, long duration) {
-		metric += metricCalculator.calculate(result);
+		metric += metricCalculator.calculate(result).doubleValue();
     }
 
     @Override

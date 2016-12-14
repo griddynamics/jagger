@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.coordinator;
 
 import com.griddynamics.jagger.coordinator.async.AsyncCallback;
+import com.griddynamics.jagger.util.Timeout;
 
 import java.io.Serializable;
 import java.util.concurrent.Future;
@@ -43,6 +44,8 @@ public interface RemoteExecutor extends Serializable {
     <C extends Command<R>, R extends Serializable> void run(C command, NodeCommandExecutionListener<C> listener, AsyncCallback<R> callback);
 
     <C extends Command<R>, R extends Serializable> R runSyncWithTimeout(C command, NodeCommandExecutionListener<C> listener, long millis);
+
+    <C extends Command<R>, R extends Serializable> R runSyncWithTimeout(C command, NodeCommandExecutionListener<C> listener, Timeout millis);
 
     <C extends Command<R>, R extends Serializable> Future<R> run(C command, NodeCommandExecutionListener<C> listener);
 }

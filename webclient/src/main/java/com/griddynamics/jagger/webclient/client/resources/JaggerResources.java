@@ -42,6 +42,26 @@ public interface JaggerResources extends ClientBundle {
     @Source("hyperlink.png")
     ImageResource getHyperlinkImage();
 
+    @Source("pencil.png")
+    ImageResource getPencilImage();
+
+    // icons downloaded from http://www.iconsdb.com/gray-icons
+    @Source("icons/cross-2-24.png")
+    ImageResource getCrossImage();
+
+    @Source("icons/cross-blue-2-24.png")
+    ImageResource getCrossBlueImage();
+
+    @Source("icons/download-24.png")
+    @ImageResource.ImageOptions(height = 16, width = 16)
+    ImageResource getDownloadImage();
+
+    @Source("icons/settings-with-triangle-4-24.png")
+    ImageResource getGearImage();
+
+    @Source("icons/settings-with-triangle-blue-4-24.png")
+    ImageResource getGearBlueImage();
+
     @Source("JaggerWebClient.css")
     @CssResource.NotStrict
     JaggerStyle css();
@@ -61,9 +81,9 @@ public interface JaggerResources extends ClientBundle {
 
         String plotLegend();
 
-        String plotPanel();
-
         String summaryPanel();
+
+        String nodesPanel();
 
         String zoomLabel();
 
@@ -79,8 +99,45 @@ public interface JaggerResources extends ClientBundle {
 
         String toolBar();
 
+        String searchPanel();
+
+        String tagButton();
+
+        String searchTabPanel();
+
         String sessionNameHeader();
 
         String testNameHeader();
+
+        String exceptionPanel();
+
+        String controlFont();
+
+        String userCommentBox();
+
+        String descriptionPanel();
+
+        String abstractWindow();
+
+        String textAreaPanel();
+
+        String dragLabel();
+
+        String mainTabPanel();
+
+        String pointer();
+
+        String plotSettingsMenu();
+
+        String draggable();
+
+        String legendPanel();
+
+        String padding2px();
+
+        String overflowYScroll();
+
+        String plotButtonsPanel();
+
     }
 }

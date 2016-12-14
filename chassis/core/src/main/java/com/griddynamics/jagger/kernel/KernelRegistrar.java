@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -70,7 +70,8 @@ public class KernelRegistrar implements Runnable {
                 });
                 kernel.setConnected(true);
             } catch (Throwable e) {
-                log.info("ThreadId {}. KernelID {} Unable to connect to Coordinator. Waiting for {} ms", new Object[]{Thread.currentThread().getId(), kernel.getKernelId(), kernel.getReconnectPeriod()});
+                log.warn("ThreadId {}. KernelID {} Unable to connect to Coordinator. Waiting for {} ms", new Object[]{Thread.currentThread().getId(), kernel.getKernelId(), kernel.getReconnectPeriod()});
+                log.warn("cause: ", e);
                 try {
                     Thread.sleep(kernel.getReconnectPeriod());
                 } catch (InterruptedException ee) {

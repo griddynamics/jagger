@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -24,7 +23,7 @@
 
     <groupId>com.griddynamics.jagger</groupId>
     <artifactId>parent</artifactId>
-    <version>1.2.2-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${groupId}.${artifactId}</name>
@@ -32,24 +31,38 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <targetJdkVersion>1.6</targetJdkVersion>
-        <targetJdk>${JAVA_HOME}</targetJdk>
+        <jagger.targetJdkVersion>1.8</jagger.targetJdkVersion>
+        <jagger.targetJdk>${JAVA_HOME}</jagger.targetJdk>
 
-        <spring.version>3.0.5.RELEASE</spring.version>
-        <!--<spring.version>3.1.4.RELEASE</spring.version>-->
+        <spring.version>4.3.2.RELEASE</spring.version>
+        <hibernate.validator.version>5.2.4.Final</hibernate.validator.version>
+        <hibernate.version>3.6.10.Final</hibernate.version>
+
+        <findbugs-maven-plugin.version>3.0.4</findbugs-maven-plugin.version>
+        <maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
+        <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
+        <checkstyle.version>7.1.1</checkstyle.version>
+        <gwt.version>2.5.1</gwt.version>
+        <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
     </properties>
 
     <modules>
+        <module>dbapi</module>
+        <module>docker</module>
         <module>monitoring/agent</module>
         <module>diagnostics</module>
         <module>chassis/</module>
         <module>distribution</module>
-        <module>facade</module>
         <module>webclient</module>
         <module>archetype</module>
         <module>test/jagger-test</module>
         <module>test/test-target</module>
         <module>archetype-examples</module>
+        <module>jaas</module>
+        <module>rawdata</module>
+        <module>jaas-client</module>
+        <module>archetype-java-builders</module>
+        <module>test/java-builder-tests</module>
     </modules>
 
     <scm>
@@ -64,6 +77,7 @@
     </issueManagement>
 
     <repositories>
+        <!--need for Sigar library. See monitoring POM-->
         <repository>
             <id>jboss-third-party</id>
             <layout>default</layout>
@@ -73,52 +87,6 @@
             </snapshots>
             <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
         </repository>
-        <repository>
-            <id>jboss-java-net</id>
-            <layout>default</layout>
-            <name>jboss java.net repo</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/java.net-m2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>snmp4j</id>
-            <layout>default</layout>
-            <name>snmp4j repo</name>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <url>https://server.oosnmp.net/dist/release/</url>
-        </repository>
-        <repository>
-            <id>gflot</id>
-            <name>Code Monkey</name>
-            <url>http://codemonkey.dumontierlab.com/maven/repo/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>smartclient</id>
-            <name>smartclient.com</name>
-            <url>http://www.smartclient.com/maven2</url>
-        </repository>
-        <repository>
-	    <id>openr66</id>
-            <name>openr66</name>
-            <url>http://openr66.free.fr/maven2</url>
-            <layout>default</layout>
-    </repository>
-
-
-        <!--???-->
-        <!--<repository>-->
-            <!--<id>springsource-repo</id>-->
-            <!--<name>SpringSource Repository</name>-->
-            <!--<url>http://repo.springsource.org/release</url>-->
-        <!--</repository>-->
-
     </repositories>
 
     <!--<pluginRepositories>-->
@@ -154,76 +122,87 @@
             <!-- Jagger Components -->
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
+                <artifactId>jaas-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.util</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.configuration</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>diagnostics</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.coordinator</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.coordinator.zookeeper</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.coordinator.http</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.core</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.invokers</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.providers</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.invoker.hessian</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>monitoring.agent</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.spring.schema</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.griddynamics.jagger</groupId>
+                <artifactId>dbapi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- Third-party dependencies -->
 
             <dependency>
@@ -294,27 +273,25 @@
             <dependency>
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports</artifactId>
-                <version>4.0.1</version>
+                <version>6.3.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>3.5.4-Final</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-annotations</artifactId>
-                <version>3.5.4-Final</version>
-                <scope>compile</scope>
+                <version>${hibernate.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>3.5.4-Final</version>
+                <version>${hibernate.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>javassist</artifactId>
+                        <groupId>javassist</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -324,11 +301,9 @@
             </dependency>
 
             <dependency>
-                <groupId>javassist</groupId>
+                <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.12.1.GA</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <version>3.20.0-GA</version>
             </dependency>
 
             <dependency>
@@ -377,7 +352,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
-                <version>1.5.2</version>
+                <version>1.7.5</version>
             </dependency>
 
             <dependency>
@@ -402,7 +377,6 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
                 <version>${spring.version}</version>
-                <scope>compile</scope>
             </dependency>
 
             <dependency>
@@ -434,7 +408,6 @@
                 <version>2.2.2</version>
             </dependency>
 
-
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
@@ -465,7 +438,7 @@
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.2</version>
             </dependency>
 
             <dependency>
@@ -475,27 +448,21 @@
             </dependency>
 
             <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>3.0.1</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>4.2.4</version>
+                <version>4.4.5</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.2.5</version>
+                <version>4.5.1</version>
             </dependency>
 
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>r09</version>
+                <version>16.0</version>
             </dependency>
 
             <dependency>
@@ -513,27 +480,14 @@
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-servlet</artifactId>
-                <version>2.4.0</version>
+                <version>${gwt.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-user</artifactId>
-                <version>2.4.0</version>
+                <version>${gwt.version}</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-dev</artifactId>
-                <version>2.4.0</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.smartgwt</groupId>
-                <artifactId>smartgwt</artifactId>
-                <version>2.5</version>
             </dependency>
 
             <dependency>
@@ -545,7 +499,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>4.0.2.GA</version>
+                <version>${hibernate.validator.version}</version>
             </dependency>
 
             <dependency>
@@ -555,9 +509,10 @@
             </dependency>
 
             <dependency>
-                <groupId>trove</groupId>
-                <artifactId>trove</artifactId>
-                <version>1.0.2</version>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -571,96 +526,166 @@
             </extension>
         </extensions>
 
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
-                <configuration>
-                    <target>${targetJdkVersion}</target>
-                    <source>${targetJdkVersion}</source>
-                    <fork>true</fork>
-                    <debug>true</debug>
-                    <executable>${targetJdk}/bin/javac</executable>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8.1</version>
-                <configuration>
-                    <docfilessubdirs>true</docfilessubdirs>
-                    <stylesheetfile>jagger-javadoc.css</stylesheetfile>
-                    <detectOfflineLinks>false</detectOfflineLinks>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2.2</version>
-            </plugin>
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>downloads-maven-plugin</artifactId>
-                <version>0.5</version>
-                <configuration>
-                    <description>${project.name} build of the ${project.version} release</description>
-                    <server>github</server>
-                    <override>true</override>
-                    <includeAttached>true</includeAttached>
-                </configuration>
-            </plugin>
-            <!--
-                                <plugin>
-                                    <groupId>com.github.github</groupId>
-                                    <artifactId>site-maven-plugin</artifactId>
-                                    <version>0.6</version>
-                                    <configuration>
-                                        <message>Building site for ${project.version}</message>
-                                        <server>github</server>
-                                    </configuration>
-                                </plugin>
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.2.2</version>
-            </plugin>
-
-            <!--???-->
-            <!--<plugin>-->
-                 <!--<groupId>com.soebes.maven.plugins.dmg</groupId>-->
-                 <!--<artifactId>doxygen-maven-plugin</artifactId>-->
-                 <!--<version>1.0.1</version>-->
-                 <!--<configuration>-->
-                    <!--<configurationFile>Doxyfile</configurationFile>-->
-                 <!--</configuration>-->
-             <!--</plugin>-->
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <target>${jagger.targetJdkVersion}</target>
+                        <source>${jagger.targetJdkVersion}</source>
+                        <fork>true</fork>
+                        <debug>true</debug>
+                        <executable>${jagger.targetJdk}/bin/javac</executable>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.4</version>
+                    <configuration>
+                        <docfilessubdirs>true</docfilessubdirs>
+                        <stylesheetfile>jagger-javadoc.css</stylesheetfile>
+                        <detectOfflineLinks>false</detectOfflineLinks>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jxr-plugin</artifactId>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>downloads-maven-plugin</artifactId>
+                    <version>0.5</version>
+                    <configuration>
+                        <description>${project.name} build of the ${project.version} release</description>
+                        <server>github</server>
+                        <override>true</override>
+                        <includeAttached>true</includeAttached>
+                    </configuration>
+                </plugin>
+                <!--
+                                    <plugin>
+                                        <groupId>com.github.github</groupId>
+                                        <artifactId>site-maven-plugin</artifactId>
+                                        <version>0.6</version>
+                                        <configuration>
+                                            <message>Building site for ${project.version}</message>
+                                            <server>github</server>
+                                        </configuration>
+                                    </plugin>
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.2.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs-maven-plugin.version}</version>
+                    <configuration>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <failOnError>true</failOnError>
+                        <xmlOutput>true</xmlOutput>
+                        <xmlOutputDirectory>${project.build.directory}/findbugs</xmlOutputDirectory>
+                        <excludeFilterFile>${project.parent.basedir}/findbugs-exclude-filter.xml</excludeFilterFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                    <configuration>
+                        <targetJdk>${jagger.targetJdkVersion}</targetJdk>
+                        <verbose>true</verbose>
+                        <failOnViolation>true</failOnViolation>
+                        <printFailingErrors>true</printFailingErrors>
+                        <failurePriority>5</failurePriority>
+                        <aggregate>true</aggregate>
+                        <format>xml</format>
+                        <targetDirectory>${project.build.directory}/pmd</targetDirectory>
+                        <outputDirectory>${project.build.directory}/pmd</outputDirectory>
+                        <rulesets>${project.parent.basedir}/pmd-rulesets.xml</rulesets>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                                <goal>cpd-check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <configLocation>${project.parent.basedir}/checkstyle-checker.xml</configLocation>
+                        <encoding>UTF-8</encoding>
+                        <consoleOutput>true</consoleOutput>
+                        <failOnViolation>true</failOnViolation>
+                        <outputFile>${project.build.directory}/checkstyle/checkstyle.xml</outputFile>
+                        <outputFileFormat>xml</outputFileFormat>
+                        <violationSeverity>warning</violationSeverity>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <!--
@@ -718,4 +743,36 @@
 
         </plugins>
     </reporting>
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>exec-maven-plugin</artifactId>
+                            <version>1.5.0</version>
+                            <executions>
+                                <execution>
+                                 <id>docker-build</id>
+                                    <phase>install</phase>
+                                    <goals>
+                                        <goal>exec</goal>
+                                    </goals>
+                                </execution>
+                                <execution>
+                                    <id>docker-push</id>
+                                    <phase>deploy</phase>
+                                    <goals>
+                                        <goal>exec</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>

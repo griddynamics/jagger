@@ -4,8 +4,7 @@
   ~ http://www.griddynamics.com
   ~
   ~ This library is free software; you can redistribute it and/or modify it under the terms of
-  ~ the GNU Lesser General Public License as published by the Free Software Foundation; either
-  ~ version 2.1 of the License, or any later version.
+  ~ Apache License; either version 2.0 of the License, or any later version
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   ~ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -20,25 +19,29 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="threadInfoProviderSelf" lazy-init="true"
           class="com.griddynamics.jagger.diagnostics.thread.sampling.SelfThreadInfoProvider"/>
 
     <bean id="threadInfoProviderStub" lazy-init="true"
-          class="com.griddynamics.jagger.diagnostics.thread.sampling.StubThreadInfoProvider"/>
+          class="com.griddynamics.jagger.agent.impl.StubThreadInfoProvider"/>
 
     <bean id="multiThreadInfoProviderRemote" lazy-init="true"
-          class="com.griddynamics.jagger.diagnostics.thread.sampling.RemoteMultiThreadInfoProvider">
-        <property name="jmxServices" value="${jmx.services}"/>
+          class="com.griddynamics.jagger.agent.impl.RemoteMultiThreadInfoProvider" init-method="init">
+        <property name="executor" ref="agentExecutor"/>
+        <property name="jmxConnector" ref="jmxConnector"/>
     </bean>
 
     <alias name="multiThreadInfoProviderRemote" alias="trueThreadInfoProvider"/>
     <alias name="threadInfoProviderStub" alias="falseThreadInfoProvider"/>
     <alias name="${jmx.enabled}ThreadInfoProvider" alias="threadInfoProvider"/>
+
+    <bean id="samplingProfilerTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${jmx.profiler.timeout}"/>
+        <property name="name"  value="jmx.profiler.timeout"/>
+    </bean>
 
     <bean id="samplingProfiler" class="com.griddynamics.jagger.diagnostics.thread.sampling.SamplingProfilerImpl">
         <property name="excludePatterns">
@@ -56,7 +59,20 @@
             </list>
         </property>
         <property name="threadInfoProvider" ref="threadInfoProvider"/>
-        <property name="jmxTimeout" value="${jmx.profiler.timeout}"/>
+        <property name="jmxTimeout" ref="samplingProfilerTimeout"/>
     </bean>
+
+    <bean id="jmxConnector" class="com.griddynamics.jagger.agent.impl.JmxConnector">
+        <property name="connectionTimeout" ref="jmxConnectionTimeout"/>
+        <property name="connectionPeriod" value="${jmx.connection.retry.period}"/>
+        <property name="urlFormat" value="${jmx.url.format}"/>
+        <property name="jmxServices" value="${jmx.services}"/>
+    </bean>
+
+    <bean id="jmxConnectionTimeout" class="com.griddynamics.jagger.util.Timeout">
+        <property name="value" value="${jmx.connection.timeout}"/>
+        <property name="name"  value="jmx.connection.timeout"/>
+    </bean>
+
 
 </beans>

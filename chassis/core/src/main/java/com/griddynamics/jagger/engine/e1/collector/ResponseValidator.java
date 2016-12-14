@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -23,59 +23,75 @@ package com.griddynamics.jagger.engine.e1.collector;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObject;
 
-/** ??? Some short description
- * @author ???
+/** Validates the result of invocation
+ * @author Grid Dynamics
  * @n
  * @par Details:
- * @details ???
+ * @details Simplified type of collector. @n
+ * Validates the result of invocation of specified query and endpoint. Save validation result to database. @n
+ * Validators execute one by one. If one fails, no other will be executed. @n
  *
  * @param <Q> - Query type
  * @param <R> - Result type
  * @param <E> - Endpoint type
  *
- * @ingroup Main_Collectors_Base_group */
+ */
 public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 
-    /** ??? Some short description
-     * @author ???
+    /** Default constructor for validators
+     * @author Grid Dynamics
      * @n
      * @par Details:
-     * @details ???
+     * @details This constructor will be called by validator provider, which creates validator instances
      *
-     *  @param taskId        - ???
-     *  @param sessionId     - ???
-     *  @param kernelContext - ??? */
+     * @param taskId        - id of current task
+     * @param sessionId     - id of current session
+     * @param kernelContext - context for current Node */
     public ResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
     }
 
-    /** ??? Some short description
-     * @author ???
+    /** Returns the name of validator
+     * @author Grid Dynamics
      * @n
      * @par Details:
-     * @details ???
+     * @details Returns the name of validator. This name will be displayed at webUI and jagger report.
      *
-     *  @return ??? */
+     * @return the name of validator */
     public abstract String getName();
 
-    /** ??? Some short description
-     * @author ???
+    /** Validates the result of invocation
+     * @author Grid Dynamics
      * @n
      * @par Details:
-     * @details ???
+     * @details  Validates the result of invocation with specified query and endpoint. If return false current request to SUT will be marked as failed.
      *
-     *  @param query     - ???
-     *  @param endpoint  - ???
-     *  @param result    - ???
-     *  @param duration  - ???
+     * @param query     - the query of current invocation
+     * @param endpoint  - the endpoint of current invocation
+     * @param result    - the result of invocation
+     * @param duration  - the duration of invocation
      *
-     *  @return ??? */
+     * @return true if validation is successful */
     public abstract boolean validate(Q query, E endpoint, R result, long duration);
 
 }
 
-/* **************** How to customize collector ************************* */
-/// @defgroup Main_HowToCustomizeCollectors_group Custom collectors
-///
+/// @page MetricsValidators Validators
+/// @brief Section provides information about validation of the SUT responses @n
 /// @details
-/// @todo finish docu section Custom collectors
+/// @n
+/// Validation of SUT responses is provided by Jagger components Validators. They verify responses from the SUT and decide whether responses are valid or not.
+/// Every response can be validated by multiple validators. One after another. If one of the validators in the chain sets FAIL status to the response, this request
+/// is considered failed. This will affect @ref MetricsPerformance "standard performance metrics": success rate and number of failures. @n
+/// @n
+/// @par How to create validator
+/// Create a custom class that implements @ref ResponseValidator<Q,E,R> "ResponseValidator" @n
+/// Example: @ref NotNullResponseValidator<Q,E,R> @n
+/// TODO: add Http validator when ready @n
+/// @n
+/// @par How to add validator to your test
+/// @b Note: you can add multiple validators to the @ref com.griddynamics.jagger.user.test.configurations.JTestDefinition "JTestDefinition". They will be executed in the same sequence like they are added
+/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - Detailed load test scenario configuration
+/// @until end: following section is used for docu generation - Detailed load test scenario configuration
+///

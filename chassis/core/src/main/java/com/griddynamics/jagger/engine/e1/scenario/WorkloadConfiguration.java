@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -21,6 +21,9 @@
 package com.griddynamics.jagger.engine.e1.scenario;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -30,29 +33,47 @@ import java.io.Serializable;
  * @author Mairbek Khadikov
  */
 public class WorkloadConfiguration implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(WorkloadConfiguration.class);
+
     private final int threads;
     private final int delay;
     private final int samples;
+    private final long period;
 
     public static WorkloadConfiguration with(int threads, int delay) {
         return with(threads, delay, -1);
     }
 
     public static WorkloadConfiguration with(int threads, int delay, int samples) {
-        return new WorkloadConfiguration(threads, delay, samples);
+        return with(threads, delay, samples, -1L);
+    }
+
+    public static WorkloadConfiguration with(long period, int maxThreads) {
+        return with(maxThreads, 0, -1, period);
+    }
+
+    public static WorkloadConfiguration with(int threads, int delay, int samples, long period) {
+        return new WorkloadConfiguration(threads, delay, samples, period);
     }
 
     public static WorkloadConfiguration zero() {
         return with(0, 0);
     }
 
-    private WorkloadConfiguration(int threads, int delay, int samples) {
-        Preconditions.checkArgument(threads >= 0);
-        Preconditions.checkArgument(delay   >= 0);
+    private WorkloadConfiguration(int threads, int delay, int samples, long period) {
+        try {
+            Preconditions.checkArgument(threads >= 0);
+            Preconditions.checkArgument(delay   >= 0);
+        }
+        catch (IllegalArgumentException e) {
+            log.error("Unsupported configuration. threads=" + threads + ", delay=" + delay);
+            throw Throwables.propagate(e);
+        }
 
         this.threads = threads;
         this.delay   = delay;
         this.samples = samples;
+        this.period = period;
     }
 
     public int getThreads() {
@@ -65,6 +86,10 @@ public class WorkloadConfiguration implements Serializable {
 
     public int getSamples() {
         return samples;
+    }
+
+    public long getPeriod() {
+        return period;
     }
 
     @Override
@@ -92,9 +117,10 @@ public class WorkloadConfiguration implements Serializable {
     @Override
     public String toString() {
         return "WorkloadConfiguration{" +
-                "delay=" + delay +
-                ", threads=" + threads +
+                "threads=" + threads +
+                ", delay=" + delay +
                 ", samples=" + samples +
+                ", period=" + period +
                 '}';
     }
 }

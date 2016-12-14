@@ -3,11 +3,11 @@ package com.griddynamics.jagger.webclient.client;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.core.client.GWT;
-import com.griddynamics.jagger.webclient.client.dto.MetricDto;
-import com.griddynamics.jagger.webclient.client.dto.MetricNameDto;
-import com.griddynamics.jagger.webclient.client.dto.TaskDataDto;
+import com.griddynamics.jagger.dbapi.dto.SummaryIntegratedDto;
+import com.griddynamics.jagger.dbapi.model.MetricNode;
 
-import java.util.List;
+
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,7 +31,5 @@ public interface MetricDataService extends RemoteService {
         }
     }
 
-    public Set<MetricNameDto> getMetricsNames(Set<TaskDataDto> tests);
-    public MetricDto getMetric( MetricNameDto metricName);
-    public List<MetricDto> getMetrics(List<MetricNameDto> metricNames);
+    public Map<MetricNode, SummaryIntegratedDto> getMetrics(Set<MetricNode> metricNames, boolean isEnableDecisionsPerMetricFetching) throws RuntimeException;
 }

@@ -4,18 +4,19 @@
     <id>jagger-suite-archetype</id>
 
     <sources>
-        <source>src/main/java/PageVisitorInvoker.java</source>
-        <source>src/main/java/ResponseSize.java</source>
+        <source>src/main/java/Invoker_PageVisitor.java</source>
+        <source>src/main/java/Metric_ResponseSize.java</source>
+        <source>src/main/java/Provider_Endpoints.java</source>
     </sources>
     <resources>
         <resource>src/main/resources/profiles/basic/environment.properties</resource>
-        <resource>src/main/resources/suite/invokers/invokers.conf.xml</resource>
+        <resource>src/main/resources/suite/invokers.conf.xml</resource>
         <resource>src/main/resources/suite/collectors.conf.xml</resource>
-        <resource>src/main/resources/suite/defaults.config.xml</resource>
-        <resource>src/main/resources/suite/test.suite.conf.xml</resource>
-        <resource>src/main/resources/suite/test.suite.scenario.config.xml</resource>
+        <resource>src/main/resources/suite/defaults.conf.xml</resource>
+        <resource>src/main/resources/suite/listeners.conf.xml</resource>
+        <resource>src/main/resources/suite/providers.conf.xml</resource>
+        <resource>src/main/resources/suite/suite.conf.xml</resource>
+        <resource>src/main/resources/suite/test.description.conf.xml</resource>
         <resource>assembly-config.xml</resource>
     </resources>
-
-
 </archetype>

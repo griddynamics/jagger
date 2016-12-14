@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="log_file_name" value="jaas"/>
+    <springProperty scope="context" name="logs_path" source="jaas.logs.path"/>
+    <!--<property name="logs_path" value="${jaas.logs.path:-.}"/>-->
+
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger %X{uuid} %X{report} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logs_path}/${log_file_name}.log</file>
+        <append>true</append>
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>10</maxIndex>
+            <fileNamePattern>${logs_path}/${log_file_name}.%i.log</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>50MB</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.springframework.orm" level="WARN"/>
+    <logger name="org.springframework.context.support" level="WARN"/>
+    <logger name="org.apache.zookeeper" level="ERROR"/>
+    <logger name="org.apache.hadoop" level="ERROR"/>
+
+    <logger name="com.griddynamics.jagger" level="INFO"/>
+    <logger name="com.griddynamics.jagger.invoker.CircularSupplier" level="WARN"/>
+    <logger name="com.griddynamics.jagger.invoker.LoadInvocationLogger" level="WARN"/>
+    <logger name="com.griddynamics.jagger.storage.rdb.HibernateKeyValueStorage" level="WARN"/>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

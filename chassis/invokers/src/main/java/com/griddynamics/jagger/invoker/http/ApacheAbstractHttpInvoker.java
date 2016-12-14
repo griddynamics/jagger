@@ -3,8 +3,8 @@
  * http://www.griddynamics.com
  *
  * This library is free software; you can redistribute it and/or modify it under the terms of
- * the GNU Lesser General Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or any later version.
+ * the Apache License; either
+ * version 2.0 of the License, or any later version.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -31,15 +31,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-/** ??? Some short description
- * @author ???
+/** This class creates http request to the services of SuT
+ * @author Evelina Stepanova
  * @n
  * @par Details:
- * @details ???
+ * @details An abstract implementation of http invoker. It based on apache http-client. Create http-requests and params from your queries and endpoints.
  *
- * @param <Q> -???
+ * @param <Q> -query type
  *
  * @ingroup Main_Invokers_group */
+@Deprecated
 public abstract class ApacheAbstractHttpInvoker<Q> implements Invoker<Q, HttpResponse, String> {
     private static final Logger log = LoggerFactory.getLogger(ApacheAbstractHttpInvoker.class);
 
@@ -50,6 +51,15 @@ public abstract class ApacheAbstractHttpInvoker<Q> implements Invoker<Q, HttpRes
         this.httpClient = httpClient;
     }
 
+    /** Executes http request via apache http client
+     * @author Mairbek Khadikov
+     * @n
+     *
+     * @param query    - input data for the invocation
+     * @param endpoint - url of target service
+     *
+     * @return apache http response
+     * @throws InvocationException when invocation failed */
     @Override
     public final HttpResponse invoke(Q query, String endpoint) throws InvocationException {
         Preconditions.checkNotNull(query);
@@ -77,7 +87,22 @@ public abstract class ApacheAbstractHttpInvoker<Q> implements Invoker<Q, HttpRes
         }
     }
 
+    /** Creates request(GET, POST, etc) from query and endpoint
+     * @author Evelina Stepanova
+     * @n
+     *
+     * @param query - a query of Q type
+     * @param endpoint - location of target
+     * @return apache request base
+     */
     protected abstract HttpRequestBase getHttpMethod(Q query, String endpoint);
 
+    /** Extract client params from query
+     * @author Evelina Stepanova
+     * @n
+     *
+     * @param query - a query of Q type
+     * @return params for apache http client
+     */
     protected abstract HttpParams getHttpClientParams(Q query);
 }
