@@ -39,10 +39,6 @@
         <property name="clazz" value="com.griddynamics.jagger.engine.e1.collector.InformationCollector"/>
     </bean>
 
-	<bean id="diagnosticCollector" class="com.griddynamics.jagger.engine.e1.collector.DiagnosticCollectorProvider">
-		<property name="metricCalculator" ref="simpleMetricCalculator"/>
-	</bean>
-
 	<bean id="simpleMetricCalculator" class="com.griddynamics.jagger.engine.e1.collector.SimpleMetricCalculator"/>
 
 </beans>

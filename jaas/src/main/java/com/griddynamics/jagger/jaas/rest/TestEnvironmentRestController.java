@@ -5,12 +5,12 @@ import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentInvalidIdException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentSessionNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentStatusException;
-import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.service.TestEnvironmentService;
-import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
+import com.griddynamics.jagger.jaas.service.TestExecutionService;
+import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
-import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
+import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -108,7 +108,10 @@ public class TestEnvironmentRestController extends AbstractController {
         testEnv.setEnvironmentId(envId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         if (updated.getStatus() == PENDING) {
-            getLoadScenarioNameToExecute(updated).ifPresent(loadScenarioName -> setNextConfigToExecuteHeader(response, loadScenarioName));
+            getTestExecutionToExecute(updated).ifPresent(execution -> {
+                setNextConfigToExecuteHeader(response, execution.getLoadScenarioId());
+                setTestProjectURLHeader(response, execution.getTestProjectURL());
+            });
             if (oldEnv.getStatus() == RUNNING)
                 testExecutionService.finishExecution(envId, oldEnv.getRunningLoadScenario().getLoadScenarioId());
         }
@@ -117,16 +120,6 @@ public class TestEnvironmentRestController extends AbstractController {
         }
         response.addCookie(getSessionCookie(updated));
         return ResponseEntity.accepted().build();
-    }
-
-    private Optional<String> getLoadScenarioNameToExecute(TestEnvironmentEntity testEnv) {
-        List<String> loadScenarioNames = testEnv.getLoadScenarios().stream().map(LoadScenarioEntity::getLoadScenarioId).collect(toList());
-
-        return testExecutionService.readAllPending().stream()
-                .filter(testExec -> testExec.getEnvId().equals(testEnv.getEnvironmentId()))
-                .map(TestExecutionEntity::getLoadScenarioId)
-                .filter(loadScenarioNames::contains)
-                .findFirst();
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
@@ -147,6 +140,15 @@ public class TestEnvironmentRestController extends AbstractController {
         return ResponseEntity.created(fromCurrentRequest().path("/{envId}").buildAndExpand(testEnv.getEnvironmentId()).toUri()).build();
     }
 
+    private Optional<TestExecutionEntity> getTestExecutionToExecute(TestEnvironmentEntity testEnv) {
+        List<String> loadScenarioNames = testEnv.getLoadScenarios().stream().map(LoadScenarioEntity::getLoadScenarioId).collect(toList());
+
+        return testExecutionService.readAllPending().stream()
+                .filter(testExec -> testExec.getEnvId().equals(testEnv.getEnvironmentId()))
+                .filter(testExec -> loadScenarioNames.contains(testExec.getLoadScenarioId()))
+                .findFirst();
+    }
+
     private void validateTestEnv(TestEnvironmentEntity testEnv) {
         String envId = testEnv.getEnvironmentId();
         Pattern envIdPattern = Pattern.compile(ENV_ID_PATTERN);
@@ -165,6 +167,10 @@ public class TestEnvironmentRestController extends AbstractController {
 
     private void setNextConfigToExecuteHeader(HttpServletResponse response, String loadScenarioName) {
         response.addHeader(TestEnvUtils.CONFIG_NAME_HEADER, loadScenarioName);
+    }
+
+    private void setTestProjectURLHeader(HttpServletResponse response, String testProjectURL) {
+        response.addHeader(TestEnvUtils.TEST_PROJECT_URL_HEADER, testProjectURL);
     }
 
     private Cookie getSessionCookie(TestEnvironmentEntity testEnv) {

@@ -20,7 +20,14 @@
 
 package com.griddynamics.jagger.util;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class is used in chassis, web UI server and web UI client
@@ -37,24 +44,30 @@ public class StandardMetricsNamesUtil {
     public static final String SUCCESS_RATE = "Success rate";
     public static final String DURATION_SEC = "Duration, sec";
     public static final String TIME_LATENCY_PERCENTILE = "Time Latency Percentile";
-    public static final String FAIL_COUNT = "Number of failures";
+    public static final String VIRTUAL_USERS = "Virtual users";
+
+    // aggregators ids
+    public static final String SUCCESS_RATE_AGGREGATOR_OK_ID = "Success rate";
+    public static final String SUCCESS_RATE_AGGREGATOR_FAILED_ID = "Number of fails";
 
     //begin: following section is used for docu generation - standard metrics ids
     public static final String THROUGHPUT_ID = "throughput";
     public static final String LATENCY_ID = "avgLatency";
     public static final String LATENCY_STD_DEV_ID = "stdDevLatency";
-    public static final String FAIL_COUNT_ID = "failureCount";
     public static final String SUCCESS_RATE_ID = "successRate";
+    public static final String SUCCESS_RATE_OK_ID = SUCCESS_RATE_ID + " [" + SUCCESS_RATE_AGGREGATOR_OK_ID + "]";
+    public static final String SUCCESS_RATE_FAILED_ID = SUCCESS_RATE_ID + " [" + SUCCESS_RATE_AGGREGATOR_FAILED_ID + "]";
     public static final String DURATION_ID = "duration";
     public static final String ITERATION_SAMPLES_ID = "samples";
+
+    public static final String VIRTUAL_USERS_ID = "Jagger.Threads";
+
     //end: following section is used for docu generation - standard metrics ids
 
     // ids for standard metrics saved with old model (in WorkloadTaskData, TimeLatencyPercentile, etc)
     public static final String THROUGHPUT_OLD_ID = "throughput-old";
     public static final String LATENCY_OLD_ID = "avgLatency-old";
     public static final String LATENCY_STD_DEV_OLD_ID = "stdDevLatency-old";
-    public static final String FAIL_COUNT_OLD_ID = "failureCount-old";
-    public static final String SUCCESS_RATE_OLD_ID = "successRate-old";
     public static final String DURATION_OLD_ID = "duration-old";
     public static final String ITERATION_SAMPLES_OLD_ID = "samples-old";
 
@@ -120,8 +133,6 @@ public class StandardMetricsNamesUtil {
         synonyms.put(THROUGHPUT_OLD_ID, Arrays.asList(THROUGHPUT_ID, THROUGHPUT));
         synonyms.put(LATENCY_OLD_ID, Arrays.asList(LATENCY_ID, LATENCY));
         synonyms.put(LATENCY_STD_DEV_OLD_ID, Arrays.asList(LATENCY_STD_DEV_ID));
-        synonyms.put(FAIL_COUNT_OLD_ID, Arrays.asList(FAIL_COUNT_ID));
-        synonyms.put(SUCCESS_RATE_OLD_ID, Arrays.asList(SUCCESS_RATE_ID, SUCCESS_RATE));
         synonyms.put(DURATION_OLD_ID, Arrays.asList(DURATION_ID, "Duration"));
         synonyms.put(ITERATION_SAMPLES_OLD_ID, Arrays.asList(ITERATION_SAMPLES_ID, "Iterations"));
 
@@ -129,8 +140,6 @@ public class StandardMetricsNamesUtil {
         synonyms.put(THROUGHPUT_ID, Arrays.asList(THROUGHPUT_OLD_ID, THROUGHPUT));
         synonyms.put(LATENCY_ID, Arrays.asList(LATENCY_OLD_ID, LATENCY));
         synonyms.put(LATENCY_STD_DEV_ID, Arrays.asList(LATENCY_STD_DEV_OLD_ID));
-        synonyms.put(FAIL_COUNT_ID, Arrays.asList(FAIL_COUNT_OLD_ID));
-        synonyms.put(SUCCESS_RATE_ID, Arrays.asList(SUCCESS_RATE_OLD_ID, SUCCESS_RATE));
         synonyms.put(DURATION_ID, Arrays.asList(DURATION_OLD_ID, "Duration"));
         synonyms.put(ITERATION_SAMPLES_ID, Arrays.asList(ITERATION_SAMPLES_OLD_ID, "Iterations"));
     }

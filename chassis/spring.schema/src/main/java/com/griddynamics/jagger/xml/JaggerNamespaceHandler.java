@@ -13,7 +13,6 @@ import com.griddynamics.jagger.xml.beanParsers.task.*;
 import com.griddynamics.jagger.xml.beanParsers.workload.TestDescriptionDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.OneByOneBalancerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.RoundRobinBalancerDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.calibration.DefaultCalibratorDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ApacheHttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
@@ -132,12 +131,6 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("client-params", mapCustomDefinitionParser);
         registerBeanDefinitionParser("method-params", mapCustomDefinitionParser);
 
-        //calibrators
-        registerBeanDefinitionParser("calibrator", findTypeParser);
-        registerBeanDefinitionParser("defaultCalibrator", new DefaultCalibratorDefinitionParser());
-
-
-
         //termination strategy
         registerBeanDefinitionParser("termination",  findTypeParser);
         registerBeanDefinitionParser("termination-iterations", new IterationsOrDurationTerminationStrategyDefinitionParser());
@@ -180,6 +173,5 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         //limits
         registerBeanDefinitionParser("limits", new LimitSetDefinitionParser());
         registerBeanDefinitionParser("limit", new LimitDefinitionParser());
-
     }
 }

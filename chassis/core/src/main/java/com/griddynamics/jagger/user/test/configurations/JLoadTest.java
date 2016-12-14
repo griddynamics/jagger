@@ -1,9 +1,13 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.griddynamics.jagger.engine.e1.Provider;
+import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
+
+import com.google.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -19,10 +23,12 @@ import java.util.Objects;
  * @li termination criteria - when load should be terminated
  *
  * See @ref section_writing_test_load_scenario for more details @n
- * @n More information on the parameter of the test definition, you can find in the Builder documentation @n
- * @n Code example:
- * @dontinclude ExampleSimpleJLoadScenarioProvider.java
- * @skip begin: following section is used for docu generation - Load test scenario configuration
+ * @n
+ * More information on the parameter of the test definition, you can find in the Builder documentation @n
+ * @n
+ * Code example:
+ * @dontinclude  ExampleSimpleJLoadScenarioProvider.java
+ * @skip  begin: following section is used for docu generation - Load test scenario configuration
  * @until end: following section is used for docu generation - Load test scenario configuration
  */
 public class JLoadTest {
@@ -32,6 +38,7 @@ public class JLoadTest {
     private final JTestDefinition testDescription;
     private final JTerminationCriteria termination;
     private final List<JLimit> limits;
+    private final List<Provider<TestListener>> listeners;
 
     private JLoadTest(Builder builder) {
         this.id = builder.id.value();
@@ -39,11 +46,11 @@ public class JLoadTest {
         this.load = builder.load;
         this.termination = builder.termination;
         this.limits = builder.limits;
+        this.listeners = builder.listeners;
     }
 
     /**
      * Builder of the JLoadTest
-     *
      * @param id          - Unique id of the test definition
      * @param definition  - Definition of the load test (sources of the test data and used protocol)
      * @param load        - Load strategy for this load test (Virtual users, Requests per seconds, etc)
@@ -63,6 +70,8 @@ public class JLoadTest {
         private final JTerminationCriteria termination;
         private List<JLimit> limits;
 
+        private List<Provider<TestListener>> listeners = Lists.newArrayList();
+    
         private Builder(Id id, JTestDefinition jTestDefinition, JLoadProfile load, JTerminationCriteria termination) {
             this.id = id;
             this.jTestDefinition = jTestDefinition;
@@ -70,10 +79,39 @@ public class JLoadTest {
             this.termination = termination;
             this.limits = new LinkedList<>();
         }
-
+    
+        /**
+         * Optional: Adds instances of subtypes of {@link com.griddynamics.jagger.engine.e1.Provider<TestListener>}
+         * Listeners will be executed before, after and periodically during a test
+         * @n
+         * Example:
+         * @code
+         *      addListeners(Arrays.asList(new CollectThreadsTestListener()))
+         * @endcode
+         * @see com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener for example
+         */
+        public Builder addListeners(List<Provider<TestListener>> listeners) {
+            this.listeners.addAll(listeners);
+            return this;
+        }
+    
+        /**
+         * Optional: Adds a subtype instance of {@link com.griddynamics.jagger.engine.e1.Provider<TestListener>}
+         * Listener will be executed before, after and periodically during a test
+         * @n
+         * Example:
+         * @code
+         *      addListener(new CollectThreadsTestListener())
+         * @endcode
+         * @see com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener for example
+         */
+        public Builder addListener(Provider<TestListener> listener) {
+            this.listeners.add(listener);
+            return this;
+        }
 
         /**
-         * Set limits for a test.
+         * Optional: Set limits for a test.
          *
          * @param limits array of {@link JLimit}.
          */
@@ -84,7 +122,7 @@ public class JLoadTest {
         }
 
         /**
-         * Set limits for a test.
+         * Optional: Set limits for a test.
          *
          * @param limits list of {@link JLimit}.
          */
@@ -122,5 +160,9 @@ public class JLoadTest {
 
     public List<JLimit> getLimits() {
         return limits;
+    }
+    
+    public List<Provider<TestListener>> getListeners() {
+        return listeners;
     }
 }

@@ -5,13 +5,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/** Listener, executed before and after test-group execution.
+/**
+ * Listener, executed before and after test-group execution.
  * @author Gribov Kirill
  * @n
  * @par Details:
  * @details
  * @n
- * @ingroup Main_Listeners_Base_group */
+ * @ingroup Main_Listeners_Base_group
+ */
 public abstract class TestGroupListener {
 
     /** Executes before test-group starts

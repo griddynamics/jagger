@@ -28,7 +28,4 @@ public interface ScenarioFactory<Q, R, E> extends Serializable {
 
     Scenario<Q, R, E> get(NodeContext context);
 
-
-    int getCalibrationSamplesCount();
-
 }

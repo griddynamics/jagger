@@ -28,7 +28,6 @@
             <list>
                 <ref bean="durationCollector"/>
                 <ref bean="informationCollector"/>
-                <ref bean="diagnosticCollector"/>
             </list>
         </property>
     </bean>

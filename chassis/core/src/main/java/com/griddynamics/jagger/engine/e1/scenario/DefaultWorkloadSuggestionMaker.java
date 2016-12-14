@@ -39,7 +39,7 @@ import static com.griddynamics.jagger.util.DecimalUtil.areEqual;
 public class DefaultWorkloadSuggestionMaker implements WorkloadSuggestionMaker {
     private static final Logger log = LoggerFactory.getLogger(DefaultWorkloadSuggestionMaker.class);
 
-    private static final WorkloadConfiguration CALIBRATION_CONFIGURATION = WorkloadConfiguration.with(1, 0);
+    private static final WorkloadConfiguration FIRST_POINT_CONFIGURATION = WorkloadConfiguration.with(1, 0);
     private static final int MIN_DELAY = 10;
     // critical. if delay is too long we are not able to stop threads fast during balancing =>
     // change workload configuration fails by timeout
@@ -65,13 +65,13 @@ public class DefaultWorkloadSuggestionMaker implements WorkloadSuggestionMaker {
             throw new IllegalArgumentException("Cannot suggest workload configuration");
         }
 
-        if (!threadDelayStats.contains(CALIBRATION_CONFIGURATION.getThreads(), CALIBRATION_CONFIGURATION.getDelay())) {
-            log.debug("Statistics is empty. Going to return calibration info.");
-            return CALIBRATION_CONFIGURATION;
+        if (!threadDelayStats.contains(FIRST_POINT_CONFIGURATION.getThreads(), FIRST_POINT_CONFIGURATION.getDelay())) {
+            log.debug("Statistics is empty. Injecting empty entry");
+            return FIRST_POINT_CONFIGURATION;
         }
         if (threadDelayStats.size() == 2 && areEqual(threadDelayStats.get(1, 0).getSecond(), BigDecimal.ZERO)) {
-            log.warn("No calibration info. Going to retry.");
-            return CALIBRATION_CONFIGURATION;
+            log.warn("Statistics is still empty. Injecting empty entry");
+            return FIRST_POINT_CONFIGURATION;
         }
 
         Map<Integer, Pair<Long, BigDecimal>> noDelays = threadDelayStats.column(0);

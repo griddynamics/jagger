@@ -12,11 +12,15 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 // begin: following section is used for docu generation - Load test scenario configuration
+@Configuration
 public class ExampleSimpleJLoadScenarioProvider {
 
-    public static JLoadScenario getExampleJaggerLoadScenario() {
+    @Bean
+    public JLoadScenario exampleSimpleJaggerLoadScenario() {
 
         JTestDefinition jTestDefinition = JTestDefinition.builder(Id.of("td_example"), new ExampleEndpointsProvider()).build();
 
