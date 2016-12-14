@@ -23,53 +23,54 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <util:map id="monitoringMetricsDescription" key-type="java.lang.String" value-type="com.griddynamics.jagger.engine.e1.collector.MetricDescription">
+
         <!--changing names-->
-        <entry key="mon_cpula_1" value-ref="mon_cpula_1_bean"/>
-        <entry key="mon_cpula_5" value-ref="mon_cpula_5_bean"/>
-        <entry key="mon_cpula_15" value-ref="mon_cpula_15_bean"/>
-        <entry key="mon_gc_minor_time" value-ref="mon_gc_minor_time_bean"/>
-        <entry key="mon_gc_major_time" value-ref="mon_gc_major_time_bean"/>
-        <entry key="mon_gc_minor_unit" value-ref="mon_gc_minor_unit_bean"/>
-        <entry key="mon_gc_major_unit" value-ref="mon_gc_major_unit_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_CPULA_1}" value-ref="mon_cpula_1_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_CPULA_5}" value-ref="mon_cpula_5_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_CPULA_15}" value-ref="mon_cpula_15_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_GC_MINOR_TIME}" value-ref="mon_gc_minor_time_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_GC_MAJOR_TIME}" value-ref="mon_gc_major_time_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_GC_MINOR_UNIT}" value-ref="mon_gc_minor_unit_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_GC_MAJOR_UNIT}" value-ref="mon_gc_major_unit_bean"/>
 
         <!--just to allow customisation-->
-        <entry key="mon_mem_ram" value-ref="mon_mem_ram_bean"/>
-        <entry key="mon_mem_total" value-ref="mon_mem_total_bean"/>
-        <entry key="mon_mem_used" value-ref="mon_mem_used_bean"/>
-        <entry key="mon_mem_actual_used" value-ref="mon_mem_actual_used_bean"/>
-        <entry key="mon_mem_free_prcnt" value-ref="mon_mem_free_prcnt_bean"/>
-        <entry key="mon_mem_actual_free" value-ref="mon_mem_actual_free_bean"/>
-        <entry key="mon_mem_free" value-ref="mon_mem_free_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_MEM_RAM}" value-ref="mon_mem_ram_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_MEM_TOTAL}" value-ref="mon_mem_total_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_MEM_USED}" value-ref="mon_mem_used_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_MEM_ACTUAL_USED}" value-ref="mon_mem_actual_used_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_MEM_FREE_PRCNT}" value-ref="mon_mem_free_prcnt_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_MEM_ACTUAL_FREE}" value-ref="mon_mem_actual_free_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_MEM_FREE}" value-ref="mon_mem_free_bean"/>
 
-        <entry key="mon_tcp_est" value-ref="mon_tcp_est_bean"/>
-        <entry key="mon_tcp_listen" value-ref="mon_tcp_listen_bean"/>
-        <entry key="mon_sync_received" value-ref="mon_sync_received_bean"/>
-        <entry key="mon_inbound_total" value-ref="mon_inbound_total_bean"/>
-        <entry key="mon_outbound_total" value-ref="mon_outbound_total_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_TCP_EST}" value-ref="mon_tcp_est_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_TCP_LISTEN}" value-ref="mon_tcp_listen_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_SYNC_RECEIVED}" value-ref="mon_sync_received_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_INBOUND_TOTAL}" value-ref="mon_inbound_total_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_OUTBOUND_TOTAL}" value-ref="mon_outbound_total_bean"/>
 
-        <entry key="mon_disk_read_bytes" value-ref="mon_disk_read_bytes_bean"/>
-        <entry key="mon_disk_write_bytes" value-ref="mon_disk_write_bytes_bean"/>
-        <entry key="mon_disk_service_time" value-ref="mon_disk_service_time_bean"/>
-        <entry key="mon_disk_queue_size_total" value-ref="mon_disk_queue_size_total_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_DISK_READ_BYTES}" value-ref="mon_disk_read_bytes_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_DISK_WRITE_BYTES}" value-ref="mon_disk_write_bytes_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_DISK_SERVICE_TIME}" value-ref="mon_disk_service_time_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_DISK_QUEUE_SIZE_TOTAL}" value-ref="mon_disk_queue_size_total_bean"/>
 
-        <entry key="mon_cpu_user" value-ref="mon_cpu_user_bean"/>
-        <entry key="mon_cpu_sys_prcnt" value-ref="mon_cpu_sys_prcnt_bean"/>
-        <entry key="mon_cpu_idle_prcnt" value-ref="mon_cpu_idle_prcnt_bean"/>
-        <entry key="mon_cpu_wait" value-ref="mon_cpu_wait_bean"/>
-        <entry key="mon_cpu_combined" value-ref="mon_cpu_combined_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_CPU_USER}" value-ref="mon_cpu_user_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_CPU_SYS_PRCNT}" value-ref="mon_cpu_sys_prcnt_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_CPU_IDLE_PRCNT}" value-ref="mon_cpu_idle_prcnt_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_CPU_WAIT}" value-ref="mon_cpu_wait_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_CPU_COMBINED}" value-ref="mon_cpu_combined_bean"/>
 
-        <entry key="mon_heap_init" value-ref="mon_heap_init_bean"/>
-        <entry key="mon_heap_used" value-ref="mon_heap_used_bean"/>
-        <entry key="mon_heap_committed" value-ref="mon_heap_committed_bean"/>
-        <entry key="mon_heap_max" value-ref="mon_heap_max_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_HEAP_INIT}" value-ref="mon_heap_init_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_HEAP_USED}" value-ref="mon_heap_used_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_HEAP_COMMITTED}" value-ref="mon_heap_committed_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_HEAP_MAX}" value-ref="mon_heap_max_bean"/>
 
-        <entry key="mon_nonheap_init" value-ref="mon_nonheap_init_bean"/>
-        <entry key="mon_nonheap_used" value-ref="mon_nonheap_used_bean"/>
-        <entry key="mon_nonheap_committed" value-ref="mon_nonheap_committed_bean"/>
-        <entry key="mon_nonheap_max" value-ref="mon_nonheap_max_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_NONHEAP_INIT}" value-ref="mon_nonheap_init_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_NONHEAP_USED}" value-ref="mon_nonheap_used_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_NONHEAP_COMMITTED}" value-ref="mon_nonheap_committed_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_NONHEAP_MAX}" value-ref="mon_nonheap_max_bean"/>
 
-        <entry key="mon_thread_count" value-ref="mon_thread_count_bean"/>
-        <entry key="mon_thread_peak_count" value-ref="mon_thread_peak_count_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_THREAD_COUNT}" value-ref="mon_thread_count_bean"/>
+        <entry key="#{T(com.griddynamics.jagger.util.StandardMetricsNamesUtil).MON_THREAD_PEAK_COUNT}" value-ref="mon_thread_peak_count_bean"/>
     </util:map>
 
     <!--monitoring parameters are described by DefaultMonitoringParameters class-->

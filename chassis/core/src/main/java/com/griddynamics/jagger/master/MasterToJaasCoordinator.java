@@ -45,8 +45,10 @@ public class MasterToJaasCoordinator implements Closeable {
     private final Set<String> availableConfigs;
     private boolean registered = false;
     private StatusExchangeThread statusExchangeThread;
-
-    public MasterToJaasCoordinator(String envId, String jaasEndpoint, int statusReportIntervalSeconds,
+    
+    public MasterToJaasCoordinator(String envId,
+                                   String jaasEndpoint,
+                                   int statusReportIntervalSeconds,
                                    Set<String> availableConfigs) {
         this.envId = envId;
         try {
@@ -79,20 +81,20 @@ public class MasterToJaasCoordinator implements Closeable {
         registered = true;
     }
     
-    public String awaitConfigToExecute() throws TerminateException, InterruptedException {
+    public JaasResponse awaitConfigToExecute() throws TerminateException, InterruptedException {
         if (!registered) {
             throw new IllegalStateException("must be registered");
         }
         statusExchangeThread.setPendingRequestEntity();
-        String configName;
+        JaasResponse jaasResponse;
         do {
-            configName = statusExchangeThread.nextConfigToExecute.poll(1, TimeUnit.MINUTES);
+            jaasResponse = statusExchangeThread.nextConfigToExecute.poll(1, TimeUnit.MINUTES);
             if (!standBy) {
                 throw getTerminateException();
             }
         }
-        while (configName == null);
-        statusExchangeThread.setRunningRequestEntity(configName);
+        while (jaasResponse == null);
+        statusExchangeThread.setRunningRequestEntity(jaasResponse.loadScenarioName);
         statusExchangeThread.statusSent = false;
         synchronized (statusExchangeThread.statusLock) {
             while (!statusExchangeThread.statusSent) {
@@ -103,7 +105,7 @@ public class MasterToJaasCoordinator implements Closeable {
                 }
             }
         }
-        return configName;
+        return jaasResponse;
     }
     
     private TerminateException getTerminateException() throws TerminateException {
@@ -201,7 +203,7 @@ public class MasterToJaasCoordinator implements Closeable {
         
         private String sessionCookie;
     
-        private final SynchronousQueue<String> nextConfigToExecute = new SynchronousQueue<>();
+        private final SynchronousQueue<JaasResponse> nextConfigToExecute = new SynchronousQueue<>();
         
         private volatile RequestEntity<TestEnvironmentEntity> requestEntity;
 
@@ -233,10 +235,10 @@ public class MasterToJaasCoordinator implements Closeable {
             this.requestEntity = buildPendingRequestEntity();
         }
         
-        public void setRunningRequestEntity(String configName) {
+        public void setRunningRequestEntity(String loadScenarioName) {
             RequestEntity<TestEnvironmentEntity> requestEntity = buildPendingRequestEntity();
             requestEntity.getBody().setStatus(TestEnvironmentStatus.RUNNING);
-            requestEntity.getBody().setRunningLoadScenario(new LoadScenarioEntity(configName));
+            requestEntity.getBody().setRunningLoadScenario(new LoadScenarioEntity(loadScenarioName));
     
             this.requestEntity = requestEntity;
         }
@@ -288,39 +290,46 @@ public class MasterToJaasCoordinator implements Closeable {
             if (requestEntity.getBody().getStatus() != TestEnvironmentStatus.PENDING) {
                 return;
             }
-            String configName = getNextConfigToExecute(responseEntity);
-            if (configName == null) {
+            String loadScenarioName = extractHeader(responseEntity, TestEnvUtils.LOAD_SCENARIO_HEADER);
+            String testProjectUrl = extractHeader(responseEntity, TestEnvUtils.TEST_PROJECT_URL_HEADER);
+            if (loadScenarioName == null && testProjectUrl == null) {
                 return;
             }
-            if (!nextConfigToExecute.offer(configName, 1, TimeUnit.MINUTES)) {
+    
+            JaasResponse jaasResponse = new JaasResponse();
+            jaasResponse.loadScenarioName = loadScenarioName;
+            jaasResponse.testProjectUrl = testProjectUrl;
+            
+            if (!nextConfigToExecute.offer(jaasResponse, 1, TimeUnit.MINUTES)) {
                 LOGGER.warn("Didn't manage to put next config name into a queue");
             }
         }
-        
-        private String getNextConfigToExecute(ResponseEntity<String> responseEntity) {
-            List<String> configNameHeaders = responseEntity.getHeaders().get(TestEnvUtils.CONFIG_NAME_HEADER);
+    
+        private String extractHeader(final ResponseEntity<String> responseEntity, final String headerName) {
+            List<String> configNameHeaders = responseEntity.getHeaders().get(headerName);
             
             if (CollectionUtils.isEmpty(configNameHeaders)) {
                 return null;
             }
     
             if (configNameHeaders.size() > 1) {
-                LOGGER.warn(
-                        "There are more then 1 {} header value in response. Using the 1st one",
-                        TestEnvUtils.CONFIG_NAME_HEADER
-                );
+                LOGGER.warn("There are more then 1 {} header value in response. Using the 1st one", headerName);
             }
             
-            String configName = configNameHeaders.get(0);
-            if (!availableConfigs.contains(configName)) {
-                LOGGER.warn(
-                        "Received config name '{}' in not among available ones: {}\nCan not execute it", configName,
-                        availableConfigs
-                );
-                configName = null;
-            }
-            
-            return configName;
+            return configNameHeaders.get(0);
+        }
+    }
+    
+    public static class JaasResponse {
+        private String loadScenarioName;
+        private String testProjectUrl;
+    
+        public String getLoadScenarioName() {
+            return loadScenarioName;
+        }
+    
+        public String getTestProjectUrl() {
+            return testProjectUrl;
         }
     }
 }
