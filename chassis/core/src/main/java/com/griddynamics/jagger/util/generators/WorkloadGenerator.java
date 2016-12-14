@@ -65,6 +65,8 @@ class WorkloadGenerator {
         String period = String.valueOf(jLoadProfile.getPeriod());
         if (jLoadProfile.getPeriod() > 0) {
             period += "s";
+        } else {
+            period = "-1";
         }
         exactInvocationsClockConfiguration.setPeriod(period);
         exactInvocationsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
