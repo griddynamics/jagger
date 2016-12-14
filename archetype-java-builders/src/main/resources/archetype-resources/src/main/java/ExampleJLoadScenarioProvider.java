@@ -26,36 +26,24 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
-import com.griddynamics.jagger.util.JaggerPropertiesProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import ${package}.util.JaggerPropertiesProvider;
 
 /**
- * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties, which you can use
- * for configuration of JLoadScenario.<p>
+ * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties and test properties, which are needed for load scenario
+ * configuration, but must not get to the Jagger environment. You can use them for configuration of JLoadScenario.<p>
  * Benefit of this approach is that you can change JLoadScenario configuration by changing properties file and no recompilation is needed.<p>
- *
- * Also there's a test.properties file which can be used for storing properties, which are needed for load scenario configuration, but must not get to
- * the Jagger environment. To use them, annotate load scenario provider class with @PropertySource("classpath:test.properties") annotation and autowire
- * {@link Environment}, which is used for obtaining properties.<p>
- *
- * Properties in test.properties does not override properties from environment.properties and not available in JaggerPropertiesProvider.
+ * Properties in test.properties does not override properties from environment.properties.
  */
 @Configuration
-@PropertySource("classpath:test.properties")
 public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
-    @Autowired
-    private Environment testEnvironment;
-    
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
 
-        // Example of using Environment properties located in test.properties
-        String testDefinitionComment = testEnvironment.getProperty("example.jagger.test.definition.comment");
+        // Example of using JaggerPropertiesProvider
+        String testDefinitionComment = getTestPropertyValue("example.jagger.test.definition.comment");
 
         JTestDefinition jTestDefinition = JTestDefinition
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
@@ -67,8 +55,8 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .build();
     
         // Example of using JaggerPropertiesProvider
-        Long iterationsNumber = Long.valueOf(getPropertyValue("example.jagger.load.scenario.termination.iterations"));
-        Long maxDurationInSeconds = Long.valueOf(getPropertyValue("example.jagger.load.scenario.termination.max.duration.seconds"));
+        Long iterationsNumber = Long.valueOf(getTestPropertyValue("example.jagger.load.scenario.termination.iterations"));
+        Long maxDurationInSeconds = Long.valueOf(getTestPropertyValue("example.jagger.load.scenario.termination.max.duration.seconds"));
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations
                 .of(IterationsNumber.of(iterationsNumber), MaxDurationInSeconds.of(maxDurationInSeconds));
     

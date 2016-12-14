@@ -5,6 +5,7 @@
     <id>archetype-java-builders</id>
 
     <sources>
+        <source>src/main/java/util/JaggerPropertiesProvider.java</source>
         <source>src/main/java/ExampleEndpointsProvider.java</source>
         <source>src/main/java/ExampleQueriesProvider.java</source>
         <source>src/main/java/ExampleJLoadScenarioProvider.java</source>
