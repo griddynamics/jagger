@@ -15,10 +15,7 @@
         <class>com.griddynamics.jagger.dbapi.entity.WorkloadTaskData</class>
         <class>com.griddynamics.jagger.dbapi.entity.WorkloadDetails</class>
 
-        <class>com.griddynamics.jagger.dbapi.entity.MonitoringStatistics</class> // read in many place, but is never persisted in the codebase
-        <class>com.griddynamics.jagger.dbapi.entity.PerformedMonitoring</class> // read in many place, but is never persisted in the codebase
         <class>com.griddynamics.jagger.dbapi.entity.ValidationResultEntity</class>
-        <class>com.griddynamics.jagger.dbapi.entity.DiagnosticResultEntity</class>
         <class>com.griddynamics.jagger.dbapi.entity.MetricPointEntity</class>
         <class>com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity</class>
         <class>com.griddynamics.jagger.dbapi.entity.MetricSummaryEntity</class>
