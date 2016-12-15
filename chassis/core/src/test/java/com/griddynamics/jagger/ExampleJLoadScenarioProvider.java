@@ -1,11 +1,6 @@
 package com.griddynamics.jagger;
 
-import static java.util.Collections.singletonList;
-
-import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
-import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider;
-import com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider;
-import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.*;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
@@ -17,12 +12,7 @@ import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowErrThresh;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowWarnThresh;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpErrThresh;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.*;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
@@ -34,6 +24,10 @@ import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.Ma
 import com.griddynamics.jagger.util.JaggerPropertiesProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.stream.IntStream;
+
+import static java.util.Collections.singletonList;
 
 /**
  * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties, which you can use
@@ -53,6 +47,10 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withQueryProvider(new ExampleQueriesProvider())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
+                .addValidator(DefaultResponseStatusValidatorProvider.builder()
+                        .withValidCodes(200, 201, 204)
+                        .withValidCodes(IntStream.rangeClosed(404, 405))
+                        .build())
                 .addListener(new NotNullInvocationListener())
                 .build();
         
@@ -108,6 +106,9 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
                 .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
+                .addValidator(DefaultResponseStatusValidatorProvider.builder()
+                        .withValidCodes("(200|201|203)")
+                        .build())
                 .build();
         
         JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
