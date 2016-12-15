@@ -25,13 +25,9 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 /** Validates that invocation result is not null.@n
  * @author Dmitry Kotlyarov
  * @n
- *
- * @param <Q> - Query type
- * @param <R> - Result type
- * @param <E> - Endpoint type
- *
- */
-public class NotNullResponseValidator<Q, E, R> extends ResponseValidator<Q, E, R> {
+ * @ingroup Main_Collectors_group */
+public class NotNullResponseValidator extends ResponseValidator<Object, Object, Object> {
+
     public NotNullResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {
         super(taskId, sessionId, kernelContext);
     }
@@ -52,7 +48,7 @@ public class NotNullResponseValidator<Q, E, R> extends ResponseValidator<Q, E, R
      *
      * @return false if invocation result is null */
     @Override
-    public boolean validate(Q query, E endpoint, R result, long duration) {
+    public boolean validate(Object query, Object endpoint, Object result, long duration) {
         return result != null;
     }
 }
