@@ -4,6 +4,7 @@ import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.ResponseStatusValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
