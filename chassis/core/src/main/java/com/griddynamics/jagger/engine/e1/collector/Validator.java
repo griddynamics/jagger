@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.RESULT;
+
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.Flushable;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObject;
@@ -8,16 +10,12 @@ import com.griddynamics.jagger.storage.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.RESULT;
-
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 8/15/13
  * Time: 3:27 PM
- * To change this template use File | Settings | File Templates.
  */
-public class Validator extends KernelSideObject implements Flushable{
+public class Validator extends KernelSideObject implements Flushable {
     private static final Logger log = LoggerFactory.getLogger(Validator.class);
 
     private ResponseValidator validator;
