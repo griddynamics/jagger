@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.util.generators;
 
+import com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClock;
 import com.griddynamics.jagger.engine.e1.scenario.ExactInvocationsClockConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.FixedDelay;
 import com.griddynamics.jagger.engine.e1.scenario.QpsClockConfiguration;
@@ -62,12 +63,7 @@ class WorkloadGenerator {
         exactInvocationsClockConfiguration.setSamplesCount(jLoadProfile.getInvocationCount());
         exactInvocationsClockConfiguration.setThreads(jLoadProfile.getThreadCount());
         exactInvocationsClockConfiguration.setDelay(jLoadProfile.getDelay());
-        String period = String.valueOf(jLoadProfile.getPeriod());
-        if (jLoadProfile.getPeriod() > 0) {
-            period += "s";
-        } else {
-            period = "-1";
-        }
+        String period = jLoadProfile.getPeriod() > 0 ? jLoadProfile.getPeriod() + "s" : ExactInvocationsClockConfiguration.DEFAULT_PERIOD;
         exactInvocationsClockConfiguration.setPeriod(period);
         exactInvocationsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
         return exactInvocationsClockConfiguration;
