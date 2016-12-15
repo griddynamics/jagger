@@ -34,37 +34,40 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
-import com.griddynamics.jagger.util.JaggerPropertiesProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ${package}.util.JaggerPropertiesProvider;
 
 /**
- * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties, which you can use
- * for configuration of JLoadScenario.<p>
- * Benefit of this approach is that you can change JLoadScenario configuration by changing properties file and no recompilation is needed.
+ * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties and test properties. You can use them for configuration of JLoadScenario.<p>
+ * Benefit of this approach is that you can change JLoadScenario configuration by changing properties file and no recompilation is needed.<p>
+ * Properties in test.properties do not override properties from environment.properties.
  */
 @Configuration
 public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
-        
+
+        // Example of using JaggerPropertiesProvider
+        String testDefinitionComment = getTestPropertyValue("example.jagger.test.definition.comment");
+
         JTestDefinition jTestDefinition = JTestDefinition
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
-                .withComment("no comments")
+                .withComment(testDefinitionComment)
                 .withQueryProvider(new ExampleQueriesProvider())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())
                 .build();
-        
+
         // Example of using JaggerPropertiesProvider
-        Long iterationsNumber = Long.valueOf(getPropertyValue("example.jagger.load.scenario.termination.iterations"));
-        Long maxDurationInSeconds = Long.valueOf(getPropertyValue("example.jagger.load.scenario.termination.max.duration.seconds"));
+        Long iterationsNumber = Long.valueOf(getTestPropertyValue("example.jagger.load.scenario.termination.iterations"));
+        Long maxDurationInSeconds = Long.valueOf(getTestPropertyValue("example.jagger.load.scenario.termination.max.duration.seconds"));
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations
                 .of(IterationsNumber.of(iterationsNumber), MaxDurationInSeconds.of(maxDurationInSeconds));
-        
+
         JLoadProfile jLoadProfileRps = JLoadProfileRps
                 .builder(RequestsPerSecond.of(10))
                 .withMaxLoadThreads(10)
@@ -91,12 +94,12 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .addListener(new CollectThreadsTestListener())
                 .withLimits(successrateLimit, throughputLimit)
                 .build();
-        
+
         JParallelTestsGroup jParallelTestsGroup = JParallelTestsGroup
                 .builder(Id.of("exampleJaggerParallelTestsGroup"), jLoadTest)
                 .addListener(new ExampleTestGroupListener())
                 .build();
-        
+
         // For JLoadScenario which is supposed to be executed by Jagger its ID must be set to 'jagger.load.scenario.id.to.execute' property's value
         return JLoadScenario.builder(Id.of("exampleJaggerLoadScenario"), jParallelTestsGroup)
                             .addListener(new ExampleLoadScenarioListener())
