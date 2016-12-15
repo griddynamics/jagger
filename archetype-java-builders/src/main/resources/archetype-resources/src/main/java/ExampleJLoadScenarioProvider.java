@@ -2,12 +2,13 @@ package ${package};
 
 import static java.util.Collections.singletonList;
 
-import com.griddynamics.jagger.engine.e1.BasicTGDecisionMakerListener;
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
+import com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
-import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
+import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
@@ -56,7 +57,8 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 // optional
                 .withComment(testDefinitionComment)
                 .withQueryProvider(new ExampleQueriesProvider())
-                .addValidator(NotNullResponseValidator.class)
+                .addValidator(new ExampleResponseValidatorProvider("we are always good"))
+                .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())
                 .build();
 
@@ -111,7 +113,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .addValidators(singletonList(NotNullResponseValidator.class))
+                .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
                 .build();
 
         JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
