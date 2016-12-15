@@ -2,7 +2,6 @@ package com.griddynamics.jagger.test.jaas.util;
 
 import com.griddynamics.jagger.engine.e1.services.data.service.*;
 import com.griddynamics.jagger.test.jaas.util.entity.ExecutionEntity;
-import com.griddynamics.jagger.util.JaggerPropertiesProvider;
 
 import java.util.*;
 
