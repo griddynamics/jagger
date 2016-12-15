@@ -25,8 +25,6 @@ import com.griddynamics.jagger.util.JaggerPropertiesProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.stream.IntStream;
-
 import static java.util.Collections.singletonList;
 
 /**
@@ -47,10 +45,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withQueryProvider(new ExampleQueriesProvider())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
-                .addValidator(DefaultResponseStatusValidatorProvider.builder()
-                        .withValidCodes(200, 201, 204)
-                        .withValidCodes(IntStream.rangeClosed(404, 405))
-                        .build())
+                .addValidator(ResponseStatusValidatorProvider.withValidCodes(200, 201, 204))
                 .addListener(new NotNullInvocationListener())
                 .build();
         
@@ -106,9 +101,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
                 .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
-                .addValidator(DefaultResponseStatusValidatorProvider.builder()
-                        .withValidCodes("(200|201|203)")
-                        .build())
+                .addValidator(ResponseStatusValidatorProvider.withValidCodes("(200|201|203)"))
                 .build();
         
         JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
