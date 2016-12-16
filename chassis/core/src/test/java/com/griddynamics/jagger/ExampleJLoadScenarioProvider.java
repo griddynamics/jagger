@@ -94,7 +94,7 @@ public class ExampleJLoadScenarioProvider {
                 // optional
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
-                .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
+                .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addValidator(JHttpResponseStatusValidatorProvider.of("(200|201|203)"))
                 .build();
 
