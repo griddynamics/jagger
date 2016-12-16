@@ -3,8 +3,8 @@ package com.griddynamics.jagger;
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider;
+import com.griddynamics.jagger.engine.e1.collector.JHttpResponseStatusValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
-import com.griddynamics.jagger.engine.e1.collector.ResponseStatusValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
@@ -43,7 +43,7 @@ public class ExampleJLoadScenarioProvider {
                 .withQueryProvider(new ExampleQueriesProvider())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
-                .addValidator(ResponseStatusValidatorProvider.withValidCodes(200, 201, 204))
+                .addValidator(JHttpResponseStatusValidatorProvider.of(200, 201, 204))
                 .addListener(new NotNullInvocationListener())
                 .build();
 
@@ -95,7 +95,7 @@ public class ExampleJLoadScenarioProvider {
                 .withComment("no comments")
                 .withQueryProvider(new ExampleQueriesProvider())
                 .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
-                .addValidator(ResponseStatusValidatorProvider.withValidCodes("(200|201|203)"))
+                .addValidator(JHttpResponseStatusValidatorProvider.of("(200|201|203)"))
                 .build();
 
         JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
