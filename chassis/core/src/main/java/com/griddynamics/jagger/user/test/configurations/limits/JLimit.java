@@ -45,8 +45,8 @@ public abstract class JLimit {
          * Set limits for warnings criteria only.
          * Cannot be initialized more than once.
          *
-         * @param lowWarnThresh lower warning threshold.
-         * @param upWarnThresh  upper warning threshold.
+         * @param lowWarnThresh relative lower warning threshold.
+         * @param upWarnThresh  relative upper warning threshold.
          */
         public Builder withOnlyWarnings(LowWarnThresh lowWarnThresh, UpWarnThresh upWarnThresh) {
             if (initialized) {
@@ -70,8 +70,8 @@ public abstract class JLimit {
          * Set limits for errors criteria only.
          * Cannot be initialized more than once.
          *
-         * @param lowErrThresh lower error threshold.
-         * @param upErrThresh upper error threshold.
+         * @param lowErrThresh relative lower error threshold.
+         * @param upErrThresh  relative upper error threshold.
          */
         public Builder withOnlyErrors(LowErrThresh lowErrThresh, UpErrThresh upErrThresh) {
             if (initialized) {
@@ -95,8 +95,8 @@ public abstract class JLimit {
          * Set limits for upper limits only.
          * Cannot be initialized more than once.
          *
-         * @param upWarnThresh upper warning threshold.
-         * @param upErrThresh  upper error threshold.
+         * @param upWarnThresh relative upper warning threshold.
+         * @param upErrThresh  relative upper error threshold.
          */
         public Builder withOnlyUpperThresholds(UpWarnThresh upWarnThresh, UpErrThresh upErrThresh) {
             if (initialized) {
@@ -120,10 +120,10 @@ public abstract class JLimit {
          * Set limits for warnings criteria only.
          * Cannot be initialized more than once.
          *
-         * @param lowWarnThresh lower warning threshold.
-         * @param lowErrThresh   lower error threshold.
+         * @param lowErrThresh  relative lower error threshold.
+         * @param lowWarnThresh relative lower warning threshold.
          */
-        public Builder withOnlyLowerThresholds(LowWarnThresh lowWarnThresh, LowErrThresh lowErrThresh) {
+        public Builder withOnlyLowerThresholds(LowErrThresh lowErrThresh, LowWarnThresh lowWarnThresh) {
             if (initialized) {
                 throw new IllegalArgumentException("It is already initialized with values: " +
                         this.lowWarnThresh + ", " + this.lowErrThresh + ", " + this.upWarnThresh + ", " + this.upErrThresh);
@@ -145,15 +145,15 @@ public abstract class JLimit {
          * Set all limits.
          * Cannot be initialized more than once.
          *
-         * @param lowWarnThresh lower warning threshold.
-         * @param lowErrThresh   lower error threshold.
-         * @param upWarnThresh  upper warning threshold.
-         * @param upErrThresh   upper error threshold.
+         * @param lowErrThresh  relative lower error threshold.
+         * @param lowWarnThresh relative lower warning threshold.
+         * @param upWarnThresh  relative upper warning threshold.
+         * @param upErrThresh   relative upper error threshold.
          */
-        public Builder withExactLimits(LowWarnThresh lowWarnThresh, LowErrThresh lowErrThresh, UpWarnThresh upWarnThresh, UpErrThresh upErrThresh) {
+        public Builder withExactLimits(LowErrThresh lowErrThresh, LowWarnThresh lowWarnThresh, UpWarnThresh upWarnThresh, UpErrThresh upErrThresh) {
             if (initialized) {
                 throw new IllegalArgumentException("It is already initialized with values: " +
-                        this.lowWarnThresh + ", " + this.lowErrThresh + ", " + this.upWarnThresh + ", " + this.upErrThresh);
+                        this.lowErrThresh + ", " + this.lowWarnThresh + ", " + this.upWarnThresh + ", " + this.upErrThresh);
             }
             Objects.requireNonNull(lowWarnThresh);
             Objects.requireNonNull(lowErrThresh);

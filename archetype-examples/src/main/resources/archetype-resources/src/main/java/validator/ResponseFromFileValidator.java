@@ -13,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-/* begin: following section is used for docu generation - validator-custom source */
 /* Will compare result of invokation with expected result, read from file
  * @author Grid Dynamics
  *
@@ -82,4 +81,3 @@ public class ResponseFromFileValidator<Q, E, R> extends ResponseValidator<Q, E, 
         }
     }
 }
-/* end: following section is used for docu generation - validator-custom source */

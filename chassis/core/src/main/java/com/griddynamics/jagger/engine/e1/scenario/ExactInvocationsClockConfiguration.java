@@ -4,13 +4,15 @@ import com.griddynamics.jagger.util.Parser;
 
 public class ExactInvocationsClockConfiguration implements WorkloadClockConfiguration {
 
+    public static final String DEFAULT_PERIOD = "-1";
+
     private int threadCount;
 
     private int samplesCount;
 
     private int delay = 0;
 
-    private String period = "-1";
+    private String period = DEFAULT_PERIOD;
 
     private int tickInterval = 1000;
 

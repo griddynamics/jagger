@@ -12,7 +12,7 @@ import java.util.List;
  * @par Details:
  * @details
  * @n
- * @ingroup Main_Listeners_Base_group
+ * @ingroup Main_Listeners_group
  */
 public abstract class TestGroupListener {
 

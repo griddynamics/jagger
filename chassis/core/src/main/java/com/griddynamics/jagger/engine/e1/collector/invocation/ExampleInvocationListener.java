@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.engine.e1.collector.test;
+package com.griddynamics.jagger.engine.e1.collector.invocation;
 
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.AvgMetricAggregatorProvider;
@@ -11,7 +11,15 @@ import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 import com.griddynamics.jagger.invoker.InvocationException;
 
-public class ExampleTestDefinitionListener extends ServicesAware implements Provider<InvocationListener> {
+/** Example of the invocation listener
+ * @author Anton Antonenko
+ * @n
+ * @par Details:
+ * @details
+ * Collects response time metrics. Max, min, average, percentiles
+ *
+ * @ingroup Main_Listeners_group */
+public class ExampleInvocationListener extends ServicesAware implements Provider<InvocationListener> {
 
     private final String metricName = "example-duration-metric";
 

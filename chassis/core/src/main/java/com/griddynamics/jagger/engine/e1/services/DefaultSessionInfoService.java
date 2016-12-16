@@ -5,13 +5,13 @@ import com.griddynamics.jagger.dbapi.entity.TagEntity;
 
 import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kgribov
- * Date: 12/10/13
- * Time: 6:13 PM
- * To change this template use File | Settings | File Templates.
- */
+/** Implementation of the @ref SessionInfoService
+ * @n
+ * @par Details:
+ * @details  Service gives ability to create and modify session metadata (such as session comment) @n
+ * Where this service is available you can find in chapter: @ref section_listeners_services @n
+ * @n
+ * @ingroup Main_Services_group */
 public class DefaultSessionInfoService implements SessionInfoService {
 
     private SessionMetaDataStorage metaDataStorage;

@@ -122,12 +122,10 @@
                 <!-- end: following section is used for docu generation - description of limits for metrics directly in test -->
             </test-group>
 
-            <!-- begin: following section is used for docu generation - test suite listener usage -->
             <!-- Custom test suite listener will be executed on test suite start and stop -->
             <listeners-test-suite>
                 <listener-test-suite xsi:type="listener-test-suite-ref" ref="listenerTestSuite"/>
             </listeners-test-suite>
-            <!-- end: following section is used for docu generation - test suite listener usage -->
 
         </test-suite>
 

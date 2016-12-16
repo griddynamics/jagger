@@ -1,0 +1,91 @@
+/// @page ListenersMain
+///
+/// @li @ref section_listeners_intro
+/// @li @ref section_listeners_example
+/// @li @ref section_listeners_list
+/// @li @ref section_listeners_services
+/// @li @ref section_listeners_services_example
+///
+/// @section section_listeners_intro Additional user actions during performance test execution
+/// We consider that at this point, you have already @ref WritingTest "learned how to write load test" and know the structure of the @ref section_writing_test_load_scenario "load scenario" @n
+/// Execution of the load scenario can be described with following simplified sequence:
+/// - Start the load scenario
+///  - Start the first parallel test group inside scenario
+///   - Start all load tests inside the test group
+///   - Provide SUT invocations (send requests to the SUT, work with the responses)
+///   - Stop all the tests
+///  - Stop the first test group
+///  - Start the second tests group
+///   - ...
+///  - Stop the second test group
+/// - Stop the scenario
+///
+/// Jagger allows to execute custom code on the every step from the list above. This code can prepare test data, reconfigure the SUT, store additional custom metrics, provide additional logging, etc @n
+/// The feature is available via @ref section_listeners_list "listeners" classes. User can implement his own listener (load scenario listener, test group listener, etc) and attach it to the particular element of the load scenario. @n
+///
+/// @section section_listeners_example Listener example
+/// @par Create custom listener
+/// In this simple example test group listener will just provide additional logging during test group start and stop
+/// @dontinclude  ExampleTestGroupListener.java
+/// @skip  begin: following section is used for docu generation - example of the test group listener
+/// @until end: following section is used for docu generation - example of the test group listener
+/// @par Attach test listener to the parallel test group in your load scenario
+/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - example of the test group listener
+/// @until end: following section is used for docu generation - example of the test group listener
+///
+/// @section section_listeners_list Listeners
+///
+/// @par You can implement following listeners: @n
+/// @ref com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener "LoadScenarioListener" - Load scenario listener. Is triggered on start and stop of the load scenario @n
+/// @ref com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener "TestGroupListener" - Parallel test group listener. Is triggered on start and stop of the test group @n
+/// @ref com.griddynamics.jagger.engine.e1.collector.test.TestListener "TestListener" - Load test listener. Is triggered on start, stop and during load test execution @n
+/// @ref com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener<Q,R,E> "InvocationListener" - Invocation listener. Is triggered on invocation start, success, error and failure @n
+/// @n
+/// @par Framework is providing additional information in the listeners: @n
+/// @ref com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo "LoadScenarioInfo" - Load scenario listener. Is triggered on start and stop of the load scenario @n
+/// @ref com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo "TestGroupInfo" - Parallel test group listener. Is triggered on start and stop of the test group @n
+/// @ref com.griddynamics.jagger.engine.e1.collector.test.TestInfo "TestInfo" - Load test listener. Is triggered on start, stop and during load test execution @n
+/// @ref com.griddynamics.jagger.engine.e1.collector.invocation.InvocationInfo<Q,R,E> "InvocationInfo" - Invocation listener. Is triggered on invocation start, success, error and failure @n
+/// @n
+/// @par Java doc for listeners and examples
+/// @ref Main_Listeners_group
+///
+/// @section section_listeners_services Services
+///
+/// In all listeners framework is providing access to the Jagger internals via services. Main goal of the services - simplify development of the custom code.
+///  With the help of services you can store custom metrics, access test results, store additional information about your test in the Jagger test results database @n
+/// @par You can use following services: @n
+/// @ref com.griddynamics.jagger.engine.e1.services.DefaultSessionInfoService "DefaultSessionInfoService" - Allows to add comments to the test results, mark results with tags @n
+/// @ref com.griddynamics.jagger.engine.e1.services.DefaultMetricService "DefaultMetricService" - Allows to crete and save custom metrics @n
+/// @ref com.griddynamics.jagger.engine.e1.services.DefaultDataService "DefaultDataService" - Provides access to the test results, stored in the results DB @n
+/// @n
+/// @par Java doc for services
+/// @ref Main_Services_group
+/// @n
+/// @par Services availability
+/// All custom listeners have access to Jagger services. List of available services can be different for different types of listeners. @n
+/// Please see table below to find what services can be used in different listeners. @n
+/// @dontinclude  ServicesAware.java
+/// @skip  begin: following section is used for docu generation - listeners to services relation
+/// @until end: following section is used for docu generation - listeners to services relation
+/// @n
+/// If you will try to use unavailable service in some listener - nothing will happen and warning will be logged @n
+///
+/// @section section_listeners_services_example Service usage example
+///
+/// @par Example of metric service usage in the invocation listener @n
+/// Example code creates custom metric and stores test results to the Jagger database after every successful request to SUT
+/// @dontinclude  NotNullInvocationListener.java
+/// @skip  begin: following section is used for docu generation - example of the invocation listener with metric service
+/// @until end: following section is used for docu generation - example of the invocation listener with metric service
+/// @n
+
+// *************************************
+// not a part of the documentation below
+
+/// @defgroup Main_Listeners_group Listener implementations and examples
+/// @details @ref ListenersMain
+
+/// @defgroup Main_Services_group Service implementations and examples
+/// @details @ref section_listeners_services
