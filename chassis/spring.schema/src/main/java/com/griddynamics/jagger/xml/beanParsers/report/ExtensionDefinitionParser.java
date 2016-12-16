@@ -16,6 +16,8 @@ import org.w3c.dom.Element;
  * Time: 16:26
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class ExtensionDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     @Override

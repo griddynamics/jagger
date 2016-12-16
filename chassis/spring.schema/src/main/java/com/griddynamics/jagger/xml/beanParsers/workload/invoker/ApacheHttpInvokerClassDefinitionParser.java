@@ -10,6 +10,8 @@ import org.w3c.dom.Element;
  * User: amikryukov
  * Date: 5/22/13
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class ApacheHttpInvokerClassDefinitionParser extends InvokerClassDefinitionParser {
 
     @Override

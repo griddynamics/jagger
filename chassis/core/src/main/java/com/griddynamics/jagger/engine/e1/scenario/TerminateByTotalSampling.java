@@ -20,9 +20,12 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.google.common.base.Preconditions;
+
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class TerminateByTotalSampling implements TerminateStrategyConfiguration {
     private int samples;
 
