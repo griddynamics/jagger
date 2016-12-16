@@ -20,10 +20,7 @@
 
 package com.griddynamics.jagger.kernel;
 
-import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.griddynamics.jagger.coordinator.*;
 import com.griddynamics.jagger.invoker.Invoker;
@@ -34,14 +31,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author Alexey Kiselyov Date: 17.05.11
@@ -58,6 +60,8 @@ public class SimpleKernel extends Kernel implements ApplicationContextAware {
     private final NodeId nodeId;
 
     private ApplicationContext context;
+
+    private Map<Class<Object>, Object> invokers;
 
     public SimpleKernel(Coordinator coordinator) {
         super(coordinator);
@@ -108,6 +112,18 @@ public class SimpleKernel extends Kernel implements ApplicationContextAware {
         this.workers = workers;
     }
 
+    @Autowired(required = false)
+    public void setInvokers(List<Invoker> invokers) {
+        log.debug("Looking up for all invokers");
+        log.debug("Loaded invokers from context {}", invokers);
+        this.invokers = new HashMap<>();
+        for (Invoker invoker : invokers) {
+            Class clazz = invoker.getClass();
+            this.invokers.put(clazz, invoker);
+        }
+        log.debug("Invokers found {}", invokers);
+    }
+
     public void run() {
         super.run();
         try {
@@ -128,7 +144,9 @@ public class SimpleKernel extends Kernel implements ApplicationContextAware {
                 log.error("Error during context termination: {}", e.getMessage(), e);
             }
         }
-        for (long i = lock.getCount(); i > 0; i--) lock.countDown();
+        for (long i = lock.getCount(); i > 0; i--) {
+            lock.countDown();
+        }
     }
 
     @Override
@@ -141,20 +159,8 @@ public class SimpleKernel extends Kernel implements ApplicationContextAware {
         this.commandExecutors = commandExecutors;
     }
 
+
     private Map<Class<Object>, Object> lookUpInvokers() {
-        log.debug("Looking up for all invokers");
-        Map<Class<Object>, Object> result = Maps.newHashMap();
-
-        Map<String, Invoker> invokers = context.getBeansOfType(Invoker.class);
-        log.debug("Loaded invokers from context {}", invokers);
-
-        for (Map.Entry<String, Invoker> entry : invokers.entrySet()) {
-            Invoker invoker = entry.getValue();
-            Class clazz = invoker.getClass();
-            result.put(clazz, invoker);
-        }
-
-        log.debug("Invokers found {}", result);
-        return result;
+        return invokers;
     }
 }
