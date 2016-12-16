@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations;
 
 import com.griddynamics.jagger.engine.e1.Provider;
-import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
@@ -19,6 +19,8 @@ import java.util.List;
  * @li source of the endpointsProvider (where to apply load)
  * @li source of queries (what parameters of the load to set)
  * @li what protocol to use for the communication with the system under test (SUT)
+ * @li how to validate SUT responses
+ * @li what additional user defined actions to execute during communication with SUT
  *
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n Code example:
@@ -34,7 +36,7 @@ public class JTestDefinition {
     private final String comment;
     private final Iterable queries;
     private final Class<? extends Invoker> invoker;
-    private final List<Class<? extends ResponseValidator>> validators;
+    private final List<ResponseValidatorProvider> validators;
     private final List<Provider<InvocationListener>> listeners;
 
     private JTestDefinition(Builder builder) {
@@ -68,7 +70,7 @@ public class JTestDefinition {
         private String comment = "";
         private Iterable queries;
         private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
-        private List<Class<? extends ResponseValidator>> validators = Lists.newArrayList();
+        private List<ResponseValidatorProvider> validators = Lists.newArrayList();
         private List<Provider<InvocationListener>> listeners = Lists.newArrayList();
 
         private Builder(Id id, Iterable endpointsProvider) {
@@ -112,30 +114,30 @@ public class JTestDefinition {
         }
 
         /**
-         * Optional: Adds a list of subtypes of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidator}
+         * Optional: Adds a list of subtypes of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider}
          * Instances of those subtypes will be used to validate responses during Jagger test execution @n
          * Example:
          * @code
-         *      addValidators(Arrays.asList(com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator.class))
+         *      addValidator(new ExampleResponseValidatorProvider("we are always good"))
          * @endcode
-         * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
+         * @see com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider for example
          */
-        public Builder addValidators(List<Class<? extends ResponseValidator>> validators) {
+        public Builder addValidators(List<ResponseValidatorProvider> validators) {
             this.validators.addAll(validators);
             return this;
         }
     
         /**
-         * Optional: Adds a subtype of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidator}
+         * Optional: Adds a subtype of {@link com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider}
          * Instances of those subtypes will be used to validate responses during Jagger test execution
          * @n
          * Example:
          * @code
-         *      addValidator(com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator.class)
+         *      addValidator(new ExampleResponseValidatorProvider("we are always good"))
          * @endcode
-         * @see com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator for example
+         * @see com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider for example
          */
-        public Builder addValidator(Class<? extends ResponseValidator> validator) {
+        public Builder addValidator(ResponseValidatorProvider validator) {
             this.validators.add(validator);
             return this;
         }
@@ -208,7 +210,7 @@ public class JTestDefinition {
         return comment;
     }
 
-    public List<Class<? extends ResponseValidator>> getValidators() {
+    public List<ResponseValidatorProvider> getValidators() {
         return validators;
     }
     

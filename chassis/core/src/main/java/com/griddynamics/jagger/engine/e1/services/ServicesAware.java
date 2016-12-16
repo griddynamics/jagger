@@ -40,27 +40,27 @@ public abstract class ServicesAware implements ServicesInitializable {
 
         /* Services available for test listener */
         if (environment.equals(JaggerPlace.TEST_LISTENER)){
-            metricService       = new DefaultMetricService(sessionId, taskId, context);         /* Available */
-            sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
-            dataService         = new DefaultDataService(context);                              /* Available */
+            metricService       = new DefaultMetricService(sessionId, taskId, context);       /* Available */
+            sessionInfoService  = new DefaultSessionInfoService(context);                     /* Available */
+            dataService         = new DefaultDataService(context);                            /* Available */
         }
         /* Services available for test group listener */
         if (environment.equals(JaggerPlace.TEST_GROUP_LISTENER)){
-            metricService       = new DefaultMetricService(sessionId, taskId, context);         /* Available */
-            sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
-            dataService         = new DefaultDataService(context);                              /* Available */
+            metricService       = new DefaultMetricService(sessionId, taskId, context);       /* Available */
+            sessionInfoService  = new DefaultSessionInfoService(context);                     /* Available */
+            dataService         = new DefaultDataService(context);                            /* Available */
         }
         /* Services available for test suite listener */
         if (environment.equals(JaggerPlace.LOAD_SCENARIO_LISTENER)){
-            metricService       = new EmptyMetricService(JaggerPlace.LOAD_SCENARIO_LISTENER);   /* NOT AVAILABLE */
-            sessionInfoService  = new DefaultSessionInfoService(context);                       /* Available */
-            dataService         = new DefaultDataService(context);                              /* Available */
+            metricService       = new EmptyMetricService(JaggerPlace.LOAD_SCENARIO_LISTENER); /* NOT AVAILABLE */
+            sessionInfoService  = new DefaultSessionInfoService(context);                     /* Available */
+            dataService         = new DefaultDataService(context);                            /* Available */
         }
         /* Services available for decision maker listener */
         if (environment.equals(JaggerPlace.TEST_GROUP_DECISION_MAKER_LISTENER)){
-            metricService       = new EmptyMetricService(JaggerPlace.TEST_GROUP_DECISION_MAKER_LISTENER);        /* NOT AVAILABLE */
-            sessionInfoService  = new DefaultSessionInfoService(context);                                        /* Available */
-            dataService         = new DefaultDataService(context);                                               /* Available */
+            metricService       = new EmptyMetricService(JaggerPlace.TEST_GROUP_DECISION_MAKER_LISTENER); /* NOT AVAILABLE */
+            sessionInfoService  = new DefaultSessionInfoService(context);                                 /* Available */
+            dataService         = new DefaultDataService(context);                                        /* Available */
         }
 
         /* Services available for invocation listener */

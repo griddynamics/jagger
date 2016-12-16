@@ -4,8 +4,13 @@ import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
+import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
+import com.griddynamics.jagger.invoker.InvocationException;
+import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
+import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
+import com.griddynamics.jagger.invoker.v2.JHttpQuery;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +18,15 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
 import java.util.Set;
 
+
 /**
- * Gets expected data into temp storage({@link TestContext}).
- *
+ * Loads expected data into temp storage({@link TestContext}).
+ * <p>
  * Created by ELozovan on 2016-09-27.
  */
 public class LoadScenarioConfigListener extends ServicesAware implements Provider<LoadScenarioListener> {
@@ -32,35 +38,73 @@ public class LoadScenarioConfigListener extends ServicesAware implements Provide
             @Override
             public void onStart(LoadScenarioInfo loadScenarioInfo) {
                 super.onStart(loadScenarioInfo);
-                // TODO: Ids are hard-coded for now. Re-factor once JFG-908 is ready.
-                Set<SessionEntity> sessionsAvailable = getDataService().getSessions(Arrays.asList("5", "15", "42", "32", "17", "28", "45", "50", "12"));
-                sessionsAvailable.stream().forEach(this::correctDateFieldValue);
+                Set<SessionEntity> sessionsAvailable = getDataService().getSessions(Collections.emptyList());
+                sessionsAvailable.forEach(this::correctDateFieldValue);
                 TestContext.setSessions(sessionsAvailable);
 
-                findAndStoreExpectedTests(sessionsAvailable);
+                findAndLoadExpectedTests(sessionsAvailable);
+
+                String tmpSessionId = TestContext.getTests().keySet().toArray(new String[]{})[0];
+                findAndLoadExpectedMetrics(tmpSessionId, TestContext.getTestsBySessionId(tmpSessionId));
             }
 
-            private void findAndStoreExpectedTests(Set<SessionEntity> sessionsAvailable) {
+            @Override
+            public void onStop(LoadScenarioInfo loadScenarioInfo) {
+                super.onStop(loadScenarioInfo);
+                DefaultHttpInvoker invoker = new DefaultHttpInvoker();
+                JHttpEndpoint jaasEndpoint = new JHttpEndpoint(TestContext.getEndpointUri());
+
+                // Request to delete executions not deleted during test run.
+                for (Long executionId : TestContext.getCreatedExecutionIds()) {
+                    try {
+                        invoker.invoke(new JHttpQuery<String>().delete().path(TestContext.getExecutionsUri() + "/" + executionId), jaasEndpoint);
+                    } catch (InvocationException ignored) {
+                    }
+                }
+            }
+
+            private void findAndLoadExpectedTests(Set<SessionEntity> sessionsAvailable) {
                 SessionEntity sessionToGetTests = null;
                 Set<TestEntity> tests = null;
                 while (null == tests) {
                     sessionToGetTests = sessionsAvailable.stream().skip(new Random().nextInt(sessionsAvailable.size() - 1)).findFirst().orElse(null);
                     tests = getDataService().getTests(sessionToGetTests);
 
-                    if (tests.isEmpty()){
+                    if (tests.isEmpty()) {
                         tests = null; //Let's find another session which shall have some tests stored.
                     }
                 }
 
-                tests.stream().forEach(this::correctDateFieldValue);
+                tests.forEach(this::correctDateFieldValue);
                 TestContext.addTests(sessionToGetTests.getId(), tests);
+            }
+
+            private void findAndLoadExpectedMetrics(String sessionId, Set<TestEntity> testsAvailable) {
+                TestEntity testToGetMetricsFrom = null;
+                Set<MetricEntity> metrics = null;
+                while (null == metrics) {
+                    testToGetMetricsFrom = testsAvailable.size() < 2 ?
+                            testsAvailable.stream().findFirst().orElse(null)
+                            : testsAvailable.stream().skip(new Random().nextInt(testsAvailable.size() - 1)).findFirst().orElse(null);
+                    metrics = getDataService().getMetrics(testToGetMetricsFrom);
+
+                    if (metrics.isEmpty()) {
+                        metrics = null; //Let's find another test which shall have some metrics stored.
+                    }
+                }
+
+                TestContext.setMetricPlotData(getDataService().getMetricPlotData(metrics));
+                TestContext.setMetricSummaries(getDataService().getMetricSummary(metrics));
+
+                metrics.forEach(this::correctDateFieldValue);
+                TestContext.addMetrics(sessionId, testToGetMetricsFrom.getName(), metrics);
             }
 
             /**
              * DataService returns dates as Timestamp, JSON deserialiser returns them as Date, so #equals() returns false anyway.
              * This crutch resets date fields values to avoid that type mismatch.
              */
-            private <T> void correctDateFieldValue(T entity){
+            private <T> void correctDateFieldValue(T entity) {
                 final String getterPrefix = "get";
                 Method[] allMethods = entity.getClass().getDeclaredMethods();
                 for (Method m : allMethods) {
@@ -68,7 +112,9 @@ public class LoadScenarioConfigListener extends ServicesAware implements Provide
                     Type mReturnType = m.getGenericReturnType();
 
                     // Looking for a Date getXYZ()
-                    if (!(mName.startsWith(getterPrefix) && (mReturnType.equals(Date.class)))) { continue; }
+                    if (!(mName.startsWith(getterPrefix) && (mReturnType.equals(Date.class)))) {
+                        continue;
+                    }
 
                     m.setAccessible(true);
                     try {

@@ -61,8 +61,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @li @ref Main_HowToCustomizeInvokers_group
 /// @li @ref Main_HowToCustomizeProviders_group
 /// @li @ref Main_HowToCustomizeDistributors_group
-/// @li @ref Main_HowToCustomizeCollectors_group
-/// @li @ref Main_HowToCustomizeListeners_group
 
 /* **************** Invokers page *************************  */
 /// @defgroup Main_Invokers_General_group Invokers main page
@@ -113,11 +111,7 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @defgroup Main_Distributors_Base_group Distributor
 /// @details @ref Main_Distributors_General_group
 /// @defgroup Main_Collectors_Base_group Collector
-/// @details @ref Main_Collectors_General_group
-/// @defgroup Main_Services_Base_group Jagger service
-/// @details @ref Main_Services_General_group
-/// @defgroup Main_Listeners_Base_group Listener
-/// @details @ref Main_Listeners_General_group
+
 /// @defgroup Main_Aggregators_Base_group Aggregator
 /// @details @ref Main_Aggregators_General_group
 
@@ -129,11 +123,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @defgroup Main_Distributors_group Implementations of distributors
 /// @details @ref Main_Distributors_General_group
 /// @defgroup Main_Collectors_group Implementations of collectors
-/// @details @ref Main_Collectors_General_group
-/// @defgroup Main_Services_group Implementations of Jagger services
-/// @details @ref Main_Services_General_group
-/// @defgroup Main_Listeners_group Implementations of listeners
-/// @details @ref Main_Listeners_General_group
 /// @defgroup Main_Aggregators_group Implementations of aggregators
 /// @details @ref Main_Aggregators_General_group
 /// @defgroup Main_Terminators_group Implementations of termination strategies

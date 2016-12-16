@@ -3,8 +3,10 @@
 /// @page Installation Installation
 /// @page GettingStarted Getting started
 /// @page WritingTest Creating load test
-/// @page JaggerProperties Jagger configuration
+/// @page ListenersMain User actions during the load test
+/// @page MetricsMain Collecting performance metrics
 /// @page MonitoringMain Collecting system and JVM metrics
+/// @page JaggerProperties Jagger configuration
 /// @page FrameworkComponents Framework components
 /// @page Licence Licence
 ///

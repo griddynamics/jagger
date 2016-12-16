@@ -1,12 +1,13 @@
 package com.griddynamics.jagger.engine.e1.collector.invocation;
 
-/** Class, which contains some information about invocation execution
+/** Class, which contains information about invocation execution
  * @author Gribov Kirill
  * @n
  * @par Details:
  * @details
- * @n
- * */
+ *
+ * @ingroup Main_Listeners_group
+ */
 public class InvocationInfo<Q, R, E>  {
     private Q query;
     private R result;

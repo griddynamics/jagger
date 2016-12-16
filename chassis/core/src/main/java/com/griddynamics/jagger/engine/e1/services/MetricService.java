@@ -6,7 +6,7 @@ import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
  * @author Gribov Kirill
  * @n
  * @par Details:
- * @details Where this service is available you can find in chapter: @ref Main_ListenersAndServices_group @n
+ * @details Where this service is available you can find in chapter: @ref section_listeners_services @n
  * Below is example of creating metric with metric service. @ref com.griddynamics.jagger.engine.e1.collector.MetricDescription "MetricDescription" is used to setup how metric will be
  * aggregated and stored @n
  * @n
@@ -21,7 +21,7 @@ import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
  * @until end: following section is used for docu generation - example of metric saving
  *
  * @n
- * Full example code you can find in chapter @ref Main_CustomListenersExamples_group @n
+ * Full example code you can find in chapter @ref TODO JFG-993 add correct link @n
  * @n
  * @ingroup Main_Services_group */
  public interface MetricService extends JaggerService{

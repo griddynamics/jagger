@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @li Add some resume to session comment after test suite is over
  *
  * @n
- * @ingroup Main_Listeners_Base_group
+ * @ingroup Main_Listeners_group
  */
 public abstract class LoadScenarioListener {
 

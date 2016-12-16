@@ -6,13 +6,14 @@ import com.griddynamics.jagger.util.GeneralNodeInfo;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Class, which contains some information about test suite execution
+/** Class, which contains information about test suite execution
  * @author Gribov Kirill
  * @n
  * @par Details:
  * @details
- * @n
- * */
+ *
+ * @ingroup Main_Listeners_group
+ */
 public class LoadScenarioInfo {
     private String sessionId;
     private Map<NodeId,GeneralNodeInfo> generalNodeInfo = new HashMap<NodeId,GeneralNodeInfo>();
