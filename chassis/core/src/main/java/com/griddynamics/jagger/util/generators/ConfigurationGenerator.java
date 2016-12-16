@@ -47,6 +47,7 @@ public class ConfigurationGenerator {
     private boolean monitoringEnable;
     private BaselineSessionProvider baselineSessionProvider;
     private LimitSetConfig limitSetConfig;
+    private int defaultMaxLoadThreads;
 
     public Set<String> getJaggerLoadScenarioNames() {
         if (useBuilders) {
@@ -177,5 +178,9 @@ public class ConfigurationGenerator {
 
     public void setLimitSetConfig(LimitSetConfig limitSetConfig) {
         this.limitSetConfig = limitSetConfig;
+    }
+
+    public void setDefaultMaxLoadThreads(int defaultMaxLoadThreads) {
+        this.defaultMaxLoadThreads = defaultMaxLoadThreads;
     }
 }
