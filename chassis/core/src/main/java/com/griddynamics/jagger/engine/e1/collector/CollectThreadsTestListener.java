@@ -24,8 +24,7 @@ import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USER
  * @dontinclude suite.conf.xml
  * @skip begin: following section is used for docu generation - test listener usage
  * @until end: following section is used for docu generation - test listener usage
- * @n
- * @ingroup Main_Listeners_group
+ *
  */
 public class CollectThreadsTestListener extends ServicesAware implements Provider<TestListener> {
 

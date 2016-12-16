@@ -34,8 +34,8 @@ import java.util.Properties;
 public class JaggerXmlApplicationContext extends AbstractXmlApplicationContext {
     private final URL directory;
     private final Properties environmentProperties;
-
-    public JaggerXmlApplicationContext(URL directory, Properties environmentProperties, String[] configLocations) {
+    
+    public JaggerXmlApplicationContext(URL directory, Properties environmentProperties, String[] configLocations, ClassLoader classLoader) {
         if (directory.toString().endsWith("/")) {
             this.directory = directory;
         } else {
@@ -45,11 +45,16 @@ public class JaggerXmlApplicationContext extends AbstractXmlApplicationContext {
                 throw new RuntimeException(e);
             }
         }
-
+        
         this.environmentProperties = environmentProperties;
-
+        
+        setClassLoader(classLoader);
         setConfigLocations(configLocations);
         refresh();
+    }
+    
+    public JaggerXmlApplicationContext(URL directory, Properties environmentProperties, String[] configLocations) {
+        this(directory, environmentProperties, configLocations, JaggerXmlApplicationContext.class.getClassLoader());
     }
 
     public URL getDirectory() {

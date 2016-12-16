@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true">
+
+    <!--This xml file will contain bean declaration of custom invokers-->
+    <!--TODO remove this file when JFG-1018 will be fixed-->
+    <bean id="pageInvoker" class="com.griddynamics.jagger.test.jaas.invoker.InvokerWithoutStatusCodeValidation"/>
+    <bean id="executionInvoker" class="com.griddynamics.jagger.test.jaas.invoker.ExecutionManipulateInvoker"/>
+
+</beans>

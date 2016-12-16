@@ -12,8 +12,8 @@
 /// @section section_main_what_is_jagger Capabilities overview
 /// Main features:
 /// @li @ref WritingTest "Generate load"
-/// @li Collect performance metrics (TODO link to main performance metrics)
-/// @li Validate responses from the system under test
+/// @li @ref MetricsMain "Collect performance and custom metrics"
+/// @li @ref MetricsValidators "Validate responses from the system under test"
 /// @li @ref MonitoringMain "Collect system and JVM monitoring metrics"
 /// @li Store test results
 /// @li Report test results

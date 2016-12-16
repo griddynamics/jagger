@@ -2,13 +2,14 @@ package com.griddynamics.jagger.engine.e1.collector.test;
 
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 
-/** Class, which contains some information about test execution
+/** Class, which contains information about test execution
  * @author Gribov Kirill
  * @n
  * @par Details:
  * @details
- * @n
- * */
+ *
+ * @ingroup Main_Listeners_group
+ */
 public class TestInfo {
     private WorkloadTask test;
     private String sessionId;

@@ -17,7 +17,7 @@ import java.util.List;
  * Possible applications for invocation listener:
  * @li Collect some parameters during test run and save as metrics
  *
- * @ingroup Main_Listeners_Base_group */
+ * @ingroup Main_Listeners_group */
 public abstract class InvocationListener<Q, R, E>  {
 
     /** Method is executed before invocation starts

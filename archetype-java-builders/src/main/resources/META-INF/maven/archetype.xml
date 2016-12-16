@@ -5,6 +5,7 @@
     <id>archetype-java-builders</id>
 
     <sources>
+        <source>src/main/java/util/JaggerPropertiesProvider.java</source>
         <source>src/main/java/ExampleEndpointsProvider.java</source>
         <source>src/main/java/ExampleQueriesProvider.java</source>
         <source>src/main/java/ExampleJLoadScenarioProvider.java</source>
@@ -13,6 +14,7 @@
     <resources>
         <resource>src/main/resources/profiles/basic/environment.properties</resource>
         <resource>src/main/resources/jagger.log4j.properties</resource>
+        <resource>src/main/resources/test.properties</resource>
         <resource>assembly-config.xml</resource>
     </resources>
 </archetype>

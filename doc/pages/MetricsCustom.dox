@@ -1,0 +1,14 @@
+/// @page MetricsCustom Custom metrics
+/// @brief Section provides full information about validation of the SUT responses and collection metrics @n
+/// @details
+/// @n
+/// Besides collecting performance metrics (response time, throughput, etc.), Jagger is able to validate responses from the SUT and collect custome metrics. @n
+/// <b> Validation </b> - verification of the responses from the SUT and decision whether they are valid or not @n
+/// <b> Custom metrics </b> - additional measurement values, collected during performance test execution @n
+/// @n
+/// @li @subpage MonitoringSetup
+/// @li @subpage MonitoringMetricsSetup
+/// @li @ref section_default_properties_for_monitoring_metrics "List of all monitoring metrics and default settings"
+///
+/// ??? link to monitoring metrics
+///. Validation can be Validation affects success rate performance metric. @n

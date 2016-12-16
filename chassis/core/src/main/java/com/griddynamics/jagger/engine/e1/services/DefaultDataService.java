@@ -12,6 +12,16 @@ import com.griddynamics.jagger.engine.e1.services.data.service.*;
 
 import java.util.*;
 
+/**
+ * Implementation of the @ref DataService
+ *
+ * @par Details:
+ * @details  Provides access to the tests results in the Jagger DB. You can get a full information about sessions, tests, metrics. @n
+ * Where this service is available you can find in chapter: @ref section_listeners_services @n
+ * @n
+ * @ingroup Main_Services_group
+ */
+
 public class DefaultDataService implements DataService {
 
     private DatabaseService databaseService;
