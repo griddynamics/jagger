@@ -72,7 +72,19 @@ public class TestExecutionDaoTest {
         expected.addAuditEntity(new TestExecutionAuditEntity(getTestExecutionEntity(), System.currentTimeMillis(), PENDING, RUNNING));
         testExecutionDao.create(expected);
     }
-    
+
+    @Test
+    public void createWithoutTestUrl() {
+        TestExecutionEntity expected = getTestExecutionEntity();
+        expected.setTestProjectURL(null);
+        testExecutionDao.create(expected);
+
+        TestExecutionEntity actual = testExecutionDao.read(1L);
+
+        assertThat(actual, is(notNullValue()));
+        assertThat(actual, is(expected));
+    }
+
     @Test
     public void readTest() {
         TestExecutionEntity expected = getTestExecutionEntity();
