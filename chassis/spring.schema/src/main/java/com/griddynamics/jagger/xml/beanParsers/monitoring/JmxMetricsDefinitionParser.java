@@ -33,6 +33,8 @@ import java.util.List;
  * @author Nikolay Musienko
  *         Date: 15.07.13
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class JmxMetricsDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

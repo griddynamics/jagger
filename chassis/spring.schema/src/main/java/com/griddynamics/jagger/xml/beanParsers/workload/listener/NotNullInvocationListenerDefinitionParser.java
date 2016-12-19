@@ -10,6 +10,8 @@ import org.w3c.dom.Element;
  * User: kgribov
  * Date: 2/6/14
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class NotNullInvocationListenerDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

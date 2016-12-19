@@ -13,6 +13,8 @@ import org.w3c.dom.Element;
  * Date: 11.03.13
  * Time: 12:48
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class CustomValidatorDefinitionParser extends AbstractValidatorDefinitionParser {
 
     private static final Logger log = LoggerFactory.getLogger(CustomValidatorDefinitionParser.class);

@@ -13,6 +13,8 @@ import java.util.ArrayList;
  * Time: 1:50 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class ListCustomDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

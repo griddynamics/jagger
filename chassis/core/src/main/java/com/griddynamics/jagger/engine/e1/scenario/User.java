@@ -29,6 +29,8 @@ import java.util.LinkedHashMap;
 /**
  * User: dkotlyarov
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class User {
     private static final Logger log = LoggerFactory.getLogger(User.class);
 
