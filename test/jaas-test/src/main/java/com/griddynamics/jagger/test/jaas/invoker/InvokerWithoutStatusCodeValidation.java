@@ -10,6 +10,7 @@ import java.util.Map;
 /**
  * Invoker without checking result codes.
  * I.e. if request returns 4xx or 5xx this invoker doesn't throw exception unlike DefaultHttpInvoker
+ * Remove when JFG-1059 will be fixed
  */
 public class InvokerWithoutStatusCodeValidation extends DefaultHttpInvoker {
     public InvokerWithoutStatusCodeValidation() {
