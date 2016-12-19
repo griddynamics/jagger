@@ -25,6 +25,8 @@ import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryD
 import com.griddynamics.jagger.xml.beanParsers.workload.scenario.QueryPoolScenarioDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
 
     private FindParserByTypeDefinitionParser findTypeParser = new FindParserByTypeDefinitionParser();

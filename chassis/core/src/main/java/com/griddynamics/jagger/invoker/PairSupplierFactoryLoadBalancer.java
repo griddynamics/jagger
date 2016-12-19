@@ -38,7 +38,7 @@ public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoa
             throw new NullPointerException("Init endpoint provider!");
         }
         if (queryProvider == null) {
-            logger.warn("Query provider is null!");
+            logger.debug("Query provider is null!");
         }
 
         if (pairSupplier == null){

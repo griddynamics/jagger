@@ -26,6 +26,8 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class SuccessRateCollectorDefinitionParser extends AbstractCollectorDefinitionParser{
 
     @Override

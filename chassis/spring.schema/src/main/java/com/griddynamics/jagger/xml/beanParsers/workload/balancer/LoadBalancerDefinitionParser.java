@@ -7,7 +7,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public abstract class LoadBalancerDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     @Override

@@ -32,7 +32,8 @@ import org.w3c.dom.Element;
  * @author Nikolay Musienko
  *         Date: 15.07.13
  */
-
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class MonitoringSutDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

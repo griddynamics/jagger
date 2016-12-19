@@ -1,10 +1,8 @@
 package com.griddynamics.jagger.xml.beanParsers.task;
 
-import com.griddynamics.jagger.engine.e1.scenario.UserClockConfiguration;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 

@@ -25,6 +25,8 @@ package com.griddynamics.jagger.master.configuration;
  *         Date: 16.07.13
  */
 
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class MonitoringConfiguration {
 
     MonitoringSutConfiguration monitoringSutConfiguration;
