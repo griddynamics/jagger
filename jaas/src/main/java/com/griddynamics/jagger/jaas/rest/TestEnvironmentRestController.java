@@ -98,27 +98,18 @@ public class TestEnvironmentRestController extends AbstractController {
                                                    final HttpServletResponse response) {
         if (!testEnvService.exists(envId))
             throw ResourceNotFoundException.getTestEnvResourceNfe();
-
         if (!testEnvService.existsWithSessionId(envId, sessionId))
             throw new TestEnvironmentSessionNotFoundException(envId, sessionId);
+        
         validateTestEnv(testEnv);
-        TestEnvironmentEntity oldEnv = testEnvService.read(envId);
 
         testEnv.setEnvironmentId(envId);
         testEnv.setSessionId(sessionId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         if (updated.getStatus() == PENDING) {
-            getTestExecutionToExecute(updated).ifPresent(execution -> {
-                response.addHeader(TestEnvUtils.LOAD_SCENARIO_HEADER, execution.getLoadScenarioId());
-                response.addHeader(TestEnvUtils.TEST_PROJECT_URL_HEADER, execution.getTestProjectURL());
-                response.addHeader(TestEnvUtils.EXECUTION_ID_HEADER, execution.getId().toString());
-            });
-            if (oldEnv.getStatus() == RUNNING) {
-                testExecutionService.finishExecution(envId, oldEnv.getRunningLoadScenario().getLoadScenarioId());
-            }
-        }
-        if (oldEnv.getStatus() == PENDING && updated.getStatus() == RUNNING) {
-            testExecutionService.startExecution(envId, testEnv.getRunningLoadScenario().getLoadScenarioId());
+            getTestExecutionToExecute(updated).ifPresent(
+                    execution -> response.addHeader(TestEnvUtils.EXECUTION_ID_HEADER, execution.getId().toString())
+            );
         }
         response.addCookie(getSessionCookie(updated));
         return ResponseEntity.accepted().build();

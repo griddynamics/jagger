@@ -1,6 +1,9 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,14 +16,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "test_execution_entity")
 public class TestExecutionEntity {
     public enum TestExecutionStatus {
-        PENDING, RUNNING, FINISHED, TIMEOUT
+        PENDING, RUNNING, COMPLETED, FAILED, TIMEOUT
     }
 
     @Id
@@ -35,6 +37,9 @@ public class TestExecutionEntity {
 
     @Column(name = "`test_project_url`")
     private String testProjectURL;
+    
+    @Column(name = "`error_message`")
+    private String errorMessage;
 
     @Column(name = "`execution_start_timeout_in_seconds`")
     private Long executionStartTimeoutInSeconds;
@@ -43,9 +48,8 @@ public class TestExecutionEntity {
     @Column(nullable = false)
     private TestExecutionStatus status;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "testExecutionEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TestExecutionAuditEntity> auditEntities;
+    private List<TestExecutionAuditEntity> auditEntities;
 
     public Long getId() {
         return id;
@@ -94,18 +98,27 @@ public class TestExecutionEntity {
     public void setStatus(TestExecutionStatus status) {
         this.status = status;
     }
-
-    public Set<TestExecutionAuditEntity> getAuditEntities() {
+    
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+    
+    public List<TestExecutionAuditEntity> getAuditEntities() {
         return auditEntities;
     }
 
-    public void setAuditEntities(Set<TestExecutionAuditEntity> auditEntities) {
+    public void setAuditEntities(List<TestExecutionAuditEntity> auditEntities) {
         this.auditEntities = auditEntities;
     }
 
     public void addAuditEntity(TestExecutionAuditEntity auditEntity) {
-        if (auditEntities == null)
-            auditEntities = new HashSet<>();
+        if (auditEntities == null) {
+            auditEntities = new ArrayList<>();
+        }
         auditEntities.add(auditEntity);
     }
 
@@ -121,8 +134,8 @@ public class TestExecutionEntity {
         if (executionStartTimeoutInSeconds != null ? !executionStartTimeoutInSeconds.equals(that.executionStartTimeoutInSeconds) :
                 that.executionStartTimeoutInSeconds != null) return false;
         if (testProjectURL != null ? !testProjectURL.equals(that.testProjectURL) : that.testProjectURL != null) return false;
+        if (errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null) return false;
         return status == that.status;
-
     }
 
     @Override
@@ -132,6 +145,7 @@ public class TestExecutionEntity {
         result = 31 * result + (testProjectURL != null ? testProjectURL.hashCode() : 0);
         result = 31 * result + (executionStartTimeoutInSeconds != null ? executionStartTimeoutInSeconds.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
         return result;
     }
 
@@ -143,6 +157,7 @@ public class TestExecutionEntity {
                 ", loadScenarioId='" + loadScenarioId + '\'' +
                 ", testProjectURL='" + testProjectURL + '\'' +
                 ", executionStartTimeoutInSeconds=" + executionStartTimeoutInSeconds +
+                ", errorMessage=" + errorMessage +
                 ", status=" + status +
                 ", auditEntities=" + auditEntities +
                 '}';

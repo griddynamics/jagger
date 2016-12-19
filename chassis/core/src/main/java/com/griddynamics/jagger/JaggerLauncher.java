@@ -22,12 +22,14 @@ package com.griddynamics.jagger;
 
 import com.griddynamics.jagger.coordinator.Coordinator;
 import com.griddynamics.jagger.exception.TechnicalException;
+import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
 import com.griddynamics.jagger.kernel.Kernel;
 import com.griddynamics.jagger.launch.LaunchManager;
 import com.griddynamics.jagger.launch.LaunchTask;
 import com.griddynamics.jagger.launch.Launches;
+import com.griddynamics.jagger.master.JaasExecApiClient;
 import com.griddynamics.jagger.master.Master;
-import com.griddynamics.jagger.master.MasterToJaasCoordinator;
+import com.griddynamics.jagger.master.JaasEnvApiClient;
 import com.griddynamics.jagger.master.TerminateException;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.StorageServerLauncher;
@@ -35,6 +37,7 @@ import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
 import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +60,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -172,7 +176,7 @@ public final class JaggerLauncher {
                 if (isStandByMode) {
                     log.info("Starting Master in stand by mode...");
         
-                    try (MasterToJaasCoordinator masterToJaasCoordinator = new MasterToJaasCoordinator(
+                    try (JaasEnvApiClient masterToJaasCoordinator = new JaasEnvApiClient(
                             environmentProperties.getProperty("realtime.environment.id"),
                             environmentProperties.getProperty("realtime.jaas.endpoint"), Integer.parseInt(
                             environmentProperties.getProperty("realtime.status.report.interval.seconds")),
@@ -180,18 +184,7 @@ public final class JaggerLauncher {
                     )) {
                         masterToJaasCoordinator.register();
                         while (masterToJaasCoordinator.isStandBy()) {
-                            MasterToJaasCoordinator.JaasResponse jaasResponse =
-                                    masterToJaasCoordinator.awaitConfigToExecute();
-                            if (jaasResponse.getTestProjectUrl() == null) { // then execute existing load scenario
-                                environmentProperties
-                                        .setProperty(LOAD_SCENARIO_ID_PROP, jaasResponse.getLoadScenarioName());
-                                System.setProperty(
-                                        USER_CONFIGS_PACKAGE, environmentProperties.getProperty(USER_CONFIGS_PACKAGE));
-                                doLaunchMaster(directory);
-                            } else { // then execute a load scenario from provided artifact
-                                executeDynamicLoadScenario(jaasResponse.getLoadScenarioName(),
-                                        jaasResponse.getTestProjectUrl(), directory);
-                            }
+                            doLoadScenarioExecution(masterToJaasCoordinator.awaitNextExecution(), directory);
                         }
                     } catch (TerminateException | InterruptedException e) {
                         log.error("Master has been terminated.");
@@ -205,8 +198,47 @@ public final class JaggerLauncher {
         builder.addMainTask(masterTask);
     }
     
-    private static void executeDynamicLoadScenario(String loadScenarioId, String customClassesUrl, URL directory) {
+    private static void doLoadScenarioExecution(final JaasEnvApiClient.JaasResponse jaasResponse, final URL directory) {
+        JaasExecApiClient execApiClient = null;
+        try {
+            execApiClient = new JaasExecApiClient(jaasResponse.getExecutionId(),
+                                                  environmentProperties.getProperty("realtime.jaas.endpoint")
+            );
+        
+            Optional<TestExecutionEntity> optionalExecution = execApiClient.getExecution();
+            if (!optionalExecution.isPresent()) { // didn't manage to acquire an entity
+                return;
+            }
+            TestExecutionEntity execution = optionalExecution.get();
+            if (execution.getStatus() != TestExecutionEntity.TestExecutionStatus.PENDING) {
+                log.warn("Received execution is not in PENDING state. Going to proceed with next...");
+                return;
+            }
+            execApiClient.startExecution();
+            
+            if (execution.getTestProjectURL() == null) { // then execute existing load scenario
+                environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, execution.getLoadScenarioId());
+                System.setProperty(USER_CONFIGS_PACKAGE, environmentProperties.getProperty(USER_CONFIGS_PACKAGE));
+                doLaunchMaster(directory);
+            } else { // then execute a load scenario from provided artifact
+                executeDynamicLoadScenario(execution.getLoadScenarioId(),
+                                           execution.getTestProjectURL(),
+                                           directory);
+            }
+            
+            execApiClient.completeExecution();
+        } catch (Exception e) {
+            log.error("Error during a load scenario execution", e);
+            if (execApiClient != null) {
+                execApiClient.failExecution(ExceptionUtils.getMessage(e) + " With root cause message: " + ExceptionUtils
+                        .getRootCauseMessage(e));
+            }
+        }
+    }
     
+    private static void executeDynamicLoadScenario(String loadScenarioId, String customClassesUrl, URL directory)
+            throws IOException {
+        
         environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, loadScenarioId);
     
         try {
@@ -238,6 +270,7 @@ public final class JaggerLauncher {
             }
         } catch (IOException e) {
             log.error("I/O Error during load scenario execution launching.", e);
+            throw e;
         }
     }
     
