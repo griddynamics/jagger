@@ -290,19 +290,31 @@ public class MasterToJaasCoordinator implements Closeable {
             if (requestEntity.getBody().getStatus() != TestEnvironmentStatus.PENDING) {
                 return;
             }
+    
+            JaasResponse jaasResponse = extractJaasResponse(responseEntity);
+            if (jaasResponse == null) {
+                return;
+            }
+            
+            if (!nextConfigToExecute.offer(jaasResponse, 1, TimeUnit.MINUTES)) {
+                LOGGER.warn("Didn't manage to put next config name into a queue");
+            }
+        }
+        
+        private JaasResponse extractJaasResponse(ResponseEntity<String> responseEntity) {
             String loadScenarioName = extractHeader(responseEntity, TestEnvUtils.LOAD_SCENARIO_HEADER);
             String testProjectUrl = extractHeader(responseEntity, TestEnvUtils.TEST_PROJECT_URL_HEADER);
-            if (loadScenarioName == null && testProjectUrl == null) {
-                return;
+            String executionId = extractHeader(responseEntity, TestEnvUtils.EXECUTION_ID_HEADER);
+            if (loadScenarioName == null && testProjectUrl == null && executionId == null) {
+                return null;
             }
     
             JaasResponse jaasResponse = new JaasResponse();
             jaasResponse.loadScenarioName = loadScenarioName;
             jaasResponse.testProjectUrl = testProjectUrl;
+            jaasResponse.executionId = executionId;
             
-            if (!nextConfigToExecute.offer(jaasResponse, 1, TimeUnit.MINUTES)) {
-                LOGGER.warn("Didn't manage to put next config name into a queue");
-            }
+            return jaasResponse;
         }
     
         private String extractHeader(final ResponseEntity<String> responseEntity, final String headerName) {
@@ -323,6 +335,7 @@ public class MasterToJaasCoordinator implements Closeable {
     public static class JaasResponse {
         private String loadScenarioName;
         private String testProjectUrl;
+        private String executionId;
     
         public String getLoadScenarioName() {
             return loadScenarioName;
@@ -330,6 +343,10 @@ public class MasterToJaasCoordinator implements Closeable {
     
         public String getTestProjectUrl() {
             return testProjectUrl;
+        }
+    
+        public String getExecutionId() {
+            return executionId;
         }
     }
 }
