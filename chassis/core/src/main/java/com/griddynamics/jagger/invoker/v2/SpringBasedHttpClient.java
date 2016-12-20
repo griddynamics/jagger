@@ -42,9 +42,9 @@ import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBa
 @SuppressWarnings({"unused", "unchecked"})
 public class SpringBasedHttpClient implements JHttpClient {
 
-    private static final int DEFAULT_MAX_CONN_TOTAL = 200;
-    private static final int DEFAULT_MAX_CONN_PER_ROUTE = 50;
-    private static final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 1000;
+    private static final int DEFAULT_MAX_CONN_TOTAL = Integer.MAX_VALUE;
+    private static final int DEFAULT_MAX_CONN_PER_ROUTE = Integer.MAX_VALUE;
+    private static final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 60000;
 
     /**
      * values: {@link JSpringBasedHttpClientParameters#DEFAULT_URI_VARIABLES}, {@link JSpringBasedHttpClientParameters#ERROR_HANDLER},
