@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.CONNECT_TIMEOUT_IN_MS;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.DEFAULT_URI_VARIABLES;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.ERROR_HANDLER;
@@ -87,7 +88,7 @@ public class SpringBasedHttpClient implements JHttpClient {
      * - {@code int max_conn_per_route} (look at {@link HttpClientBuilder#setMaxConnPerRoute(int)}) <p>
      * - {@code int connect_timeout} (look at {@link HttpComponentsClientHttpRequestFactory#setConnectTimeout(int)}) <p>
      */
-    private Map<String, Object> clientParams;
+    private final Map<String, Object> clientParams;
 
     private RestTemplate restTemplate;
 
@@ -196,6 +197,6 @@ public class SpringBasedHttpClient implements JHttpClient {
     }
 
     public Map<String, Object> getClientParams() {
-        return clientParams;
+        return newHashMap(clientParams);
     }
 }
