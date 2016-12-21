@@ -151,21 +151,39 @@ public class SpringBasedHttpClient implements JHttpClient {
             restTemplate.setRequestFactory((ClientHttpRequestFactory) clientParams.get(REQUEST_FACTORY.value));
         }
         if (clientParams.containsKey(MAX_CONN_PER_ROUTE.value)) {
-            maxConnPerRoute = (int) clientParams.get(MAX_CONN_PER_ROUTE.value);
+            Object value = clientParams.get(MAX_CONN_PER_ROUTE.value);
+            if (value instanceof String)
+                maxConnPerRoute = Integer.parseInt((String) value);
+            else
+                maxConnPerRoute = (int) value;
         }
         if (clientParams.containsKey(MAX_CONN_TOTAL.value)) {
-            maxConnTotal = (int) clientParams.get(MAX_CONN_TOTAL.value);
+            Object value = clientParams.get(MAX_CONN_TOTAL.value);
+            if (value instanceof String)
+                maxConnTotal = Integer.parseInt((String) value);
+            else
+                maxConnTotal = (int) value;
         }
         if (clientParams.containsKey(CONNECT_TIMEOUT_IN_MS.value)) {
-            connectTimeoutInMs = (int) clientParams.get(CONNECT_TIMEOUT_IN_MS.value);
+            Object value = clientParams.get(CONNECT_TIMEOUT_IN_MS.value);
+            if (value instanceof String)
+                connectTimeoutInMs = Integer.parseInt((String) value);
+            else
+                connectTimeoutInMs = (int) value;
         }
 
-        if (!clientParams.containsKey(REQUEST_FACTORY.value)) {
+        if (!clientParams.containsKey(REQUEST_FACTORY.value) && containsAnyRequestFactoryParam(clientParams)) {
             restTemplate.setRequestFactory(getRequestFactory(maxConnPerRoute, maxConnTotal, connectTimeoutInMs));
-        } else {
+        } else if (clientParams.containsKey(REQUEST_FACTORY.value) && containsAnyRequestFactoryParam(clientParams)) {
             throw new IllegalArgumentException("Parameters max_conn_total, max_conn_per_route and connect_timeout cannot be set if " +
                     "request_factory parameter presents. You must configure these parameters in your request_factory entity.");
         }
+    }
+
+    private boolean containsAnyRequestFactoryParam(Map<String, Object> clientParams) {
+        return clientParams.containsKey(MAX_CONN_PER_ROUTE.value) ||
+                clientParams.containsKey(MAX_CONN_TOTAL.value) ||
+                clientParams.containsKey(CONNECT_TIMEOUT_IN_MS.value);
     }
 
     private HttpComponentsClientHttpRequestFactory getRequestFactory() {
