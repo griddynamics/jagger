@@ -21,6 +21,8 @@ import java.util.List;
  * Time: 2:19 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class TestDescriptionDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

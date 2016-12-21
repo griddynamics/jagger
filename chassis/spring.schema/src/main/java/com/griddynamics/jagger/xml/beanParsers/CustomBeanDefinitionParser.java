@@ -19,6 +19,8 @@ import java.util.List;
  * Time: 12:10 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public abstract class CustomBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser{
 
     @Override

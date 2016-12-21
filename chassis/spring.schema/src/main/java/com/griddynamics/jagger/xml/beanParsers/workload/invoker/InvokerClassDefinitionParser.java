@@ -11,6 +11,8 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
  * Time: 4:18 PM
  * To change this template use File | Settings | File Templates.
  */
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public abstract class InvokerClassDefinitionParser implements BeanDefinitionParser {
 
     protected BeanDefinition getClassNameBeanDefinition(Class clazz){

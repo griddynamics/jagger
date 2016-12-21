@@ -3,6 +3,7 @@ package com.griddynamics.jagger.jaas.rest;
 import com.griddynamics.jagger.jaas.exceptions.InvalidTestExecutionException;
 import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,15 +57,13 @@ public class TestExecutionRestController extends AbstractController {
     }
 
     private void validateTestExecution(TestExecutionEntity testExecution) {
-        if (testExecution.getTestProjectURL() != null) {
+        if (StringUtils.isNotBlank(testExecution.getTestProjectURL())) {
             try {
                 new URL(testExecution.getTestProjectURL());
             } catch (MalformedURLException e) {
                 throw new InvalidTestExecutionException(
                         format("Test project URL '%s' is not valid URL! %s", testExecution.getTestProjectURL(), e.getMessage()), e);
             }
-        } else {
-            throw new InvalidTestExecutionException("Test project URL must not be null!");
         }
     }
 
