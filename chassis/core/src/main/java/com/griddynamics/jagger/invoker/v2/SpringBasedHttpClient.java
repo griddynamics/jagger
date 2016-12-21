@@ -147,9 +147,6 @@ public class SpringBasedHttpClient implements JHttpClient {
         if (clientParams.containsKey(INTERCEPTORS.value)) {
             restTemplate.setInterceptors((List<ClientHttpRequestInterceptor>) clientParams.get(INTERCEPTORS.value));
         }
-        if (clientParams.containsKey(REQUEST_FACTORY.value)) {
-            restTemplate.setRequestFactory((ClientHttpRequestFactory) clientParams.get(REQUEST_FACTORY.value));
-        }
         if (clientParams.containsKey(MAX_CONN_PER_ROUTE.value)) {
             Object value = clientParams.get(MAX_CONN_PER_ROUTE.value);
             if (value instanceof String)
@@ -172,6 +169,9 @@ public class SpringBasedHttpClient implements JHttpClient {
                 connectTimeoutInMs = (int) value;
         }
 
+        if (clientParams.containsKey(REQUEST_FACTORY.value)) {
+            restTemplate.setRequestFactory((ClientHttpRequestFactory) clientParams.get(REQUEST_FACTORY.value));
+        }
         if (!clientParams.containsKey(REQUEST_FACTORY.value) && containsAnyRequestFactoryParam(clientParams)) {
             restTemplate.setRequestFactory(getRequestFactory(maxConnPerRoute, maxConnTotal, connectTimeoutInMs));
         } else if (clientParams.containsKey(REQUEST_FACTORY.value) && containsAnyRequestFactoryParam(clientParams)) {
