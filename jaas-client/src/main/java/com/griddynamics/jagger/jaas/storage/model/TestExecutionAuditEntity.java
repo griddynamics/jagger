@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus;

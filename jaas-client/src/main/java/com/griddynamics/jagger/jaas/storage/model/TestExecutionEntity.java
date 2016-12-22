@@ -40,6 +40,9 @@ public class TestExecutionEntity {
     
     @Column(name = "`error_message`")
     private String errorMessage;
+    
+    @Column(name = "`session_id`")
+    private String sessionId;
 
     @Column(name = "`execution_start_timeout_in_seconds`")
     private Long executionStartTimeoutInSeconds;
@@ -99,6 +102,14 @@ public class TestExecutionEntity {
         this.status = status;
     }
     
+    public String getSessionId() {
+        return sessionId;
+    }
+    
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+    
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -134,6 +145,7 @@ public class TestExecutionEntity {
         if (executionStartTimeoutInSeconds != null ? !executionStartTimeoutInSeconds.equals(that.executionStartTimeoutInSeconds) :
                 that.executionStartTimeoutInSeconds != null) return false;
         if (testProjectURL != null ? !testProjectURL.equals(that.testProjectURL) : that.testProjectURL != null) return false;
+        if (sessionId != null ? !sessionId.equals(that.sessionId) : that.sessionId != null) return false;
         if (errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null) return false;
         return status == that.status;
     }
@@ -146,6 +158,7 @@ public class TestExecutionEntity {
         result = 31 * result + (executionStartTimeoutInSeconds != null ? executionStartTimeoutInSeconds.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
+        result = 31 * result + (sessionId != null ? sessionId.hashCode() : 0);
         return result;
     }
 
@@ -158,6 +171,7 @@ public class TestExecutionEntity {
                 ", testProjectURL='" + testProjectURL + '\'' +
                 ", executionStartTimeoutInSeconds=" + executionStartTimeoutInSeconds +
                 ", errorMessage=" + errorMessage +
+                ", sessionId=" + sessionId +
                 ", status=" + status +
                 ", auditEntities=" + auditEntities +
                 '}';

@@ -216,17 +216,18 @@ public final class JaggerLauncher {
             }
             execApiClient.startExecution();
             
+            String sessionId = null;
             if (execution.getTestProjectURL() == null) { // then execute existing load scenario
                 environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, execution.getLoadScenarioId());
                 System.setProperty(USER_CONFIGS_PACKAGE, environmentProperties.getProperty(USER_CONFIGS_PACKAGE));
-                doLaunchMaster(directory);
+                sessionId = doLaunchMaster(directory);
             } else { // then execute a load scenario from provided artifact
-                executeDynamicLoadScenario(execution.getLoadScenarioId(),
+                sessionId = executeDynamicLoadScenario(execution.getLoadScenarioId(),
                                            execution.getTestProjectURL(),
                                            directory);
             }
             
-            execApiClient.completeExecution();
+            execApiClient.completeExecution(sessionId);
         } catch (Exception e) {
             log.error("Error during a load scenario execution", e);
             if (execApiClient != null) {
@@ -236,7 +237,7 @@ public final class JaggerLauncher {
         }
     }
     
-    private static void executeDynamicLoadScenario(String loadScenarioId, String customClassesUrl, URL directory)
+    private static String executeDynamicLoadScenario(String loadScenarioId, String customClassesUrl, URL directory)
             throws IOException {
         
         environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, loadScenarioId);
@@ -264,7 +265,7 @@ public final class JaggerLauncher {
                     environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, userProps.getProperty(LOAD_SCENARIO_ID_PROP));
                 }
                 
-                doLaunchMaster(directory, urlClassLoader);
+                return doLaunchMaster(directory, urlClassLoader);
             } finally {
                 Thread.currentThread().setContextClassLoader(contextClassLoader);
             }
@@ -282,7 +283,7 @@ public final class JaggerLauncher {
         return availableConfigs;
     }
     
-    private static void doLaunchMaster(final URL directory, final ClassLoader classLoader) {
+    private static String doLaunchMaster(final URL directory, final ClassLoader classLoader) {
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties, classLoader);
         initCoordinator(context);
         context.getBean(StorageServerLauncher.class); // to trigger lazy initialization
@@ -290,11 +291,14 @@ public final class JaggerLauncher {
         configurationGenerator.setJLoadScenarioIdToExecute(environmentProperties.getProperty(LOAD_SCENARIO_ID_PROP));
         Master master = context.getBean(Master.class);
         master.run();
+        
+        String sessionId = master.getSessionIdProvider().getSessionId();
         context.destroy();
+        return sessionId;
     }
     
-    private static void doLaunchMaster(final URL directory) {
-        doLaunchMaster(directory, JaggerLauncher.class.getClassLoader());
+    private static String doLaunchMaster(final URL directory) {
+        return doLaunchMaster(directory, JaggerLauncher.class.getClassLoader());
     }
     
     private static void launchReporter(final URL directory) {

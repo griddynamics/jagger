@@ -56,15 +56,16 @@ public class JaasExecApiClient {
         });
     }
     
-    public void completeExecution() {
+    public void completeExecution(final String sessionId) {
         Optional<TestExecutionEntity> executionEntity = getExecution();
         executionEntity.ifPresent(entity -> {
             entity.setStatus(TestExecutionEntity.TestExecutionStatus.COMPLETED);
+            entity.setSessionId(sessionId);
             updateExecution(entity);
         });
     }
     
-    public void failExecution(String errorMessage) {
+    public void failExecution(final String errorMessage) {
         Optional<TestExecutionEntity> executionEntity = getExecution();
         executionEntity.ifPresent(entity -> {
             entity.setStatus(TestExecutionEntity.TestExecutionStatus.FAILED);
