@@ -2,6 +2,7 @@ package com.griddynamics.jagger.invoker.v2;
 
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -19,14 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+import static com.google.common.collect.Maps.newHashMap;
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.CONNECT_TIMEOUT_IN_MS;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.DEFAULT_URI_VARIABLES;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.ERROR_HANDLER;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.INTERCEPTORS;
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.MAX_CONN_PER_ROUTE;
+import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.MAX_CONN_TOTAL;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.MESSAGE_CONVERTERS;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.REQUEST_FACTORY;
 import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBasedHttpClientParameters.URI_TEMPLATE_HANDLER;
-import static java.lang.String.format;
 
 /**
  * Implementation of {@link JHttpClient}. <p>
@@ -39,18 +42,25 @@ import static java.lang.String.format;
 @SuppressWarnings({"unused", "unchecked"})
 public class SpringBasedHttpClient implements JHttpClient {
 
+    private static final int DEFAULT_MAX_CONN_TOTAL = Integer.MAX_VALUE;
+    private static final int DEFAULT_MAX_CONN_PER_ROUTE = Integer.MAX_VALUE;
+    private static final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 60000;
+
     /**
      * values: {@link JSpringBasedHttpClientParameters#DEFAULT_URI_VARIABLES}, {@link JSpringBasedHttpClientParameters#ERROR_HANDLER},
      * {@link JSpringBasedHttpClientParameters#MESSAGE_CONVERTERS}, {@link JSpringBasedHttpClientParameters#URI_TEMPLATE_HANDLER},
      * {@link JSpringBasedHttpClientParameters#INTERCEPTORS}, {@link JSpringBasedHttpClientParameters#REQUEST_FACTORY}
      */
     public enum JSpringBasedHttpClientParameters {
-        DEFAULT_URI_VARIABLES("defaultUriVariables"),
-        ERROR_HANDLER("errorHandler"),
-        MESSAGE_CONVERTERS("messageConverters"),
-        URI_TEMPLATE_HANDLER("uriTemplateHandler"),
+        DEFAULT_URI_VARIABLES("default_uri_variables"),
+        ERROR_HANDLER("error_handler"),
+        MESSAGE_CONVERTERS("message_converters"),
+        URI_TEMPLATE_HANDLER("uri_template_handler"),
         INTERCEPTORS("interceptors"),
-        REQUEST_FACTORY("requestFactory");
+        REQUEST_FACTORY("request_factory"),
+        MAX_CONN_TOTAL("max_conn_total"),
+        MAX_CONN_PER_ROUTE("max_conn_per_route"),
+        CONNECT_TIMEOUT_IN_MS("connect_timeout");
 
         private String value;
 
@@ -65,24 +75,27 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     /**
      * This field is a container for {@link RestTemplate} parameters which can be passed by the
-     * {@link SpringBasedHttpClient#SpringBasedHttpClient(Map)} constructor or by {@link SpringBasedHttpClient#setClientParams(Map)} setter.<p>
-     * <p><p>
-     * The list of client params (look at {@link JSpringBasedHttpClientParameters}): <p>
-     * - {@code Map<String, ?> defaultUriVariables} (look at {@link RestTemplate#setDefaultUriVariables(Map)}) <p>
-     * - {@code ResponseErrorHandler errorHandler} (look at {@link RestTemplate#setErrorHandler(ResponseErrorHandler)}) <p>
-     * - {@code List<HttpMessageConverter<?>> messageConverters} (look at {@link RestTemplate#setMessageConverters(List)}) <p>
-     * - {@code UriTemplateHandler uriTemplateHandler} (look at {@link RestTemplate#setUriTemplateHandler(UriTemplateHandler)}) <p>
+     * {@link SpringBasedHttpClient#SpringBasedHttpClient(Map)} constructor .<p>
+     * <p>
+     * The list of supported client params (look at {@link JSpringBasedHttpClientParameters}): <p>
+     * - {@code Map<String, ?> default_uri_variables} (look at {@link RestTemplate#setDefaultUriVariables(Map)}) <p>
+     * - {@code ResponseErrorHandler error_handler} (look at {@link RestTemplate#setErrorHandler(ResponseErrorHandler)}) <p>
+     * - {@code List<HttpMessageConverter<?>> message_converters} (look at {@link RestTemplate#setMessageConverters(List)}) <p>
+     * - {@code UriTemplateHandler uri_template_handler} (look at {@link RestTemplate#setUriTemplateHandler(UriTemplateHandler)}) <p>
      * - {@code List<ClientHttpRequestInterceptor> interceptors} (look at {@link RestTemplate#setInterceptors(List)}) <p>
-     * - {@code ClientHttpRequestFactory requestFactory} (look at {@link RestTemplate#setRequestFactory(ClientHttpRequestFactory)}) <p>
+     * - {@code ClientHttpRequestFactory request_factory} (look at {@link RestTemplate#setRequestFactory(ClientHttpRequestFactory)}) <p>
+     * - {@code int max_conn_total} (look at {@link HttpClientBuilder#setMaxConnTotal(int)}) <p>
+     * - {@code int max_conn_per_route} (look at {@link HttpClientBuilder#setMaxConnPerRoute(int)}) <p>
+     * - {@code int connect_timeout} (look at {@link HttpComponentsClientHttpRequestFactory#setConnectTimeout(int)}) <p>
      */
-    private Map<String, Object> clientParams;
+    private final Map<String, Object> clientParams;
 
     private RestTemplate restTemplate;
 
     public SpringBasedHttpClient() {
         clientParams = new HashMap<>();
         restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(getSslAllTrustRequestFactory());
+        restTemplate.setRequestFactory(getRequestFactory());
     }
 
     public SpringBasedHttpClient(Map<String, Object> clientParams) {
@@ -115,29 +128,77 @@ public class SpringBasedHttpClient implements JHttpClient {
     }
 
     private void setRestTemplateParams(Map<String, Object> clientParams) {
-        clientParams.forEach((parameterKey, parameterVal) -> {
-            if (parameterKey.equals(DEFAULT_URI_VARIABLES.value)) {
-                restTemplate.setDefaultUriVariables((Map<String, ?>) parameterVal);
-            } else if (parameterKey.equals(ERROR_HANDLER.value)) {
-                restTemplate.setErrorHandler((ResponseErrorHandler) parameterVal);
-            } else if (parameterKey.equals(MESSAGE_CONVERTERS.value)) {
-                restTemplate.setMessageConverters((List<HttpMessageConverter<?>>) parameterVal);
-            } else if (parameterKey.equals(URI_TEMPLATE_HANDLER.value)) {
-                restTemplate.setUriTemplateHandler((UriTemplateHandler) parameterVal);
-            } else if (parameterKey.equals(INTERCEPTORS.value)) {
-                restTemplate.setInterceptors((List<ClientHttpRequestInterceptor>) parameterVal);
-            } else if (parameterKey.equals(REQUEST_FACTORY.value)) {
-                restTemplate.setRequestFactory((ClientHttpRequestFactory) parameterVal);
-            } else {
-                throw new IllegalArgumentException(format("Unknown parameter name '%s'!", parameterKey));
-            }
-        });
+        int maxConnPerRoute = DEFAULT_MAX_CONN_PER_ROUTE;
+        int maxConnTotal = DEFAULT_MAX_CONN_TOTAL;
+        int connectTimeoutInMs = DEFAULT_CONNECT_TIMEOUT_IN_MS;
+
+        if (clientParams.containsKey(DEFAULT_URI_VARIABLES.value)) {
+            restTemplate.setDefaultUriVariables((Map<String, ?>) clientParams.get(DEFAULT_URI_VARIABLES.value));
+        }
+        if (clientParams.containsKey(ERROR_HANDLER.value)) {
+            restTemplate.setErrorHandler((ResponseErrorHandler) clientParams.get(ERROR_HANDLER.value));
+        }
+        if (clientParams.containsKey(MESSAGE_CONVERTERS.value)) {
+            restTemplate.setMessageConverters((List<HttpMessageConverter<?>>) clientParams.get(MESSAGE_CONVERTERS.value));
+        }
+        if (clientParams.containsKey(URI_TEMPLATE_HANDLER.value)) {
+            restTemplate.setUriTemplateHandler((UriTemplateHandler) clientParams.get(URI_TEMPLATE_HANDLER.value));
+        }
+        if (clientParams.containsKey(INTERCEPTORS.value)) {
+            restTemplate.setInterceptors((List<ClientHttpRequestInterceptor>) clientParams.get(INTERCEPTORS.value));
+        }
+        if (clientParams.containsKey(MAX_CONN_PER_ROUTE.value)) {
+            Object value = clientParams.get(MAX_CONN_PER_ROUTE.value);
+            if (value instanceof String)
+                maxConnPerRoute = Integer.parseInt((String) value);
+            else
+                maxConnPerRoute = (int) value;
+        }
+        if (clientParams.containsKey(MAX_CONN_TOTAL.value)) {
+            Object value = clientParams.get(MAX_CONN_TOTAL.value);
+            if (value instanceof String)
+                maxConnTotal = Integer.parseInt((String) value);
+            else
+                maxConnTotal = (int) value;
+        }
+        if (clientParams.containsKey(CONNECT_TIMEOUT_IN_MS.value)) {
+            Object value = clientParams.get(CONNECT_TIMEOUT_IN_MS.value);
+            if (value instanceof String)
+                connectTimeoutInMs = Integer.parseInt((String) value);
+            else
+                connectTimeoutInMs = (int) value;
+        }
+
+        if (clientParams.containsKey(REQUEST_FACTORY.value)) {
+            restTemplate.setRequestFactory((ClientHttpRequestFactory) clientParams.get(REQUEST_FACTORY.value));
+        }
+        if (!clientParams.containsKey(REQUEST_FACTORY.value) && containsAnyRequestFactoryParam(clientParams)) {
+            restTemplate.setRequestFactory(getRequestFactory(maxConnPerRoute, maxConnTotal, connectTimeoutInMs));
+        } else if (clientParams.containsKey(REQUEST_FACTORY.value) && containsAnyRequestFactoryParam(clientParams)) {
+            throw new IllegalArgumentException("Parameters max_conn_total, max_conn_per_route and connect_timeout cannot be set if " +
+                    "request_factory parameter presents. You must configure these parameters in your request_factory entity.");
+        }
     }
 
-    private HttpComponentsClientHttpRequestFactory getSslAllTrustRequestFactory() {
+    private boolean containsAnyRequestFactoryParam(Map<String, Object> clientParams) {
+        return clientParams.containsKey(MAX_CONN_PER_ROUTE.value) ||
+                clientParams.containsKey(MAX_CONN_TOTAL.value) ||
+                clientParams.containsKey(CONNECT_TIMEOUT_IN_MS.value);
+    }
+
+    private HttpComponentsClientHttpRequestFactory getRequestFactory() {
+        return getRequestFactory(DEFAULT_MAX_CONN_PER_ROUTE, DEFAULT_MAX_CONN_TOTAL, DEFAULT_CONNECT_TIMEOUT_IN_MS);
+    }
+
+    private HttpComponentsClientHttpRequestFactory getRequestFactory(int maxConnPerRoute, int maxConnTotal, int connectTimeoutInMs) {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        CloseableHttpClient httpClient = HttpClients.custom().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setSSLHostnameVerifier(new NoopHostnameVerifier())
+                .setMaxConnPerRoute(maxConnPerRoute)
+                .setMaxConnTotal(maxConnTotal)
+                .build();
         requestFactory.setHttpClient(httpClient);
+        requestFactory.setConnectTimeout(connectTimeoutInMs);
         return requestFactory;
     }
 
@@ -154,10 +215,6 @@ public class SpringBasedHttpClient implements JHttpClient {
     }
 
     public Map<String, Object> getClientParams() {
-        return clientParams;
-    }
-
-    public void setClientParams(Map<String, Object> clientParams) {
-        this.clientParams = clientParams;
+        return newHashMap(clientParams);
     }
 }

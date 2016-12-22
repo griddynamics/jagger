@@ -33,7 +33,7 @@ public class TestExecutionEntity {
     @Column(name = "`load_scenario_id`", nullable = false)
     private String loadScenarioId;
 
-    @Column(name = "`test_project_url`", nullable = false)
+    @Column(name = "`test_project_url`")
     private String testProjectURL;
 
     @Column(name = "`execution_start_timeout_in_seconds`")

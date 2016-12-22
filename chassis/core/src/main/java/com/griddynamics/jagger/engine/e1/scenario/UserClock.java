@@ -20,18 +20,25 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import com.google.common.collect.Maps;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * User: dkotlyarov
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class UserClock implements WorkloadClock {
     private static final Logger log = LoggerFactory.getLogger(UserClock.class);
 

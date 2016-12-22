@@ -13,6 +13,8 @@ import org.w3c.dom.Element;
  * Time: 4:43 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class ThreadsTestListenerDefinitionParser extends CustomBeanDefinitionParser {
     @Override
     protected Class getBeanClass(Element element) {

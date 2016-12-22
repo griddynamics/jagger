@@ -20,12 +20,13 @@
 
 package com.griddynamics.jagger.xml.beanParsers.workload.queryProvider;
 
-import com.google.common.base.Preconditions;
 import com.griddynamics.jagger.providers.FileProvider;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import com.google.common.base.Preconditions;
 
 import java.util.List;
 
@@ -33,6 +34,8 @@ import java.util.List;
  * @author Nikolay Musienko
  *         Date: 23.04.13
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class FileProviderDefinitionParser extends CustomBeanDefinitionParser {
     @Override
     protected Class getBeanClass(Element element) {

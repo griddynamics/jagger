@@ -4,7 +4,6 @@ import com.griddynamics.jagger.invoker.http.HttpQuery;
 import com.griddynamics.jagger.xml.beanParsers.CustomBeanDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.XMLConstants;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
@@ -16,6 +15,8 @@ import org.w3c.dom.Element;
  * Time: 3:11 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class HttpQueryDefinitionParser extends CustomBeanDefinitionParser {
     @Override
     protected Class getBeanClass(Element element) {
