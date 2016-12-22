@@ -83,9 +83,9 @@ public class JLoadProfileRps implements JLoadProfile {
          * @param warmUpTimeInSeconds The warm up time value in seconds. Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInSeconds
          */
         public Builder withWarmUpTimeInSeconds(long warmUpTimeInSeconds) {
-            if (warmUpTimeInSeconds < 0) {
+            if (warmUpTimeInSeconds <= 0) {
                 throw new IllegalArgumentException(
-                        String.format("The warm up time value in seconds. must be >= 0. Provided value is %s", warmUpTimeInSeconds));
+                        String.format("The warm up time value in seconds. must be > 0. Provided value is %s", warmUpTimeInSeconds));
             }
             this.warmUpTimeInSeconds = warmUpTimeInSeconds;
             return this;
