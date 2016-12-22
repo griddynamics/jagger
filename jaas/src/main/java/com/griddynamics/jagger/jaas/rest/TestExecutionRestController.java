@@ -75,7 +75,7 @@ public class TestExecutionRestController extends AbstractController {
         
         if (testExecution.getLoadScenarioId() == null && testExecution.getTestProjectURL() == null) {
             throw new InvalidTestExecutionException(
-                    "Neither a test project URL nor a load scenario name are not specified");
+                    "Neither a test project URL nor a load scenario name are specified");
         }
         
         if (StringUtils.isNotBlank(testExecution.getTestProjectURL())) {

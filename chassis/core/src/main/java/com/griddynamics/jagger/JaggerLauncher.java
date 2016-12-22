@@ -211,7 +211,8 @@ public final class JaggerLauncher {
             }
             TestExecutionEntity execution = optionalExecution.get();
             if (execution.getStatus() != TestExecutionEntity.TestExecutionStatus.PENDING) {
-                log.warn("Received execution is not in PENDING state. Going to proceed with next...");
+                log.warn("Received execution with id '{}' is not in PENDING state. Going to proceed with next...",
+                         execution.getId());
                 return;
             }
             execApiClient.startExecution();

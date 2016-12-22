@@ -54,7 +54,7 @@ public class JaasEnvApiClient implements Closeable {
         try {
             this.jaasEndpoint = new URI(jaasEndpoint);
         } catch (URISyntaxException e) {
-            throw new IllegalStateException("Incorrect JaaS endpoint", e);
+            throw new IllegalStateException(String.format("Incorrect JaaS endpoint %s", jaasEndpoint), e);
         }
     
         if (availableConfigs == null) {
