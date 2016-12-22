@@ -57,7 +57,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 
 /// @defgroup Main_Custom_Components_group Custom component
 ///
-/// @li @ref Main_HowToCustomizeAggregators_group
 /// @li @ref Main_HowToCustomizeInvokers_group
 /// @li @ref Main_HowToCustomizeProviders_group
 /// @li @ref Main_HowToCustomizeDistributors_group
@@ -110,11 +109,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @defgroup Main_Invokers_Base_group Invoker
 /// @defgroup Main_Distributors_Base_group Distributor
 /// @details @ref Main_Distributors_General_group
-/// @defgroup Main_Collectors_Base_group Collector
-
-/// @defgroup Main_Aggregators_Base_group Aggregator
-/// @details @ref Main_Aggregators_General_group
-
 
 /* **************** Implementations ************************* */
 /// @defgroup Main_Invokers_group Implementations of invokers
@@ -122,7 +116,4 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @details @ref Main_Providers_General_group
 /// @defgroup Main_Distributors_group Implementations of distributors
 /// @details @ref Main_Distributors_General_group
-/// @defgroup Main_Collectors_group Implementations of collectors
-/// @defgroup Main_Aggregators_group Implementations of aggregators
-/// @details @ref Main_Aggregators_General_group
 /// @defgroup Main_Terminators_group Implementations of termination strategies

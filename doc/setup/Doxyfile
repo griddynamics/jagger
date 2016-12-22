@@ -666,7 +666,12 @@ WARN_LOGFILE           =
 
 INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/Invoker.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidator.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/JHttpResponseStatusValidator.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/NotNullResponseValidator.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ResponseValidatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/DefaultResponseValidatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ExampleResponseValidatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/JHttpResponseStatusValidatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/user/test/configurations \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/v2 \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/loadscenario/LoadScenarioListener.java \
@@ -692,6 +697,16 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/DefaultSessionInfoService.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricDescription.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/data/service \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregator.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MetricAggregatorSettings.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/AvgMetricAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MaxMetricAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/MinMetricAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/PercentileAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/StdDevMetricAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateFailsAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SumMetricAggregatorProvider.java \
                          ./doc/pages/a_PageOrder.dox \
                          ./doc/pages/AgentProperties.dox \
                          ./doc/pages/Components.dox \
@@ -703,6 +718,7 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./doc/pages/Licence.dox \
                          ./doc/pages/ListenersMain.dox \
                          ./doc/pages/MainPage.dox \
+                         ./doc/pages/MetricsAggregation.dox \
                          ./doc/pages/MetricsMain.dox \
                          ./doc/pages/MetricsCustom.dox \
                          ./doc/pages/MetricsPerformance.dox \
@@ -781,10 +797,12 @@ EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleJLoadScenarioProvider.java \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleQueriesProvider.java \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleEndpointsProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/invocation/ExampleInvocationListener.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/ExampleTestGroupListener.java \
                          ./chassis/core/src/test/java/com/griddynamics/jagger/ExampleJLoadScenarioProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/invocation/NotNullInvocationListener.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/services/ServicesAware.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/ExampleResponseValidatorProvider.java \
                          ./webclient/src/main/resources/webclient.properties \
                          ./monitoring/agent/src/main/resources/spring/agent.properties \
                          ./chassis/configuration/configuration/basic/default.environment.properties \

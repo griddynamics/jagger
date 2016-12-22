@@ -1,14 +1,27 @@
 /// @page MetricsCustom Custom metrics
-/// @brief Section provides full information about validation of the SUT responses and collection metrics @n
 /// @details
 /// @n
-/// Besides collecting performance metrics (response time, throughput, etc.), Jagger is able to validate responses from the SUT and collect custome metrics. @n
-/// <b> Validation </b> - verification of the responses from the SUT and decision whether they are valid or not @n
-/// <b> Custom metrics </b> - additional measurement values, collected during performance test execution @n
+/// We consider you are already familiar with the general approach for metrics @ref MetricsMain "aggregation and storage" @n
 /// @n
-/// @li @subpage MonitoringSetup
-/// @li @subpage MonitoringMetricsSetup
-/// @li @ref section_default_properties_for_monitoring_metrics "List of all monitoring metrics and default settings"
+/// Jagger test framework allows to work with custom performance metrics. That means, you can create, collect, aggregate, store and make pass/fail decision based on you own metrics.
 ///
-/// ??? link to monitoring metrics
-///. Validation can be Validation affects success rate performance metric. @n
+/// @par Custom metrics collection
+/// Framework is exposing @ref com.griddynamics.jagger.engine.e1.services.DefaultMetricService "metric service" to work with custom metrics @n
+/// MetricService allows to:
+/// - create metric
+///   - set unique id of the metric
+///   - set display name - text, displayed in the reports
+///   - set flags what values will be aggregated (summary, detailed results)
+///   - set what aggregator(s) will be used for this metric
+/// - same metric values
+///
+/// you can find more details about Jagger services in the chapter @ref ListenersMain
+///
+/// @par Custom metrics collection. Case 1
+/// In the example we are creating metric before running performance test and saving values on every successful request to the SUT. After test is over, results for this metric
+/// will be aggregated by multiple aggregators. More details about metrics collection you can find in the chapter @ref MetricsMain
+/// @include  ExampleInvocationListener.java
+///
+/// @par Custom metrics collection. Case 2
+/// Another option: you can collect metrics with some external tool. After test is over you can read time series values from this tool as store them in the framework DB.
+/// In this case you can execute your code in the @ref section_listeners_intro "test or test group listener" in the onStop method

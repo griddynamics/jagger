@@ -3,7 +3,7 @@
 /// @dontinclude  JaggerVersion.txt
 /// @skipline  Version
 /// @n
-/// Back to <a href="https://github.com/griddynamics/jagger/wiki">GitHub</a> documentation @n
+/// Back to <a href="https://github.com/griddynamics/jagger/wiki">GitHub</a> @n
 /// @n
 /// @section section_main_introduction Introduction
 /// Jagger is performance test framework, suitable for local usage and for building continuous performance testing. @n
@@ -23,6 +23,6 @@
 /// @li Rise pass/warning/fail alerts in the CI
 /// @li Work with custom components
 /// @li Run in single node or distributed mode
-/// @n
+///
 /// @n
 /// Other documentation <a href='../archive/index.html'>versions</a>
