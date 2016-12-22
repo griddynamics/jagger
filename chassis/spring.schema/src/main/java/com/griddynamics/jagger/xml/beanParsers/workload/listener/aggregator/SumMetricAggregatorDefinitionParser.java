@@ -31,6 +31,8 @@ import org.w3c.dom.Element;
  *         Date: 06.08.13
  */
 
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class SumMetricAggregatorDefinitionParser extends CustomBeanDefinitionParser {
 
     @Override

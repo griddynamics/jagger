@@ -10,6 +10,8 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
  * Processor, which set Prototype scope to all Providers in spring context
  * @author kgribov
  */
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public class ProviderBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {

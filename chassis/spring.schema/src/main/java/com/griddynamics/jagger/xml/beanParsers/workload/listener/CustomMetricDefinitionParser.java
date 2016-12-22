@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
  * Time: 8:04 PM
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
 public class CustomMetricDefinitionParser extends AbstractCalculatorBasedDefinitionParser {
 
     @Override

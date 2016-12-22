@@ -20,11 +20,14 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.base.Preconditions;
 import com.griddynamics.jagger.util.JavaSystemClock;
 import com.griddynamics.jagger.util.SystemClock;
 import com.griddynamics.jagger.util.TimeUtils;
 
+import com.google.common.base.Preconditions;
+
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class TerminateByDuration implements TerminateStrategyConfiguration {
     private int seconds;
     private SystemClock systemClock = new JavaSystemClock();

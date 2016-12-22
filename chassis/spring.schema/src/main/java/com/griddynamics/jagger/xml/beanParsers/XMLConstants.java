@@ -10,6 +10,8 @@ import java.util.List;
  * Time: 13:25
  * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: Should be removed with xml configuration JFG-906
 public class XMLConstants {
 
     public static final String MONITORING = "monitoring";

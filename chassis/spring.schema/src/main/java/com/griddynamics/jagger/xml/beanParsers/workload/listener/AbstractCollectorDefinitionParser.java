@@ -38,6 +38,8 @@ import java.util.List;
  * @author Nikolay Musienko
  *         Date: 22.03.13
  */
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
+@Deprecated
 public abstract class AbstractCollectorDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     @Override

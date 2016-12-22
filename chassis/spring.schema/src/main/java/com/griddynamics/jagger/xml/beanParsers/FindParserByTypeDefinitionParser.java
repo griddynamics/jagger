@@ -7,12 +7,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Created with IntelliJ IDEA.
  * User: kgribov
  * Date: 1/22/13
  * Time: 4:25 PM
- * To change this template use File | Settings | File Templates.
  */
+@Deprecated
+// TODO: GD 11/25/16 Should be removed with xml configuration JFG-906
 public class FindParserByTypeDefinitionParser implements BeanDefinitionParser {
 
     @Override
