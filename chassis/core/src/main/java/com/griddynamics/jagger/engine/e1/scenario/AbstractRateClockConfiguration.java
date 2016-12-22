@@ -128,6 +128,6 @@ public abstract class AbstractRateClockConfiguration implements WorkloadClockCon
     }
 
     public boolean isRumpUp() {
-        return (warmUpTime != -1);
+        return (warmUpTime != -1 && warmUpTime != 0);
     }
 }
