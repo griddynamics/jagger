@@ -1,14 +1,17 @@
 /// @page MetricsPerformance Standard performance metrics
-/// ???
-/// @brief Section provides full information about validation of the SUT responses and metrics collection@n
 /// @details
 /// @n
-/// Besides collecting performance metrics (response time, throughput, etc.), Jagger is able to validate responses from the SUT and collect custom metrics. @n
-/// <b> Validation </b> - verification of the responses from the SUT and decision whether they are valid or not @n
-/// <b> Custom metrics </b> - additional measurement values, collected during performance test execution @n
-/// @n
-/// @li @subpage MetricsValidators
-/// @li @subpage MetricsCustom
+/// Standard performance metrics are describing the test execution and the performance of the System Under Test@n
+/// Among standard metrics are:
+/// @li Throughput - number of successful transaction (request + response) per second during test execution
+/// @li Latency - response time of the SUT. We are measuring mean value, standard deviation and percentiles of this parameter
+/// @li Success rate - relation of the successful transactions to the full number of transactions
+/// @li Number of fails - number of failed transactions
+/// @li Duration - load test duration
+/// @li Iterations - full number of transactions
+/// @li Virtual users - number of virtual users for load generation
 ///
-/// ??? link to monitoring metrics
-///. Validation can be Validation affects success rate performance metric. @n
+/// Metrics above are always collected and stored. @n
+/// Throughput and latency are collected only for successful transactions. If transaction was successful or not is defined by @ref MetricsValidators "validators" @n
+///
+/// <b> \e Note: </b> you can configure what latency percentiles will be saved for particular load scenario. Details: @ref com.griddynamics.jagger.user.test.configurations.JLoadScenario "JLoadScenario"

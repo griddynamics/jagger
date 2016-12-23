@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus;
 
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "test_execution_audit_entity")
 public class TestExecutionAuditEntity {
@@ -21,10 +24,11 @@ public class TestExecutionAuditEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "`test_execution_id`", nullable = false)
     private TestExecutionEntity testExecutionEntity;
-
+    
     @Column(nullable = false)
     private long timestamp;
 

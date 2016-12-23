@@ -29,11 +29,9 @@ import java.io.Serializable;
  * @details Simplified type of collector. @n
  * Such kind of collector is helpful, when you would like to calculate some info from response. The result of calculation will be stored in database. @n
  * @n
- * To view default implementations of collectors click here @ref Main_Collectors_group
  *
  * @param <R> - type of response
- *
- * @ingroup Main_Collectors_Base_group */
+ */
 public interface MetricCalculator<R> extends AbstractMetricCalculator<R, Number>, Serializable {
 
     /**Returns a number, which was calculated from response

@@ -2,13 +2,18 @@
 /// @brief Section provides full information about validation of the SUT responses and metrics collection@n
 /// @details
 /// @n
-/// Besides collecting performance metrics (response time, throughput, etc.), Jagger is able to validate responses from the SUT and collect custom metrics. @n
-/// <b> Validation </b> - verification of the responses from the SUT and decision whether they are valid or not @n
-/// <b> Custom metrics </b> - additional measurement values, collected during performance test execution @n
-/// @n
-/// @li @subpage MetricsValidators
-/// @li @subpage MetricsPerformance
-/// @li @subpage MetricsCustom
+/// All metrics, collected by Jagger can be separated to the following categories:
+/// @li @subpage MetricsPerformance - main performance parameters like response time, throughput, etc
+/// @li @subpage MonitoringMain "System and JVM metrics" - resources utilization like CPU, memory, disk, network, etc
+/// @li @subpage MetricsCustom "Custom metrics" - user defined metrics
+/// @li @subpage MetricsValidators "Results of validators" - results of functional verification of the SUT responses
 ///
-/// ??? link to monitoring metrics
-///. Validation can be Validation affects success rate performance metric. @n
+/// For every validator, framework is storing single value: success rate of the validator - how many responses from the SUT (related to the full number of responses) successfully passed this validator. @n
+/// @n
+/// For every metric, framework is storing summary value and detailed results (aka 'plot data'): metric values during test execution @n
+/// @n
+/// How is it done: @n
+/// During test execution raw values for every metric are stores in the file system in the time series format. After the test is over, raw data is aggregated. Depending on the setup for every metric,
+/// framework can aggregate only summary value or, additionally, detailed results (metric vs time). Every metric can be aggregated by single aggregator or multiple aggregators, running one after another.
+/// As example, from the raw data of the Success rate metric, with use of two different aggregators we are calculating two parameters: Success rate and Number of fails. @n
+/// More information about raw values aggregation you can read here: @subpage MetricsAggregation "metric aggregation"

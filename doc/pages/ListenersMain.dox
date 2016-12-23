@@ -24,15 +24,21 @@
 /// The feature is available via @ref section_listeners_list "listeners" classes. User can implement his own listener (load scenario listener, test group listener, etc) and attach it to the particular element of the load scenario. @n
 ///
 /// @section section_listeners_example Listener example
-/// @par Create custom listener
+/// @par Create custom test group listener
 /// In this simple example test group listener will just provide additional logging during test group start and stop
 /// @dontinclude  ExampleTestGroupListener.java
 /// @skip  begin: following section is used for docu generation - example of the test group listener
 /// @until end: following section is used for docu generation - example of the test group listener
-/// @par Attach test listener to the parallel test group in your load scenario
+/// @par Attach test group listener to the parallel test group in your load scenario
 /// @dontinclude  ExampleJLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - example of the test group listener
 /// @until end: following section is used for docu generation - example of the test group listener
+/// @par Another example. Invocation listeners
+/// You can attach as many listeners as necessary to particular step in the test flow. They will be executed in the same order like they are added@n
+/// Below is an example of the test definition with two invocation listeners
+/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - example of the invocation listener
+/// @until end: following section is used for docu generation - example of the invocation listener
 ///
 /// @section section_listeners_list Listeners
 ///

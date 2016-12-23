@@ -1,6 +1,9 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
-// begin: following section is used for docu generation - custom aggregator source
+/** Calculates max value on the interval
+ * @author Kirill Gribov
+ *
+ * @ingroup Main_Aggregators_group */
 public class MaxMetricAggregatorProvider implements MetricAggregatorProvider {
 
     @Override
@@ -37,4 +40,3 @@ public class MaxMetricAggregatorProvider implements MetricAggregatorProvider {
         }
     }
 }
-// end: following section is used for docu generation - custom aggregator source

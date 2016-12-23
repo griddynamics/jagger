@@ -7,21 +7,6 @@ import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
  * @n
  * @par Details:
  * @details Where this service is available you can find in chapter: @ref section_listeners_services @n
- * Below is example of creating metric with metric service. @ref com.griddynamics.jagger.engine.e1.collector.MetricDescription "MetricDescription" is used to setup how metric will be
- * aggregated and stored @n
- * @n
- * @par Example - creating metric:
- * @dontinclude  ProviderOfTestListener.java
- * @skip  begin: following section is used for docu generation - example of metric creation
- * @until end: following section is used for docu generation - example of metric creation
- * @n
- * @par Example - saving metric:
- * @dontinclude  ProviderOfTestListener.java
- * @skip  begin: following section is used for docu generation - example of metric saving
- * @until end: following section is used for docu generation - example of metric saving
- *
- * @n
- * Full example code you can find in chapter @ref TODO JFG-993 add correct link @n
  * @n
  * @ingroup Main_Services_group */
  public interface MetricService extends JaggerService{
@@ -32,12 +17,6 @@ import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
      * @par Details:
      * @details Registers in Jagger a metric define by \e metricDescription. Registration (creation) should be provided single time. @n
      * After metric is created you can save some test data to it with help of @ref saveValue
-     * @n
-     * @par Example:
-     * @dontinclude  ProviderOfTestListener.java
-     * @skip  begin: following section is used for docu generation - example of metric creation
-     * @until end: following section is used for docu generation - example of metric creation
-     * @n
      *
      * @param metricDescription - describes how to store metric */
     void createMetric(MetricDescription metricDescription);
