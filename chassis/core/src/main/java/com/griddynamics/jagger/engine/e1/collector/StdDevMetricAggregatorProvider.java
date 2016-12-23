@@ -23,15 +23,8 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
-/** Calculates standard deviation on interval
+/** Calculates standard deviation on the interval
  * @author Nikolay Musienko
- * @n
- * @par Details:
- * @details
- * @n
- * @par Usage example:
- * To use this aggregator add @xlink_complex{metric-aggregator-std} to @xlink_complex{metric-custom} block. @n
- * More examples you can find in: @ref AvgMetricAggregatorProvider @n
  *
  * @ingroup Main_Aggregators_group */
 public class StdDevMetricAggregatorProvider implements MetricAggregatorProvider {

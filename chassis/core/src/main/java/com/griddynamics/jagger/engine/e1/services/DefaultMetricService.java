@@ -18,6 +18,12 @@ import java.net.URLEncoder;
  * @par Details:
  * @details  Service gives an ability to create and describe metrics, save metric values.@n
  * Where this service is available you can find in chapter: @ref section_listeners_services @n
+ * Below is example of creating metric with metric service. @ref com.griddynamics.jagger.engine.e1.collector.MetricDescription "MetricDescription" is used to setup how metric will be
+ * aggregated and stored @n
+ * In the example we are creating metric before running performance test and saving values on every successful request to the SUT. After test is over, results for this metric
+ * will be aggregated by multiple aggregators. More details about metrics collection you can find in the chapter @ref MetricsMain
+ * @n
+ * @include  ExampleInvocationListener.java
  * @n
  * @ingroup Main_Services_group */
 public class DefaultMetricService implements MetricService {

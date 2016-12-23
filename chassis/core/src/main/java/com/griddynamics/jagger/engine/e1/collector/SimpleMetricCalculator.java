@@ -26,8 +26,7 @@ package com.griddynamics.jagger.engine.e1.collector;
  * @par Details:
  * @details Save the number of not null responses in database
  *
- *
- * @ingroup Main_Collectors_group */
+ */
 public class SimpleMetricCalculator implements MetricCalculator<Object> {
 
     /**Returns 1 if response is not null

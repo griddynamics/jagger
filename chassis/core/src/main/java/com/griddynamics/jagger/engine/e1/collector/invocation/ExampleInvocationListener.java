@@ -25,6 +25,8 @@ public class ExampleInvocationListener extends ServicesAware implements Provider
 
     @Override
     protected void init() {
+
+        //begin: following section is used for docu generation - example of the metric with multiple aggregators
         getMetricService().createMetric(new MetricDescription(metricName)
                 .displayName("Example duration metric, ms")
                 .showSummary(true)
@@ -40,8 +42,8 @@ public class ExampleInvocationListener extends ServicesAware implements Provider
                 .addAggregator(new PercentileAggregatorProvider(90D))
                 .addAggregator(new PercentileAggregatorProvider(95D))
                 .addAggregator(new PercentileAggregatorProvider(99D))
-        )
-        ;
+        );
+        //end: following section is used for docu generation - example of the metric with multiple aggregators
     }
 
     @Override

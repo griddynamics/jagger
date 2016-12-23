@@ -15,7 +15,8 @@ import static java.util.stream.Collectors.toSet;
 
 /**
  * Provides default response status validator {@link JHttpResponseStatusValidator}.
- */
+ *
+ * @ingroup Main_Validators_group */
 public class JHttpResponseStatusValidatorProvider implements ResponseValidatorProvider {
 
     private Set<Integer> validStatusCodes = newHashSet();

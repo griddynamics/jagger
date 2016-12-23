@@ -15,11 +15,13 @@ import java.util.Objects;
  *
  * Created by Andrey Badaev
  * Date: 14/12/16
- */
+ *
+ * @ingroup Main_Validators_group */
 public class ExampleResponseValidatorProvider implements ResponseValidatorProvider {
     
     private final String someValue;
-    
+
+    /* Constructor allows to pass parameters to the validator */
     public ExampleResponseValidatorProvider(String someValue) {this.someValue = someValue;}
     
     @Override
@@ -29,11 +31,13 @@ public class ExampleResponseValidatorProvider implements ResponseValidatorProvid
 
         return new ResponseValidator<JHttpQuery, JHttpEndpoint, JHttpResponse>(taskId, sessionId, kernelContext) {
             @Override
+            /* This name will be displayed in the reports */
             public String getName() {
-                return null;
+                return "Example response validator";
             }
     
             @Override
+            /* Validator logic in defined here */
             public boolean validate(JHttpQuery query, JHttpEndpoint endpoint, JHttpResponse result, long duration) {
                 if (Objects.equals(someValue, "we are always good")) {
                     return true;

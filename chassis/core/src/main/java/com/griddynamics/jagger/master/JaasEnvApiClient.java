@@ -30,12 +30,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * Handles Jagger Master node to JaaS communication -
+ * Handles communication to JaaS environment API -
  * initial registration and further status updates with commands parsing from JaaS response.
  */
-public class MasterToJaasCoordinator implements Closeable {
+public class JaasEnvApiClient implements Closeable {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(MasterToJaasCoordinator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JaasEnvApiClient.class);
     
     private volatile boolean standBy = true;
     private final RestTemplate restTemplate = new RestTemplate();
@@ -46,15 +46,15 @@ public class MasterToJaasCoordinator implements Closeable {
     private boolean registered = false;
     private StatusExchangeThread statusExchangeThread;
     
-    public MasterToJaasCoordinator(String envId,
-                                   String jaasEndpoint,
-                                   int statusReportIntervalSeconds,
-                                   Set<String> availableConfigs) {
+    public JaasEnvApiClient(String envId,
+                            String jaasEndpoint,
+                            int statusReportIntervalSeconds,
+                            Set<String> availableConfigs) {
         this.envId = envId;
         try {
             this.jaasEndpoint = new URI(jaasEndpoint);
         } catch (URISyntaxException e) {
-            throw new IllegalStateException("Incorrect JaaS endpoint", e);
+            throw new IllegalStateException(String.format("Incorrect JaaS endpoint %s", jaasEndpoint), e);
         }
     
         if (availableConfigs == null) {
@@ -81,7 +81,7 @@ public class MasterToJaasCoordinator implements Closeable {
         registered = true;
     }
     
-    public JaasResponse awaitConfigToExecute() throws TerminateException, InterruptedException {
+    public JaasResponse awaitNextExecution() throws TerminateException, InterruptedException {
         if (!registered) {
             throw new IllegalStateException("must be registered");
         }
@@ -94,22 +94,12 @@ public class MasterToJaasCoordinator implements Closeable {
             }
         }
         while (jaasResponse == null);
-        statusExchangeThread.setRunningRequestEntity(jaasResponse.loadScenarioName);
-        statusExchangeThread.statusSent = false;
-        synchronized (statusExchangeThread.statusLock) {
-            while (!statusExchangeThread.statusSent) {
-                statusExchangeThread.statusLock
-                        .wait(statusReportIntervalSeconds * 1000); // waiting until new status is sent
-                if (!standBy) {
-                    throw getTerminateException();
-                }
-            }
-        }
+        
         return jaasResponse;
     }
     
     private TerminateException getTerminateException() throws TerminateException {
-        throw new TerminateException("Master to JaaS communication can't be proceeded");
+        throw new TerminateException("Communication to JaaS Env API can't be proceeded");
     }
     
     private String doRegister() throws InterruptedException {
@@ -207,11 +197,7 @@ public class MasterToJaasCoordinator implements Closeable {
         
         private volatile RequestEntity<TestEnvironmentEntity> requestEntity;
 
-        private final Object statusLock = new Object();
-
-        private volatile boolean statusSent = false;
-
-        public StatusExchangeThread(String sessionCookie) {
+        StatusExchangeThread(String sessionCookie) {
             this.sessionCookie = sessionCookie;
             this.requestEntity = buildPendingRequestEntity();
 
@@ -231,11 +217,11 @@ public class MasterToJaasCoordinator implements Closeable {
             return new RequestEntity<>(testEnvEntity, httpHeaders, HttpMethod.PUT, updatesUri);
         }
         
-        public void setPendingRequestEntity() {
+        void setPendingRequestEntity() {
             this.requestEntity = buildPendingRequestEntity();
         }
         
-        public void setRunningRequestEntity(String loadScenarioName) {
+        void setRunningRequestEntity(String loadScenarioName) {
             RequestEntity<TestEnvironmentEntity> requestEntity = buildPendingRequestEntity();
             requestEntity.getBody().setStatus(TestEnvironmentStatus.RUNNING);
             requestEntity.getBody().setRunningLoadScenario(new LoadScenarioEntity(loadScenarioName));
@@ -248,10 +234,6 @@ public class MasterToJaasCoordinator implements Closeable {
             do {
                 try {
                     updateStatus();
-                    statusSent = true;
-                    synchronized (statusLock) {
-                        statusLock.notifyAll();
-                    }
                     TimeUnit.SECONDS.sleep(statusReportIntervalSeconds);
                 } catch (InterruptedException e) {
                     standBy = false;
@@ -290,19 +272,27 @@ public class MasterToJaasCoordinator implements Closeable {
             if (requestEntity.getBody().getStatus() != TestEnvironmentStatus.PENDING) {
                 return;
             }
-            String loadScenarioName = extractHeader(responseEntity, TestEnvUtils.LOAD_SCENARIO_HEADER);
-            String testProjectUrl = extractHeader(responseEntity, TestEnvUtils.TEST_PROJECT_URL_HEADER);
-            if (loadScenarioName == null && testProjectUrl == null) {
+    
+            JaasResponse jaasResponse = extractJaasResponse(responseEntity);
+            if (jaasResponse == null) {
                 return;
             }
-    
-            JaasResponse jaasResponse = new JaasResponse();
-            jaasResponse.loadScenarioName = loadScenarioName;
-            jaasResponse.testProjectUrl = testProjectUrl;
             
             if (!nextConfigToExecute.offer(jaasResponse, 1, TimeUnit.MINUTES)) {
                 LOGGER.warn("Didn't manage to put next config name into a queue");
             }
+        }
+        
+        private JaasResponse extractJaasResponse(ResponseEntity<String> responseEntity) {
+            String executionId = extractHeader(responseEntity, TestEnvUtils.EXECUTION_ID_HEADER);
+            if (executionId == null) {
+                return null;
+            }
+    
+            JaasResponse jaasResponse = new JaasResponse();
+            jaasResponse.executionId = executionId;
+            
+            return jaasResponse;
         }
     
         private String extractHeader(final ResponseEntity<String> responseEntity, final String headerName) {
@@ -321,15 +311,10 @@ public class MasterToJaasCoordinator implements Closeable {
     }
     
     public static class JaasResponse {
-        private String loadScenarioName;
-        private String testProjectUrl;
+        private String executionId;
     
-        public String getLoadScenarioName() {
-            return loadScenarioName;
-        }
-    
-        public String getTestProjectUrl() {
-            return testProjectUrl;
+        public String getExecutionId() {
+            return executionId;
         }
     }
 }

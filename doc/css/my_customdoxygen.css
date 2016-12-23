@@ -27,7 +27,7 @@ html {text-align:center;}
 .tablist li:last-of-type:hover {background:none;}
 #nav-path {display:none;}
 div.fragment {background: #eee;padding: 12px;font-family: 'Courier';display: block;margin-bottom: 0px;border:0px;}
-div.fragment .line {font-family:monospace,fixed!important;font-size:14px;line-height:22px;color: #436ab3;}
+div.fragment .line {font-family:monospace,fixed!important;font-size:13px;line-height:22px;color: #436ab3;}
 .contents p, .contents li, .contents dt, .contents dd {font-size:18px;line-height:24px;}
 .contents b, .contents li b, .contents strong {font-weight:700;}
 .contents dt {margin-bottom:1em;}

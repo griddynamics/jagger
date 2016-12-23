@@ -26,8 +26,8 @@ import com.griddynamics.jagger.util.TimeUnits;
  * @details With help of this class you can define: @n
  * @li aggregation interval for metric or number of saved points
  * @li normalisation of metric vs time
- *
- */
+ * @n
+ * @ingroup Main_Aggregators_group */
 public class MetricAggregatorSettings {
 
     /** Empty settings that not affect data processing. Used when no additional settings required for aggregation */
