@@ -5,6 +5,7 @@ import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvi
 import com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.JHttpResponseStatusValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.invocation.ExampleInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
@@ -28,14 +29,13 @@ import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.Ma
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static java.util.Collections.singletonList;
-
 @Configuration
 public class ExampleJLoadScenarioProvider {
 
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
 
+        // begin: following section is used for docu generation - example of the invocation listener
         JTestDefinition jTestDefinition = JTestDefinition
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
@@ -45,7 +45,9 @@ public class ExampleJLoadScenarioProvider {
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addValidator(JHttpResponseStatusValidatorProvider.of(200, 201, 204))
                 .addListener(new NotNullInvocationListener())
+                .addListener(new ExampleInvocationListener())
                 .build();
+        // end: following section is used for docu generation - example of the invocation listener
 
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(1000), MaxDurationInSeconds.of(20));
 
@@ -57,7 +59,7 @@ public class ExampleJLoadScenarioProvider {
 
         // For standard metrics use JMetricName.
         // JLimitVsRefValue is used to compare the results with the referenced value.
-        JLimit successrateLimit = JLimitVsRefValue.builder(JMetricName.SUCCESS_RATE_OK, RefValue.of(10D))
+        JLimit successrateLimit = JLimitVsRefValue.builder(JMetricName.PERF_SUCCESS_RATE_OK, RefValue.of(10D))
                                                   // the threshold is relative.
                                                   .withOnlyWarnings(LowWarnThresh.of(0.1), UpWarnThresh.of(1.5))
                                                   .build();
@@ -65,7 +67,7 @@ public class ExampleJLoadScenarioProvider {
         // For standard metrics use JMetricName.
         // JLimitVsBaseline is used to compare the results with the baseline.
         // Use 'chassis.engine.e1.reporting.session.comparison.baseline.session.id' to set baseline.
-        JLimit throughputLimit = JLimitVsBaseline.builder(JMetricName.THROUGHPUT)
+        JLimit throughputLimit = JLimitVsBaseline.builder(JMetricName.PERF_THROUGHPUT)
                                                  // the threshold is relative.
                                                  .withOnlyErrors(LowErrThresh.of(0.99), UpErrThresh.of(1.00001))
                                                  .build();

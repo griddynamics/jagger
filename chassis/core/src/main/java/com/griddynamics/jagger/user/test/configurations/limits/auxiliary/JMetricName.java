@@ -7,14 +7,14 @@ import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
  */
 public enum JMetricName {
 
-    SUCCESS_RATE_OK,
-    SUCCESS_RATE_FAILS,
-    THROUGHPUT,
-    VIRTUAL_USERS,
-    STD_DEV_LATENCY,
-    DURATION,
-    AVG_LATENCY,
-    ITERATION_SAMPLES,
+    PERF_SUCCESS_RATE_OK,
+    PERF_SUCCESS_RATE_FAILS,
+    PERF_THROUGHPUT,
+    PERF_VIRTUAL_USERS,
+    PERF_STD_DEV_LATENCY,
+    PERF_DURATION,
+    PERF_AVG_LATENCY,
+    PERF_ITERATION_SAMPLES,
     MON_CPULA_1,
     MON_CPULA_5,
     MON_CPULA_15,
@@ -64,28 +64,28 @@ public enum JMetricName {
     public String transformToString() {
         String name = null;
         switch (this) {
-            case SUCCESS_RATE_OK:
+            case PERF_SUCCESS_RATE_OK:
                 name = StandardMetricsNamesUtil.SUCCESS_RATE_OK_ID;
                 break;
-            case SUCCESS_RATE_FAILS:
+            case PERF_SUCCESS_RATE_FAILS:
                 name = StandardMetricsNamesUtil.SUCCESS_RATE_FAILED_ID;
                 break;
-            case THROUGHPUT:
+            case PERF_THROUGHPUT:
                 name = StandardMetricsNamesUtil.THROUGHPUT_ID;
                 break;
-            case VIRTUAL_USERS:
+            case PERF_VIRTUAL_USERS:
                 name = StandardMetricsNamesUtil.VIRTUAL_USERS_ID;
                 break;
-            case STD_DEV_LATENCY:
+            case PERF_STD_DEV_LATENCY:
                 name = StandardMetricsNamesUtil.LATENCY_STD_DEV_ID;
                 break;
-            case DURATION:
+            case PERF_DURATION:
                 name = StandardMetricsNamesUtil.DURATION_ID;
                 break;
-            case AVG_LATENCY:
+            case PERF_AVG_LATENCY:
                 name = StandardMetricsNamesUtil.LATENCY_ID;
                 break;
-            case ITERATION_SAMPLES:
+            case PERF_ITERATION_SAMPLES:
                 name = StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
                 break;
             case MON_CPULA_1:

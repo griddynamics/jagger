@@ -763,7 +763,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             entityManager.createQuery("select count(sm) from SessionMetaDataEntity sm").getSingleResult();
             return true;
         } catch (Exception e) {
-            log.warn("Could not access SessionMetaDataTable", e);
+            log.warn("Could not access SessionMetaDataTable");
         }
         return false;
     }

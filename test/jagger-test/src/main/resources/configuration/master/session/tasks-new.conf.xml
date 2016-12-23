@@ -94,9 +94,6 @@
                 <metric-aggregator xsi:type="metric-aggregator-sum"/>
             </metric>
 
-            <!-- begin: following section is used for docu generation - metrics with aggregators -->
-            <!-- Note: to use this example, you shall implement custom metric calculators "constant", "alwaysIncrease" and "sin". -->
-
             <!-- Math functions with aggregators with settings -->
             <!-- Normalize metric value by seconds -->
             <metric id="constant1-sum-normalized-1s" xsi:type="metric-custom" calculator="constant" plotData="true" saveSummary="true">
@@ -112,8 +109,6 @@
             <metric id="sin1-sum-point-interval-2s" xsi:type="metric-custom" calculator="sin" plotData="true" saveSummary="true">
                 <metric-aggregator xsi:type="metric-aggregator-sum" pointInterval="2000"/>
             </metric>
-
-            <!-- end: following section is used for docu generation - metrics with aggregators -->
 
         </info-collectors>
 
@@ -157,12 +152,10 @@
                 <metric-aggregator xsi:type="metric-aggregator-ref" ref="minAggregator"/>
             </metric>
 
-            <!--begin: following section is used for docu generation - custom aggregator usage-->
             <metric id="sin2" xsi:type="metric-custom" calculator="sin" plotData="true" saveSummary="true">
                 <metric-aggregator xsi:type="metric-aggregator-ref" ref="maxAggregator"/>
                 <metric-aggregator xsi:type="metric-aggregator-ref" ref="minAggregator"/>
             </metric>
-            <!--end: following section is used for docu generation - custom aggregator usage-->
 
         </info-collectors>
 
@@ -215,11 +208,9 @@
 
             <!-- end: following section is used for docu generation - metric-success-rate -->
 
-            <!-- begin: following section is used for docu generation - standard aggregator usage -->
             <metric id="CustomSuccessRateSummary" xsi:type="metric-success-rate" saveSummary="true">
                 <metric-aggregator xsi:type="metric-aggregator-avg"/>
             </metric>
-            <!-- end: following section is used for docu generation - standard aggregator usage -->
 
 
 

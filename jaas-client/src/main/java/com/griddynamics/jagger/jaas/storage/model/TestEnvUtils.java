@@ -16,8 +16,7 @@ public final class TestEnvUtils {
     
     public static final String SESSION_COOKIE = PREFIX + "Session";
     public static final String EXPIRES_HEADER = PREFIX + "Expires";
-    public static final String LOAD_SCENARIO_HEADER = PREFIX + "Load-Scenario-To-Execute";
-    public static final String TEST_PROJECT_URL_HEADER = PREFIX + "Test-Project-Url";
+    public static final String EXECUTION_ID_HEADER = PREFIX + "Execution-Id";
 
     private static final DateTimeFormatter EXPIRES_FORMATTER = DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneId.of("GMT"));
     

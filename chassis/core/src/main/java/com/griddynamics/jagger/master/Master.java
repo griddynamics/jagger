@@ -20,11 +20,6 @@
 
 package com.griddynamics.jagger.master;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.agent.model.ManageAgent;
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.Coordinator;
@@ -35,8 +30,8 @@ import com.griddynamics.jagger.dbapi.DatabaseService;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator;
-import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.process.Services;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
 import com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage;
@@ -56,7 +51,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import javax.annotation.PostConstruct;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Service;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,6 +65,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Main thread of Master
@@ -115,7 +117,11 @@ public class Master implements Runnable {
             }
         }
     }, String.format("Shutdown hook for %s", getClass().toString()));
-
+    
+    public SessionIdProvider getSessionIdProvider() {
+        return sessionIdProvider;
+    }
+    
     @Required
     public void setReconnectPeriod(long reconnectPeriod) {
         this.reconnectPeriod = reconnectPeriod;
