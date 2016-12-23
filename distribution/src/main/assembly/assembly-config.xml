@@ -80,14 +80,6 @@
             </includes>
         </dependencySet>
 
-        <dependencySet>
-            <outputDirectory>profiles</outputDirectory>
-            <unpack>true</unpack>
-            <includes>
-                <include>*com.griddynamics.jagger:chassis.configuration:zip:profiles:${version}</include>
-            </includes>
-        </dependencySet>
-
     </dependencySets>
 
     <fileSets>
