@@ -11,9 +11,14 @@ import java.util.Objects;
  */
 public class JLoadProfileRps implements JLoadProfile {
 
+    public static final int DEFAULT_MAX_LOAD_THREADS = -1;
+    public static final int DEFAULT_TICK_INTERVAL = 1000;
+    public static final int DEFAULT_WARM_UP_TIME = -1;
+
     private final long requestsPerSecond;
     private final long maxLoadThreads;
     private final long warmUpTimeInSeconds;
+
     private final int tickInterval;
 
     private JLoadProfileRps(Builder builder) {
@@ -34,11 +39,8 @@ public class JLoadProfileRps implements JLoadProfile {
     public static Builder builder(RequestsPerSecond requestsPerSecond) {
         return new Builder(requestsPerSecond);
     }
-
     public static class Builder {
-        static final int DEFAULT_TICK_INTERVAL = 1000;
-        static final int DEFAULT_MAX_LOAD_THREADS = 4000;
-        static final int DEFAULT_WARM_UP_TIME = -1;
+
         private final long requestsPerSecond;
         private long maxLoadThreads;
         private long warmUpTimeInSeconds;

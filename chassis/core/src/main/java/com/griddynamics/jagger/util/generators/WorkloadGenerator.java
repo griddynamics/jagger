@@ -23,10 +23,10 @@ import static java.util.stream.Collectors.toList;
  */
 class WorkloadGenerator {
 
-    static WorkloadClockConfiguration generateLoad(JLoadProfile jLoadProfile) {
+    static WorkloadClockConfiguration generateLoad(JLoadProfile jLoadProfile, int maxThreads) {
         WorkloadClockConfiguration clockConfiguration = null;
         if (jLoadProfile instanceof JLoadProfileRps) {
-            clockConfiguration = generateRps((JLoadProfileRps) jLoadProfile);
+            clockConfiguration = generateRps((JLoadProfileRps) jLoadProfile, maxThreads);
         } else if (jLoadProfile instanceof JLoadProfileUserGroups) {
             clockConfiguration = generateUserGroup((JLoadProfileUserGroups) jLoadProfile);
         } else if (jLoadProfile instanceof JLoadProfileInvocation) {
@@ -36,11 +36,14 @@ class WorkloadGenerator {
     }
 
 
-    private static WorkloadClockConfiguration generateRps(JLoadProfileRps jLoadProfile) {
+    private static WorkloadClockConfiguration generateRps(JLoadProfileRps jLoadProfile, int maxThreads) {
         QpsClockConfiguration qpsClockConfiguration = new QpsClockConfiguration();
         qpsClockConfiguration.setValue(jLoadProfile.getRequestsPerSecond());
         qpsClockConfiguration.setWarmUpTime(jLoadProfile.getWarmUpTimeInSeconds());
-        qpsClockConfiguration.setMaxThreadNumber((int) jLoadProfile.getMaxLoadThreads());
+        int userDefinedMaxThreads = (int) jLoadProfile.getMaxLoadThreads();
+        int threadsNumber = (JLoadProfileRps.DEFAULT_MAX_LOAD_THREADS == userDefinedMaxThreads) ? maxThreads
+                : userDefinedMaxThreads;
+        qpsClockConfiguration.setMaxThreadNumber(threadsNumber);
         qpsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
         return qpsClockConfiguration;
     }

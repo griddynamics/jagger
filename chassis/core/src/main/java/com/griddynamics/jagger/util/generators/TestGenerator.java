@@ -24,7 +24,9 @@ import static com.griddynamics.jagger.util.generators.WorkloadGenerator.generate
 class TestGenerator {
     static WorkloadTask generateFromTest(JLoadTest jLoadTest,
                                          BaselineSessionProvider baselineSessionProvider,
-                                         LimitSetConfig limitSetConfig, String testGroupName) {
+                                         LimitSetConfig limitSetConfig,
+                                         int maxThreads,
+                                         String testGroupName) {
         WorkloadTask task = generatePrototype(jLoadTest.getTestDescription());
         task.setName(getName(jLoadTest.getId(), testGroupName));
         task.setParentTaskId(testGroupName);
@@ -36,7 +38,7 @@ class TestGenerator {
     
         task.setTerminateStrategyConfiguration(generateTermination(jLoadTest.getTermination()));
     
-        task.setClockConfiguration(generateLoad(jLoadTest.getLoad()));
+        task.setClockConfiguration(generateLoad(jLoadTest.getLoad(), maxThreads));
         
         task.setLimits(LimitGenerator.generate(jLoadTest.getLimits(), baselineSessionProvider, limitSetConfig));
 

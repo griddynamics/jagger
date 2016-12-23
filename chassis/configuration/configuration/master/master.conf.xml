@@ -175,6 +175,7 @@
             </bean>
         </property>
         <property name="limitSetConfig" ref="limitSetConfig"/>
+        <property name="maxThreads" value="${workload.threads.maxcount:4000}"/>
     </bean>
 </beans>
 
