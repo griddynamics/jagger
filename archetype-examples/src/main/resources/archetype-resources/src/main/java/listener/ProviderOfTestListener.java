@@ -31,8 +31,6 @@ public class ProviderOfTestListener extends ServicesAware implements Provider<Te
     // Method will be executed single time, when listener provider is initiated
     @Override
     protected void init() {
-        // begin: following section is used for docu generation - example of metric creation
-
         // In this example, we will create custom metric to collect internal metrics of SUT
         // Approach is the following:
         // - Declare custom metric
@@ -43,8 +41,6 @@ public class ProviderOfTestListener extends ServicesAware implements Provider<Te
         MetricDescription metricDescription = new MetricDescription("internalData");
         metricDescription.plotData(false).showSummary(true).addAggregator(new AvgMetricAggregatorProvider());
         getMetricService().createMetric(metricDescription);
-
-        // end: following section is used for docu generation - example of metric creation
     }
 
     // Method will provide custom test listener to Jagger

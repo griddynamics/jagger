@@ -95,28 +95,21 @@ public class TestEnvironmentRestController extends AbstractController {
     public ResponseEntity<?> updateTestEnvironment(@CookieValue(TestEnvUtils.SESSION_COOKIE) String sessionId,
                                                    @PathVariable String envId,
                                                    @RequestBody TestEnvironmentEntity testEnv,
-                                                   HttpServletResponse response) {
+                                                   final HttpServletResponse response) {
         if (!testEnvService.exists(envId))
             throw ResourceNotFoundException.getTestEnvResourceNfe();
-
         if (!testEnvService.existsWithSessionId(envId, sessionId))
             throw new TestEnvironmentSessionNotFoundException(envId, sessionId);
+        
         validateTestEnv(testEnv);
-        TestEnvironmentEntity oldEnv = testEnvService.read(envId);
 
         testEnv.setEnvironmentId(envId);
         testEnv.setSessionId(sessionId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         if (updated.getStatus() == PENDING) {
-            getTestExecutionToExecute(updated).ifPresent(execution -> {
-                setNextConfigToExecuteHeader(response, execution.getLoadScenarioId());
-                setTestProjectURLHeader(response, execution.getTestProjectURL());
-            });
-            if (oldEnv.getStatus() == RUNNING)
-                testExecutionService.finishExecution(envId, oldEnv.getRunningLoadScenario().getLoadScenarioId());
-        }
-        if (oldEnv.getStatus() == PENDING && updated.getStatus() == RUNNING) {
-            testExecutionService.startExecution(envId, testEnv.getRunningLoadScenario().getLoadScenarioId());
+            getTestExecutionToExecute(updated).ifPresent(
+                    execution -> response.addHeader(TestEnvUtils.EXECUTION_ID_HEADER, execution.getId().toString())
+            );
         }
         response.addCookie(getSessionCookie(updated));
         return ResponseEntity.accepted().build();
@@ -161,15 +154,7 @@ public class TestEnvironmentRestController extends AbstractController {
     private void setExpiresHeader(HttpServletResponse response, TestEnvironmentEntity testEnv) {
         response.addHeader(TestEnvUtils.EXPIRES_HEADER, getFormattedExpirationDate(testEnv));
     }
-
-    private void setNextConfigToExecuteHeader(HttpServletResponse response, String loadScenarioName) {
-        response.addHeader(TestEnvUtils.LOAD_SCENARIO_HEADER, loadScenarioName);
-    }
-
-    private void setTestProjectURLHeader(HttpServletResponse response, String testProjectURL) {
-        response.addHeader(TestEnvUtils.TEST_PROJECT_URL_HEADER, testProjectURL);
-    }
-
+    
     private Cookie getSessionCookie(TestEnvironmentEntity testEnv) {
         Cookie cookie = new Cookie(TestEnvUtils.SESSION_COOKIE, testEnv.getSessionId());
         cookie.setMaxAge(environmentsTtlMinutes * 60);

@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.FINISHED;
+import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.COMPLETED;
 import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.PENDING;
 import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.RUNNING;
 import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.TIMEOUT;
@@ -154,8 +154,8 @@ public class TestExecutionDaoTest {
         TestExecutionEntity expected = getTestExecutionEntity();
         testExecutionDao.create(expected);
 
-        expected.addAuditEntity(new TestExecutionAuditEntity(expected, System.currentTimeMillis(), PENDING, FINISHED));
-        expected.addAuditEntity(new TestExecutionAuditEntity(expected, System.currentTimeMillis(), FINISHED, TIMEOUT));
+        expected.addAuditEntity(new TestExecutionAuditEntity(expected, System.currentTimeMillis(), PENDING, COMPLETED));
+        expected.addAuditEntity(new TestExecutionAuditEntity(expected, System.currentTimeMillis(), COMPLETED, TIMEOUT));
         testExecutionDao.update(expected);
 
         TestExecutionEntity actual = testExecutionDao.read(1L);

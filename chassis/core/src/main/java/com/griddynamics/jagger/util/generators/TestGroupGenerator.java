@@ -1,7 +1,5 @@
 package com.griddynamics.jagger.util.generators;
 
-import static com.griddynamics.jagger.util.generators.TestGenerator.generateFromTest;
-
 import com.griddynamics.jagger.engine.e1.collector.limits.LimitSetConfig;
 import com.griddynamics.jagger.engine.e1.scenario.InfiniteTerminationStrategyConfiguration;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
@@ -14,6 +12,8 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 
 import java.util.ArrayList;
+
+import static com.griddynamics.jagger.util.generators.TestGenerator.generateFromTest;
 
 /**
  * @author asokol
@@ -34,9 +34,9 @@ class TestGroupGenerator {
         compositeTask.setName(jParallelTestsGroup.getId() + "-group");
         compositeTask.setListeners(jParallelTestsGroup.getListeners());
         compositeTask.setDecisionMakerListeners(jParallelTestsGroup.getDecisionMakerListeners());
-        
+
         for (JLoadTest test : jParallelTestsGroup.getTests()) {
-            WorkloadTask task = generateFromTest(test, baselineSessionProvider, limitSetConfig);
+            WorkloadTask task = generateFromTest(test, baselineSessionProvider, limitSetConfig, jParallelTestsGroup.getId());
             task.setNumber(compositeTask.getNumber());
             if (task.getTerminateStrategyConfiguration() instanceof InfiniteTerminationStrategyConfiguration) {
                 compositeTask.getAttendant().add(task);

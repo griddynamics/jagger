@@ -7,6 +7,6 @@ import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
  * @n
  * Created by Andrey Badaev
  * Date: 14/12/16
- */
+ * @ingroup Main_Validators_group */
 public interface ResponseValidatorProvider extends KernelSideObjectProvider<ResponseValidator<?, ?, ?>> {
 }
