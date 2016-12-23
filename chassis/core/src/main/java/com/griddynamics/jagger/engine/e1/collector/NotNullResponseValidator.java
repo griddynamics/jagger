@@ -24,8 +24,8 @@ import com.griddynamics.jagger.coordinator.NodeContext;
 
 /** Validates that invocation result is not null.@n
  * @author Dmitry Kotlyarov
- * @n
- * @ingroup Main_Collectors_group */
+ *
+ * @ingroup Main_Validators_group */
 public class NotNullResponseValidator extends ResponseValidator<Object, Object, Object> {
 
     public NotNullResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {

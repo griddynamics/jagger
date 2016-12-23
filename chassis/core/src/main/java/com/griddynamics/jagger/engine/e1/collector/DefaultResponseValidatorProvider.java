@@ -11,7 +11,8 @@ import java.lang.reflect.InvocationTargetException;
  * @n
  * Created by Andrey Badaev
  * Date: 13/12/16
- */
+ *
+ * @ingroup Main_Validators_group */
 public class DefaultResponseValidatorProvider implements ResponseValidatorProvider {
     
     private final Class<? extends ResponseValidator<?, ?, ?>> clazz;

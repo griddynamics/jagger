@@ -8,6 +8,8 @@ import com.griddynamics.jagger.dbapi.dto.TagDto;
 import com.griddynamics.jagger.dbapi.entity.SessionData;
 import com.griddynamics.jagger.dbapi.entity.TagEntity;
 import com.griddynamics.jagger.dbapi.util.HTMLFormatter;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -84,8 +87,19 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         dataSaverService.saveUserComment(sessionDataId, userComment);
     }
 
-    public Long getTotalSize() throws RuntimeException {
-        return (Long) entityManager.createQuery("select count(sessionData.id) from SessionData as sessionData").getSingleResult();
+    public Long getTotalSize() {
+        Long result;
+        try {
+            result = (Long) entityManager.createQuery("select count(sessionData.id) from SessionData as sessionData").getSingleResult();
+        } catch (PersistenceException ex) {
+            Throwable rootCause = ExceptionUtils.getRootCause(ex);
+            if (rootCause != null && StringUtils.contains(rootCause.getMessage(), "doesn't exist")) {
+                result = 0L;
+            } else {
+                throw ex;
+            }
+        }
+        return result;
     }
 
     public Long getTotalSizeByDate(Date from, Date to) {
@@ -142,8 +156,15 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         List<SessionDataDto> sessionDataDtoList;
         try {
             sessionDataDtoList = getAllWithMetaData(start, length);
+        } catch (PersistenceException ex) {
+            Throwable rootCause = ExceptionUtils.getRootCause(ex);
+            if (rootCause != null && StringUtils.contains(rootCause.getMessage(), "doesn't exist")) {
+                return Collections.emptyList();
+            } else {
+                throw ex;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception occurred fetching session data.", e);
             throw new RuntimeException(e);
         }
 

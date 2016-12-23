@@ -2,9 +2,10 @@ package com.griddynamics.jagger.engine.e1.collector;
 
 import com.griddynamics.jagger.util.statistics.StatisticsCalculator;
 
-/**
- *  Calculates percentile value on interval. Percentile must be passed in constructor.
- */
+/** Calculates percentile value on the interval. Percentile must be passed in constructor
+ * @author Anton Antonenko
+ *
+ * @ingroup Main_Aggregators_group */
 public class PercentileAggregatorProvider implements MetricAggregatorProvider {
     private Double percentile = 95D;
 

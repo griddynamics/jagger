@@ -51,8 +51,7 @@ import java.io.File;
  * @n
  * @image html jagger_success_rate_avg_agg.png "Success rate data with aggregator: average on interval"
  * @n
- *
- * @ingroup Main_Collectors_group */
+ */
 public class SuccessRateCollector<Q, R, E> extends MetricCollector<Q, R, E> {
     private final String name;
     private long startTime = 0;

@@ -14,8 +14,6 @@ public interface TestExecutionService {
     TestExecutionEntity create(TestExecutionEntity testExecution);
 
     void delete(Long testExecutionId);
-
-    void finishExecution(String environmentId, String loadScenarioId);
-
-    void startExecution(String environmentId, String loadScenarioId);
+    
+    void update(TestExecutionEntity testExecution);
 }
