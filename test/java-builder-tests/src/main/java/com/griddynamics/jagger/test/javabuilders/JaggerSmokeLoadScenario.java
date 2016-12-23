@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 
 @Configuration
-public class JaggerSmokeTestSuite extends JaggerPropertiesProvider {
+public class JaggerSmokeLoadScenario extends JaggerPropertiesProvider {
 
     private TestDefinitionVariations definitions;
     private TestLoadVariations loads;
