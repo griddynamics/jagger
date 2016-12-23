@@ -185,7 +185,7 @@ public class JaggerSmokeLoadScenario extends JaggerPropertiesProvider {
     }
 
     private JLimit allSuccess(){
-        return JLimitVsRefValue.builder(JMetricName.SUCCESS_RATE_OK, RefValue.of(1.0)).build();
+        return JLimitVsRefValue.builder(JMetricName.PERF_SUCCESS_RATE_OK, RefValue.of(1.0)).build();
     }
 
 }
