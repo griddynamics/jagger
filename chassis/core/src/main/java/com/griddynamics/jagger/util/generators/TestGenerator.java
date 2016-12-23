@@ -24,7 +24,8 @@ import java.util.List;
 class TestGenerator {
     static WorkloadTask generateFromTest(JLoadTest jLoadTest,
                                          BaselineSessionProvider baselineSessionProvider,
-                                         LimitSetConfig limitSetConfig) {
+                                         LimitSetConfig limitSetConfig,
+                                         int maxThreads) {
         WorkloadTask task = generatePrototype(jLoadTest.getTestDescription());
         task.setName(jLoadTest.getId());
         task.setVersion("0");
@@ -35,7 +36,7 @@ class TestGenerator {
     
         task.setTerminateStrategyConfiguration(generateTermination(jLoadTest.getTermination()));
     
-        task.setClockConfiguration(generateLoad(jLoadTest.getLoad()));
+        task.setClockConfiguration(generateLoad(jLoadTest.getLoad(), maxThreads));
         
         task.setLimits(LimitGenerator.generate(jLoadTest.getLimits(), baselineSessionProvider, limitSetConfig));
 
