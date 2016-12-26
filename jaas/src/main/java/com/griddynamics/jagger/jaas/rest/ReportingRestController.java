@@ -1,7 +1,5 @@
 package com.griddynamics.jagger.jaas.rest;
 
-import static com.griddynamics.jagger.jaas.service.DynamicDataService.DEFAULT_DB_CONFIG_ID;
-
 import com.griddynamics.jagger.jaas.service.DynamicReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
 import java.io.IOException;
+
+import static com.griddynamics.jagger.jaas.service.DynamicDataService.DEFAULT_DB_CONFIG_ID;
 
 /**
  * JaaS REST API controller based on Spring MVC which generates Jagger test execution reports
@@ -33,9 +33,9 @@ public class ReportingRestController {
         this.dynamicReportingRestController = new DynamicReportingRestController(dynamicReportingService);
     }
     
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public WebAsyncTask<ResponseEntity<Resource>> getReport(
-            @RequestParam(name = "sessionId", required = true) String sessionId,
+            @RequestParam(name = "sessionId") String sessionId,
             @RequestParam(name = "baseLineSessionId", required = false) String baseLineSessionId
     ) throws IOException {
         return dynamicReportingRestController.getReport(DEFAULT_DB_CONFIG_ID, sessionId, baseLineSessionId);
