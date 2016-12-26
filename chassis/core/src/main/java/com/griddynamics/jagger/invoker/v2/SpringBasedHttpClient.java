@@ -4,18 +4,28 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.UnknownHttpStatusCodeException;
 import org.springframework.web.util.UriTemplateHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +51,7 @@ import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBa
  */
 @SuppressWarnings({"unused", "unchecked"})
 public class SpringBasedHttpClient implements JHttpClient {
-
+    private static final Logger log = LoggerFactory.getLogger(SpringBasedHttpClient.class);
     private static final int DEFAULT_MAX_CONN_TOTAL = Integer.MAX_VALUE;
     private static final int DEFAULT_MAX_CONN_PER_ROUTE = Integer.MAX_VALUE;
     private static final int DEFAULT_CONNECT_TIMEOUT_IN_MS = 60000;
@@ -96,6 +106,7 @@ public class SpringBasedHttpClient implements JHttpClient {
         clientParams = new HashMap<>();
         restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(getRequestFactory());
+        restTemplate.setErrorHandler(new AllowAllCodesResponseErrorHandler());
     }
 
     public SpringBasedHttpClient(Map<String, Object> clientParams) {
@@ -216,5 +227,40 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     public Map<String, Object> getClientParams() {
         return newHashMap(clientParams);
+    }
+
+    public static class AllowAllCodesResponseErrorHandler implements ResponseErrorHandler {
+        @Override
+        public boolean hasError(ClientHttpResponse response) throws IOException {
+            return false;
+        }
+
+        @Override
+        public void handleError(ClientHttpResponse response) throws IOException {
+            try {
+                response.getStatusCode();
+            } catch (IllegalArgumentException ex) {
+                throw new UnknownHttpStatusCodeException(response.getRawStatusCode(),
+                        response.getStatusText(), response.getHeaders(), getResponseBody(response), getCharset(response));
+            }
+        }
+
+        private byte[] getResponseBody(ClientHttpResponse response) {
+            try {
+                InputStream responseBody = response.getBody();
+                if (responseBody != null) {
+                    return FileCopyUtils.copyToByteArray(responseBody);
+                }
+            } catch (IOException ex) {
+                // ignore
+            }
+            return new byte[0];
+        }
+
+        private Charset getCharset(ClientHttpResponse response) {
+            HttpHeaders headers = response.getHeaders();
+            MediaType contentType = headers.getContentType();
+            return contentType != null ? contentType.getCharset() : null;
+        }
     }
 }
