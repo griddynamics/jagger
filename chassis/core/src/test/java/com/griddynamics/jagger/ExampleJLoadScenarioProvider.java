@@ -62,7 +62,7 @@ public class ExampleJLoadScenarioProvider {
         // For standard metrics use JMetricName.
         // JLimitVsRefValue is used to compare the results with the referenced value.
         // Thresholds are relative values. In the example below, accepted range for the Success rate metric is:
-        // 0.99 * 1.0 < Accepted values < 1.0 * 1.01
+        // 0.99 * 1.0 <= Accepted values <= 1.0 * 1.01
         JLimit successRateLimit = JLimitVsRefValue.builder(JMetricName.PERF_SUCCESS_RATE_OK, RefValue.of(1D))
                                                   .withOnlyWarnings(LowWarnThresh.of(0.99), UpWarnThresh.of(1.01))
                                                   .build();
@@ -71,7 +71,7 @@ public class ExampleJLoadScenarioProvider {
         // JLimitVsBaseline is used to compare the results with the baseline.
         // Use 'chassis.engine.e1.reporting.session.comparison.baseline.session.id' to set baseline.
         // Thresholds are relative values. In the example below, accepted range for the Throughput metric is:
-        // 0.99 * Reference value from the baseline session < Accepted values < Ref value * 1.00001
+        // 0.99 * Reference value from the baseline session <= Accepted values <= Ref value * 1.00001
         JLimit throughputLimit = JLimitVsBaseline.builder(JMetricName.PERF_THROUGHPUT)
                                                  .withOnlyErrors(LowErrThresh.of(0.99), UpErrThresh.of(1.00001))
                                                  .build();
