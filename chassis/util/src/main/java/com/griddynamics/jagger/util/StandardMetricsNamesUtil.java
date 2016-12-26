@@ -50,7 +50,6 @@ public class StandardMetricsNamesUtil {
     public static final String SUCCESS_RATE_AGGREGATOR_OK_ID = "Success rate";
     public static final String SUCCESS_RATE_AGGREGATOR_FAILED_ID = "Number of fails";
 
-    //begin: following section is used for docu generation - standard metrics ids
     public static final String THROUGHPUT_ID = "throughput";
     public static final String LATENCY_ID = "avgLatency";
     public static final String LATENCY_STD_DEV_ID = "stdDevLatency";
@@ -61,8 +60,6 @@ public class StandardMetricsNamesUtil {
     public static final String ITERATION_SAMPLES_ID = "samples";
 
     public static final String VIRTUAL_USERS_ID = "Jagger.Threads";
-
-    //end: following section is used for docu generation - standard metrics ids
 
     // ids for standard metrics saved with old model (in WorkloadTaskData, TimeLatencyPercentile, etc)
     public static final String THROUGHPUT_OLD_ID = "throughput-old";
