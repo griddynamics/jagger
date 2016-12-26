@@ -20,12 +20,19 @@
 
 package com.griddynamics.jagger.coordinator.zookeeper.tester;
 
-import com.google.common.collect.Sets;
-import com.griddynamics.jagger.coordinator.*;
+import com.griddynamics.jagger.coordinator.Coordination;
+import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.NodeStatus;
+import com.griddynamics.jagger.coordinator.StatusChangeListener;
+import com.griddynamics.jagger.coordinator.Worker;
 import com.griddynamics.jagger.coordinator.zookeeper.ZNode;
 import com.griddynamics.jagger.coordinator.zookeeper.Zoo;
 import com.griddynamics.jagger.coordinator.zookeeper.ZooKeeperFactory;
 import com.griddynamics.jagger.coordinator.zookeeper.ZookeeperCoordinator;
+import com.griddynamics.jagger.util.UrlClassLoaderHolder;
+
+import com.google.common.collect.Sets;
 
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -39,7 +46,7 @@ public class CoordinatorConsumer {
         Zoo zoo = new Zoo(zooKeeperFactory.create());
         ZNode root = zoo.root().child(args[0]);
 
-        Coordinator coordinator = new ZookeeperCoordinator(root, Executors.newSingleThreadExecutor());
+        Coordinator coordinator = new ZookeeperCoordinator(root, Executors.newSingleThreadExecutor(), new UrlClassLoaderHolder());
 
         Set<Worker> workers = Sets.newLinkedHashSet();
         workers.add(new PrintValWorker());

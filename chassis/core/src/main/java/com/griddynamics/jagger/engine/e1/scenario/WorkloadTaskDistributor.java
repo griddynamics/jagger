@@ -121,7 +121,8 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
                     }
 
                     startTime = System.currentTimeMillis() ;
-                    controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration, startTime);
+                    controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration, startTime,
+                                                               classesUrl);
 
                     WorkloadClock clock = task.getClock();
                     TerminationStrategy terminationStrategy = task.getTerminationStrategy();

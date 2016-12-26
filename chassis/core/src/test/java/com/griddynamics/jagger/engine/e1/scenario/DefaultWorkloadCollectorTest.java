@@ -44,7 +44,8 @@ public class DefaultWorkloadCollectorTest {
         task = new WorkloadTask();
         remotes = Maps.newHashMap();
         startTime = System.currentTimeMillis();
-        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, TimeoutsConfiguration.getDefaultTimeouts(), startTime);
+        controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, TimeoutsConfiguration.getDefaultTimeouts(), startTime,
+                                                   classesUrl);
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
