@@ -136,16 +136,7 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         double succeeded = (double) (invoked - failed);
         log.debug("Latency: avg {} stdev {}", avgLatency, stdDevLatency);
 
-        double throughput = Math.rint(succeeded / duration * 100) / 100;
-        if (Double.isNaN(throughput)) {
-            log.error("throughput is NaN (succeeded={},duration={}). Value for throughput will be set zero", succeeded, duration);
-            throughput = 0;
-        }
-        log.debug("Throughput: {}", throughput);
-
-        double successRate = (invoked.doubleValue() > 0)
-                ? Math.rint(succeeded / invoked.doubleValue() * 10000) / 10000
-                : 1;
+        double successRate = (invoked.doubleValue() > 0) ? Math.rint(succeeded / invoked.doubleValue() * 10000) / 10000 : 1;
         if (Double.isNaN(successRate)) {
             log.error("successRate is NaN (succeeded={},invoked={}). Value for successRate will be set zero", succeeded, invoked);
             successRate = 0;
