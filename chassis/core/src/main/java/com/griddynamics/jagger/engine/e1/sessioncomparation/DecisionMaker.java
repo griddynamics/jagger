@@ -25,7 +25,7 @@ import com.griddynamics.jagger.util.Decision;
 /** Make a decision(OK, WARNING, FATAL, ERROR) by current test
  * @author Dmitry Kotlyarov
  * @n
- * @deprecated It is recommended to compare metrics and take decision with use of limits: @ref DecisionMakerBasedOnLimits @n
+ * @deprecated It is recommended to compare metrics and take decision with use of limits: @ref MainDecisionMaker @n
  * @n
  * @par Details:
  * @details Make a decision based on comparison between current test and test from baseline session

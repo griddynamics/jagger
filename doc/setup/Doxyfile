@@ -719,6 +719,7 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./doc/pages/ListenersMain.dox \
                          ./doc/pages/MainPage.dox \
                          ./doc/pages/MetricsAggregation.dox \
+                         ./doc/pages/MainDecisionMaker.dox \
                          ./doc/pages/MetricsMain.dox \
                          ./doc/pages/MetricsCustom.dox \
                          ./doc/pages/MetricsPerformance.dox \
@@ -808,10 +809,6 @@ EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
                          ./chassis/configuration/configuration/basic/default.environment.properties \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties \
                          ./license.txt
-
-#                          ./test/jagger-test/src/main/java/metric/aggregator/MaxMetricAggregatorProvider.java \
-#                         ./test/jagger-test/src/main/resources/configuration/master/metric/calculatorsAndAggregators.conf.xml \
-
 
 #./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \
 #                         ./archetype-examples/src/main/resources/archetype-resources/src/main/resources/ \

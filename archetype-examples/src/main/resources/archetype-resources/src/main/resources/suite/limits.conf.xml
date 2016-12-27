@@ -34,7 +34,6 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd"
         >
 
-    <!-- begin: following section is used for docu generation - description of limits for metrics -->
     <limits id="myLimits">
         <!-- S T A N D A R D    M E T R I C S -->
         <!-- Compare throughput to value from baseline session -->
@@ -64,6 +63,5 @@
         <limit xsi:type="limit-vs-value"    metricName="exampleSuccessRate-aggSR"    refValue="1.0"  LET="0.9999" LWT="0.99999" UWT="1.00001" UET="1.0001"/>
         <limit xsi:type="limit-vs-value"    metricName="exampleSuccessRate-aggFails" refValue="0.1"  LET="-1.0"   LWT="-0.9"    UWT="0.9"      UET="1.0"/>
     </limits>
-    <!-- end: following section is used for docu generation - description of limits for metrics -->
 
 </beans:beans>

@@ -51,8 +51,6 @@
 
         <test-suite id="ts_jaggerTestSuit">
 
-            <!-- begin: following section is used for docu generation - attaching limits to test -->
-
             <test-group id="tg_groovyInvokerGroup">
                 <test id="t_invokerTest" testDescription="td_groovyGooglePageTest">
                     <load xsi:type="load-threads" count="1"/>
@@ -62,8 +60,6 @@
                     <limits xsi:type="limits-ref" ref="myLimits"/>
                 </test>
             </test-group>
-
-            <!-- end: following section is used for docu generation - attaching limits to test -->
 
            <test-group id="tg_groovyScenarioGroup">
                <test id="t_groovyTest" testDescription="td_groovyScenarioExample">
@@ -108,7 +104,6 @@
                </test>
                <!-- end: following section is used for docu generation - test listener usage -->
 
-                <!-- begin: following section is used for docu generation - description of limits for metrics directly in test -->
                <test id="t_googlePage" testDescription="td_googlePageTest">
                    <load xsi:type="load-threads" count="1"/>
                    <termination xsi:type="termination-background" />
@@ -119,7 +114,6 @@
                        <limit xsi:type="limit-vs-value"    metricName="exampleSuccessRate-aggFails" refValue="0.1"  LET="-1.0" LWT="-0.9"  UWT="0.9"   UET="1.0"/>
                    </limits>
                </test>
-                <!-- end: following section is used for docu generation - description of limits for metrics directly in test -->
             </test-group>
 
             <!-- Custom test suite listener will be executed on test suite start and stop -->

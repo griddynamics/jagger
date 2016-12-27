@@ -57,26 +57,32 @@ public class ExampleJLoadScenarioProvider {
                 .withWarmUpTimeInSeconds(10)
                 .build();
 
+        // begin: following section is used for docu generation - example of the limits
+
         // For standard metrics use JMetricName.
         // JLimitVsRefValue is used to compare the results with the referenced value.
-        JLimit successrateLimit = JLimitVsRefValue.builder(JMetricName.PERF_SUCCESS_RATE_OK, RefValue.of(10D))
-                                                  // the threshold is relative.
-                                                  .withOnlyWarnings(LowWarnThresh.of(0.1), UpWarnThresh.of(1.5))
+        // Thresholds are relative values. In the example below, accepted range for the Success rate metric is:
+        // 0.99 * 1.0 <= Accepted values <= 1.0 * 1.01
+        JLimit successRateLimit = JLimitVsRefValue.builder(JMetricName.PERF_SUCCESS_RATE_OK, RefValue.of(1D))
+                                                  .withOnlyWarnings(LowWarnThresh.of(0.99), UpWarnThresh.of(1.01))
                                                   .build();
 
         // For standard metrics use JMetricName.
         // JLimitVsBaseline is used to compare the results with the baseline.
         // Use 'chassis.engine.e1.reporting.session.comparison.baseline.session.id' to set baseline.
+        // Thresholds are relative values. In the example below, accepted range for the Throughput metric is:
+        // 0.99 * Reference value from the baseline session <= Accepted values <= Ref value * 1.00001
         JLimit throughputLimit = JLimitVsBaseline.builder(JMetricName.PERF_THROUGHPUT)
-                                                 // the threshold is relative.
                                                  .withOnlyErrors(LowErrThresh.of(0.99), UpErrThresh.of(1.00001))
                                                  .build();
 
         JLoadTest jLoadTest = JLoadTest
                 .builder(Id.of("exampleJaggerLoadTest"), jTestDefinition, jLoadProfileRps, jTerminationCriteria)
                 .addListener(new CollectThreadsTestListener())
-                .withLimits(successrateLimit, throughputLimit)
+                .withLimits(successRateLimit, throughputLimit)
                 .build();
+
+        // end: following section is used for docu generation - example of the limits
 
         // begin: following section is used for docu generation - example of the test group listener
 
