@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.jaas.rest;
 
 import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
@@ -146,8 +145,7 @@ public class TestEnvironmentRestController extends AbstractController {
         if (!matcher.matches())
             throw new TestEnvironmentInvalidIdException(envId, envIdPattern);
 
-        if (testEnv.getRunningLoadScenario() == null && testEnv.getStatus() == RUNNING
-                || testEnv.getRunningLoadScenario() != null && testEnv.getStatus() == PENDING)
+        if (testEnv.getRunningLoadScenario() != null && testEnv.getStatus() == PENDING)
             throw new WrongTestEnvironmentStatusException(testEnv.getStatus(), testEnv.getRunningLoadScenario());
     }
 

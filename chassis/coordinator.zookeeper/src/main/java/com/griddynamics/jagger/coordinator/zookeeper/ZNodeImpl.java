@@ -20,18 +20,19 @@
 
 package com.griddynamics.jagger.coordinator.zookeeper;
 
-import com.google.common.collect.Lists;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.griddynamics.jagger.util.SerializationUtils.deserialize;
+import static com.griddynamics.jagger.util.SerializationUtils.serialize;
+
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.griddynamics.jagger.util.SerializationUtils.deserialize;
-import static com.griddynamics.jagger.util.SerializationUtils.serialize;
 
 /**
  * Default implementation of {@link ZNode}
@@ -59,15 +60,25 @@ public class ZNodeImpl implements ZNode {
 
     @Override
     public <T> T getObject(Class<T> clazz) {
-        Object object = deserialize(getData());
+        return getObject(clazz, null);
+    }
+    
+    @Override
+    public <T> T getObject(final Class<T> clazz, ClassLoader classLoader) {
+        
+        if (classLoader == null) {
+            classLoader = this.getClass().getClassLoader();
+        }
+        
+        Object object = deserialize(getData(), classLoader);
         if (!clazz.isInstance(object)) {
             logger.warn("getObject returns {} instead of {}", object != null ? object.getClass().getName() : "NULL", clazz.getName());
             throw new IllegalStateException(object + " is not a type of  " + clazz);
         }
-
+    
         return clazz.cast(object);
     }
-
+    
     @Override
     public String getString() {
         return new String(getData());

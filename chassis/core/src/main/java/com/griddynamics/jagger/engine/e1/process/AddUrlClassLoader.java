@@ -3,6 +3,8 @@ package com.griddynamics.jagger.engine.e1.process;
 import com.griddynamics.jagger.coordinator.Command;
 
 /**
+ * A command to add and use a custom url class loader for a provided classes url.
+ * @n
  * Created by Andrey Badaev
  * Date: 26/12/16
  */

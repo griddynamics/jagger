@@ -41,7 +41,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 public class DefaultWorkloadController implements WorkloadController {
@@ -58,24 +57,24 @@ public class DefaultWorkloadController implements WorkloadController {
     private Map<NodeId, Integer> delays;
     private Map<NodeId, Integer> poolSize;
     
-    private final String classesUrl;
-
+    private String classesUrl;
+    
+    public void setClassesUrl(String classesUrl) {
+        this.classesUrl = classesUrl;
+    }
+    
     public DefaultWorkloadController(final String sessionId,
                                      final String taskId,
                                      final WorkloadTask task,
                                      final Map<NodeId, RemoteExecutor> remotes,
                                      final TimeoutsConfiguration timeoutsConfiguration,
-                                     final Long startTime,
-                                     final String classesUrl) {
+                                     final Long startTime) {
         this.sessionId = Preconditions.checkNotNull(sessionId);
         this.taskId = Preconditions.checkNotNull(taskId);
         this.task = Preconditions.checkNotNull(task);
         this.remotes = ImmutableMap.copyOf(remotes);
         this.timeoutsConfiguration = timeoutsConfiguration;
         this.startTime = startTime;
-        
-        Objects.requireNonNull(classesUrl);
-        this.classesUrl = classesUrl;
         
         progress = Progress.IDLE;
         processes = Maps.newHashMap();
@@ -136,13 +135,15 @@ public class DefaultWorkloadController implements WorkloadController {
             threads.put(nodeId, 0);
             delays.put(nodeId, 0);
             
-            RemoteExecutor executor = remotes.get(nodeId);
-            AddUrlClassLoader addUrlClassLoaderCommand = AddUrlClassLoader.create(sessionId, classesUrl);
-            log.info("Sending command to add a class loader with classes url {} to node {}", classesUrl, nodeId);
-            executor.runSyncWithTimeout(addUrlClassLoaderCommand,
-                                        Coordination.<Command>doNothing(),
-                                        timeoutsConfiguration.getWorkloadStopTimeout());
-            log.info("Class loader with classes url {} has been added to node {}", classesUrl, nodeId);
+            if (classesUrl != null) {
+                RemoteExecutor executor = remotes.get(nodeId);
+                AddUrlClassLoader addUrlClassLoaderCommand = AddUrlClassLoader.create(sessionId, classesUrl);
+                log.info("Sending command to add a class loader with classes url {} to node {}", classesUrl, nodeId);
+                executor.runSyncWithTimeout(addUrlClassLoaderCommand,
+                                            Coordination.<Command>doNothing(),
+                                            timeoutsConfiguration.getWorkloadStopTimeout());
+                log.info("Class loader with classes url {} has been added to node {}", classesUrl, nodeId);
+            }
         }
 
         this.poolSize = poolSize;
@@ -185,12 +186,14 @@ public class DefaultWorkloadController implements WorkloadController {
             log.debug("Process {} is stopped on node {}", processId, id);
     
     
-            RemoveUrlClassLoader removeUrlClassLoaderCommand = RemoveUrlClassLoader.create(sessionId);
-            log.info("Sending command to remove a custom class loader to node {}", id);
-            executor.runSyncWithTimeout(removeUrlClassLoaderCommand,
-                                        Coordination.<Command>doNothing(),
-                                        timeoutsConfiguration.getWorkloadStopTimeout());
-            log.info("A custom class loader has been removed from node {}", id);
+            if (classesUrl != null) {
+                RemoveUrlClassLoader removeUrlClassLoaderCommand = RemoveUrlClassLoader.create(sessionId);
+                log.info("Sending command to remove a custom class loader to node {}", id);
+                executor.runSyncWithTimeout(removeUrlClassLoaderCommand,
+                                            Coordination.<Command>doNothing(),
+                                            timeoutsConfiguration.getWorkloadStopTimeout());
+                log.info("A custom class loader has been removed from node {}", id);
+            }
         }
 
         log.debug("Workload stopped");

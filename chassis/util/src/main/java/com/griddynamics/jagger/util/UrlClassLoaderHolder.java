@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 
 /**
+ * Holds and handles a custom url class loader based on provided classes url.
+ * @n
  * Created by Andrey Badaev
  * Date: 26/12/16
  */
@@ -22,9 +25,9 @@ public class UrlClassLoaderHolder {
         return urlClassLoader;
     }
     
-    public boolean createFor(String classesUrl) {
+    public boolean createFor(final String classesUrl) {
         try {
-            log.info("Creating a classloader for classes url {}", classesUrl);
+            log.info("Creating a classloader for classes url {} ...", classesUrl);
             final URL customClasses = new URL(classesUrl);
             this.urlClassLoader = new URLClassLoader(new URL[]{customClasses});
             log.info("Classloader for classes url {} successfully created", classesUrl);
@@ -37,19 +40,22 @@ public class UrlClassLoaderHolder {
     }
     
     public boolean clear() {
-        log.info("Closing a classloader...");
+        log.info("Closing a classloader with custom url {} ...", Arrays.toString(urlClassLoader.getURLs()));
         if (urlClassLoader != null) {
             try {
                 urlClassLoader.close();
             } catch (IOException e) {
-                log.error("Error during closing a classloader.", e);
+                log.error("Error during closing a classloader with custom url {}.",
+                          Arrays.toString(urlClassLoader.getURLs()),
+                          e);
                 return false;
             } finally {
                 urlClassLoader = null;
             }
         }
     
-        log.info("Classloader successfully closed.");
+        log.info("Classloader with custom url {} has been successfully closed.",
+                 Arrays.toString(urlClassLoader.getURLs()));
         return true;
     }
 }

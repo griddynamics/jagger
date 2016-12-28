@@ -138,16 +138,20 @@ public class SerializationUtils {
     }
 
     public static Object deserialize(byte[] data) {
+        return deserialize(data, SerializationUtils.class.getClassLoader());
+    }
+    
+    public static Object deserialize(byte[] data, ClassLoader classLoader) {
         ObjectInputStream ois = null;
         try {
             try{
                 //TODO fixes for support old reports
-                ois= new JBossObjectInputStream(new ByteArrayInputStream(data));
+                ois= new JBossObjectInputStream(new ByteArrayInputStream(data), classLoader);
             } catch (IOException e){
                 //data stored not with JBoss
-                ois=new ClassLoaderObjectInputStream(SerializationUtils.class.getClassLoader(), new ByteArrayInputStream(data));
+                ois=new ClassLoaderObjectInputStream(classLoader, new ByteArrayInputStream(data));
             }
-    
+        
             return ois.readObject();
         } catch (Exception e) {
             throw new RuntimeException(e);

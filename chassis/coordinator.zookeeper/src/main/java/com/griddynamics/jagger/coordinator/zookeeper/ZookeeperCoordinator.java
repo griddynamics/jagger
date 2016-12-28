@@ -253,7 +253,7 @@ public class ZookeeperCoordinator implements Coordinator {
         }
     }
 
-    private static <C extends Command<R>, R extends Serializable> List<QueueEntry<C, R>> getEntries(ZNode queueNode, Watcher watcher) {
+    private <C extends Command<R>, R extends Serializable> List<QueueEntry<C, R>> getEntries(ZNode queueNode, Watcher watcher) {
         List<QueueEntry<C, R>> result = Lists.newLinkedList();
         List<ZNode> children = queueNode.firstLevelChildren(watcher);
 
@@ -265,7 +265,7 @@ public class ZookeeperCoordinator implements Coordinator {
         });
 
         for (ZNode child : children) {
-            QueueEntry<C, R> entry = child.getObject(QueueEntry.class);
+            QueueEntry<C, R> entry = child.getObject(QueueEntry.class, classLoaderHolder.get());
             child.remove();
             result.add(entry);
         }

@@ -3,6 +3,8 @@ package com.griddynamics.jagger.engine.e1.process;
 import com.griddynamics.jagger.coordinator.Command;
 
 /**
+ * A command to remove a custom url class loader if any.
+ * @n
  * Created by Andrey Badaev
  * Date: 26/12/16
  */
