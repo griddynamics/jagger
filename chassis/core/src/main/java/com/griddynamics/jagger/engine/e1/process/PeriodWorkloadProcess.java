@@ -54,7 +54,7 @@ public class PeriodWorkloadProcess extends AbstractWorkloadProcess {
             Future<Service.State> future = thread.start();
             if (future != null) {
                 Service.State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
-                log.debug("Workload thread with is started with state {}", state);
+                log.debug("Workload thread is started with state {}", state);
                 return;
             }
         }

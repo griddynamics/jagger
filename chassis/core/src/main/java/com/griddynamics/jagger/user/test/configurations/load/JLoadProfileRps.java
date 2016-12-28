@@ -37,7 +37,7 @@ public class JLoadProfileRps implements JLoadProfile {
 
     public static class Builder {
         static final int DEFAULT_TICK_INTERVAL = 1000;
-        static final int DEFAULT_MAX_LOAD_THREADS = 4000;
+        static final int DEFAULT_MAX_LOAD_THREADS = 500;
         static final int DEFAULT_WARM_UP_TIME = -1;
         private final long requestsPerSecond;
         private long maxLoadThreads;
@@ -68,7 +68,7 @@ public class JLoadProfileRps implements JLoadProfile {
             return new JLoadProfileRps(this);
         }
 
-        /** Optional: Max load threads. Default is 4000.
+        /** Optional: Max load threads. Default is 500.
          * @param maxLoadThreads The maximum number of threads, which Jagger engine can create to provide the requested load
          */
         public Builder withMaxLoadThreads(long maxLoadThreads) {
