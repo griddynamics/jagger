@@ -44,6 +44,8 @@ public class UrlClassLoaderHolder {
         if (urlClassLoader != null) {
             try {
                 urlClassLoader.close();
+                log.info("Classloader with custom url {} has been successfully closed.",
+                         Arrays.toString(urlClassLoader.getURLs()));
             } catch (IOException e) {
                 log.error("Error during closing a classloader with custom url {}.",
                           Arrays.toString(urlClassLoader.getURLs()),
@@ -54,8 +56,6 @@ public class UrlClassLoaderHolder {
             }
         }
     
-        log.info("Classloader with custom url {} has been successfully closed.",
-                 Arrays.toString(urlClassLoader.getURLs()));
         return true;
     }
 }

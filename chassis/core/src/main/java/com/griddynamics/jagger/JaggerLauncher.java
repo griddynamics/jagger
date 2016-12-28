@@ -289,13 +289,17 @@ public final class JaggerLauncher {
     }
     
     private static String doLaunchMaster(final URL directory, final ClassLoader classLoader) {
+        
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties, classLoader);
         initCoordinator(context);
         context.getBean(StorageServerLauncher.class); // to trigger lazy initialization
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
+        
+        log.info("Going to execute {} load scenario...", environmentProperties.getProperty(LOAD_SCENARIO_ID_PROP));
         configurationGenerator.setJLoadScenarioIdToExecute(environmentProperties.getProperty(LOAD_SCENARIO_ID_PROP));
         WorkloadTaskDistributor workloadTaskDistributor = context.getBean(WorkloadTaskDistributor.class);
         workloadTaskDistributor.setClassesUrl(environmentProperties.getProperty(LOAD_SCENARIO_CLASSES_URL));
+        
         Master master = context.getBean(Master.class);
         master.run();
         
