@@ -81,7 +81,7 @@ public final class JaggerLauncher {
     public static final String USER_ENVIRONMENT_PROPERTIES = "jagger.user.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
     public static final String USER_CONFIGS_PACKAGE = "chassis.master.package.to.scan";
-    public static final String LOAD_SCENARIO_CLASSES_URL ="load.scenario.classes.url";
+    public static final String LOAD_SCENARIO_CLASSES_URL ="dynamic.load.scenario.classes.url";
     private static final Logger log = LoggerFactory.getLogger(JaggerLauncher.class);
     private static final String DEFAULT_ENVIRONMENT_PROPERTIES_LOCATION =
             "./configuration/basic/default.environment.properties";

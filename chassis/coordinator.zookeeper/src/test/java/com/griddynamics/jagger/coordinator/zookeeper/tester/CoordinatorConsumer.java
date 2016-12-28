@@ -44,6 +44,7 @@ public class CoordinatorConsumer {
         zooKeeperFactory.setConnectString("localhost:2181");
         zooKeeperFactory.setSessionTimeout(1000000);
         Zoo zoo = new Zoo(zooKeeperFactory.create());
+        
         ZNode root = zoo.root().child(args[0]);
 
         Coordinator coordinator = new ZookeeperCoordinator(root, Executors.newSingleThreadExecutor(), new UrlClassLoaderHolder());

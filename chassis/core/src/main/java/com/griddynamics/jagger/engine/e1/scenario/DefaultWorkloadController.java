@@ -141,7 +141,7 @@ public class DefaultWorkloadController implements WorkloadController {
                 log.info("Sending command to add a class loader with classes url {} to node {}", classesUrl, nodeId);
                 executor.runSyncWithTimeout(addUrlClassLoaderCommand,
                                             Coordination.<Command>doNothing(),
-                                            timeoutsConfiguration.getWorkloadStopTimeout());
+                                            timeoutsConfiguration.getWorkloadStartTimeout());
                 log.info("Class loader with classes url {} has been added to node {}", classesUrl, nodeId);
             }
         }
