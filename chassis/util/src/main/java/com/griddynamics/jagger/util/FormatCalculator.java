@@ -35,6 +35,8 @@ public class FormatCalculator {
             return "###.#####";
         } else if (value > 0.00001) {
             return "#.#####";
+        } else if (Double.compare(value, 0D) == 0) {
+            return "#";
         }
 
         return "#.###E0#";
