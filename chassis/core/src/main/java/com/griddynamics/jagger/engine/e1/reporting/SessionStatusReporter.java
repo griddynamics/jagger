@@ -62,8 +62,7 @@ public class SessionStatusReporter extends AbstractReportProvider {
         // Errors during session execution
         Decision sessionExecutionStatus = Decision.OK;
         String errorMessage = "";
-        List<SessionData> sessionData = (List<SessionData>) getHibernateTemplate().find("from SessionData d where d.sessionId=?",
-                getSessionIdProvider().getSessionId());
+        List<SessionData> sessionData = (List<SessionData>) getHibernateTemplate().find("from SessionData d where d.sessionId=?", sessionId);
         if (sessionData.size() == 1) {
             errorMessage = sessionData.get(0).getErrorMessage();
             if (errorMessage != null) {

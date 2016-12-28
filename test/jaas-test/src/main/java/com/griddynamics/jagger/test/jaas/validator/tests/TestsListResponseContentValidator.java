@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.test.jaas.validator.tests;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
@@ -26,10 +25,6 @@ import static junit.framework.Assert.assertTrue;
  * - a randomly picked records is the same as corresponding expected one.
  */
 public class TestsListResponseContentValidator extends BaseHttpResponseValidator<TestEntity[]> {
-
-    public TestsListResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
-        super(taskId, sessionId, kernelContext);
-    }
 
     @Override
     public String getName() {
