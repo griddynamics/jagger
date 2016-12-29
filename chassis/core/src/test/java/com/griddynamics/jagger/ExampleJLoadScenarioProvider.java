@@ -87,7 +87,7 @@ public class ExampleJLoadScenarioProvider {
         // begin: following section is used for docu generation - example of the test group listener
 
         JParallelTestsGroup jParallelTestsGroup = JParallelTestsGroup
-                .builder(Id.of("exampleJaggerParallelTestsGroup"), jLoadTest)
+                .builder(Id.of("exampleJaggerParallelTestsGroup"), jLoadTest, jLoadTest)
                 .addListener(new ExampleTestGroupListener())
                 .build();
 
