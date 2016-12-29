@@ -30,7 +30,7 @@
 /// @li Load scenario provider(s) - component where load scenarios are defined. Every provider is marked with annotation @@Configuration. Every method returning load scenario
 /// is marked with annotation @@Bean. Provider can contain multiple methods with @@Bean annotation
 /// @li Test data provider(s) - endpoint and query providers. Sources of the test data
-/// @li Util - support component to work with test and environment propeties (TODO link to test configuration)
+/// @li Util - support component to work with @ref section_writing_test_parametrization "test and environment properties"
 ///
 /// In short, test development will consist of creating test data sources and writing load scenarios @n
 ///
