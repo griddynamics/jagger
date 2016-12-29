@@ -6,6 +6,12 @@ import java.util.Objects;
 
 /**
  * This type of load implements an exact number of requests per second performed by Jagger.
+ * Available attributes:
+ *     - requestsPerSecond - A goal number of requests per second
+ *
+ * Optional attributes:
+ *     - maxLoadThreads - Maximum number of parallel threads allowed for load generation
+ *     - warmUpTimeInSeconds - Load will increase from 0 to @e requestsPerSecond in this time
  *
  * @ingroup Main_Load_profiles_group
  */

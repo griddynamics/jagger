@@ -798,6 +798,8 @@ EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleJLoadScenarioProvider.java \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleQueriesProvider.java \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleEndpointsProvider.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/test.properties \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/invocation/ExampleInvocationListener.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/testgroup/ExampleTestGroupListener.java \
                          ./chassis/core/src/test/java/com/griddynamics/jagger/ExampleJLoadScenarioProvider.java \
@@ -807,7 +809,6 @@ EXAMPLE_PATH           = ./doc/setup/JaggerVersion.txt \
                          ./webclient/src/main/resources/webclient.properties \
                          ./monitoring/agent/src/main/resources/spring/agent.properties \
                          ./chassis/configuration/configuration/basic/default.environment.properties \
-                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties \
                          ./license.txt
 
 #./archetype-examples/src/main/resources/archetype-resources/src/main/java/ \

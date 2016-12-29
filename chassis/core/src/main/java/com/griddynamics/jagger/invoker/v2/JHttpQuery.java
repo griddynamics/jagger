@@ -39,6 +39,8 @@ import static com.google.common.collect.Lists.newArrayList;
  *    .body(42);
  * }</pre>
  * @since 2.0
+ *
+ * @ingroup Main_Http_group
  */
 @SuppressWarnings("unused")
 public class JHttpQuery<T> implements Serializable {
