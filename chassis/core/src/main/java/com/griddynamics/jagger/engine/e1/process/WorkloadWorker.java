@@ -20,6 +20,9 @@
 
 package com.griddynamics.jagger.engine.e1.process;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.griddynamics.jagger.agent.model.GetGeneralNodeInfo;
 import com.griddynamics.jagger.coordinator.CommandExecutor;
 import com.griddynamics.jagger.coordinator.ConfigurableWorker;
@@ -35,15 +38,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Adapts {@link PerThreadWorkloadProcess} and {@link PeriodWorkloadProcess} to coordination API.
@@ -200,12 +200,11 @@ public class WorkloadWorker extends ConfigurableWorker {
      * @return {@link ThreadPoolExecutor} instance with given pool size
      */
     private ThreadPoolExecutor getFixedThreadPoolExecutor(int poolSize) {
-        return (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize,
+        return new ThreadPoolExecutor(20, poolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
                 new ThreadFactoryBuilder()
                         .setNameFormat("workload-thread %d")
                         .setUncaughtExceptionHandler(ExceptionLogger.INSTANCE)
-                        .build()
-        );
+                        .build());
     }
 
     private String generateId() {
