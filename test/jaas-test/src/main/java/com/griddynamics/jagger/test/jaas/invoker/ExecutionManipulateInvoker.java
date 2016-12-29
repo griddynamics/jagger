@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.test.jaas.invoker;
 
 import com.griddynamics.jagger.invoker.InvocationException;
+import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
 import com.griddynamics.jagger.invoker.v2.JHttpResponse;
@@ -12,7 +13,7 @@ import org.springframework.http.HttpMethod;
  * Perform POST and DELETE requests for executions.
  * Manage list of available execution ids which used for validation and composing requests.
  */
-public class ExecutionManipulateInvoker extends InvokerWithoutStatusCodeValidation {
+public class ExecutionManipulateInvoker extends DefaultHttpInvoker {
     @Override
     public JHttpResponse invoke(JHttpQuery query, JHttpEndpoint endpoint) throws InvocationException {
         if (query.getMethod().equals(HttpMethod.DELETE)) {

@@ -35,7 +35,7 @@ import com.griddynamics.jagger.engine.e1.scenario.KernelSideObject;
  * @param <R> - Result type
  * @param <E> - Endpoint type
  *
- */
+ * @ingroup Main_Validators_group */
 public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 
     /** Default constructor for validators
@@ -77,21 +77,26 @@ public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 }
 
 /// @page MetricsValidators Validators
-/// @brief Section provides information about validation of the SUT responses @n
 /// @details
 /// @n
 /// Validation of SUT responses is provided by Jagger components Validators. They verify responses from the SUT and decide whether responses are valid or not.
 /// Every response can be validated by multiple validators. One after another. If one of the validators in the chain sets FAIL status to the response, this request
 /// is considered failed. This will affect @ref MetricsPerformance "standard performance metrics": success rate and number of failures. @n
-/// @n
-/// @par How to create validator
-/// Create a custom class that implements @ref ResponseValidator<Q,E,R> "ResponseValidator" @n
-/// Example: @ref NotNullResponseValidator<Q,E,R> @n
-/// TODO: add Http validator when ready @n
-/// @n
-/// @par How to add validator to your test
-/// @b Note: you can add multiple validators to the @ref com.griddynamics.jagger.user.test.configurations.JTestDefinition "JTestDefinition". They will be executed in the same sequence like they are added
-/// @dontinclude  ExampleJLoadScenarioProvider.java
-/// @skip  begin: following section is used for docu generation - Detailed load test scenario configuration
-/// @until end: following section is used for docu generation - Detailed load test scenario configuration
 ///
+/// @par Java doc for validators and examples
+/// @ref Main_Validators_group
+///
+/// @par Example of validator
+/// We will create a custom validator provider. This provider is returning an instance of validator. Depending on the setup our validator will verify http response code or always
+/// return true.
+/// @include  ExampleResponseValidatorProvider.java
+/// We will add created validator to a particular test. You can add multiple validators to the same test. htey will be executed in the same sequence like they are added
+/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - example of the invocation listener
+/// @until end: following section is used for docu generation - example of the invocation listener
+
+// *************************************
+// not a part of the documentation below
+
+/// @defgroup Main_Validators_group Validators implementations and examples
+/// @details @ref MetricsValidators

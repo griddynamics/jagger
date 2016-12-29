@@ -9,9 +9,6 @@ import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE
  * @details Aggregator is calculating number of fails in every point for full set of data from beginning of the test @n
  * This means you are getting accumulative value and can see in dynamics how number of fails was changing and influencing success rate. @n
  * Results of calculation are presented in SuccessRateCollector<Q,R,E> docu @n
- * @n
- * This aggregator is used by default when @xlink{metric-success-rate} collector is included in @xlink{test-description,info-collectors} block. @n
- * When necessary you can use different aggregator(s) like in example in SuccessRateCollector<Q,R,E> docu @n
  *
  * @ingroup Main_Aggregators_group */
 public class SuccessRateFailsAggregatorProvider implements MetricAggregatorProvider {

@@ -14,7 +14,8 @@ import static com.google.common.collect.Sets.newHashSet;
  * Validates JHttpResponse status code.
  * If {@link JHttpResponseStatusValidator#validStatusCodesRegexp} is not null, it will be used for validation, otherwise
  * {@link JHttpResponseStatusValidator#validStatusCodes} is used.
- */
+ *
+ * @ingroup Main_Validators_group */
 public class JHttpResponseStatusValidator extends ResponseValidator<JHttpQuery, JHttpEndpoint, JHttpResponse> {
 
     private Set<Integer> validStatusCodes = newHashSet();

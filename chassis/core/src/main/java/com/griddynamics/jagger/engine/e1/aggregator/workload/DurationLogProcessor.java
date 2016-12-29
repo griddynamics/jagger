@@ -32,7 +32,6 @@ import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.storage.KeyValueStorage;
-import com.griddynamics.jagger.storage.Namespace;
 import com.griddynamics.jagger.storage.fs.logging.AggregationInfo;
 import com.griddynamics.jagger.storage.fs.logging.DurationLogEntry;
 import com.griddynamics.jagger.storage.fs.logging.LogAggregator;
@@ -57,8 +56,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.END_TIME;
-import static com.griddynamics.jagger.engine.e1.collector.CollectorConstants.START_TIME;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_ID;
@@ -283,11 +280,8 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             persistAggregatedMetricValue(Math.rint(globalStatisticsCalc.getMean()) / 1000D, latencyDesc);
             persistAggregatedMetricValue(Math.rint(globalStatisticsCalc.getStandardDeviation()) / 1000D, latencyStdDevDesc);
 
-            Namespace taskNamespace = Namespace.of(taskData.getSessionId(), taskData.getTaskId());
-
-            Long startTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, START_TIME);
-            Long endTime = (Long) keyValueStorage.fetchNotNull(taskNamespace, END_TIME);
-
+            Long startTime = aggregationInfo.getMinTime();
+            Long endTime = aggregationInfo.getMaxTime();
             double duration = (double) (endTime - startTime) / 1000;
             double totalThroughput = Math.rint(totalCount / duration * 100) / 100;
 

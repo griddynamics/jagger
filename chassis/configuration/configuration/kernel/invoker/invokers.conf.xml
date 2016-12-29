@@ -60,7 +60,19 @@
         <property name="httpClient" ref="httpClient"/>
     </bean>
 
-    <!-- New invoker from 2.0 -->
-    <bean id="defaultHttpInvoker" class="com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker"/>
 
+    <!-- New invoker from 2.0 -->
+    <bean id="defaultHttpInvoker" class="com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker">
+        <constructor-arg name="httpClient" ref="springBasedHttpClient" />
+    </bean>
+
+    <bean id="springBasedHttpClient" class="com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient">
+        <constructor-arg name="clientParams">
+            <map>
+                <entry key="max_conn_total" value="${chassis.default.invoker.max.connections.total:2147483647}" value-type="java.lang.Integer"/>
+                <entry key="max_conn_per_route" value="${chassis.default.invoker.max.connections.route:2147483647}" value-type="java.lang.Integer"/>
+                <entry key="connect_timeout" value="${chassis.default.invoker.connect.timeout.in.milliseconds:60000}" value-type="java.lang.Integer"/>
+            </map>
+        </constructor-arg>
+    </bean>
 </beans>

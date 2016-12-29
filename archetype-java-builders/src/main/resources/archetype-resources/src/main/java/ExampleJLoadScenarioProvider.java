@@ -77,15 +77,15 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
         // For standard metrics use JMetricName.
         // JLimitVsRefValue is used to compare the results with the referenced value.
-        JLimit successrateLimit = JLimitVsRefValue.builder(JMetricName.SUCCESS_RATE_OK, RefValue.of(10D))
+        JLimit successRateLimit = JLimitVsRefValue.builder(JMetricName.PERF_SUCCESS_RATE_OK, RefValue.of(1D))
                 // the threshold is relative.
-                .withOnlyWarnings(LowWarnThresh.of(0.1), UpWarnThresh.of(1.5))
+                .withOnlyWarnings(LowWarnThresh.of(0.99), UpWarnThresh.of(1.01))
                 .build();
 
         // For standard metrics use JMetricName.
         // JLimitVsBaseline is used to compare the results with the baseline.
         // Use 'chassis.engine.e1.reporting.session.comparison.baseline.session.id' to set baseline.
-        JLimit throughputLimit = JLimitVsBaseline.builder(JMetricName.THROUGHPUT)
+        JLimit throughputLimit = JLimitVsBaseline.builder(JMetricName.PERF_THROUGHPUT)
                 // the threshold is relative.
                 .withOnlyErrors(LowErrThresh.of(0.99), UpErrThresh.of(1.00001))
                 .build();
@@ -93,7 +93,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
         JLoadTest jLoadTest = JLoadTest
                 .builder(Id.of("exampleJaggerLoadTest"), jTestDefinition, jLoadProfileRps, jTerminationCriteria)
                 .addListener(new CollectThreadsTestListener())
-                .withLimits(successrateLimit, throughputLimit)
+                .withLimits(successRateLimit, throughputLimit)
                 .build();
 
         JParallelTestsGroup jParallelTestsGroup = JParallelTestsGroup

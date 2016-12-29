@@ -34,7 +34,7 @@
         <jagger.targetJdkVersion>1.8</jagger.targetJdkVersion>
         <jagger.targetJdk>${JAVA_HOME}</jagger.targetJdk>
 
-        <spring.version>4.3.2.RELEASE</spring.version>
+        <spring.version>4.3.4.RELEASE</spring.version>
         <hibernate.validator.version>5.2.4.Final</hibernate.validator.version>
         <hibernate.version>3.6.10.Final</hibernate.version>
 
@@ -594,7 +594,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.2</version>
+                    <version>2.5.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

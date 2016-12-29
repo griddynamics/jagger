@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "test_environment_entity")
 public class TestEnvironmentEntity {
