@@ -18,10 +18,18 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--to include user defined Jagger Load Test scenarios-->
+    <context:component-scan base-package="${chassis.master.package.to.scan:com.griddynamics.jagger}"/>
+    <context:annotation-config/>
 
     <import resource="monitoring.metrics.conf.xml"/>
+    <!--to include user defined Jagger Load Test scenarios-->
 
     <bean id="kernel" class="com.griddynamics.jagger.kernel.SimpleKernel">
         <constructor-arg ref="coordinator"/>
@@ -43,7 +51,7 @@
 
     <bean id="workloadWorker" class="com.griddynamics.jagger.engine.e1.process.WorkloadWorker">
         <property name="logWriter" ref="bufferedLogWriter"/>
-        <property name="timeoutsConfiguration" ref="timeoutsConfiguration" />
+        <property name="timeoutsConfiguration" ref="timeoutsConfiguration"/>
     </bean>
 
     <bean id="monitoringWorker" class="com.griddynamics.jagger.monitoring.MonitoringWorker">
@@ -69,7 +77,7 @@
 
     <bean id="monitoringWorkerTimeout" class="com.griddynamics.jagger.util.Timeout">
         <property name="value" value="${chassis.monitoring.command.execution.ttl}"/>
-        <property name="name"  value="chassis.monitoring.command.execution.ttl"/>
+        <property name="name" value="chassis.monitoring.command.execution.ttl"/>
     </bean>
 
 </beans>
