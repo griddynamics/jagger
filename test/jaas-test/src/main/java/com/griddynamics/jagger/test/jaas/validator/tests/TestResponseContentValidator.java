@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.test.jaas.validator.tests;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
@@ -16,11 +15,6 @@ import static junit.framework.Assert.assertNotNull;
  * - actual record is the same as expected one.
  */
 public class TestResponseContentValidator extends BaseHttpResponseValidator<TestEntity> {
-
-    public TestResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
-        super(taskId, sessionId, kernelContext);
-    }
-
     @Override
     public String getName() {
         return "TestResponseContentValidator";
