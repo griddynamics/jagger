@@ -50,6 +50,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class WorkloadWorker extends ConfigurableWorker {
     private static final Logger log = LoggerFactory.getLogger(WorkloadWorker.class);
+    private static final int CORE_POOL_SIZE = 5;
     private TimeoutsConfiguration timeoutsConfiguration;
 
     private GeneralInfoCollector generalInfoCollector = new GeneralInfoCollector();
@@ -200,7 +201,7 @@ public class WorkloadWorker extends ConfigurableWorker {
      * @return {@link ThreadPoolExecutor} instance with given pool size
      */
     private ThreadPoolExecutor getFixedThreadPoolExecutor(int poolSize) {
-        return new ThreadPoolExecutor(5, poolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
+        return new ThreadPoolExecutor(CORE_POOL_SIZE, poolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
                 new ThreadFactoryBuilder()
                         .setNameFormat("workload-thread %d")
                         .setUncaughtExceptionHandler(ExceptionLogger.INSTANCE)
