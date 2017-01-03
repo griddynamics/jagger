@@ -221,7 +221,8 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                         if (currentCount > 0) {
                             double throughput = (double) currentCount * 1000 / extendedInterval;
                             long currentTime = time - extendedInterval / 2;
-                            // first point is removed because it's value very high and it breaks statistics JFG-729
+                            // first point is removed because it's value very high due to the first invocation of invoker taking longer than the other
+                            // and it breaks statistics JFG-729
                             if (++addedStatistics > 1)
                                 addStatistics(time, currentTime, throughput, windowStatisticsCalc, throughputDesc, latencyDesc, latencyStdDevDesc, percentiles);
                             currentCount = 0;
