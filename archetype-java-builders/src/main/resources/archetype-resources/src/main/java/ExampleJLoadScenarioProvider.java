@@ -72,7 +72,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
         JLoadProfile jLoadProfileRps = JLoadProfileRps
                 .builder(RequestsPerSecond.of(10))
                 .withMaxLoadThreads(10)
-                .withWarmUpTimeInSeconds(10)
+                .withWarmUpTimeInMilliseconds(10000)
                 .build();
 
         // For standard metrics use JMetricName.
@@ -118,8 +118,8 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
                 .build();
 
-        JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
-        JLoadProfile load2 = JLoadProfileRps.builder(RequestsPerSecond.of(20)).withMaxLoadThreads(20).withWarmUpTimeInSeconds(20).build();
+        JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInMilliseconds(10000).build();
+        JLoadProfile load2 = JLoadProfileRps.builder(RequestsPerSecond.of(20)).withMaxLoadThreads(20).withWarmUpTimeInMilliseconds(20000).build();
 
         JTerminationCriteria termination = JTerminationCriteriaIterations.of(IterationsNumber.of(500), MaxDurationInSeconds.of(60));
         JTerminationCriteria terminationBackground = JTerminationCriteriaBackground.getInstance();

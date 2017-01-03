@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * Optional attributes:
  *     - maxLoadThreads - Maximum number of parallel threads allowed for load generation
- *     - warmUpTimeInSeconds - Load will increase from 0 to @e requestsPerSecond in this time
+ *     - warmUpTimeInMilliseconds - Load will increase from 0 to @e requestsPerSecond in this time
  *
  * @ingroup Main_Load_profiles_group
  */
@@ -19,7 +19,7 @@ public class JLoadProfileRps implements JLoadProfile {
 
     private final long requestsPerSecond;
     private final long maxLoadThreads;
-    private final long warmUpTimeInSeconds;
+    private final long warmUpTimeInMilliseconds;
     private final int tickInterval;
 
     private JLoadProfileRps(Builder builder) {
@@ -27,7 +27,7 @@ public class JLoadProfileRps implements JLoadProfile {
 
         this.requestsPerSecond = builder.requestsPerSecond;
         this.maxLoadThreads = builder.maxLoadThreads;
-        this.warmUpTimeInSeconds = builder.warmUpTimeInSeconds;
+        this.warmUpTimeInMilliseconds = builder.warmUpTimeInMilliseconds;
         this.tickInterval = builder.tickInterval;
     }
 
@@ -47,7 +47,7 @@ public class JLoadProfileRps implements JLoadProfile {
         static final int DEFAULT_WARM_UP_TIME = -1;
         private final long requestsPerSecond;
         private long maxLoadThreads;
-        private long warmUpTimeInSeconds;
+        private long warmUpTimeInMilliseconds;
 
         // Tick interval doesn't have setter, since it's unclear if this field is needed. Check https://issues.griddynamics.net/browse/JFG-1000
         private int tickInterval;
@@ -63,7 +63,7 @@ public class JLoadProfileRps implements JLoadProfile {
 
             this.requestsPerSecond = requestsPerSecond.value();
             this.maxLoadThreads = DEFAULT_MAX_LOAD_THREADS;
-            this.warmUpTimeInSeconds = DEFAULT_WARM_UP_TIME;
+            this.warmUpTimeInMilliseconds = DEFAULT_WARM_UP_TIME;
             this.tickInterval = DEFAULT_TICK_INTERVAL;
         }
 
@@ -85,15 +85,15 @@ public class JLoadProfileRps implements JLoadProfile {
             return this;
         }
 
-        /** Optional: Warm up time (in seconds). Default is -1.
-         * @param warmUpTimeInSeconds The warm up time value in seconds. Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInSeconds
+        /** Optional: Warm up time (in milliseconds). Default is -1.
+         * @param warmUpTimeInMilliseconds The warm up time value in milliseconds. Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInMilliseconds
          */
-        public Builder withWarmUpTimeInSeconds(long warmUpTimeInSeconds) {
-            if (warmUpTimeInSeconds < 0) {
+        public Builder withWarmUpTimeInMilliseconds(long warmUpTimeInMilliseconds) {
+            if (warmUpTimeInMilliseconds < 0) {
                 throw new IllegalArgumentException(
-                        String.format("The warm up time value in seconds. must be >= 0. Provided value is %s", warmUpTimeInSeconds));
+                        String.format("The warm up time value in milliseconds. must be >= 0. Provided value is %s", warmUpTimeInMilliseconds));
             }
-            this.warmUpTimeInSeconds = warmUpTimeInSeconds;
+            this.warmUpTimeInMilliseconds = warmUpTimeInMilliseconds;
             return this;
         }
     }
@@ -106,8 +106,8 @@ public class JLoadProfileRps implements JLoadProfile {
         return maxLoadThreads;
     }
 
-    public long getWarmUpTimeInSeconds() {
-        return warmUpTimeInSeconds;
+    public long getWarmUpTimeInMilliseconds() {
+        return warmUpTimeInMilliseconds;
     }
 
     public int getTickInterval() {
