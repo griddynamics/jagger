@@ -21,6 +21,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "test_execution_entity")
 public class TestExecutionEntity {
+    
+    private static final int ERROR_MESSAGE_MAX_LENGTH = 1000;
+    
     public enum TestExecutionStatus {
         PENDING, RUNNING, COMPLETED, FAILED, TIMEOUT
     }
@@ -38,7 +41,7 @@ public class TestExecutionEntity {
     @Column(name = "`test_project_url`")
     private String testProjectURL;
     
-    @Column(name = "`error_message`")
+    @Column(name = "`error_message`", length = ERROR_MESSAGE_MAX_LENGTH)
     private String errorMessage;
     
     @Column(name = "`session_id`")
@@ -115,6 +118,9 @@ public class TestExecutionEntity {
     }
     
     public void setErrorMessage(String errorMessage) {
+        if (errorMessage.length() > ERROR_MESSAGE_MAX_LENGTH) {
+            errorMessage = errorMessage.substring(0, ERROR_MESSAGE_MAX_LENGTH - 1);
+        }
         this.errorMessage = errorMessage;
     }
     

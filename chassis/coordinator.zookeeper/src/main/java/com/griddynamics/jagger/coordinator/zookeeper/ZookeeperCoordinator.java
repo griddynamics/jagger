@@ -35,6 +35,7 @@ import com.griddynamics.jagger.coordinator.Qualifier;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
 import com.griddynamics.jagger.coordinator.StatusChangeListener;
 import com.griddynamics.jagger.coordinator.Worker;
+import com.griddynamics.jagger.util.UrlClassLoaderHolder;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
@@ -64,10 +65,12 @@ public class ZookeeperCoordinator implements Coordinator {
 
     private final Executor executor;
 
-
-    public ZookeeperCoordinator(ZNode rootNode, Executor executor) {
+    private final UrlClassLoaderHolder classLoaderHolder;
+    
+    public ZookeeperCoordinator(ZNode rootNode, Executor executor, UrlClassLoaderHolder classLoaderHolder) {
         this.rootNode = rootNode;
         this.executor = executor;
+        this.classLoaderHolder = classLoaderHolder;
     }
 
     @Override
@@ -250,7 +253,7 @@ public class ZookeeperCoordinator implements Coordinator {
         }
     }
 
-    private static <C extends Command<R>, R extends Serializable> List<QueueEntry<C, R>> getEntries(ZNode queueNode, Watcher watcher) {
+    private <C extends Command<R>, R extends Serializable> List<QueueEntry<C, R>> getEntries(ZNode queueNode, Watcher watcher) {
         List<QueueEntry<C, R>> result = Lists.newLinkedList();
         List<ZNode> children = queueNode.firstLevelChildren(watcher);
 
@@ -262,7 +265,7 @@ public class ZookeeperCoordinator implements Coordinator {
         });
 
         for (ZNode child : children) {
-            QueueEntry<C, R> entry = child.getObject(QueueEntry.class);
+            QueueEntry<C, R> entry = child.getObject(QueueEntry.class, classLoaderHolder.get());
             child.remove();
             result.add(entry);
         }

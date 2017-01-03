@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.test.jaas.validator.sessions;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
@@ -24,9 +23,6 @@ import java.util.stream.Collectors;
  */
 public class SessionsListResponseContentValidator extends BaseHttpResponseValidator<SessionEntity[]> {
 
-    public SessionsListResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
-        super(taskId, sessionId, kernelContext);
-    }
 
     @Override
     public String getName() {

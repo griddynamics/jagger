@@ -14,6 +14,8 @@ import java.util.Map;
  *
  * @author Anton Antonenko
  * @since 2.0
+ *
+ * @ingroup Main_Http_group
  */
 public class JHttpResponse<T> implements Serializable {
 

@@ -49,9 +49,12 @@ public class JaasExecApiClient {
     }
     
     public void startExecution() {
+        
         Optional<TestExecutionEntity> executionEntity = getExecution();
         executionEntity.ifPresent(entity -> {
             entity.setStatus(TestExecutionEntity.TestExecutionStatus.RUNNING);
+            
+            LOGGER.info("Starting execution of {}", entity);
             updateExecution(entity);
         });
     }
@@ -61,6 +64,8 @@ public class JaasExecApiClient {
         executionEntity.ifPresent(entity -> {
             entity.setStatus(TestExecutionEntity.TestExecutionStatus.COMPLETED);
             entity.setSessionId(sessionId);
+            
+            LOGGER.info("Updating execution of {}", entity);
             updateExecution(entity);
         });
     }
@@ -70,6 +75,8 @@ public class JaasExecApiClient {
         executionEntity.ifPresent(entity -> {
             entity.setStatus(TestExecutionEntity.TestExecutionStatus.FAILED);
             entity.setErrorMessage(errorMessage);
+            
+            LOGGER.info("Failing execution of {}", entity);
             updateExecution(entity);
         });
     }

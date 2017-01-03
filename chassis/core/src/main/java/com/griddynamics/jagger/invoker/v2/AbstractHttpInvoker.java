@@ -16,6 +16,8 @@ import com.griddynamics.jagger.invoker.Invoker;
  * @author Anton Antonenko
  * @see Invoker
  * @since 2.0
+ *
+ * @ingroup Main_Http_group
  */
 @SuppressWarnings("unused")
 public abstract class AbstractHttpInvoker<HTTP_CLIENT extends JHttpClient> implements Invoker<JHttpQuery, JHttpResponse, JHttpEndpoint> {

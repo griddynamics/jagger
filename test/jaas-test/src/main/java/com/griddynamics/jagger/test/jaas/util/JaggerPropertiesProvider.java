@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.test.javabuilders.utils;
+package com.griddynamics.jagger.test.jaas.util;
 
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,6 @@ public class JaggerPropertiesProvider{
     @Autowired
     private Environment testEnv;
 
-    public Integer getIntPropertyValue(String key) {
-        return Integer.parseInt(getPropertyValue(key));
-    }
 
     public String getPropertyValue(String key) {
         String prop = testEnv.getProperty(key);

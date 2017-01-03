@@ -14,6 +14,8 @@ import static java.lang.String.format;
  * @author Anton Antonenko
  * @see AbstractHttpInvoker
  * @since 2.0
+ *
+ * @ingroup Main_Http_group
  */
 @SuppressWarnings("unused")
 public class DefaultHttpInvoker extends AbstractHttpInvoker {

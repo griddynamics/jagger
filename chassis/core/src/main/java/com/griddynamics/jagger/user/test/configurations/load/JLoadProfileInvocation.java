@@ -6,7 +6,14 @@ import com.griddynamics.jagger.user.test.configurations.load.auxiliary.ThreadCou
 import java.util.Objects;
 
 /**
- * * This type of load implements an exact number of invocation with exact number of threads performed by Jagger.
+ * This type of load implements an exact number of invocation, performed by exact number of threads.
+ * Available attributes:
+ *     - invocationCount - A goal number of invocations
+ *     - threadCount - How many threads will be used. Number of invocations, defined by @e invocationCount, will be distributed between this threads
+ *
+ * Optional attributes:
+ *     - delayBetweenInvocationsInMilliseconds - Delay between invocations in milliseconds
+ *     - periodInSeconds - Period between load generation in seconds. If periodInSeconds is set, Jagger will perform @e invocationCount of requests every @e periodInSeconds seconds
  *
  * @ingroup Main_Load_profiles_group
  */
@@ -14,15 +21,15 @@ public class JLoadProfileInvocation implements JLoadProfile {
 
     private final int invocationCount;
     private final int threadCount;
-    private final int delay;
-    private final int period;
+    private final int delayBetweenInvocationsInMilliseconds;
+    private final int periodInSeconds;
     private final int tickInterval;
 
     private JLoadProfileInvocation(Builder builder) {
         this.invocationCount = builder.invocationCount;
         this.threadCount = builder.threadCount;
-        this.delay = builder.delay;
-        this.period = builder.period;
+        this.delayBetweenInvocationsInMilliseconds = builder.delayBetweenInvocationsInMilliseconds;
+        this.periodInSeconds = builder.periodInSeconds;
         this.tickInterval = builder.tickInterval;
     }
 
@@ -46,8 +53,8 @@ public class JLoadProfileInvocation implements JLoadProfile {
         static final int DEFAULT_DELAY = 0;
         private int invocationCount;
         private int threadCount;
-        private int delay;
-        private int period;
+        private int delayBetweenInvocationsInMilliseconds;
+        private int periodInSeconds;
         // Tick interval doesn't have setter, since it's unclear if this field is needed. Check https://issues.griddynamics.net/browse/JFG-1031
         private int tickInterval;
 
@@ -56,30 +63,30 @@ public class JLoadProfileInvocation implements JLoadProfile {
             Objects.requireNonNull(threadCount);
 
             this.tickInterval = DEFAULT_TICK_INTERVAL;
-            this.period = DEFAULT_PERIOD;
-            this.delay = DEFAULT_DELAY;
+            this.periodInSeconds = DEFAULT_PERIOD;
+            this.delayBetweenInvocationsInMilliseconds = DEFAULT_DELAY;
 
             this.invocationCount = invocationCount.value();
             this.threadCount = threadCount.value();
         }
 
         /**
-         * Optional: Delay between invocations. Default value is 0.
+         * Optional: Delay between invocations in milliseconds. Default value is 0.
          *
          * @param delay The delay between invocations.
          */
-        public Builder withDelayBetweenInvocationsInSeconds(int delay) {
-            this.delay = delay;
+        public Builder withDelayBetweenInvocationsInMilliseconds(int delay) {
+            this.delayBetweenInvocationsInMilliseconds = delay;
             return this;
         }
 
         /**
-         * Optional: Period of invocation. By default is not used.
+         * Optional: Period between load generation in seconds. If periodInSeconds is set, Jagger will perform @e invocationCount of requests every @e periodInSeconds seconds
          *
          * @param period period between invocations.
          */
         public Builder withPeriodBetweenLoadInSeconds(int period) {
-            this.period = period;
+            this.periodInSeconds = period;
             return this;
         }
 
@@ -103,12 +110,12 @@ public class JLoadProfileInvocation implements JLoadProfile {
         return invocationCount;
     }
 
-    public int getDelay() {
-        return delay;
+    public int getDelayBetweenInvocationsInMilliseconds() {
+        return delayBetweenInvocationsInMilliseconds;
     }
 
-    public int getPeriod() {
-        return period;
+    public int getPeriodInSeconds() {
+        return periodInSeconds;
     }
 
     public int getTickInterval() {

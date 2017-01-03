@@ -58,7 +58,10 @@
                 <property name="nameFormat" value="zookeeper-coordinator-pool-%d"/>
             </bean>
         </constructor-arg>
+        <constructor-arg ref="urlClassLoaderHolder"/>
     </bean>
+
+    <bean id="urlClassLoaderHolder" class="com.griddynamics.jagger.util.UrlClassLoaderHolder"/>
 
     <bean id="memoryCoordinator" class="com.griddynamics.jagger.coordinator.memory.MemoryCoordinator"
           factory-method="getInstance" lazy-init="true">
