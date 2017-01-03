@@ -245,7 +245,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                                 Number aggregated = intervalAggregator.getAggregated();
                                 if (aggregated != null) {
                                     double value = aggregated.doubleValue();
-                                    // first point is removed because it's value very high and it breaks statistics
+                                    // first point is removed because it's value very high and it breaks statistics JFG-729
                                     if (++addedStatistics > 1)
                                         addStatistics(intervalAggregator, normalizeRequired, normalizeFullIntervalRequired, normalizeByInterval, metricDesc, time, extendedInterval, value);
                                     extendedInterval = intervalSize;

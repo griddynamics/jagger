@@ -221,7 +221,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                         if (currentCount > 0) {
                             double throughput = (double) currentCount * 1000 / extendedInterval;
                             long currentTime = time - extendedInterval / 2;
-                            // first point is removed because it's value very high and it breaks statistics
+                            // first point is removed because it's value very high and it breaks statistics JFG-729
                             if (++addedStatistics > 1)
                                 addStatistics(time, currentTime, throughput, windowStatisticsCalc, throughputDesc, latencyDesc, latencyStdDevDesc, percentiles);
                             currentCount = 0;
@@ -269,15 +269,15 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             return percentileMap;
         }
 
-        private void addStatistics(long time, long currentTime, Double throughput, StatisticsCalculator calculator,
+        private void addStatistics(long time, long currentTime, Double throughput, StatisticsCalculator windowStatisticCalculator,
                                    MetricDescriptionEntity throughputDesc, MetricDescriptionEntity latencyDesc,
                                    MetricDescriptionEntity latencyStdDevDesc, Map<Double, MetricDescriptionEntity> percentileMap) {
 
             statistics.add(new MetricPointEntity(currentTime, throughput, throughputDesc));
-            statistics.add(new MetricPointEntity(currentTime, calculator.getMean() / 1000, latencyDesc));
-            statistics.add(new MetricPointEntity(currentTime, calculator.getStandardDeviation() / 1000, latencyStdDevDesc));
+            statistics.add(new MetricPointEntity(currentTime, windowStatisticCalculator.getMean() / 1000, latencyDesc));
+            statistics.add(new MetricPointEntity(currentTime, windowStatisticCalculator.getStandardDeviation() / 1000, latencyStdDevDesc));
             for (Double percentileKey : getTimeWindowPercentilesKeys()) {
-                Double value = calculator.getPercentile(percentileKey) / 1000D;
+                Double value = windowStatisticCalculator.getPercentile(percentileKey) / 1000D;
                 statistics.add(new MetricPointEntity(time, value, percentileMap.get(percentileKey)));
             }
         }
