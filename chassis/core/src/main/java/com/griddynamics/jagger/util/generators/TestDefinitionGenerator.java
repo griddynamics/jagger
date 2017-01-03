@@ -1,8 +1,5 @@
 package com.griddynamics.jagger.util.generators;
 
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
-
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
@@ -21,6 +18,9 @@ import org.springframework.beans.factory.support.ManagedList;
 
 import java.util.List;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
+
 /**
  *
  * @author asokol
@@ -37,9 +37,13 @@ class TestDefinitionGenerator {
         scenarioFactory.setQueryProvider(jTestDefinition.getQueries());
         scenarioFactory.setEndpointProvider(jTestDefinition.getEndpoints());
         scenarioFactory.setInvokerClazz(jTestDefinition.getInvoker());
-        scenarioFactory.setLoadBalancer(new SimpleCircularLoadBalancer() {{
-            setPairSupplierFactory(new RoundRobinPairSupplierFactory());
-        }});
+        if (jTestDefinition.getLoadBalancer() == null) {
+            scenarioFactory.setLoadBalancer(new SimpleCircularLoadBalancer() {{
+                setPairSupplierFactory(new RoundRobinPairSupplierFactory());
+            }});
+        } else {
+            scenarioFactory.setLoadBalancer(jTestDefinition.getLoadBalancer());
+        }
         prototype.setScenarioFactory(scenarioFactory);
 
         prototype.setName(jTestDefinition.getId());
