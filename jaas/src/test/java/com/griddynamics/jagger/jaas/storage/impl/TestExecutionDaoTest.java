@@ -135,6 +135,18 @@ public class TestExecutionDaoTest {
     }
 
     @Test
+    public void readByEnvTest() {
+        List<TestExecutionEntity> expected = getTestExecutionEntities();
+        testExecutionDao.create(expected);
+
+        List<TestExecutionEntity> actual = testExecutionDao.readByEnv(ENVIRONMENT_ID_1);
+
+        assertThat(actual, is(notNullValue()));
+        assertThat(actual.get(0), is(expected.get(0)));
+        assertThat(actual.size(), is(1));
+    }
+
+    @Test
     public void updateTest() {
         TestExecutionEntity expected = getTestExecutionEntity();
         testExecutionDao.create(expected);

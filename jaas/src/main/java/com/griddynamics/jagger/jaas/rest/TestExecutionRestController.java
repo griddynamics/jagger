@@ -1,8 +1,5 @@
 package com.griddynamics.jagger.jaas.rest;
 
-import static java.lang.String.format;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 import com.griddynamics.jagger.jaas.exceptions.InvalidTestExecutionException;
 import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
@@ -17,12 +14,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import static java.lang.String.format;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/executions")
@@ -41,8 +42,11 @@ public class TestExecutionRestController extends AbstractController {
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TestExecutionEntity>> getTestExecutions() {
-        return produceGetResponse(testExecutionService, t -> testExecutionService.readAll());
+    public ResponseEntity<List<TestExecutionEntity>> getTestExecutions(@RequestParam(name = "envId", required = false) String envId) {
+        if (StringUtils.isBlank(envId))
+            return produceGetResponse(testExecutionService, t -> testExecutionService.readAll());
+        else
+            return produceGetResponse(testExecutionService, t -> testExecutionService.readByEnv(envId));
     }
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)

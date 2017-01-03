@@ -1,8 +1,6 @@
 package com.griddynamics.jagger.jaas.service.impl;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.PENDING;
-
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.storage.TestExecutionDao;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionAuditEntity;
@@ -11,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
-
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.PENDING;
 
 @Service
 public class TestExecutionServiceImpl implements TestExecutionService {
@@ -41,6 +40,11 @@ public class TestExecutionServiceImpl implements TestExecutionService {
     @Override
     public List<TestExecutionEntity> readAllPending() {
         return newArrayList(testExecutionDao.readAllPending());
+    }
+
+    @Override
+    public List<TestExecutionEntity> readByEnv(String envId) {
+        return newArrayList(testExecutionDao.readByEnv(envId));
     }
 
     @Override
