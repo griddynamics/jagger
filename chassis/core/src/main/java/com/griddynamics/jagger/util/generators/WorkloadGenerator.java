@@ -51,7 +51,7 @@ class WorkloadGenerator {
     private static WorkloadClockConfiguration generateTps(JLoadProfileTps jLoadProfile) {
         TpsClockConfiguration tpsClockConfiguration = new TpsClockConfiguration();
         tpsClockConfiguration.setValue(jLoadProfile.getTransactionsPerSecond());
-        tpsClockConfiguration.setWarmUpTime(jLoadProfile.getWarmUpTimeInSeconds());
+        tpsClockConfiguration.setWarmUpTime(jLoadProfile.getWarmUpTimeInMilliseconds());
         tpsClockConfiguration.setMaxThreadNumber((int) jLoadProfile.getMaxLoadThreads());
         tpsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
         return tpsClockConfiguration;
