@@ -1,0 +1,28 @@
+/// @page RunTests
+///
+/// @section section_java_builder_test Java Builder Tests
+/// This project contains smoke tests to check that main `java builder` expressions may be used without exception.
+/// Also there are tests to verify that Jagger generate load as specified in appropriate JLoadProfile in java configuration. @n
+/// Test sources located in test/java-builder-tests folder. Scenario Id - `JaggerSmokeTests` @n
+///
+/// To run test:
+/// @li Prepare SUT - build and run test-target web application (located in test/test-target).
+/// @n TODO: rewrite when test target will be deployed with docker
+/// @li Optional: Edit `profiles/basic/environment.properties` to configure path to Jagger DB.
+/// Default connection is to local H2 DB. See more information about jagger configuration
+/// in the @ref JaggerProperties "Jagger properties section"
+/// @li Configure `test.service.endpoints` property - single value or comma separated list with path to SUT.@n
+/// Edit `test.properties` file or specify `-Dtest.service.endpoints=` in command line when run test.
+/// @li Build and run test project. See @ref GettingStarted "Getting Started" for example.
+///
+/// @section section_jaas_tests JaaS Tests
+/// This project contains smoke test to check JaaS REST API and verify default JHTTP* classes provided by Jagger. @n
+/// Test sources located in test/jaas-tests folder. Scenario Id - `ts_JaaSTestSuit` @n
+///
+/// @li Prepare SUT - configure and run JaaS. See @ref section_installation_local "Installation section" for details. @n
+/// Note: Jagger DB should contains information about at least one test session with test contains metrics with both plot data and summary information.
+/// @li Configure `jaas.endpoint` property with path to JaaS SUT. Edit `test.properties` or specify path to JaaS in command line.
+/// @li Optional: Edit `profiles/basic/environment.properties` to configure Jagger. See more information about jagger configuration
+/// in the @ref JaggerProperties "Jagger properties section".
+/// Note: if JaaS is used to run tests, make sure that another instance of JaaS and JaaS DB is used in SUT.
+/// @li Build and run test project. See @ref GettingStarted "Getting Started" for example.
