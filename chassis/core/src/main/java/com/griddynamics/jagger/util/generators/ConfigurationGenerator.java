@@ -17,6 +17,7 @@ import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.ManagedList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -68,18 +69,19 @@ public class ConfigurationGenerator {
         if (useBuilders) {
             JLoadScenario jLoadScenario = jaggerLoadScenarios.get(jLoadScenarioToExecute);
             if (jLoadScenario == null) {
-                throw new IllegalArgumentException(String.format("No Jagger test suite with name %s",
-                        jLoadScenarioToExecute
-                ));
+                throw new IllegalArgumentException(String.format(
+                        "No Jagger load scenario with name %s. Available load scenarios: %s",
+                        jLoadScenarioToExecute,
+                        jaggerLoadScenarios.keySet()));
             }
             return generate(jLoadScenario);
         }
 
         Configuration configuration = configurations.get(jLoadScenarioToExecute);
         if (configuration == null) {
-            throw new IllegalArgumentException(String.format("No Jagger configuration with name %s",
-                    jLoadScenarioToExecute
-            ));
+            throw new IllegalArgumentException(String.format("No Jagger configuration with name %s. Available: %s",
+                                                             jLoadScenarioToExecute,
+                                                             configurations.keySet()));
         }
         return configuration;
     }

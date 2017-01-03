@@ -61,7 +61,13 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
     private TaskExecutionStatusProvider taskExecutionStatusProvider;
 
     private long logInterval;
-
+    
+    private String classesUrl;
+    
+    public void setClassesUrl(String classesUrl) {
+        this.classesUrl = classesUrl;
+    }
+    
     @Override
     public Set<Qualifier<?>> getQualifiers() {
         Set<Qualifier<?>> result = Sets.newHashSet();
@@ -122,6 +128,7 @@ public class WorkloadTaskDistributor extends AbstractDistributor<WorkloadTask> {
 
                     startTime = System.currentTimeMillis() ;
                     controller = new DefaultWorkloadController(sessionId, taskId, task, remotes, timeoutsConfiguration, startTime);
+                    controller.setClassesUrl(classesUrl);
 
                     WorkloadClock clock = task.getClock();
                     TerminationStrategy terminationStrategy = task.getTerminationStrategy();

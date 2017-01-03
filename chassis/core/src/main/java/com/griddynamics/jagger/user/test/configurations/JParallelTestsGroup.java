@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @brief  Describes step in the JLoadScenario execution sequence
@@ -144,6 +145,11 @@ public class JParallelTestsGroup {
          * @return JParallelTestsGroup object.
          */
         public JParallelTestsGroup build() {
+    
+            if (tests.stream().map(JLoadTest::getId).collect(Collectors.toSet()).size() < tests.size()) {
+                throw new IllegalStateException("JLoadTest ids inside one JParallelTestsGroup are not all unique");
+            }
+            
             return new JParallelTestsGroup(this);
         }
 

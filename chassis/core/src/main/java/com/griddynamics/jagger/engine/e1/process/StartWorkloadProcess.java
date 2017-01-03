@@ -105,7 +105,7 @@ public class StartWorkloadProcess implements Command<String> {
     public ScenarioContext getScenarioContext() {
         return this.scenarioContext;
     }
-
+    
     @Override
     public String toString() {
         return "StartWorkloadProcess{" +

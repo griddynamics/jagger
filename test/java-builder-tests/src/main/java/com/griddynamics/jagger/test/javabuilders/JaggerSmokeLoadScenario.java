@@ -1,7 +1,10 @@
 package com.griddynamics.jagger.test.javabuilders;
 
-import com.griddynamics.jagger.test.javabuilders.smoke_components.TestDefinitionVariations;
+import com.griddynamics.jagger.test.javabuilders.load.InvocationsLoadTests;
+import com.griddynamics.jagger.test.javabuilders.load.RpsLoadTests;
+import com.griddynamics.jagger.test.javabuilders.load.UserGroupsLoadTests;
 import com.griddynamics.jagger.test.javabuilders.smoke_components.DummyTestListenerProvider;
+import com.griddynamics.jagger.test.javabuilders.smoke_components.TestDefinitionVariations;
 import com.griddynamics.jagger.test.javabuilders.smoke_components.TestLoadVariations;
 import com.griddynamics.jagger.test.javabuilders.utils.JaggerPropertiesProvider;
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
@@ -19,11 +22,12 @@ import com.griddynamics.jagger.user.test.configurations.termination.JTermination
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.DurationInSeconds;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Configuration
 public class JaggerSmokeLoadScenario extends JaggerPropertiesProvider {
@@ -158,12 +162,65 @@ public class JaggerSmokeLoadScenario extends JaggerPropertiesProvider {
                 .build();
     }
 
-
     /**
-     * Check smoke_components scenario with few test groups
+     * TODO remove workaround when JFG-1082 will be fixed
      */
+    private JParallelTestsGroup testGroup(String id, JLoadTest... tests){
+        return JParallelTestsGroup.builder(Id.of(id), Stream.of(tests).map(t->
+                JLoadTest.builder(Id.of(id+"_"+t.getId()), t.getTestDescription(), t.getLoad(), t.getTermination())
+                        .addListeners(t.getListeners())
+                        .withLimits(t.getLimits())
+                        .build())
+                .collect(Collectors.toList())).build();
+    }
+
+    private JParallelTestsGroup getInvocationsLoadTests(){
+        InvocationsLoadTests tests = new InvocationsLoadTests(this);
+        return testGroup("InvocationsLoadTests",
+                tests.testInvocationsInOneThread(),
+                tests.testInvocationsSeveralThreads(),
+                tests.testInvocationsTerminatedByDurationAfterInvocationsReached(),
+                tests.testInvocationsTerminatedByDurationBeforeInvocationsReached(),
+                tests.testInvocationsTerminatedByIterations(),
+                tests.testInvocationsWithDelayBetweenInvocations(),
+                tests.testInvocationsWithPeriodLoadingMaxDuration(),
+                tests.testInvocationsWithPeriodLoadingMaxIterations(),
+                tests.testInvocationsWithSmallerLoadingPeriod()
+        );
+    }
+
+    private JParallelTestsGroup getRpsLoadTests(){
+        RpsLoadTests tests = new RpsLoadTests(this);
+
+        return testGroup("RpsLoad",
+                tests.testRpsLoadLimitThreads(),
+                tests.testRpsLoadWithDurationTermination(),
+                tests.testRpsLoadWithIterationTermination(),
+                tests.testRpsLoadWithWarmUp(),
+                tests.testRpsBalancingPulse(),
+                tests.testRpsBalancingRnd());
+    }
+
+    private JParallelTestsGroup getGroupLoadTests(){
+        UserGroupsLoadTests tests = new UserGroupsLoadTests(this);
+
+        return testGroup("GroupLoad",
+                tests.oneUserOneGroup(),
+                tests.severalUsersOneGroup(),
+                tests.userGroupWithDelay(),
+                tests.userGroupWithLifeTimeGreaterTestDuration(),
+                // tests.userGroupWithLifeTimeLessTestDuration(), TODO uncomment when JFG-1094 will be fixed
+                tests.userGroupWithSlewRate(),
+                tests.userGroupWithSlewRateTerminated(),
+                tests.userGroupDelayBetweenInvocations(),
+                tests.fewUserGroups(),
+                tests.userGroupsComplexLoad()
+        );
+
+    }
+
     @Bean
-    public JLoadScenario getJaggerTests(){
+    public JLoadScenario getJaggerTestScenario(){
         definitions = new TestDefinitionVariations(this);
         loads = new TestLoadVariations();
         terminate10Sec = JTerminationCriteriaDuration.of(DurationInSeconds.of(10));
@@ -181,7 +238,25 @@ public class JaggerSmokeLoadScenario extends JaggerPropertiesProvider {
                 )
         ).build();
 
-        return JLoadScenario.builder(Id.of("JaggerSmokeTests"), singleTest, backgroundTermination, severalTests).build();
+        return JLoadScenario.builder(Id.of("JaggerSmokeTests"),
+                singleTest,
+                backgroundTermination,
+                severalTests,
+                getInvocationsLoadTests(),
+                getRpsLoadTests(),
+                getGroupLoadTests()).build();
+    }
+
+    /**
+     * For loads tests debugging porpoises
+     */
+    @Bean
+    public JLoadScenario getJaggerLoadTestScenario() {
+        return JLoadScenario.builder(Id.of("LoadsTests"),
+                getInvocationsLoadTests(),
+                getRpsLoadTests(),
+                getGroupLoadTests()
+        ).build();
     }
 
     private JLimit allSuccess(){

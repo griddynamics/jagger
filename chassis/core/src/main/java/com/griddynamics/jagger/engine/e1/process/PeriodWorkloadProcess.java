@@ -39,12 +39,7 @@ public class PeriodWorkloadProcess extends AbstractWorkloadProcess {
         long delay = command.getScenarioContext().getWorkloadConfiguration().getDelay();
 
         // start scheduling task with given period.
-        loopExecutor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                startNewThread(0);
-            }
-        }, delay, period, TimeUnit.MILLISECONDS);
+        loopExecutor.scheduleAtFixedRate(() -> startNewThread(0), delay, period, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -54,7 +49,7 @@ public class PeriodWorkloadProcess extends AbstractWorkloadProcess {
             Future<Service.State> future = thread.start();
             if (future != null) {
                 Service.State state = Futures.get(future, timeoutsConfiguration.getWorkloadStartTimeout());
-                log.debug("Workload thread with is started with state {}", state);
+                log.debug("Workload thread is started with state {}. Total threads number - {}", state, executor.getActiveCount());
                 return;
             }
         }
@@ -86,12 +81,7 @@ public class PeriodWorkloadProcess extends AbstractWorkloadProcess {
 
     @Override
     public void changeConfiguration(WorkloadConfiguration configuration) {
-        loopExecutor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                startNewThread(0);
-            }
-        }, configuration.getDelay(), configuration.getPeriod(), TimeUnit.MILLISECONDS);
+        loopExecutor.scheduleAtFixedRate(() -> startNewThread(0), configuration.getDelay(), configuration.getPeriod(), TimeUnit.MILLISECONDS);
     }
 
 
