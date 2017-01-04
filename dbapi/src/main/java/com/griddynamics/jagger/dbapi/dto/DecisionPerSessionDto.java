@@ -10,7 +10,7 @@ public class DecisionPerSessionDto {
     private Long id;
     private String sessionId;
     private Decision decision;
-    private List<DecisionPerTaskDto> taskDecisions;
+    private List<DecisionPerTestGroupDto> testGroupDecisions;
 
     public DecisionPerSessionDto(DecisionPerSessionEntity decisionPerSessionEntity) {
         this.id = decisionPerSessionEntity.getId();
@@ -42,11 +42,11 @@ public class DecisionPerSessionDto {
         this.decision = decision;
     }
 
-    public List<DecisionPerTaskDto> getTaskDecisions() {
-        return taskDecisions;
+    public List<DecisionPerTestGroupDto> getTestGroupDecisions() {
+        return testGroupDecisions;
     }
 
-    public void setTaskDecisions(List<DecisionPerTaskDto> taskDecisions) {
-        this.taskDecisions = taskDecisions;
+    public void setTestGroupDecisions(List<DecisionPerTestGroupDto> testGroupDecisions) {
+        this.testGroupDecisions = testGroupDecisions;
     }
 }

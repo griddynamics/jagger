@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerMetricDto;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerTaskDto;
+import com.griddynamics.jagger.dbapi.dto.DecisionPerTestGroupDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.NodeInfoDto;
 import com.griddynamics.jagger.dbapi.dto.NodeInfoPerSessionDto;
@@ -91,6 +92,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
@@ -1272,25 +1274,49 @@ public class DatabaseServiceImpl implements DatabaseService {
                 entityManager.createQuery("select dpt from DecisionPerTaskEntity as dpt where dpt.taskData.sessionId = :sessionId")
                         .setParameter("sessionId", sessionId).getResultList();
 
-        List<DecisionPerTaskDto> decisionPerTaskDtos = new ArrayList<>();
-        for (DecisionPerTaskEntity decisionPerTask : taskDecisions) {
-            List<DecisionPerMetricEntity> metricDecisions = (List<DecisionPerMetricEntity>)
-                    entityManager.createQuery("select dpm from DecisionPerMetricEntity as dpm where dpm.metricDescriptionEntity.taskData.id = :taskId")
-                            .setParameter("taskId", decisionPerTask.getTaskData().getId()).getResultList();
+        Set<Long> taskIds = taskDecisions.stream().map(decision -> decision.getTaskData().getId()).collect(Collectors.toSet());
+        Map<Long, Set<Long>> testIdsByTestGroupIds = getTestGroupIdsByTestIds(taskIds);
 
-            DecisionPerTaskDto decisionPerTaskDto = new DecisionPerTaskDto(decisionPerTask);
+        List<DecisionPerTestGroupDto> decisionPerTestGroupDtos = new ArrayList<>();
+        List<DecisionPerTaskDto> decisionPerTaskDtos = new ArrayList<>();
+        for (DecisionPerTaskEntity taskDecision : taskDecisions) {
+            // get metric decisions for task
+            List<DecisionPerMetricEntity> metricDecisions = (List<DecisionPerMetricEntity>) entityManager.createQuery(
+                    "select dpm from DecisionPerMetricEntity as dpm where dpm.metricDescriptionEntity.taskData.id = :taskId")
+                    .setParameter("taskId", taskDecision.getTaskData().getId()).getResultList();
+
+            // create DecisionPerTaskDto and add it to list
+            DecisionPerTaskDto decisionPerTaskDto = new DecisionPerTaskDto(taskDecision);
             decisionPerTaskDto.setMetricDecisions(metricDecisions.stream().map(DecisionPerMetricDto::new).collect(toList()));
             decisionPerTaskDtos.add(decisionPerTaskDto);
+
+            // if task is test group - create new DecisionPerTestGroupDto and add it to list
+            if (testIdsByTestGroupIds.containsKey(taskDecision.getTaskData().getId())) {
+                decisionPerTestGroupDtos.add(new DecisionPerTestGroupDto(taskDecision));
+            }
         }
+
+        // fill test group decisions with task decisions
+        testIdsByTestGroupIds.forEach((Long testGroupId, Set<Long> tasks) -> {
+            DecisionPerTestGroupDto testGroupDecision = decisionPerTestGroupDtos.stream()
+                    .filter(decision -> decision.getTaskData().getId().equals(testGroupId))
+                    .findFirst().get();
+
+            List<DecisionPerTaskDto> testGroupTaskDecisions = decisionPerTaskDtos.stream()
+                    .filter(decision -> tasks.contains(decision.getTaskData().getId())).collect(toList());
+            testGroupDecision.setTaskDecisions(testGroupTaskDecisions);
+        });
+
         DecisionPerSessionDto decisionPerSessionDto = new DecisionPerSessionDto(sessionDecision);
-        decisionPerSessionDto.setTaskDecisions(decisionPerTaskDtos);
+        decisionPerSessionDto.setTestGroupDecisions(decisionPerTestGroupDtos);
 
         return decisionPerSessionDto;
     }
 
     @Override
     public List<DecisionPerSessionDto> getAllDecisions() {
-        List<String> sessions = (List<String>) entityManager.createQuery("select dps.sessionId from DecisionPerSessionEntity as dps").getResultList();
+        List<String> sessions = (List<String>) entityManager.createQuery("select dps.sessionId from DecisionPerSessionEntity as dps")
+                .getResultList();
         return sessions.stream().map(this::getDecisionPerSession).collect(toList());
     }
 
