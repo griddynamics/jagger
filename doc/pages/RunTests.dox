@@ -6,23 +6,59 @@
 /// Test sources located in test/java-builder-tests folder. Scenario Id - `JaggerSmokeTests` @n
 ///
 /// To run test:
-/// @li Prepare SUT - build and run test-target web application (located in test/test-target).
-/// @n TODO: rewrite when test target will be deployed with docker
-/// @li Optional: Edit `profiles/basic/environment.properties` to configure path to Jagger DB.
+/// @li Optional: Edit `profiles/basic/environment.properties` to configure Jagger.
 /// Default connection is to local H2 DB. See more information about jagger configuration
 /// in the @ref JaggerProperties "Jagger properties section"
-/// @li Configure `test.service.endpoints` property - single value or comma separated list with path to SUT.@n
-/// Edit `test.properties` file or specify `-Dtest.service.endpoints=` in command line when run test.
-/// @li Build and run test project. See @ref GettingStarted "Getting Started" for example.
+/// @li Optional: Edit `test.properties` file to configure `test.service.endpoints` property - single value or comma separated list with path to SUT.@n
+/// You may specify this property later in "start test" step.
+/// @li If needed, Download and install <a href="http://tomcat.apache.org/">tomcat</a>
+/// @li Build Jagger project
+/// @code
+/// cd {jagger-root-folder}
+/// mvn clean install
+/// @endcode
+/// @li start SUT
+/// @code
+/// cd test/test-target
+/// cp target/test-target-{version}.war {path-to-tomcat-folder}/webapps/ROOT.war
+/// cd {path-to-tomcat-folder}/bin
+/// ./catalina.sh start
+/// @endcode
+/// @li start test
+/// @code
+/// cd {jagger-root-folder}/test/java-builder-tests/target/java-builder-tests-{version}-full/
+/// ./start.sh profiles/basic/environment.properties -Dtest.service.endpoints=http://localhost:8080
+/// @endcode
+///
+/// @n TODO: rewrite when test target will be deployed with docker
 ///
 /// @section section_jaas_tests JaaS Tests
 /// This project contains smoke test to check JaaS REST API and verify default JHTTP* classes provided by Jagger. @n
 /// Test sources located in test/jaas-tests folder. Scenario Id - `ts_JaaSTestSuit` @n
 ///
-/// @li Prepare SUT - configure and run JaaS. See @ref section_installation_local "Installation section" for details. @n
-/// Note: Jagger DB should contains information about at least one test session with test contains metrics with both plot data and summary information.
-/// @li Configure `jaas.endpoint` property with path to JaaS SUT. Edit `test.properties` or specify path to JaaS in command line.
-/// @li Optional: Edit `profiles/basic/environment.properties` to configure Jagger. See more information about jagger configuration
-/// in the @ref JaggerProperties "Jagger properties section".
-/// Note: if JaaS is used to run tests, make sure that another instance of JaaS and JaaS DB is used in SUT.
-/// @li Build and run test project. See @ref GettingStarted "Getting Started" for example.
+/// To run test:
+/// @li Optional: Edit `profiles/basic/environment.properties` to configure Jagger.
+/// Default DB connection is to local H2 DB. See more information about jagger configuration
+/// in the @ref JaggerProperties "Jagger properties section"
+/// @li Optional: Edit `test.properties` file to configure `jaas.endpoint` with path to JaaS SUT.@n
+/// You may specify this property later in "start test" step.
+/// @li Build Jagger project
+/// @code
+/// cd {jagger-root-folder}
+/// mvn clean install
+/// @endcode
+/// @li Edit `docker/compose/target/context/docker-compose-with-existing-results-db.yml` to configure Jagger DB.
+/// Jagger DB should contains information about at least one test session with test contains metrics with both plot data and summary information.
+/// For example, DB with results of java-builder-tests run may be used.
+/// <b>Note:<b> if JaaS will be used to run tests and/or collect executions result, make sure that jagger-jaas services have different ports.
+/// @li Run docker compose.
+/// @code
+/// cd docker/compose/target/context
+/// docker-compose -f docker-compose-with-existing-results-db.yml up
+/// @endcode
+/// @li start test
+/// @code
+/// cd {jagger-root-folder}/test/jaas-tests/target/jaas-tests-{version}-full/
+/// ./start.sh profiles/basic/environment.properties -Djaas.endpoint=http://localhost:8088
+/// @endcode
+
