@@ -239,7 +239,9 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
                     globalStatisticsCalc.addValue(logEntry.getDuration());
                 }
             }
-            if (currentCount > 0) {
+            // first point is removed because it's value very high due to the first invocation of invoker taking longer than the other
+            // and it breaks statistics JFG-729
+            if (currentCount > 0 && ++addedStatistics > 1) {
                 double throughput = (double) currentCount * 1000 / intervalSize;
                 long currentTime = time - extendedInterval / 2;
                 addStatistics(time, currentTime, throughput, windowStatisticsCalc, throughputDesc, latencyDesc, latencyStdDevDesc, percentiles);

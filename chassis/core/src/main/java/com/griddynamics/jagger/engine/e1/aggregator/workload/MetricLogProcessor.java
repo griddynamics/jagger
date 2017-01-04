@@ -265,7 +265,9 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                         if (metricDescription.getShowSummary())
                             overallMetricAggregator.append(logEntry.getMetric());
                     }
-                    if (metricDescription.getPlotData()) {
+                    // first point is removed because it's value very high due to the first invocation of invoker taking longer than the other
+                    // and it breaks statistics JFG-729
+                    if (metricDescription.getPlotData() && ++addedStatistics > 1) {
                         Number aggregated = intervalAggregator.getAggregated();
                         if (aggregated != null) {
                             double value = aggregated.doubleValue();
