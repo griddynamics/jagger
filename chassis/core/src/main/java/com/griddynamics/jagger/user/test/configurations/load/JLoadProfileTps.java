@@ -6,6 +6,7 @@ import java.util.Objects;
 
 /**
  * This type of load implements an exact number of transactions per second performed by Jagger.
+ * @details Transaction is invoke from Jagger + response from system under test.
  * Available attributes:
  *     - transactionsPerSecond - A goal number of transactions per second
  *

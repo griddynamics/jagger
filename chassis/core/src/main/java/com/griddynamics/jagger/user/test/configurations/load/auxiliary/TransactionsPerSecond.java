@@ -1,7 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.load.auxiliary;
 
 /**
- * The number of requests per second Jagger shall perform.
+ * The number of transactions (request + response) per second Jagger shall perform.
  *
  */
 public final class TransactionsPerSecond {

@@ -6,6 +6,7 @@ import java.util.Objects;
 
 /**
  * This type of load implements an exact number of requests per second performed by Jagger.
+ * @details Request is invoke from Jagger without waiting for the response.
  * Available attributes:
  *     - requestsPerSecond - A goal number of requests per second
  *
