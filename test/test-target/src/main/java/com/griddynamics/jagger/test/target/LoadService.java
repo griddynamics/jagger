@@ -30,6 +30,11 @@ import java.util.Random;
 public class LoadService {
     private static final Random rnd = new Random();
 
+    /** Call to this endpoint will produce and sum random value n-times (n = cycles param value) before sending response back.
+     * @param cycles number of cycles.
+     * @return Actual delay, number of cycles, sum of generated random values.
+     * @throws InterruptedException
+     */
     @GET
     @Produces("text/plain")
     @Path("{cycles}")

@@ -25,12 +25,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import java.util.Arrays;
-import java.util.Random;
 
 @Path("/allocate")
 public class AllocateService {
-    private static final Random rnd = new Random();
 
+    /** Call to this endpoint will allocate bytes n-times (n = cycles param value) before sending response back.
+     * @param bytes number of bytes to generate per cycle.
+     * @param cycles number of cycles.
+     * @return Actual delay, number of allocated bytes, number of cycles.
+     * @throws InterruptedException
+     */
     @GET
     @Produces("text/plain")
     @Path("{bytes}x{cycles}")

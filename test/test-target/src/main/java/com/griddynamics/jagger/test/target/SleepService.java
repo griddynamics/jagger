@@ -31,6 +31,13 @@ public class SleepService{
 
     private static final Random rnd = new Random();
 
+    /**
+     * This endpoint produces responses with exact waiting time (specified by delay parameter).
+     *
+     * @param delay time in milliseconds before endpoint sends response back.
+     * @return Actual delay and expected delay values.
+     * @throws InterruptedException
+     */
     @GET
     @Produces("text/plain")
     @Path("{delay}")
@@ -40,6 +47,14 @@ public class SleepService{
         return "OK: targetDelay=[" + delay + "], actualDelay=[" + (System.currentTimeMillis() - startTime) + "]";
     }
 
+    /**
+     * This endpoint produces responses with random waiting time (between delayMin and delayMax).
+     *
+     * @param delayMin lower border of random delay
+     * @param delayMax higher border of random delay
+     * @return Actual delay and expected delay values.
+     * @throws InterruptedException
+     */
     @GET
     @Produces("text/plain")
     @Path("{delayMin}-{delayMax}")
@@ -50,6 +65,14 @@ public class SleepService{
         return "OK: targetDelay=[" + delay + "], actualDelay=[" + (System.currentTimeMillis() - startTime) + "]";
     }
 
+    /**
+     * This endpoint produces responses with waiting time depending on the sine function of time (between 0 and delayMax).
+     *
+     * @param period period of sinusoid
+     * @param delayMax higher value of sinusoid
+     * @return Actual delay and expected delay values.
+     * @throws InterruptedException
+     */
     @GET
     @Produces("text/plain")
     @Path("pulse/{period}/{delayMax}")
