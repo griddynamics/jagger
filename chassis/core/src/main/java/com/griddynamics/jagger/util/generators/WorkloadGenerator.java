@@ -38,7 +38,7 @@ class WorkloadGenerator {
     private static WorkloadClockConfiguration generateRps(JLoadProfileRps jLoadProfile) {
         QpsClockConfiguration qpsClockConfiguration = new QpsClockConfiguration();
         qpsClockConfiguration.setValue(jLoadProfile.getRequestsPerSecond());
-        qpsClockConfiguration.setWarmUpTime(jLoadProfile.getWarmUpTimeInSeconds());
+        qpsClockConfiguration.setWarmUpTime(jLoadProfile.getWarmUpTimeInMilliseconds());
         qpsClockConfiguration.setMaxThreadNumber((int) jLoadProfile.getMaxLoadThreads());
         qpsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
         return qpsClockConfiguration;

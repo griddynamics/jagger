@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @brief  Describes the execution sequence of the load tests during single run
@@ -133,6 +134,11 @@ public class JLoadScenario {
          * @return JLoadScenario object.
          */
         public JLoadScenario build() {
+    
+            if (testGroups.stream().map(JParallelTestsGroup::getId).collect(Collectors.toSet()).size() < testGroups.size()) {
+                throw new IllegalStateException("JParallelTestsGroup ids inside one JLoadScenario are not all unique");
+            }
+            
             return new JLoadScenario(this);
         }
 

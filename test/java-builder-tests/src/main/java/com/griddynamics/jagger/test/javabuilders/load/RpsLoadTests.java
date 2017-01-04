@@ -106,7 +106,7 @@ public class RpsLoadTests extends LoadTestsDefinition{
 
         return test("simple rps Load with warm up",
                 rpsLoad(rps)
-                        .withWarmUpTimeInSeconds(warmUp*1000).build(), //TODO *1000 remove after JFG-1093
+                        .withWarmUpTimeInMilliseconds(warmUp * 1000).build(),
                 durationTermination(testDuration),
                 deviationLimit(JMetricName.PERF_THROUGHPUT, expectedRps, 0.05, 0.1),
                 deviationLimit(JMetricName.PERF_ITERATION_SAMPLES, expectedIterations, 0.05, 0.1),
