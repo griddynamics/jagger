@@ -50,6 +50,10 @@ public class DecisionPerTaskEntity {
         this.decision = decision;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public TaskData getTaskData() {
         return taskData;
     }
@@ -65,5 +69,4 @@ public class DecisionPerTaskEntity {
     public void setDecision(String decision) {
         this.decision = decision;
     }
-
 }

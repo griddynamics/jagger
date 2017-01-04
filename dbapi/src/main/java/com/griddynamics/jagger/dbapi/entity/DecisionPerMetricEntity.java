@@ -50,6 +50,10 @@ public class DecisionPerMetricEntity {
         this.decision = decision;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public MetricDescriptionEntity getMetricDescriptionEntity() {
         return metricDescriptionEntity;
     }
@@ -65,5 +69,4 @@ public class DecisionPerMetricEntity {
     public void setDecision(String decision) {
         this.decision = decision;
     }
-
 }

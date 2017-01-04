@@ -49,6 +49,10 @@ public class DecisionPerSessionEntity {
         this.decision = decision;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getSessionId() {
         return sessionId;
     }
@@ -64,5 +68,4 @@ public class DecisionPerSessionEntity {
     public void setDecision(String decision) {
         this.decision = decision;
     }
-
 }
