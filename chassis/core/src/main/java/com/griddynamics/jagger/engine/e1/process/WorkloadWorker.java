@@ -239,7 +239,8 @@ public class WorkloadWorker extends ConfigurableWorker {
      * @return {@link ThreadPoolExecutor} instance with given pool size
      */
     private ThreadPoolExecutor getFixedThreadPoolExecutor(int poolSize) {
-        return new ThreadPoolExecutor(CORE_POOL_SIZE, poolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
+        int corePoolSize = poolSize < CORE_POOL_SIZE ? poolSize : CORE_POOL_SIZE;
+        return new ThreadPoolExecutor(corePoolSize, poolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
                 new ThreadFactoryBuilder()
                         .setNameFormat("workload-thread %d")
                         .setUncaughtExceptionHandler(ExceptionLogger.INSTANCE)
