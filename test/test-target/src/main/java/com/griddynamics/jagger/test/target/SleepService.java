@@ -34,6 +34,8 @@ public class SleepService{
     /**
      * This endpoint produces responses with exact waiting time (specified by delay parameter).
      *
+     * Example of request: /sleep/100
+     *
      * @param delay time in milliseconds before endpoint sends response back.
      * @return Actual delay and expected delay values.
      * @throws InterruptedException
@@ -49,6 +51,8 @@ public class SleepService{
 
     /**
      * This endpoint produces responses with random waiting time (between delayMin and delayMax).
+     *
+     * Example of request: /sleep/100-1000
      *
      * @param delayMin lower border of random delay
      * @param delayMax higher border of random delay
@@ -67,6 +71,8 @@ public class SleepService{
 
     /**
      * This endpoint produces responses with waiting time depending on the sine function of time (between 0 and delayMax).
+     *
+     * Example of request: /sleep/pulse/10000/3000
      *
      * @param period period of sinusoid
      * @param delayMax higher value of sinusoid

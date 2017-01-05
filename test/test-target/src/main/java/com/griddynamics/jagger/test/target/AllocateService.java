@@ -30,6 +30,9 @@ import java.util.Arrays;
 public class AllocateService {
 
     /** Call to this endpoint will allocate bytes n-times (n = cycles param value) before sending response back.
+     *
+     * Example of request: /allocate/100x100
+     *
      * @param bytes number of bytes to generate per cycle.
      * @param cycles number of cycles.
      * @return Actual delay, number of allocated bytes, number of cycles.
