@@ -148,7 +148,7 @@ public class UserGroupsLoadTests extends LoadTestsDefinition {
         int delay = 2;
         JLoadProfileUsers u = JLoadProfileUsers.builder(NumberOfUsers.of(1)).build();
         JLoadProfileUserGroups load = JLoadProfileUserGroups.builder(u)
-                .withDelayBetweenInvocationsInSeconds(delay*1000).build();
+                .withDelayBetweenInvocationsInMilliseconds(delay*1000).build();
 
         double invocationDuration = latency + delay;
         double expectedIterations = testDuration / invocationDuration;
