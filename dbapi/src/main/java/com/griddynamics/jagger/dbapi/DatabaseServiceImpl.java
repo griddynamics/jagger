@@ -1292,7 +1292,9 @@ public class DatabaseServiceImpl implements DatabaseService {
 
             // if task is test group - create new DecisionPerTestGroupDto and add it to list
             if (testIdsByTestGroupIds.containsKey(taskDecision.getTaskData().getId())) {
-                decisionPerTestGroupDtos.add(new DecisionPerTestGroupDto(taskDecision));
+                DecisionPerTestGroupDto decisionPerTestGroupDto = new DecisionPerTestGroupDto(taskDecision);
+                decisionPerTestGroupDto.setMetricDecisions(decisionPerTaskDto.getMetricDecisions());
+                decisionPerTestGroupDtos.add(decisionPerTestGroupDto);
             }
         }
 

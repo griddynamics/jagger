@@ -27,6 +27,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/**
+ * Represents DecisionPerTaskEntity table in DB
+ */
 @Entity
 public class DecisionPerTaskEntity {
 

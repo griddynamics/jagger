@@ -26,6 +26,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Represents DecisionPerSessionEntity table in DB
+ */
 @Entity
 public class DecisionPerSessionEntity {
 

@@ -6,6 +6,11 @@ import com.griddynamics.jagger.util.Decision;
 
 import java.util.List;
 
+/**
+ * This class is used for /session/{id}/decision rest call in JaaS.
+ * It represents a part of decision JSON - decision for session.
+ * It's a root element of JSON. Its child element is {@link DecisionPerTestGroupDto}.
+ */
 public class DecisionPerSessionDto {
     private Long id;
     private String sessionId;

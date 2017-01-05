@@ -5,6 +5,11 @@ import com.griddynamics.jagger.dbapi.entity.DecisionPerMetricEntity;
 import com.griddynamics.jagger.dbapi.entity.MetricDescriptionEntity;
 import com.griddynamics.jagger.util.Decision;
 
+/**
+ * This class is used for /session/{id}/decision rest call in JaaS.
+ * It represents a part of decision JSON - decision for metric.
+ * It's the last element in JSON root. Its parent element is {@link DecisionPerTaskDto} or {@link DecisionPerTestGroupDto}.
+ */
 public class DecisionPerMetricDto {
     private Long id;
     private MetricDescriptionEntity metricDescription;
