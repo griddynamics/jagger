@@ -4,7 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerMetricDto;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
-import com.griddynamics.jagger.dbapi.dto.DecisionPerTaskDto;
+import com.griddynamics.jagger.dbapi.dto.DecisionPerTestDto;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerTestGroupDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.NodeInfoDto;
@@ -1278,22 +1278,22 @@ public class DatabaseServiceImpl implements DatabaseService {
         Map<Long, Set<Long>> testIdsByTestGroupIds = getTestGroupIdsByTestIds(taskIds);
 
         List<DecisionPerTestGroupDto> decisionPerTestGroupDtos = new ArrayList<>();
-        List<DecisionPerTaskDto> decisionPerTaskDtos = new ArrayList<>();
+        List<DecisionPerTestDto> decisionPerTestDtos = new ArrayList<>();
         for (DecisionPerTaskEntity taskDecision : taskDecisions) {
             // get metric decisions for task
             List<DecisionPerMetricEntity> metricDecisions = (List<DecisionPerMetricEntity>) entityManager.createQuery(
                     "select dpm from DecisionPerMetricEntity as dpm where dpm.metricDescriptionEntity.taskData.id = :taskId")
                     .setParameter("taskId", taskDecision.getTaskData().getId()).getResultList();
 
-            // create DecisionPerTaskDto and add it to list
-            DecisionPerTaskDto decisionPerTaskDto = new DecisionPerTaskDto(taskDecision);
-            decisionPerTaskDto.setMetricDecisions(metricDecisions.stream().map(DecisionPerMetricDto::new).collect(toList()));
-            decisionPerTaskDtos.add(decisionPerTaskDto);
+            // create DecisionPerTestDto and add it to list
+            DecisionPerTestDto decisionPerTestDto = new DecisionPerTestDto(taskDecision);
+            decisionPerTestDto.setMetricDecisions(metricDecisions.stream().map(DecisionPerMetricDto::new).collect(toList()));
+            decisionPerTestDtos.add(decisionPerTestDto);
 
             // if task is test group - create new DecisionPerTestGroupDto and add it to list
             if (testIdsByTestGroupIds.containsKey(taskDecision.getTaskData().getId())) {
                 DecisionPerTestGroupDto decisionPerTestGroupDto = new DecisionPerTestGroupDto(taskDecision);
-                decisionPerTestGroupDto.setMetricDecisions(decisionPerTaskDto.getMetricDecisions());
+                decisionPerTestGroupDto.setMetricDecisions(decisionPerTestDto.getMetricDecisions());
                 decisionPerTestGroupDtos.add(decisionPerTestGroupDto);
             }
         }
@@ -1304,9 +1304,9 @@ public class DatabaseServiceImpl implements DatabaseService {
                     .filter(decision -> decision.getTaskData().getId().equals(testGroupId))
                     .findFirst().get();
 
-            List<DecisionPerTaskDto> testGroupTaskDecisions = decisionPerTaskDtos.stream()
+            List<DecisionPerTestDto> testGroupTestDecisions = decisionPerTestDtos.stream()
                     .filter(decision -> tasks.contains(decision.getTaskData().getId())).collect(toList());
-            testGroupDecision.setTaskDecisions(testGroupTaskDecisions);
+            testGroupDecision.setTestDecisions(testGroupTestDecisions);
         });
 
         DecisionPerSessionDto decisionPerSessionDto = new DecisionPerSessionDto(sessionDecision);

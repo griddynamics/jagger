@@ -8,16 +8,16 @@ import java.util.List;
 
 /**
  * This class is used for /session/{id}/decision rest call in JaaS.
- * It represents a part of decision JSON - decision for task.
+ * It represents a part of decision JSON - decision for test.
  * Its parent element is {@link DecisionPerTestGroupDto} and child is {@link DecisionPerMetricDto}.
  */
-public class DecisionPerTaskDto {
+public class DecisionPerTestDto {
     private Long id;
     private TaskData taskData;
     private Decision decision;
     private List<DecisionPerMetricDto> metricDecisions;
 
-    public DecisionPerTaskDto(DecisionPerTaskEntity decisionPerTaskEntity) {
+    public DecisionPerTestDto(DecisionPerTaskEntity decisionPerTaskEntity) {
         this.id = decisionPerTaskEntity.getId();
         this.taskData = decisionPerTaskEntity.getTaskData();
         this.decision = Decision.valueOf(decisionPerTaskEntity.getDecision());

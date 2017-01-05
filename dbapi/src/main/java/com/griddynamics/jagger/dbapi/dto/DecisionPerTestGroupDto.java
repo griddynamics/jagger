@@ -9,13 +9,13 @@ import java.util.List;
 /**
  * This class is used for /session/{id}/decision rest call in JaaS.
  * It represents a part of decision JSON - decision for test group.
- * Its parent element is {@link DecisionPerSessionDto} and children are {@link DecisionPerTaskDto} and {@link DecisionPerMetricDto}.
+ * Its parent element is {@link DecisionPerSessionDto} and children are {@link DecisionPerTestDto} and {@link DecisionPerMetricDto}.
  */
 public class DecisionPerTestGroupDto {
     private Long id;
     private TaskData taskData;
     private Decision decision;
-    private List<DecisionPerTaskDto> taskDecisions;
+    private List<DecisionPerTestDto> testDecisions;
     private List<DecisionPerMetricDto> metricDecisions;
 
     public DecisionPerTestGroupDto(DecisionPerTaskEntity decisionPerTaskEntity) {
@@ -48,12 +48,12 @@ public class DecisionPerTestGroupDto {
         this.decision = decision;
     }
 
-    public List<DecisionPerTaskDto> getTaskDecisions() {
-        return taskDecisions;
+    public List<DecisionPerTestDto> getTestDecisions() {
+        return testDecisions;
     }
 
-    public void setTaskDecisions(List<DecisionPerTaskDto> taskDecisions) {
-        this.taskDecisions = taskDecisions;
+    public void setTestDecisions(List<DecisionPerTestDto> testDecisions) {
+        this.testDecisions = testDecisions;
     }
 
     public List<DecisionPerMetricDto> getMetricDecisions() {
