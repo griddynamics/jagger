@@ -15,7 +15,7 @@ import static java.util.Collections.singletonList;
  *     - lifeTimeInSeconds - Describes how long threads will be alive. Default is 2 days.<p>
  *     - startDelayInSeconds - Delay before first thread will start. Default is 0.<p>
  *     - slewRateUsersPerSecond - Describes how many threads to start during every iteration. Default is numberOfUsers value.<p>
- * You can set optional attribute delayBetweenInvocationsInMilliseconds to specify delay in seconds between invocations (default value is 0s).
+ * You can set optional attribute delayBetweenInvocationsInMilliseconds to specify delay in milliseconds between invocations (default value is 0s).
  *
  * @ingroup Main_Load_profiles_group
  */
@@ -98,14 +98,14 @@ public class JLoadProfileUserGroups implements JLoadProfile {
 
         /**
          * Optional: Delay between invocations in seconds. Default is 0 s.
-         * @param delayBetweenInvocationsInSeconds Delay between invocations in seconds
+         * @param delayBetweenInvocationsInMilliseconds Delay between invocations in seconds
          */
-        public Builder withDelayBetweenInvocationsInSeconds(int delayBetweenInvocationsInSeconds) {
-            if (delayBetweenInvocationsInSeconds < 0) {
+        public Builder withDelayBetweenInvocationsInMilliseconds(int delayBetweenInvocationsInMilliseconds) {
+            if (delayBetweenInvocationsInMilliseconds < 0) {
                 throw new IllegalArgumentException(
-                        String.format("Delay between invocations must be >= 0. Provided value is %s", delayBetweenInvocationsInSeconds));
+                        String.format("Delay between invocations must be >= 0. Provided value is %s", delayBetweenInvocationsInMilliseconds));
             }
-            this.delayBetweenInvocationsInMilliseconds = delayBetweenInvocationsInSeconds;
+            this.delayBetweenInvocationsInMilliseconds = delayBetweenInvocationsInMilliseconds;
             return this;
         }
     }
