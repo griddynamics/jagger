@@ -1,78 +1,78 @@
 package com.griddynamics.jagger.user.test.configurations.load;
 
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.TransactionsPerSecond;
 
 import java.util.Objects;
 
 /**
- * This type of load implements an exact number of requests per second performed by Jagger.
- * @details Request is invoke from Jagger without waiting for the response.
+ * This type of load implements an exact number of transactions per second performed by Jagger.
+ * @details Transaction is invoke from Jagger + response from system under test.
  * Available attributes:
- *     - requestsPerSecond - A goal number of requests per second
+ *     - transactionsPerSecond - A goal number of transactions per second
  *
  * Optional attributes:
  *     - maxLoadThreads - Maximum number of parallel threads allowed for load generation
- *     - warmUpTimeInMilliseconds - Load will increase from 0 to @e requestsPerSecond in this time
+ *     - warmUpTimeInMilliseconds - Load will increase from 0 to @e transactionsPerSecond in this time
  *
  * @ingroup Main_Load_profiles_group
  */
-public class JLoadProfileRps implements JLoadProfile {
+public class JLoadProfileTps implements JLoadProfile {
 
-    private final long requestsPerSecond;
+    private final long transactionsPerSecond;
     private final long maxLoadThreads;
     private final long warmUpTimeInMilliseconds;
     private final int tickInterval;
 
-    private JLoadProfileRps(Builder builder) {
+    private JLoadProfileTps(Builder builder) {
         Objects.requireNonNull(builder);
 
-        this.requestsPerSecond = builder.requestsPerSecond;
+        this.transactionsPerSecond = builder.transactionsPerSecond;
         this.maxLoadThreads = builder.maxLoadThreads;
         this.warmUpTimeInMilliseconds = builder.warmUpTimeInMilliseconds;
         this.tickInterval = builder.tickInterval;
     }
 
-    /** Builder of the JLoadProfileRps: request per seconds
+    /** Builder of the JLoadProfileTps: transactions per seconds
      * @n
-     * @details Constructor parameters are mandatory for the JLoadProfileRps. All parameters, set by setters are optional
+     * @details Constructor parameters are mandatory for the JLoadProfileTps. All parameters, set by setters are optional
      * @n
-     * @param requestsPerSecond   - The number of requests per second Jagger shall perform
+     * @param transactionsPerSecond   - The number of transactions per second Jagger shall perform
      */
-    public static Builder builder(RequestsPerSecond requestsPerSecond) {
-        return new Builder(requestsPerSecond);
+    public static Builder builder(TransactionsPerSecond transactionsPerSecond) {
+        return new Builder(transactionsPerSecond);
     }
 
     public static class Builder {
         static final int DEFAULT_TICK_INTERVAL = 1000;
         static final int DEFAULT_MAX_LOAD_THREADS = 500;
         static final int DEFAULT_WARM_UP_TIME = -1;
-        private final long requestsPerSecond;
+        private final long transactionsPerSecond;
         private long maxLoadThreads;
         private long warmUpTimeInMilliseconds;
 
         // Tick interval doesn't have setter, since it's unclear if this field is needed. Check https://issues.griddynamics.net/browse/JFG-1000
         private int tickInterval;
 
-        /** Builder of JLoadProfileRps: request per seconds
+        /** Builder of JLoadProfileTps: transactions per seconds
          * @n
-         * @details Constructor parameters are mandatory for the JLoadProfileRps. All parameters, set by setters are optional
+         * @details Constructor parameters are mandatory for the JLoadProfileTps. All parameters, set by setters are optional
          * @n
-         * @param requestsPerSecond   - The number of requests per second Jagger shall perform
+         * @param transactionsPerSecond   - The number of transactions per second Jagger shall perform
          */
-        public Builder(RequestsPerSecond requestsPerSecond) {
-            Objects.requireNonNull(requestsPerSecond);
+        public Builder(TransactionsPerSecond transactionsPerSecond) {
+            Objects.requireNonNull(transactionsPerSecond);
 
-            this.requestsPerSecond = requestsPerSecond.value();
+            this.transactionsPerSecond = transactionsPerSecond.value();
             this.maxLoadThreads = DEFAULT_MAX_LOAD_THREADS;
             this.warmUpTimeInMilliseconds = DEFAULT_WARM_UP_TIME;
             this.tickInterval = DEFAULT_TICK_INTERVAL;
         }
 
-        /** Creates an object of JLoadProfileRps type with custom parameters.
-         * @return JLoadProfileRps object.
+        /** Creates an object of JLoadProfileTps type with custom parameters.
+         * @return JLoadProfileTps object.
          */
-        public JLoadProfileRps build() {
-            return new JLoadProfileRps(this);
+        public JLoadProfileTps build() {
+            return new JLoadProfileTps(this);
         }
 
         /** Optional: Max load threads. Default is 500.
@@ -87,9 +87,9 @@ public class JLoadProfileRps implements JLoadProfile {
         }
 
         /** Optional: Warm up time (in milliseconds). Default is -1.
-         * @param warmUpTimeInMilliseconds The warm up time value in milliseconds. Jagger increases load from 0 to @b requestPerSecond by @b warmUpTimeInMilliseconds
+         * @param warmUpTimeInMilliseconds The warm up time value in milliseconds. Jagger increases load from 0 to @b transactionsPerSecond by @b warmUpTimeInMilliseconds
          */
-        public Builder withWarmUpTimeInMilliseconds(long warmUpTimeInMilliseconds) {
+        public Builder withWarmUpTimeInSeconds(long warmUpTimeInMilliseconds) {
             if (warmUpTimeInMilliseconds < 0) {
                 throw new IllegalArgumentException(
                         String.format("The warm up time value in milliseconds. must be >= 0. Provided value is %s", warmUpTimeInMilliseconds));
@@ -99,8 +99,8 @@ public class JLoadProfileRps implements JLoadProfile {
         }
     }
 
-    public long getRequestsPerSecond() {
-        return requestsPerSecond;
+    public long getTransactionsPerSecond() {
+        return transactionsPerSecond;
     }
 
     public long getMaxLoadThreads() {

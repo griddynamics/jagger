@@ -2,16 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.griddynamics.jagger.test.jaas-test</groupId>
-    <artifactId>jaas-test</artifactId>
-    <version>2.0-SNAPSHOT</version>
-    <name>${groupId}:${artifactId}</name>
-    <packaging>jar</packaging>
+    <parent>
+        <groupId>com.griddynamics.jagger</groupId>
+        <artifactId>parent</artifactId>
+        <version>2.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
 
-    <properties>
-        <spring.version>4.3.4.RELEASE</spring.version>
-        <jagger.version>2.0-SNAPSHOT</jagger.version>
-    </properties>
+    <artifactId>jaas-test</artifactId>
+    <name>${groupId}.${artifactId}</name>
+    <packaging>jar</packaging>
 
     <repositories>
         <repository>
@@ -41,21 +41,8 @@
             <artifactId>jagger-distribution</artifactId>
             <type>zip</type>
             <classifier>full</classifier>
-            <version>${jagger.version}</version>
+            <version>${version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.2</version>
-        </dependency>
-
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -64,24 +51,20 @@
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.core</artifactId>
-            <version>${jagger.version}</version>
         </dependency>
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.util</artifactId>
-            <version>${jagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
