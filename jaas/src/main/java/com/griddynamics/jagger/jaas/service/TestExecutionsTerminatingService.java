@@ -36,10 +36,10 @@ public class TestExecutionsTerminatingService {
     }
 
     private boolean isOutdated(TestExecutionEntity testExec) {
-        long testExecStartTimeoutInSeconds = testExec.getExecutionStartTimeoutInSeconds();
+        long executionTimeToStartInSeconds = testExec.getExecutionTimeToStartInSeconds();
         long testExecCreated = testExec.getAuditEntities().stream().findFirst().get().getTimestamp();
 
-        long expirationTimestamp = testExecCreated + testExecStartTimeoutInSeconds * 1000;
+        long expirationTimestamp = testExecCreated + executionTimeToStartInSeconds * 1000;
         return expirationTimestamp <= System.currentTimeMillis();
     }
 
