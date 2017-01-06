@@ -22,7 +22,6 @@ package com.griddynamics.jagger.engine.e1.reporting;
 
 import com.griddynamics.jagger.dbapi.DatabaseService;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
-import com.griddynamics.jagger.dbapi.entity.WorkloadTaskData;
 import com.griddynamics.jagger.engine.e1.services.DataService;
 import com.griddynamics.jagger.engine.e1.services.DefaultDataService;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
@@ -35,7 +34,6 @@ import com.griddynamics.jagger.util.MetricNamesRankingProvider;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -277,38 +275,8 @@ public class SummaryReporter {
 
             dataForScalabilityPlots.put(testEntity, new HashMap<String, Double>());
 
-            //??? todo JFG_777 - decide how to provide session comparison and decision making for back compatibility
-            // workaround for back compatibility
-            // create dummy workloadTaskData entity for decision maker
-            WorkloadTaskData workloadTaskData = new WorkloadTaskData();
-            Map<MetricEntity,MetricSummaryValueEntity> metricsForThisTest = standardMetricsMap.get(testEntity);
-            for (MetricEntity metricEntity : metricsForThisTest.keySet()) {
-                if (StandardMetricsNamesUtil.THROUGHPUT_ID.equals(metricEntity.getMetricId())) {
-                    workloadTaskData.setThroughput(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
-                    dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.THROUGHPUT_ID, metricsForThisTest.get(metricEntity).getValue());
-                }
-                if (StandardMetricsNamesUtil.SUCCESS_RATE_ID.equals(metricEntity.getMetricId())) {
-                    workloadTaskData.setSuccessRate(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
-                }
-                if (StandardMetricsNamesUtil.LATENCY_ID.equals(metricEntity.getMetricId())) {
-                    workloadTaskData.setAvgLatency(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
-                    dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.LATENCY_ID, metricsForThisTest.get(metricEntity).getValue());
-                }
-                if (StandardMetricsNamesUtil.LATENCY_STD_DEV_ID.equals(metricEntity.getMetricId())) {
-                    workloadTaskData.setStdDevLatency(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
-                    dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID, metricsForThisTest.get(metricEntity).getValue());
-                }
-            }
-
             String testStatusComment = "";
             Decision testStatus = Decision.OK;
-
-            // Success rate
-            Decision testSuccessRateStatus = decisionMaker.decideOnTest(workloadTaskData);
-            if (testSuccessRateStatus.ordinal() > testStatus.ordinal()) {
-                testStatusComment = "Test status is based on success rate. Success rate is below the threshold defined by the property: 'chassis.master.reporting.successrate.threshold'";
-                testStatus = testSuccessRateStatus;
-            }
 
             // Errors during workload configuration
             Decision testExecutionStatus = testEntity.getTestExecutionStatus();
