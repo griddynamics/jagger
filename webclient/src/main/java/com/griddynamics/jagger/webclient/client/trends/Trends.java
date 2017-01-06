@@ -1287,18 +1287,6 @@ public class Trends extends DefaultActivity {
                                         tempTree.setCheckedExpandedWithParent(metricNode);
                                         needTestInfo = true;
                                     }
-                                    // workaround for back compatibility for standard metrics like Latency and Co
-                                    else {
-                                        if (metricNameDto.getMetricNameSynonyms() != null) {
-                                            for (String synonym : metricNameDto.getMetricNameSynonyms()) {
-                                                if (testsMetrics.getMetrics().contains(synonym)) {
-                                                    tempTree.setCheckedExpandedWithParent(metricNode);
-                                                    needTestInfo = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
                                 }
                             }
                             if (needTestInfo) {
@@ -1351,17 +1339,7 @@ public class Trends extends DefaultActivity {
                                 if (testsMetrics.getTrends().contains(metricNameDto.getMetricName())) {
                                     tempTree.setCheckedExpandedWithParent(plotNode);
                                 }
-                                // workaround for back compatibility for standard metrics like Latency and Co
-                                else {
-                                    if (metricNameDto.getMetricNameSynonyms() != null) {
-                                        for (String synonym : metricNameDto.getMetricNameSynonyms()) {
-                                            if (testsMetrics.getTrends().contains(synonym)) {
-                                                tempTree.setCheckedExpandedWithParent(plotNode);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
+
                             }
                         }
 

@@ -174,12 +174,12 @@ public class SummaryReporter {
         if (metricsPerTest == null) {
 
             Set<String> standardMetricsIds = new HashSet<String>();
-            standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.THROUGHPUT_ID));
-            standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.SUCCESS_RATE_ID));
-            standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_ID));
-            standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID));
-            standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.ITERATION_SAMPLES_ID));
-            standardMetricsIds.addAll(StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.VIRTUAL_USERS_ID));
+            standardMetricsIds.add(StandardMetricsNamesUtil.THROUGHPUT_ID);
+            standardMetricsIds.add(StandardMetricsNamesUtil.SUCCESS_RATE_ID);
+            standardMetricsIds.add(StandardMetricsNamesUtil.LATENCY_ID);
+            standardMetricsIds.add(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID);
+            standardMetricsIds.add(StandardMetricsNamesUtil.ITERATION_SAMPLES_ID);
+            standardMetricsIds.add(StandardMetricsNamesUtil.VIRTUAL_USERS_ID);
 
             LocalRankingProvider localRankingProvider = new LocalRankingProvider();
             DataService dataService = new DefaultDataService(databaseService);
@@ -283,18 +283,18 @@ public class SummaryReporter {
             WorkloadTaskData workloadTaskData = new WorkloadTaskData();
             Map<MetricEntity,MetricSummaryValueEntity> metricsForThisTest = standardMetricsMap.get(testEntity);
             for (MetricEntity metricEntity : metricsForThisTest.keySet()) {
-                if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.THROUGHPUT_ID).contains(metricEntity.getMetricId())) {
+                if (StandardMetricsNamesUtil.THROUGHPUT_ID.equals(metricEntity.getMetricId())) {
                     workloadTaskData.setThroughput(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
                     dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.THROUGHPUT_ID, metricsForThisTest.get(metricEntity).getValue());
                 }
-                if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.SUCCESS_RATE_ID).contains(metricEntity.getMetricId())) {
+                if (StandardMetricsNamesUtil.SUCCESS_RATE_ID.equals(metricEntity.getMetricId())) {
                     workloadTaskData.setSuccessRate(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
                 }
-                if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_ID).contains(metricEntity.getMetricId())) {
+                if (StandardMetricsNamesUtil.LATENCY_ID.equals(metricEntity.getMetricId())) {
                     workloadTaskData.setAvgLatency(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
                     dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.LATENCY_ID, metricsForThisTest.get(metricEntity).getValue());
                 }
-                if (StandardMetricsNamesUtil.getAllVariantsOfMetricName(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID).contains(metricEntity.getMetricId())) {
+                if (StandardMetricsNamesUtil.LATENCY_STD_DEV_ID.equals(metricEntity.getMetricId())) {
                     workloadTaskData.setStdDevLatency(new BigDecimal(metricsForThisTest.get(metricEntity).getValue()));
                     dataForScalabilityPlots.get(testEntity).put(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID, metricsForThisTest.get(metricEntity).getValue());
                 }

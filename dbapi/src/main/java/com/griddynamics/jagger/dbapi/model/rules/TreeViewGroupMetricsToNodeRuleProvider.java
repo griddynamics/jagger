@@ -12,6 +12,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_TPS;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS_ID;
+
 @Component
 public class TreeViewGroupMetricsToNodeRuleProvider {
 
@@ -71,92 +90,37 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
         List<TreeViewGroupMetricsToNodeRule> result = new ArrayList<TreeViewGroupMetricsToNodeRule>();
 
         // Throughput
-        String regex = "^(" +
-                StandardMetricsNamesUtil.THROUGHPUT_ID + "|" +
-                StandardMetricsNamesUtil.THROUGHPUT_OLD_ID +
-                ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.THROUGHPUT_ID,
-                StandardMetricsNamesUtil.THROUGHPUT_TPS,
-                regex));
+        String regex = "^(" + THROUGHPUT_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, THROUGHPUT_ID, THROUGHPUT_TPS, regex));
 
         // Latency
-        regex = "^(" +
-                StandardMetricsNamesUtil.LATENCY_ID + "|" +
-                StandardMetricsNamesUtil.LATENCY_OLD_ID +
-                ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.LATENCY_ID,
-                StandardMetricsNamesUtil.LATENCY_SEC,
-                regex));
+        regex = "^(" + LATENCY_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, LATENCY_ID, LATENCY_SEC, regex));
 
         // Latency, std dev
-        regex = "^(" +
-                StandardMetricsNamesUtil.LATENCY_STD_DEV_ID + "|" +
-                StandardMetricsNamesUtil.LATENCY_STD_DEV_OLD_ID +
-                ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.LATENCY_STD_DEV_ID,
-                StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC,
-                regex));
+        regex = "^(" + LATENCY_STD_DEV_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, LATENCY_STD_DEV_ID, LATENCY_STD_DEV_SEC, regex));
 
         // Duration
-        regex = "^(" +
-                StandardMetricsNamesUtil.DURATION_ID + "|" +
-                StandardMetricsNamesUtil.DURATION_OLD_ID +
-                ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.DURATION_ID,
-                StandardMetricsNamesUtil.DURATION_SEC,
-                regex));
-
+        regex = "^(" + DURATION_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, DURATION_ID, DURATION_SEC, regex));
 
         // Samples
-        regex = "^(" +
-                StandardMetricsNamesUtil.ITERATION_SAMPLES_ID + "|" +
-                StandardMetricsNamesUtil.ITERATION_SAMPLES_OLD_ID +
-                ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.ITERATION_SAMPLES_ID,
-                StandardMetricsNamesUtil.ITERATIONS_SAMPLES,
-                regex));
+        regex = "^(" + ITERATION_SAMPLES_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, ITERATION_SAMPLES_ID, ITERATIONS_SAMPLES, regex));
 
         // Success rate
-        regex = "^(" +
-                StandardMetricsNamesUtil.SUCCESS_RATE_ID + ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.SUCCESS_RATE_ID,
-                StandardMetricsNamesUtil.SUCCESS_RATE,
-                regex));
+        regex = "^(" + SUCCESS_RATE_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, SUCCESS_RATE_ID, SUCCESS_RATE, regex));
         //Virtual Users
-        regex = "^(" +
-                StandardMetricsNamesUtil.VIRTUAL_USERS_ID +
-                ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.VIRTUAL_USERS_ID,
-                StandardMetricsNamesUtil.VIRTUAL_USERS,
-                regex));
+        regex = "^(" + VIRTUAL_USERS_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, VIRTUAL_USERS_ID, VIRTUAL_USERS, regex));
 
         if ((percentiles != null) && (!percentiles.isEmpty())) {
             for (Double percentile : percentiles) {
-                String percentileNameNewModel = StandardMetricsNamesUtil.getLatencyMetricName(percentile, false);
-                String percentileNameOldModel = StandardMetricsNamesUtil.getLatencyMetricName(percentile, true);
-                regex = "^(" +
-                        percentileNameNewModel + "|" +
-                        percentileNameOldModel +
-                        ")$";
-                result.add(new TreeViewGroupMetricsToNodeRule(
-                        Rule.By.ID,
-                        percentileNameNewModel,
-                        percentileNameNewModel,
-                        regex));
+                String percentileName = StandardMetricsNamesUtil.getLatencyMetricName(percentile);
+                regex = "^" + percentileName + "$";
+                result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, percentileName, percentileName, regex));
             }
         }
 
@@ -168,43 +132,21 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
         List<TreeViewGroupMetricsToNodeRule> result = new ArrayList<TreeViewGroupMetricsToNodeRule>();
 
         // Throughput
-        String regex = "^(" +
-                StandardMetricsNamesUtil.THROUGHPUT_ID + ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.THROUGHPUT_ID,
-                StandardMetricsNamesUtil.THROUGHPUT,
-                regex));
+        String regex = "^(" + THROUGHPUT_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, THROUGHPUT_ID, THROUGHPUT, regex));
 
         // Virtual Users
-        regex = "^(" +
-                StandardMetricsNamesUtil.VIRTUAL_USERS_ID + ".*" + ")$";
+        regex = "^(" + VIRTUAL_USERS_ID + ".*" + ")$";
         result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.VIRTUAL_USERS_ID,
-                StandardMetricsNamesUtil.VIRTUAL_USERS,
-                regex));
+                Rule.By.ID, VIRTUAL_USERS_ID, VIRTUAL_USERS, regex));
 
         // Latency
-        regex = "^(" +
-                StandardMetricsNamesUtil.LATENCY_ID + "|" +
-                StandardMetricsNamesUtil.LATENCY_STD_DEV_ID +
-                ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.LATENCY_ID + StandardMetricsNamesUtil.LATENCY_STD_DEV_ID,
-                StandardMetricsNamesUtil.LATENCY,
-                regex));
+        regex = "^(" + LATENCY_ID + "|" + LATENCY_STD_DEV_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, LATENCY_ID + LATENCY_STD_DEV_ID, LATENCY, regex));
 
         // Time Latency Percentile
-        regex = "^" + StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX + "|" +
-                StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE +
-                "$";
-        result.add(new TreeViewGroupMetricsToNodeRule(
-                Rule.By.ID,
-                StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE + "_id",
-                StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE,
-                regex));
+        regex = "^" + LATENCY_PERCENTILE_REGEX + "|" + TIME_LATENCY_PERCENTILE + "$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, TIME_LATENCY_PERCENTILE + "_id", TIME_LATENCY_PERCENTILE, regex));
 
         return result;
     }
