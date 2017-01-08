@@ -1284,17 +1284,18 @@ public class DatabaseServiceImpl implements DatabaseService {
             List<DecisionPerMetricEntity> metricDecisions = (List<DecisionPerMetricEntity>) entityManager.createQuery(
                     "select dpm from DecisionPerMetricEntity as dpm where dpm.metricDescriptionEntity.taskData.id = :taskId")
                     .setParameter("taskId", taskDecision.getTaskData().getId()).getResultList();
-
-            // create DecisionPerTestDto and add it to list
-            DecisionPerTestDto decisionPerTestDto = new DecisionPerTestDto(taskDecision);
-            decisionPerTestDto.setMetricDecisions(metricDecisions.stream().map(DecisionPerMetricDto::new).collect(toList()));
-            decisionPerTestDtos.add(decisionPerTestDto);
+            List<DecisionPerMetricDto> decisionPerMetricDtos = metricDecisions.stream().map(DecisionPerMetricDto::new).collect(toList());
 
             // if task is test group - create new DecisionPerTestGroupDto and add it to list
             if (testIdsByTestGroupIds.containsKey(taskDecision.getTaskData().getId())) {
                 DecisionPerTestGroupDto decisionPerTestGroupDto = new DecisionPerTestGroupDto(taskDecision);
-                decisionPerTestGroupDto.setMetricDecisions(decisionPerTestDto.getMetricDecisions());
+                decisionPerTestGroupDto.setMetricDecisions(decisionPerMetricDtos);
                 decisionPerTestGroupDtos.add(decisionPerTestGroupDto);
+            } else {
+                // otherwise create DecisionPerTestDto and add it to list
+                DecisionPerTestDto decisionPerTestDto = new DecisionPerTestDto(taskDecision);
+                decisionPerTestDto.setMetricDecisions(decisionPerMetricDtos);
+                decisionPerTestDtos.add(decisionPerTestDto);
             }
         }
 
