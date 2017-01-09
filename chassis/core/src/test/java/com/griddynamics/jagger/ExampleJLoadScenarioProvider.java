@@ -40,6 +40,7 @@ public class ExampleJLoadScenarioProvider {
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment("no comments")
+                .withInvoker(ExampleCustomHttpInvokerProvider.nonVerbose())
                 .withQueryProvider(new ExampleQueriesProvider())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
