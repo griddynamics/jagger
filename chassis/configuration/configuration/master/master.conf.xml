@@ -176,6 +176,8 @@
         </property>
         <property name="limitSetConfig" ref="limitSetConfig"/>
     </bean>
+
+    <!--<bean class="net.sf.jasperreports.engine.util.JRStyledTextParser" factory-method="getInstance"/>-->
 </beans>
 
 

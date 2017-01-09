@@ -17,15 +17,19 @@
   ~ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
- <bean id="myFontFamily" class="net.sf.jasperreports.engine.fonts.SimpleFontFamily">
-   <property name="name" value="sans-serif"/>
-   <property name="normal" value="fonts/MS_Reference_Sans_Serif.ttf"/>
-   <property name="pdfEncoding" value="Identity-H"/>
-   <property name="pdfEmbedded" value="true"/>
- </bean>
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="myFontFamily" class="net.sf.jasperreports.engine.fonts.SimpleFontFamily">
+        <property name="name" value="sans-serif"/>
+        <!--<property name="normal" value="fonts/MS_Reference_Sans_Serif.ttf"/>-->
+        <property name="normalFace">
+            <bean class="com.griddynamics.jagger.util.SimpleFontFaceFactory" factory-method="newInstance">
+                <constructor-arg name="fontFile" value="classpath:fonts/MS_Reference_Sans_Serif.ttf"/>
+            </bean>
+        </property>
+        <property name="pdfEncoding" value="Identity-H"/>
+        <property name="pdfEmbedded" value="true"/>
+    </bean>
 </beans>
