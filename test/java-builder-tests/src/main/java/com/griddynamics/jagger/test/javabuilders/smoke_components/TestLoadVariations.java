@@ -21,13 +21,13 @@ public class TestLoadVariations {
 
     public JLoadProfile rpsFiveSecWarmUp(){
         return JLoadProfileRps.builder(RequestsPerSecond.of(10))
-                .withWarmUpTimeInSeconds(5)
+                .withWarmUpTimeInMilliseconds(5000)
                 .build();
     }
 
     public JLoadProfile rpsWith0WarmUp(){
         return JLoadProfileRps.builder(RequestsPerSecond.of(1))
-                //.withWarmUpTimeInSeconds(0) TODO uncomment when JFG-1009 will be fixed
+                //.withWarmUpTimeInMilliseconds(0) TODO uncomment when JFG-1009 will be fixed
                 .build();
     }
 
@@ -40,13 +40,13 @@ public class TestLoadVariations {
     public JLoadProfile rpsAllFields(){
         return JLoadProfileRps.builder(RequestsPerSecond.of(100))
                 .withMaxLoadThreads(10)
-                .withWarmUpTimeInSeconds(2)
+                .withWarmUpTimeInMilliseconds(2000)
                 .build();
     }
 
     public JLoadProfile singleGroupAllDefaults(){
         JLoadProfileUsers group = JLoadProfileUsers.builder(NumberOfUsers.of(1)).build();
-        return JLoadProfileUserGroups.builder(group).withDelayBetweenInvocationsInSeconds(1)
+        return JLoadProfileUserGroups.builder(group).withDelayBetweenInvocationsInMilliseconds(1)
                 .build();
     }
 

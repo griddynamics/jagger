@@ -21,12 +21,14 @@
 package com.griddynamics.jagger.util;
 
 import biz.source_code.base64Coder.Base64Coder;
-import com.google.common.io.Closeables;
 import com.griddynamics.jagger.exception.TechnicalException;
+import org.apache.commons.io.input.ClassLoaderObjectInputStream;
 import org.jboss.serial.io.JBossObjectInputStream;
 import org.jboss.serial.io.JBossObjectOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.Closeables;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -95,7 +97,7 @@ public class SerializationUtils {
         } finally {
             String s = new String(Base64Coder.encode(baos.toByteArray()));
             if (s.isEmpty()) {
-                log.info("toString({}, '{}', '{}')", new Object[] {toStringCount.getAndIncrement(), s, o});
+                log.info("toString({}, '{}', '{}')", toStringCount.getAndIncrement(), s, o);
             }
             try {
                 Closeables.close(oos, true);
@@ -136,18 +138,21 @@ public class SerializationUtils {
     }
 
     public static Object deserialize(byte[] data) {
+        return deserialize(data, SerializationUtils.class.getClassLoader());
+    }
+    
+    public static Object deserialize(byte[] data, ClassLoader classLoader) {
         ObjectInputStream ois = null;
         try {
             try{
                 //TODO fixes for support old reports
-                ois= new JBossObjectInputStream(new ByteArrayInputStream(data));
+                ois= new JBossObjectInputStream(new ByteArrayInputStream(data), classLoader);
             } catch (IOException e){
                 //data stored not with JBoss
-                ois=new ObjectInputStream(new ByteArrayInputStream(data));
+                ois=new ClassLoaderObjectInputStream(classLoader, new ByteArrayInputStream(data));
             }
-            Object payload = ois.readObject();
-
-            return payload;
+        
+            return ois.readObject();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {

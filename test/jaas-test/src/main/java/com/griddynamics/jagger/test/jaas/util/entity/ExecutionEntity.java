@@ -11,14 +11,14 @@ public class ExecutionEntity {
     private Long id;
     private String envId;
     private String loadScenarioId;
-    private Long executionStartTimeoutInSeconds;
+    private Long executionTimeToStartInSeconds;
     private ExecutionEntity.TestExecutionStatus status;
 
     public static ExecutionEntity getDefault() {
         ExecutionEntity e = new ExecutionEntity();
         e.setEnvId("1");
         e.setLoadScenarioId("sid");
-        e.setExecutionStartTimeoutInSeconds(0L);
+        e.setExecutionTimeToStartInSeconds(0L);
         return e;
     }
 
@@ -46,12 +46,12 @@ public class ExecutionEntity {
         this.loadScenarioId = loadScenarioId;
     }
 
-    public Long getExecutionStartTimeoutInSeconds() {
-        return executionStartTimeoutInSeconds;
+    public Long getExecutionTimeToStartInSeconds() {
+        return executionTimeToStartInSeconds;
     }
 
-    public void setExecutionStartTimeoutInSeconds(Long executionStartTimeoutInSeconds) {
-        this.executionStartTimeoutInSeconds = executionStartTimeoutInSeconds;
+    public void setExecutionTimeToStartInSeconds(Long executionTimeToStartInSeconds) {
+        this.executionTimeToStartInSeconds = executionTimeToStartInSeconds;
     }
 
     public ExecutionEntity.TestExecutionStatus getStatus() {
@@ -72,8 +72,8 @@ public class ExecutionEntity {
         if (envId != null ? !envId.equals(that.envId) : that.envId != null) return false;
         if (loadScenarioId != null ? !loadScenarioId.equals(that.loadScenarioId) : that.loadScenarioId != null)
             return false;
-        if (executionStartTimeoutInSeconds != null ? !executionStartTimeoutInSeconds.equals(that.executionStartTimeoutInSeconds) :
-                that.executionStartTimeoutInSeconds != null) return false;
+        if (executionTimeToStartInSeconds != null ? !executionTimeToStartInSeconds.equals(that.executionTimeToStartInSeconds) :
+                that.executionTimeToStartInSeconds != null) return false;
         return status == that.status;
 
     }
@@ -82,7 +82,7 @@ public class ExecutionEntity {
     public int hashCode() {
         int result = envId != null ? envId.hashCode() : 0;
         result = 31 * result + (loadScenarioId != null ? loadScenarioId.hashCode() : 0);
-        result = 31 * result + (executionStartTimeoutInSeconds != null ? executionStartTimeoutInSeconds.hashCode() : 0);
+        result = 31 * result + (executionTimeToStartInSeconds != null ? executionTimeToStartInSeconds.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         return result;
     }
@@ -93,7 +93,7 @@ public class ExecutionEntity {
                 "id=" + id +
                 ", envId='" + envId + '\'' +
                 ", loadScenarioId='" + loadScenarioId + '\'' +
-                ", executionStartTimeoutInSeconds=" + executionStartTimeoutInSeconds +
+                ", executionTimeToStartInSeconds=" + executionTimeToStartInSeconds +
                 ", status=" + status +
                 '}';
     }

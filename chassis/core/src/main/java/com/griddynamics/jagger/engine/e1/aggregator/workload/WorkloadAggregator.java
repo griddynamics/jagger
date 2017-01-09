@@ -119,46 +119,15 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         }
 
         log.debug("validation result {}", validationResults);
-
         log.debug("invoked {} failed {}", invoked, failed);
-        double avgLatency = 0;
-        double stdDevLatency = 0;
-
-        if (invoked > 1) {
-            avgLatency = Math.rint(totalDuration / invoked.doubleValue() * 1000) / 1000;
-            double avgDuration = totalDuration / invoked.doubleValue();
-            stdDevLatency = Math.sqrt(
-                    totalSqrDuration / invoked.doubleValue() - avgDuration * avgDuration
-            );
-            stdDevLatency = Math.rint(stdDevLatency * 1000) / 1000;
-        }
-
-        double succeeded = (double) (invoked - failed);
-        log.debug("Latency: avg {} stdev {}", avgLatency, stdDevLatency);
-
-        double throughput = Math.rint(succeeded / duration * 100) / 100;
-        if (Double.isNaN(throughput)) {
-            log.error("throughput is NaN (succeeded={},duration={}). Value for throughput will be set zero", succeeded, duration);
-            throughput = 0;
-        }
-        log.debug("Throughput: {}", throughput);
-
-        double successRate = (invoked.doubleValue() > 0)
-                ? Math.rint(succeeded / invoked.doubleValue() * 10000) / 10000
-                : 1;
-        if (Double.isNaN(successRate)) {
-            log.error("successRate is NaN (succeeded={},invoked={}). Value for successRate will be set zero", succeeded, invoked);
-            successRate = 0;
-        }
-        log.debug("Success rate: {}", successRate);
 
         persistValues(sessionId, taskId, workloadTask, clock, clockValue, termination, startTime, endTime, kernels, failed, invoked,
-                validationResults, successRate);
+                validationResults);
     }
 
     private void persistValues(String sessionId, String taskId, WorkloadTask workloadTask, String clock, Integer clockValue, String termination,
                                Long startTime, Long endTime, Collection<String> kernels, Integer failed, Integer invoked,
-                               Map<String, ValidationResult> validationResults, double successRate) {
+                               Map<String, ValidationResult> validationResults) {
         String parentId = workloadTask.getParentTaskId();
 
         TaskData taskData = getTaskData(taskId, sessionId);

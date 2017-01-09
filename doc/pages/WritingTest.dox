@@ -7,6 +7,8 @@
 /// @li @ref section_writing_load_test
 /// @li @ref section_writing_test_definition
 /// @li @ref section_writing_http_test_definition
+/// @li @ref section_writing_custom_test_definition
+/// @li @ref section_writing_test_parametrization
 ///
 ///
 /// @section section_writing_test_glossary Main terms
@@ -25,11 +27,12 @@
 /// We consider that at this point, you have already @ref section_installation_local "installed the framework" and @ref section_getting_started_run "learned how to execute the test" @n
 /// @n
 /// Now let's look inside the test project and review what is there. Created test project will have following components:
-/// @li Load scenario provider(s) - component where load tests are defined
+/// @li Load scenario provider(s) - component where load scenarios are defined. Every provider is marked with annotation @@Configuration. Every method returning load scenario
+/// is marked with annotation @@Bean. Provider can contain multiple methods with @@Bean annotation
 /// @li Test data provider(s) - endpoint and query providers. Sources of the test data
-/// @li Config - support component, where you should register (create a bean with @@Bean annotation) your scenario to make it visible for the framework
+/// @li Util - support component to work with @ref section_writing_test_parametrization "test and environment properties"
 ///
-/// In short, test development will consist of creating test data sources, creating load scenarios, registering load scenarios in the config file @n
+/// In short, test development will consist of creating test data sources and writing load scenarios @n
 ///
 /// @section section_writing_test_load_scenario Load scenario
 /// Load scenario describes the execution sequence of the load tests. While there are multiple scenarios in the test project, only single one can be executed at a time @n
@@ -57,10 +60,6 @@
 /// @dontinclude  ExampleSimpleJLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - Load test scenario configuration
 /// @until end: following section is used for docu generation - Load test scenario configuration
-/// @par Register load scenario in the framework
-/// @dontinclude  JLoadScenariosConfig.java
-/// @skip  begin: following section is used for docu generation - Load test scenario registering
-/// @until end: following section is used for docu generation - Load test scenario registering
 /// @n
 /// @section section_writing_load_test Load test
 /// Below is the list of available load profiles and termination criteria:
@@ -77,17 +76,16 @@
 /// this set of the requests is passed to the invoker. Invoker is providing communication with the SUT and returning responses. @n
 /// Responses are verified by validators to take pass/fail decision and processed by metrics to collect some measurements. @n
 /// During the run time every virtual user is working with it's own invoker, thus allowing to generate load. @n
-/// TODO: links to jagger components for providers, invokers, etc @n
 /// @n
 /// @section section_writing_http_test_definition Test definition for HTTP configuration
 /// @par Support of Http
-/// Out of the box Jagger support http load tests. To make work with http easier, we have prepared @ref com.griddynamics.jagger.invoker.v2
+/// Out of the box Jagger support http load tests. To make work with http easier, we have prepared @ref Main_Http_group
 /// "set of classes to describe Test definition for HTTP" @n
 /// @li DefaultHttpInvoker - Http invoker. Used by default for all test definitions
 /// @li JHttpEndpoint - Http endpoint.
 /// @li JHttpQuery - Http query.
 /// @li JHttpResponse - Http response. Represents response from the SUT
-/// @li JHttpValidator - TODO in development
+/// @li JHttpResponseStatusValidatorProvider - Provider of the Http status validators
 ///
 /// To create your first load test using http, you need to create an endpoint provider, like in the example below. @n
 /// Query provider is optional @n
@@ -99,3 +97,33 @@
 /// @dontinclude  ExampleQueriesProvider.java
 /// @skip  begin: following section is used for docu generation - Query provider
 /// @until end: following section is used for docu generation - Query provider
+///
+/// @section section_writing_custom_test_definition Test definition for Custom configuration
+/// @par Custom component to work with non http protocol
+/// Based on the http example above, you can create performance test for any other protocol. You will need to:
+/// @li decide what objects will describe you endpoints, queries and responses. It can be any serializable object. You can use @ref Main_Http_group "JHttpEndpoint, JHttpQuery, JHttpResponse as example"
+/// @li create test data sources - providers of your endpoints and queries. Providers are implementing Iterable like in the examples above.
+/// @li create custom invoker. This component implements Invoker<Q,R,E> and can use some library to communicate with you SUT. E.g. jdbc to load database. You can use @ref com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker "DefaultHttpInvoker" as example
+/// @li if necessary, add @ref MetricsMain "custom validators and metrics"
+///
+/// TODO: add example of the custom invoker
+///
+/// @section section_writing_test_parametrization Parametrization via properties
+/// To make your test more flexible and avoid recompilation we are recommending to parametrize your test. You can define parameters
+/// like load value or test duration in the @e test.properties file and later change them in the file or via system properties @n
+/// @n
+/// Example of the test properties file: @n
+/// @include ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/test.properties
+///
+/// Example of the test properties usage in the code:
+/// @dontinclude /Users/dlatnikov/Work/git/jagger/archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - Detailed load test scenario configuration
+/// @until end: following section is used for docu generation - Detailed load test scenario configuration
+
+
+
+// *************************************
+// not a part of the documentation below
+
+/// @defgroup Main_Http_group Http test definition components
+/// @details @ref section_writing_http_test_definition

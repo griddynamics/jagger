@@ -1,4 +1,4 @@
-/// @page MonitoringMain
+/// @page MonitoringMain Collecting system and JVM metrics
 /// @details
 /// @n
 /// Jagger is able to collect information about system and JVM resources utilization @n

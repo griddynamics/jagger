@@ -178,6 +178,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             this.aggregationInfo = aggregationInfo;
             this.intervalSizeProvider = intervalSizeProvider;
             this.taskData = taskData;
+            this.statistics = new ArrayList<>();
         }
 
         public Collection<MetricPointEntity> getStatistics() {
@@ -188,7 +189,6 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
             String tmp = path.substring(0, path.lastIndexOf(File.separatorChar));
             String metricName = tmp.substring(tmp.lastIndexOf(File.separatorChar) + 1);
             metricName = URLDecoder.decode(metricName, "UTF-8");
-
             MetricDescription metricDescription = fetchDescription(metricName);
 
             if (metricDescription == null) {
@@ -202,135 +202,102 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
                     metricDescription.addAggregator(new SumMetricAggregatorProvider());
                 }
             }
-
-            LogReader.FileReader<MetricLogEntry> fileReader = null;
-            statistics = new LinkedList<>();
-
             for (Map.Entry<MetricAggregatorProvider, MetricAggregatorSettings> entry : metricDescription.getAggregatorsWithSettings().entrySet()) {
-                MetricAggregator overallMetricAggregator = null;
-                MetricAggregator intervalAggregator = null;
-                MetricAggregatorSettings aggregatorSettings = entry.getValue();
+                collectStatistics(metricDescription, entry);
+            }
+            return this;
+        }
 
-                TimeUnits normalizeByIntervalValue = aggregatorSettings.getNormalizationBy();
-                boolean normalizeByTimeRequired = (normalizeByIntervalValue != TimeUnits.NONE);
-                boolean normalizeByFullTimeIntervalRequired = aggregatorSettings.isNormalizeOnFullMeasuredInterval();
-                long normalizeByInterval = normalizeByIntervalValue.getMilliseconds();
-                long intervalSize = getIntervalSize(intervalSizeProvider, aggregatorSettings, aggregationInfo);
+        private void collectStatistics(MetricDescription metricDescription, Map.Entry<MetricAggregatorProvider, MetricAggregatorSettings> entry) {
+            MetricAggregator overallMetricAggregator = null;
+            MetricAggregator intervalAggregator = null;
+            MetricAggregatorSettings aggregatorSettings = entry.getValue();
+            TimeUnits normalizeByIntervalValue = aggregatorSettings.getNormalizationBy();
+            boolean normalizeRequired = (normalizeByIntervalValue != TimeUnits.NONE);
+            boolean normalizeFullIntervalRequired = aggregatorSettings.isNormalizeOnFullMeasuredInterval();
+            long normalizeByInterval = normalizeByIntervalValue.getMilliseconds();
+            long intervalSize = getIntervalSize(intervalSizeProvider, aggregatorSettings, aggregationInfo);
 
-                if (metricDescription.getShowSummary())
-                    overallMetricAggregator = entry.getKey().provide();
+            if (metricDescription.getShowSummary()) {
+                overallMetricAggregator = entry.getKey().provide();
+            }
+            if (metricDescription.getPlotData()) {
+                intervalAggregator = entry.getKey().provide();
+            }
+            if (metricDescription.getShowSummary() || metricDescription.getPlotData()) {
+                MetricAggregator nameAggregator = overallMetricAggregator == null ? intervalAggregator : overallMetricAggregator;
+                String aggregatorName = nameAggregator.getName();
+                String aggregatorIdSuffix = createIdFromName(aggregatorName, normalizeByIntervalValue);
+                String aggregatorDisplayNameSuffix = createAggregatorDisplayNameSuffix(aggregatorName, normalizeByIntervalValue);
+                String displayName = (metricDescription.getDisplayName() == null ? metricDescription.getMetricId() : metricDescription.getDisplayName()) + aggregatorDisplayNameSuffix;
+                String metricId = metricDescription.getMetricId() + '-' + aggregatorIdSuffix;
+                MetricDescriptionEntity metricDesc = persistMetricDescription(metricId, displayName, taskData);
 
-                if (metricDescription.getPlotData())
-                    intervalAggregator = entry.getKey().provide();
-
-                if ((metricDescription.getShowSummary()) || (metricDescription.getPlotData())) {
-
-                    MetricAggregator nameAggregator = overallMetricAggregator == null ? intervalAggregator : overallMetricAggregator;
-
-                    String aggregatorName = nameAggregator.getName();
-                    String aggregatorIdSuffix = createIdFromName(aggregatorName, normalizeByIntervalValue);
-                    String aggregatorDisplayNameSuffix = createAggregatorDisplayNameSuffix(aggregatorName, normalizeByIntervalValue);
-
-                    String displayName = (metricDescription.getDisplayName() == null ? metricDescription.getMetricId() :
-                            metricDescription.getDisplayName()) + aggregatorDisplayNameSuffix;
-                    String metricId = metricDescription.getMetricId() + '-' + aggregatorIdSuffix;
-
-                    MetricDescriptionEntity metricDescriptionEntity = persistMetricDescription(metricId, displayName, taskData);
-
-                    long currentInterval = aggregationInfo.getMinTime() + intervalSize;
-                    long time = intervalSize;
-
-                    long extendedInterval = intervalSize;
-
-                    try {
-                        fileReader = logReader.read(path, MetricLogEntry.class);
-                        for (MetricLogEntry logEntry : fileReader) {
-                            log.debug("Log entry {} time", logEntry.getTime());
-                            if (metricDescription.getPlotData()) {
-                                while (logEntry.getTime() > currentInterval) {
-                                    // we leave current interval or current interval is empty
-                                    Number aggregated = intervalAggregator.getAggregated();
-                                    if (aggregated != null) {
-                                        // we leave interval
-                                        // we have some info in interval aggregator
-                                        // we need to save it
-                                        double value = aggregated.doubleValue();
-
-                                        // normalize result
-                                        if (normalizeByTimeRequired) {
-                                            long intervalForNormalization;
-                                            if (!normalizeByFullTimeIntervalRequired) {
-                                                // normalize by current aggregation interval
-                                                intervalForNormalization = extendedInterval;
-                                            } else {
-                                                // normalize by time from beginning of the test
-                                                intervalForNormalization = time;
-                                            }
-                                            value = value * normalizeByInterval * 1d / intervalForNormalization;
-                                        }
-
-                                        statistics.add(new MetricPointEntity(time - extendedInterval / 2, value, metricDescriptionEntity));
-                                        intervalAggregator.reset();
-
-                                        // go for the next interval
-                                        extendedInterval = intervalSize;
+                long currentInterval = aggregationInfo.getMinTime() + intervalSize;
+                long time = intervalSize;
+                long extendedInterval = intervalSize;
+                int addedStatistics = 0;
+                try (LogReader.FileReader<MetricLogEntry> fileReader = logReader.read(path, MetricLogEntry.class)) {
+                    for (MetricLogEntry logEntry : fileReader) {
+                        log.debug("Log entry {} time", logEntry.getTime());
+                        if (metricDescription.getPlotData()) {
+                            while (logEntry.getTime() > currentInterval) {
+                                Number aggregated = intervalAggregator.getAggregated();
+                                if (aggregated != null) {
+                                    double value = aggregated.doubleValue();
+                                    // first point is removed because it's value very high due to the first invocation of invoker taking longer than the other
+                                    // and it breaks statistics JFG-729
+                                    if (++addedStatistics > 1)
+                                        addStatistics(intervalAggregator, normalizeRequired, normalizeFullIntervalRequired, normalizeByInterval, metricDesc, time, extendedInterval, value);
+                                    extendedInterval = intervalSize;
+                                    time += intervalSize;
+                                    currentInterval += intervalSize;
+                                } else {
+                                    while (logEntry.getTime() > currentInterval) {
+                                        extendedInterval += intervalSize;
                                         time += intervalSize;
                                         currentInterval += intervalSize;
-                                    } else {
-                                        // current interval is empty
-                                        // we will extend it
-                                        while (logEntry.getTime() > currentInterval) {
-                                            extendedInterval += intervalSize;
-                                            time += intervalSize;
-                                            currentInterval += intervalSize;
-                                        }
                                     }
                                 }
-                                intervalAggregator.append(logEntry.getMetric());
                             }
-                            if (metricDescription.getShowSummary())
-                                overallMetricAggregator.append(logEntry.getMetric());
+                            intervalAggregator.append(logEntry.getMetric());
                         }
-
-                        if (metricDescription.getPlotData()) {
-                            Number aggregated = intervalAggregator.getAggregated();
-                            if (aggregated != null) {
-                                double value = aggregated.doubleValue();
-
-                                // normalize result
-                                if (normalizeByTimeRequired) {
-                                    long intervalForNormalization;
-                                    if (!normalizeByFullTimeIntervalRequired) {
-                                        // normalize by current aggregation interval
-                                        intervalForNormalization = extendedInterval;
-                                    } else {
-                                        // normalize by time from beginning of the test
-                                        intervalForNormalization = time;
-                                    }
-                                    value = value * normalizeByInterval * 1d / intervalForNormalization;
-
-                                }
-                                statistics.add(new MetricPointEntity(time - extendedInterval / 2, value, metricDescriptionEntity));
-                                intervalAggregator.reset();
-                            }
+                        if (metricDescription.getShowSummary())
+                            overallMetricAggregator.append(logEntry.getMetric());
+                    }
+                    // first point is removed because it's value very high due to the first invocation of invoker taking longer than the other
+                    // and it breaks statistics JFG-729
+                    if (metricDescription.getPlotData() && ++addedStatistics > 1) {
+                        Number aggregated = intervalAggregator.getAggregated();
+                        if (aggregated != null) {
+                            double value = aggregated.doubleValue();
+                            addStatistics(intervalAggregator, normalizeRequired, normalizeFullIntervalRequired, normalizeByInterval, metricDesc, time, extendedInterval, value);
                         }
-
-                        if (metricDescription.getShowSummary()) {
-                            double value = overallMetricAggregator.getAggregated().doubleValue();
-                            if (normalizeByTimeRequired) {
-                                value = value * normalizeByInterval * 1d / time;
-                            }
-                            persistAggregatedMetricValue(value, metricDescriptionEntity);
+                    }
+                    if (metricDescription.getShowSummary()) {
+                        double value = overallMetricAggregator.getAggregated().doubleValue();
+                        if (normalizeRequired) {
+                            value = value * normalizeByInterval * 1d / time;
                         }
-                    } finally {
-                        if (fileReader != null) {
-                            fileReader.close();
-                        }
+                        persistAggregatedMetricValue(value, metricDesc);
                     }
                 }
             }
+        }
 
-            return this;
+        private void addStatistics(MetricAggregator intervalAggregator, boolean normalizeByTimeRequired, boolean normalizeByFullTimeIntervalRequired,
+                                   long normalizeByInterval, MetricDescriptionEntity metricDescriptionEntity, long time, long extendedInterval, double value) {
+            if (normalizeByTimeRequired) {
+                long intervalForNormalization;
+                if (!normalizeByFullTimeIntervalRequired) {
+                    intervalForNormalization = extendedInterval;
+                } else {
+                    intervalForNormalization = time;
+                }
+                value = value * normalizeByInterval * 1d / intervalForNormalization;
+            }
+            statistics.add(new MetricPointEntity(time - extendedInterval / 2, value, metricDescriptionEntity));
+            intervalAggregator.reset();
         }
 
         private int getIntervalSize(IntervalSizeProvider intervalSizeProvider,
@@ -374,6 +341,7 @@ public class MetricLogProcessor extends LogProcessor implements DistributionList
          * Creates aggregator`s id from aggregator`s displayName.
          * Replace all reserved symbols for aggregator`s name with empty String.
          * Reserved symbols = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" | "$" | ","
+         *
          * @param name aggregator`s name
          * @return aggregator`s id
          */

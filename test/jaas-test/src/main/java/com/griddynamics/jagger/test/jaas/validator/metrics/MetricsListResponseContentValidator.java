@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.test.jaas.validator.metrics;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
@@ -28,10 +27,6 @@ import static junit.framework.Assert.assertTrue;
  */
 public class MetricsListResponseContentValidator extends BaseHttpResponseValidator<MetricEntity[]> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsListResponseContentValidator.class);
-
-    public MetricsListResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
-        super(taskId, sessionId, kernelContext);
-    }
 
     @Override
     public String getName() {

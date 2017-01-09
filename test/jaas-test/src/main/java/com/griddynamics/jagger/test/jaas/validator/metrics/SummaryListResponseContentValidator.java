@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.test.jaas.validator.metrics;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricSummaryValueEntity;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
@@ -22,10 +21,6 @@ import static junit.framework.Assert.assertTrue;
  * - expected and actual sets are the same.
  */
 public class SummaryListResponseContentValidator extends BaseHttpResponseValidator<Map<MetricEntity, MetricSummaryValueEntity>> {
-
-    public SummaryListResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
-        super(taskId, sessionId, kernelContext);
-    }
 
     @Override
     public String getName() {

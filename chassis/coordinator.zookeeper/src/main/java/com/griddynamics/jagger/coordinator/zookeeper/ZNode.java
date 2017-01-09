@@ -34,6 +34,8 @@ public interface ZNode {
     void addChildrenWatcher(Watcher watcher);
 
     <T> T getObject(Class<T> clazz);
+    
+    <T> T getObject(Class<T> clazz, ClassLoader classLoader);
 
     String getString();
 

@@ -16,7 +16,8 @@ import static java.util.stream.Collectors.toSet;
 /**
  * Provides default response status validator {@link JHttpResponseStatusValidator}.
  *
- * @ingroup Main_Validators_group */
+ * @ingroup Main_Validators_group
+ * @ingroup Main_Http_group */
 public class JHttpResponseStatusValidatorProvider implements ResponseValidatorProvider {
 
     private Set<Integer> validStatusCodes = newHashSet();
@@ -70,9 +71,7 @@ public class JHttpResponseStatusValidatorProvider implements ResponseValidatorPr
      * @apiNote Usage: <pre>
      * {@code
      * JHttpResponseStatusValidatorProvider validator = JHttpResponseStatusValidatorProvider.of(IntStream.range(200, 399)); // from 200 inclusive to 399 exclusive
-     *
      * // or
-     *
      * JHttpResponseStatusValidatorProvider validator = JHttpResponseStatusValidatorProvider.of(IntStream.rangeClosed(200, 399)); // from 200 inclusive to 399 inclusive
      * }
      * <pre/>
@@ -85,6 +84,7 @@ public class JHttpResponseStatusValidatorProvider implements ResponseValidatorPr
      * @param stringRegExp RegExp defining valid codes
      * @return new JHttpResponseStatusValidatorProvider with valid codes regExp provided in stringRegExp
      * @throws PatternSyntaxException If the expression's syntax is invalid
+     *
      * @apiNote Usage: <pre>
      * {@code
      * JHttpResponseStatusValidatorProvider validator = JHttpResponseStatusValidatorProvider.of("(200|201|202)");

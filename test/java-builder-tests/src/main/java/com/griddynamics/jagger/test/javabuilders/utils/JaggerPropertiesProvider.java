@@ -17,6 +17,9 @@ public class JaggerPropertiesProvider{
     @Autowired
     private Environment testEnv;
 
+    public Integer getIntPropertyValue(String key) {
+        return Integer.parseInt(getPropertyValue(key));
+    }
 
     public String getPropertyValue(String key) {
         String prop = testEnv.getProperty(key);

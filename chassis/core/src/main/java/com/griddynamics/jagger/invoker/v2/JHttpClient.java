@@ -8,6 +8,8 @@ package com.griddynamics.jagger.invoker.v2;
  *
  * @author Anton Antonenko
  * @since 2.0
+ *
+ * @ingroup Main_Http_group
  */
 public interface JHttpClient {
 
