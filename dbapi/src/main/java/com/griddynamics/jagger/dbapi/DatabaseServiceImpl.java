@@ -1300,7 +1300,10 @@ public class DatabaseServiceImpl implements DatabaseService {
         }
 
         // fill test group decisions with task decisions
-        testIdsByTestGroupIds.forEach((Long testGroupId, Set<Long> tasks) -> {
+        for (Map.Entry<Long, Set<Long>> entry : testIdsByTestGroupIds.entrySet()) {
+            Long testGroupId = entry.getKey();
+            Set<Long> tasks = entry.getValue();
+
             DecisionPerTestGroupDto testGroupDecision = decisionPerTestGroupDtos.stream()
                     .filter(decision -> decision.getTaskData().getId().equals(testGroupId))
                     .findFirst().get();
@@ -1308,7 +1311,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             List<DecisionPerTestDto> testGroupTestDecisions = decisionPerTestDtos.stream()
                     .filter(decision -> tasks.contains(decision.getTaskData().getId())).collect(toList());
             testGroupDecision.setTestDecisions(testGroupTestDecisions);
-        });
+        }
 
         DecisionPerSessionDto decisionPerSessionDto = new DecisionPerSessionDto(sessionDecision);
         decisionPerSessionDto.setTestGroupDecisions(decisionPerTestGroupDtos);
