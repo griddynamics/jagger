@@ -20,8 +20,6 @@
 
 package com.griddynamics.jagger.storage.fs.logging;
 
-import java.io.IOException;
-
 /**
  * Common interface for log reader
  *
@@ -29,7 +27,7 @@ import java.io.IOException;
  */
 public interface LogReader {
 
-    interface FileReader<T> extends Iterable<T> {
+    interface FileReader<T> extends Iterable<T>, AutoCloseable {
         void close();
     }
 

@@ -47,8 +47,8 @@ public class TestExecutionEntity {
     @Column(name = "`session_id`")
     private String sessionId;
 
-    @Column(name = "`execution_start_timeout_in_seconds`")
-    private Long executionStartTimeoutInSeconds;
+    @Column(name = "`execution_time_to_start_in_seconds`")
+    private Long executionTimeToStartInSeconds;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -89,12 +89,12 @@ public class TestExecutionEntity {
         this.testProjectURL = testProjectURL;
     }
 
-    public Long getExecutionStartTimeoutInSeconds() {
-        return executionStartTimeoutInSeconds;
+    public Long getExecutionTimeToStartInSeconds() {
+        return executionTimeToStartInSeconds;
     }
 
-    public void setExecutionStartTimeoutInSeconds(Long executionStartTimeoutInSeconds) {
-        this.executionStartTimeoutInSeconds = executionStartTimeoutInSeconds;
+    public void setExecutionTimeToStartInSeconds(Long executionTimeToStartInSeconds) {
+        this.executionTimeToStartInSeconds = executionTimeToStartInSeconds;
     }
 
     public TestExecutionStatus getStatus() {
@@ -148,8 +148,8 @@ public class TestExecutionEntity {
 
         if (envId != null ? !envId.equals(that.envId) : that.envId != null) return false;
         if (loadScenarioId != null ? !loadScenarioId.equals(that.loadScenarioId) : that.loadScenarioId != null) return false;
-        if (executionStartTimeoutInSeconds != null ? !executionStartTimeoutInSeconds.equals(that.executionStartTimeoutInSeconds) :
-                that.executionStartTimeoutInSeconds != null) return false;
+        if (executionTimeToStartInSeconds != null ? !executionTimeToStartInSeconds.equals(that.executionTimeToStartInSeconds) :
+                that.executionTimeToStartInSeconds != null) return false;
         if (testProjectURL != null ? !testProjectURL.equals(that.testProjectURL) : that.testProjectURL != null) return false;
         if (sessionId != null ? !sessionId.equals(that.sessionId) : that.sessionId != null) return false;
         if (errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null) return false;
@@ -161,7 +161,7 @@ public class TestExecutionEntity {
         int result = envId != null ? envId.hashCode() : 0;
         result = 31 * result + (loadScenarioId != null ? loadScenarioId.hashCode() : 0);
         result = 31 * result + (testProjectURL != null ? testProjectURL.hashCode() : 0);
-        result = 31 * result + (executionStartTimeoutInSeconds != null ? executionStartTimeoutInSeconds.hashCode() : 0);
+        result = 31 * result + (executionTimeToStartInSeconds != null ? executionTimeToStartInSeconds.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
         result = 31 * result + (sessionId != null ? sessionId.hashCode() : 0);
@@ -175,7 +175,7 @@ public class TestExecutionEntity {
                 ", envId='" + envId + '\'' +
                 ", loadScenarioId='" + loadScenarioId + '\'' +
                 ", testProjectURL='" + testProjectURL + '\'' +
-                ", executionStartTimeoutInSeconds=" + executionStartTimeoutInSeconds +
+                ", executionTimeToStartInSeconds=" + executionTimeToStartInSeconds +
                 ", errorMessage=" + errorMessage +
                 ", sessionId=" + sessionId +
                 ", status=" + status +

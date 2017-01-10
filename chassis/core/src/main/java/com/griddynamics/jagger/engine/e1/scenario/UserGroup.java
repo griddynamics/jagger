@@ -34,8 +34,6 @@ import java.util.Map;
 /**
  * User: dkotlyarov
  */
-@Deprecated
-// TODO: Should be removed with xml configuration JFG-906
 public class UserGroup {
     private static final Logger log = LoggerFactory.getLogger(UserGroup.class);
 

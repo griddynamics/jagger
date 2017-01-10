@@ -46,7 +46,7 @@ public class TestLoadVariations {
 
     public JLoadProfile singleGroupAllDefaults(){
         JLoadProfileUsers group = JLoadProfileUsers.builder(NumberOfUsers.of(1)).build();
-        return JLoadProfileUserGroups.builder(group).withDelayBetweenInvocationsInSeconds(1)
+        return JLoadProfileUserGroups.builder(group).withDelayBetweenInvocationsInMilliseconds(1)
                 .build();
     }
 

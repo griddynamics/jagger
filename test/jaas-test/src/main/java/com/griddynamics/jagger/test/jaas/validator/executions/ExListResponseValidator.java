@@ -53,7 +53,7 @@ public class ExListResponseValidator extends BaseHttpResponseValidator<Execution
 
         Assert.assertEquals("Randomly selected actual execution has unexpected value", expected.getEnvId(), randomActualEntity.getEnvId());
         Assert.assertEquals("Randomly selected actual execution has unexpected value", ExecutionEntity.TestExecutionStatus.PENDING, randomActualEntity.getStatus());
-        Assert.assertEquals("Randomly selected actual execution has unexpected value", expected.getExecutionStartTimeoutInSeconds(), randomActualEntity.getExecutionStartTimeoutInSeconds());
+        Assert.assertEquals("Randomly selected actual execution has unexpected value", expected.getExecutionTimeToStartInSeconds(), randomActualEntity.getExecutionTimeToStartInSeconds());
         Assert.assertEquals("Randomly selected actual execution has unexpected value", expected.getLoadScenarioId(), randomActualEntity.getLoadScenarioId());
 
         return true;
