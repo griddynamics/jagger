@@ -52,12 +52,6 @@
                   value="${chassis.master.reporting.root.path}/reporting/common/images/gray_ball_84.png"/>
     </bean>
 
-    <bean id="sessionStatusDecisionMaker"
-          class="com.griddynamics.jagger.engine.e1.reporting.DefaultSessionStatusDecisionMaker">
-        <property name="description"
-                  value="Status is based on success rate. Session status is a status of the worst test."/>
-    </bean>
-
     <bean id="abstractReportProviderBean" class="com.griddynamics.jagger.reporting.AbstractReportProviderBean"
           abstract="true">
         <property name="sessionFactory" ref="sessionFactory"/>
@@ -143,14 +137,6 @@
                         <property name="template" value="/reporting/diagnostics-report.jrxml"/>
                     </bean>
                 </entry>
-                <entry key="workloadSessionComparison">
-                    <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadSessionComparisonReporter"
-                          parent="abstractReportProviderBean">
-                        <property name="template"
-                                  value="/reporting/workload-session-comparison-report.jrxml"/>
-                        <property name="statusImageProvider" ref="statusImageProvider"/>
-                    </bean>
-                </entry>
                 <entry key="workloadProcessDetails">
                     <bean class="com.griddynamics.jagger.engine.e1.reporting.WorkloadProcessDetailsReporter"
                           parent="abstractReportProviderBean">
@@ -212,7 +198,6 @@
     <bean id="summaryReporter" class="com.griddynamics.jagger.engine.e1.reporting.SummaryReporter" scope="prototype">
         <property name="databaseService" ref="databaseService"/>
         <property name="metricHighlighting" value="${report.enable.decisions.per.metric.highlighting:true}"/>
-        <property name="decisionMaker" ref="sessionStatusDecisionMaker"/>
         <property name="statusImageProvider" ref="statusImageProvider"/>
     </bean>
 

@@ -15,6 +15,9 @@ public class DecisionPerMetricDto {
     private MetricDescriptionEntity metricDescription;
     private Decision decision;
 
+    public DecisionPerMetricDto() {
+    }
+
     public DecisionPerMetricDto(DecisionPerMetricEntity decisionPerMetricEntity) {
         this.id = decisionPerMetricEntity.getId();
         this.metricDescription = decisionPerMetricEntity.getMetricDescriptionEntity();

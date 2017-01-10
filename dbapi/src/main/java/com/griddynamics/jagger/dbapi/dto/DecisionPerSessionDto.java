@@ -17,6 +17,9 @@ public class DecisionPerSessionDto {
     private Decision decision;
     private List<DecisionPerTestGroupDto> testGroupDecisions;
 
+    public DecisionPerSessionDto() {
+    }
+
     public DecisionPerSessionDto(DecisionPerSessionEntity decisionPerSessionEntity) {
         this.id = decisionPerSessionEntity.getId();
         this.sessionId = decisionPerSessionEntity.getSessionId();
