@@ -27,6 +27,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/**
+ * Represents DecisionPerMetricEntity table in DB
+ */
 @Entity
 public class DecisionPerMetricEntity {
 
@@ -50,6 +53,10 @@ public class DecisionPerMetricEntity {
         this.decision = decision;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public MetricDescriptionEntity getMetricDescriptionEntity() {
         return metricDescriptionEntity;
     }
@@ -65,5 +72,4 @@ public class DecisionPerMetricEntity {
     public void setDecision(String decision) {
         this.decision = decision;
     }
-
 }

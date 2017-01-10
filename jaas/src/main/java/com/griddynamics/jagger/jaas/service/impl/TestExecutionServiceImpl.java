@@ -43,6 +43,11 @@ public class TestExecutionServiceImpl implements TestExecutionService {
     }
 
     @Override
+    public List<TestExecutionEntity> readByEnv(String envId) {
+        return newArrayList(testExecutionDao.readByEnv(envId));
+    }
+
+    @Override
     public TestExecutionEntity create(TestExecutionEntity testExecution) {
         if (testExecution.getExecutionTimeToStartInSeconds() == null || testExecution.getExecutionTimeToStartInSeconds() == 0) {
             testExecution.setExecutionTimeToStartInSeconds(testExecutionDefaultTimeToStartInSeconds);

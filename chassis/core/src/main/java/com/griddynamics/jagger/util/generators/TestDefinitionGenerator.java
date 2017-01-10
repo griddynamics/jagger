@@ -1,8 +1,5 @@
 package com.griddynamics.jagger.util.generators;
 
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
-
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
@@ -20,6 +17,9 @@ import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import org.springframework.beans.factory.support.ManagedList;
 
 import java.util.List;
+
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
 
 /**
  *

@@ -43,6 +43,14 @@ public class TestExecutionDaoImpl extends AbstractCrudDao<TestExecutionEntity, L
 
     @Override
     @Transactional
+    public List<TestExecutionEntity> readByEnv(String envId) {
+        Query query = getCurrentSession().createQuery("select t from TestExecutionEntity t where t.envId=:envId");
+        query.setString("envId", envId);
+        return (List<TestExecutionEntity>) query.list();
+    }
+
+    @Override
+    @Transactional
     public List<TestExecutionEntity> readAllPending() {
         Query query = getCurrentSession().createQuery("select t from TestExecutionEntity t where t.status = :status");
         query.setString("status", PENDING.name());

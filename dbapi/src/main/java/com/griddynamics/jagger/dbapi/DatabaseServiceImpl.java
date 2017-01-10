@@ -1,8 +1,11 @@
 package com.griddynamics.jagger.dbapi;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.griddynamics.jagger.dbapi.dto.DecisionPerMetricDto;
+import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
+import com.griddynamics.jagger.dbapi.dto.DecisionPerTestDto;
+import com.griddynamics.jagger.dbapi.dto.DecisionPerTestGroupDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.NodeInfoDto;
 import com.griddynamics.jagger.dbapi.dto.NodeInfoPerSessionDto;
@@ -91,7 +94,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by kgribov on 4/2/14.
@@ -412,7 +417,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             List<PlotSingleDto> plotSingleDtos = new ArrayList<>(sumCollection.size());
             MetricRankingProvider.sortMetrics(sumCollection);
 
-            plotSingleDtos.addAll(sumCollection.stream().map(DataProcessingUtil::generatePlotSingleDto).collect(Collectors.toList()));
+            plotSingleDtos.addAll(sumCollection.stream().map(DataProcessingUtil::generatePlotSingleDto).collect(toList()));
 
             SummaryIntegratedDto summaryDto = new SummaryIntegratedDto();
             summaryDto.setSummarySingleDtoList(sumCollection);
@@ -1072,7 +1077,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             }
 
             nodeInfoPerSessionDtoList.addAll(sessions.entrySet().stream()
-                    .map(session -> new NodeInfoPerSessionDto(session.getKey(), session.getValue())).collect(Collectors.toList()));
+                    .map(session -> new NodeInfoPerSessionDto(session.getKey(), session.getValue())).collect(toList()));
 
             log.info("For session ids " + sessionIds + " were found node info values in " + (System.currentTimeMillis() - time) + " ms");
         } catch (PersistenceException ex) {
@@ -1260,6 +1265,68 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
+    public DecisionPerSessionDto getDecisionPerSession(String sessionId) {
+        DecisionPerSessionEntity sessionDecision = (DecisionPerSessionEntity)
+                entityManager.createQuery("select dps from DecisionPerSessionEntity as dps where dps.sessionId = :sessionId")
+                        .setParameter("sessionId", sessionId).getSingleResult();
+
+        List<DecisionPerTaskEntity> taskDecisions = (List<DecisionPerTaskEntity>)
+                entityManager.createQuery("select dpt from DecisionPerTaskEntity as dpt where dpt.taskData.sessionId = :sessionId")
+                        .setParameter("sessionId", sessionId).getResultList();
+
+        Set<Long> taskIds = taskDecisions.stream().map(decision -> decision.getTaskData().getId()).collect(Collectors.toSet());
+        Map<Long, Set<Long>> testIdsByTestGroupIds = getTestGroupIdsByTestIds(taskIds);
+
+        List<DecisionPerTestGroupDto> decisionPerTestGroupDtos = new ArrayList<>();
+        List<DecisionPerTestDto> decisionPerTestDtos = new ArrayList<>();
+        for (DecisionPerTaskEntity taskDecision : taskDecisions) {
+            // get metric decisions for task
+            List<DecisionPerMetricEntity> metricDecisions = (List<DecisionPerMetricEntity>) entityManager.createQuery(
+                    "select dpm from DecisionPerMetricEntity as dpm where dpm.metricDescriptionEntity.taskData.id = :taskId")
+                    .setParameter("taskId", taskDecision.getTaskData().getId()).getResultList();
+            List<DecisionPerMetricDto> decisionPerMetricDtos = metricDecisions.stream().map(DecisionPerMetricDto::new).collect(toList());
+
+            // if task is test group - create new DecisionPerTestGroupDto and add it to list
+            if (testIdsByTestGroupIds.containsKey(taskDecision.getTaskData().getId())) {
+                DecisionPerTestGroupDto decisionPerTestGroupDto = new DecisionPerTestGroupDto(taskDecision);
+                decisionPerTestGroupDto.setMetricDecisions(decisionPerMetricDtos);
+                decisionPerTestGroupDtos.add(decisionPerTestGroupDto);
+            } else {
+                // otherwise create DecisionPerTestDto and add it to list
+                DecisionPerTestDto decisionPerTestDto = new DecisionPerTestDto(taskDecision);
+                decisionPerTestDto.setMetricDecisions(decisionPerMetricDtos);
+                decisionPerTestDtos.add(decisionPerTestDto);
+            }
+        }
+
+        // fill test group decisions with task decisions
+        for (Map.Entry<Long, Set<Long>> entry : testIdsByTestGroupIds.entrySet()) {
+            Long testGroupId = entry.getKey();
+            Set<Long> tasks = entry.getValue();
+
+            DecisionPerTestGroupDto testGroupDecision = decisionPerTestGroupDtos.stream()
+                    .filter(decision -> decision.getTaskData().getId().equals(testGroupId))
+                    .findFirst().get();
+
+            List<DecisionPerTestDto> testGroupTestDecisions = decisionPerTestDtos.stream()
+                    .filter(decision -> tasks.contains(decision.getTaskData().getId())).collect(toList());
+            testGroupDecision.setTestDecisions(testGroupTestDecisions);
+        }
+
+        DecisionPerSessionDto decisionPerSessionDto = new DecisionPerSessionDto(sessionDecision);
+        decisionPerSessionDto.setTestGroupDecisions(decisionPerTestGroupDtos);
+
+        return decisionPerSessionDto;
+    }
+
+    @Override
+    public List<DecisionPerSessionDto> getAllDecisions() {
+        List<String> sessions = (List<String>) entityManager.createQuery("select dps.sessionId from DecisionPerSessionEntity as dps")
+                .getResultList();
+        return sessions.stream().map(this::getDecisionPerSession).collect(toList());
+    }
+
+    @Override
     public TaskData getTaskData(String taskId, String sessionId) {
         return fetchUtil.getTaskData(taskId, sessionId);
     }
@@ -1332,7 +1399,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                 }
             }
         }
-        return Lists.newArrayList(mapForTests, mapForSessionScope);
+        return newArrayList(mapForTests, mapForSessionScope);
     }
 
     private boolean isSessionScopeMetric(MetricNameDto metricNameDto) {
