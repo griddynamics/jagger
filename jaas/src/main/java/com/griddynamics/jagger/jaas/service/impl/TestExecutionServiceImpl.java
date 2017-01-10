@@ -17,7 +17,7 @@ import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.Tes
 @Service
 public class TestExecutionServiceImpl implements TestExecutionService {
 
-    @Value("${test.execution.default.start.timeout.seconds}")
+    @Value("${test.execution.default.time.to.start.seconds}")
     private Long testExecutionDefaultTimeToStartInSeconds;
 
     private TestExecutionDao testExecutionDao;
