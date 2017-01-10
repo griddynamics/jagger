@@ -32,13 +32,37 @@
     <name>${groupId}.${artifactId}</name>
     <url>http://maven.apache.org</url>
 
+    <properties>
+        <maven.war.plugin.version>3.0.0</maven.war.plugin.version>
+        <tomcat7.plugin.version>2.1</tomcat7.plugin.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>${maven.war.plugin.version}</version>
                 <configuration>
                     <webXml>src/main/webapp/web.xml</webXml>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>${tomcat7.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>tomcat-run</id>
+                        <goals>
+                            <goal>exec-war-only</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <path>/</path>
+                            <attachArtifactClassifier>war-exec</attachArtifactClassifier>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

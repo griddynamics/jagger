@@ -18,7 +18,7 @@ import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.Tes
 public class TestExecutionServiceImpl implements TestExecutionService {
 
     @Value("${test.execution.default.start.timeout.seconds}")
-    private Long testExecutionDefaultStartTimeoutInSeconds;
+    private Long testExecutionDefaultTimeToStartInSeconds;
 
     private TestExecutionDao testExecutionDao;
 
@@ -44,8 +44,8 @@ public class TestExecutionServiceImpl implements TestExecutionService {
 
     @Override
     public TestExecutionEntity create(TestExecutionEntity testExecution) {
-        if (testExecution.getExecutionStartTimeoutInSeconds() == null || testExecution.getExecutionStartTimeoutInSeconds() == 0) {
-            testExecution.setExecutionStartTimeoutInSeconds(testExecutionDefaultStartTimeoutInSeconds);
+        if (testExecution.getExecutionTimeToStartInSeconds() == null || testExecution.getExecutionTimeToStartInSeconds() == 0) {
+            testExecution.setExecutionTimeToStartInSeconds(testExecutionDefaultTimeToStartInSeconds);
         }
     
         testExecution.setAuditEntities(Lists.newArrayList(new TestExecutionAuditEntity(testExecution,

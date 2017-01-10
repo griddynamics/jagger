@@ -30,6 +30,14 @@ import java.util.Random;
 public class NetService {
     private static final Random rnd = new Random();
 
+    /** Call to this endpoint will produce random text (with length of bytes param value) before sending response back.
+     *
+     * Example of request: /net/text/1000
+     *
+     * @param bytes length of produced text.
+     * @return Actual delay, length of produced text, randomly produced text.
+     * @throws InterruptedException
+     */
     @GET
     @Produces("text/plain")
     @Path("text/{bytes}")

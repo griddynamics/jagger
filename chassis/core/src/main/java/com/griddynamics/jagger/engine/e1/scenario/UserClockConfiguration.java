@@ -29,8 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * UserGroup: dkotlyarov
  */
-@Deprecated
-// TODO: Should be removed with xml configuration JFG-906
 public class UserClockConfiguration implements WorkloadClockConfiguration {
     private static final Logger log = LoggerFactory.getLogger(UserClockConfiguration.class);
 
