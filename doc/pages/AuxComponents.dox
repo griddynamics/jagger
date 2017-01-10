@@ -1,0 +1,9 @@
+/// @page AuxComponents
+/// @brief This chapter contains information related to the framework development and testing
+/// @details
+/// @n
+/// This chapter is dedicated to auxiliary components available in the Jagger project. These components can be used for
+/// framework development and testing. There is no information related to the framework usage
+///
+/// @li @subpage AuxRunTests
+///

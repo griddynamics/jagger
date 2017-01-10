@@ -15,6 +15,22 @@ import java.util.Objects;
  *     - delayBetweenInvocationsInMilliseconds - Delay between invocations in milliseconds
  *     - periodInSeconds - Period between load generation in seconds. If periodInSeconds is set, Jagger will perform @e invocationCount of requests every @e periodInSeconds seconds
  *
+ * Examples: @n
+ * @code
+ * JLoadProfileInvocation.builder(InvocationCount.of(500), ThreadCount.of(1));
+ * @endcode
+ * @image html load_InvocationsEnd.png "Invocations load"
+ * @n
+ * @code
+ * JLoadProfileInvocation.builder(InvocationCount.of(500), ThreadCount.of(5)).withPeriodBetweenLoadInSeconds(30).build();
+ * @endcode
+ * @image html load_InvocationsWithPeriod.png "Periodic invocations load. Same set of requests is executed periodically. 'Period between load' > time to execute all requests"
+ * @n
+ * @code
+ * JLoadProfileInvocation.builder(InvocationCount.of(500), ThreadCount.of(1)).withPeriodBetweenLoadInSeconds(10).build();
+ * @endcode
+ * @image html load_InvocationsWithPeriod2.png "Periodic invocations load. Same set of requests is executed periodically. 'Period between load' < time to execute all requests"
+ *
  * @ingroup Main_Load_profiles_group
  */
 public class JLoadProfileInvocation implements JLoadProfile {
