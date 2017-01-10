@@ -8,7 +8,7 @@ import com.griddynamics.jagger.util.Decision;
 /**
  * This class is used for /session/{id}/decision rest call in JaaS.
  * It represents a part of decision JSON - decision for metric.
- * It's the last element in JSON root. Its parent element is {@link DecisionPerTestDto} or {@link DecisionPerTestGroupDto}.
+ * It's the last element in JSON tree. Its parent element is {@link DecisionPerTestDto} or {@link DecisionPerTestGroupDto}.
  */
 public class DecisionPerMetricDto {
     private Long id;
