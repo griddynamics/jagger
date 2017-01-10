@@ -53,7 +53,26 @@ public enum JMetricName {
     MON_NONHEAP_MAX,
     MON_THREAD_COUNT,
     MON_THREAD_PEAK_COUNT,
-    MON_FILE_DESCRIPTORS;
+    MON_FILE_DESCRIPTORS,
+    LATENCY_AVG,
+    LATENCY_STD_DEV;
+
+    private final double DEFAULT_VALUE = -1D;
+
+    private double value = DEFAULT_VALUE;
+
+    /**
+     * Metric name for some particular percentile.
+     *
+     * @param percentile the value of percentile. It may varies from 0 to 100.0 percent.
+     */
+    public static JMetricName LATENCY_PERCENTILE(Double percentile) {
+        if (percentile < 0) {
+            throw new IllegalArgumentException("Percentile may varies from 0 to 100.0");
+        }
+        LATENCY_AVG.value = percentile;
+        return JMetricName.LATENCY_AVG;
+    }
 
 
     /**
@@ -204,6 +223,16 @@ public enum JMetricName {
                 break;
             case MON_FILE_DESCRIPTORS:
                 name = StandardMetricsNamesUtil.MON_FILE_DESCRIPTORS;
+                break;
+            case LATENCY_STD_DEV:
+                name = StandardMetricsNamesUtil.LATENCY_STD_DEV_ID;
+                break;
+            case LATENCY_AVG:
+                if (this.value == DEFAULT_VALUE) {
+                    name = StandardMetricsNamesUtil.LATENCY_ID;
+                } else {
+                    name = StandardMetricsNamesUtil.LATENCY + " " + this.value + " %";
+                }
             default:
                 break;
 
