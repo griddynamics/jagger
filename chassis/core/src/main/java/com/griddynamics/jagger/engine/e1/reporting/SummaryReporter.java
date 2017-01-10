@@ -61,17 +61,11 @@ public class SummaryReporter {
     private Map<TestEntity,Map<String,Double>> dataForScalabilityPlots = new HashMap<TestEntity, Map<String, Double>>();
     private SessionEntity sessionEntity;
 
-    private SessionStatusDecisionMaker decisionMaker;
     private StatusImageProvider statusImageProvider;
 
     @Required
     public void setMetricHighlighting(boolean isMetricHighlighting) {
         this.isMetricHighlighting = isMetricHighlighting;
-    }
-
-    @Required
-    public void setDecisionMaker(SessionStatusDecisionMaker decisionMaker) {
-        this.decisionMaker = decisionMaker;
     }
 
     @Required

@@ -21,12 +21,6 @@
 package com.griddynamics.jagger.util;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Class is used in chassis, web UI server and web UI client
  * to use it in web UI client - keep it simple (use only standard java libraries)
@@ -120,34 +114,5 @@ public class StandardMetricsNamesUtil {
                 metricName.indexOf("Latency ") + "Latency ".length(),
                 metricName.indexOf(" %")
         ));
-    }
-
-
-    // Standard metrics can be stored in DB under different ids due to back compatibility
-    public static Set<String> getAllVariantsOfMetricName(String metricName) {
-        Set<String> result = new HashSet<String>();
-        result.add(metricName);
-
-        List<String> synonyms = getSynonyms(metricName);
-        if (synonyms != null) {
-            result.addAll(synonyms);
-        }
-
-        return result;
-    }
-
-    private static List<String> getSynonyms(String metricName) {
-        // dynamic synonyms for latency percentiles
-        if (metricName.matches(LATENCY_PERCENTILE_REGEX)) {
-            Double value = parseLatencyPercentileKey(metricName);
-            String percentileMetricName = getLatencyMetricName(value);
-            if (metricName.equals(percentileMetricName)) {
-                return new ArrayList<String>(Arrays.asList(TIME_LATENCY_PERCENTILE));
-            } else {
-                return new ArrayList<String>(Arrays.asList(percentileMetricName));
-            }
-
-        }
-        return null;
     }
 }
