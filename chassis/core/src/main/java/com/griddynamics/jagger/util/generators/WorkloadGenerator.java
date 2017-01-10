@@ -14,6 +14,7 @@ import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileTps;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUserGroups;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.stream.Collectors.toList;
 
@@ -65,6 +66,7 @@ class WorkloadGenerator {
 
         UserGroupsClockConfiguration userGroupsClockConfiguration = new UserGroupsClockConfiguration();
         userGroupsClockConfiguration.setUsers(users);
+        userGroupsClockConfiguration.setShutdown(new AtomicBoolean());
         userGroupsClockConfiguration.setDelay(new FixedDelay(jLoadProfile.getDelayBetweenInvocationsInMilliseconds()));
         userGroupsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
         return userGroupsClockConfiguration;

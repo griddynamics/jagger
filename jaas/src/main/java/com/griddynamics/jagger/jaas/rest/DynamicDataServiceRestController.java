@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.jaas.rest;
 
+import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
 import com.griddynamics.jagger.engine.e1.services.DataService;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricPlotPointEntity;
@@ -104,6 +105,11 @@ public class DynamicDataServiceRestController extends AbstractController {
     @GetMapping(value = "/{dbId}/sessions/{sessionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SessionEntity> getSession(@PathVariable Long dbId, @PathVariable String sessionId) {
         return produceDsResponse(dbId, dataService -> dataService.getSession(sessionId));
+    }
+
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/decision", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DecisionPerSessionDto> getSessionDecision(@PathVariable Long dbId, @PathVariable String sessionId) {
+        return produceDsResponse(dbId, dataService -> dataService.getSessionDecisions(sessionId));
     }
 
     @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}",

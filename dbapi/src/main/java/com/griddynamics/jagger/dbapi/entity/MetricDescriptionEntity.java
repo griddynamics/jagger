@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.dbapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +23,7 @@ public class MetricDescriptionEntity {
     @Column(length = 100)
     private String displayName;
 
+    @JsonIgnore
     @ManyToOne
     private TaskData taskData;
 
