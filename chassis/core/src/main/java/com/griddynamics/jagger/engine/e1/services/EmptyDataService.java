@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.engine.e1.services;
 
+import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
 import com.griddynamics.jagger.engine.e1.services.data.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,12 @@ public class EmptyDataService implements DataService {
     @Override
     public Set<SessionEntity> getSessions(Collection<String> sessionIds) {
         log.warn("Can't get session entities for session ids {}. DataService is not supported in {}", sessionIds, jaggerPlace);
+        return null;
+    }
+
+    @Override
+    public DecisionPerSessionDto getSessionDecisions(String sessionId) {
+        log.warn("Can't get session decision for session id {}. DataService is not supported in {}", sessionId, jaggerPlace);
         return null;
     }
 

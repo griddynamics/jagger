@@ -47,6 +47,11 @@ public class DefaultDataService implements DataService {
     }
 
     @Override
+    public DecisionPerSessionDto getSessionDecisions(String sessionId) {
+        return databaseService.getDecisionPerSession(sessionId);
+    }
+
+    @Override
     public Set<SessionEntity> getSessions(Collection<String> sessionIds) {
 
         List<SessionDataDto> sessionDataDtoList = databaseService.getSessionInfoService().getBySessionIds(0, sessionIds.size(), new HashSet<String>(sessionIds));

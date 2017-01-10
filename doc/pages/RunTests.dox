@@ -19,18 +19,14 @@
 /// @endcode
 /// @li start SUT
 /// @code
-/// cd test/test-target
-/// cp target/test-target-{version}.war {path-to-tomcat-folder}/webapps/ROOT.war
-/// cd {path-to-tomcat-folder}/bin
-/// ./catalina.sh start
+/// cd test/test-target/target
+/// java -jar test-target-{version}-war-exec.jar
 /// @endcode
 /// @li start test
 /// @code
 /// cd {jagger-root-folder}/test/java-builder-tests/target/java-builder-tests-{version}-full/
 /// ./start.sh profiles/basic/environment.properties -Dtest.service.endpoints=http://localhost:8080
 /// @endcode
-///
-/// @n TODO: rewrite when test target will be deployed with docker
 ///
 /// @section section_jaas_tests JaaS Tests
 /// This project contains smoke test to check JaaS REST API and verify default JHTTP* classes provided by Jagger. @n

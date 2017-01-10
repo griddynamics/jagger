@@ -27,6 +27,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+/**
+ * Represents DecisionPerTaskEntity table in DB
+ */
 @Entity
 public class DecisionPerTaskEntity {
 
@@ -50,6 +53,10 @@ public class DecisionPerTaskEntity {
         this.decision = decision;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public TaskData getTaskData() {
         return taskData;
     }
@@ -65,5 +72,4 @@ public class DecisionPerTaskEntity {
     public void setDecision(String decision) {
         this.decision = decision;
     }
-
 }
