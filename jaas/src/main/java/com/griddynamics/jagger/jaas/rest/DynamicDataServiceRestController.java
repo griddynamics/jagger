@@ -112,7 +112,7 @@ public class DynamicDataServiceRestController extends AbstractController {
         return produceDsResponse(dbId, dataService -> dataService.getSessionDecisions(sessionId));
     }
 
-    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}",
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName:.+}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TestEntity> getTest(@PathVariable Long dbId, @PathVariable String sessionId,
                                               @PathVariable String testName
@@ -134,7 +134,7 @@ public class DynamicDataServiceRestController extends AbstractController {
         return produceDsResponse(dbId, dataService -> dataService.getMetrics(testId));
     }
 
-    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}/metrics",
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName:.+}/metrics",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<MetricEntity>> getMetrics(@PathVariable Long dbId, @PathVariable String sessionId,
                                                         @PathVariable String testName
@@ -147,7 +147,7 @@ public class DynamicDataServiceRestController extends AbstractController {
                 .orElse(Collections.emptySet());
     }
 
-    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}/metrics/summary",
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName:.+}/metrics/summary",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<MetricEntity, MetricSummaryValueEntity>> getMetricsSummary(@PathVariable Long dbId,
                                                                                          @PathVariable String sessionId,
@@ -157,7 +157,7 @@ public class DynamicDataServiceRestController extends AbstractController {
                 .getMetricSummary(getMetrics(dataService, sessionId, testName)));
     }
 
-    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName}/metrics/plot-data",
+    @GetMapping(value = "/{dbId}/sessions/{sessionId}/tests/{testName:.+}/metrics/plot-data",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<MetricEntity, List<MetricPlotPointEntity>>> getMetricPlotData(@PathVariable Long dbId,
                                                                                             @PathVariable String sessionId,

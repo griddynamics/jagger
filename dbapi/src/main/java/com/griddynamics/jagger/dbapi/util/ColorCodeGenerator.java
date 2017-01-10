@@ -12,8 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.dbapi.util.CommonUtils.addAllNullSafe;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Collections.singletonList;
@@ -27,12 +25,6 @@ public class ColorCodeGenerator {
 
     public static String getHexColorCode(String metricId, String sessionId) {
         return getHexColorCode(singletonList(metricId), sessionId);
-    }
-
-    public static String getHexColorCode(String metricId, List<String> synonyms, String sessionId) {
-        List<String> metricIds = newArrayList(metricId);
-        addAllNullSafe(metricIds, synonyms);
-        return getHexColorCode(metricIds, sessionId);
     }
 
     private static String getHexColorCode(List<String> metricIds, String sessionId) {

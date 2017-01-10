@@ -18,6 +18,9 @@ public class DecisionPerTestGroupDto {
     private List<DecisionPerTestDto> testDecisions;
     private List<DecisionPerMetricDto> metricDecisions;
 
+    public DecisionPerTestGroupDto() {
+    }
+
     public DecisionPerTestGroupDto(DecisionPerTaskEntity decisionPerTaskEntity) {
         this.id = decisionPerTaskEntity.getId();
         this.taskData = decisionPerTaskEntity.getTaskData();

@@ -266,7 +266,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
         private Map<Double, MetricDescriptionEntity> initPercentileMap() {
             Map<Double, MetricDescriptionEntity> percentileMap = new HashMap<>(getTimeWindowPercentilesKeys().size());
             for (Double percentileKey : getTimeWindowPercentilesKeys()) {
-                String metricStr = StandardMetricsNamesUtil.getLatencyMetricName(percentileKey, false);
+                String metricStr = StandardMetricsNamesUtil.getLatencyMetricName(percentileKey);
                 percentileMap.put(percentileKey, persistMetricDescription(metricStr, metricStr, taskData));
             }
             return percentileMap;
