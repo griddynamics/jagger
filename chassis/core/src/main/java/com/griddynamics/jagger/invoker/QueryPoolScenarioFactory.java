@@ -37,6 +37,7 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
 
     @Override
     public Scenario<Q, R, E> get(NodeContext nodeContext) {
+        // TODO: to remove request to context after JFG-1090
         Invoker<Q, R, E> invoker = nodeContext.getService(invokerClazz);
         if (invokerProvider != null) {
             invoker = invokerProvider.provide();

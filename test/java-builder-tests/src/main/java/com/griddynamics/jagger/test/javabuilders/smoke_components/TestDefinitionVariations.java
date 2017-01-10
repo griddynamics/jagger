@@ -3,6 +3,7 @@ package com.griddynamics.jagger.test.javabuilders.smoke_components;
 import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
+import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
 import com.griddynamics.jagger.test.javabuilders.utils.EndpointsProvider;
@@ -73,7 +74,7 @@ public class TestDefinitionVariations {
     public JTestDefinition allFields(){
         return JTestDefinition.builder(Id.of("all fields"), getEndpoints())
                 .withQueryProvider(SINGLE_QUERY)
-                .withInvoker(DummyCustomInvoker.class)
+                .withInvoker(DefaultInvokerProvider.of(DummyCustomInvoker.class))
                 .addValidators(Arrays.asList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class),
                         DefaultResponseValidatorProvider.of(TrueValidator.class)))
                 .withComment("all fields definition")
