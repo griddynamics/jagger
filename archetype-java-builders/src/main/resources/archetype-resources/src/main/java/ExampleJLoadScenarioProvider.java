@@ -1,7 +1,6 @@
 package ${package};
 
 import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonList;
 
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.ExampleResponseValidatorProvider;
@@ -37,7 +36,7 @@ import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.It
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.gd.util.JaggerPropertiesProvider;
+import ${package}.util.JaggerPropertiesProvider;
 
 import java.util.Arrays;
 
@@ -93,7 +92,8 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withOnlyErrors(LowErrThresh.of(0.99), UpErrThresh.of(1.00001))
                 .build();
 
-        //
+        // For standard metrics use JMetricName.
+        // JMetricName.PERF_LATENCY_PERCENTILE is used to set limits for latency percentile metrics.
         JLimit latencyPercentileLimit = JLimitVsRefValue.builder(JMetricName.PERF_LATENCY_PERCENTILE(95D), RefValue.of(0.1D))
                 // the threshold is relative.
                 .withOnlyWarnings(LowWarnThresh.of(0.50), UpWarnThresh.of(1.5))
