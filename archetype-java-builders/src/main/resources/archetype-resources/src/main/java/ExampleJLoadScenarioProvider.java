@@ -39,6 +39,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ${package}.util.JaggerPropertiesProvider;
 
+import java.util.Arrays;
+
 // begin: following section is used for docu generation - Detailed load test scenario configuration
 
 /**
@@ -94,10 +96,18 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withOnlyErrors(LowErrThresh.of(0.99), UpErrThresh.of(1.00001))
                 .build();
 
+        // For standard metrics use JMetricName.
+        // JMetricName.PERF_LATENCY_PERCENTILE is used to set limits for latency percentile metrics.
+        JLimit latencyPercentileLimit = JLimitVsRefValue.builder(JMetricName.PERF_LATENCY_PERCENTILE(95D), RefValue.of(0.1D))
+                // the threshold is relative.
+                .withOnlyWarnings(LowWarnThresh.of(0.50), UpWarnThresh.of(1.5))
+                .build();
+
+
         JLoadTest jLoadTest = JLoadTest
                 .builder(Id.of("exampleJaggerLoadTest"), jTestDefinition, jLoadProfileRps, jTerminationCriteria)
                 .addListener(new CollectThreadsTestListener())
-                .withLimits(successRateLimit, throughputLimit)
+                .withLimits(successRateLimit, throughputLimit, latencyPercentileLimit)
                 .build();
 
         JParallelTestsGroup jParallelTestsGroup = JParallelTestsGroup
@@ -107,8 +117,9 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
         // For JLoadScenario which is supposed to be executed by Jagger its ID must be set to 'jagger.load.scenario.id.to.execute' property's value
         return JLoadScenario.builder(Id.of("exampleJaggerLoadScenario"), jParallelTestsGroup)
-                            .addListener(new ExampleLoadScenarioListener())
-                            .build();
+                .addListener(new ExampleLoadScenarioListener())
+                .withLatencyPercentiles(Arrays.asList(10D, 25.5D, 42D, 95D))
+                .build();
     }
     // end: following section is used for docu generation - Detailed load test scenario configuration
 
