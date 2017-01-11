@@ -26,8 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Configuration
 public class JaggerSmokeLoadScenario extends JaggerPropertiesProvider {
@@ -162,16 +160,8 @@ public class JaggerSmokeLoadScenario extends JaggerPropertiesProvider {
                 .build();
     }
 
-    /**
-     * TODO remove workaround when JFG-1082 will be fixed
-     */
     private JParallelTestsGroup testGroup(String id, JLoadTest... tests){
-        return JParallelTestsGroup.builder(Id.of(id), Stream.of(tests).map(t->
-                JLoadTest.builder(Id.of(id+"_"+t.getId()), t.getTestDescription(), t.getLoad(), t.getTermination())
-                        .addListeners(t.getListeners())
-                        .withLimits(t.getLimits())
-                        .build())
-                .collect(Collectors.toList())).build();
+        return JParallelTestsGroup.builder(Id.of(id), Arrays.asList(tests)).build();
     }
 
     private JParallelTestsGroup getInvocationsLoadTests(){
@@ -209,7 +199,7 @@ public class JaggerSmokeLoadScenario extends JaggerPropertiesProvider {
                 tests.severalUsersOneGroup(),
                 tests.userGroupWithDelay(),
                 tests.userGroupWithLifeTimeGreaterTestDuration(),
-                // tests.userGroupWithLifeTimeLessTestDuration(), TODO uncomment when JFG-1094 will be fixed
+                tests.userGroupWithLifeTimeLessTestDuration(),
                 tests.userGroupWithSlewRate(),
                 tests.userGroupWithSlewRateTerminated(),
                 tests.userGroupDelayBetweenInvocations(),
