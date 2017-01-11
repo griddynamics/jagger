@@ -12,16 +12,15 @@ import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
 import com.griddynamics.jagger.test.jaas.util.TestContext;
+import com.griddynamics.jagger.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -38,14 +37,27 @@ public class LoadScenarioConfigListener extends ServicesAware implements Provide
             @Override
             public void onStart(LoadScenarioInfo loadScenarioInfo) {
                 super.onStart(loadScenarioInfo);
+                //collect all test sessions
                 Set<SessionEntity> sessionsAvailable = getDataService().getSessions(Collections.emptyList());
                 sessionsAvailable.forEach(this::correctDateFieldValue);
                 TestContext.setSessions(sessionsAvailable);
 
-                findAndLoadExpectedTests(sessionsAvailable);
+                // collect sessions with not empty tests
+                Map<SessionEntity, Set<TestEntity>> testToTest = sessionsAvailable.stream()
+                        .map(s-> Pair.of(s, getDataService().getTests(s)))
+                        .filter(e->!e.getSecond().isEmpty())
+                        .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
 
-                String tmpSessionId = TestContext.getTests().keySet().toArray(new String[]{})[0];
-                findAndLoadExpectedMetrics(tmpSessionId, TestContext.getTestsBySessionId(tmpSessionId));
+                Pair<SessionEntity, Map.Entry<TestEntity, Set<MetricEntity>>> testData = searchTestData(testToTest);
+                Set<MetricEntity> metrics = testData.getSecond().getValue();
+                SessionEntity session = testData.getFirst();
+
+                metrics.forEach(this::correctDateFieldValue);
+                TestContext.addMetrics(session.getId(), testData.getSecond().getKey().getName(), metrics);
+
+                Set<TestEntity> tests = testToTest.get(session);
+                tests.forEach(this::correctDateFieldValue);
+                TestContext.addTests(session.getId(), tests);
             }
 
             @Override
@@ -63,41 +75,33 @@ public class LoadScenarioConfigListener extends ServicesAware implements Provide
                 }
             }
 
-            private void findAndLoadExpectedTests(Set<SessionEntity> sessionsAvailable) {
-                SessionEntity sessionToGetTests = null;
-                Set<TestEntity> tests = null;
-                while (null == tests) {
-                    sessionToGetTests = sessionsAvailable.stream().skip(new Random().nextInt(sessionsAvailable.size() - 1)).findFirst().orElse(null);
-                    tests = getDataService().getTests(sessionToGetTests);
+            /**
+             * Search and return random test with not empty plot data and summary for metrics
+             */
+            private Pair<SessionEntity, Map.Entry<TestEntity, Set<MetricEntity>>> searchTestData(Map<SessionEntity, Set<TestEntity>> sessionsToTests){
+                Random rnd = new Random();
+                Pair<SessionEntity, Map.Entry<TestEntity, Set<MetricEntity>>> testData  = null;
 
-                    if (tests.isEmpty()) {
-                        tests = null; //Let's find another session which shall have some tests stored.
+                for (Map.Entry<SessionEntity, Set<TestEntity>> sessionToTests : sessionsToTests.entrySet()) {
+                    Map<TestEntity, Set<MetricEntity>> testsToMetrics = getDataService().getMetricsByTests(sessionToTests.getValue());
+
+                    for (Map.Entry<TestEntity, Set<MetricEntity>> testToMetrics : testsToMetrics.entrySet()) {
+                        if(testToMetrics.getValue().stream().anyMatch(m -> m.isPlotAvailable() && m.isSummaryAvailable())){
+                            TestContext.setMetricPlotData(getDataService().getMetricPlotData(testToMetrics.getValue()));
+                            TestContext.setMetricSummaries(getDataService().getMetricSummary(testToMetrics.getValue()));
+                            testData = Pair.of(sessionToTests.getKey(), testToMetrics);
+                            if(rnd.nextFloat()>0.7){ //provide some randomization of test data between test runs
+                                return testData;
+                            }
+                        }
                     }
                 }
 
-                tests.forEach(this::correctDateFieldValue);
-                TestContext.addTests(sessionToGetTests.getId(), tests);
-            }
-
-            private void findAndLoadExpectedMetrics(String sessionId, Set<TestEntity> testsAvailable) {
-                TestEntity testToGetMetricsFrom = null;
-                Set<MetricEntity> metrics = null;
-                while (null == metrics) {
-                    testToGetMetricsFrom = testsAvailable.size() < 2 ?
-                            testsAvailable.stream().findFirst().orElse(null)
-                            : testsAvailable.stream().skip(new Random().nextInt(testsAvailable.size() - 1)).findFirst().orElse(null);
-                    metrics = getDataService().getMetrics(testToGetMetricsFrom);
-
-                    if (metrics.isEmpty()) {
-                        metrics = null; //Let's find another test which shall have some metrics stored.
-                    }
+                if(testData==null){
+                    throw new RuntimeException("There are no appropriate test data. Expected at least one test session with test has both metric plot data and summary");
                 }
 
-                TestContext.setMetricPlotData(getDataService().getMetricPlotData(metrics));
-                TestContext.setMetricSummaries(getDataService().getMetricSummary(metrics));
-
-                metrics.forEach(this::correctDateFieldValue);
-                TestContext.addMetrics(sessionId, testToGetMetricsFrom.getName(), metrics);
+                return testData;
             }
 
             /**

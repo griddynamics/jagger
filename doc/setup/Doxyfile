@@ -709,6 +709,8 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SumMetricAggregatorProvider.java \
                          ./doc/pages/a_PageOrder.dox \
                          ./doc/pages/AgentProperties.dox \
+                         ./doc/pages/AuxComponents.dox \
+                         ./doc/pages/AuxRunTests.dox \
                          ./doc/pages/Components.dox \
                          ./doc/pages/GettingStarted.dox \
                          ./doc/pages/Installation.dox \

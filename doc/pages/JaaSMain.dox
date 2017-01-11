@@ -3,4 +3,5 @@
 /// @details
 /// @n
 /// @li @subpage JaasInstallation
+/// @li @htmlonly <a href="./swagger/swagger_doc.html" target="_blank">REST API documentation</a> @endhtmlonly
 ///

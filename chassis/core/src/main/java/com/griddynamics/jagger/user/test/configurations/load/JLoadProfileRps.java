@@ -14,6 +14,21 @@ import java.util.Objects;
  *     - maxLoadThreads - Maximum number of parallel threads allowed for load generation
  *     - warmUpTimeInMilliseconds - Load will increase from 0 to @e requestsPerSecond in this time
  *
+ * Examples: @n
+ * @code
+ * LoadProfileRps.builder(RequestsPerSecond.of(50)).withWarmUpTimeInMilliseconds(15000).build();
+ * @endcode
+ * @image html load_rpsWarmUp.png "Requests per seconds load with warm up time"
+ * @n
+ * Example of load balancing with changing response time: @n
+ * In this example, response time is changing periodically from approx 0 to 200 ms. Load generator is keeping load at 50 rps by adjusting number of virtual users
+ * @code
+ * JLoadProfileRps.builder(RequestsPerSecond.of(50)).build();
+ * @endcode
+ * @image html load_rps_balance1_latency.png "Response time from the SUT is changing"
+ * @image html load_rps_balance2_throughput.png "Number of request per seconds has constant rate due to the number of virtual users balancing"
+ * @image html load_rps_balance3_virtual_users.png "Adjustment of virtual users"
+ *
  * @ingroup Main_Load_profiles_group
  */
 public class JLoadProfileRps implements JLoadProfile {

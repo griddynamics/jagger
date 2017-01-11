@@ -14,6 +14,8 @@
 /// @n
 /// @section section_webui_installation_embedded Installation with embedded server
 /// <b> @e Note: </b> Starting Jagger version 2.0 WebUI can be run with embedded server.@n
+/// You can download Web client .jar file at: http://nexus.griddynamics.net/nexus/content//repositories/public/com/griddynamics/jagger/webclient/2.0/webclient-2.0-war-exec.jar
+/// @n
 /// To configure web client you can use java parameters. For example:
 /// @code
 /// java -jar jagger-${build.finalName}.jar -Djdbc.driver=com.mysql.jdbc.Driver
@@ -29,7 +31,7 @@
 /// I will show you how to launch jagger web client with [Apache Tomcat](http://tomcat.apache.org/) @n
 /// @n
 /// @li Download jagger war file from the next link - @n
-/// https://nexus.griddynamics.net/nexus/content/repositories/public/com/griddynamics/jagger/webclient/1.2.5/webclient-1.2.5.war @n
+/// https://nexus.griddynamics.net/nexus/content/repositories/public/com/griddynamics/jagger/webclient/2.0/webclient-2.0.war @n
 /// <b> @e Note: </b> Latest version number you can find in [Release notes](https://github.com/griddynamics/jagger/wiki/Jagger-Release-Notes#jagger-release-notes) @n
 /// @n
 /// @li Rename `webclient-X.X.X.war` file to `ROOT.war` @n

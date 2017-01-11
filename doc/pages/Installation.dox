@@ -16,8 +16,8 @@
 /// @li Load generating components
 ///
 /// @par To install and launch <b>Result storage and presentation</b> components you can use docker
-/// Download docker compose .yml file for local installation `compose-2.0-m1-package.zip` from
-/// `https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/com/griddynamics/jagger/compose/2.0-m1/` and unzip it @n
+/// Download docker compose .yml file for local installation `compose-2.0-package.zip` from
+/// `https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/com/griddynamics/jagger/compose/2.0/` and unzip it @n
 /// @n
 /// Run docker compose. All necessary images will be downloaded from the DockerHub and launched locally in containers
 /// @code
@@ -35,7 +35,7 @@
 /// @par To install and use <b>Load generating components</b> we are creating a Jagger test project from template
 /// Create new test project from template
 /// @code
-/// mvn archetype:generate -DarchetypeGroupId=com.griddynamics.jagger -DarchetypeArtifactId=jagger-archetype-java-builders -DarchetypeVersion=2.0-m1 -DarchetypeRepository=https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/
+/// mvn archetype:generate -DarchetypeGroupId=com.griddynamics.jagger -DarchetypeArtifactId=jagger-archetype-java-builders -DarchetypeVersion=2.0 -DarchetypeRepository=https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/
 /// @endcode
 /// <b> @e Note: </b> Latest version number `archetypeVersion` you can find in [Release notes](https://github.com/griddynamics/jagger/wiki/Jagger-Release-Notes#jagger-release-notes) @n
 /// @n

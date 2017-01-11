@@ -8,7 +8,7 @@ import java.util.Objects;
 import static java.util.Collections.singletonList;
 
 /**
- * This load is a list of user groups {@link JLoadProfileUsers}. Every such user group imitates a group of threads. Threads will start sequentially.
+ * This load is a list of user groups {@link JLoadProfileUsers} running in parallel. Every such user group imitates a group of threads. Threads will start sequentially.
  * Thus you are able to create load ramp-up and rump-down with this load type. You can configure a number of threads by attributes of user group.<p>
  * Available attributes:<p>
  *     - numberOfUsers - A goal number of threads.<p>
@@ -16,6 +16,15 @@ import static java.util.Collections.singletonList;
  *     - startDelayInSeconds - Delay before first thread will start. Default is 0.<p>
  *     - slewRateUsersPerSecond - Describes how many threads to start during every iteration. Default is numberOfUsers value.<p>
  * You can set optional attribute delayBetweenInvocationsInMilliseconds to specify delay in milliseconds between invocations (default value is 0s).
+ *
+ * Examples: @n
+ * @code
+ * JLoadProfileUsers u1 = JLoadProfileUsers.builder(NumberOfUsers.of(10)).withStartDelayInSeconds(0).withLifeTimeInSeconds(80).build();
+ * JLoadProfileUsers u2 = JLoadProfileUsers.builder(NumberOfUsers.of(10)).withStartDelayInSeconds(20).withLifeTimeInSeconds(80).build();
+ * JLoadProfileUsers u3 = JLoadProfileUsers.builder(NumberOfUsers.of(10)).withStartDelayInSeconds(40).withLifeTimeInSeconds(80).build();
+ * JLoadProfileUserGroups.builder(u1, u2, u3).build();
+ * @endcode
+ * @image html load_ComplexGroupLoad.png "Multiple user groups load with allows to build complex load profiles"
  *
  * @ingroup Main_Load_profiles_group
  */
