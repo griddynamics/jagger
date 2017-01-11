@@ -46,11 +46,6 @@ public class DefaultNodeContext implements NodeContext {
         if (services.containsKey(clazz)) {
             return (T) services.get(clazz);
         }
-        try {
-            return clazz.newInstance();
-        } catch (Exception e) {
-            log.warn("Didn't manage to create an instance of {}", clazz, e);
-        }
         return null;
     }
 

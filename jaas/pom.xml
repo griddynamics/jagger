@@ -442,10 +442,10 @@
                         <doctype>book</doctype>
                         <toc>left</toc>
                         <toclevels>3</toclevels>
-                        <numbered></numbered>
-                        <hardbreaks></hardbreaks>
-                        <sectlinks></sectlinks>
-                        <sectanchors></sectanchors>
+                        <numbered />
+                        <hardbreaks />
+                        <sectlinks />
+                        <sectanchors />
                         <generated>${generated.asciidoc.directory}</generated>
                     </attributes>
                 </configuration>
