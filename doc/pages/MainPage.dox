@@ -21,8 +21,9 @@
 /// @li @ref JaasMain "Provide REST API for the test results access"
 /// @li Integrate to CI
 /// @li @ref MainDecisionMaker "Rise pass/warning/fail alerts in the CI"
-/// @li Work with custom components
-/// @li Run in single node or distributed mode
+/// @li @ref section_writing_custom_test_definition "Work with custom communication protocols and components"
+/// @li @ref ComponentsLoadGenExecutionModes "Run on the single node or in the distributed mode"
+/// @li @ref ComponentsControlExecModes "Run framework as a server and submit new tests via REST API"
 ///
 /// @n
 /// Other documentation <a href='../archive/index.html'>versions</a>

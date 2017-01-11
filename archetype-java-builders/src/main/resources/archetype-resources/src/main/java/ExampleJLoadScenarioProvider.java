@@ -38,6 +38,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ${package}.util.JaggerPropertiesProvider;
 
+// begin: following section is used for docu generation - Detailed load test scenario configuration
+
 /**
  * By extending {@link JaggerPropertiesProvider} you get access to all Jagger properties and test properties. You can use them for configuration of JLoadScenario.<p>
  * Benefit of this approach is that you can change JLoadScenario configuration by changing properties file and no recompilation is needed.<p>
@@ -46,7 +48,6 @@ import ${package}.util.JaggerPropertiesProvider;
 @Configuration
 public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
 
-    // begin: following section is used for docu generation - Detailed load test scenario configuration
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
 

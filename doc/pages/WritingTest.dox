@@ -111,12 +111,13 @@
 /// @section section_writing_test_parametrization Parametrization via properties
 /// To make your test more flexible and avoid recompilation we are recommending to parametrize your test. You can define parameters
 /// like load value or test duration in the @e test.properties file and later change them in the file or via system properties @n
+/// Jagger archetype contains util class @ref JaggerPropertiesProvider to work with properties. Your load scenario provider should just extend this class like in the example below @n
 /// @n
 /// Example of the test properties file: @n
 /// @include ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/test.properties
 ///
 /// Example of the test properties usage in the code:
-/// @dontinclude /Users/dlatnikov/Work/git/jagger/archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleJLoadScenarioProvider.java
+/// @dontinclude ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleJLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - Detailed load test scenario configuration
 /// @until end: following section is used for docu generation - Detailed load test scenario configuration
 

@@ -14,4 +14,4 @@
 /// Metrics above are always collected and stored. @n
 /// Throughput and latency are collected only for successful transactions. If transaction was successful or not is defined by @ref MetricsValidators "validators" @n
 ///
-/// <b> \e Note: </b> you can configure what latency percentiles will be saved for particular load scenario. Details: @ref com.griddynamics.jagger.user.test.configurations.JLoadScenario "JLoadScenario"
+/// <b> \e Note: </b> you can configure what latency percentiles will be saved for particular load scenario. Details: @ref com.griddynamics.jagger.user.test.configurations.JLoadScenario.Builder "JLoadScenario"

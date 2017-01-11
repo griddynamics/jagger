@@ -707,11 +707,15 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateAggregatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateFailsAggregatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SumMetricAggregatorProvider.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/util/JaggerPropertiesProvider.java \
                          ./doc/pages/a_PageOrder.dox \
                          ./doc/pages/AgentProperties.dox \
                          ./doc/pages/AuxComponents.dox \
                          ./doc/pages/AuxRunTests.dox \
-                         ./doc/pages/Components.dox \
+                         ./doc/pages/ComponentsExecModes.dox \
+                         ./doc/pages/ComponentsLoadGenExecModes.dox \
+                         ./doc/pages/ComponentsControlExecModes.dox \
+                         ./doc/pages/ComponentsMain.dox \
                          ./doc/pages/GettingStarted.dox \
                          ./doc/pages/Installation.dox \
                          ./doc/pages/JaggerProperties.dox \

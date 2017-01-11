@@ -46,13 +46,13 @@
 /// @ref com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener "LoadScenarioListener" - Load scenario listener. Is triggered on start and stop of the load scenario @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener "TestGroupListener" - Parallel test group listener. Is triggered on start and stop of the test group @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.test.TestListener "TestListener" - Load test listener. Is triggered on start, stop and during load test execution @n
-/// @ref com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener<Q,R,E> "InvocationListener" - Invocation listener. Is triggered on invocation start, success, error and failure @n
+/// @ref Workaround_InvocationListener_group "InvocationListener" - Invocation listener. Is triggered on invocation start, success, error and failure @n
 /// @n
 /// @par Framework is providing additional information in the listeners: @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo "LoadScenarioInfo" - Load scenario listener. Is triggered on start and stop of the load scenario @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo "TestGroupInfo" - Parallel test group listener. Is triggered on start and stop of the test group @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.test.TestInfo "TestInfo" - Load test listener. Is triggered on start, stop and during load test execution @n
-/// @ref com.griddynamics.jagger.engine.e1.collector.invocation.InvocationInfo<Q,R,E> "InvocationInfo" - Invocation listener. Is triggered on invocation start, success, error and failure @n
+/// @ref Workaround_InvocationInfo_group "InvocationInfo" - Invocation listener. Is triggered on invocation start, success, error and failure @n
 /// @n
 /// @par Java doc for listeners and examples
 /// @ref Main_Listeners_group
@@ -95,3 +95,6 @@
 
 /// @defgroup Main_Services_group Service implementations and examples
 /// @details @ref section_listeners_services
+
+/// @defgroup Workaround_InvocationListener_group Invocation listener
+/// @defgroup Workaround_InvocationInfo_group Invocation info
