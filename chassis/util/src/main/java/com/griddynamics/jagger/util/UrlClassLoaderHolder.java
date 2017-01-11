@@ -29,7 +29,7 @@ public class UrlClassLoaderHolder {
         try {
             log.info("Creating a classloader for classes url {} ...", classesUrl);
             final URL customClasses = new URL(classesUrl);
-            this.urlClassLoader = new URLClassLoader(new URL[]{customClasses});
+            this.urlClassLoader = new JaggerUrlClassLoader(new URL[]{customClasses});
             log.info("Classloader for classes url {} successfully created", classesUrl);
             return true;
         } catch (MalformedURLException e) {
