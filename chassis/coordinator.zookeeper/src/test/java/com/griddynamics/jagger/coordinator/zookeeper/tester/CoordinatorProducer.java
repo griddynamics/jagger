@@ -25,6 +25,7 @@ import com.griddynamics.jagger.coordinator.zookeeper.ZNode;
 import com.griddynamics.jagger.coordinator.zookeeper.Zoo;
 import com.griddynamics.jagger.coordinator.zookeeper.ZooKeeperFactory;
 import com.griddynamics.jagger.coordinator.zookeeper.ZookeeperCoordinator;
+import com.griddynamics.jagger.util.UrlClassLoaderHolder;
 
 import java.util.Collections;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class CoordinatorProducer {
 
         ZNode root = zoo.root().child(args[0]);
 
-        Coordinator coordinator = new ZookeeperCoordinator(root, Executors.newSingleThreadExecutor());
+        Coordinator coordinator = new ZookeeperCoordinator(root, Executors.newSingleThreadExecutor(), new UrlClassLoaderHolder());
 
         NodeId nodeId = NodeId.masterNode("master");
         Set<Worker> workers = Collections.singleton(Coordination.emptyWorker());

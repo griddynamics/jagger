@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.jaas.rest;
 
 import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
@@ -44,8 +43,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(value = "/envs")
-@Api(description = "This is the API for Jagger Test Environments. It provides endpoints for reading, creating and updating Test Environments. "
-        + "Deleting is performed automatically by cleaning job. Expiration time of environments is set by property 'environments.ttl.minutes'.")
+@Api(description = "Jagger Test Environments API. It provides endpoints for reading, creating and updating Test Environments. "
+        + "Deleting is performed automatically by cleaning job. Expiration time of environments is set by property 'environments.ttl.minutes'. "
+        + "This API is user by Jagger load generation components for communication with JaaS. It allows JaaS to monitor running test "
+        + "environments and send commands to these environments. "
+        + "Test Environments API is not intended for manual usage")
 public class TestEnvironmentRestController extends AbstractController {
 
     private static final String ENV_ID_PATTERN = "^[a-zA-Z0-9\\._\\-]{1,249}$";
@@ -146,8 +148,7 @@ public class TestEnvironmentRestController extends AbstractController {
         if (!matcher.matches())
             throw new TestEnvironmentInvalidIdException(envId, envIdPattern);
 
-        if (testEnv.getRunningLoadScenario() == null && testEnv.getStatus() == RUNNING
-                || testEnv.getRunningLoadScenario() != null && testEnv.getStatus() == PENDING)
+        if (testEnv.getRunningLoadScenario() != null && testEnv.getStatus() == PENDING)
             throw new WrongTestEnvironmentStatusException(testEnv.getStatus(), testEnv.getRunningLoadScenario());
     }
 

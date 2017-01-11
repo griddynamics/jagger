@@ -60,6 +60,9 @@
 /// Also you can define name for every JMX connection, like: @n
 /// @code -Djmx.services=localhost:9870{tomcat},localhost:9875{jetty} @endcode
 /// @n
+/// and delay how long (in ms) agent should wait for JMX connection to open: @n
+/// @code -Djmx.connection.timeout=10000 @endcode
+/// @n
 /// There are some more properties for agent setup. You can find them here: @subpage AgentProperties
 /// @n
 /// @section section_mon_agent_start_jboss JMX monitoring configuration for JBoss 6 and later

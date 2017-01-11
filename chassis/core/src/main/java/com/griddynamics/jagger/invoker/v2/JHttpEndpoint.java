@@ -28,6 +28,8 @@ import static org.springframework.web.util.UriComponentsBuilder.newInstance;
  *
  * @author Anton Antonenko
  * @since 2.0
+ *
+ * @ingroup Main_Http_group
  */
 public class JHttpEndpoint implements Serializable {
 

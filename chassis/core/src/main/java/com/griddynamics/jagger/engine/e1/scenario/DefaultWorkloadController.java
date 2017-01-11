@@ -20,17 +20,25 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.griddynamics.jagger.coordinator.Command;
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.coordinator.RemoteExecutor;
-import com.griddynamics.jagger.engine.e1.process.*;
+import com.griddynamics.jagger.engine.e1.process.AddUrlClassLoader;
+import com.griddynamics.jagger.engine.e1.process.ChangeWorkloadConfiguration;
+import com.griddynamics.jagger.engine.e1.process.PollWorkloadProcessStatus;
+import com.griddynamics.jagger.engine.e1.process.RemoveUrlClassLoader;
+import com.griddynamics.jagger.engine.e1.process.ScenarioContext;
+import com.griddynamics.jagger.engine.e1.process.StartWorkloadProcess;
+import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
+import com.griddynamics.jagger.engine.e1.process.WorkloadStatus;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import java.util.Map;
 import java.util.Set;
@@ -48,14 +56,26 @@ public class DefaultWorkloadController implements WorkloadController {
     private Map<NodeId, Integer> threads;
     private Map<NodeId, Integer> delays;
     private Map<NodeId, Integer> poolSize;
-
-    public DefaultWorkloadController(String sessionId, String taskId, WorkloadTask task, Map<NodeId, RemoteExecutor> remotes, TimeoutsConfiguration timeoutsConfiguration, Long startTime) {
+    
+    private String classesUrl;
+    
+    public void setClassesUrl(String classesUrl) {
+        this.classesUrl = classesUrl;
+    }
+    
+    public DefaultWorkloadController(final String sessionId,
+                                     final String taskId,
+                                     final WorkloadTask task,
+                                     final Map<NodeId, RemoteExecutor> remotes,
+                                     final TimeoutsConfiguration timeoutsConfiguration,
+                                     final Long startTime) {
         this.sessionId = Preconditions.checkNotNull(sessionId);
         this.taskId = Preconditions.checkNotNull(taskId);
         this.task = Preconditions.checkNotNull(task);
         this.remotes = ImmutableMap.copyOf(remotes);
         this.timeoutsConfiguration = timeoutsConfiguration;
         this.startTime = startTime;
+        
         progress = Progress.IDLE;
         processes = Maps.newHashMap();
         threads = Maps.newHashMap();
@@ -91,7 +111,13 @@ public class DefaultWorkloadController implements WorkloadController {
             Integer threadsOnNode = threads.get(id);
             Integer delay = delays.get(id);
 
-            log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}", new Object[]{pollTime, id, threadsOnNode, status.getStartedSamples(), status.getFinishedSamples(), delay});
+            log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}",
+                      pollTime,
+                      id,
+                      threadsOnNode,
+                      status.getStartedSamples(),
+                      status.getFinishedSamples(),
+                      delay);
 
             builder.addNodeInfo(id, status.getCurrentThreadNumber(), status.getStartedSamples(), status.getFinishedSamples(), delay, pollTime, durationTime);
         }
@@ -108,6 +134,16 @@ public class DefaultWorkloadController implements WorkloadController {
         for (NodeId nodeId : remotes.keySet()) {
             threads.put(nodeId, 0);
             delays.put(nodeId, 0);
+            
+            if (classesUrl != null) {
+                RemoteExecutor executor = remotes.get(nodeId);
+                AddUrlClassLoader addUrlClassLoaderCommand = AddUrlClassLoader.create(sessionId, classesUrl);
+                log.info("Sending command to add a class loader with classes url {} to node {}", classesUrl, nodeId);
+                executor.runSyncWithTimeout(addUrlClassLoaderCommand,
+                                            Coordination.<Command>doNothing(),
+                                            timeoutsConfiguration.getWorkloadStartTimeout());
+                log.info("Class loader with classes url {} has been added to node {}", classesUrl, nodeId);
+            }
         }
 
         this.poolSize = poolSize;
@@ -148,6 +184,16 @@ public class DefaultWorkloadController implements WorkloadController {
             log.debug("Going to stop process {} on node {}", processId, id);
             executor.runSyncWithTimeout(stop, Coordination.<Command>doNothing(), timeoutsConfiguration.getWorkloadStopTimeout());
             log.debug("Process {} is stopped on node {}", processId, id);
+    
+    
+            if (classesUrl != null) {
+                RemoveUrlClassLoader removeUrlClassLoaderCommand = RemoveUrlClassLoader.create(sessionId);
+                log.info("Sending command to remove a custom class loader to node {}", id);
+                executor.runSyncWithTimeout(removeUrlClassLoaderCommand,
+                                            Coordination.<Command>doNothing(),
+                                            timeoutsConfiguration.getWorkloadStopTimeout());
+                log.info("A custom class loader has been removed from node {}", id);
+            }
         }
 
         log.debug("Workload stopped");

@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.test.jaas.validator.sessions;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
@@ -15,10 +14,6 @@ import com.griddynamics.jagger.test.jaas.validator.BaseHttpResponseValidator;
  * - actual session record is the same as expected one.
  */
 public class SessionResponseContentValidator extends BaseHttpResponseValidator<SessionEntity> {
-
-    public SessionResponseContentValidator(String taskId, String sessionId, NodeContext kernelContext) {
-        super(taskId, sessionId, kernelContext);
-    }
 
     @Override
     public String getName() {

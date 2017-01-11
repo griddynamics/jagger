@@ -4,7 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.griddynamics.jagger"/>
+    <context:component-scan base-package="com.griddynamics.jagger" resource-pattern="ExampleJLoadScenarioProvider.class"/>
     <context:annotation-config/>
 
     <bean id="configurationGenerator" class="com.griddynamics.jagger.util.generators.ConfigurationGenerator"/>

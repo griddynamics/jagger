@@ -13,7 +13,7 @@ import java.util.List;
   * @n
   * @par Details:
   * @details This type of listener is intended to make decision about test group execution status @n
-  * It is executed when decision making based on limits is used. Details: @ref DecisionMakerBasedOnLimits @n
+  * It is executed when decision making based on limits is used. Details: @ref MainDecisionMaker @n
   * @n
   * @ingroup Main_Listeners_group */
 public interface TestGroupDecisionMakerListener {

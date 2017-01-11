@@ -135,11 +135,23 @@ public class TestExecutionDaoTest {
     }
 
     @Test
+    public void readByEnvTest() {
+        List<TestExecutionEntity> expected = getTestExecutionEntities();
+        testExecutionDao.create(expected);
+
+        List<TestExecutionEntity> actual = testExecutionDao.readByEnv(ENVIRONMENT_ID_1);
+
+        assertThat(actual, is(notNullValue()));
+        assertThat(actual.get(0), is(expected.get(0)));
+        assertThat(actual.size(), is(1));
+    }
+
+    @Test
     public void updateTest() {
         TestExecutionEntity expected = getTestExecutionEntity();
         testExecutionDao.create(expected);
 
-        expected.setExecutionStartTimeoutInSeconds(1000L);
+        expected.setExecutionTimeToStartInSeconds(1000L);
         testExecutionDao.update(expected);
 
         TestExecutionEntity actual = testExecutionDao.read(1L);
@@ -199,7 +211,7 @@ public class TestExecutionDaoTest {
         TestExecutionEntity expected = getTestExecutionEntity();
         testExecutionDao.create(expected);
 
-        expected.setExecutionStartTimeoutInSeconds(1000L);
+        expected.setExecutionTimeToStartInSeconds(1000L);
         testExecutionDao.createOrUpdate(expected);
 
         TestExecutionEntity actual = testExecutionDao.read(1L);
@@ -252,7 +264,7 @@ public class TestExecutionDaoTest {
         testExecutionEntity.setEnvId(ENVIRONMENT_ID_1);
         testExecutionEntity.setLoadScenarioId(LOAD_SCENARIO_ID_1);
         testExecutionEntity.setTestProjectURL("/home/test1");
-        testExecutionEntity.setExecutionStartTimeoutInSeconds(0L);
+        testExecutionEntity.setExecutionTimeToStartInSeconds(0L);
         testExecutionEntity.setStatus(PENDING);
         testExecutionEntity.addAuditEntity(new TestExecutionAuditEntity(testExecutionEntity, System.currentTimeMillis(), PENDING, RUNNING));
         return testExecutionEntity;
@@ -263,7 +275,7 @@ public class TestExecutionDaoTest {
         testExecutionEntity1.setEnvId(ENVIRONMENT_ID_1);
         testExecutionEntity1.setLoadScenarioId(LOAD_SCENARIO_ID_1);
         testExecutionEntity1.setTestProjectURL("/home/test1");
-        testExecutionEntity1.setExecutionStartTimeoutInSeconds(0L);
+        testExecutionEntity1.setExecutionTimeToStartInSeconds(0L);
         testExecutionEntity1.setStatus(PENDING);
         testExecutionEntity1.addAuditEntity(new TestExecutionAuditEntity(testExecutionEntity1, System.currentTimeMillis(), PENDING, RUNNING));
 
@@ -271,7 +283,7 @@ public class TestExecutionDaoTest {
         testExecutionEntity2.setEnvId(ENVIRONMENT_ID_2);
         testExecutionEntity2.setLoadScenarioId(LOAD_SCENARIO_ID_2);
         testExecutionEntity2.setTestProjectURL("/home/test2");
-        testExecutionEntity2.setExecutionStartTimeoutInSeconds(50L);
+        testExecutionEntity2.setExecutionTimeToStartInSeconds(50L);
         testExecutionEntity2.setStatus(PENDING);
         testExecutionEntity2.addAuditEntity(new TestExecutionAuditEntity(testExecutionEntity2, System.currentTimeMillis(), PENDING, RUNNING));
 

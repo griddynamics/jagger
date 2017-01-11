@@ -10,8 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.dbapi.util.CommonUtils.addAllNullSafe;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class PlotPointShapeGenerator {
@@ -21,12 +19,6 @@ public class PlotPointShapeGenerator {
 
     public static PointShape generatePointShape(String metricId, String sessionId) {
         return generatePointShape(Collections.singletonList(metricId), sessionId);
-    }
-
-    public static PointShape generatePointShape(String metricId, List<String> synonyms, String sessionId) {
-        List<String> metricIds = newArrayList(metricId);
-        addAllNullSafe(metricIds, synonyms);
-        return generatePointShape(metricIds, sessionId);
     }
 
     private static PointShape generatePointShape(List<String> metricIds, String sessionId) {

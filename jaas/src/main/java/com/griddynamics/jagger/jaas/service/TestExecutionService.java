@@ -11,6 +11,8 @@ public interface TestExecutionService {
 
     List<TestExecutionEntity> readAllPending();
 
+    List<TestExecutionEntity> readByEnv(String envId);
+
     TestExecutionEntity create(TestExecutionEntity testExecution);
 
     void delete(Long testExecutionId);

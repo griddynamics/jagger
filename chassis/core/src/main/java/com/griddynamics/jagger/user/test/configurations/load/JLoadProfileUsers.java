@@ -6,7 +6,26 @@ import java.util.Objects;
 
 
 /**
- * This class represents a user group in {@link JLoadProfileUserGroups}.
+ * This class represents a group of virtual users.
+ * Available attributes:<p>
+ *     - numberOfUsers - A goal number of threads.<p>
+ *     - lifeTimeInSeconds - Describes how long threads will be alive. Default is 2 days.<p>
+ *     - startDelayInSeconds - Delay before first thread will start. Default is 0.<p>
+ *     - slewRateUsersPerSecond - Describes how many threads to start during every iteration. Default is numberOfUsers value.<p>
+ *
+ * Examples: @n
+ * @code
+ * JLoadProfileUsers u = JLoadProfileUsers.builder(NumberOfUsers.of(5)).withStartDelayInSeconds(10).build();
+ * @endcode
+ * @image html load_GroupWithDelay.png "User group load with start delay"
+ * @n
+ * @code
+ * JLoadProfileUsers u = JLoadProfileUsers.builder(NumberOfUsers.of(20)).withSlewRateUsersPerSecond(1).build();
+ * @endcode
+ * @image html load_GroupSlewRate.png "User group load with slew rate"
+ *
+ * @ingroup Main_Load_profiles_group
+
  */
 public class JLoadProfileUsers {
 

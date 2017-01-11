@@ -48,6 +48,8 @@ import static com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient.JSpringBa
  * @author Anton Antonenko
  * @see JHttpClient
  * @since 2.0
+ *
+ * @ingroup Main_Http_group
  */
 @SuppressWarnings({"unused", "unchecked"})
 public class SpringBasedHttpClient implements JHttpClient {

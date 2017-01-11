@@ -9,6 +9,7 @@ import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvi
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
+import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
@@ -58,6 +59,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 // optional
                 .withComment(testDefinitionComment)
                 .withQueryProvider(new ExampleQueriesProvider())
+                .withLoadBalancer(new RoundRobinLoadBalancer())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())
@@ -72,20 +74,20 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
         JLoadProfile jLoadProfileRps = JLoadProfileRps
                 .builder(RequestsPerSecond.of(10))
                 .withMaxLoadThreads(10)
-                .withWarmUpTimeInSeconds(10)
+                .withWarmUpTimeInMilliseconds(10000)
                 .build();
 
         // For standard metrics use JMetricName.
         // JLimitVsRefValue is used to compare the results with the referenced value.
-        JLimit successrateLimit = JLimitVsRefValue.builder(JMetricName.SUCCESS_RATE_OK, RefValue.of(10D))
+        JLimit successRateLimit = JLimitVsRefValue.builder(JMetricName.PERF_SUCCESS_RATE_OK, RefValue.of(1D))
                 // the threshold is relative.
-                .withOnlyWarnings(LowWarnThresh.of(0.1), UpWarnThresh.of(1.5))
+                .withOnlyWarnings(LowWarnThresh.of(0.99), UpWarnThresh.of(1.01))
                 .build();
 
         // For standard metrics use JMetricName.
         // JLimitVsBaseline is used to compare the results with the baseline.
         // Use 'chassis.engine.e1.reporting.session.comparison.baseline.session.id' to set baseline.
-        JLimit throughputLimit = JLimitVsBaseline.builder(JMetricName.THROUGHPUT)
+        JLimit throughputLimit = JLimitVsBaseline.builder(JMetricName.PERF_THROUGHPUT)
                 // the threshold is relative.
                 .withOnlyErrors(LowErrThresh.of(0.99), UpErrThresh.of(1.00001))
                 .build();
@@ -93,7 +95,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
         JLoadTest jLoadTest = JLoadTest
                 .builder(Id.of("exampleJaggerLoadTest"), jTestDefinition, jLoadProfileRps, jTerminationCriteria)
                 .addListener(new CollectThreadsTestListener())
-                .withLimits(successrateLimit, throughputLimit)
+                .withLimits(successRateLimit, throughputLimit)
                 .build();
 
         JParallelTestsGroup jParallelTestsGroup = JParallelTestsGroup
@@ -118,8 +120,8 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
                 .build();
 
-        JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInSeconds(10).build();
-        JLoadProfile load2 = JLoadProfileRps.builder(RequestsPerSecond.of(20)).withMaxLoadThreads(20).withWarmUpTimeInSeconds(20).build();
+        JLoadProfile load = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInMilliseconds(10000).build();
+        JLoadProfile load2 = JLoadProfileRps.builder(RequestsPerSecond.of(20)).withMaxLoadThreads(20).withWarmUpTimeInMilliseconds(20000).build();
 
         JTerminationCriteria termination = JTerminationCriteriaIterations.of(IterationsNumber.of(500), MaxDurationInSeconds.of(60));
         JTerminationCriteria terminationBackground = JTerminationCriteriaBackground.getInstance();

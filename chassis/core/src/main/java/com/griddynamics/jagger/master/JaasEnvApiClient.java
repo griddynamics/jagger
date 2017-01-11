@@ -94,7 +94,8 @@ public class JaasEnvApiClient implements Closeable {
             }
         }
         while (jaasResponse == null);
-        
+    
+        statusExchangeThread.setRunningRequestEntity();
         return jaasResponse;
     }
     
@@ -221,10 +222,9 @@ public class JaasEnvApiClient implements Closeable {
             this.requestEntity = buildPendingRequestEntity();
         }
         
-        void setRunningRequestEntity(String loadScenarioName) {
+        void setRunningRequestEntity() {
             RequestEntity<TestEnvironmentEntity> requestEntity = buildPendingRequestEntity();
             requestEntity.getBody().setStatus(TestEnvironmentStatus.RUNNING);
-            requestEntity.getBody().setRunningLoadScenario(new LoadScenarioEntity(loadScenarioName));
     
             this.requestEntity = requestEntity;
         }
@@ -264,7 +264,7 @@ public class JaasEnvApiClient implements Closeable {
             if (requestEntity.getBody().getStatus() == TestEnvironmentStatus.PENDING) {
                 setPendingRequestEntity();
             } else {
-                setRunningRequestEntity(requestEntity.getBody().getRunningLoadScenario().getLoadScenarioId());
+                setRunningRequestEntity();
             }
         }
         

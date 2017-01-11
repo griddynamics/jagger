@@ -21,15 +21,16 @@
 package com.griddynamics.jagger;
 
 import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadTaskDistributor;
 import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
 import com.griddynamics.jagger.kernel.Kernel;
 import com.griddynamics.jagger.launch.LaunchManager;
 import com.griddynamics.jagger.launch.LaunchTask;
 import com.griddynamics.jagger.launch.Launches;
+import com.griddynamics.jagger.master.JaasEnvApiClient;
 import com.griddynamics.jagger.master.JaasExecApiClient;
 import com.griddynamics.jagger.master.Master;
-import com.griddynamics.jagger.master.JaasEnvApiClient;
 import com.griddynamics.jagger.master.TerminateException;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.StorageServerLauncher;
@@ -80,6 +81,7 @@ public final class JaggerLauncher {
     public static final String USER_ENVIRONMENT_PROPERTIES = "jagger.user.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
     public static final String USER_CONFIGS_PACKAGE = "chassis.master.package.to.scan";
+    public static final String LOAD_SCENARIO_CLASSES_URL ="realtime.load.scenario.classes.url";
     private static final Logger log = LoggerFactory.getLogger(JaggerLauncher.class);
     private static final String DEFAULT_ENVIRONMENT_PROPERTIES_LOCATION =
             "./configuration/basic/default.environment.properties";
@@ -176,15 +178,15 @@ public final class JaggerLauncher {
                 if (isStandByMode) {
                     log.info("Starting Master in stand by mode...");
         
-                    try (JaasEnvApiClient masterToJaasCoordinator = new JaasEnvApiClient(
+                    try (JaasEnvApiClient jaasEnvApiClient = new JaasEnvApiClient(
                             environmentProperties.getProperty("realtime.environment.id"),
                             environmentProperties.getProperty("realtime.jaas.endpoint"), Integer.parseInt(
                             environmentProperties.getProperty("realtime.status.report.interval.seconds")),
                             getAvailableConfigurations(directory)
                     )) {
-                        masterToJaasCoordinator.register();
-                        while (masterToJaasCoordinator.isStandBy()) {
-                            doLoadScenarioExecution(masterToJaasCoordinator.awaitNextExecution(), directory);
+                        jaasEnvApiClient.register();
+                        while (jaasEnvApiClient.isStandBy()) {
+                            doLoadScenarioExecution(jaasEnvApiClient.awaitNextExecution(), directory);
                         }
                     } catch (TerminateException | InterruptedException e) {
                         log.error("Master has been terminated.");
@@ -265,10 +267,12 @@ public final class JaggerLauncher {
                 if (StringUtils.isEmpty(loadScenarioId)) {
                     environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, userProps.getProperty(LOAD_SCENARIO_ID_PROP));
                 }
-                
+    
+                environmentProperties.setProperty(LOAD_SCENARIO_CLASSES_URL, customClassesUrl);
                 return doLaunchMaster(directory, urlClassLoader);
             } finally {
                 Thread.currentThread().setContextClassLoader(contextClassLoader);
+                environmentProperties.remove(LOAD_SCENARIO_CLASSES_URL);
             }
         } catch (IOException e) {
             log.error("I/O Error during load scenario execution launching.", e);
@@ -285,11 +289,17 @@ public final class JaggerLauncher {
     }
     
     private static String doLaunchMaster(final URL directory, final ClassLoader classLoader) {
+        
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties, classLoader);
         initCoordinator(context);
         context.getBean(StorageServerLauncher.class); // to trigger lazy initialization
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
+        
+        log.info("Going to execute {} load scenario...", environmentProperties.getProperty(LOAD_SCENARIO_ID_PROP));
         configurationGenerator.setJLoadScenarioIdToExecute(environmentProperties.getProperty(LOAD_SCENARIO_ID_PROP));
+        WorkloadTaskDistributor workloadTaskDistributor = context.getBean(WorkloadTaskDistributor.class);
+        workloadTaskDistributor.setClassesUrl(environmentProperties.getProperty(LOAD_SCENARIO_CLASSES_URL));
+        
         Master master = context.getBean(Master.class);
         master.run();
         

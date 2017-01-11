@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.dbapi;
 
+import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.dbapi.dto.NodeInfoPerSessionDto;
 import com.griddynamics.jagger.dbapi.dto.PlotIntegratedDto;
@@ -177,6 +178,10 @@ public interface DatabaseService {
      * @return true if it is possible to store tags and false otherwise
      */
     boolean checkIfTagsStorageAvailable();
+
+    DecisionPerSessionDto getDecisionPerSession(String sessionId);
+
+    List<DecisionPerSessionDto> getAllDecisions();
 
     /**
      * Returns task data, corresponding to defined pair of taskIs and sessionId

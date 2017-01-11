@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.test.jaas.validator.executions;
 
-import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
 import com.griddynamics.jagger.invoker.v2.JHttpResponse;
@@ -13,8 +12,10 @@ import com.griddynamics.jagger.test.jaas.validator.BaseHttpResponseValidator;
  * - actual execution record is the same as expected one
  */
 public class ExResponseValidator extends BaseHttpResponseValidator<ExecutionEntity> {
-    public ExResponseValidator(String taskId, String sessionId, NodeContext kernelContext) {
-        super(taskId, sessionId, kernelContext);
+
+    @Override
+    public String getName() {
+        return "getExecutionResponseValidator";
     }
 
     @Override

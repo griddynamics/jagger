@@ -14,6 +14,7 @@
 /// @n
 /// How is it done: @n
 /// During test execution raw values for every metric are stores in the file system in the time series format. After the test is over, raw data is aggregated. Depending on the setup for every metric,
-/// framework can aggregate only summary value or, additionally, detailed results (metric vs time). Every metric can be aggregated by single aggregator or multiple aggregators, running one after another.
-/// As example, from the raw data of the Success rate metric, with use of two different aggregators we are calculating two parameters: Success rate and Number of fails. @n
+/// framework can aggregate only summary value or, additionally, detailed results (metric vs time). You can setup how metric will be aggregated during metric creation.
+/// Every metric can be aggregated by single aggregator or multiple aggregators, running one after another. As example, from the raw data of the Success rate metric, with use of two different aggregators
+/// we are calculating two parameters: Success rate and Number of fails. @n
 /// More information about raw values aggregation you can read here: @subpage MetricsAggregation "metric aggregation"

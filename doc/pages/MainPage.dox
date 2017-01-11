@@ -20,7 +20,7 @@
 /// @li @ref WebUiMain "Display, compare, share test results via WebUI"
 /// @li @ref JaasMain "Provide REST API for the test results access"
 /// @li Integrate to CI
-/// @li Rise pass/warning/fail alerts in the CI
+/// @li @ref MainDecisionMaker "Rise pass/warning/fail alerts in the CI"
 /// @li Work with custom components
 /// @li Run in single node or distributed mode
 ///
