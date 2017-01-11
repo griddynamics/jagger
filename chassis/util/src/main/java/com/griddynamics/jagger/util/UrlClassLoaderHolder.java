@@ -40,8 +40,8 @@ public class UrlClassLoaderHolder {
     }
     
     public boolean clear() {
-        log.info("Closing a classloader with custom url {} ...", Arrays.toString(urlClassLoader.getURLs()));
         if (urlClassLoader != null) {
+            log.info("Closing a classloader with custom url {} ...", Arrays.toString(urlClassLoader.getURLs()));
             try {
                 urlClassLoader.close();
                 log.info("Classloader with custom url {} has been successfully closed.",
