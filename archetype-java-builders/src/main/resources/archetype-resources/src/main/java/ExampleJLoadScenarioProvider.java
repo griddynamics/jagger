@@ -58,6 +58,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment(testDefinitionComment)
+                .withInvoker(ExampleCustomHttpInvokerProvider.nonVerbose())
                 .withQueryProvider(new ExampleQueriesProvider())
                 .withLoadBalancer(new RoundRobinLoadBalancer())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))

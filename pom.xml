@@ -70,7 +70,8 @@
         <url>https://github.com/griddynamics/jagger</url>
         <connection>scm:git:git://github.com/griddynamics/jagger.git</connection>
         <developerConnection>scm:git:git@github.com:griddynamics/jagger.git</developerConnection>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <issueManagement>
         <url>https://github.com/griddynamics/jagger/issues</url>

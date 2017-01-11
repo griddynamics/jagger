@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.user.test.configurations;
 
-import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
@@ -10,7 +9,10 @@ import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
+import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class JTestDefinition {
 
     private final String comment;
     private final Iterable queries;
-    private final Class<? extends Invoker> invoker;
+    private final Provider<Invoker> invoker;
     private final List<ResponseValidatorProvider> validators;
     private final List<Provider<InvocationListener>> listeners;
     private final QueryPoolLoadBalancer loadBalancer;
@@ -74,7 +76,7 @@ public class JTestDefinition {
 
         private String comment = "";
         private Iterable queries;
-        private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
+        private Provider<Invoker> invoker = DefaultInvokerProvider.of(DefaultHttpInvoker.class);
         private List<ResponseValidatorProvider> validators = Lists.newArrayList();
         private List<Provider<InvocationListener>> listeners = Lists.newArrayList();
         private QueryPoolLoadBalancer loadBalancer;
@@ -122,13 +124,13 @@ public class JTestDefinition {
         /**
          * Optional: Sets subtypes of {@link com.griddynamics.jagger.invoker.Invoker}
          *
-         * Instances of this class will be used to during Jagger test execution to send requests to the System under test. @n
+         * Instances of this invoker will be used during Jagger test execution to send requests to the System under test. @n
          * Example:
          * @code
-         *      withInvoker(com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker.class)
+         *      .withInvoker(DefaultInvokerProvider.of(DefaultHttpInvoker.class))
          * @endcode
          */
-        public Builder withInvoker(Class<? extends Invoker> invoker) {
+        public Builder withInvoker(Provider<Invoker> invoker) {
             this.invoker = invoker;
             return this;
         }
@@ -222,7 +224,7 @@ public class JTestDefinition {
         return queries;
     }
 
-    public Class<? extends Invoker> getInvoker() {
+    public Provider<Invoker> getInvoker() {
         return invoker;
     }
 
