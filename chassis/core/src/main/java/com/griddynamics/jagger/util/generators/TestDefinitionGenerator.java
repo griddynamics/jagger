@@ -34,12 +34,8 @@ class TestDefinitionGenerator {
         QueryPoolScenarioFactory scenarioFactory = new QueryPoolScenarioFactory();
         scenarioFactory.setQueryProvider(jTestDefinition.getQueries());
         scenarioFactory.setEndpointProvider(jTestDefinition.getEndpoints());
-        scenarioFactory.setInvokerClazz(jTestDefinition.getInvoker());
         scenarioFactory.setLoadBalancer(jTestDefinition.getLoadBalancer());
         scenarioFactory.setInvokerProvider(jTestDefinition.getInvoker());
-        scenarioFactory.setLoadBalancer(new SimpleCircularLoadBalancer() {{
-            setPairSupplierFactory(new RoundRobinPairSupplierFactory());
-        }});
         prototype.setScenarioFactory(scenarioFactory);
 
         prototype.setName(jTestDefinition.getId());

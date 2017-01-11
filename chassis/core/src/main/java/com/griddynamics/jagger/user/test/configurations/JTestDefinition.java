@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.user.test.configurations;
 
-import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
@@ -12,6 +11,8 @@ import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class JTestDefinition {
         /**
          * Optional: Sets subtypes of {@link com.griddynamics.jagger.invoker.Invoker}
          *
-         * Instances of this class will be used to during Jagger test execution to send requests to the System under test. @n
+         * Instances of this invoker will be used during Jagger test execution to send requests to the System under test. @n
          * Example:
          * @code
          *      .withInvoker(DefaultInvokerProvider.of(DefaultHttpInvoker.class))

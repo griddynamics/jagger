@@ -4,6 +4,7 @@ import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvi
 import com.griddynamics.jagger.engine.e1.collector.JHttpResponseStatusValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.NotNullResponseValidator;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
+import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 import com.griddynamics.jagger.test.jaas.invoker.ExecutionManipulateInvoker;
 import com.griddynamics.jagger.test.jaas.listener.LoadScenarioConfigListener;
@@ -175,7 +176,7 @@ public class JaasScenario extends JaggerPropertiesProvider {
         JTestDefinition definition = JTestDefinition.builder(Id.of(id + "def"),
                 Collections.singletonList(new JHttpEndpoint(TestContext.getEndpointUri())))
                 .withQueryProvider(queryProvider)
-                .withInvoker(ExecutionManipulateInvoker.class)
+                .withInvoker(DefaultInvokerProvider.of(ExecutionManipulateInvoker.class))
                 .addValidators(validators)
                 .build();
 
