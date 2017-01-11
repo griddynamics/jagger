@@ -4,7 +4,12 @@ import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.invoker.Invoker;
+import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
+import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
+import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
+import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
+import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 
 import com.google.common.collect.Lists;
@@ -35,9 +40,10 @@ public class JTestDefinition {
 
     private final String comment;
     private final Iterable queries;
-    private final Class<? extends Invoker> invoker;
+    private final Provider<Invoker> invoker;
     private final List<ResponseValidatorProvider> validators;
     private final List<Provider<InvocationListener>> listeners;
+    private final QueryPoolLoadBalancer loadBalancer;
 
     private JTestDefinition(Builder builder) {
         this.id = builder.id.value();
@@ -48,6 +54,7 @@ public class JTestDefinition {
         this.invoker = builder.invoker;
         this.validators = builder.validators;
         this.listeners = builder.listeners;
+        this.loadBalancer = builder.loadBalancer;
     }
 
     /**
@@ -69,13 +76,17 @@ public class JTestDefinition {
 
         private String comment = "";
         private Iterable queries;
-        private Class<? extends Invoker> invoker = DefaultHttpInvoker.class;
+        private Provider<Invoker> invoker = DefaultInvokerProvider.of(DefaultHttpInvoker.class);
         private List<ResponseValidatorProvider> validators = Lists.newArrayList();
         private List<Provider<InvocationListener>> listeners = Lists.newArrayList();
+        private QueryPoolLoadBalancer loadBalancer;
 
         private Builder(Id id, Iterable endpointsProvider) {
             this.id = id;
             this.endpointsProvider = endpointsProvider;
+            this.loadBalancer = new SimpleCircularLoadBalancer() {{
+                setPairSupplierFactory(new RoundRobinPairSupplierFactory());
+            }};
         }
 
         /**
@@ -100,15 +111,26 @@ public class JTestDefinition {
         }
 
         /**
+         * Optional: Sets load balancer (subtypes of {@link QueryPoolLoadBalancer}).
+         * Default is {@link RoundRobinLoadBalancer}
+         *
+         * @param loadBalancer load balancer.
+         */
+        public Builder withLoadBalancer(QueryPoolLoadBalancer loadBalancer) {
+            this.loadBalancer = loadBalancer;
+            return this;
+        }
+
+        /**
          * Optional: Sets subtypes of {@link com.griddynamics.jagger.invoker.Invoker}
          *
-         * Instances of this class will be used to during Jagger test execution to send requests to the System under test. @n
+         * Instances of this invoker will be used during Jagger test execution to send requests to the System under test. @n
          * Example:
          * @code
-         *      withInvoker(com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker.class)
+         *      .withInvoker(DefaultInvokerProvider.of(DefaultHttpInvoker.class))
          * @endcode
          */
-        public Builder withInvoker(Class<? extends Invoker> invoker) {
+        public Builder withInvoker(Provider<Invoker> invoker) {
             this.invoker = invoker;
             return this;
         }
@@ -202,7 +224,7 @@ public class JTestDefinition {
         return queries;
     }
 
-    public Class<? extends Invoker> getInvoker() {
+    public Provider<Invoker> getInvoker() {
         return invoker;
     }
 
@@ -216,5 +238,9 @@ public class JTestDefinition {
     
     public List<Provider<InvocationListener>> getListeners() {
         return listeners;
+    }
+
+    public QueryPoolLoadBalancer getLoadBalancer() {
+        return loadBalancer;
     }
 }

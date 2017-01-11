@@ -9,6 +9,7 @@ import com.griddynamics.jagger.engine.e1.collector.DefaultResponseValidatorProvi
 import com.griddynamics.jagger.engine.e1.collector.invocation.NotNullInvocationListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.ExampleLoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener;
+import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
@@ -57,7 +58,9 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
                 // optional
                 .withComment(testDefinitionComment)
+                .withInvoker(ExampleCustomHttpInvokerProvider.nonVerbose())
                 .withQueryProvider(new ExampleQueriesProvider())
+                .withLoadBalancer(new RoundRobinLoadBalancer())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())

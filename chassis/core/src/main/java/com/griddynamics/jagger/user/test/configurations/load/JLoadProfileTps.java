@@ -7,6 +7,9 @@ import java.util.Objects;
 /**
  * This type of load implements an exact number of transactions per second performed by Jagger.
  * @details Transaction is invoke from Jagger + response from system under test.
+ *
+ * @b IMPORTANT: Please use @ref JLoadProfileRps instead. TPS load has issues with balancing algorithm (issue JFG-753). In some cases it will be not possible to set load to the desired value. @n
+ * @n
  * Available attributes:
  *     - transactionsPerSecond - A goal number of transactions per second
  *

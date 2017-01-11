@@ -43,8 +43,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(value = "/envs")
-@Api(description = "This is the API for Jagger Test Environments. It provides endpoints for reading, creating and updating Test Environments. "
-        + "Deleting is performed automatically by cleaning job. Expiration time of environments is set by property 'environments.ttl.minutes'.")
+@Api(description = "Jagger Test Environments API. It provides endpoints for reading, creating and updating Test Environments. "
+        + "Deleting is performed automatically by cleaning job. Expiration time of environments is set by property 'environments.ttl.minutes'. "
+        + "This API is user by Jagger load generation components for communication with JaaS. It allows JaaS to monitor running test "
+        + "environments and send commands to these environments. "
+        + "Test Environments API is not intended for manual usage")
 public class TestEnvironmentRestController extends AbstractController {
 
     private static final String ENV_ID_PATTERN = "^[a-zA-Z0-9\\._\\-]{1,249}$";

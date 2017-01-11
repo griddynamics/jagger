@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.invoker;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.util.JavaSystemClock;
 import com.griddynamics.jagger.util.SystemClock;
 
@@ -31,11 +32,18 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
 
     private Iterable<Q> queryProvider;
     private Iterable<E> endpointProvider;
+    
+    private Provider<Invoker> invokerProvider;
 
     @Override
     public Scenario<Q, R, E> get(NodeContext nodeContext) {
+        // TODO: to remove request to context after JFG-1090
         Invoker<Q, R, E> invoker = nodeContext.getService(invokerClazz);
-        if(invoker == null) {
+        if (invokerProvider != null) {
+            invoker = invokerProvider.provide();
+        }
+    
+        if (invoker == null) {
             throw new IllegalArgumentException("Service for class + '" + invokerClazz.getCanonicalName()
             + "' not found!");
         }
@@ -72,5 +80,9 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
 
     public void setEndpointProvider(Iterable<E> endpointProvider) {
         this.endpointProvider = endpointProvider;
+    }
+    
+    public void setInvokerProvider(Provider<Invoker> invokerProvider) {
+        this.invokerProvider = invokerProvider;
     }
 }

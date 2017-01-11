@@ -3,6 +3,7 @@ package com.griddynamics.jagger.jaas.rest;
 import com.griddynamics.jagger.jaas.exceptions.InvalidTestExecutionException;
 import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
+import io.swagger.annotations.Api;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,6 +28,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/executions")
+@Api(description = "Jagger Test Execution API. It provides endpoints for reading, creating, updating and deleting Test Executions. "
+        + "This API can be used manually or via separate Jenkins plugin, to run particular performance test projects on the "
+        + "selected test environment")
 public class TestExecutionRestController extends AbstractController {
 
     private TestExecutionService testExecutionService;

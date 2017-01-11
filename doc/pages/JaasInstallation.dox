@@ -15,11 +15,24 @@
 /// JaaS based on Spring Boot, so its properties can be configured using one of Spring Boot ways - @n
 /// <a href="http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html">Boot External Config</a> @n
 /// @n
-/// TODO: where to take JaaS jar? Do we have it in nexus? @n
-/// To launch JaaS just execute: @n
+/// You can download JaaS .jar file at: http://nexus.griddynamics.net/nexus/content//repositories/public/com/griddynamics/jagger/jaas/2.0/jaas-2.0.jar
+/// @n
+/// To launch JaaS execute: @n
 /// @code
-/// java -jar <JaaS jar>
+/// java -jar jaas-${build.finalName}.jar -Dserver.port=8081
+///                                       -Djaas.db.url=jdbc:mysql://localhost/jaasdb
+///                                       -Djaas.db.user=jaas
+///                                       -Djaas.db.pass=jaas
+///                                       -Djaas.db.driver=com.mysql.jdbc.Driver
+///                                       -Djaas.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+///                                       -Djagger.db.default.desc=jaggerdb
+///                                       -Djagger.db.default.url=jdbc:mysql://localhost:3307/jaggerdb
+///                                       -Djagger.db.default.user=jaggeruser
+///                                       -Djagger.db.default.pass=password
+///                                       -Djagger.db.default.jdbcDriver=com.mysql.jdbc.Driver
+///                                       -Djagger.db.default.hibernateDialect=org.hibernate.dialect.MySQLDialect
 /// @endcode
 /// @n
 /// By default JaaS is listening on port 8080.
-/// To change it just override property "server.port".
+/// To change it just override property "server.port" like in the example above. @n
+/// JaaS is working with two data bases. One is used to hold JaaS state and another is Jagger test results DB
