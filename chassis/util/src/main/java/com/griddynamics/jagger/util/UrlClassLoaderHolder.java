@@ -29,7 +29,7 @@ public class UrlClassLoaderHolder {
         try {
             log.info("Creating a classloader for classes url {} ...", classesUrl);
             final URL customClasses = new URL(classesUrl);
-            this.urlClassLoader = new URLClassLoader(new URL[]{customClasses});
+            this.urlClassLoader = new JaggerUrlClassLoader(new URL[]{customClasses});
             log.info("Classloader for classes url {} successfully created", classesUrl);
             return true;
         } catch (MalformedURLException e) {
@@ -40,8 +40,8 @@ public class UrlClassLoaderHolder {
     }
     
     public boolean clear() {
-        log.info("Closing a classloader with custom url {} ...", Arrays.toString(urlClassLoader.getURLs()));
         if (urlClassLoader != null) {
+            log.info("Closing a classloader with custom url {} ...", Arrays.toString(urlClassLoader.getURLs()));
             try {
                 urlClassLoader.close();
                 log.info("Classloader with custom url {} has been successfully closed.",

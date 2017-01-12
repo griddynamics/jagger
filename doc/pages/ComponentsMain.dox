@@ -1,0 +1,24 @@
+/// @page FrameworkComponents
+/// @brief Section describes components of the test framework and different execution configurations
+/// @n
+/// @li @ref section_components_overview
+/// @li @subpage ComponentsExecutionModes
+/// @li @subpage WebUiMain
+/// @li @subpage JaasMain
+///
+///
+/// @section section_components_overview Overview of the components
+///
+/// We can separate components of the framework to the following groups:
+/// - Results storage and representation components
+///   - Test results data base. MySQL and H2 are supported
+///   - Web UI - web application to present and share test results
+///   - JaaS - Jagger as a Service - REST API to access test results and control test execution in CI
+///   - JaaS data base - storage for JaaS. MySQL and H2 are supported
+/// - Load generating components
+///   - Master/Coordinator - central component to control load generation
+///   - Kernel - load generating component
+/// - Monitoring components
+///   - Monitoring agent
+/// - CI integration components (TODO details)
+///

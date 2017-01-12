@@ -35,6 +35,7 @@ import com.griddynamics.jagger.master.TerminateException;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.StorageServerLauncher;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
+import com.griddynamics.jagger.util.JaggerUrlClassLoader;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
 import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.apache.commons.lang.StringUtils;
@@ -248,7 +249,7 @@ public final class JaggerLauncher {
         try {
             final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             final URL customClasses = new URL(customClassesUrl);
-            try (URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{customClasses})) {
+            try (URLClassLoader urlClassLoader = new JaggerUrlClassLoader(new URL[]{customClasses})) {
                 Thread.currentThread().setContextClassLoader(urlClassLoader);
             
                 Properties userProps = new Properties();

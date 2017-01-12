@@ -119,7 +119,7 @@ public class RpsLoadTests extends LoadTestsDefinition{
      */
     public JLoadTest testRpsBalancingPulse(){
         int maxDelay = sleepDelay * 2;
-        int period = testDuration;
+        int period = testDuration*1000;
         double expectedUsersCount = rps * latency;
         double expectedIterations = rps * testDuration;
 
@@ -159,8 +159,7 @@ public class RpsLoadTests extends LoadTestsDefinition{
 
 
     private JLoadProfileRps.Builder rpsLoad(long rps){
-        return JLoadProfileRps.builder(RequestsPerSecond.of(rps))
-                .withMaxLoadThreads(50); //TODO remove when JFG-1083
+        return JLoadProfileRps.builder(RequestsPerSecond.of(rps));
     }
 
     private JLoadTest test(String id, JLoadProfile l, JTerminationCriteria t, JLimit... limits){

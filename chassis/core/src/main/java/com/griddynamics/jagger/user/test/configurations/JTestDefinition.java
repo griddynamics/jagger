@@ -1,18 +1,17 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
+import com.griddynamics.jagger.invoker.RandomLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
-import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-
-import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -84,8 +83,9 @@ public class JTestDefinition {
         private Builder(Id id, Iterable endpointsProvider) {
             this.id = id;
             this.endpointsProvider = endpointsProvider;
-            this.loadBalancer = new SimpleCircularLoadBalancer() {{
+            this.loadBalancer = new RandomLoadBalancer() {{
                 setPairSupplierFactory(new RoundRobinPairSupplierFactory());
+                setRandomSeed(31);
             }};
         }
 

@@ -29,6 +29,8 @@ services:
       JWC_JDBC_URL: jdbc:mysql://<hostname>:<port>/<base_name>
       JWC_JDBC_USER: <username>
       JWC_JDBC_PASS: <password>
+      MYSQL_PORT: 3306
+      MYSQL_HOST: <hostname>
 
   jagger-jaas:
     image: griddynamics/jagger-jaas:${project.version}
@@ -44,6 +46,8 @@ services:
       JAAS_DB_USER: jaggeruser
       JAAS_DB_PASS: password
       JAAS_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      MYSQL_PORT: 3306
+      MYSQL_HOST: jaas-mysql
       # Specify here the existing results database
       JAGGER_DB_DEFAULT_URL: jdbc:mysql://<hostname>:<port>/<base_name>
       JAGGER_DB_DEFAULT_DESC: default_db
