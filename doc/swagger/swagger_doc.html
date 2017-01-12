@@ -1,0 +1,3040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.3">
+<title>Jagger as a Service</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
+/* Remove comment around @import statement below when using as a custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
+audio,canvas,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+[hidden],template{display:none}
+script{display:none!important}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{margin:0}
+a{background:transparent}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+body{-webkit-font-smoothing:antialiased}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.center{margin-left:auto;margin-right:auto}
+.spread{width:100%}
+p.lead,.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{font-size:1.21875em;line-height:1.6}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:none}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #ddddd8;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.no-bullet{list-style:none}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite:before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media only screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7;font-weight:bold}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt,table tr:nth-of-type(even){background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+body{tab-size:4}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
+.clearfix:after,.float-group:after{clear:both}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menu{color:rgba(0,0,0,.8)}
+b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
+b.button:before{content:"[";padding:0 3px 0 2px}
+b.button:after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header:before,#header:after,#content:before,#content:after,#footnotes:before,#footnotes:after,#footer:before,#footer:after{content:" ";display:table}
+#header:after,#content:after,#footnotes:after,#footer:after{clear:both}
+#content{margin-top:1.25em}
+#content:before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #ddddd8}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #ddddd8;padding-bottom:8px}
+#header .details{border-bottom:1px solid #ddddd8;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span:before{content:"\00a0\2013\00a0"}
+#header .details br+span.author:before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark:before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber:after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #ddddd8;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #efefed;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media only screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background-color:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #efefed;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}
+@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background-color:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+.sect1{padding-bottom:.625em}
+@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}
+.sect1+.sect1{border-top:1px solid #efefed}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor:before,h2>a.anchor:before,h3>a.anchor:before,#toctitle>a.anchor:before,.sidebarblock>.content>.title>a.anchor:before,h4>a.anchor:before,h5>a.anchor:before,h6>a.anchor:before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
+.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#f7f7f8}
+.sidebarblock .literalblock pre,.sidebarblock .listingblock pre:not(.highlight),.sidebarblock .listingblock pre[class="highlight"],.sidebarblock .listingblock pre[class^="highlight "],.sidebarblock .listingblock pre.CodeRay,.sidebarblock .listingblock pre.prettyprint{background:#f2f1f1}
+.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;padding:1em;font-size:.8125em}
+.literalblock pre.nowrap,.literalblock pre[class].nowrap,.listingblock pre.nowrap,.listingblock pre[class].nowrap{overflow-x:auto;white-space:pre;word-wrap:normal}
+@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:.90625em}}
+@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}
+.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]:before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:#999}
+.listingblock:hover code[data-lang]:before{display:block}
+.listingblock.terminal pre .command:before{content:attr(data-prompt);padding-right:.5em;color:#999}
+.listingblock.terminal pre .command:not([data-prompt]):before{content:"$"}
+table.pyhltable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0;line-height:1.45}
+table.pyhltable td.code{padding-left:.75em;padding-right:0}
+pre.pygments .lineno,table.pyhltable td:not(.code){color:#999;padding-left:0;padding-right:.5em;border-right:1px solid #ddddd8}
+pre.pygments .lineno{display:inline-block;margin-right:.25em}
+table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock blockquote p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote:before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.5em;margin-right:.5ex;text-align:right}
+.quoteblock .quoteblock{margin-left:0;margin-right:0;padding:.5em 0;border-left:3px solid rgba(0,0,0,.6)}
+.quoteblock .quoteblock blockquote{padding:0 0 0 .75em}
+.quoteblock .quoteblock blockquote:before{display:none}
+.verseblock{margin:0 1em 1.25em 1em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract{margin:0 0 1.25em 0;display:block}
+.quoteblock.abstract blockquote,.quoteblock.abstract blockquote p{text-align:left;word-spacing:0}
+.quoteblock.abstract blockquote:before,.quoteblock.abstract blockquote p:first-of-type:before{display:none}
+table.tableblock{max-width:100%;border-collapse:separate}
+table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
+table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
+table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
+table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
+table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
+table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
+table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot{border-width:1px 0}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+td>div.verse{white-space:pre}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
+ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1em;font-size:.85em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{width:1em;position:relative;top:1px}
+ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
+ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
+ul.inline>li>*{display:block}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:last-of-type{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
+.imageblock.right,.imageblock[style*="float: right"]{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em 0;border-width:1px 0 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;text-indent:-1.05em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background-color:#00fafa}
+.black{color:#000}
+.black-background{background-color:#000}
+.blue{color:#0000bf}
+.blue-background{background-color:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background-color:#fa00fa}
+.gray{color:#606060}
+.gray-background{background-color:#7d7d7d}
+.green{color:#006000}
+.green-background{background-color:#007d00}
+.lime{color:#00bf00}
+.lime-background{background-color:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background-color:#7d0000}
+.navy{color:#000060}
+.navy-background{background-color:#00007d}
+.olive{color:#606000}
+.olive-background{background-color:#7d7d00}
+.purple{color:#600060}
+.purple-background{background-color:#7d007d}
+.red{color:#bf0000}
+.red-background{background-color:#fa0000}
+.silver{color:#909090}
+.silver-background{background-color:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background-color:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background-color:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background-color:#fafa00}
+span.icon>.fa{cursor:default}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning:before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution:before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important:before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background-color:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]:after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background-color:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@media print{@page{margin:1.25cm .75cm}
+*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare):after,a[href^="https:"]:not(.bare):after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]:after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #ddddd8!important;padding-bottom:0!important}
+.sect1{padding-bottom:0!important}
+.sect1+.sect1{border:0!important}
+#header>h1:first-child{margin-top:1.25rem}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em 0}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span:before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]:before{display:block}
+#footer{background:none!important;padding:0 .9375em}
+#footer-text{color:rgba(0,0,0,.6)!important;font-size:.9em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+</style>
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>Jagger as a Service</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_overview">1. Overview</a>
+<ul class="sectlevel2">
+<li><a href="#_version_information">1.1. Version information</a></li>
+<li><a href="#_license_information">1.2. License information</a></li>
+<li><a href="#_uri_scheme">1.3. URI scheme</a></li>
+<li><a href="#_tags">1.4. Tags</a></li>
+</ul>
+</li>
+<li><a href="#_paths">2. Resources</a>
+<ul class="sectlevel2">
+<li><a href="#_data-service-rest-controller_resource">2.1. Data-service-rest-controller</a>
+<ul class="sectlevel3">
+<li><a href="#_getsessionsusingget">2.1.1. getSessions</a></li>
+<li><a href="#_getsessionusingget">2.1.2. getSession</a></li>
+<li><a href="#_getsessiondecisionusingget">2.1.3. getSessionDecision</a></li>
+<li><a href="#_gettestsusingget">2.1.4. getTests</a></li>
+<li><a href="#_gettestusingget">2.1.5. getTest</a></li>
+<li><a href="#_getmetricsusingget">2.1.6. getMetrics</a></li>
+<li><a href="#_getmetricplotdatausingget">2.1.7. getMetricPlotData</a></li>
+<li><a href="#_getmetricssummaryusingget">2.1.8. getMetricsSummary</a></li>
+<li><a href="#_getmetricsusingget_1">2.1.9. getMetrics</a></li>
+</ul>
+</li>
+<li><a href="#_reporting-rest-controller_resource">2.2. Reporting-rest-controller</a>
+<ul class="sectlevel3">
+<li><a href="#_getreportusingget">2.2.1. getReport</a></li>
+</ul>
+</li>
+<li><a href="#_test-environment-rest-controller_resource">2.3. Test-environment-rest-controller</a>
+<ul class="sectlevel3">
+<li><a href="#_createtestenvironmentusingpost">2.3.1. Creates Test Environment.</a></li>
+<li><a href="#_gettestenvironmentsusingget">2.3.2. Retrieves all Test Environments.</a></li>
+<li><a href="#_gettestenvironmentusingget">2.3.3. Retrieves Test Environment by envId.</a></li>
+<li><a href="#_updatetestenvironmentusingput">2.3.4. Updates Test Environment by envId.</a></li>
+</ul>
+</li>
+<li><a href="#_test-execution-rest-controller_resource">2.4. Test-execution-rest-controller</a>
+<ul class="sectlevel3">
+<li><a href="#_createtestexecutionusingpost">2.4.1. createTestExecution</a></li>
+<li><a href="#_gettestexecutionsusingget">2.4.2. getTestExecutions</a></li>
+<li><a href="#_gettestexecutionusingget">2.4.3. getTestExecution</a></li>
+<li><a href="#_updatetestexecutionusingput">2.4.4. updateTestExecution</a></li>
+<li><a href="#_deletetestexecutionusingdelete">2.4.5. deleteTestExecution</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_overview"><a class="anchor" href="#_overview"></a>1. Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>JaaS in a main artifact in Jagger 2. It is an always listening component.</p>
+</div>
+<div class="paragraph">
+<p>It provides different information through its REST API.</p>
+</div>
+<div class="paragraph">
+<p>JaaS artifact packed as an all in jar (with all dependencies inside) with embedded Tomcat.</p>
+</div>
+<div class="paragraph">
+<p>JaaS based on Spring Boot, so its properties can be configured using one of Spring Boot waysby default JaaS is listening on port 8080. To change it just override property "server.port".</p>
+</div>
+<div class="sect2">
+<h3 id="_version_information"><a class="anchor" href="#_version_information"></a>1.1. Version information</h3>
+<div class="paragraph">
+<p><em>Version</em> : 2.0.1-SNAPSHOT</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_license_information"><a class="anchor" href="#_license_information"></a>1.2. License information</h3>
+<div class="paragraph">
+<p><em>License</em> : Apache License, Version 2.0<br>
+<em>License URL</em> : <a href="https://github.com/griddynamics/jagger/blob/master/license.txt" class="bare">https://github.com/griddynamics/jagger/blob/master/license.txt</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_uri_scheme"><a class="anchor" href="#_uri_scheme"></a>1.3. URI scheme</h3>
+<div class="paragraph">
+<p><em>Host</em> : localhost<br>
+<em>BasePath</em> : /jaas</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tags"><a class="anchor" href="#_tags"></a>1.4. Tags</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>test-execution-rest-controller : Jagger Test Execution API. It provides endpoints for reading, creating, updating and deleting Test Executions. This API can be used manually or via separate Jenkins plugin, to run particular performance test projects on the selected test environment</p>
+</li>
+<li>
+<p>test-environment-rest-controller : Jagger Test Environments API. It provides endpoints for reading, creating and updating Test Environments. Deleting is performed automatically by cleaning job. Expiration time of environments is set by property 'environments.ttl.minutes'. This API is user by Jagger load generation components for communication with JaaS. It allows JaaS to monitor running test environments and send commands to these environments. Test Environments API is not intended for manual usage</p>
+</li>
+<li>
+<p>reporting-rest-controller : Reporting Rest Controller</p>
+</li>
+<li>
+<p>data-service-rest-controller : Data Service Rest Controller</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_paths"><a class="anchor" href="#_paths"></a>2. Resources</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_data-service-rest-controller_resource"><a class="anchor" href="#_data-service-rest-controller_resource"></a>2.1. Data-service-rest-controller</h3>
+<div class="paragraph">
+<p>Data Service Rest Controller</p>
+</div>
+<div class="sect3">
+<h4 id="_getsessionsusingget"><a class="anchor" href="#_getsessionsusingget"></a>2.1.1. getSessions</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/sessions</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">id</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array(multi)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses"><a class="anchor" href="#_responses"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_sessionentity">SessionEntity</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes"><a class="anchor" href="#_consumes"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces"><a class="anchor" href="#_produces"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request"><a class="anchor" href="#_example_http_request"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path"><a class="anchor" href="#_request_path"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/sessions"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_request_query"><a class="anchor" href="#_request_query"></a>Request query</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "id" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response"><a class="anchor" href="#_example_http_response"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200"><a class="anchor" href="#_response_200"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"array"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500"><a class="anchor" href="#_response_500"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getsessionusingget"><a class="anchor" href="#_getsessionusingget"></a>2.1.2. getSession</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/sessions/{sessionId}</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_2"><a class="anchor" href="#_parameters_2"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_2"><a class="anchor" href="#_responses_2"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_sessionentity">SessionEntity</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_2"><a class="anchor" href="#_consumes_2"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_2"><a class="anchor" href="#_produces_2"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_2"><a class="anchor" href="#_example_http_request_2"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_2"><a class="anchor" href="#_request_path_2"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/sessions/string"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_2"><a class="anchor" href="#_example_http_response_2"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_2"><a class="anchor" href="#_response_200_2"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "comment" : "string",
+  "endDate" : "string",
+  "id" : "string",
+  "kernels" : 0,
+  "startDate" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_2"><a class="anchor" href="#_response_500_2"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getsessiondecisionusingget"><a class="anchor" href="#_getsessiondecisionusingget"></a>2.1.3. getSessionDecision</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/sessions/{sessionId}/decision</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_3"><a class="anchor" href="#_parameters_3"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_3"><a class="anchor" href="#_responses_3"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_decisionpersessiondto">DecisionPerSessionDto</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_3"><a class="anchor" href="#_consumes_3"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_3"><a class="anchor" href="#_produces_3"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_3"><a class="anchor" href="#_example_http_request_3"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_3"><a class="anchor" href="#_request_path_3"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/sessions/string/decision"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_3"><a class="anchor" href="#_example_http_response_3"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_3"><a class="anchor" href="#_response_200_3"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "decision" : "string",
+  "id" : 0,
+  "sessionId" : "string",
+  "testGroupDecisions" : [ {
+    "decision" : "string",
+    "id" : 0,
+    "metricDecisions" : [ {
+      "decision" : "string",
+      "id" : 0,
+      "metricDescription" : {
+        "display" : "string",
+        "displayName" : "string",
+        "id" : 0,
+        "metricId" : "string"
+      }
+    } ],
+    "taskData" : {
+      "id" : 0,
+      "number" : 0,
+      "sessionId" : "string",
+      "status" : "string",
+      "taskId" : "string",
+      "taskName" : "string"
+    },
+    "testDecisions" : [ {
+      "decision" : "string",
+      "id" : 0,
+      "metricDecisions" : [ {
+        "decision" : "string",
+        "id" : 0,
+        "metricDescription" : {
+          "display" : "string",
+          "displayName" : "string",
+          "id" : 0,
+          "metricId" : "string"
+        }
+      } ],
+      "taskData" : {
+        "id" : 0,
+        "number" : 0,
+        "sessionId" : "string",
+        "status" : "string",
+        "taskId" : "string",
+        "taskName" : "string"
+      }
+    } ]
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_3"><a class="anchor" href="#_response_500_3"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gettestsusingget"><a class="anchor" href="#_gettestsusingget"></a>2.1.4. getTests</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/sessions/{sessionId}/tests</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_4"><a class="anchor" href="#_parameters_4"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_4"><a class="anchor" href="#_responses_4"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_testentity">TestEntity</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_4"><a class="anchor" href="#_consumes_4"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_4"><a class="anchor" href="#_produces_4"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_4"><a class="anchor" href="#_example_http_request_4"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_4"><a class="anchor" href="#_request_path_4"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/sessions/string/tests"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_4"><a class="anchor" href="#_example_http_response_4"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_4"><a class="anchor" href="#_response_200_4"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"array"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_4"><a class="anchor" href="#_response_500_4"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gettestusingget"><a class="anchor" href="#_gettestusingget"></a>2.1.5. getTest</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/sessions/{sessionId}/tests/{testName}</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_5"><a class="anchor" href="#_parameters_5"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testName</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testName</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_5"><a class="anchor" href="#_responses_5"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_testentity">TestEntity</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_5"><a class="anchor" href="#_consumes_5"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_5"><a class="anchor" href="#_produces_5"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_5"><a class="anchor" href="#_example_http_request_5"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_5"><a class="anchor" href="#_request_path_5"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/sessions/string/tests/string"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_5"><a class="anchor" href="#_example_http_response_5"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_5"><a class="anchor" href="#_response_200_5"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "clockValue" : 0,
+  "decision" : "string",
+  "description" : "string",
+  "id" : 0,
+  "load" : "string",
+  "name" : "string",
+  "startDate" : "string",
+  "taskDataDto" : {
+    "description" : "string",
+    "id" : 0,
+    "idToSessionId" : {
+      "string" : "string"
+    },
+    "ids" : [ 0 ],
+    "sessionId" : "string",
+    "sessionIds" : [ "string" ],
+    "taskName" : "string"
+  },
+  "terminationStrategy" : "string",
+  "testExecutionStatus" : "string",
+  "testGroupIndex" : 0
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_5"><a class="anchor" href="#_response_500_5"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getmetricsusingget"><a class="anchor" href="#_getmetricsusingget"></a>2.1.6. getMetrics</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/sessions/{sessionId}/tests/{testName}/metrics</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_6"><a class="anchor" href="#_parameters_6"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testName</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testName</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_6"><a class="anchor" href="#_responses_6"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_metricentity">MetricEntity</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_6"><a class="anchor" href="#_consumes_6"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_6"><a class="anchor" href="#_produces_6"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_6"><a class="anchor" href="#_example_http_request_6"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_6"><a class="anchor" href="#_request_path_6"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/sessions/string/tests/string/metrics"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_6"><a class="anchor" href="#_example_http_response_6"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_6"><a class="anchor" href="#_response_200_6"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"array"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_6"><a class="anchor" href="#_response_500_6"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getmetricplotdatausingget"><a class="anchor" href="#_getmetricplotdatausingget"></a>2.1.7. getMetricPlotData</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/sessions/{sessionId}/tests/{testName}/metrics/plot-data</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_7"><a class="anchor" href="#_parameters_7"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testName</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testName</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_7"><a class="anchor" href="#_responses_7"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string, &lt; <a href="#_metricplotpointentity">MetricPlotPointEntity</a> &gt; array &gt; map</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_7"><a class="anchor" href="#_consumes_7"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_7"><a class="anchor" href="#_produces_7"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_7"><a class="anchor" href="#_example_http_request_7"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_7"><a class="anchor" href="#_request_path_7"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/sessions/string/tests/string/metrics/plot-data"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_7"><a class="anchor" href="#_example_http_response_7"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_7"><a class="anchor" href="#_response_200_7"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"object"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_7"><a class="anchor" href="#_response_500_7"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getmetricssummaryusingget"><a class="anchor" href="#_getmetricssummaryusingget"></a>2.1.8. getMetricsSummary</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/sessions/{sessionId}/tests/{testName}/metrics/summary</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_8"><a class="anchor" href="#_parameters_8"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testName</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testName</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_8"><a class="anchor" href="#_responses_8"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string, <a href="#_metricsummaryvalueentity">MetricSummaryValueEntity</a> &gt; map</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_8"><a class="anchor" href="#_consumes_8"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_8"><a class="anchor" href="#_produces_8"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_8"><a class="anchor" href="#_example_http_request_8"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_8"><a class="anchor" href="#_request_path_8"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/sessions/string/tests/string/metrics/summary"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_8"><a class="anchor" href="#_example_http_response_8"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_8"><a class="anchor" href="#_response_200_8"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"object"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_8"><a class="anchor" href="#_response_500_8"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getmetricsusingget_1"><a class="anchor" href="#_getmetricsusingget_1"></a>2.1.9. getMetrics</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /db/tests/{testId}/metrics</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_9"><a class="anchor" href="#_parameters_9"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int64)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_9"><a class="anchor" href="#_responses_9"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_metricentity">MetricEntity</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_9"><a class="anchor" href="#_consumes_9"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_9"><a class="anchor" href="#_produces_9"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_9"><a class="anchor" href="#_example_http_request_9"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_9"><a class="anchor" href="#_request_path_9"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/db/tests/0/metrics"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_9"><a class="anchor" href="#_example_http_response_9"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_9"><a class="anchor" href="#_response_200_9"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"array"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_9"><a class="anchor" href="#_response_500_9"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reporting-rest-controller_resource"><a class="anchor" href="#_reporting-rest-controller_resource"></a>2.2. Reporting-rest-controller</h3>
+<div class="paragraph">
+<p>Reporting Rest Controller</p>
+</div>
+<div class="sect3">
+<h4 id="_getreportusingget"><a class="anchor" href="#_getreportusingget"></a>2.2.1. getReport</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /report</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_10"><a class="anchor" href="#_parameters_10"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>baseLineSessionId</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">baseLineSessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_10"><a class="anchor" href="#_responses_10"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_946d044413312cc31ce8b8800e8863c7">WebAsyncTask«ResponseEntity«Resource»»</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_10"><a class="anchor" href="#_consumes_10"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_10"><a class="anchor" href="#_produces_10"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code><strong>/</strong></code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_10"><a class="anchor" href="#_example_http_request_10"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_10"><a class="anchor" href="#_request_path_10"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/report"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_request_query_2"><a class="anchor" href="#_request_query_2"></a>Request query</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "baseLineSessionId" : "string",
+  "sessionId" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_10"><a class="anchor" href="#_example_http_response_10"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_10"><a class="anchor" href="#_response_200_10"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "callable" : { },
+  "executor" : { },
+  "timeout" : 0
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_10"><a class="anchor" href="#_response_500_10"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_test-environment-rest-controller_resource"><a class="anchor" href="#_test-environment-rest-controller_resource"></a>2.3. Test-environment-rest-controller</h3>
+<div class="paragraph">
+<p>Jagger Test Environments API. It provides endpoints for reading, creating and updating Test Environments. Deleting is performed automatically by cleaning job. Expiration time of environments is set by property 'environments.ttl.minutes'. This API is user by Jagger load generation components for communication with JaaS. It allows JaaS to monitor running test environments and send commands to these environments. Test Environments API is not intended for manual usage</p>
+</div>
+<div class="sect3">
+<h4 id="_createtestenvironmentusingpost"><a class="anchor" href="#_createtestenvironmentusingpost"></a>2.3.1. Creates Test Environment.</h4>
+<div class="literalblock">
+<div class="content">
+<pre>POST /envs</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_description"><a class="anchor" href="#_description"></a>Description</h5>
+<div class="paragraph">
+<p>If operation successful, 'Environment-Session' cookie is returned with response, which is required for PUT request. This cookie is valid only for Test Environment with envId which was specified in request body.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_11"><a class="anchor" href="#_parameters_11"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testEnv</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testEnv</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_testenvironmententity">TestEnvironmentEntity</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_11"><a class="anchor" href="#_responses_11"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">object</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>201</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Creation is successful.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">object</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>400</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">envId doesn&#8217;t match ^[a-zA-Z0-9._-]{1,249}$ OR status is inconsistent with runningLoadScenario.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>409</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Test Environment with provided envId already exists.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_11"><a class="anchor" href="#_consumes_11"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_11"><a class="anchor" href="#_produces_11"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code><strong>/</strong></code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_11"><a class="anchor" href="#_example_http_request_11"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_11"><a class="anchor" href="#_request_path_11"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/envs"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_request_body"><a class="anchor" href="#_request_body"></a>Request body</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "environmentId" : "string",
+  "loadScenarios" : [ {
+    "loadScenarioId" : "string"
+  } ],
+  "runningLoadScenario" : {
+    "loadScenarioId" : "string"
+  },
+  "status" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_11"><a class="anchor" href="#_example_http_response_11"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_11"><a class="anchor" href="#_response_200_11"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"object"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_201"><a class="anchor" href="#_response_201"></a>Response 201</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"object"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gettestenvironmentsusingget"><a class="anchor" href="#_gettestenvironmentsusingget"></a>2.3.2. Retrieves all Test Environments.</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /envs</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_responses_12"><a class="anchor" href="#_responses_12"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_testenvironmententity">TestEnvironmentEntity</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_12"><a class="anchor" href="#_consumes_12"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_12"><a class="anchor" href="#_produces_12"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_12"><a class="anchor" href="#_example_http_request_12"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_12"><a class="anchor" href="#_request_path_12"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/envs"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_12"><a class="anchor" href="#_example_http_response_12"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_12"><a class="anchor" href="#_response_200_12"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"array"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_11"><a class="anchor" href="#_response_500_11"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gettestenvironmentusingget"><a class="anchor" href="#_gettestenvironmentusingget"></a>2.3.3. Retrieves Test Environment by envId.</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /envs/{envId}</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_12"><a class="anchor" href="#_parameters_12"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>envId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">envId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_13"><a class="anchor" href="#_responses_13"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Test Environment is found.<br>
+<strong>Headers</strong> : <br>
+<code>Environment-Expires</code> (string) : This header stores expiration time of Test Environment.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_testenvironmententity">TestEnvironmentEntity</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>404</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Test Environment with provided envId is not found.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_13"><a class="anchor" href="#_consumes_13"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_13"><a class="anchor" href="#_produces_13"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_13"><a class="anchor" href="#_example_http_request_13"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_13"><a class="anchor" href="#_request_path_13"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/envs/string"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_13"><a class="anchor" href="#_example_http_response_13"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_13"><a class="anchor" href="#_response_200_13"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "environmentId" : "string",
+  "loadScenarios" : [ {
+    "loadScenarioId" : "string"
+  } ],
+  "runningLoadScenario" : {
+    "loadScenarioId" : "string"
+  },
+  "status" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_12"><a class="anchor" href="#_response_500_12"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_updatetestenvironmentusingput"><a class="anchor" href="#_updatetestenvironmentusingput"></a>2.3.4. Updates Test Environment by envId.</h4>
+<div class="literalblock">
+<div class="content">
+<pre>PUT /envs/{envId}</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_description_2"><a class="anchor" href="#_description_2"></a>Description</h5>
+<div class="paragraph">
+<p>This operation can be performed only if 'Environment-Session' cookie is present and valid. To obtain this cookie POST to /envs must be performed firstly. This cookie is valid only for Test Environment with envId which was specified in POST request body.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_13"><a class="anchor" href="#_parameters_13"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>envId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">envId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sessionId</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">sessionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testEnv</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testEnv</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_testenvironmententity">TestEnvironmentEntity</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_14"><a class="anchor" href="#_responses_14"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">object</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>202</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Update is successful.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">object</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>400</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Environment-Session cookie is not present.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>404</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Test Environment with provided envId or sessionId is not found.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_14"><a class="anchor" href="#_consumes_14"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_14"><a class="anchor" href="#_produces_14"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code><strong>/</strong></code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_14"><a class="anchor" href="#_example_http_request_14"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_14"><a class="anchor" href="#_request_path_14"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/envs/string"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_request_body_2"><a class="anchor" href="#_request_body_2"></a>Request body</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "environmentId" : "string",
+  "loadScenarios" : [ {
+    "loadScenarioId" : "string"
+  } ],
+  "runningLoadScenario" : {
+    "loadScenarioId" : "string"
+  },
+  "status" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_14"><a class="anchor" href="#_example_http_response_14"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_14"><a class="anchor" href="#_response_200_14"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"object"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_202"><a class="anchor" href="#_response_202"></a>Response 202</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"object"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_test-execution-rest-controller_resource"><a class="anchor" href="#_test-execution-rest-controller_resource"></a>2.4. Test-execution-rest-controller</h3>
+<div class="paragraph">
+<p>Jagger Test Execution API. It provides endpoints for reading, creating, updating and deleting Test Executions. This API can be used manually or via separate Jenkins plugin, to run particular performance test projects on the selected test environment</p>
+</div>
+<div class="sect3">
+<h4 id="_createtestexecutionusingpost"><a class="anchor" href="#_createtestexecutionusingpost"></a>2.4.1. createTestExecution</h4>
+<div class="literalblock">
+<div class="content">
+<pre>POST /executions</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_14"><a class="anchor" href="#_parameters_14"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testExecution</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testExecution</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_testexecutionentity">TestExecutionEntity</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_15"><a class="anchor" href="#_responses_15"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_testexecutionentity">TestExecutionEntity</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_15"><a class="anchor" href="#_consumes_15"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_15"><a class="anchor" href="#_produces_15"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_15"><a class="anchor" href="#_example_http_request_15"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_15"><a class="anchor" href="#_request_path_15"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/executions"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_request_body_3"><a class="anchor" href="#_request_body_3"></a>Request body</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "auditEntities" : [ {
+    "id" : 0,
+    "newStatus" : "string",
+    "oldStatus" : "string",
+    "timestamp" : 0
+  } ],
+  "envId" : "string",
+  "errorMessage" : "string",
+  "executionTimeToStartInSeconds" : 0,
+  "id" : 0,
+  "loadScenarioId" : "string",
+  "sessionId" : "string",
+  "status" : "string",
+  "testProjectURL" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_15"><a class="anchor" href="#_example_http_response_15"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_15"><a class="anchor" href="#_response_200_15"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "auditEntities" : [ {
+    "id" : 0,
+    "newStatus" : "string",
+    "oldStatus" : "string",
+    "timestamp" : 0
+  } ],
+  "envId" : "string",
+  "errorMessage" : "string",
+  "executionTimeToStartInSeconds" : 0,
+  "id" : 0,
+  "loadScenarioId" : "string",
+  "sessionId" : "string",
+  "status" : "string",
+  "testProjectURL" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gettestexecutionsusingget"><a class="anchor" href="#_gettestexecutionsusingget"></a>2.4.2. getTestExecutions</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /executions</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_15"><a class="anchor" href="#_parameters_15"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>envId</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">envId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_16"><a class="anchor" href="#_responses_16"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_testexecutionentity">TestExecutionEntity</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_16"><a class="anchor" href="#_consumes_16"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_16"><a class="anchor" href="#_produces_16"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_16"><a class="anchor" href="#_example_http_request_16"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_16"><a class="anchor" href="#_request_path_16"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/executions"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_request_query_3"><a class="anchor" href="#_request_query_3"></a>Request query</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "envId" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_16"><a class="anchor" href="#_example_http_response_16"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_16"><a class="anchor" href="#_response_200_16"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"array"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_13"><a class="anchor" href="#_response_500_13"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_gettestexecutionusingget"><a class="anchor" href="#_gettestexecutionusingget"></a>2.4.3. getTestExecution</h4>
+<div class="literalblock">
+<div class="content">
+<pre>GET /executions/{testExecutionId}</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_16"><a class="anchor" href="#_parameters_16"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testExecutionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testExecutionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int64)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_17"><a class="anchor" href="#_responses_17"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_testexecutionentity">TestExecutionEntity</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">500 - Internal server error.<br>
+<br>
+There is a problem with the resource you are looking for, and it can not be displayed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_17"><a class="anchor" href="#_consumes_17"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_17"><a class="anchor" href="#_produces_17"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_17"><a class="anchor" href="#_example_http_request_17"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_17"><a class="anchor" href="#_request_path_17"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/executions/0"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_17"><a class="anchor" href="#_example_http_response_17"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_17"><a class="anchor" href="#_response_200_17"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "auditEntities" : [ {
+    "id" : 0,
+    "newStatus" : "string",
+    "oldStatus" : "string",
+    "timestamp" : 0
+  } ],
+  "envId" : "string",
+  "errorMessage" : "string",
+  "executionTimeToStartInSeconds" : 0,
+  "id" : 0,
+  "loadScenarioId" : "string",
+  "sessionId" : "string",
+  "status" : "string",
+  "testProjectURL" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_response_500_14"><a class="anchor" href="#_response_500_14"></a>Response 500</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"&lt;&lt;_error&gt;&gt;"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_updatetestexecutionusingput"><a class="anchor" href="#_updatetestexecutionusingput"></a>2.4.4. updateTestExecution</h4>
+<div class="literalblock">
+<div class="content">
+<pre>PUT /executions/{testExecutionId}</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_17"><a class="anchor" href="#_parameters_17"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testExecutionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testExecutionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int64)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>executionEntity</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">executionEntity</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_testexecutionentity">TestExecutionEntity</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_18"><a class="anchor" href="#_responses_18"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">object</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_18"><a class="anchor" href="#_consumes_18"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_18"><a class="anchor" href="#_produces_18"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code><strong>/</strong></code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_18"><a class="anchor" href="#_example_http_request_18"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_18"><a class="anchor" href="#_request_path_18"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/executions/0"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_request_body_4"><a class="anchor" href="#_request_body_4"></a>Request body</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "auditEntities" : [ {
+    "id" : 0,
+    "newStatus" : "string",
+    "oldStatus" : "string",
+    "timestamp" : 0
+  } ],
+  "envId" : "string",
+  "errorMessage" : "string",
+  "executionTimeToStartInSeconds" : 0,
+  "id" : 0,
+  "loadScenarioId" : "string",
+  "sessionId" : "string",
+  "status" : "string",
+  "testProjectURL" : "string"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_18"><a class="anchor" href="#_example_http_response_18"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_18"><a class="anchor" href="#_response_200_18"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"object"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_deletetestexecutionusingdelete"><a class="anchor" href="#_deletetestexecutionusingdelete"></a>2.4.5. deleteTestExecution</h4>
+<div class="literalblock">
+<div class="content">
+<pre>DELETE /executions/{testExecutionId}</pre>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_parameters_18"><a class="anchor" href="#_parameters_18"></a>Parameters</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11%;">
+<col style="width: 16%;">
+<col style="width: 50%;">
+<col style="width: 22%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>testExecutionId</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">testExecutionId</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer(int64)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_responses_19"><a class="anchor" href="#_responses_19"></a>Responses</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">object</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_consumes_19"><a class="anchor" href="#_consumes_19"></a>Consumes</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/json</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_produces_19"><a class="anchor" href="#_produces_19"></a>Produces</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><code><strong>/</strong></code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_request_19"><a class="anchor" href="#_example_http_request_19"></a>Example HTTP request</h5>
+<div class="sect5">
+<h6 id="_request_path_19"><a class="anchor" href="#_request_path_19"></a>Request path</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"/executions/0"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_example_http_response_19"><a class="anchor" href="#_example_http_response_19"></a>Example HTTP response</h5>
+<div class="sect5">
+<h6 id="_response_200_19"><a class="anchor" href="#_response_200_19"></a>Response 200</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">"object"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-01-12 13:38:54 MSK
+</div>
+</div>
+</body>
+</html>

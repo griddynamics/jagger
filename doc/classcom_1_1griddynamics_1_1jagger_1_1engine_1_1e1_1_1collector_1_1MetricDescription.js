@@ -1,0 +1,26 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription =
+[
+    [ "MetricDescription", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a2663af1ea7b1d81de4b0131e76f922d2.html#a2663af1ea7b1d81de4b0131e76f922d2", null ],
+    [ "addAggregator", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a062f40f4418430d5d299426655f573c0.html#a062f40f4418430d5d299426655f573c0", null ],
+    [ "addAggregator", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a64c8ee69cebb32ce5a5a42aade20b5fc.html#a64c8ee69cebb32ce5a5a42aade20b5fc", null ],
+    [ "displayName", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a136b615275ef97577acdd5dcd3a21f48.html#a136b615275ef97577acdd5dcd3a21f48", null ],
+    [ "getAggregators", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_abcdb12cada1ae65bfce5d003ef7ca5ee.html#abcdb12cada1ae65bfce5d003ef7ca5ee", null ],
+    [ "getAggregatorsWithSettings", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_afcc97151b8247a3351c4808439b67698.html#afcc97151b8247a3351c4808439b67698", null ],
+    [ "getDisplayName", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a3fd84985a38a4348eea06b95e4b17e70.html#a3fd84985a38a4348eea06b95e4b17e70", null ],
+    [ "getMetricId", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_afad2b6920dd2350272adc05b61cd1e09.html#afad2b6920dd2350272adc05b61cd1e09", null ],
+    [ "getPlotData", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_adb46f12b2987c961c5d731517c02371b.html#adb46f12b2987c961c5d731517c02371b", null ],
+    [ "getShowSummary", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_af294547083867c7b6efc729d19506772.html#af294547083867c7b6efc729d19506772", null ],
+    [ "plotData", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a32909b92f0b92c569ba80020a7037115.html#a32909b92f0b92c569ba80020a7037115", null ],
+    [ "setAggregators", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a40d80c807562b9e9876facdfcc131fa7.html#a40d80c807562b9e9876facdfcc131fa7", null ],
+    [ "setAggregatorsWithSettings", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_ac05b6f96293334094441d38117beabd9.html#ac05b6f96293334094441d38117beabd9", null ],
+    [ "setDisplayName", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_aa658a423894d15bdda3d42913df09f28.html#aa658a423894d15bdda3d42913df09f28", null ],
+    [ "setMetricId", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_aaf13e4b01e79ea8efaecbf0e77639e3a.html#aaf13e4b01e79ea8efaecbf0e77639e3a", null ],
+    [ "setPlotData", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a09c402b8371f3bed70397596e958af07.html#a09c402b8371f3bed70397596e958af07", null ],
+    [ "setShowSummary", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a7c46691ae58498d048e9b3a67b9a717c.html#a7c46691ae58498d048e9b3a67b9a717c", null ],
+    [ "showSummary", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a575402f53a2b5fa16e0aeb06279468ea.html#a575402f53a2b5fa16e0aeb06279468ea", null ],
+    [ "aggregatorsWithSettings", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a29c215b4f64a4e585bfbed002277cb19.html#a29c215b4f64a4e585bfbed002277cb19", null ],
+    [ "displayName", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_ae55d7a99a52eaf49da0c7efa0f632bfa.html#ae55d7a99a52eaf49da0c7efa0f632bfa", null ],
+    [ "id", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a2e72d231844e88315ac517d3dfa26f68.html#a2e72d231844e88315ac517d3dfa26f68", null ],
+    [ "plotData", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a1fdfe4a0f5202e4a3ceba7311c48d773.html#a1fdfe4a0f5202e4a3ceba7311c48d773", null ],
+    [ "showSummary", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricDescription_a495b7b8b4b5385f0999ff32738a39798.html#a495b7b8b4b5385f0999ff32738a39798", null ]
+];

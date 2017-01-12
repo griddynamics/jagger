@@ -1,0 +1,4 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1SuccessRateFailsAggregatorProvider =
+[
+    [ "provide", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1SuccessRateFailsAggregatorProvider_a95c0b1898e73c71bb2309f7ef8201626.html#a95c0b1898e73c71bb2309f7ef8201626", null ]
+];

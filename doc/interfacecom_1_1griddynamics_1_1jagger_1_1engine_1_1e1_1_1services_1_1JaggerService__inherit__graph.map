@@ -1,0 +1,8 @@
+<map id="com.griddynamics.jagger.engine.e1.services.JaggerService" name="com.griddynamics.jagger.engine.e1.services.JaggerService">
+<area shape="rect" id="node2" href="$interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DataService.html" title="Service provides access to tests results, stored in the Jagger database. " alt="" coords="341,5,628,44"/>
+<area shape="rect" id="node4" href="$interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1MetricService.html" title="Service gives an ability to create and describe metrics, save metric values. " alt="" coords="341,68,628,107"/>
+<area shape="rect" id="node6" href="$interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1SessionInfoService.html" title="Service gives ability to create and modify session metadata(such as session comment) ..." alt="" coords="341,131,628,169"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultDataService.html" title="Implementation of the DataService. " alt="" coords="676,5,964,44"/>
+<area shape="rect" id="node5" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultMetricService.html" title="Implementation of the MetricService &#160;. " alt="" coords="676,68,964,107"/>
+<area shape="rect" id="node7" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService.html" title="Implementation of the SessionInfoService &#160;. " alt="" coords="676,131,964,169"/>
+</map>

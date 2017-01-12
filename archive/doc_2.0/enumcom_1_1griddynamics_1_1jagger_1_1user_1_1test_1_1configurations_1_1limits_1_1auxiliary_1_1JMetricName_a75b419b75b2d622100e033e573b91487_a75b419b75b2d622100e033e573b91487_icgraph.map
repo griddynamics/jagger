@@ -1,0 +1,4 @@
+<map id="com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName.transformToString" name="com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName.transformToString">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsBaseline_ac53b780f3e7441c673cbdfd9fea10864.html#ac53b780f3e7441c673cbdfd9fea10864" title="Builder for JLimit to compare with baseline. " alt="" coords="452,5,800,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsRefValue_a34cf8127e2ae4ce45ac15da7f3f1d0ed.html#a34cf8127e2ae4ce45ac15da7f3f1d0ed" title="Builder for JLimit to compare with current value. " alt="" coords="452,68,800,107"/>
+</map>

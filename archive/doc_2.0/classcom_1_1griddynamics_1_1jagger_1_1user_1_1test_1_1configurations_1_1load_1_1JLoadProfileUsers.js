@@ -1,0 +1,9 @@
+var classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUsers =
+[
+    [ "Builder", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUsers_1_1Builder.html", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUsers_1_1Builder" ],
+    [ "builder", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUsers_a0e7acc972588571d3b7baf96051413b9.html#a0e7acc972588571d3b7baf96051413b9", null ],
+    [ "getLifeTimeInSeconds", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUsers_a375e8c25f92b78f30736315471cc95ff.html#a375e8c25f92b78f30736315471cc95ff", null ],
+    [ "getNumberOfUsers", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUsers_ac789a9ee0717d8f8c57305db506d75b4.html#ac789a9ee0717d8f8c57305db506d75b4", null ],
+    [ "getSlewRateUsersPerSecond", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUsers_af78020d13f5ad61e104b795802b7da88.html#af78020d13f5ad61e104b795802b7da88", null ],
+    [ "getStartDelayInSeconds", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUsers_aa36757da8e628ebb0536473af1925217.html#aa36757da8e628ebb0536473af1925217", null ]
+];

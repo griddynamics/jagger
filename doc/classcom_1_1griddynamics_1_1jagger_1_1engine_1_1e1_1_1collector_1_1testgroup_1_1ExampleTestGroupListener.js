@@ -1,0 +1,5 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1testgroup_1_1ExampleTestGroupListener =
+[
+    [ "init", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1testgroup_1_1ExampleTestGroupListener_a5ecd37c2fc03512d1912203eecbd94e4.html#a5ecd37c2fc03512d1912203eecbd94e4", null ],
+    [ "provide", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1testgroup_1_1ExampleTestGroupListener_af2bd2a4c5e13591cec9744a727869431.html#af2bd2a4c5e13591cec9744a727869431", null ]
+];

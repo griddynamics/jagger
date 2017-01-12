@@ -1,0 +1,10 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1LoadScenarioInfo =
+[
+    [ "LoadScenarioInfo", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1LoadScenarioInfo_a65c21e4ecc111192bee808d14ac212ad.html#a65c21e4ecc111192bee808d14ac212ad", null ],
+    [ "getDuration", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1LoadScenarioInfo_aa11c92f840a96446c97efeb7a59b29e4.html#aa11c92f840a96446c97efeb7a59b29e4", null ],
+    [ "getGeneralNodeInfo", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1LoadScenarioInfo_a79e07db2d5a1909cafee64fd6b931d03.html#a79e07db2d5a1909cafee64fd6b931d03", null ],
+    [ "getSessionId", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1LoadScenarioInfo_a84b513f225dea79813a695fa0b51bf33.html#a84b513f225dea79813a695fa0b51bf33", null ],
+    [ "setDuration", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1LoadScenarioInfo_a9f22a349fefa531f1ce29245c13c1e94.html#a9f22a349fefa531f1ce29245c13c1e94", null ],
+    [ "setGeneralNodeInfo", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1LoadScenarioInfo_a31aa13f95b35217a7d95336fc7477b9e.html#a31aa13f95b35217a7d95336fc7477b9e", null ],
+    [ "setSessionId", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1LoadScenarioInfo_a5ea3df374d72e285bee8cf9e7ed695a8.html#a5ea3df374d72e285bee8cf9e7ed695a8", null ]
+];

@@ -1,0 +1,5 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1invocation_1_1ExampleInvocationListener =
+[
+    [ "init", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1invocation_1_1ExampleInvocationListener_aee73bfad256bb1d38a99a56280edda7c.html#aee73bfad256bb1d38a99a56280edda7c", null ],
+    [ "provide", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1invocation_1_1ExampleInvocationListener_a0d45fd2dbc566ec3bf3d6bcc948cb036.html#a0d45fd2dbc566ec3bf3d6bcc948cb036", null ]
+];

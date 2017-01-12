@@ -1,0 +1,4 @@
+<map id="ResponseValidator" name="ResponseValidator">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator.html" title="Validates JHttpResponse status code. " alt="" coords="186,5,432,84"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1NotNullResponseValidator.html" title="Validates that invocation result is not null. " alt="" coords="192,108,426,173"/>
+</map>

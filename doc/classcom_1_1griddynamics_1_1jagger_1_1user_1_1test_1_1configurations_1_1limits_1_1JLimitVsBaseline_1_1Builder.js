@@ -1,0 +1,4 @@
+var classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsBaseline_1_1Builder =
+[
+    [ "build", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsBaseline_1_1Builder_afc5fc78c98cc24f3946ceb01cd33a33e.html#afc5fc78c98cc24f3946ceb01cd33a33e", null ]
+];

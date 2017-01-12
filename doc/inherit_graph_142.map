@@ -1,0 +1,4 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classJaggerPropertiesProvider.html" title="This class is needed to provide Jagger environment properties and test properties. " alt="" coords="5,5,178,31"/>
+<area shape="rect" id="node2" href="$classExampleJLoadScenarioProvider.html" title="By extending JaggerPropertiesProvider you get access to all Jagger properties and test properties..." alt="" coords="226,5,438,31"/>
+</map>

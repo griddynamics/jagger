@@ -1,0 +1,6 @@
+var classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1auxiliary_1_1MaxDurationInSeconds =
+[
+    [ "MaxDurationInSeconds", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1auxiliary_1_1MaxDurationInSeconds_a49a860e38eb2cc0f5e93077ba409b705.html#a49a860e38eb2cc0f5e93077ba409b705", null ],
+    [ "of", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1auxiliary_1_1MaxDurationInSeconds_aab4971252b973b81b42f366bc69918f9.html#aab4971252b973b81b42f366bc69918f9", null ],
+    [ "value", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1auxiliary_1_1MaxDurationInSeconds_ab51f26cd1193596583bcfc41a231f88b.html#ab51f26cd1193596583bcfc41a231f88b", null ]
+];

@@ -1,0 +1,28 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity =
+[
+    [ "equals", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a2b065454865346127a75b1b82b4daaf3.html#a2b065454865346127a75b1b82b4daaf3", null ],
+    [ "getClockValue", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a729c9097e8c9cf7702a98dc85f14fa40.html#a729c9097e8c9cf7702a98dc85f14fa40", null ],
+    [ "getDecision", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a8a7aa38df50eb0c92b5450ccaf6381c1.html#a8a7aa38df50eb0c92b5450ccaf6381c1", null ],
+    [ "getDescription", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_ac778f91900d49f29346daf3a8a08b198.html#ac778f91900d49f29346daf3a8a08b198", null ],
+    [ "getId", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a92a8b6feed11cf4beb53363db8f0b1c4.html#a92a8b6feed11cf4beb53363db8f0b1c4", null ],
+    [ "getLoad", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_ac977e796e818477719b55b76486cfa45.html#ac977e796e818477719b55b76486cfa45", null ],
+    [ "getName", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_ae934c8a1cb9ab355919e63c2230bdabf.html#ae934c8a1cb9ab355919e63c2230bdabf", null ],
+    [ "getStartDate", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_ad3c044c0249b70589f6ddc987a72e4fc.html#ad3c044c0249b70589f6ddc987a72e4fc", null ],
+    [ "getTaskDataDto", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a50ff8ea7faabc5ad79fce6df6bbfd83c.html#a50ff8ea7faabc5ad79fce6df6bbfd83c", null ],
+    [ "getTerminationStrategy", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a9d725899c47861263bab3647524d847a.html#a9d725899c47861263bab3647524d847a", null ],
+    [ "getTestExecutionStatus", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_ab2dc87e5bf050fced1392f9a74c37a84.html#ab2dc87e5bf050fced1392f9a74c37a84", null ],
+    [ "getTestGroupIndex", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a0741bae34aa35fa4d18500b2b876caaf.html#a0741bae34aa35fa4d18500b2b876caaf", null ],
+    [ "hashCode", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a5891e7fd12edc581dc6828b452f0e7c8.html#a5891e7fd12edc581dc6828b452f0e7c8", null ],
+    [ "setClockValue", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a1ad951e4773cab206380ca1828193eeb.html#a1ad951e4773cab206380ca1828193eeb", null ],
+    [ "setDecision", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_aaf2ba368ea3506fa17d2750c113953c1.html#aaf2ba368ea3506fa17d2750c113953c1", null ],
+    [ "setDescription", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_ac8ce5f9d9376955b5364888cbb51e8fb.html#ac8ce5f9d9376955b5364888cbb51e8fb", null ],
+    [ "setId", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a2105be94e5b3f7afef2b807ea982248c.html#a2105be94e5b3f7afef2b807ea982248c", null ],
+    [ "setLoad", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a5ea4ccd9ec534e1fdbcaf161a42799da.html#a5ea4ccd9ec534e1fdbcaf161a42799da", null ],
+    [ "setName", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_ae1db2e8cf2a87757fc808de5add84ab6.html#ae1db2e8cf2a87757fc808de5add84ab6", null ],
+    [ "setStartDate", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a31ed43602c482d8e6a86713c3a4a1ba5.html#a31ed43602c482d8e6a86713c3a4a1ba5", null ],
+    [ "setTaskDataDto", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a64d495ef3a83614b08fe05bea2de6c46.html#a64d495ef3a83614b08fe05bea2de6c46", null ],
+    [ "setTerminationStrategy", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_ad5a49b241a3888bea2600034bc590dca.html#ad5a49b241a3888bea2600034bc590dca", null ],
+    [ "setTestExecutionStatus", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a5d2b094f4e4af8f928d77a35337aba65.html#a5d2b094f4e4af8f928d77a35337aba65", null ],
+    [ "setTestGroupIndex", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_a5e9c2445187b75943cfdf13fceebaf09.html#a5e9c2445187b75943cfdf13fceebaf09", null ],
+    [ "toString", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1TestEntity_aafb03bba97dfd262d5d03f02b0ae5aba.html#aafb03bba97dfd262d5d03f02b0ae5aba", null ]
+];

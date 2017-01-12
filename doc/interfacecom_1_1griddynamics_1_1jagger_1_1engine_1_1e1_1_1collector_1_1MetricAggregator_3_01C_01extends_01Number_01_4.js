@@ -1,0 +1,7 @@
+var interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregator_3_01C_01extends_01Number_01_4 =
+[
+    [ "append", "interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregator_3_01C_01extends_01Number_01_4_a75345a237817edc474f842630d2089b1.html#a75345a237817edc474f842630d2089b1", null ],
+    [ "getAggregated", "interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregator_3_01C_01extends_01Number_01_4_aacff12e09f43087c4d2680a77598f240.html#aacff12e09f43087c4d2680a77598f240", null ],
+    [ "getName", "interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregator_3_01C_01extends_01Number_01_4_ad6e214255c29f240a929f03e66077d9f.html#ad6e214255c29f240a929f03e66077d9f", null ],
+    [ "reset", "interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregator_3_01C_01extends_01Number_01_4_aaa303958d4b7226aab0fb6cd96f2ae69.html#aaa303958d4b7226aab0fb6cd96f2ae69", null ]
+];

@@ -33,6 +33,11 @@ then
         cd ./archive/
         ./create_index.sh
         cd ../
+
+        echo "- Add to git"
+        git add ./doc
+        git add ./archive/$folder
+
     else
         echo "##### Error. Folder '$folder' not found"
     fi

@@ -1,0 +1,5 @@
+<map id="com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh.of" name="com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh.of">
+<area shape="rect" id="node2" href="$classExampleJLoadScenarioProvider_a559b3db4991995a819e6849dd2a9e9d6.html#a559b3db4991995a819e6849dd2a9e9d6" title="ExampleJLoadScenarioProvider.example\lJaggerLoadScenario" alt="" coords="848,5,1113,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_1_1Builder_a4cba51602999d079ef4a2dffde72e2bd.html#a4cba51602999d079ef4a2dffde72e2bd" title="Set limits for errors criteria only. " alt="" coords="452,33,800,72"/>
+<area shape="rect" id="node4" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_1_1Builder_a2526296eea5703b03d8265e07f505f04.html#a2526296eea5703b03d8265e07f505f04" title="Set limits for warnings criteria only. " alt="" coords="452,96,800,135"/>
+</map>

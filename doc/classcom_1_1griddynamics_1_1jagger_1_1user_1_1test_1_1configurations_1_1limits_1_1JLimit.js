@@ -1,0 +1,9 @@
+var classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit =
+[
+    [ "Builder", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_1_1Builder.html", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_1_1Builder" ],
+    [ "getLowerErrorThreshold", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_a8158384fc842eced8a01f3eda7cd432b.html#a8158384fc842eced8a01f3eda7cd432b", null ],
+    [ "getLowWarnThresh", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_a7e0a55d09a8129314ecdbecbdee5a7f7.html#a7e0a55d09a8129314ecdbecbdee5a7f7", null ],
+    [ "getMetricName", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_a8d706417c794df8817de3793d03d67a0.html#a8d706417c794df8817de3793d03d67a0", null ],
+    [ "getUpperErrorThreshold", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_a2ed7618028c03afa2e41995926f3f024.html#a2ed7618028c03afa2e41995926f3f024", null ],
+    [ "getUpperWarningThreshold", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit_af14c4594479108b208db1de9c37a3257.html#af14c4594479108b208db1de9c37a3257", null ]
+];

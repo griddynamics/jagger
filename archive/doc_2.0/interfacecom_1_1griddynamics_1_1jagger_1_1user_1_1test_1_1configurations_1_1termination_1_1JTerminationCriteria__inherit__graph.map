@@ -1,0 +1,5 @@
+<map id="com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria" name="com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1JTerminationCriteriaBackground.html" title="Test with such termination strategy will wait another tests in test&#45;group to be stopped. " alt="" coords="436,5,819,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1JTerminationCriteriaDuration.html" title="Test with such termination strategy will be executed for the defined time &#45; duration. " alt="" coords="436,68,819,107"/>
+<area shape="rect" id="node4" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1JTerminationCriteriaIterations.html" title="Test with such termination strategy will last till defined number of requests are executed..." alt="" coords="436,131,819,169"/>
+</map>

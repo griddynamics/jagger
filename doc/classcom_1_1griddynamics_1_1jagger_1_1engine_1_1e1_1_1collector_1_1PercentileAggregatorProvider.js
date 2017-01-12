@@ -1,0 +1,6 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1PercentileAggregatorProvider =
+[
+    [ "PercentileAggregatorProvider", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1PercentileAggregatorProvider_a974dfeb328c1ccec4e2513f21097e095.html#a974dfeb328c1ccec4e2513f21097e095", null ],
+    [ "PercentileAggregatorProvider", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1PercentileAggregatorProvider_a24f5b6916f68460a44a915eb68d9622b.html#a24f5b6916f68460a44a915eb68d9622b", null ],
+    [ "provide", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1PercentileAggregatorProvider_a44bc434e3aec3c4a14daba6ae817b516.html#a44bc434e3aec3c4a14daba6ae817b516", null ]
+];

@@ -1,0 +1,6 @@
+var classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1auxiliary_1_1RefValue =
+[
+    [ "of", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1auxiliary_1_1RefValue_a3c7506472e8820768656a2fc07292b28.html#a3c7506472e8820768656a2fc07292b28", null ],
+    [ "toString", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1auxiliary_1_1RefValue_ab6b876188b9616f3ba057c9597dceaaf.html#ab6b876188b9616f3ba057c9597dceaaf", null ],
+    [ "value", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1auxiliary_1_1RefValue_a6f2897612e6003250fe97e5a8863175c.html#a6f2897612e6003250fe97e5a8863175c", null ]
+];

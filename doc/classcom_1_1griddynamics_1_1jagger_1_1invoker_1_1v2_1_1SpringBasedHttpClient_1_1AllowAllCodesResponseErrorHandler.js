@@ -1,0 +1,5 @@
+var classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1SpringBasedHttpClient_1_1AllowAllCodesResponseErrorHandler =
+[
+    [ "handleError", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1SpringBasedHttpClient_1_1AllowAllCodesResponseErrorHandler_a998cef0cbc6ca132b1d395527d165950.html#a998cef0cbc6ca132b1d395527d165950", null ],
+    [ "hasError", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1SpringBasedHttpClient_1_1AllowAllCodesResponseErrorHandler_a9ec8467d09b36b1656c6ab842deef289.html#a9ec8467d09b36b1656c6ab842deef289", null ]
+];

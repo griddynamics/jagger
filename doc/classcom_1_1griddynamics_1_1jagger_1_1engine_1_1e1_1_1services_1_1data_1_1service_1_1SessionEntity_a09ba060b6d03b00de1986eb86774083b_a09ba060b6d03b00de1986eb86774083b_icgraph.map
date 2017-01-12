@@ -1,0 +1,4 @@
+<map id="com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity.setEndDate" name="com.griddynamics.jagger.engine.e1.services.data.service.SessionEntity.setEndDate">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultDataService_a076922cb32e60aae17c2cc4b49e09c55.html#a076922cb32e60aae17c2cc4b49e09c55" title="Returns session entities for specify session ids. " alt="" coords="416,5,704,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultDataService_a51f6e93925846877bb474a7f31d1d314.html#a51f6e93925846877bb474a7f31d1d314" title="Returns session&#39;s entity for specify session&#39;s id. " alt="" coords="752,5,1039,44"/>
+</map>

@@ -1,0 +1,12 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings =
+[
+    [ "getNormalizationBy", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_ad956d1d2eed8c5c9e9a856eda32b590f.html#ad956d1d2eed8c5c9e9a856eda32b590f", null ],
+    [ "getPointCount", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_a0869e8ecfe7081b01caecd5e9b6fd8f5.html#a0869e8ecfe7081b01caecd5e9b6fd8f5", null ],
+    [ "getPointInterval", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_a8440580a58f87e3e90cda41dbd2e8208.html#a8440580a58f87e3e90cda41dbd2e8208", null ],
+    [ "isNormalizeOnFullMeasuredInterval", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_af6cf343d27d0f776f34974210a361607.html#af6cf343d27d0f776f34974210a361607", null ],
+    [ "setNormalizationBy", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_af946e88a660396d794521150ec5758f2.html#af946e88a660396d794521150ec5758f2", null ],
+    [ "setNormalizeOnFullMeasuredInterval", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_a3727ffa47d81e6521fb393862be3f14b.html#a3727ffa47d81e6521fb393862be3f14b", null ],
+    [ "setPointCount", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_a48607513fb68cb10ec54729d0e4c276c.html#a48607513fb68cb10ec54729d0e4c276c", null ],
+    [ "setPointInterval", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_a7a46248a629e22c0554bd03371bad8c4.html#a7a46248a629e22c0554bd03371bad8c4", null ],
+    [ "EMPTY_SETTINGS", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MetricAggregatorSettings_a9c916258cf14203e0587748271c23f62.html#a9c916258cf14203e0587748271c23f62", null ]
+];

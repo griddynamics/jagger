@@ -1,0 +1,7 @@
+var namespacecom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits =
+[
+    [ "auxiliary", "namespacecom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1auxiliary.html", "namespacecom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1auxiliary" ],
+    [ "JLimit", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit.html", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimit" ],
+    [ "JLimitVsBaseline", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsBaseline.html", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsBaseline" ],
+    [ "JLimitVsRefValue", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsRefValue.html", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsRefValue" ]
+];

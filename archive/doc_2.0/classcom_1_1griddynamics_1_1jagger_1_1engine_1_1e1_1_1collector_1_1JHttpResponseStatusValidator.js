@@ -1,0 +1,10 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator =
+[
+    [ "JHttpResponseStatusValidator", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator_a9261a57fa445c672f4a6cc491c95f270.html#a9261a57fa445c672f4a6cc491c95f270", null ],
+    [ "getName", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator_a8c8c43a7e05be480380a0a1216ebc64b.html#a8c8c43a7e05be480380a0a1216ebc64b", null ],
+    [ "getValidStatusCodes", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator_ac4849b674b645c49c082945c20998d44.html#ac4849b674b645c49c082945c20998d44", null ],
+    [ "getValidStatusCodesRegexp", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator_a3aaff348614fbcc2c84832bd87adae73.html#a3aaff348614fbcc2c84832bd87adae73", null ],
+    [ "setValidStatusCodes", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator_a32ce5db53d1f0f02037191a6213b3a0a.html#a32ce5db53d1f0f02037191a6213b3a0a", null ],
+    [ "setValidStatusCodesRegexp", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator_a2fea9f8eb43e35509fc206d40c3286f7.html#a2fea9f8eb43e35509fc206d40c3286f7", null ],
+    [ "validate", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1JHttpResponseStatusValidator_aa08bb8e13cedec77aa503efb31cd778a.html#aa08bb8e13cedec77aa503efb31cd778a", null ]
+];

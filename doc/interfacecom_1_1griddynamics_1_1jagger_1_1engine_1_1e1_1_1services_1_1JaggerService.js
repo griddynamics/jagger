@@ -1,0 +1,4 @@
+var interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1JaggerService =
+[
+    [ "isAvailable", "interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1JaggerService_aa7a9a9bc5e78e5cafbcdc87f95a35ce8.html#aa7a9a9bc5e78e5cafbcdc87f95a35ce8", null ]
+];

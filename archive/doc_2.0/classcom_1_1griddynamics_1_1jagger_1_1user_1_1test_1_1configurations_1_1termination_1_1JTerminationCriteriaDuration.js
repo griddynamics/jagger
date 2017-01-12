@@ -1,0 +1,6 @@
+var classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1JTerminationCriteriaDuration =
+[
+    [ "JTerminationCriteriaDuration", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1JTerminationCriteriaDuration_a77769b9e80ed6d6381834b94ea03cf8e.html#a77769b9e80ed6d6381834b94ea03cf8e", null ],
+    [ "getDurationInSeconds", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1JTerminationCriteriaDuration_a8ffbfa7ec16df37115958070eb3b8016.html#a8ffbfa7ec16df37115958070eb3b8016", null ],
+    [ "of", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1termination_1_1JTerminationCriteriaDuration_ac1e7eb8a9f793d936aab911df9b139df.html#ac1e7eb8a9f793d936aab911df9b139df", null ]
+];

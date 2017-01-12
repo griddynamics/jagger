@@ -1,0 +1,4 @@
+<map id="com.griddynamics.jagger.engine.e1.services.DefaultDataService.getMetricPlotData" name="com.griddynamics.jagger.engine.e1.services.DefaultDataService.getMetricPlotData">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1MetricPlotPointEntity_a8b4812f8959c7150dcf23023f645e118.html#a8b4812f8959c7150dcf23023f645e118" title="com.griddynamics.jagger.engine.e1.services.data.service.\lMetricPlotPointEntity.setTime" alt="" coords="341,5,704,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1MetricPlotPointEntity_ac24e8c69ca3809ec2336849f75aef10e.html#ac24e8c69ca3809ec2336849f75aef10e" title="com.griddynamics.jagger.engine.e1.services.data.service.\lMetricPlotPointEntity.setValue" alt="" coords="341,68,704,107"/>
+</map>
