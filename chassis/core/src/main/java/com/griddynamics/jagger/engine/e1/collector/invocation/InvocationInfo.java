@@ -7,6 +7,7 @@ package com.griddynamics.jagger.engine.e1.collector.invocation;
  * @details
  *
  * @ingroup Main_Listeners_group
+ * @ingroup Workaround_InvocationInfo_group
  */
 public class InvocationInfo<Q, R, E>  {
     private Q query;

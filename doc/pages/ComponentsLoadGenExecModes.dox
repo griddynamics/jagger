@@ -1,0 +1,112 @@
+/// @page ComponentsLoadGenExecutionModes Load generating modes
+/// @brief Section describes different load generation configurations of the framework
+/// @n
+/// @li @ref section_components_exec_load_gen_simple
+/// @li @ref section_components_exec_load_gen_default
+/// @li @ref section_components_exec_load_distributed
+/// @li @ref section_components_exec_load_distributed_run
+/// @li @ref section_components_exec_load_distributed_run_details
+///
+/// @ref JaggerProperties "Configuration of the framework" is provided via property files or system properties @n
+///
+/// @section section_components_exec_load_gen_simple Simplest configuration
+///
+/// In the simplest configuration you can launch framework as a single JVM
+/// @li @ref section_installation_local "download java archetype"
+/// @li @ref section_jagger_properties "configure `environment.properties` file in the java project to use H2 DB"
+/// @li @ref section_getting_started_run "compile and run test project"
+///
+/// In this case all load generating components are executed in a single JVM. You will collect @ref MetricsPerformance "standard performance metrics".
+/// Pdf report will be generated at the end of the test execution @n
+/// @image html /doc/images/components_simple.png "Simplest configuration of the test framework"
+///
+/// @section section_components_exec_load_gen_default  Default configuration
+///
+/// After running @ref section_installation_local "local installation", you will get default framework configuration, like shown in the image below. @n
+/// In this case
+/// @li Results storage and representation components are always running in the docker containers
+/// @li When you @ref section_getting_started_run "compile and run test project", all load generating components are executed in a single JVM. During test run
+/// all results are collected in the test results DB. Later you can access results via @ref WebUiMain "web interface" or @ref JaasMain "REST API".
+/// RESP API also allows to download pdf report.
+/// @li Optionally: you can start one or many monitoring agents to @ref MonitoringMain "collect system and JVM metrics". All monitoring metrics will be also stored
+/// in the results DB
+/// @li Optionally: via @ref section_jagger_properties "jagger properties" you can enable communication between load generating components and JaaS. In this case
+/// you will be able to @ref section_components_exec_control_stand_by "submit and start new test project to already running load generating components via REST API"
+///
+/// @image html /doc/images/components_default.png "Default configuration of the test framework"
+///
+/// @section section_components_exec_load_distributed Distributed configuration
+///
+/// In case when single node is not enough to generate enough load, or you would like to load your system from different nodes/locations, you can run
+/// framework in the distributed mode. @n
+/// @n
+/// In distributed mode, load generators (Kernels) are started as separate java applications on the single or multiple nodes. Kernels are
+/// responsible for communication with the SUT, with monitoring agents and for temporary storage of the @ref MetricsMain "raw test results". @n
+/// @n
+/// Master/Coordinator is started in it's own JVM and is responsible for load balancing between Kernels, communication with JaaS, final results
+/// aggregation and storage in the results DB. @n
+/// In this case
+/// @li Results storage and representation components are always running
+/// @li @ref section_components_exec_load_distributed_run
+/// @li During test run all results are collected in the test results DB. Later you can access results via @ref WebUiMain "web interface" or @ref JaasMain "REST API".
+/// RESP API also allows to download pdf report.
+/// @li Optionally: you can start one or many monitoring agents to @ref MonitoringMain "collect system and JVM metrics". All monitoring metrics will be also stored
+/// in the results DB
+/// @li Optionally: via @ref section_jagger_properties "jagger properties" you can enable communication between load generating components and JaaS. In this case
+/// you will be able to @ref section_components_exec_control_stand_by "submit and start new test project to already running load generating components via REST API"
+///
+/// @image html /doc/images/components_distributed.png "Distributed configuration of the test framework"
+///
+/// @section section_components_exec_load_distributed_run Run framework in the distributed configuration
+///
+/// Already in the single node mode Jagger framework is capable of producing high load: thousands of virtual users with thousands of
+/// transactions per seconds. Usually these numbers are limited by the system resources @n
+/// When such load is not enough, you can run framework in the distributed mode on multiple nodes like on the image below @n
+///
+/// @image html execution_distributed_mode.png "Execution in the distributed mode"
+///
+/// Next roles are available in the distributed mode:
+/// - one instance with Master/Coordinator role
+/// - one or multiple instances with Kernel role
+///
+/// Master doesn't have information about Kernels that will do workload before its start. Kernel has an address of Master/Coordinator `chassis.coordinator.zookeeper.endpoint`
+/// in it's config and registers on Master/Coordinator after start. Master/Coordinator gets the list of registered Kernels and distributes tasks for execution among
+/// them. Report with execution results is available on Master after execution finished. @n
+/// @n
+/// In order to start Jagger in the distributed mode.
+/// @li Start Kernel(s)
+/// @code
+/// ./start.sh profiles/basic/environment.properties
+///             -Dchassis.roles=KERNEL
+///             -Dchassis.coordinator.zookeeper.endpoint={master/coordinator host}:2181
+///             -Dchassis.storage.fs.default.name=hdfs://{master/coordinator host}/
+///             -Dchassis.workspace=./jaggerworkspace/server
+/// @endcode
+/// @li Start Master
+/// In our case we will have two Kernels and two monitoring agents
+/// @code
+/// ./start.sh profiles/basic/environment.properties
+///            -Dchassis.roles=MASTER,COORDINATION_SERVER,HTTP_COORDINATION_SERVER
+///            -Dchassis.conditions.monitoring.enable=true
+///            -Dchassis.conditions.min.agents.count=2
+///            -Dchassis.conditions.min.kernels.count=2
+///            -Dchassis.storage.rdb.client.driver=com.mysql.jdbc.Driver
+///            -Dchassis.storage.rdb.client.url=jdbc:mysql://{database host}:3306/jaggerdb
+///            -Dchassis.storage.rdb.username=jaggeruser
+///            -Dchassis.storage.rdb.password=jaggerpassword
+///            -Dchassis.storage.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+///            -Dchassis.coordination.bean=zookeeperCoordinator
+///            -Dchassis.coordinator.zookeeper.endpoint={master/coordinator host}:2181
+///            -Dchassis.log.storage.bean=hdfsStorage
+///            -Dchassis.storage.fs.default.name=hdfs://{master/coordinator host}/
+///            -Dchassis.workspace=./jaggerworkspace/server
+/// @endcode
+///
+/// You can start Master, Kernel nodes in any order @n
+/// Information about mentioned properties you can find in the @ref section_jagger_properties "Jagger configuration" chapter @n
+/// @n
+/// We are recommending to use Jenkins plugin to start framework in the distributed mode in CI (TODO link)
+///
+/// @section section_components_exec_load_distributed_run_details Distributed configuration test flow
+///
+/// @image html execution_distributed_mode_details.png "Distributed configuration test flow"
