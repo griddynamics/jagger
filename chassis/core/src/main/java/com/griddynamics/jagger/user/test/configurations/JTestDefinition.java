@@ -85,6 +85,7 @@ public class JTestDefinition {
             this.endpointsProvider = endpointsProvider;
             this.loadBalancer = new RandomLoadBalancer() {{
                 setPairSupplierFactory(new RoundRobinPairSupplierFactory());
+                setRandomSeed(31);
             }};
         }
 
