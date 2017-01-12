@@ -105,7 +105,7 @@
 /// You can start Master, Kernel nodes in any order @n
 /// Information about mentioned properties you can find in the @ref section_jagger_properties "Jagger configuration" chapter @n
 /// @n
-/// We are recommending to use Jenkins plugin to start framework in the distributed mode in CI (TODO link)
+/// We are recommending to use @ref section_ci_jagger_deploy_plugin "Jenkins deployment plugin" to start framework in the distributed mode in CI
 ///
 /// @section section_components_exec_load_distributed_run_details Distributed configuration test flow
 ///

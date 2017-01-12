@@ -72,7 +72,7 @@
 /// @image html writing_test_test_definition.png "Test definition components"
 /// @n
 /// On the image above you can see relation of the different components of the test definition. Test data, provided @n
-/// by endpoint and query providers, is combined by the distributor to the set of the requests. During the load test @n
+/// by endpoint and query providers, is combined by the @ref Main_Distributors_group "distributor (aka load balancer)" to the set of the requests. During the load test @n
 /// this set of the requests is passed to the invoker. Invoker is providing communication with the SUT and returning responses. @n
 /// Responses are verified by validators to take pass/fail decision and processed by metrics to collect some measurements. @n
 /// During the run time every virtual user is working with it's own invoker, thus allowing to generate load. @n
@@ -106,7 +106,7 @@
 /// @li create custom invoker. This component implements Invoker<Q,R,E> and can use some library to communicate with you SUT. E.g. jdbc to load database. You can use @ref com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker "DefaultHttpInvoker" as example
 /// @li if necessary, add @ref MetricsMain "custom validators and metrics"
 ///
-/// TODO: add example of the custom invoker
+/// @ref section_installation_local "Jagger archetype" contains example of the custom invoker provider @ref ExampleCustomHttpInvokerProvider.java and its usage in the @ref ExampleJLoadScenarioProvider.java
 ///
 /// @section section_writing_test_parametrization Parametrization via properties
 /// To make your test more flexible and avoid recompilation we are recommending to parametrize your test. You can define parameters
@@ -128,3 +128,16 @@
 
 /// @defgroup Main_Http_group Http test definition components
 /// @details @ref section_writing_http_test_definition
+
+/// @defgroup Main_Distributors_group Load balancers (Distributors)
+/// 
+/// Distributors provide pairs of endpoints and queries for invokers @n
+/// Before start of the test distributor is combining all endpoints and queries according to user setup and stores these combination in internal list. @n
+/// \b Important: mentioned list is shared by all threads that produce load. it is not possible to have separate list per workload thread @n
+/// Before every invoke distributor is providing single pair of endpoint / query to invoker @n
+/// @n
+/// @section section_distributors_random Access SUT with random order of endpoint / query pairs
+/// Pairs of endpoint / query are collected into list single time during Jagger start up. By default all threads are accessing elements
+/// of the mentioned list in the same order: from first element to the last, doing this in cycle. If it is necessary to execute endpoint / query pairs in random order,
+/// TODO Java based configuration requires better setup of the load balancers (build in and custom) JFG-1063
+/// @image html jagger_random_query_distribution.png "Access SUT with random order of endpoint / query pairs"

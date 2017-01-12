@@ -1,0 +1,38 @@
+/// @page TestResultsMain
+/// @brief Describes how the framework is handling results of performance testing
+/// @details
+///
+/// @li @ref section_results
+/// @li @ref section_results_access
+///
+/// @section section_results Performance test results storage
+/// To simplify results analysis and support @ref CIMain "Continuous Performance Testing", Jagger framework is storing measured parameters @n
+/// @n
+/// Results are stored in MySQL or H2 database. You can configure storage via @ref section_jagger_properties "Jagger properties" @n
+/// @n
+/// Every execution of the @ref section_writing_test_load_scenario "load scenario" corresponds to a separate test session in the @ref section_components_exec_load_gen_default "test results database".
+/// For every test session framework is storing:
+/// - general info
+///   - when test session was started and
+///   - what was the configuration of the load scenario
+///   - user tags. You can mark every load scenario execution with tags to sort and search your test results later
+///   - user comments. You can add additional user comments to every test session
+/// - information about executed load tests
+///   - when load test was started
+///   - what @ref section_writing_load_test "load profile" was used
+///   - what @ref section_writing_load_test "termination strategy" was used
+/// - detailed tests results
+///   - metrics id, display name, aggregated value(s), detailed results. You can @ref MetricsMain "configure what results will be stored" for different metrics
+/// - decisions
+///   - @ref MainDecisionMaker "decision" per metric, test, test group, scenario
+/// - test environment information
+///   - information about every node, participating in the test: CPU info, java version, OS info, available system memory
+///
+/// @section section_results_access Test results access
+/// You can access test results via multiple channels:
+/// - @ref WebUiMain "Web UI" - instrument for results analysis, presentation and sharing
+/// - @ref JaasMain "JaaS REST API" - access to the test result and report generation
+/// - @ref ReportingMain "Reporting" - pdf report generation per particular test session
+/// - @ref section_listeners_services "SessionInfoService" - write access to the test results from the source code of your test project.
+/// You can add comments (e.g. some additional description of your test session) and mark test sessions with Tags
+/// - @ref section_listeners_services "DataService" - access to the test results from the source code of your test project

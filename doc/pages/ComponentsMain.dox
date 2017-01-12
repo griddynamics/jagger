@@ -20,5 +20,7 @@
 ///   - Kernel - load generating component
 /// - Monitoring components
 ///   - Monitoring agent
-/// - CI integration components (TODO details)
+/// - @ref CIMain "CI integration components"
+///   - Deployment Jenkins plugin - allows to run test framework in the single node or distributed mode
+///   - JaaS Jenkins plugin - allow to submit tests to the framework running as a test server
 ///
