@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.dbapi.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.griddynamics.jagger.dbapi.entity.DecisionPerSessionEntity;
 import com.griddynamics.jagger.util.Decision;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * It represents a part of decision JSON - decision for session.
  * It's a root element of JSON. Its child element is {@link DecisionPerTestGroupDto}.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DecisionPerSessionDto {
     private Long id;
     private String sessionId;
