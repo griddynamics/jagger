@@ -707,11 +707,22 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateAggregatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SuccessRateFailsAggregatorProvider.java \
                          ./chassis/core/src/main/java/com/griddynamics/jagger/engine/e1/collector/SumMetricAggregatorProvider.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/LoadBalancer.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/OneByOneLoadBalancer.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/PairSupplierFactoryLoadBalancer.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/QueryPoolLoadBalancer.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/RandomLoadBalancer.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/RoundRobinLoadBalancer.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/SimpleCircularLoadBalancer.java \
+                         ./chassis/core/src/main/java/com/griddynamics/jagger/invoker/SimpleLoadBalancer.java \
                          ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/util/JaggerPropertiesProvider.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleCustomHttpInvokerProvider.java \
+                         ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleJLoadScenarioProvider.java \
                          ./doc/pages/a_PageOrder.dox \
                          ./doc/pages/AgentProperties.dox \
                          ./doc/pages/AuxComponents.dox \
                          ./doc/pages/AuxRunTests.dox \
+                         ./doc/pages/CIMain.dox \
                          ./doc/pages/ComponentsExecModes.dox \
                          ./doc/pages/ComponentsLoadGenExecModes.dox \
                          ./doc/pages/ComponentsControlExecModes.dox \
@@ -732,6 +743,8 @@ INPUT                  = ./chassis/core/src/main/java/com/griddynamics/jagger/in
                          ./doc/pages/MonitoringMain.dox \
                          ./doc/pages/MonitoringMetricsSetup.dox \
                          ./doc/pages/MonitoringStartingAgent.dox \
+                         ./doc/pages/ReportingMain.dox \
+                         ./doc/pages/TestResultsMain.dox \
                          ./doc/pages/WebUiInstallation.dox \
                          ./doc/pages/WebUiMain.dox \
                          ./doc/pages/WebUiOverview.dox \

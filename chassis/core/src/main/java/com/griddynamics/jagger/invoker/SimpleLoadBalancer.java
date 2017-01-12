@@ -24,7 +24,6 @@ import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
 
-// @todo add an ability to use in xml configuration
 /** Contains only one query and endpoint
  * @author Dmitry Kotlyarov
  * @n

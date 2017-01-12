@@ -5,8 +5,6 @@
 /// @li @ref section_installation_local
 /// @li @ref section_installation_ci
 ///
-/// @n
-/// @n
 /// @section section_installation_local Local installation
 /// @n
 /// @b Requirements: java, maven, docker @n
@@ -48,4 +46,9 @@
 ///
 /// @n
 /// @section section_installation_ci CI installation
-/// TODO work in progress
+/// <b> NOTE </b> It is advanced section dedicated to the framework intergation to CI. If you are the first time here, you can skip it for now and return to it later @n
+/// @n
+/// Framework is suitable for execution in the CI pipelines. It allows to build Continuous Performance Testing. You can read:
+/// - @ref ComponentsLoadGenExecutionModes "how to run framework in the single node or distributed mode"
+/// - @ref ComponentsControlExecModes "how to run framework as a test service"
+/// - @ref CIMain "how to run framework as a part of Continuous Integration pipelines"
