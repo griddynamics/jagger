@@ -27,7 +27,7 @@ public class TestLoadVariations {
 
     public JLoadProfile rpsWith0WarmUp(){
         return JLoadProfileRps.builder(RequestsPerSecond.of(1))
-                //.withWarmUpTimeInMilliseconds(0) TODO uncomment when JFG-1009 will be fixed
+                .withWarmUpTimeInMilliseconds(0)
                 .build();
     }
 

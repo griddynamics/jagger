@@ -28,6 +28,6 @@ public class JaggerPropertiesProvider {
     }
 
     public String getTestPropertyValue(String key) {
-        return testEnv.getProperty(key);
+        return testEnv.getRequiredProperty(key);
     }
 }
