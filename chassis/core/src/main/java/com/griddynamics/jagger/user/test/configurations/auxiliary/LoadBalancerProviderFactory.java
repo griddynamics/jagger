@@ -8,6 +8,8 @@ import com.griddynamics.jagger.invoker.RandomLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 
+import java.util.Random;
+
 /**
  * Creates entities of type {@link LoadBalancerProvider}.
  */
@@ -21,13 +23,21 @@ public class LoadBalancerProviderFactory {
     }
 
     /**
+     * @param seed the initial seed of {@link Random} (look at {@link Random#Random(long)})
+     * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with {@link RoundRobinPairSupplierFactory}
+     */
+    public static LoadBalancerProvider roundRobinRandomized(long seed) {
+        return new LoadBalancerProvider(new RandomLoadBalancer() {{
+            setPairSupplierFactory(new RoundRobinPairSupplierFactory());
+            setRandomSeed(seed);
+        }});
+    }
+
+    /**
      * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with {@link RoundRobinPairSupplierFactory}
      */
     public static LoadBalancerProvider roundRobinRandomized() {
-        return new LoadBalancerProvider(new RandomLoadBalancer() {{
-            setPairSupplierFactory(new RoundRobinPairSupplierFactory());
-            setRandomSeed(31);
-        }});
+        return roundRobinRandomized(31);
     }
 
     /**
@@ -38,13 +48,21 @@ public class LoadBalancerProviderFactory {
     }
 
     /**
+     * @param seed the initial seed of {@link Random} (look at {@link Random#Random(long)})
+     * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with {@link OneByOnePairSupplierFactory}
+     */
+    public static LoadBalancerProvider oneByOneRandomized(long seed) {
+        return new LoadBalancerProvider(new RandomLoadBalancer() {{
+            setPairSupplierFactory(new OneByOnePairSupplierFactory());
+            setRandomSeed(seed);
+        }});
+    }
+
+    /**
      * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with {@link OneByOnePairSupplierFactory}
      */
     public static LoadBalancerProvider oneByOneRandomized() {
-        return new LoadBalancerProvider(new RandomLoadBalancer() {{
-            setPairSupplierFactory(new OneByOnePairSupplierFactory());
-            setRandomSeed(31);
-        }});
+        return oneByOneRandomized(31);
     }
 
     /**
@@ -55,12 +73,20 @@ public class LoadBalancerProviderFactory {
     }
 
     /**
+     * @param seed the initial seed of {@link Random} (look at {@link Random#Random(long)})
+     * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with custom {@link PairSupplierFactory}
+     */
+    public static LoadBalancerProvider customRandomized(PairSupplierFactory customPairSupplierFactory, long seed) {
+        return new LoadBalancerProvider(new RandomLoadBalancer() {{
+            setPairSupplierFactory(customPairSupplierFactory);
+            setRandomSeed(seed);
+        }});
+    }
+
+    /**
      * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with custom {@link PairSupplierFactory}
      */
     public static LoadBalancerProvider customRandomized(PairSupplierFactory customPairSupplierFactory) {
-        return new LoadBalancerProvider(new RandomLoadBalancer() {{
-            setPairSupplierFactory(customPairSupplierFactory);
-            setRandomSeed(31);
-        }});
+        return customRandomized(customPairSupplierFactory, 31);
     }
 }
