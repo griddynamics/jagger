@@ -27,10 +27,10 @@ public class LoadBalancerProviderFactory {
      * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with {@link RoundRobinPairSupplierFactory}
      */
     public static LoadBalancerProvider roundRobinRandomized(long seed) {
-        return new LoadBalancerProvider(new RandomLoadBalancer() {{
-            setPairSupplierFactory(new RoundRobinPairSupplierFactory());
-            setRandomSeed(seed);
-        }});
+        RandomLoadBalancer loadBalancer = new RandomLoadBalancer();
+        loadBalancer.setRandomSeed(seed);
+        loadBalancer.setPairSupplierFactory(new RoundRobinPairSupplierFactory());
+        return new LoadBalancerProvider(loadBalancer);
     }
 
     /**
@@ -52,10 +52,10 @@ public class LoadBalancerProviderFactory {
      * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with {@link OneByOnePairSupplierFactory}
      */
     public static LoadBalancerProvider oneByOneRandomized(long seed) {
-        return new LoadBalancerProvider(new RandomLoadBalancer() {{
-            setPairSupplierFactory(new OneByOnePairSupplierFactory());
-            setRandomSeed(seed);
-        }});
+        RandomLoadBalancer loadBalancer = new RandomLoadBalancer();
+        loadBalancer.setRandomSeed(seed);
+        loadBalancer.setPairSupplierFactory(new OneByOnePairSupplierFactory());
+        return new LoadBalancerProvider(loadBalancer);
     }
 
     /**
@@ -77,10 +77,10 @@ public class LoadBalancerProviderFactory {
      * @return {@link LoadBalancerProvider} of {@link RandomLoadBalancer} with custom {@link PairSupplierFactory}
      */
     public static LoadBalancerProvider customRandomized(PairSupplierFactory customPairSupplierFactory, long seed) {
-        return new LoadBalancerProvider(new RandomLoadBalancer() {{
-            setPairSupplierFactory(customPairSupplierFactory);
-            setRandomSeed(seed);
-        }});
+        RandomLoadBalancer loadBalancer = new RandomLoadBalancer();
+        loadBalancer.setRandomSeed(seed);
+        loadBalancer.setPairSupplierFactory(customPairSupplierFactory);
+        return new LoadBalancerProvider(loadBalancer);
     }
 
     /**
