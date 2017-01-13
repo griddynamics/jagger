@@ -6,12 +6,11 @@ import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
-import com.griddynamics.jagger.invoker.RandomLoadBalancer;
-import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
-import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProviderFactory;
 
 import java.util.List;
 
@@ -54,7 +53,7 @@ public class JTestDefinition {
         this.invoker = builder.invoker;
         this.validators = builder.validators;
         this.listeners = builder.listeners;
-        this.loadBalancer = builder.loadBalancer;
+        this.loadBalancer = builder.loadBalancerProvider.provide();
     }
 
     /**
@@ -79,15 +78,12 @@ public class JTestDefinition {
         private Provider<Invoker> invoker = DefaultInvokerProvider.of(DefaultHttpInvoker.class);
         private List<ResponseValidatorProvider> validators = Lists.newArrayList();
         private List<Provider<InvocationListener>> listeners = Lists.newArrayList();
-        private QueryPoolLoadBalancer loadBalancer;
+        private LoadBalancerProvider loadBalancerProvider;
 
         private Builder(Id id, Iterable endpointsProvider) {
             this.id = id;
             this.endpointsProvider = endpointsProvider;
-            this.loadBalancer = new RandomLoadBalancer() {{
-                setPairSupplierFactory(new RoundRobinPairSupplierFactory());
-                setRandomSeed(31);
-            }};
+            this.loadBalancerProvider = LoadBalancerProviderFactory.roundRobinRandomized();
         }
 
         /**
@@ -112,15 +108,15 @@ public class JTestDefinition {
         }
 
         /**
-         * Optional: Sets load balancer aka distributor (how to pair endpoints and queries) (subtypes of {@link QueryPoolLoadBalancer}).
-         * Default is {@link RoundRobinLoadBalancer}
+         * Optional: Sets load balancer aka distributor (how to pair endpoints and queries) provider.
+         * Default is {@link LoadBalancerProviderFactory#roundRobinRandomized()}
          *
          * Available implementations: @ref Main_Distributors_group
          *
-         * @param loadBalancer load balancer.
+         * @param loadBalancerProvider load balancer provider.
          */
-        public Builder withLoadBalancer(QueryPoolLoadBalancer loadBalancer) {
-            this.loadBalancer = loadBalancer;
+        public Builder withLoadBalancerProvider(LoadBalancerProvider loadBalancerProvider) {
+            this.loadBalancerProvider = loadBalancerProvider;
             return this;
         }
 

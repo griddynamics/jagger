@@ -14,6 +14,7 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProviderFactory;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
@@ -47,6 +48,7 @@ public class ExampleJLoadScenarioProvider {
                 .addValidator(JHttpResponseStatusValidatorProvider.of(200, 201, 204))
                 .addListener(new NotNullInvocationListener())
                 .addListener(new ExampleInvocationListener())
+                .withLoadBalancerProvider(LoadBalancerProviderFactory.oneByOneRandomized())
                 .build();
         // end: following section is used for docu generation - example of the invocation listener
 
