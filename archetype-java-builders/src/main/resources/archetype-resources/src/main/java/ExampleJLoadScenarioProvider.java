@@ -64,7 +64,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withComment(testDefinitionComment)
                 .withInvoker(ExampleCustomHttpInvokerProvider.nonVerbose())
                 .withQueryProvider(new ExampleQueriesProvider())
-                .withLoadBalancerProvider(LoadBalancerProviderFactory.roundRobin())
+                .withLoadBalancerProvider(LoadBalancerProviderFactory.roundRobinRandomized())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())
