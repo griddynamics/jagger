@@ -10,18 +10,18 @@ import java.util.Objects;
  * @details Request is invoke from Jagger without waiting for the response.
  * Available attributes:
  * - requestsPerSecond - A goal number of requests per second
- * <p>
  * Optional attributes:
  * - maxLoadThreads - Maximum number of parallel threads allowed for load generation
  * - warmUpTimeInMilliseconds - Load will increase from 0 to @e requestsPerSecond in this time
- * <p>
  * Examples: @n
- * @code LoadProfileRps.builder(RequestsPerSecond.of(50)).withWarmUpTimeInMilliseconds(15000).build();
+ * @code
+ * LoadProfileRps.builder(RequestsPerSecond.of(50)).withWarmUpTimeInMilliseconds(15000).build();
  * @endcode
  * @image html load_rpsWarmUp.png "Requests per seconds load with warm up time"
  * @n Example of load balancing with changing response time: @n
  * In this example, response time is changing periodically from approx 0 to 200 ms. Load generator is keeping load at 50 rps by adjusting number of virtual users
- * @code JLoadProfileRps.builder(RequestsPerSecond.of(50)).build();
+ * @code
+ * JLoadProfileRps.builder(RequestsPerSecond.of(50)).build();
  * @endcode
  * @image html load_rps_balance1_latency.png "Response time from the SUT is changing"
  * @image html load_rps_balance2_throughput.png "Number of request per seconds has constant rate due to the number of virtual users balancing"
@@ -95,7 +95,7 @@ public class JLoadProfileRps implements JLoadProfile {
         }
 
         /**
-         * Optional: Max load threads. Default is 500.
+         * Optional: Max load threads. Default is 4000.
          *
          * @param maxLoadThreads The maximum number of threads, which Jagger engine can create to provide the requested load
          */
