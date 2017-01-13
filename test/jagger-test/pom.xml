@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>jagger-test</artifactId>
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
 
     <properties>
     </properties>
@@ -48,7 +48,7 @@
             <artifactId>jagger-distribution</artifactId>
             <type>zip</type>
             <classifier>full</classifier>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

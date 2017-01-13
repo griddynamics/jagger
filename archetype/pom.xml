@@ -5,7 +5,7 @@
     <artifactId>jagger-suite-archetype</artifactId>
     <packaging>jar</packaging>    
 
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
     <url>http://maven.apache.org</url>
 
     <parent>
@@ -33,7 +33,7 @@
                     <replacements>
                         <replacement>
                             <token>jagger.version.placeholder</token>
-                            <value>${version}</value>
+                            <value>${project.version}</value>
                         </replacement>
                         <replacement>
                             <token>spring.version.placeholder</token>

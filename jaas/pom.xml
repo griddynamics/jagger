@@ -26,7 +26,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jaas</artifactId>
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
 
     <properties>
         <spring.boot.version>1.4.2.RELEASE</spring.boot.version>
@@ -212,7 +212,7 @@
             </exclusions>
             <type>zip</type>
             <classifier>configuration</classifier>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!--swagger-->
@@ -324,6 +324,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+		<version>2.19.1</version>
                 <configuration>
                     <systemPropertyVariables>
                         <io.springfox.staticdocs.outputDir>${swagger.output.dir}</io.springfox.staticdocs.outputDir>
