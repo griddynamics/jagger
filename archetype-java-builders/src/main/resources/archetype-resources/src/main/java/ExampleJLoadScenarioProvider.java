@@ -15,6 +15,7 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProviderFactory;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
@@ -63,7 +64,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withComment(testDefinitionComment)
                 .withInvoker(ExampleCustomHttpInvokerProvider.nonVerbose())
                 .withQueryProvider(new ExampleQueriesProvider())
-                .withLoadBalancer(new RoundRobinLoadBalancer())
+                .withLoadBalancerProvider(LoadBalancerProviderFactory.roundRobin())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())
