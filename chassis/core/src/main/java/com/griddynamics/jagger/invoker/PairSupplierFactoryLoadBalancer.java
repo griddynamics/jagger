@@ -23,6 +23,9 @@ package com.griddynamics.jagger.invoker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @ingroup Main_Distributors_group */
+
 public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
 
     private final static Logger logger = LoggerFactory.getLogger(PairSupplierFactoryLoadBalancer.class);

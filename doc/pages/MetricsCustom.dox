@@ -13,7 +13,7 @@
 ///   - set display name - text, displayed in the reports
 ///   - set flags what values will be aggregated (summary, detailed results)
 ///   - set what aggregator(s) will be used for this metric
-/// - same metric values
+/// - save metric values
 ///
 /// you can find more details about Jagger services in the chapter @ref ListenersMain
 ///

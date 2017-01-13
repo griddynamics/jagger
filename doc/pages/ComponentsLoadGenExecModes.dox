@@ -77,35 +77,38 @@
 /// @li Start Kernel(s)
 /// @code
 /// ./start.sh profiles/basic/environment.properties
-///             -Dchassis.roles=KERNEL
-///             -Dchassis.coordinator.zookeeper.endpoint={master/coordinator host}:2181
-///             -Dchassis.storage.fs.default.name=hdfs://{master/coordinator host}/
-///             -Dchassis.workspace=./jaggerworkspace/server
+/// -Dchassis.roles=KERNEL
+/// -Dchassis.coordination.bean=zookeeperCoordinator
+/// -Dchassis.coordinator.zookeeper.endpoint={master/coordinator host}:2181
+/// -Dchassis.storage.fs.default.name=hdfs://{master/coordinator host}/
+/// -Dchassis.workspace=./jaggerworkspace/server
 /// @endcode
 /// @li Start Master
-/// In our case we will have two Kernels and two monitoring agents
+/// In our case we will have one Kernels and one monitoring agent. Number of kernels and agents is not limited
 /// @code
 /// ./start.sh profiles/basic/environment.properties
-///            -Dchassis.roles=MASTER,COORDINATION_SERVER,HTTP_COORDINATION_SERVER
-///            -Dchassis.conditions.monitoring.enable=true
-///            -Dchassis.conditions.min.agents.count=2
-///            -Dchassis.conditions.min.kernels.count=2
-///            -Dchassis.storage.rdb.client.driver=com.mysql.jdbc.Driver
-///            -Dchassis.storage.rdb.client.url=jdbc:mysql://{database host}:3306/jaggerdb
-///            -Dchassis.storage.rdb.username=jaggeruser
-///            -Dchassis.storage.rdb.password=jaggerpassword
-///            -Dchassis.storage.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
-///            -Dchassis.coordination.bean=zookeeperCoordinator
-///            -Dchassis.coordinator.zookeeper.endpoint={master/coordinator host}:2181
-///            -Dchassis.log.storage.bean=hdfsStorage
-///            -Dchassis.storage.fs.default.name=hdfs://{master/coordinator host}/
-///            -Dchassis.workspace=./jaggerworkspace/server
+/// -Dchassis.roles=MASTER,COORDINATION_SERVER,HTTP_COORDINATION_SERVER
+/// -Dchassis.conditions.monitoring.enable=true
+/// -Dchassis.conditions.min.agents.count=1
+/// -Dchassis.conditions.min.kernels.count=1
+/// -Dchassis.coordination.bean=zookeeperCoordinator
+/// -Dchassis.coordinator.zookeeper.endpoint={master/coordinator host}:2181
+/// -Dchassis.log.storage.bean=hdfsStorage
+/// -Dchassis.storage.fs.default.name=hdfs://{master/coordinator host}/
+/// -Dchassis.workspace=./jaggerworkspace/server
+/// @endcode
+/// @li Start Agent
+/// @code
+/// ./start_agent.sh
+/// -Dchassis.coordination.http.url=http://{master/coordinator host}:8089
+/// -Djmx.enabled=false -Dagent.name=agentName
 /// @endcode
 ///
-/// You can start Master, Kernel nodes in any order @n
+/// You can start Master, Kernel, Agent nodes in any order @n
+/// Please remove `./jaggerworkspace` folder in the directory if exists before starting nodes @n
 /// Information about mentioned properties you can find in the @ref section_jagger_properties "Jagger configuration" chapter @n
 /// @n
-/// We are recommending to use Jenkins plugin to start framework in the distributed mode in CI (TODO link)
+/// We are recommending to use @ref section_ci_jagger_deploy_plugin "Jenkins deployment plugin" to start framework in the distributed mode in CI
 ///
 /// @section section_components_exec_load_distributed_run_details Distributed configuration test flow
 ///

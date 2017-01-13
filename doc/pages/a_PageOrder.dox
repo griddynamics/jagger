@@ -8,6 +8,9 @@
 /// @page MainDecisionMaker Making decision
 /// @page JaggerProperties Jagger configuration
 /// @page FrameworkComponents Components and execution modes
+/// @page CIMain Continuous Integration
+/// @page TestResultsMain Test results
+/// @page ReportingMain Reporting
 /// @page Licence Licence
 /// @page AuxComponents Auxiliary Jagger components
 ///

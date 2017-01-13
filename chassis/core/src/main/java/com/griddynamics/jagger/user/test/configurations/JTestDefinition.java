@@ -20,8 +20,9 @@ import java.util.List;
  * @n
  * @par Details:
  * @details Test definition is the base component of the @ref section_writing_test_load_scenario "load test description". With the help of the internal Builder class it allows to setup: @n
- * @li source of the endpointsProvider (where to apply load)
+ * @li source of the endpoints (where to apply load)
  * @li source of queries (what parameters of the load to set)
+ * @li how to pair endpoints ans queries (one by one, round robin, random, unique, etc)
  * @li what protocol to use for the communication with the system under test (SUT)
  * @li how to validate SUT responses
  * @li what additional user defined actions to execute during communication with SUT
@@ -111,8 +112,10 @@ public class JTestDefinition {
         }
 
         /**
-         * Optional: Sets load balancer (subtypes of {@link QueryPoolLoadBalancer}).
+         * Optional: Sets load balancer aka distributor (how to pair endpoints and queries) (subtypes of {@link QueryPoolLoadBalancer}).
          * Default is {@link RoundRobinLoadBalancer}
+         *
+         * Available implementations: @ref Main_Distributors_group
          *
          * @param loadBalancer load balancer.
          */

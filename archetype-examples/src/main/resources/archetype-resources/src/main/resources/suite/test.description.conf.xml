@@ -37,7 +37,6 @@
 
     <!--This xml file will contain description of your tests-->
 
-    <!-- begin: following section is used for docu generation - invoker usage -->
     <!--Description of single scenario: "Visit page"-->
     <!--This scenario is used as base element and later will be inherited by other elements in this file-->
     <scenario id="pageScenario" xsi:type="scenario-query-pool">
@@ -49,7 +48,6 @@
         <!--here is example of custom invoker usage-->
         <invoker xsi:type="invoker-class" class="${package}.invoker.PageVisitorInvoker"/>
     </scenario>
-    <!-- end: following section is used for docu generation - invoker usage -->
 
 
 

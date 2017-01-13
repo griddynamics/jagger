@@ -23,7 +23,7 @@
 /// Such setup can be useful in the CI environments. It allows to run large number of tests without restarting framework and even without access to the environment where
 /// framework is running. @n
 /// @n
-/// We are recommending to use Jenking plugin (TODO link) to launch tests on the environments, running in the <b> Stand by </b> mode @n
+/// We are recommending to use @ref section_ci_jagger_jaas_plugin "Jenkins JaaS plugin" to launch tests on the environments, running in the <b> Stand by </b> mode @n
 /// @n
 /// Let's review <b> Stand by </b> mode working sequence in details with @ref section_components_exec_load_gen_default "default load generating configuration"
 /// @li Results storage and representation components are always running in the docker containers
@@ -40,8 +40,9 @@
 /// JaaS will return commands in the responses.
 /// @li Via @htmlonly <a href="./swagger/swagger_doc.html#_test-execution-rest-controller_resource" target="_blank">Execution REST API</a> @endhtmlonly you can submit new test project to selected environment.
 /// You will need to send URL to the .jar file with you test project, environment Id where it should be executed, id of the load scenario to execute, time to start the test
-/// @li JaaS will save your execution request to the execution queue. Execution will stay in the queue not more that time to start parameter. If during these time, there will be request
-/// from Master/Coordinator on the dedicated environment, JaaS will send a command to the environment to execute your test project
+/// @li JaaS will save your execution request to the execution queue. Execution will stay in the queue not more than time to start parameter. If during this time, there will be request
+/// from Master/Coordinator on the dedicated environment, JaaS will send a command to the environment to execute your test project. If there is no request from dedicated environment
+/// during time to start interval, execution will be marked as timeout and will be not submitted.
 /// @li Test project execution will start, results will be collected in the test results DB. Later you can access results via @ref WebUiMain "web interface" or @ref JaasMain "REST API".
 /// @li After test execution is over, environment will return to <b> Stand By </b> mode and will wait for the next command
 ///

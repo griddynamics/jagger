@@ -33,7 +33,8 @@ import java.util.Random;
  *
  * @param <Q> Query type
  * @param <E> Endpoint type
- */
+ *
+ * @ingroup Main_Distributors_group */
 public class RandomLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
 
     private long randomSeed;
