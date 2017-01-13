@@ -26,7 +26,8 @@ class TestGroupGenerator {
     static Task generateFromTestGroup(JParallelTestsGroup jParallelTestsGroup,
                                       boolean monitoringEnabled,
                                       BaselineSessionProvider baselineSessionProvider,
-                                      LimitSetConfig limitSetConfig) {
+                                      LimitSetConfig limitSetConfig,
+                                      int defaultClockConfugrationMaxThreads) {
         CompositeTask compositeTask = new CompositeTask();
         compositeTask.setLeading(new ArrayList<>());
         compositeTask.setAttendant(new ArrayList<>());
@@ -36,7 +37,8 @@ class TestGroupGenerator {
         compositeTask.setDecisionMakerListeners(jParallelTestsGroup.getDecisionMakerListeners());
 
         for (JLoadTest test : jParallelTestsGroup.getTests()) {
-            WorkloadTask task = generateFromTest(test, baselineSessionProvider, limitSetConfig, jParallelTestsGroup.getId());
+            WorkloadTask task = generateFromTest(test, baselineSessionProvider, limitSetConfig,
+                    jParallelTestsGroup.getId(), defaultClockConfugrationMaxThreads);
             task.setNumber(compositeTask.getNumber());
             if (task.getTerminateStrategyConfiguration() instanceof InfiniteTerminationStrategyConfiguration) {
                 compositeTask.getAttendant().add(task);

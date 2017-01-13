@@ -21,6 +21,9 @@ import java.util.Objects;
  */
 public class JLoadProfileTps implements JLoadProfile {
 
+    public static final int USE_DEFAULT_MAX_THREAD_COUNT = -1;
+
+
     private final long transactionsPerSecond;
     private final long maxLoadThreads;
     private final long warmUpTimeInMilliseconds;
@@ -47,7 +50,6 @@ public class JLoadProfileTps implements JLoadProfile {
 
     public static class Builder {
         static final int DEFAULT_TICK_INTERVAL = 1000;
-        static final int DEFAULT_MAX_LOAD_THREADS = 500;
         static final int DEFAULT_WARM_UP_TIME = -1;
         private final long transactionsPerSecond;
         private long maxLoadThreads;
@@ -66,8 +68,8 @@ public class JLoadProfileTps implements JLoadProfile {
             Objects.requireNonNull(transactionsPerSecond);
 
             this.transactionsPerSecond = transactionsPerSecond.value();
-            this.maxLoadThreads = DEFAULT_MAX_LOAD_THREADS;
             this.warmUpTimeInMilliseconds = DEFAULT_WARM_UP_TIME;
+            this.maxLoadThreads = USE_DEFAULT_MAX_THREAD_COUNT;
             this.tickInterval = DEFAULT_TICK_INTERVAL;
         }
 

@@ -97,7 +97,8 @@ public class ConfigurationGenerator {
         Configuration configuration = new Configuration();
         List<Task> tasks = jLoadScenario.getTestGroups()
                 .stream()
-                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable, baselineSessionProvider, limitSetConfig))
+                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable,
+                        baselineSessionProvider, limitSetConfig, defaultMaxLoadThreads))
                 .collect(Collectors.toList());
         configuration.setTasks(tasks);
         configuration.setLoadScenarioListeners(jLoadScenario.getListeners());
