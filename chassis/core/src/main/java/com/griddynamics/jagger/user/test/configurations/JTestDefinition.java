@@ -6,6 +6,8 @@ import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
+import com.griddynamics.jagger.invoker.RandomLoadBalancer;
+import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
@@ -110,7 +112,7 @@ public class JTestDefinition {
 
         /**
          * Optional: Sets load balancer aka distributor (how to pair endpoints and queries) provider.
-         * Default is Round Robin randomized
+         * Default is {@link RandomLoadBalancer} with {@link RoundRobinPairSupplierFactory}
          *
          * Available implementations: @ref Main_Distributors_group
          *
