@@ -24,6 +24,7 @@ public class LoadBalancerProvider implements Serializable {
 
     /**
      * Default load balancers.
+     *
      * @see RoundRobinLoadBalancer
      * @see OneByOneLoadBalancer
      */
