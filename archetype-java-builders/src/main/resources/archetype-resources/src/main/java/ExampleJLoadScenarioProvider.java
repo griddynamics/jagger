@@ -15,7 +15,7 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProviderFactory;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
@@ -39,6 +39,8 @@ import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.Ma
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ${package}.util.JaggerPropertiesProvider;
+
+import static com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider.DefaultLoadBalancer.ROUND_ROBIN;
 
 import java.util.Arrays;
 
@@ -64,7 +66,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withComment(testDefinitionComment)
                 .withInvoker(ExampleCustomHttpInvokerProvider.nonVerbose())
                 .withQueryProvider(new ExampleQueriesProvider())
-                .withLoadBalancerProvider(LoadBalancerProviderFactory.roundRobinRandomized())
+                .withLoadBalancerProvider(LoadBalancerProvider.ofRandomized(ROUND_ROBIN))
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())

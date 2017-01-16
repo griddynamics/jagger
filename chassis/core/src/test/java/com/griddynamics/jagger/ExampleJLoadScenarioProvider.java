@@ -14,11 +14,16 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProviderFactory;
+import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
-import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.*;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowErrThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.LowWarnThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpErrThresh;
+import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnThresh;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
@@ -29,6 +34,8 @@ import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.It
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.MaxDurationInSeconds;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import static com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider.DefaultLoadBalancer.ROUND_ROBIN;
 
 @Configuration
 public class ExampleJLoadScenarioProvider {
@@ -48,7 +55,7 @@ public class ExampleJLoadScenarioProvider {
                 .addValidator(JHttpResponseStatusValidatorProvider.of(200, 201, 204))
                 .addListener(new NotNullInvocationListener())
                 .addListener(new ExampleInvocationListener())
-                .withLoadBalancerProvider(LoadBalancerProviderFactory.oneByOneRandomized())
+                .withLoadBalancerProvider(LoadBalancerProvider.ofRandomized(ROUND_ROBIN))
                 .build();
         // end: following section is used for docu generation - example of the invocation listener
 
