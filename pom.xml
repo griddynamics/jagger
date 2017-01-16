@@ -55,7 +55,6 @@
         <module>distribution</module>
         <module>webclient</module>
         <module>archetype</module>
-        <module>test/jagger-test</module>
         <module>test/test-target</module>
         <module>test/java-builder-tests</module>
         <module>test/jaas-test</module>
