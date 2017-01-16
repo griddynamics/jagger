@@ -95,7 +95,7 @@ public class JLoadProfileRps implements JLoadProfile {
         }
 
         /**
-         * Optional: Max load threads. Default is 4000.
+         * Optional: Max load threads. Default is 500.
          *
          * @param maxLoadThreads The maximum number of threads, which Jagger engine can create to provide the requested load
          */

@@ -80,7 +80,7 @@ public class JLoadProfileTps implements JLoadProfile {
             return new JLoadProfileTps(this);
         }
 
-        /** Optional: Max load threads. Default is 4000.
+        /** Optional: Max load threads. Default is 500.
          * @param maxLoadThreads The maximum number of threads, which Jagger engine can create to provide the requested load
          */
         public Builder withMaxLoadThreads(long maxLoadThreads) {
