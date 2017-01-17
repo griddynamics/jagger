@@ -1,2 +1,0 @@
-Run jagger with -Dtest.service.endpoints="<comma-separated list of tested machines>"
-e.g. -Dtest.service.endpoints="http://jagger-ci4.vm.griddynamics.net:8080, http://jagger-ci4.vm.griddynamics.net:8090, http://jagger-ci5.vm.griddynamics.net:8080, http://jagger-ci5.vm.griddynamics.net:8090"
