@@ -48,7 +48,7 @@ public class JLoadBalancer implements Serializable {
         }
 
         /**
-         * Calling this setter will produce Randomized load balancer (look at {@link RandomLoadBalancer})
+         * Optional: Calling this setter will produce Randomized load balancer (look at {@link RandomLoadBalancer})
          * with random seed specified by parameter <b>seed<b/>.
          *
          * @param seed the initial seed of {@link Random} (look at {@link Random#Random(long)})
