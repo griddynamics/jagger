@@ -14,7 +14,6 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
@@ -27,6 +26,7 @@ import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnT
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
+import com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
@@ -35,7 +35,8 @@ import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.Ma
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider.DefaultLoadBalancer.ROUND_ROBIN;
+import static com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer.DefaultLoadBalancer.ROUND_ROBIN;
+
 
 @Configuration
 public class ExampleJLoadScenarioProvider {
@@ -55,7 +56,7 @@ public class ExampleJLoadScenarioProvider {
                 .addValidator(JHttpResponseStatusValidatorProvider.of(200, 201, 204))
                 .addListener(new NotNullInvocationListener())
                 .addListener(new ExampleInvocationListener())
-                .withLoadBalancerProvider(LoadBalancerProvider.ofRandomized(ROUND_ROBIN))
+                .withLoadBalancer(JLoadBalancer.builder(ROUND_ROBIN).withRandomSeed(42).build())
                 .build();
         // end: following section is used for docu generation - example of the invocation listener
 

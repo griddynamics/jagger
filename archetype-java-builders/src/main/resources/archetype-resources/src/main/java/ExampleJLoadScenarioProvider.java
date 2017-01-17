@@ -15,7 +15,6 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsBaseline;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
@@ -31,6 +30,7 @@ import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.UpWarnT
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileRps;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.RequestsPerSecond;
+import com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ${package}.util.JaggerPropertiesProvider;
 
-import static com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider.DefaultLoadBalancer.ROUND_ROBIN;
+import static com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer.DefaultLoadBalancer.ROUND_ROBIN;
 
 import java.util.Arrays;
 
@@ -66,7 +66,7 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withComment(testDefinitionComment)
                 .withInvoker(ExampleCustomHttpInvokerProvider.nonVerbose())
                 .withQueryProvider(new ExampleQueriesProvider())
-                .withLoadBalancerProvider(LoadBalancerProvider.ofRandomized(ROUND_ROBIN))
+                .withLoadBalancer(JLoadBalancer.builder(ROUND_ROBIN).build())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
                 .addListener(new NotNullInvocationListener())

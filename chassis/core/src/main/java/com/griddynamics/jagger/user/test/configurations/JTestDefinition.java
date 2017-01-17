@@ -11,11 +11,11 @@ import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-import com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider;
+import com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer;
 
 import java.util.List;
 
-import static com.griddynamics.jagger.user.test.configurations.auxiliary.LoadBalancerProvider.DefaultLoadBalancer.ROUND_ROBIN;
+import static com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer.DefaultLoadBalancer.ROUND_ROBIN;
 
 /**
  * @brief Definition of the load test - describes test data sources and the protocol, used during load test
@@ -56,7 +56,7 @@ public class JTestDefinition {
         this.invoker = builder.invoker;
         this.validators = builder.validators;
         this.listeners = builder.listeners;
-        this.loadBalancer = builder.loadBalancerProvider.provide();
+        this.loadBalancer = builder.loadBalancer;
     }
 
     /**
@@ -81,12 +81,12 @@ public class JTestDefinition {
         private Provider<Invoker> invoker = DefaultInvokerProvider.of(DefaultHttpInvoker.class);
         private List<ResponseValidatorProvider> validators = Lists.newArrayList();
         private List<Provider<InvocationListener>> listeners = Lists.newArrayList();
-        private LoadBalancerProvider loadBalancerProvider;
+        private QueryPoolLoadBalancer loadBalancer;
 
         private Builder(Id id, Iterable endpointsProvider) {
             this.id = id;
             this.endpointsProvider = endpointsProvider;
-            this.loadBalancerProvider = LoadBalancerProvider.ofRandomized(ROUND_ROBIN);
+            this.loadBalancer = JLoadBalancer.builder(ROUND_ROBIN).withRandomSeed(31).build();
         }
 
         /**
@@ -111,15 +111,15 @@ public class JTestDefinition {
         }
 
         /**
-         * Optional: Sets load balancer aka distributor (how to pair endpoints and queries) provider.
+         * Optional: Sets load balancer aka distributor (how to pair endpoints and queries) (subtypes of {@link QueryPoolLoadBalancer}).
          * Default is {@link RandomLoadBalancer} with {@link RoundRobinPairSupplierFactory}
          *
          * Available implementations: @ref Main_Distributors_group
          *
-         * @param loadBalancerProvider load balancer provider.
+         * @param loadBalancer load balancer.
          */
-        public Builder withLoadBalancerProvider(LoadBalancerProvider loadBalancerProvider) {
-            this.loadBalancerProvider = loadBalancerProvider;
+        public Builder withLoadBalancer(QueryPoolLoadBalancer loadBalancer) {
+            this.loadBalancer = loadBalancer;
             return this;
         }
 
