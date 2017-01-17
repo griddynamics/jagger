@@ -7,13 +7,15 @@ import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
 import com.griddynamics.jagger.invoker.RandomLoadBalancer;
-import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
 import com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker;
 import com.griddynamics.jagger.invoker.v2.DefaultInvokerProvider;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+import com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer;
 
 import java.util.List;
+
+import static com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer.DefaultLoadBalancer.ROUND_ROBIN;
 
 /**
  * @brief Definition of the load test - describes test data sources and the protocol, used during load test
@@ -84,10 +86,7 @@ public class JTestDefinition {
         private Builder(Id id, Iterable endpointsProvider) {
             this.id = id;
             this.endpointsProvider = endpointsProvider;
-            this.loadBalancer = new RandomLoadBalancer() {{
-                setPairSupplierFactory(new RoundRobinPairSupplierFactory());
-                setRandomSeed(31);
-            }};
+            this.loadBalancer = JLoadBalancer.builder(ROUND_ROBIN).withRandomSeed(31).build();
         }
 
         /**
@@ -113,7 +112,7 @@ public class JTestDefinition {
 
         /**
          * Optional: Sets load balancer aka distributor (how to pair endpoints and queries) (subtypes of {@link QueryPoolLoadBalancer}).
-         * Default is {@link RoundRobinLoadBalancer}
+         * Default is {@link RandomLoadBalancer} with {@link RoundRobinPairSupplierFactory}
          *
          * Available implementations: @ref Main_Distributors_group
          *
