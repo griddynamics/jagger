@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>java-builder-tests</artifactId>
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
 
     <packaging>jar</packaging>
 
@@ -46,7 +46,7 @@
             <artifactId>jagger-distribution</artifactId>
             <type>zip</type>
             <classifier>full</classifier>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

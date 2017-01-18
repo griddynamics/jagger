@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rawdata</artifactId>
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
 
     <properties>
         <protobuf-java.version>3.1.0</protobuf-java.version>

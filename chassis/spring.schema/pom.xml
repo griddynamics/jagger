@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>chassis.spring.schema</artifactId>
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
 
     <dependencies>
 
