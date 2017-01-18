@@ -26,7 +26,7 @@
     <version>2.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -54,12 +54,9 @@
         <module>chassis/</module>
         <module>distribution</module>
         <module>webclient</module>
-        <module>archetype</module>
-        <module>test/jagger-test</module>
         <module>test/test-target</module>
         <module>test/java-builder-tests</module>
         <module>test/jaas-test</module>
-        <module>archetype-examples</module>
         <module>jaas</module>
         <module>rawdata</module>
         <module>jaas-client</module>
@@ -707,10 +704,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
+		<version>2.19.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
+		<version>2.5</version>
                 <configuration>
                     <aggregate>false</aggregate>
                 </configuration>

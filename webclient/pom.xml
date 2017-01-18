@@ -4,7 +4,7 @@
     <artifactId>webclient</artifactId>
     <packaging>war</packaging>
 
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
     <url>http://maven.apache.org</url>
 
     <parent>
@@ -203,13 +203,13 @@
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.util</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>dbapi</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -268,7 +268,7 @@
                     <style>PRETTY</style>
                     <runTarget>/index.html</runTarget>
                     <modules>
-                        <module>${groupId}.${artifactId}.JaggerWebClient</module>
+                        <module>${project.groupId}.${project.artifactId}.JaggerWebClient</module>
                     </modules>
                     <runClasspathExcludes>
                         <runClasspathExclude>asm-3.3.jar</runClasspathExclude>
@@ -357,6 +357,6 @@
             </plugin>
         </plugins>
 
-        <outputDirectory>${build.directory}/${build.finalName}/WEB-INF/classes</outputDirectory>
+        <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
     </build>
 </project>

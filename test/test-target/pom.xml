@@ -29,7 +29,7 @@
     <artifactId>test-target</artifactId>
     <packaging>war</packaging>
 
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
     <url>http://maven.apache.org</url>
 
     <properties>
