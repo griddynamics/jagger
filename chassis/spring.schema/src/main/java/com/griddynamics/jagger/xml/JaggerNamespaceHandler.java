@@ -1,24 +1,48 @@
 package com.griddynamics.jagger.xml;
 
-import com.griddynamics.jagger.xml.beanParsers.*;
-import com.griddynamics.jagger.xml.beanParsers.configuration.*;
+import com.griddynamics.jagger.xml.beanParsers.FindParserByTypeDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.ListCustomDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.MapCustomDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.PrimitiveDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.configuration.TestPlanDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.configuration.TestSuiteDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.limit.LimitDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.limit.LimitSetDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.JmxMetricsDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.MonitoringSutDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.monitoring.jmxMetrixGroupDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.report.*;
-import com.griddynamics.jagger.xml.beanParsers.task.*;
-import com.griddynamics.jagger.xml.beanParsers.workload.TestDescriptionDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.report.ExtensionDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.report.ExtensionsDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.report.ReportDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.report.SessionComparatorsDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.BackgroundTerminationStrategyDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.InvocationDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.IterationsOrDurationTerminationStrategyDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.RpsDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.TpsDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.UserDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.UserGroupDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.UserGroupsDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.task.VirtualUserDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.OneByOneBalancerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.balancer.RoundRobinBalancerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ApacheHttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.ClassInvokerDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.HttpInvokerClassDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.invoker.SoapInvokerClassDefinitionParser;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.*;
-import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.*;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.BasicTGDecisionMakerListenerDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.CustomMetricDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.CustomValidatorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.NotNullInvocationListenerDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.NotNullResponseDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.SimpleMetricDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.SuccessRateCollectorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.ThreadsTestListenerDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.AvgMetricAggregatorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.RefMetricAggregatorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.StdDevMetricAggregatorDefinitionParser;
+import com.griddynamics.jagger.xml.beanParsers.workload.listener.aggregator.SumMetricAggregatorDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.CsvProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.FileProviderDefinitionParser;
 import com.griddynamics.jagger.xml.beanParsers.workload.queryProvider.HttpQueryDefinitionParser;
@@ -37,9 +61,7 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
 
         //CONFIGURATION
-        registerBeanDefinitionParser("configuration", new ConfigDefinitionParser());
         registerBeanDefinitionParser("test-suite", new TestSuiteDefinitionParser());
-        registerBeanDefinitionParser("test-group", new TestDefinitionParser());
         registerBeanDefinitionParser("latency-percentiles", listCustomDefinitionParser);
         registerBeanDefinitionParser("percentile", primitiveParser);
 
@@ -53,9 +75,6 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
 
         registerBeanDefinitionParser("decision-maker", findTypeParser);
 
-        //TASKS
-        registerBeanDefinitionParser("test", new TaskDefinitionParser());
-
         //type of tasks
         registerBeanDefinitionParser("load",  findTypeParser);
 
@@ -67,8 +86,6 @@ public class JaggerNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("load-rps", new RpsDefinitionParser());
         registerBeanDefinitionParser("load-threads", new VirtualUserDefinitionParser());
 
-        //Test-description
-        registerBeanDefinitionParser("test-description" , new TestDescriptionDefinitionParser());
 
         //validator
         registerBeanDefinitionParser("validator", findTypeParser);
