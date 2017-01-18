@@ -43,7 +43,7 @@ services:
     depends_on:
       - jagger-mysql
     environment:
-      TZ: Europe/Moscow
+      TZ: UTC
       JWC_HTTP_PORT: 80
       JWC_JDBC_DRIVER: com.mysql.jdbc.Driver
       JWC_JDBC_URL: jdbc:mysql://jagger-mysql:3306/jaggerdb
