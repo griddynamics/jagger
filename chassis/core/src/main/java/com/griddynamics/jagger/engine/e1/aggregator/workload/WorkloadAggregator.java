@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -144,8 +143,8 @@ public class WorkloadAggregator extends LogProcessor implements DistributionList
         testData.setParentId(parentId);
         testData.setNumber(workloadTask.getNumber());
         testData.setScenario(workloadDetails);
-        testData.setStartTime(new Date(startTime));
-        testData.setEndTime(new Date(endTime));
+        testData.setStartTime(startTime);
+        testData.setEndTime(endTime);
 
         getHibernateTemplate().persist(testData);
 

@@ -25,7 +25,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.util.Date;
 
 @Entity
 public class WorkloadData {
@@ -35,8 +34,8 @@ public class WorkloadData {
     private String parentId;
     private Integer number;
     private WorkloadDetails scenario;
-    private Date startTime;
-    private Date endTime;
+    private Long startTime;
+    private Long endTime;
 
     @Id
     // Identity strategy is not supported by Oracle DB from the box
@@ -82,19 +81,19 @@ public class WorkloadData {
         this.scenario = scenario;
     }
 
-    public Date getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
 

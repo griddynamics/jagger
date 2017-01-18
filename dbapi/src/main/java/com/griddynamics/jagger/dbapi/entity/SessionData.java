@@ -20,10 +20,6 @@
 
 package com.griddynamics.jagger.dbapi.entity;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.Collections;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +29,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import java.util.Collections;
+import java.util.Set;
 
 @Entity
 public class SessionData {
@@ -41,8 +39,8 @@ public class SessionData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String sessionId;
-    private Date startTime;
-    private Date endTime;
+    private Long startTime;
+    private Long endTime;
     private Integer taskExecuted;
     private Integer taskFailed;
     private Integer activeKernels;
@@ -73,19 +71,19 @@ public class SessionData {
         this.sessionId = sessionId;
     }
 
-    public Date getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
 

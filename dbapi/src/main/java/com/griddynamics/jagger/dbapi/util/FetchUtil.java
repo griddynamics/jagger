@@ -128,8 +128,8 @@ public class FetchUtil {
             String termination = (String) objects[3];
             String sessionId = (String) objects[0];
 
-            Date startTime = (Date) objects[5];
-            Date endTime = (Date) objects[6];
+            Date startTime = new Date(((BigInteger) objects[5]).longValue());
+            Date endTime = new Date(((BigInteger) objects[6]).longValue());
 
 
             Integer number = (Integer) objects[7];
