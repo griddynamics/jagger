@@ -6,7 +6,6 @@ import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
 import com.griddynamics.jagger.invoker.RandomLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
-import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
 
 import java.io.Serializable;
 import java.util.Random;
@@ -67,9 +66,7 @@ public class JLoadBalancer implements Serializable {
             switch (loadBalancer) {
                 case ONE_BY_ONE:
                     if (seed == null) {
-                        SimpleCircularLoadBalancer loadBalancer = new SimpleCircularLoadBalancer();
-                        loadBalancer.setPairSupplierFactory(new OneByOnePairSupplierFactory());
-                        return loadBalancer;
+                        return new OneByOneLoadBalancer();
                     } else {
                         RandomLoadBalancer randomLoadBalancer = new RandomLoadBalancer();
                         randomLoadBalancer.setRandomSeed(seed);
@@ -79,9 +76,7 @@ public class JLoadBalancer implements Serializable {
                 case ROUND_ROBIN:
                 default:
                     if (seed == null) {
-                        SimpleCircularLoadBalancer loadBalancer = new SimpleCircularLoadBalancer();
-                        loadBalancer.setPairSupplierFactory(new RoundRobinPairSupplierFactory());
-                        return loadBalancer;
+                        return new RoundRobinLoadBalancer();
                     } else {
                         RandomLoadBalancer randomLoadBalancer = new RandomLoadBalancer();
                         randomLoadBalancer.setRandomSeed(seed);
