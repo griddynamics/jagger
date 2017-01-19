@@ -47,12 +47,6 @@
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.spring.schema</artifactId>
-            <version>${jagger.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.core</artifactId>
             <version>${jagger.version}</version>
         </dependency>
