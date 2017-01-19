@@ -41,9 +41,7 @@
         <module>coordinator</module>
         <module>coordinator.zookeeper</module>
         <module>coordinator.http</module>
-        <module>invokers</module>
         <module>providers</module>
-        <module>invoker.hessian</module>
     </modules>
 
 </project>
