@@ -44,7 +44,6 @@
         <module>invokers</module>
         <module>providers</module>
         <module>invoker.hessian</module>
-        <module>spring.schema</module>
     </modules>
 
 </project>
