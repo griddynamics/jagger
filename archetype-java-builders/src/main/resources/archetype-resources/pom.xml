@@ -53,12 +53,6 @@
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.invokers</artifactId>
-            <version>${jagger.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.util</artifactId>
             <version>${jagger.version}</version>
         </dependency>
