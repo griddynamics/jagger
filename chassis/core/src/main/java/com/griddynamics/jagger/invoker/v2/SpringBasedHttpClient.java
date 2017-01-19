@@ -119,7 +119,7 @@ public class SpringBasedHttpClient implements JHttpClient {
 
     @Override
     public JHttpResponse execute(JHttpEndpoint endpoint, JHttpQuery query) {
-        if (query == null)
+        if (query == JHttpQuery.EMPTY_QUERY)
             return execute(endpoint);
 
         URI endpointURI = endpoint.getURI(query.getPath(), query.getQueryParams());
