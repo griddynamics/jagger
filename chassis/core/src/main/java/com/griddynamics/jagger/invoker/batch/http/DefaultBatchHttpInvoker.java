@@ -43,7 +43,7 @@ public class DefaultBatchHttpInvoker extends AbstractBatchHttpInvoker<JHttpClien
 
     @Override
     public ResponseBatch<JHttpResponse> invoke(QueryBatch<JHttpQuery> queryBatch, EndpointBatch<JHttpEndpoint> endpointBatch) throws InvocationException {
-        Preconditions.checkNotNull(endpointBatch, "JHttpEndpoint is null!");
+        Preconditions.checkNotNull(endpointBatch, "endpointBatch is null!");
         if (queryBatch != null) {
             Preconditions.checkState(endpointBatch.size() == queryBatch.size(),
                     format("endpointBatch size (%s) is not equal to queryBatch size (%s)", endpointBatch.size(), queryBatch.size()));
