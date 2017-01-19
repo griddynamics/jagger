@@ -54,10 +54,6 @@
             <artifactId>chassis.core</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.invokers</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

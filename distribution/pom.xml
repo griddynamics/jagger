@@ -80,10 +80,6 @@
             <artifactId>chassis.core</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.invoker.hessian</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
@@ -107,17 +103,7 @@
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.invokers</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>monitoring.agent</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.spring.schema</artifactId>
         </dependency>
 
         <dependency>
