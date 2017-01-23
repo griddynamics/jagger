@@ -293,13 +293,13 @@ public class ProcessingConfig implements Serializable {
 
             public static class User implements Serializable {
                 private String count;
-                private String startCount;
+                private double startCount;
                 private String startIn;
                 private String startBy;
                 private String life;
 
                 public User(@Attribute(name = "count") String count,
-                            @Attribute(name = "startCount") String startCount,
+                            @Attribute(name = "startCount") double startCount,
                             @Attribute(name = "startIn") String startIn,
                             @Attribute(name = "startBy") String startBy,
                             @Attribute(name = "life") String life) {
@@ -344,12 +344,12 @@ public class ProcessingConfig implements Serializable {
                 }
 
                 @Attribute(name = "startCount")
-                public String getStartCount() {
+                public double getStartCount() {
                     return startCount;
                 }
 
                 @Attribute(name = "startCount")
-                public void setStartCount(String startCount) {
+                public void setStartCount(double startCount) {
                     this.startCount = startCount;
                 }
 
