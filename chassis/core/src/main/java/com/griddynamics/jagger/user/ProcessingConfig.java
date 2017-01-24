@@ -250,13 +250,13 @@ public class ProcessingConfig implements Serializable {
 
             public static class User implements Serializable {
                 private String count;
-                private String startCount;
+                private double startCount;
                 private String startIn;
                 private String startBy;
                 private String life;
 
                 public User(String count,
-                            String startCount,
+                            double startCount,
                             String startIn,
                             String startBy,
                             String life) {
@@ -294,11 +294,11 @@ public class ProcessingConfig implements Serializable {
                     this.startBy = startBy;
                 }
 
-                public String getStartCount() {
+                public double getStartCount() {
                     return startCount;
                 }
 
-                public void setStartCount(String startCount) {
+                public void setStartCount(double startCount) {
                     this.startCount = startCount;
                 }
 

@@ -60,7 +60,7 @@ class WorkloadGenerator {
 
     private static WorkloadClockConfiguration generateUserGroup(JLoadProfileUserGroups jLoadProfile) {
         List<User> users = jLoadProfile.getUserGroups().stream()
-                .map(userGroup -> new User(String.valueOf(userGroup.getNumberOfUsers()), String.valueOf(userGroup.getSlewRateUsersPerSecond()),
+                .map(userGroup -> new User(String.valueOf(userGroup.getNumberOfUsers()), userGroup.getSlewRateUsersPerSecond(),
                         userGroup.getStartDelayInSeconds() + "s", "1s", userGroup.getLifeTimeInSeconds() + "s"))
                 .collect(toList());
 
