@@ -49,7 +49,7 @@ public class UserGroup {
     private long startByTime = -1;
     int startedUserCount = 0;
     private double extraUser;
-    private double slewRate;
+    private double extraUserStep;
 
     public UserGroup(UserClock clock, int id, ProcessingConfig.Test.Task.User config, long time) {
         this(clock,
@@ -63,9 +63,9 @@ public class UserGroup {
         double floor = (Double.compare(config.getStartCount(), 1.0) < 0) ?
                 +0.0 :
                 +Math.floor(config.getStartCount());
-        double slewRate = config.getStartCount() - floor;
-        this.slewRate = slewRate;
-        this.extraUser = slewRate;
+        double extraUserStep = config.getStartCount() - floor;
+        this.extraUserStep = extraUserStep;
+        this.extraUser = extraUserStep;
     }
 
     public UserGroup(UserClock clock, int id, int count, int startCount, long startInTime, long startBy, long life) {
@@ -112,7 +112,7 @@ public class UserGroup {
 
     public void tick(long time, LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
         // to allow user set floating value of users
-        extraUser += slewRate;
+        extraUser += extraUserStep;
 
         for (User user : users) {
             user.tick(time, workloadConfigurations);
