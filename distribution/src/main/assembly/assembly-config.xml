@@ -48,9 +48,6 @@
                 <include>*com.griddynamics.jagger:chassis.coordinator.zookeeper</include>
                 <include>*com.griddynamics.jagger:chassis.coordinator.http</include>
                 <include>*com.griddynamics.jagger:monitoring.agent:jar</include>
-                <include>*com.griddynamics.jagger:chassis.invoker.hessian</include>
-                <include>*com.griddynamics.jagger:chassis.invokers</include>
-                <include>*com.griddynamics.jagger:chassis.spring.schema</include>
                 <include>*com.griddynamics.jagger:chassis.providers</include>
                 <include>*com.griddynamics.jagger:dbapi</include>
                 <include>*com.griddynamics.jagger:jaas-client</include>
