@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.dbapi.model.rules;
 
+import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
@@ -7,9 +8,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+@SuppressWarnings("Duplicates")
 @Component
 public class TreeViewGroupRuleProvider {
 
@@ -20,8 +25,7 @@ public class TreeViewGroupRuleProvider {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }
 
-    public TreeViewGroupRule provide(String rootId, String rootName) {
-
+    public <M extends MetricNode> TreeViewGroupRule provide(String rootId, String rootName, List<M> metricNodes) {
         List<TreeViewGroupRule> firstLevelFilters = new ArrayList<>();
 
         String filterRegex = "(" +
@@ -61,6 +65,36 @@ public class TreeViewGroupRuleProvider {
 
             firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, groupDisplayName, groupDisplayName, regex));
         }
+
+        String userScenarioRegex = "^.*USER-SCENARIO_(.*)_STEP#(\\d+)_(.*)(-.*)?METRIC$";
+        Pattern pattern = Pattern.compile(userScenarioRegex);
+        Map<String, Map<String, TreeViewGroupRule>> scenarioSteps = new HashMap<>();
+        for (M metricNode : metricNodes) {
+            String metricNodeId = metricNode.getId();
+            Matcher matcher = pattern.matcher(metricNodeId);
+            if (matcher.matches()) {
+                String scenarioId = matcher.group(1);
+                String stepNumber = matcher.group(2);
+                String stepId = matcher.group(3);
+
+                String nodeId = scenarioId + ":" + stepId;
+                String stepRegex = "^.*USER-SCENARIO_" + scenarioId + "_STEP#" + stepNumber + "_.*$";
+                TreeViewGroupRule userStepFilter = new TreeViewGroupRule(Rule.By.ID, nodeId, "Step " + stepNumber, stepRegex);
+                if (scenarioSteps.containsKey(scenarioId)) {
+                    scenarioSteps.get(scenarioId).put(stepNumber, userStepFilter);
+                } else {
+                    HashMap<String, TreeViewGroupRule> map = new HashMap<>();
+                    map.put(stepNumber, userStepFilter);
+                    scenarioSteps.put(scenarioId, map);
+                }
+            }
+        }
+
+        scenarioSteps.forEach((scenarioId, stepsRules) -> {
+            String scenarioRegex = "(^.*USER-SCENARIO_" + scenarioId + "_STEP#.*$)|(^.*" + scenarioId + "-sum.*$)";
+            List<TreeViewGroupRule> childrenRules = new ArrayList<>(stepsRules.values());
+            firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, scenarioId, scenarioId, scenarioRegex, childrenRules));
+        });
 
         // Root filter - will match all metrics
         return new TreeViewGroupRule(Rule.By.ID, rootId, rootName, ".*", firstLevelFilters);

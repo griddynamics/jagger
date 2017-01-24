@@ -1,9 +1,7 @@
 package com.griddynamics.jagger.dbapi;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
-import static java.util.stream.Collectors.toList;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerMetricDto;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerTestDto;
@@ -75,9 +73,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,12 +95,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by kgribov on 4/2/14.
@@ -995,7 +993,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         }
 
         // rules to create test tree view
-        TreeViewGroupRule groupedNodesRule = treeViewGroupRuleProvider.provide(rootId, rootId);
+        TreeViewGroupRule groupedNodesRule = treeViewGroupRuleProvider.provide(rootId, rootId, metricNodeList);
         // tree with metrics distributed by groups
 
         return groupedNodesRule.filter(null, metricNodeList);
