@@ -66,7 +66,8 @@ public class TreeViewGroupRuleProvider {
             firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, groupDisplayName, groupDisplayName, regex));
         }
 
-        String userScenarioRegex = "^.*USER-SCENARIO_(.*)_STEP#(\\d+)_(.*)(-.*)?METRIC$";
+        // Filters for user scenarios
+        String userScenarioRegex = "^.*USER-SCENARIO_(.*)_STEP#(\\d+)_(.*)(-.*)?$";
         Pattern pattern = Pattern.compile(userScenarioRegex);
         Map<String, Map<String, TreeViewGroupRule>> scenarioSteps = new HashMap<>();
         for (M metricNode : metricNodes) {
