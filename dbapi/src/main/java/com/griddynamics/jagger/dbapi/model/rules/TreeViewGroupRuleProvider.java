@@ -83,7 +83,7 @@ public class TreeViewGroupRuleProvider {
 
                 String nodeId = scenarioId + ":" + stepId;
                 String metricDisplayName = metricNode.getMetricNameDtoList().get(0).getMetricDisplayName();
-                String displayName = removePattern(metricDisplayName, "( Latency, ms| Success rate)? \\[.*\\]");
+                String displayName = removePattern(metricDisplayName, "( Latency, ms| Success rate| Iterations)? \\[.*\\]");
                 String stepRegex = "^.*USER-SCENARIO_" + scenarioId + "_STEP#" + stepNumber + "_.*$";
                 TreeViewGroupRule userStepFilter = new TreeViewGroupRule(Rule.By.ID, nodeId, displayName, stepRegex);
                 if (scenarioSteps.containsKey(scenarioId)) {
@@ -98,14 +98,14 @@ public class TreeViewGroupRuleProvider {
 
         scenarioSteps.forEach((scenarioId, stepsRules) -> {
             String displayName = metricNodes.stream()
-                    .filter(node -> node.getId().contains(scenarioId + "-sum"))
+                    .filter(node -> node.getId().contains(scenarioId + "-sr"))
                     .findFirst()
                     .flatMap(node -> {
                         String metricDisplayName = node.getMetricNameDtoList().get(0).getMetricDisplayName();
-                        return Optional.of(removePattern(metricDisplayName, "(, ms)? \\[.*\\]"));
+                        return Optional.of(removePattern(metricDisplayName, "( Success Rate)? \\[.*\\]"));
                     })
                     .orElse(scenarioId);
-            String scenarioRegex = "(^.*USER-SCENARIO_" + scenarioId + "_STEP#.*$)|(^.*" + scenarioId + "(-sum|-ssr).*$)";
+            String scenarioRegex = "(^.*USER-SCENARIO_" + scenarioId + "_STEP#.*$)|(^.*" + scenarioId + "(-sum|-sr|-iterations).*$)";
             List<TreeViewGroupRule> childrenRules = new ArrayList<>(stepsRules.values());
             firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, scenarioId, displayName, scenarioRegex, childrenRules));
         });
