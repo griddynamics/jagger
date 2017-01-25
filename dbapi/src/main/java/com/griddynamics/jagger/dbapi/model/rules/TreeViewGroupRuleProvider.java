@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringUtils.removePattern;
 
 @SuppressWarnings("Duplicates")
 @Component
@@ -79,8 +82,10 @@ public class TreeViewGroupRuleProvider {
                 String stepId = matcher.group(3);
 
                 String nodeId = scenarioId + ":" + stepId;
+                String metricDisplayName = metricNode.getMetricNameDtoList().get(0).getMetricDisplayName();
+                String displayName = removePattern(metricDisplayName, "(, ms)? \\[.*\\]");
                 String stepRegex = "^.*USER-SCENARIO_" + scenarioId + "_STEP#" + stepNumber + "_.*$";
-                TreeViewGroupRule userStepFilter = new TreeViewGroupRule(Rule.By.ID, nodeId, "Step " + stepNumber, stepRegex);
+                TreeViewGroupRule userStepFilter = new TreeViewGroupRule(Rule.By.ID, nodeId, displayName, stepRegex);
                 if (scenarioSteps.containsKey(scenarioId)) {
                     scenarioSteps.get(scenarioId).put(stepNumber, userStepFilter);
                 } else {
@@ -92,9 +97,17 @@ public class TreeViewGroupRuleProvider {
         }
 
         scenarioSteps.forEach((scenarioId, stepsRules) -> {
+            String displayName = metricNodes.stream()
+                    .filter(node -> node.getId().contains(scenarioId + "-sum"))
+                    .findFirst()
+                    .flatMap(node -> {
+                        String metricDisplayName = node.getMetricNameDtoList().get(0).getMetricDisplayName();
+                        return Optional.of(removePattern(metricDisplayName, "(, ms)? \\[.*\\]"));
+                    })
+                    .orElse(scenarioId);
             String scenarioRegex = "(^.*USER-SCENARIO_" + scenarioId + "_STEP#.*$)|(^.*" + scenarioId + "-sum.*$)";
             List<TreeViewGroupRule> childrenRules = new ArrayList<>(stepsRules.values());
-            firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, scenarioId, scenarioId, scenarioRegex, childrenRules));
+            firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, scenarioId, displayName, scenarioRegex, childrenRules));
         });
 
         // Root filter - will match all metrics
