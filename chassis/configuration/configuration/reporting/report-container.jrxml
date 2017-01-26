@@ -145,4 +145,22 @@
             </frame>
         </band>
     </detail>
+    <pageFooter>
+        <band height="30" splitType="Stretch">
+            <textField evaluationTime="Page">
+                <reportElement x="0" y="0" width="286" height="20" uuid="989ed34e-7b28-4270-b495-110385990610"/>
+                <textElement textAlignment="Right">
+                    <font fontName="sans-serif" size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement x="286" y="0" width="286" height="20" uuid="de370573-b40c-40e1-b7fe-21f61ffb69f8"/>
+                <textElement textAlignment="Left">
+                    <font fontName="sans-serif" size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
 </jasperReport>
