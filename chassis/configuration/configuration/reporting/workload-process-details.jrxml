@@ -43,7 +43,7 @@
             <conditionExpression>
                 <![CDATA[new Boolean(String.valueOf($F{decision}).equals(com.griddynamics.jagger.util.Decision.WARNING.toString()))]]>
             </conditionExpression>
-            <style forecolor="#840bb8" />
+            <style forecolor="#B8860B" />
         </conditionalStyle>
         <conditionalStyle>
             <conditionExpression>
