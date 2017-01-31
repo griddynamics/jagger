@@ -40,10 +40,11 @@ import java.util.concurrent.atomic.AtomicLong;
  * @ingroup Main_Distributors_group */
 public class RandomLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
 
-    private AtomicLong randomSeed;
-
-    public void setRandomSeed(long randomSeed) {
+    private final AtomicLong randomSeed;
+    
+    public RandomLoadBalancer(long randomSeed, PairSupplierFactory<Q, E> pairSupplierFactory) {
         this.randomSeed = new AtomicLong(randomSeed);
+        setPairSupplierFactory(pairSupplierFactory);
     }
 
     public long getRandomSeed() {
