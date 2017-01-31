@@ -21,7 +21,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
     
-    private final static Logger log = LoggerFactory.getLogger(PairSupplierFactoryLoadBalancer.class);
+    private final static Logger log = LoggerFactory.getLogger(ExclusiveAccessCircularLoadBalancer.class);
+    
+    public ExclusiveAccessCircularLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {
+        setPairSupplierFactory(pairSupplierFactory);
+    }
     
     private ArrayBlockingQueue<Pair<Q, E>> pairQueue;
     

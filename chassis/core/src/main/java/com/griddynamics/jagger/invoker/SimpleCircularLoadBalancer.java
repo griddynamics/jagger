@@ -20,8 +20,9 @@
 
 package com.griddynamics.jagger.invoker;
 
-import com.google.common.collect.AbstractIterator;
 import com.griddynamics.jagger.util.Pair;
+
+import com.google.common.collect.AbstractIterator;
 
 import java.util.Iterator;
 
@@ -36,7 +37,11 @@ import java.util.Iterator;
  *
  * @ingroup Main_Distributors_group */
 public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
-
+    
+    public SimpleCircularLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {
+        setPairSupplierFactory(pairSupplierFactory);
+    }
+    
     /** Returns an iterator over pairs
      * @par Details:
      * @details Returns an iterator over pairs, which were created by pairSupplierFactory
