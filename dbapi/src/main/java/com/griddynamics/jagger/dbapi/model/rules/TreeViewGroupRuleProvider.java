@@ -1,6 +1,5 @@
 package com.griddynamics.jagger.dbapi.model.rules;
 
-import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
@@ -30,7 +29,7 @@ public class TreeViewGroupRuleProvider {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }
 
-    public <M extends MetricNode> TreeViewGroupRule provide(String rootId, String rootName, Map<String, String> scenarioComponentsIdToDisplayName) {
+    public TreeViewGroupRule provide(String rootId, String rootName, Map<String, String> scenarioComponentsIdToDisplayName) {
         List<TreeViewGroupRule> firstLevelFilters = new ArrayList<>();
 
         String filterRegex = "(" +
