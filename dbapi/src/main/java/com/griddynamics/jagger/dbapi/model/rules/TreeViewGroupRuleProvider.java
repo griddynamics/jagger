@@ -4,6 +4,7 @@ import com.griddynamics.jagger.dbapi.model.MetricNode;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil.IdContainer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -11,11 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static org.apache.commons.lang3.StringUtils.removePattern;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractDisplayNameFromGenerated;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioRegexp;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepRegexp;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.getIdsFromGeneratedIdForScenarioComponents;
 
 @SuppressWarnings("Duplicates")
 @Component
@@ -28,7 +30,7 @@ public class TreeViewGroupRuleProvider {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }
 
-    public <M extends MetricNode> TreeViewGroupRule provide(String rootId, String rootName, List<M> metricNodes) {
+    public <M extends MetricNode> TreeViewGroupRule provide(String rootId, String rootName, Map<String, String> scenarioComponentsIdToDisplayName) {
         List<TreeViewGroupRule> firstLevelFilters = new ArrayList<>();
 
         String filterRegex = "(" +
@@ -70,44 +72,39 @@ public class TreeViewGroupRuleProvider {
         }
 
         // Filters for user scenarios
-        String userScenarioRegex = "^.*USER-SCENARIO_(.*)_STEP#(\\d+)_(.*)(-sr)?(-.*)?$";
-        Pattern pattern = Pattern.compile(userScenarioRegex);
-        Map<String, Map<String, TreeViewGroupRule>> scenarioSteps = new HashMap<>();
-        for (M metricNode : metricNodes) {
-            String metricNodeId = metricNode.getId();
-            Matcher matcher = pattern.matcher(metricNodeId);
-            if (matcher.matches()) {
-                String scenarioId = matcher.group(1);
-                String stepNumber = matcher.group(2);
-                String stepId = matcher.group(3);
+        Map<String, Map<String, TreeViewGroupRule>> scenarioStepsRules = new HashMap<>();
+        Map<String, String> scenarioRegexps = new HashMap<>();
+        Map<String, String> scenarioDisplayNames = new HashMap<>();
+        scenarioComponentsIdToDisplayName.forEach((generatedId, generatedDisplayName) -> {
+            IdContainer originalIds = getIdsFromGeneratedIdForScenarioComponents(generatedId);
+            String originalDisplayName = extractDisplayNameFromGenerated(generatedDisplayName);
 
-                String nodeId = scenarioId + ":" + stepId;
-                String metricDisplayName = metricNode.getMetricNameDtoList().get(0).getMetricDisplayName();
-                String displayName = removePattern(metricDisplayName, "( Latency, ms| Success rate| Iterations)? \\[.*\\]");
-                String stepRegex = "^.*USER-SCENARIO_" + scenarioId + "_STEP#" + stepNumber + "_.*$";
-                TreeViewGroupRule userStepFilter = new TreeViewGroupRule(Rule.By.ID, nodeId, displayName, stepRegex);
-                if (scenarioSteps.containsKey(scenarioId)) {
-                    scenarioSteps.get(scenarioId).put(stepNumber, userStepFilter);
+            if (originalIds != null) {
+                // if step
+                if (!originalIds.getScenarioId().equals(originalIds.getStepId())) {
+                    String nodeId = originalIds.getScenarioId() + ":" + originalIds.getStepId();
+                    String nodeDisplayName = originalDisplayName != null ? originalDisplayName : originalIds.getStepId();
+                    String filter = generateScenarioStepRegexp(originalIds.getScenarioId(), originalIds.getStepId());
+                    TreeViewGroupRule userStepFilter = new TreeViewGroupRule(Rule.By.ID, nodeId, nodeDisplayName, filter);
+                    if (scenarioStepsRules.containsKey(originalIds.getScenarioId())) {
+                        scenarioStepsRules.get(originalIds.getScenarioId()).put(originalIds.getStepId(), userStepFilter);
+                    } else {
+                        HashMap<String, TreeViewGroupRule> map = new HashMap<>();
+                        map.put(originalIds.getStepId(), userStepFilter);
+                        scenarioStepsRules.put(originalIds.getScenarioId(), map);
+                    }
+                    // if scenario
                 } else {
-                    HashMap<String, TreeViewGroupRule> map = new HashMap<>();
-                    map.put(stepNumber, userStepFilter);
-                    scenarioSteps.put(scenarioId, map);
+                    scenarioRegexps.putIfAbsent(originalIds.getScenarioId(), generateScenarioRegexp(originalIds.getScenarioId()));
+                    scenarioDisplayNames.putIfAbsent(originalIds.getScenarioId(), originalDisplayName);
                 }
             }
-        }
+        });
 
-        scenarioSteps.forEach((scenarioId, stepsRules) -> {
-            String displayName = metricNodes.stream()
-                    .filter(node -> node.getId().contains(scenarioId + "-sr"))
-                    .findFirst()
-                    .flatMap(node -> {
-                        String metricDisplayName = node.getMetricNameDtoList().get(0).getMetricDisplayName();
-                        return Optional.of(removePattern(metricDisplayName, "( Success Rate)? \\[.*\\]"));
-                    })
-                    .orElse(scenarioId);
-            String scenarioRegex = "(^.*USER-SCENARIO_" + scenarioId + "_STEP#.*$)|(^.*" + scenarioId + "(-sum|-sr|-iterations).*$)";
-            List<TreeViewGroupRule> childrenRules = new ArrayList<>(stepsRules.values());
-            firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, scenarioId, displayName, scenarioRegex, childrenRules));
+        scenarioRegexps.forEach((scenarioId, filter) -> {
+            List<TreeViewGroupRule> childrenRules = newArrayList(scenarioStepsRules.get(scenarioId).values());
+            String displayName = scenarioDisplayNames.get(scenarioId);
+            firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, scenarioId, displayName, filter, childrenRules));
         });
 
         // Root filter - will match all metrics
