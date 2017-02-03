@@ -35,7 +35,6 @@ public class User {
     private final int id;
     private final UserGroup group;
     private final UserClock clock;
-    private final long startTime;
     private final long finishTime;
     private final NodeId nodeId;
     private boolean deleted = false;
@@ -43,8 +42,7 @@ public class User {
     public User(UserClock clock, UserGroup group, long time, NodeId nodeId, LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
         this.id = group.users.size();
         this.group = group;
-        this.startTime = time;
-        this.finishTime = startTime + group.getLife();
+        this.finishTime = time + group.getLife();
         this.nodeId = nodeId;
         this.clock = clock;
 
@@ -55,9 +53,11 @@ public class User {
         this.clock.setUserStarted(true);
 
         WorkloadConfiguration workloadConfiguration = workloadConfigurations.get(nodeId);
-        workloadConfigurations.put(nodeId, WorkloadConfiguration.with(workloadConfiguration.getThreads() + 1, workloadConfiguration.getDelay()));
+        workloadConfigurations.put(nodeId, WorkloadConfiguration.with(workloadConfiguration.getThreads() + 1,
+                workloadConfiguration.getDelay()));
 
-        log.info(String.format("User %d from group %d is created at %dms of test on node %s", id, group.getId(), startTime - clock.getStartTime(), nodeId));
+        log.info(String.format("User %d from group %d is created at %dms of test on node %s", id, group.getId(),
+                time - clock.getStartTime(), nodeId));
     }
 
     public void delete(long time) {
@@ -65,7 +65,8 @@ public class User {
             deleted = true;
             group.activeUserCount--;
 
-            log.info(String.format("User %d from group %d is deleted at %dms of test on node %s", id, group.getId(), time - clock.getStartTime(), nodeId));
+            log.info(String.format("User %d from group %d is deleted at %dms of test on node %s", id, group.getId(),
+                    time - clock.getStartTime(), nodeId));
         } else {
             throw new IllegalStateException();
         }
@@ -76,7 +77,8 @@ public class User {
             delete(time);
 
             WorkloadConfiguration workloadConfiguration = workloadConfigurations.get(nodeId);
-            workloadConfigurations.put(nodeId, WorkloadConfiguration.with(workloadConfiguration.getThreads() - 1, workloadConfiguration.getDelay()));
+            workloadConfigurations.put(nodeId, WorkloadConfiguration.with(workloadConfiguration.getThreads() - 1,
+                    workloadConfiguration.getDelay()));
         }
     }
 }

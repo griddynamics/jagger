@@ -16,9 +16,9 @@ public class ExecutionEntity {
 
     public static ExecutionEntity getDefault() {
         ExecutionEntity e = new ExecutionEntity();
-        e.setEnvId("1");
+        e.setEnvId("envId");
         e.setLoadScenarioId("sid");
-        e.setExecutionTimeToStartInSeconds(0L);
+        e.setExecutionTimeToStartInSeconds(600L);
         return e;
     }
 

@@ -30,9 +30,13 @@ import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimitVsRefValue;
 import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.RefValue;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
+import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileInvocation;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUserGroups;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUsers;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.InvocationCount;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.NumberOfUsers;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.ThreadCount;
+import com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaIterations;
 import com.griddynamics.jagger.user.test.configurations.termination.auxiliary.IterationsNumber;
@@ -71,7 +75,7 @@ public class JaasScenario extends JaggerPropertiesProvider {
 
         return Stream.of(
                 tg_JaaS_GET_Sessions,
-                tg_JaaS_GET_Tests,
+                tg_JaaS_GET_Tests ,
                 tg_JaaS_GET_Metrics,
                 tg_JaaS_GET_Metric_Summaries,
                 tg_JaaS_MetricPlotList
@@ -83,8 +87,8 @@ public class JaasScenario extends JaggerPropertiesProvider {
                 getExecutionLoadTest("t_JaaS_POST_execution", queryProvider.POST_execution(),
                         Arrays.asList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class),
                                 JHttpResponseStatusValidatorProvider.of(201), new CreateExecutionResponseValidator()),
-                        JLoadProfileUserGroups.builder(JLoadProfileUsers.builder(NumberOfUsers.of(1)).build()).build(),
-                        JTerminationCriteriaIterations.of(IterationsNumber.of(500), MaxDurationInSeconds.of(20)))
+                        JLoadProfileInvocation.builder(InvocationCount.of(10), ThreadCount.of(1)).build(),
+                        JTerminationCriteriaIterations.of(IterationsNumber.of(10), MaxDurationInSeconds.of(20)))
         ).build();
 
         JParallelTestsGroup tg_JaaS_GET_executions = JParallelTestsGroup.builder(Id.of("tg_JaaS_GET_executions"),
@@ -101,8 +105,8 @@ public class JaasScenario extends JaggerPropertiesProvider {
         JParallelTestsGroup tg_JaaS_DELETE_Executions = JParallelTestsGroup.builder(Id.of("tg_JaaS_DELETE_Executions"),
                 getExecutionLoadTest("t_JaaS_DELETE_Executions", queryProvider.DELETE_Execution(),
                         Arrays.asList(JHttpResponseStatusValidatorProvider.of(204), DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)),
-                        JLoadProfileUserGroups.builder(JLoadProfileUsers.builder(NumberOfUsers.of(1)).build()).build(),
-                        JTerminationCriteriaIterations.of(IterationsNumber.of(300), MaxDurationInSeconds.of(15)))
+                        JLoadProfileInvocation.builder(InvocationCount.of(10), ThreadCount.of(1)).withDelayBetweenInvocationsInMilliseconds(1000).build(),
+                        JTerminationCriteriaIterations.of(IterationsNumber.of(10), MaxDurationInSeconds.of(15)))
         ).build();
 
         JParallelTestsGroup tg_JaaS_GET_deleted_execution = JParallelTestsGroup.builder(Id.of("tg_JaaS_GET_deleted_execution"),
@@ -126,7 +130,8 @@ public class JaasScenario extends JaggerPropertiesProvider {
         QueryProvider queryProvider = new QueryProvider(this::getPropertyValue);
         return JLoadScenario.builder(Id.of("ts_JaaSTestSuit"), Stream.concat(
                 sessionTests(queryProvider),
-                executionsTests(queryProvider)).collect(Collectors.toList()))
+                executionsTests(queryProvider)
+        ).collect(Collectors.toList()))
                 .withLatencyPercentiles(Collections.singletonList(99d))
                 .addListener(new LoadScenarioConfigListener())
                 .build();
@@ -178,6 +183,7 @@ public class JaasScenario extends JaggerPropertiesProvider {
                 .withQueryProvider(queryProvider)
                 .withInvoker(DefaultInvokerProvider.of(ExecutionManipulateInvoker.class))
                 .addValidators(validators)
+                .withLoadBalancer(JLoadBalancer.builder(JLoadBalancer.DefaultLoadBalancer.ONE_BY_ONE).build())
                 .build();
 
         return JLoadTest.builder(Id.of(id), definition, standardGroupLoad, standardTermination)
