@@ -27,7 +27,10 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
         setPairSupplierFactory(pairSupplierFactory);
     }
     
-    private ArrayBlockingQueue<Pair<Q, E>> pairQueue;
+    private volatile ArrayBlockingQueue<Pair<Q, E>> pairQueue;
+    
+    private volatile boolean initialized = false;
+    private final Object lock = new Object();
     
     private Pair<Q, E> pollNext() {
         final int timeout = 10;
@@ -51,11 +54,12 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
             @Override
             protected Pair<Q, E> computeNext() {
                 if (current != null) {
+                    log.debug("Returning pair - {}", current);
                     pairQueue.add(current);
                 }
                 current = pollNext();
                 
-                log.debug("For thread {} providing pair {}", Thread.currentThread(), current);
+                log.debug("Providing pair - {}", current);
                 return current;
             }
             
@@ -67,15 +71,23 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
     }
     
     @Override
-    public void setPairSupplierFactory(PairSupplierFactory<Q, E> pairSupplierFactory) {
-        super.setPairSupplierFactory(pairSupplierFactory);
-        
-        PairSupplier<Q, E> pairSupplier = getPairSupplier();
-        pairQueue = new ArrayBlockingQueue<>(pairSupplier.size(), true);
-        for (int i = 0; i < pairSupplier.size(); ++i) {
-            pairQueue.add(pairSupplier.get(i));
+    public void init() {
+        if (initialized) {
+            log.info("already initialized. returning...");
+            return;
         }
     
-        log.debug("{} pairs in total to balance", pairSupplier.size());
+        synchronized (lock) {
+            super.init();
+    
+            PairSupplier<Q, E> pairSupplier = getPairSupplier();
+            pairQueue = new ArrayBlockingQueue<>(pairSupplier.size(), true);
+            for (int i = 0; i < pairSupplier.size(); ++i) {
+                pairQueue.add(pairSupplier.get(i));
+            }
+    
+            log.info("{} pairs in total to balance", pairSupplier.size());
+            initialized = true;
+        }
     }
 }
