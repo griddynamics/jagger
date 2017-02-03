@@ -43,8 +43,8 @@ public class RandomLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q,
     private final AtomicLong randomSeed;
     
     public RandomLoadBalancer(long randomSeed, PairSupplierFactory<Q, E> pairSupplierFactory) {
+        super(pairSupplierFactory);
         this.randomSeed = new AtomicLong(randomSeed);
-        setPairSupplierFactory(pairSupplierFactory);
     }
 
     public long getRandomSeed() {

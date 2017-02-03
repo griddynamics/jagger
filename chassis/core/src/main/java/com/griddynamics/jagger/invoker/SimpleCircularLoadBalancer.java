@@ -39,7 +39,7 @@ import java.util.Iterator;
 public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
     
     public SimpleCircularLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {
-        setPairSupplierFactory(pairSupplierFactory);
+        super(pairSupplierFactory);
     }
     
     /** Returns an iterator over pairs
@@ -68,8 +68,6 @@ public class SimpleCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBal
             public String toString() {
                 return "SimpleCircularLoadBalancer iterator";
             }
-
-
         };
     }
 }
