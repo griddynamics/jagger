@@ -21,6 +21,9 @@
 package com.griddynamics.jagger.invoker;
 
 import com.griddynamics.jagger.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Iterator;
 
 /** LoadBalancer which uses query and endpoint provider
@@ -32,9 +35,14 @@ import java.util.Iterator;
  *
  * @ingroup Main_Distributors_group */
 public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> {
-
+    
+    private final static Logger log = LoggerFactory.getLogger(QueryPoolLoadBalancer.class);
+    
     protected Iterable<Q> queryProvider;
     protected Iterable<E> endpointProvider;
+    
+    protected volatile boolean initialized = false;
+    protected final Object lock = new Object();
 
     public QueryPoolLoadBalancer(){
     }
@@ -66,7 +74,26 @@ public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> 
      * To be called after all dependencies are injected.
      */
     public void init() {
+        synchronized (lock) {
+            if (initialized) {
+                log.debug("already initialized. returning...");
+                return;
+            }
         
+            if (endpointProvider == null) {
+                throw new IllegalStateException("Endpoint provider is null");
+            } else {
+                log.info("total endpoints number - {}", endpointSize());
+            }
+        
+            if (queryProvider == null) {
+                log.info("Query provider is null.");
+            } else {
+                log.info("total queries number - {}", querySize());
+            }
+        
+            initialized = true;
+        }
     }
 
     @Override

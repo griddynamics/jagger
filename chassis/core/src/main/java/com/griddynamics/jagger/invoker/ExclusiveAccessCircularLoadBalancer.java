@@ -24,18 +24,15 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
     private final static Logger log = LoggerFactory.getLogger(ExclusiveAccessCircularLoadBalancer.class);
     
     public ExclusiveAccessCircularLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {
-        setPairSupplierFactory(pairSupplierFactory);
+        super(pairSupplierFactory);
     }
     
     private volatile ArrayBlockingQueue<Pair<Q, E>> pairQueue;
     
-    private volatile boolean initialized = false;
-    private final Object lock = new Object();
-    
     private Pair<Q, E> pollNext() {
         final int timeout = 10;
         final TimeUnit timeUnit = TimeUnit.MINUTES;
-        
+    
         try {
             return pairQueue.poll(timeout, timeUnit);
         } catch (InterruptedException e) {
@@ -72,12 +69,12 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
     
     @Override
     public void init() {
-        if (initialized) {
-            log.info("already initialized. returning...");
-            return;
-        }
-    
         synchronized (lock) {
+            if (initialized) {
+                log.debug("already initialized. returning...");
+                return;
+            }
+            
             super.init();
     
             PairSupplier<Q, E> pairSupplier = getPairSupplier();
@@ -85,9 +82,6 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
             for (int i = 0; i < pairSupplier.size(); ++i) {
                 pairQueue.add(pairSupplier.get(i));
             }
-    
-            log.info("{} pairs in total to balance", pairSupplier.size());
-            initialized = true;
         }
     }
 }

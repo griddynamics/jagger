@@ -25,8 +25,8 @@ public class ExclusiveAccessRandomLoadBalancer<Q, E> extends PairSupplierFactory
     private final static Logger log = LoggerFactory.getLogger(ExclusiveAccessRandomLoadBalancer.class);
     
     public ExclusiveAccessRandomLoadBalancer(long randomSeed, PairSupplierFactory<Q, E> pairSupplierFactory) {
+        super(pairSupplierFactory);
         this.randomSeed = new AtomicLong(randomSeed);
-        setPairSupplierFactory(pairSupplierFactory);
     }
     
     private final AtomicLong randomSeed;
@@ -37,8 +37,6 @@ public class ExclusiveAccessRandomLoadBalancer<Q, E> extends PairSupplierFactory
 
     private volatile ConcurrentHashMap<Integer, Pair<Q, E>> pairMap;
     private volatile int pairsNumber;
-    private volatile boolean initialized = false;
-    private final Object lock = new Object();
     
     @Override
     public Iterator<Pair<Q, E>> provide() {
@@ -86,12 +84,12 @@ public class ExclusiveAccessRandomLoadBalancer<Q, E> extends PairSupplierFactory
     
     @Override
     public void init() {
-        if (initialized) {
-            log.info("already initialized. returning...");
-            return;
-        }
-        
         synchronized (lock) {
+            if (initialized) {
+                log.debug("already initialized. returning...");
+                return;
+            }
+            
             super.init();
 
             PairSupplier<Q, E> pairSupplier = getPairSupplier();
@@ -101,8 +99,6 @@ public class ExclusiveAccessRandomLoadBalancer<Q, E> extends PairSupplierFactory
             }
 
             pairsNumber = pairSupplier.size();
-            log.info("{} pairs in total to balance", pairsNumber);
-            initialized = true;
         }
     }
 }
