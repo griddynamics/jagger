@@ -61,6 +61,13 @@ public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> 
     public int endpointSize() {
         return getIterableSize(endpointProvider);
     }
+    
+    /**
+     * To be called after all dependencies are injected.
+     */
+    public void init() {
+        
+    }
 
     @Override
     public int querySize() {

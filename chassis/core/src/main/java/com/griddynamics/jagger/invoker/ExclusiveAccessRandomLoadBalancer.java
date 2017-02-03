@@ -35,8 +35,10 @@ public class ExclusiveAccessRandomLoadBalancer<Q, E> extends PairSupplierFactory
         return randomSeed.get();
     }
 
-    private ConcurrentHashMap<Integer, Pair<Q, E>> pairMap;
-    private int pairsNumber;
+    private volatile ConcurrentHashMap<Integer, Pair<Q, E>> pairMap;
+    private volatile int pairsNumber;
+    private volatile boolean initialized = false;
+    private final Object lock = new Object();
     
     @Override
     public Iterator<Pair<Q, E>> provide() {
@@ -51,6 +53,7 @@ public class ExclusiveAccessRandomLoadBalancer<Q, E> extends PairSupplierFactory
             protected Pair<Q, E> computeNext() {
     
                 if (currentPair != null && currentIndex != null) {
+                    log.debug("Returning pair - {}", currentPair);
                     pairMap.put(currentIndex, currentPair);
                 }
                 
@@ -68,7 +71,7 @@ public class ExclusiveAccessRandomLoadBalancer<Q, E> extends PairSupplierFactory
                 } while (currentPair == null);
     
     
-                log.debug("For thread {} providing pair {}", Thread.currentThread(), currentPair);
+                log.debug("Providing pair - {}", currentPair);
                 return currentPair;
             }
             
@@ -82,16 +85,24 @@ public class ExclusiveAccessRandomLoadBalancer<Q, E> extends PairSupplierFactory
     }
     
     @Override
-    public void setPairSupplierFactory(PairSupplierFactory<Q, E> pairSupplierFactory) {
-        super.setPairSupplierFactory(pairSupplierFactory);
-    
-        PairSupplier<Q, E> pairSupplier = getPairSupplier();
-        pairMap = new ConcurrentHashMap<>(pairSupplier.size());
-        for (int i = 0; i < pairSupplier.size(); ++i) {
-            pairMap.put(i, pairSupplier.get(i));
+    public void init() {
+        if (initialized) {
+            log.info("already initialized. returning...");
+            return;
         }
         
-        pairsNumber = pairSupplier.size();
-        log.debug("{} pairs in total to balance", pairsNumber);
+        synchronized (lock) {
+            super.init();
+
+            PairSupplier<Q, E> pairSupplier = getPairSupplier();
+            pairMap = new ConcurrentHashMap<>(pairSupplier.size());
+            for (int i = 0; i < pairSupplier.size(); ++i) {
+                pairMap.put(i, pairSupplier.get(i));
+            }
+
+            pairsNumber = pairSupplier.size();
+            log.info("{} pairs in total to balance", pairsNumber);
+            initialized = true;
+        }
     }
 }

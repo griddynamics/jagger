@@ -22,7 +22,7 @@ import java.util.Random;
  */
 public class JLoadBalancer implements Serializable {
     
-    private final static Logger log = LoggerFactory.getLogger(ExclusiveAccessRandomLoadBalancer.class);
+    private final static Logger log = LoggerFactory.getLogger(JLoadBalancer.class);
     
     /**
      * Creates {@link Builder} of load balancer
