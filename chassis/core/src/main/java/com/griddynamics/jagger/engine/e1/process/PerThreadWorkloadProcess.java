@@ -1,8 +1,5 @@
 package com.griddynamics.jagger.engine.e1.process;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadConfiguration;
 import com.griddynamics.jagger.exception.TechnicalException;
@@ -10,6 +7,10 @@ import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Service;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -71,9 +72,10 @@ public class PerThreadWorkloadProcess extends AbstractWorkloadProcess {
         for (Iterator<WorkloadService> it = threads.iterator(); it.hasNext(); ){
             WorkloadService workloadService = it.next();
             if (workloadService.state().equals(Service.State.TERMINATED)) {
+                it.remove();
                 samplesCountStartedFromTerminatedThreads += workloadService.getStartedSamples();
                 samplesCountFinishedFromTerminatedThreads += workloadService.getFinishedSamples();
-                it.remove();
+                emptyTransactionsFromTerminatedThreads += workloadService.getEmptyTransactions();
             }
         }
 

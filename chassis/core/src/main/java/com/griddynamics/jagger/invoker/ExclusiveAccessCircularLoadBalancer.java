@@ -29,17 +29,30 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
     
     private volatile ArrayBlockingQueue<Pair<Q, E>> pairQueue;
     
-    private Pair<Q, E> pollNext() {
+    protected boolean isToLoopAnIteration() {
+        return true;
+    }
+    
+    protected ArrayBlockingQueue<Pair<Q, E>> getPairQueue() {
+        return pairQueue;
+    }
+    
+    protected Pair<Q, E> pollNext() {
         final int timeout = 10;
         final TimeUnit timeUnit = TimeUnit.MINUTES;
     
+        Pair<Q, E> next = null;
         try {
-            return pairQueue.poll(timeout, timeUnit);
-        } catch (InterruptedException e) {
+             next = pairQueue.poll(timeout, timeUnit);
+        } catch (InterruptedException ignored) {
+        }
+    
+        if (next == null) {
             throw new IllegalStateException(String.format("Didn't manage to poll the next pair during %s %s",
                                                           String.valueOf(timeout),
-                                                          timeUnit), e);
+                                                          timeUnit));
         }
+        return next;
     }
     
     @Override
@@ -50,7 +63,7 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
             
             @Override
             protected Pair<Q, E> computeNext() {
-                if (current != null) {
+                if (current != null && isToLoopAnIteration()) {
                     log.debug("Returning pair - {}", current);
                     pairQueue.add(current);
                 }
