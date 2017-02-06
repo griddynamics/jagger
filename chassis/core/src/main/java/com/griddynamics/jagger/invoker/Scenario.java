@@ -20,11 +20,11 @@
 
 package com.griddynamics.jagger.invoker;
 
-import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.griddynamics.jagger.invoker.Invokers.doNothing;
 import static com.griddynamics.jagger.invoker.Invokers.emptyListener;
+
+import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 
 /**
  * Encapsulates algorithm of load testing.
@@ -57,7 +57,12 @@ public abstract class Scenario<Q, R, E> {
         checkNotNull(invocationListener);
         this.invocationListener = invocationListener;
     }
-
-    public abstract void doTransaction();
+    
+    /**
+     * Executes load testing unit of work
+     * @return {@code true} if any useful work (i.e. some load testing) was done during the transaction
+     * {@code false} either (for example, when all planned testing is done already)
+     */
+    public abstract boolean doTransaction();
 
 }

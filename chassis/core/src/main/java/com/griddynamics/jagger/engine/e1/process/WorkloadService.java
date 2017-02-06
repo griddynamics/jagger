@@ -6,5 +6,6 @@ public interface WorkloadService extends Service {
 
     Integer getStartedSamples();
     Integer getFinishedSamples();
+    long getEmptyTransactions();
     void changeDelay(int delay);
 }

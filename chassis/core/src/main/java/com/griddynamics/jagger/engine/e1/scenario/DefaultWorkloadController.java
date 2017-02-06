@@ -103,23 +103,33 @@ public class DefaultWorkloadController implements WorkloadController {
             WorkloadStatus status;
             String processId = processes.get(id);
             if (processId != null) {
-                status = remote.runSyncWithTimeout(PollWorkloadProcessStatus.create(sessionId, processId), Coordination.<Command<WorkloadStatus>>doNothing(), timeoutsConfiguration.getWorkloadPollingTimeout());
+                status = remote.runSyncWithTimeout(PollWorkloadProcessStatus.create(sessionId, processId),
+                                                   Coordination.<Command<WorkloadStatus>>doNothing(),
+                                                   timeoutsConfiguration.getWorkloadPollingTimeout());
             } else {
-                status = new WorkloadStatus(0,0,0);
+                status = new WorkloadStatus(0, 0, 0, 0);
             }
 
             Integer threadsOnNode = threads.get(id);
             Integer delay = delays.get(id);
 
-            log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {} with delay {}",
+            log.debug("{} Polled status: node {}, threads on node {}, samples started {}, samples finished {}, empty transactions {} with delay {}",
                       pollTime,
                       id,
                       threadsOnNode,
                       status.getStartedSamples(),
                       status.getFinishedSamples(),
+                      status.getEmptyTransactions(),
                       delay);
-
-            builder.addNodeInfo(id, status.getCurrentThreadNumber(), status.getStartedSamples(), status.getFinishedSamples(), delay, pollTime, durationTime);
+    
+            builder.addNodeInfo(id,
+                                status.getCurrentThreadNumber(),
+                                status.getStartedSamples(),
+                                status.getFinishedSamples(),
+                                status.getEmptyTransactions(),
+                                delay,
+                                pollTime,
+                                durationTime);
         }
 
         return builder.build();

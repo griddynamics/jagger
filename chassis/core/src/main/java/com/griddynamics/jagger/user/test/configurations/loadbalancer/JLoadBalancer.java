@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.loadbalancer;
 
 import com.griddynamics.jagger.invoker.ExclusiveAccessCircularLoadBalancer;
+import com.griddynamics.jagger.invoker.ExclusiveAccessOneIterationLoadBalancer;
 import com.griddynamics.jagger.invoker.ExclusiveAccessRandomLoadBalancer;
 import com.griddynamics.jagger.invoker.OneByOneLoadBalancer;
 import com.griddynamics.jagger.invoker.OneByOnePairSupplierFactory;
@@ -47,6 +48,7 @@ public class JLoadBalancer implements Serializable {
         private final DefaultLoadBalancer loadBalancer;
         private Long seed;
         private boolean exclusiveAccess;
+        private boolean oneIterationOnly;
         
         /**
          * Creates {@link Builder} of load balancer
@@ -77,10 +79,24 @@ public class JLoadBalancer implements Serializable {
          * any other virtual user won't get the same pair until that user comes for the next pair.
          *
          * @return {@link Builder} this
-         * @n
+         * @see ExclusiveAccessCircularLoadBalancer
+         * @see ExclusiveAccessRandomLoadBalancer
          */
         public Builder withExclusiveAccess() {
             this.exclusiveAccess = true;
+            return this;
+        }
+    
+        /**
+         * Optional: If this flag is true the builder will produce a load balancer
+         * which provides each pair only once (does only one iteration over a sequence of those pairs)
+         * @return
+         * @see com.griddynamics.jagger.invoker.ExclusiveAccessOneIterationLoadBalancer
+         */
+        public Builder withOneIterationOnly() {
+            this.oneIterationOnly = true;
+            this.exclusiveAccess = true;
+            
             return this;
         }
         
@@ -88,6 +104,11 @@ public class JLoadBalancer implements Serializable {
          * @return Load balancer (subtype of {@link QueryPoolLoadBalancer})
          */
         public QueryPoolLoadBalancer build() {
+            
+            if (oneIterationOnly && Objects.nonNull(seed)) {
+                throw new IllegalStateException("withOneIterationOnly() and withRandomSeed() conditions can't be satisfied simultaneously. "
+                                                + "one iteration only load balancer does not support randomness");
+            }
             
             PairSupplierFactory pairSupplierFactory = null;
             switch (loadBalancer) {
@@ -102,14 +123,24 @@ public class JLoadBalancer implements Serializable {
             
             QueryPoolLoadBalancer loadBalancer = null;
             if (Objects.nonNull(seed)) {
-                loadBalancer = exclusiveAccess ? new ExclusiveAccessRandomLoadBalancer(seed, pairSupplierFactory)
-                                               : new RandomLoadBalancer(seed, pairSupplierFactory);
+                if (exclusiveAccess) {
+                    loadBalancer = new ExclusiveAccessRandomLoadBalancer(seed, pairSupplierFactory);
+                } else {
+                    loadBalancer = new RandomLoadBalancer(seed, pairSupplierFactory);
+                }
             } else {
-                loadBalancer = exclusiveAccess ? new ExclusiveAccessCircularLoadBalancer(pairSupplierFactory)
-                                               : new SimpleCircularLoadBalancer(pairSupplierFactory);
+                if (exclusiveAccess) {
+                    if (oneIterationOnly) {
+                        loadBalancer = new ExclusiveAccessOneIterationLoadBalancer(pairSupplierFactory);
+                    } else {
+                        loadBalancer = new ExclusiveAccessCircularLoadBalancer(pairSupplierFactory);
+                    }
+                } else {
+                    loadBalancer = new SimpleCircularLoadBalancer(pairSupplierFactory);
+                }
             }
     
-            log.debug("Built a {} load balancer", loadBalancer);
+            log.info("Built a {} load balancer", loadBalancer);
             return loadBalancer;
         }
     }
