@@ -40,6 +40,7 @@ public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> 
     
     protected Iterable<Q> queryProvider;
     protected Iterable<E> endpointProvider;
+    protected KernelInfo kernelInfo;
     
     protected volatile boolean initialized = false;
     protected final Object lock = new Object();
@@ -59,7 +60,11 @@ public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> 
     public void setEndpointProvider(Iterable<E> endpointProvider){
         this.endpointProvider = endpointProvider;
     }
-
+    
+    public void setKernelInfo(KernelInfo kernelInfo) {
+        this.kernelInfo = kernelInfo;
+    }
+    
     @Override
     public final Iterator<Pair<Q, E>> iterator() {
         return provide();
@@ -91,6 +96,8 @@ public abstract class QueryPoolLoadBalancer<Q, E> implements LoadBalancer<Q, E> 
             } else {
                 log.info("total queries number - {}", querySize());
             }
+    
+            log.info("kernel info: {}", kernelInfo);
         
             initialized = true;
         }

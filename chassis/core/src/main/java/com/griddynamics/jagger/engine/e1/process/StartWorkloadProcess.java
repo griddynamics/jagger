@@ -26,6 +26,7 @@ import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.KernelSideObjectProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ScenarioCollector;
+import com.griddynamics.jagger.invoker.KernelInfo;
 import com.griddynamics.jagger.invoker.ScenarioFactory;
 
 import java.util.List;
@@ -38,7 +39,8 @@ public class StartWorkloadProcess implements Command<String> {
     private List<KernelSideObjectProvider<ScenarioCollector<Object, Object, Object>>> collectors;
     private List<Provider<InvocationListener<Object, Object, Object>>> listeners;
     private int poolSize;
-
+    private KernelInfo kernelInfo;
+    
     public static StartWorkloadProcess create(String sessionId, ScenarioContext scenarioContext, int poolSize) {
         return new StartWorkloadProcess(sessionId, scenarioContext, poolSize);
     }
@@ -106,23 +108,27 @@ public class StartWorkloadProcess implements Command<String> {
         return this.scenarioContext;
     }
     
-    @Override
-    public String toString() {
-        return "StartWorkloadProcess{" +
-                "scenarioFactory=" + scenarioFactory +
-                ", sessionId='" + sessionId + '\'' +
-                ", scenarioContext=" + scenarioContext +
-                ", collectors=" + collectors +
-                ", listeners=" + listeners +
-                ", poolSize=" + poolSize +
-                '}';
-    }
-
+    
     public int getPoolSize() {
         return poolSize;
     }
-
+    
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
+    }
+    
+    public void setKernelInfo(KernelInfo kernelInfo) {
+        this.kernelInfo = kernelInfo;
+    }
+    
+    public KernelInfo getKernelInfo() {
+        return kernelInfo;
+    }
+    
+    @Override
+    public String toString() {
+        return "StartWorkloadProcess{" + "scenarioFactory=" + scenarioFactory + ", sessionId='" + sessionId + '\''
+               + ", scenarioContext=" + scenarioContext + ", validators=" + validators + ", collectors=" + collectors
+               + ", listeners=" + listeners + ", poolSize=" + poolSize + ", kernelInfo=" + kernelInfo + '}';
     }
 }

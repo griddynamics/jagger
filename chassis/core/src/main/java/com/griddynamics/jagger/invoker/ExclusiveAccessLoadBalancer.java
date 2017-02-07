@@ -84,14 +84,22 @@ public abstract class ExclusiveAccessLoadBalancer<Q, E> extends PairSupplierFact
     
             PairSupplier<Q, E> pairSupplier = getPairSupplier();
             List<Pair<Q, E>> pairList = new ArrayList<>(pairSupplier.size());
-            for (int i = 0; i < pairSupplier.size(); ++i) {
-                pairList.add(pairSupplier.get(i));
+
+            int index = 0;
+            int step = 1;
+            if (kernelInfo != null) { // then from all the provided pairs pick only those under this node's index.
+                index = kernelInfo.getKernelId();
+                step = kernelInfo.getKernelsNumber();
+            }
+            for (; index < pairSupplier.size(); index += step) {
+                pairList.add(pairSupplier.get(index));
             }
             
-            if (!Objects.nonNull(randomnessSeed)) {
+            if (Objects.nonNull(randomnessSeed)) {
                 log.info("'randomnessSeed' value is not null. Going to shuffle the pairs");
                 Collections.shuffle(pairList, new Random(randomnessSeed));
             }
+            log.debug("Pairs to load balance: {}", pairList);
             
             pairQueue = new ArrayBlockingQueue<>(pairSupplier.size(), true, pairList);
         }

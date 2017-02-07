@@ -131,7 +131,7 @@ public abstract class AbstractWorkloadProcess implements WorkloadProcess {
     protected void startNewThread(int delay) {
 
         log.debug("Adding new workload thread");
-        Scenario<Object, Object, Object> scenario = command.getScenarioFactory().get(context);
+        Scenario<Object, Object, Object> scenario = command.getScenarioFactory().get(context, command.getKernelInfo());
 
         List<InvocationListener<?, ?, ?>> listeners = Lists.newArrayList();
         for (Provider<InvocationListener<Object, Object, Object>> listener : command.getListeners()){

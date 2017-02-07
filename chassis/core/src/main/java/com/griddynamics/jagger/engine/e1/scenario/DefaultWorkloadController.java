@@ -32,6 +32,7 @@ import com.griddynamics.jagger.engine.e1.process.ScenarioContext;
 import com.griddynamics.jagger.engine.e1.process.StartWorkloadProcess;
 import com.griddynamics.jagger.engine.e1.process.StopWorkloadProcess;
 import com.griddynamics.jagger.engine.e1.process.WorkloadStatus;
+import com.griddynamics.jagger.invoker.KernelInfo;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ public class DefaultWorkloadController implements WorkloadController {
     private Map<NodeId, Integer> threads;
     private Map<NodeId, Integer> delays;
     private Map<NodeId, Integer> poolSize;
+    private Map<NodeId, Integer> nodeToIndex;
     
     private String classesUrl;
     
@@ -80,6 +82,13 @@ public class DefaultWorkloadController implements WorkloadController {
         processes = Maps.newHashMap();
         threads = Maps.newHashMap();
         delays = Maps.newHashMap();
+        
+        nodeToIndex = Maps.newHashMap();
+        int index = 0;
+        for (NodeId nodeId : remotes.keySet()) {
+            nodeToIndex.put(nodeId, index++);
+        }
+        nodeToIndex = ImmutableMap.copyOf(nodeToIndex);
     }
 
     @Override
@@ -226,6 +235,7 @@ public class DefaultWorkloadController implements WorkloadController {
         }
         StartWorkloadProcess start = StartWorkloadProcess.create(sessionId, scenarioContext, nodePoolSize);
         start.setScenarioFactory(task.getScenarioFactory());
+        start.setKernelInfo(new KernelInfo(nodeToIndex.get(node), nodeToIndex.size()));
         start.setCollectors(task.getCollectors());
         start.setValidators(task.getValidators());
         start.setListeners(task.getListeners());

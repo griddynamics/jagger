@@ -29,18 +29,18 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
     private Class<Invoker<Q, R, E>> invokerClazz;
     private QueryPoolLoadBalancer<Q, E> loadBalancer;
     private SystemClock systemClock = new JavaSystemClock();
-
+    
     private Iterable<Q> queryProvider;
     private Iterable<E> endpointProvider;
     
     private Provider<Invoker> invokerProvider;
 
     @Override
-    public Scenario<Q, R, E> get(NodeContext nodeContext) {
+    public Scenario<Q, R, E> get(NodeContext nodeContext, KernelInfo kernelInfo) {
     
         Invoker<Q, R, E> invoker = instantiateInvoker(nodeContext);
         
-        initLoadBalancer();
+        initLoadBalancer(kernelInfo);
         
         return new QueryPoolScenario<Q, R, E>(invoker, loadBalancer.provide(), systemClock);
     }
@@ -60,13 +60,16 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
         return invoker;
     }
     
-    private void initLoadBalancer() {
+    private void initLoadBalancer(KernelInfo kernelInfo) {
         if (endpointProvider != null) {
             loadBalancer.setEndpointProvider(getEndpointProvider());
         }
         if (queryProvider != null) {
             loadBalancer.setQueryProvider(getQueryProvider());
         }
+    
+        loadBalancer.setKernelInfo(kernelInfo);
+        
         loadBalancer.init();
     }
 
