@@ -36,7 +36,7 @@ public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoa
         this.pairSupplierFactory = pairSupplierFactory;
     }
     
-    protected PairSupplier<Q, E> getPairSupplier(){
+    protected PairSupplier<Q, E> getPairSupplier() {
         return pairSupplier;
     }
     

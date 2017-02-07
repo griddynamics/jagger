@@ -1,11 +1,12 @@
 package com.griddynamics.jagger.user.test.configurations.loadbalancer;
 
-import com.griddynamics.jagger.invoker.ExclusiveAccessCircularLoadBalancer;
-import com.griddynamics.jagger.invoker.ExclusiveAccessOneIterationLoadBalancer;
-import com.griddynamics.jagger.invoker.ExclusiveAccessRandomLoadBalancer;
+import com.griddynamics.jagger.invoker.CircularExclusiveAccessLoadBalancer;
+import com.griddynamics.jagger.invoker.ExclusiveAccessLoadBalancer;
+import com.griddynamics.jagger.invoker.NonCircularExclusiveAccessLoadBalancer;
 import com.griddynamics.jagger.invoker.OneByOneLoadBalancer;
 import com.griddynamics.jagger.invoker.OneByOnePairSupplierFactory;
 import com.griddynamics.jagger.invoker.PairSupplierFactory;
+import com.griddynamics.jagger.invoker.PairSupplierFactoryLoadBalancer;
 import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
 import com.griddynamics.jagger.invoker.RandomLoadBalancer;
 import com.griddynamics.jagger.invoker.RoundRobinLoadBalancer;
@@ -79,8 +80,7 @@ public class JLoadBalancer implements Serializable {
          * any other virtual user won't get the same pair until that user comes for the next pair.
          *
          * @return {@link Builder} this
-         * @see ExclusiveAccessCircularLoadBalancer
-         * @see ExclusiveAccessRandomLoadBalancer
+         * @see ExclusiveAccessLoadBalancer
          */
         public Builder withExclusiveAccess() {
             this.exclusiveAccess = true;
@@ -90,10 +90,10 @@ public class JLoadBalancer implements Serializable {
         /**
          * Optional: If this flag is true the builder will produce a load balancer
          * which provides each pair only once (does only one iteration over a sequence of those pairs)
-         * @return
-         * @see com.griddynamics.jagger.invoker.ExclusiveAccessOneIterationLoadBalancer
+         * @return {@link Builder} this
+         * @see NonCircularExclusiveAccessLoadBalancer
          */
-        public Builder withOneIterationOnly() {
+        public Builder withNonCirclularIteration() {
             this.oneIterationOnly = true;
             this.exclusiveAccess = true;
             
@@ -105,11 +105,6 @@ public class JLoadBalancer implements Serializable {
          */
         public QueryPoolLoadBalancer build() {
             
-            if (oneIterationOnly && Objects.nonNull(seed)) {
-                throw new IllegalStateException("withOneIterationOnly() and withRandomSeed() conditions can't be satisfied simultaneously. "
-                                                + "one iteration only load balancer does not support randomness");
-            }
-            
             PairSupplierFactory pairSupplierFactory = null;
             switch (loadBalancer) {
                 case ONE_BY_ONE:
@@ -120,21 +115,18 @@ public class JLoadBalancer implements Serializable {
                     pairSupplierFactory = new RoundRobinPairSupplierFactory();
                     break;
             }
-            
-            QueryPoolLoadBalancer loadBalancer = null;
-            if (Objects.nonNull(seed)) {
-                if (exclusiveAccess) {
-                    loadBalancer = new ExclusiveAccessRandomLoadBalancer(seed, pairSupplierFactory);
+    
+            PairSupplierFactoryLoadBalancer loadBalancer = null;
+            if (exclusiveAccess) {
+                if (oneIterationOnly) {
+                    loadBalancer = new NonCircularExclusiveAccessLoadBalancer(pairSupplierFactory);
                 } else {
-                    loadBalancer = new RandomLoadBalancer(seed, pairSupplierFactory);
+                    loadBalancer = new CircularExclusiveAccessLoadBalancer(pairSupplierFactory);
                 }
+                ((ExclusiveAccessLoadBalancer)loadBalancer).setRandomnessSeed(seed);
             } else {
-                if (exclusiveAccess) {
-                    if (oneIterationOnly) {
-                        loadBalancer = new ExclusiveAccessOneIterationLoadBalancer(pairSupplierFactory);
-                    } else {
-                        loadBalancer = new ExclusiveAccessCircularLoadBalancer(pairSupplierFactory);
-                    }
+                if (Objects.nonNull(seed)) {
+                    loadBalancer = new RandomLoadBalancer(seed, pairSupplierFactory);
                 } else {
                     loadBalancer = new SimpleCircularLoadBalancer(pairSupplierFactory);
                 }
