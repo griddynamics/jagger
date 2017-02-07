@@ -6,54 +6,46 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.AbstractIterator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
- * This {@link com.griddynamics.jagger.invoker.LoadBalancer} implementation has the same semantics
- * as {@link com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer} and in addition it guarantees
+ * This {@link com.griddynamics.jagger.invoker.LoadBalancer} implementation provides guarantees
  * that each query and endpoint pair will be in exclusive access, i.e. once it is acquired by one thread
- * it won't be acquired by any other thread (virtual user).
+ * it won't be acquired by any other thread (virtual user) in multi threaded environment.
+ * @n
+ * If {@link #randomnessSeed} is not {@code null} randomly shuffles the sequence of pairs from {@link #pairSupplierFactory} using it.
  * @n
  * Created by Andrey Badaev
  * Date: 01/02/17
  */
-public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
+public abstract class ExclusiveAccessLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
     
-    private final static Logger log = LoggerFactory.getLogger(ExclusiveAccessCircularLoadBalancer.class);
+    private final static Logger log = LoggerFactory.getLogger(ExclusiveAccessLoadBalancer.class);
     
-    public ExclusiveAccessCircularLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {
+    public ExclusiveAccessLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {
         super(pairSupplierFactory);
     }
     
     private volatile ArrayBlockingQueue<Pair<Q, E>> pairQueue;
+    private volatile Long randomnessSeed;
     
-    protected boolean isToLoopAnIteration() {
-        return true;
+    public void setRandomnessSeed(Long randomnessSeed) {
+        this.randomnessSeed = randomnessSeed;
     }
+    
+    protected abstract boolean isToCircleAnIteration();
     
     protected ArrayBlockingQueue<Pair<Q, E>> getPairQueue() {
         return pairQueue;
     }
     
-    protected Pair<Q, E> pollNext() {
-        final int timeout = 10;
-        final TimeUnit timeUnit = TimeUnit.MINUTES;
-    
-        Pair<Q, E> next = null;
-        try {
-             next = pairQueue.poll(timeout, timeUnit);
-        } catch (InterruptedException ignored) {
-        }
-    
-        if (next == null) {
-            throw new IllegalStateException(String.format("Didn't manage to poll the next pair during %s %s",
-                                                          String.valueOf(timeout),
-                                                          timeUnit));
-        }
-        return next;
-    }
+    protected abstract Pair<Q, E> pollNext();
     
     @Override
     public Iterator<Pair<Q, E>> provide() {
@@ -63,7 +55,7 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
             
             @Override
             protected Pair<Q, E> computeNext() {
-                if (current != null && isToLoopAnIteration()) {
+                if (current != null && isToCircleAnIteration()) {
                     log.debug("Returning pair - {}", current);
                     pairQueue.add(current);
                 }
@@ -75,7 +67,7 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
             
             @Override
             public String toString() {
-                return "ExclusiveAccessCircularLoadBalancer iterator";
+                return super.getClass() + " iterator";
             }
         };
     }
@@ -91,10 +83,17 @@ public class ExclusiveAccessCircularLoadBalancer<Q, E> extends PairSupplierFacto
             super.init();
     
             PairSupplier<Q, E> pairSupplier = getPairSupplier();
-            pairQueue = new ArrayBlockingQueue<>(pairSupplier.size(), true);
+            List<Pair<Q, E>> pairList = new ArrayList<>(pairSupplier.size());
             for (int i = 0; i < pairSupplier.size(); ++i) {
-                pairQueue.add(pairSupplier.get(i));
+                pairList.add(pairSupplier.get(i));
             }
+            
+            if (Objects.nonNull(randomnessSeed)) {
+                log.info("'randomnessSeed' value is not null. Going to shuffle the pairs");
+                Collections.shuffle(pairList, new Random(randomnessSeed));
+            }
+            
+            pairQueue = new ArrayBlockingQueue<>(pairSupplier.size(), true, pairList);
         }
     }
 }
