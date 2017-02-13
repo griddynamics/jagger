@@ -25,35 +25,43 @@ import static java.util.stream.Collectors.toList;
  */
 class WorkloadGenerator {
 
-    static WorkloadClockConfiguration generateLoad(JLoadProfile jLoadProfile) {
+    static WorkloadClockConfiguration generateLoad(JLoadProfile jLoadProfile, int defaultMaxThreads) {
         WorkloadClockConfiguration clockConfiguration = null;
         if (jLoadProfile instanceof JLoadProfileRps) {
-            clockConfiguration = generateRps((JLoadProfileRps) jLoadProfile);
+            clockConfiguration = generateRps((JLoadProfileRps) jLoadProfile, defaultMaxThreads);
         } else if (jLoadProfile instanceof JLoadProfileUserGroups) {
             clockConfiguration = generateUserGroup((JLoadProfileUserGroups) jLoadProfile);
         } else if (jLoadProfile instanceof JLoadProfileInvocation) {
             clockConfiguration = generateInvocation((JLoadProfileInvocation) jLoadProfile);
         } else if (jLoadProfile instanceof JLoadProfileTps) {
-            clockConfiguration = generateTps((JLoadProfileTps) jLoadProfile);
+            clockConfiguration = generateTps((JLoadProfileTps) jLoadProfile, defaultMaxThreads);
         }
         return clockConfiguration;
     }
 
 
-    private static WorkloadClockConfiguration generateRps(JLoadProfileRps jLoadProfile) {
+    private static WorkloadClockConfiguration generateRps(JLoadProfileRps jLoadProfile, int defaultMaxThreads) {
         QpsClockConfiguration qpsClockConfiguration = new QpsClockConfiguration();
         qpsClockConfiguration.setValue(jLoadProfile.getRequestsPerSecond());
         qpsClockConfiguration.setWarmUpTime(jLoadProfile.getWarmUpTimeInMilliseconds());
-        qpsClockConfiguration.setMaxThreadNumber((int) jLoadProfile.getMaxLoadThreads());
+        int maxLoadThreads = (int) jLoadProfile.getMaxLoadThreads();
+        if (JLoadProfileRps.USE_DEFAULT_MAX_THREAD_COUNT == maxLoadThreads) {
+            maxLoadThreads = defaultMaxThreads;
+        }
+        qpsClockConfiguration.setMaxThreadNumber(maxLoadThreads);
         qpsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
         return qpsClockConfiguration;
     }
 
-    private static WorkloadClockConfiguration generateTps(JLoadProfileTps jLoadProfile) {
+    private static WorkloadClockConfiguration generateTps(JLoadProfileTps jLoadProfile, int defaultMaxThreads) {
         TpsClockConfiguration tpsClockConfiguration = new TpsClockConfiguration();
         tpsClockConfiguration.setValue(jLoadProfile.getTransactionsPerSecond());
         tpsClockConfiguration.setWarmUpTime(jLoadProfile.getWarmUpTimeInMilliseconds());
-        tpsClockConfiguration.setMaxThreadNumber((int) jLoadProfile.getMaxLoadThreads());
+        int maxLoadThreads = (int) jLoadProfile.getMaxLoadThreads();
+        if (JLoadProfileTps.USE_DEFAULT_MAX_THREAD_COUNT == maxLoadThreads) {
+            maxLoadThreads = defaultMaxThreads;
+        }
+        tpsClockConfiguration.setMaxThreadNumber(maxLoadThreads);
         tpsClockConfiguration.setTickInterval(jLoadProfile.getTickInterval());
         return tpsClockConfiguration;
     }
