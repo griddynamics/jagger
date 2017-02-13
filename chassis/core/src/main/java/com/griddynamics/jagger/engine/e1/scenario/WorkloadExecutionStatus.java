@@ -42,6 +42,8 @@ public interface WorkloadExecutionStatus {
     Integer getDelay(NodeId id);
 
     Long getPollTime(NodeId id);
+    
+    long getEmptyTransactions(NodeId id);
 
     int getTotalStartedSamples();
 

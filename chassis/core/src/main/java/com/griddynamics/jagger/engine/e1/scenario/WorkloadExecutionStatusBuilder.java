@@ -20,10 +20,11 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
+import com.griddynamics.jagger.coordinator.NodeId;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.griddynamics.jagger.coordinator.NodeId;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class WorkloadExecutionStatusBuilder {
     private final Map<NodeId, Integer> threads = Maps.newConcurrentMap();
     private final Map<NodeId, Integer> startedSamples = Maps.newConcurrentMap();
     private final Map<NodeId, Integer> finishedSamples = Maps.newConcurrentMap();
+    private final Map<NodeId, Long> emptyTransactions = Maps.newConcurrentMap();
     private final Map<NodeId, Integer> delays = Maps.newConcurrentMap();
     private final Map<NodeId, Long> pollTime = Maps.newConcurrentMap();
     private final Map<NodeId, Long> durationTime = Maps.newConcurrentMap();
@@ -41,10 +43,11 @@ public class WorkloadExecutionStatusBuilder {
         this.task = task;
     }
 
-    public WorkloadExecutionStatusBuilder addNodeInfo(NodeId id, int threads, int startedSamples, int finishedSamples, Integer delay, long pollTime, long durationTime) {
+    public WorkloadExecutionStatusBuilder addNodeInfo(NodeId id, int threads, int startedSamples, int finishedSamples, long emptyTransactions, Integer delay, long pollTime, long durationTime) {
         this.threads.put(id, threads);
         this.startedSamples.put(id, startedSamples);
         this.finishedSamples.put(id, finishedSamples);
+        this.emptyTransactions.put(id, emptyTransactions);
         this.delays.put(id, delay);
         this.pollTime.put(id, pollTime);
         this.durationTime.put(id, durationTime);
@@ -52,7 +55,7 @@ public class WorkloadExecutionStatusBuilder {
     }
 
     public WorkloadExecutionStatus build() {
-        return new DefaultWorkloadExecutionStatus(threads, startedSamples, finishedSamples, delays, pollTime, durationTime, task);
+        return new DefaultWorkloadExecutionStatus(threads, startedSamples, finishedSamples, emptyTransactions, delays, pollTime, durationTime, task);
     }
 
     private class DefaultWorkloadExecutionStatus implements WorkloadExecutionStatus {
@@ -60,14 +63,20 @@ public class WorkloadExecutionStatusBuilder {
         private final Map<NodeId, Integer> threads;
         private final Map<NodeId, Integer> startedSamples;
         private final Map<NodeId, Integer> finishedSamples;
+        private final Map<NodeId, Long> emptyTransactions;
         private final Map<NodeId, Integer> delays;
         private final Map<NodeId, Long> pollTime;
         private final Map<NodeId, Long> durationTime;
         private WorkloadTask task;
 
-        private DefaultWorkloadExecutionStatus(Map<NodeId, Integer> threads, Map<NodeId, Integer> startedSamples,
+        private DefaultWorkloadExecutionStatus(Map<NodeId, Integer> threads,
+                                               Map<NodeId, Integer> startedSamples,
                                                Map<NodeId, Integer> finishedSamples,
-                                               Map<NodeId, Integer> delays, Map<NodeId, Long> pollTime, Map<NodeId, Long> durationTime, WorkloadTask task) {
+                                               Map<NodeId, Long> emptyTransactions,
+                                               Map<NodeId, Integer> delays,
+                                               Map<NodeId, Long> pollTime,
+                                               Map<NodeId, Long> durationTime,
+                                               WorkloadTask task) {
             boolean nodesAreEqual = threads.keySet().equals(startedSamples.keySet()) && startedSamples.keySet().equals(pollTime.keySet());
 
             Preconditions.checkArgument(nodesAreEqual);
@@ -77,11 +86,11 @@ public class WorkloadExecutionStatusBuilder {
             this.threads = threads;
             this.startedSamples = startedSamples;
             this.finishedSamples = finishedSamples;
+            this.emptyTransactions = emptyTransactions;
             this.delays = delays;
             this.pollTime = pollTime;
             this.durationTime = durationTime;
         }
-
 
         @Override
         public Set<NodeId> getNodes() {
@@ -112,7 +121,12 @@ public class WorkloadExecutionStatusBuilder {
         public Long getPollTime(NodeId id) {
             return pollTime.get(id);
         }
-
+    
+        @Override
+        public long getEmptyTransactions(NodeId id) {
+            return emptyTransactions.get(id);
+        }
+    
         @Override
         public int getTotalStartedSamples() {
             int result = 0;

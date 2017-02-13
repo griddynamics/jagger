@@ -28,11 +28,13 @@ public class WorkloadStatus implements Serializable {
     private final int startedSamples;
     private final int finishedSamples;
     private final int currentThreadNumber;
+    private final long emptyTransactions;
 
-    public WorkloadStatus(int startedSamples, int finishedSamples, int currentThreadNumber) {
+    public WorkloadStatus(int startedSamples, int finishedSamples, int currentThreadNumber, long emptyTransactions) {
         this.startedSamples = startedSamples;
         this.finishedSamples = finishedSamples;
         this.currentThreadNumber = currentThreadNumber;
+        this.emptyTransactions = emptyTransactions;
     }
 
     public int getStartedSamples() {
@@ -46,13 +48,14 @@ public class WorkloadStatus implements Serializable {
     public int getCurrentThreadNumber() {
         return currentThreadNumber;
     }
-
+    
+    public long getEmptyTransactions() {
+        return emptyTransactions;
+    }
+    
     @Override
     public String toString() {
-        return "WorkloadStatus{" +
-                "startedSamples=" + startedSamples +
-                ", finishedSamples=" + finishedSamples +
-                ", currentThreadNumber=" + currentThreadNumber +
-                '}';
+        return "WorkloadStatus{" + "startedSamples=" + startedSamples + ", finishedSamples=" + finishedSamples
+               + ", currentThreadNumber=" + currentThreadNumber + ", emptyTransactions=" + emptyTransactions + '}';
     }
 }

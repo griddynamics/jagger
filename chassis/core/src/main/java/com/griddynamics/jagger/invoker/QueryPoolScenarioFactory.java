@@ -37,6 +37,15 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
 
     @Override
     public Scenario<Q, R, E> get(NodeContext nodeContext) {
+    
+        Invoker<Q, R, E> invoker = instantiateInvoker(nodeContext);
+        
+        initLoadBalancer();
+        
+        return new QueryPoolScenario<Q, R, E>(invoker, loadBalancer.provide(), systemClock);
+    }
+    
+    private Invoker<Q, R, E> instantiateInvoker(final NodeContext nodeContext) {
         // TODO: to remove request to context after JFG-1090
         Invoker<Q, R, E> invoker = nodeContext.getService(invokerClazz);
         if (invokerProvider != null) {
@@ -45,11 +54,20 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
     
         if (invoker == null) {
             throw new IllegalArgumentException("Service for class + '" + invokerClazz.getCanonicalName()
-            + "' not found!");
+                                               + "' not found!");
         }
-        if (endpointProvider!=null) loadBalancer.setEndpointProvider(getEndpointProvider());
-        if (queryProvider!=null)    loadBalancer.setQueryProvider(getQueryProvider());
-        return new QueryPoolScenario<Q, R, E>(invoker, loadBalancer.provide(), systemClock);
+        
+        return invoker;
+    }
+    
+    private void initLoadBalancer() {
+        if (endpointProvider != null) {
+            loadBalancer.setEndpointProvider(getEndpointProvider());
+        }
+        if (queryProvider != null) {
+            loadBalancer.setQueryProvider(getQueryProvider());
+        }
+        loadBalancer.init();
     }
 
     //@Required

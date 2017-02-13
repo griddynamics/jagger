@@ -47,8 +47,9 @@ public class SimpleScenario<Q, R, E> extends Scenario<Q, R, E> {
     }
 
     @Override
-    public void doTransaction() {
+    public boolean doTransaction() {
         invoker().invoke(query, endpoint);
+        return true;
     }
 
     private Invoker<Q, Nothing, E> invoker() {
