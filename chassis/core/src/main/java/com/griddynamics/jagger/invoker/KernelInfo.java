@@ -1,15 +1,20 @@
 package com.griddynamics.jagger.invoker;
 
+import java.io.Serializable;
+
 /**
  * Encapsulates kernel info
  * @n
  * Created by Andrey Badaev
  * Date: 07/02/17
  */
-public class KernelInfo {
+public class KernelInfo implements Serializable {
     
-    private final int kernelId;
-    private final int kernelsNumber;
+    private int kernelId;
+    private int kernelsNumber;
+    
+    private KernelInfo() { // for serialization only
+    }
     
     public KernelInfo(int kernelId, int kernelsNumber) {
         if (kernelId < 0) {
