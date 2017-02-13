@@ -16,7 +16,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractDisplayNameFromGenerated;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioRegexp;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepRegexp;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.getIdsFromGeneratedIdForScenarioComponents;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractIdsFromGeneratedIdForScenarioComponents;
 
 @SuppressWarnings("Duplicates")
 @Component
@@ -75,7 +75,7 @@ public class TreeViewGroupRuleProvider {
         Map<String, String> scenarioRegexps = new HashMap<>();
         Map<String, String> scenarioDisplayNames = new HashMap<>();
         scenarioComponentsIdToDisplayName.forEach((generatedId, generatedDisplayName) -> {
-            IdContainer originalIds = getIdsFromGeneratedIdForScenarioComponents(generatedId);
+            IdContainer originalIds = extractIdsFromGeneratedIdForScenarioComponents(generatedId);
             String originalDisplayName = extractDisplayNameFromGenerated(generatedDisplayName);
 
             if (originalIds != null) {

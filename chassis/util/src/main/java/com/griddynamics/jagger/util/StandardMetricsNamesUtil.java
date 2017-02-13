@@ -182,7 +182,7 @@ public class StandardMetricsNamesUtil {
         return metricNodeId.matches(IS_SCENARIO_REGEXP);
     }
 
-    public static IdContainer getIdsFromGeneratedIdForScenarioComponents(String generatedId) {
+    public static IdContainer extractIdsFromGeneratedIdForScenarioComponents(String generatedId) {
         Pattern pattern = Pattern.compile(USER_SCENARIO_REGEXP_WITH_GROUPS);
         Matcher matcher = pattern.matcher(generatedId);
         if (matcher.matches()) {
