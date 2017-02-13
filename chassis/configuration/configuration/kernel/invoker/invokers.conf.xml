@@ -52,6 +52,14 @@
         <constructor-arg name="httpClient" ref="springBasedHttpClient" />
     </bean>
 
+    <bean id="defaultBatchHttpInvoker" class="com.griddynamics.jagger.invoker.batch.http.DefaultBatchHttpInvoker">
+        <constructor-arg name="httpClient" ref="springBasedHttpClient" />
+    </bean>
+
+    <bean id="exampleCustomScenarioHttpInvoker" class="com.griddynamics.jagger.invoker.scenario.http.DefaultHttpCustomScenarioInvoker">
+        <constructor-arg name="executor" ref="springBasedHttpClient" />
+    </bean>
+
     <bean id="springBasedHttpClient" class="com.griddynamics.jagger.invoker.v2.SpringBasedHttpClient">
         <constructor-arg name="clientParams">
             <map>
