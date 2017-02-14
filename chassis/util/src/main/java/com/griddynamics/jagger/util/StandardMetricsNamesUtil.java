@@ -21,13 +21,13 @@
 package com.griddynamics.jagger.util;
 
 
+import static org.apache.commons.lang3.StringUtils.removePattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.apache.commons.lang3.StringUtils.removePattern;
 
 /**
  * Class is used in chassis, web UI server and web UI client
@@ -158,6 +158,7 @@ public class StandardMetricsNamesUtil {
     private static final String SCENARIO_STEP_REGEXP_TEMPLATE = "^.*" + USER_SCENARIO_ID + "%s" + US_STEP_ID + "\\d+_%s.*$";
     private static final String SCENARIO_REGEXP_TEMPLATE = "(^.*" + USER_SCENARIO_ID + "%s" + US_STEP_ID + ".*$)|(^.*%s.*(-sum|-Success rate|-Number of fails).*$)";
     private static final String DISPLAY_NAME_REGEXP = "^.*(" + ITERATIONS_SAMPLES + "|" + LATENCY_SEC + "|" + SUCCESS_RATE + ").*";
+    private static final String SCENARIO_STEP_METRIC_REGEXP_TEMPLATE = "^.*" + USER_SCENARIO_ID + "{scenario_id}" + US_STEP_ID + "\\d+_{step_id}_" + US_METRIC_ID + "{metric_id}_(-.*)?$";
 
     public static String generateScenarioStepId(String scenarioId, String stepId, Integer stepIndex) {
         // both scenario and scenario steps will have same format of ids
@@ -209,5 +210,11 @@ public class StandardMetricsNamesUtil {
 
     public static String generateScenarioStepRegexp(String scenarioId, String stepId) {
         return String.format(SCENARIO_STEP_REGEXP_TEMPLATE, scenarioId, stepId);
+    }
+    
+    public static String generateScenarioStepMetricRegexp(String scenarioId, String stepId, String metricId) {
+        return SCENARIO_STEP_METRIC_REGEXP_TEMPLATE.replace("{scenario_id}", Pattern.quote(scenarioId))
+                                                   .replace("{step_id}", Pattern.quote(stepId))
+                                                   .replace("{metric_id}", Pattern.quote(metricId));
     }
 }

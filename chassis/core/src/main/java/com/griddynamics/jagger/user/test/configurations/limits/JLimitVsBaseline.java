@@ -16,28 +16,28 @@ public class JLimitVsBaseline extends JLimit {
     /**
      * Builder for {@link JLimit} to compare with baseline.
      *
-     * @param metricName metric name.
+     * @param metricId metric name.
      * @return builder for {@link JLimit}.
      */
-    public static Builder builder(String metricName) {
-        return new Builder(metricName);
+    public static Builder builder(String metricId) {
+        return new Builder(metricId);
     }
 
     /**
      * Builder for {@link JLimit} to compare with baseline.
      *
-     * @param metricName name of standard metric.
+     * @param metricId name of standard metric.
      * @return builder for {@link JLimit}.
      */
-    public static Builder builder(JMetricName metricName) {
-        return new Builder(metricName.transformToString());
+    public static Builder builder(JMetricName metricId) {
+        return new Builder(metricId.transformToString());
     }
 
     public static class Builder extends JLimit.Builder {
 
-        private Builder(String metricName) {
-            Objects.requireNonNull(metricName);
-            this.metricName = metricName;
+        private Builder(String metricId) {
+            Objects.requireNonNull(metricId);
+            this.metricId = metricId;
         }
 
         @Override

@@ -36,7 +36,7 @@ public class LimitGenerator {
 
     private static Limit generateLimit(JLimit jLimit) {
         Limit limit = new Limit();
-        limit.setMetricName(jLimit.getMetricName());
+        limit.setMetricName(jLimit.getMetricId());
         if (jLimit instanceof JLimitVsRefValue) {
             limit.setRefValue(((JLimitVsRefValue) jLimit).getRefValue());
         }

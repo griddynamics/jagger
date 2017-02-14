@@ -15,14 +15,14 @@ import java.util.Objects;
  */
 public abstract class JLimit {
 
-    private final String metricName;
+    private final String metricId;
     private final Double lowWarnThresh;
     private final Double upperWarningThreshold;
     private final Double lowerErrorThreshold;
     private final Double upperErrorThreshold;
 
     JLimit(Builder builder) {
-        this.metricName = builder.metricName;
+        this.metricId = builder.metricId;
         this.lowWarnThresh = builder.lowWarnThresh.value();
         this.upperWarningThreshold = builder.upWarnThresh.value();
         this.lowerErrorThreshold = builder.lowErrThresh.value();
@@ -31,7 +31,7 @@ public abstract class JLimit {
 
 
     public abstract static class Builder {
-        String metricName;
+        String metricId;
         LowWarnThresh lowWarnThresh = LowWarnThresh.of(1.0);
         UpWarnThresh upWarnThresh = UpWarnThresh.of(1.0);
         LowErrThresh lowErrThresh = LowErrThresh.of(1.0);
@@ -180,8 +180,8 @@ public abstract class JLimit {
 
     }
 
-    public String getMetricName() {
-        return metricName;
+    public String getMetricId() {
+        return metricId;
     }
 
     public Double getLowWarnThresh() {
