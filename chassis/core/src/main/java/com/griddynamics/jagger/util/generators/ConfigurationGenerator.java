@@ -47,6 +47,7 @@ public class ConfigurationGenerator {
     private boolean monitoringEnable;
     private BaselineSessionProvider baselineSessionProvider;
     private LimitSetConfig limitSetConfig;
+    private ConfigurationProperties configurationProperties;
 
     public Set<String> getJaggerLoadScenarioNames() {
         if (useBuilders) {
@@ -96,7 +97,11 @@ public class ConfigurationGenerator {
         Configuration configuration = new Configuration();
         List<Task> tasks = jLoadScenario.getTestGroups()
                 .stream()
-                .map(task -> TestGroupGenerator.generateFromTestGroup(task, monitoringEnable, baselineSessionProvider, limitSetConfig))
+                                        .map(task -> TestGroupGenerator.generateFromTestGroup(task,
+                                                                                              monitoringEnable,
+                                                                                              baselineSessionProvider,
+                                                                                              limitSetConfig,
+                                                                                              configurationProperties))
                 .collect(Collectors.toList());
         configuration.setTasks(tasks);
         configuration.setLoadScenarioListeners(jLoadScenario.getListeners());
@@ -177,5 +182,9 @@ public class ConfigurationGenerator {
 
     public void setLimitSetConfig(LimitSetConfig limitSetConfig) {
         this.limitSetConfig = limitSetConfig;
+    }
+    
+    public void setConfigurationProperties(ConfigurationProperties configurationProperties) {
+        this.configurationProperties = configurationProperties;
     }
 }

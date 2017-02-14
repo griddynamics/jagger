@@ -49,7 +49,7 @@ public class QueryPoolScenario<Q, R, E> extends Scenario<Q, R, E> {
     @Override
     public boolean doTransaction() {
         Pair<Q, E> chunk = chunks.next();
-        if (chunk == null) {
+        if (chunk == null) { // load balancer logic considers there are no more available combinations
             return false;
         }
         

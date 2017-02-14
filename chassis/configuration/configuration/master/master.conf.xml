@@ -174,6 +174,9 @@
             </bean>
         </property>
         <property name="limitSetConfig" ref="limitSetConfig"/>
+        <property name="configurationProperties">
+            <bean class="com.griddynamics.jagger.util.generators.ConfigurationProperties"/>
+        </property>
     </bean>
 </beans>
 

@@ -109,18 +109,18 @@ public abstract class AbstractWorkloadProcess implements WorkloadProcess {
     public WorkloadStatus getStatus() {
         int started = samplesCountStartedFromTerminatedThreads;
         int finished = samplesCountFinishedFromTerminatedThreads;
-        long emptyTrx = emptyTransactionsFromTerminatedThreads;
+        long emptyTrn = emptyTransactionsFromTerminatedThreads;
         int runningThreads = 0;
         
         for (WorkloadService thread : threads) {
             started += thread.getStartedSamples();
             finished += thread.getFinishedSamples();
-            emptyTrx += thread.getEmptyTransactions();
+            emptyTrn += thread.getEmptyTransactions();
             if (thread.isRunning()) {
                 runningThreads ++;
             }
         }
-        return new WorkloadStatus(started, finished, runningThreads, emptyTrx);
+        return new WorkloadStatus(started, finished, runningThreads, emptyTrn);
     }
 
     /**

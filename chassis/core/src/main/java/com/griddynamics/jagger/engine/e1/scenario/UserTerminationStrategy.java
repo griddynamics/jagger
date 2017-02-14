@@ -96,7 +96,7 @@ public class UserTerminationStrategy implements TerminationStrategy {
             }
         }
         if (everyNodeHasEmptyTransactions) {
-            log.info("Request to terminate work. Every node has empty transactions which means there are nothing to do any more");
+            log.info("Request to terminate work. All planned invocations are finished");
             return true;
         }
     

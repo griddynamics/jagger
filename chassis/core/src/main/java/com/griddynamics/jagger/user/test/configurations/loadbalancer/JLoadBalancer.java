@@ -93,7 +93,7 @@ public class JLoadBalancer implements Serializable {
          * @return {@link Builder} this
          * @see NonCircularExclusiveAccessLoadBalancer
          */
-        public Builder withNonCirclularIteration() {
+        public Builder withUniqueAccess() {
             this.oneIterationOnly = true;
             this.exclusiveAccess = true;
             
