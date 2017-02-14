@@ -99,6 +99,8 @@ public abstract class ExclusiveAccessLoadBalancer<Q, E> extends PairSupplierFact
                 log.info("'randomnessSeed' value is not null. Going to shuffle the pairs");
                 Collections.shuffle(pairList, new Random(randomnessSeed));
             }
+            
+            log.info("{} pairs on this node to balance", pairList.size());
             log.debug("Pairs to load balance: {}", pairList);
             
             pairQueue = new ArrayBlockingQueue<>(pairSupplier.size(), true, pairList);
