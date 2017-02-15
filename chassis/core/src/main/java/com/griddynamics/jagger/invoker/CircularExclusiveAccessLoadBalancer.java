@@ -2,6 +2,8 @@ package com.griddynamics.jagger.invoker;
 
 import com.griddynamics.jagger.util.Pair;
 import com.griddynamics.jagger.util.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +22,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class CircularExclusiveAccessLoadBalancer<Q, E> extends ExclusiveAccessLoadBalancer<Q, E> {
     
+    private final static Logger log = LoggerFactory.getLogger(CircularExclusiveAccessLoadBalancer.class);
+    
     public CircularExclusiveAccessLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {
         super(pairSupplierFactory);
     }
@@ -36,6 +40,7 @@ public class CircularExclusiveAccessLoadBalancer<Q, E> extends ExclusiveAccessLo
     protected Pair<Q, E> pollNext() {
         
         Pair<Q, E> next = null;
+        long startMillis = System.currentTimeMillis();
         try {
             next = getPairQueue().poll(pollTimeout.getValue(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException ignored) {
@@ -45,6 +50,14 @@ public class CircularExclusiveAccessLoadBalancer<Q, E> extends ExclusiveAccessLo
             throw new IllegalStateException(String.format("Didn't manage to poll the next pair. Timeout %s",
                                                           pollTimeout));
         }
+        
+        long endMillis = System.currentTimeMillis();
+        if (endMillis - startMillis > 1000) {
+            log.warn(
+                    "It took {} ms to poll the next pair for the load balancer. Possible reason: not enough test data for selected load",
+                    endMillis - startMillis);
+        }
+        
         return next;
     }
     
