@@ -164,12 +164,12 @@ public class JHttpUserScenarioInvocationListener extends ServicesAware implement
 
             @Override
             public void onFail(InvocationInfo invocationInfo, InvocationException e) {
-                //TODO: 1122
+                //TODO: JFG-1122
             }
 
             @Override
             public void onError(InvocationInfo invocationInfo, Throwable error) {
-                //TODO: 1122
+                //TODO: JFG-1122
             }
         };
     }
