@@ -32,7 +32,7 @@ public class JLoadProfileUsers {
     private final long numberOfUsers;
     private final long lifeTimeInSeconds;
     private final long startDelayInSeconds;
-    private final long slewRateUsersPerSecond;
+    private final double slewRateUsersPerSecond;
 
     private JLoadProfileUsers(Builder builder) {
         this.numberOfUsers = builder.numberOfUsers.value();
@@ -55,7 +55,7 @@ public class JLoadProfileUsers {
         private final NumberOfUsers numberOfUsers;
         private long lifeTimeInSeconds;
         private long startDelayInSeconds;
-        private long slewRateUsersPerSecond;
+        private double slewRateUsersPerSecond;
 
         /** Builder of the JLoadProfileUsers
          * @n
@@ -106,7 +106,7 @@ public class JLoadProfileUsers {
          * Optional: Slew rate users per second. Default is numberOfUsers value.
          * @param slewRateUsersPerSecond Describes how many threads to start during every iteration
          */
-        public Builder withSlewRateUsersPerSecond(long slewRateUsersPerSecond) {
+        public Builder withSlewRateUsersPerSecond(double slewRateUsersPerSecond) {
             if (slewRateUsersPerSecond <= 0) {
                 throw new IllegalArgumentException(
                         String.format("Slew rate users per second must be > 0. Provided value is %s", slewRateUsersPerSecond));
@@ -128,7 +128,7 @@ public class JLoadProfileUsers {
         return startDelayInSeconds;
     }
 
-    public long getSlewRateUsersPerSecond() {
+    public double getSlewRateUsersPerSecond() {
         return slewRateUsersPerSecond;
     }
 }

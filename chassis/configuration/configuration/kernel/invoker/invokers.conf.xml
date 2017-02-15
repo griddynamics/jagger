@@ -24,11 +24,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.0.xsd">
 
-
-    <bean id="httpInvokerOld" class="com.griddynamics.jagger.invoker.http.HttpVisitorInvoker"/>
-
-    <bean id="tcpTrafficInvoker" class="com.griddynamics.jagger.invoker.http.TcpTrafficInvoker"/>
-
     <bean id="poolingClientConnectionManager"
           class="org.apache.http.impl.conn.PoolingClientConnectionManager">
         <property name="maxTotal" value="0x7fffffff"/>
@@ -51,15 +46,6 @@
         <property name="staleCheckingEnabled" value="true"/>
         <property name="socketBufferSize" value="65536"/>
     </bean>
-
-    <bean id="httpInvoker" class="com.griddynamics.jagger.invoker.http.HttpInvoker">
-        <property name="httpClient" ref="httpClient"/>
-    </bean>
-
-    <bean id="apacheHttpInvoker" class="com.griddynamics.jagger.invoker.http.ApacheHttpInvoker">
-        <property name="httpClient" ref="httpClient"/>
-    </bean>
-
 
     <!-- New invoker from 2.0 -->
     <bean id="defaultHttpInvoker" class="com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker">

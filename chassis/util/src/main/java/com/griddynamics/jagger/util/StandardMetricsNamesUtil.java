@@ -21,11 +21,21 @@
 package com.griddynamics.jagger.util;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringUtils.removePattern;
+
 /**
  * Class is used in chassis, web UI server and web UI client
  * to use it in web UI client - keep it simple (use only standard java libraries)
  */
 public class StandardMetricsNamesUtil {
+    private static final Logger log = LoggerFactory.getLogger(StandardMetricsNamesUtil.class);
+
     public static final String THROUGHPUT_TPS = "Throughput, tps";
     public static final String THROUGHPUT = "Throughput";
     public static final String LATENCY_SEC = "Latency, sec";
@@ -114,5 +124,90 @@ public class StandardMetricsNamesUtil {
                 metricName.indexOf("Latency ") + "Latency ".length(),
                 metricName.indexOf(" %")
         ));
+    }
+
+    public static class IdContainer {
+        private final String scenarioId;
+        private final String stepId;
+        private final String metricId;
+
+        public IdContainer(String scenarioId, String stepId, String metricId) {
+            this.scenarioId = scenarioId;
+            this.stepId = stepId;
+            this.metricId = metricId;
+        }
+
+        public String getScenarioId() {
+            return scenarioId;
+        }
+
+        public String getStepId() {
+            return stepId;
+        }
+
+        public String getMetricId() {
+            return metricId;
+        }
+    }
+
+    private static final String USER_SCENARIO_ID = "US_";
+    private static final String US_STEP_ID = "_STNN";
+    private static final String US_METRIC_ID = "METR_";
+    private static final String USER_SCENARIO_REGEXP_WITH_GROUPS = "^.*" + USER_SCENARIO_ID + "(.*)" + US_STEP_ID + "\\d+_(.*)_" + US_METRIC_ID + "(.*)_(-.*)?$";
+    private static final String IS_SCENARIO_REGEXP = "^.*" + USER_SCENARIO_ID + ".*" + US_STEP_ID + "\\d+.*";
+    private static final String SCENARIO_STEP_REGEXP_TEMPLATE = "^.*" + USER_SCENARIO_ID + "%s" + US_STEP_ID + "\\d+_%s.*$";
+    private static final String SCENARIO_REGEXP_TEMPLATE = "(^.*" + USER_SCENARIO_ID + "%s" + US_STEP_ID + ".*$)|(^.*%s.*(-sum|-Success rate|-Number of fails).*$)";
+    private static final String DISPLAY_NAME_REGEXP = "^.*(" + ITERATIONS_SAMPLES + "|" + LATENCY_SEC + "|" + SUCCESS_RATE + ").*";
+
+    public static String generateScenarioStepId(String scenarioId, String stepId, Integer stepIndex) {
+        // both scenario and scenario steps will have same format of ids
+        // scenario: US_[scenarioId]_STNN0_[scenarioId]
+        // step:     US_[scenarioId]_STNN[1...N]_[stepId]
+        return USER_SCENARIO_ID + scenarioId + US_STEP_ID + stepIndex + "_" + stepId + "_";
+    }
+
+    public static String generateScenarioId(String scenarioId) {
+        return generateScenarioStepId(scenarioId, scenarioId, 0);
+    }
+
+    public static String generateMetricId(String id, String metricId) {
+        return id + US_METRIC_ID + metricId + "_";
+    }
+
+    public static String generateMetricDisplayName(String displayName, String metricDisplayName) {
+        return displayName + " " + metricDisplayName;
+    }
+
+    public static Boolean isBelongingToScenario(String metricNodeId) {
+        return metricNodeId.matches(IS_SCENARIO_REGEXP);
+    }
+
+    public static IdContainer extractIdsFromGeneratedIdForScenarioComponents(String generatedId) {
+        Pattern pattern = Pattern.compile(USER_SCENARIO_REGEXP_WITH_GROUPS);
+        Matcher matcher = pattern.matcher(generatedId);
+        if (matcher.matches()) {
+            String scenarioId = matcher.group(1);
+            String stepId = matcher.group(2);
+            String metricId = matcher.group(3);
+            return new IdContainer(scenarioId, stepId, metricId);
+        }
+        log.warn("Generated id '{}' doesn't match user scenario regexp '{}'. Will return null.", generatedId, USER_SCENARIO_REGEXP_WITH_GROUPS);
+        return null;
+    }
+
+    public static String extractDisplayNameFromGenerated(String generatedDisplayName) {
+        if (generatedDisplayName.matches(DISPLAY_NAME_REGEXP)) {
+            return removePattern(generatedDisplayName, " (" + LATENCY_SEC + "|" + ITERATIONS_SAMPLES + "|" + SUCCESS_RATE + ") \\[.*\\]");
+        }
+        log.warn("Generated display name '{}' doesn't match regexp '{}'. Will return null.", generatedDisplayName, DISPLAY_NAME_REGEXP);
+        return null;
+    }
+
+    public static String generateScenarioRegexp(String scenarioId) {
+        return String.format(SCENARIO_REGEXP_TEMPLATE, scenarioId, scenarioId);
+    }
+
+    public static String generateScenarioStepRegexp(String scenarioId, String stepId) {
+        return String.format(SCENARIO_STEP_REGEXP_TEMPLATE, scenarioId, stepId);
     }
 }

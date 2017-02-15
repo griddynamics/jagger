@@ -3,13 +3,22 @@ package com.griddynamics.jagger.dbapi.model.rules;
 import com.griddynamics.jagger.dbapi.parameter.DefaultMonitoringParameters;
 import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil.IdContainer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractDisplayNameFromGenerated;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioRegexp;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepRegexp;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractIdsFromGeneratedIdForScenarioComponents;
+
+@SuppressWarnings("Duplicates")
 @Component
 public class TreeViewGroupRuleProvider {
 
@@ -20,8 +29,7 @@ public class TreeViewGroupRuleProvider {
         this.monitoringPlotGroups = monitoringPlotGroups;
     }
 
-    public TreeViewGroupRule provide(String rootId, String rootName) {
-
+    public TreeViewGroupRule provide(String rootId, String rootName, Map<String, String> scenarioComponentsIdToDisplayName) {
         List<TreeViewGroupRule> firstLevelFilters = new ArrayList<>();
 
         String filterRegex = "(" +
@@ -61,6 +69,42 @@ public class TreeViewGroupRuleProvider {
 
             firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, groupDisplayName, groupDisplayName, regex));
         }
+
+        // Filters for user scenarios
+        Map<String, Map<String, TreeViewGroupRule>> scenarioStepsRules = new HashMap<>();
+        Map<String, String> scenarioRegexps = new HashMap<>();
+        Map<String, String> scenarioDisplayNames = new HashMap<>();
+        scenarioComponentsIdToDisplayName.forEach((generatedId, generatedDisplayName) -> {
+            IdContainer originalIds = extractIdsFromGeneratedIdForScenarioComponents(generatedId);
+            String originalDisplayName = extractDisplayNameFromGenerated(generatedDisplayName);
+
+            if (originalIds != null) {
+                // if step
+                if (!originalIds.getScenarioId().equals(originalIds.getStepId())) {
+                    String nodeId = originalIds.getScenarioId() + ":" + originalIds.getStepId();
+                    String nodeDisplayName = originalDisplayName != null ? originalDisplayName : originalIds.getStepId();
+                    String filter = generateScenarioStepRegexp(originalIds.getScenarioId(), originalIds.getStepId());
+                    TreeViewGroupRule userStepFilter = new TreeViewGroupRule(Rule.By.ID, nodeId, nodeDisplayName, filter);
+                    if (scenarioStepsRules.containsKey(originalIds.getScenarioId())) {
+                        scenarioStepsRules.get(originalIds.getScenarioId()).put(originalIds.getStepId(), userStepFilter);
+                    } else {
+                        HashMap<String, TreeViewGroupRule> map = new HashMap<>();
+                        map.put(originalIds.getStepId(), userStepFilter);
+                        scenarioStepsRules.put(originalIds.getScenarioId(), map);
+                    }
+                    // if scenario
+                } else {
+                    scenarioRegexps.putIfAbsent(originalIds.getScenarioId(), generateScenarioRegexp(originalIds.getScenarioId()));
+                    scenarioDisplayNames.putIfAbsent(originalIds.getScenarioId(), originalDisplayName);
+                }
+            }
+        });
+
+        scenarioRegexps.forEach((scenarioId, filter) -> {
+            List<TreeViewGroupRule> childrenRules = newArrayList(scenarioStepsRules.get(scenarioId).values());
+            String displayName = scenarioDisplayNames.get(scenarioId);
+            firstLevelFilters.add(new TreeViewGroupRule(Rule.By.ID, scenarioId, displayName, filter, childrenRules));
+        });
 
         // Root filter - will match all metrics
         return new TreeViewGroupRule(Rule.By.ID, rootId, rootName, ".*", firstLevelFilters);

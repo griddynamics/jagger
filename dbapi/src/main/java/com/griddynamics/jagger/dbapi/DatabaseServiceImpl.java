@@ -1,9 +1,7 @@
 package com.griddynamics.jagger.dbapi;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
-import static java.util.stream.Collectors.toList;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerMetricDto;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
 import com.griddynamics.jagger.dbapi.dto.DecisionPerTestDto;
@@ -75,9 +73,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,12 +95,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.griddynamics.jagger.dbapi.dto.MetricNameDto.Origin.TEST_GROUP_METRIC;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by kgribov on 4/2/14.
@@ -994,8 +992,17 @@ public class DatabaseServiceImpl implements DatabaseService {
             metricNodeList.addAll(unitedMetrics);
         }
 
+
+        Map<String, String> scenarioComponentsIdToDisplayName = new HashMap<>();
+        metricNodeList.stream()
+                .filter(metricNode -> StandardMetricsNamesUtil.isBelongingToScenario(metricNode.getId()))
+                .forEach(metricNode -> {
+                    MetricNameDto metricNameDto = metricNode.getMetricNameDtoList().get(0);
+                    scenarioComponentsIdToDisplayName.put(metricNameDto.getMetricName(), metricNameDto.getMetricDisplayName());
+                });
+
         // rules to create test tree view
-        TreeViewGroupRule groupedNodesRule = treeViewGroupRuleProvider.provide(rootId, rootId);
+        TreeViewGroupRule groupedNodesRule = treeViewGroupRuleProvider.provide(rootId, rootId, scenarioComponentsIdToDisplayName);
         // tree with metrics distributed by groups
 
         return groupedNodesRule.filter(null, metricNodeList);
@@ -1284,13 +1291,13 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         return decisionPerSessionDto;
     }
-    
+
     private List<DecisionPerTestGroupDto> getDecisionPerTestGroup(List<DecisionPerTaskEntity> taskDecisions) {
-        
+
         Set<Long> taskIds =
                 taskDecisions.stream().map(decision -> decision.getTaskData().getId()).collect(Collectors.toSet());
         Map<Long, Set<Long>> testIdsByTestGroupIds = getTestGroupIdsByTestIds(taskIds);
-    
+
         List<DecisionPerTestGroupDto> decisionPerTestGroupDtos = new ArrayList<>();
         List<DecisionPerTestDto> decisionPerTestDtos = new ArrayList<>();
         for (DecisionPerTaskEntity taskDecision : taskDecisions) {
@@ -1302,7 +1309,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                                  .getResultList();
             List<DecisionPerMetricDto> decisionPerMetricDtos =
                     metricDecisions.stream().map(DecisionPerMetricDto::new).collect(toList());
-        
+
             // if task is test group - create new DecisionPerTestGroupDto and add it to list
             if (testIdsByTestGroupIds.containsKey(taskDecision.getTaskData().getId())) {
                 DecisionPerTestGroupDto decisionPerTestGroupDto = new DecisionPerTestGroupDto(taskDecision);
@@ -1315,20 +1322,20 @@ public class DatabaseServiceImpl implements DatabaseService {
                 decisionPerTestDtos.add(decisionPerTestDto);
             }
         }
-    
+
         // fill test group decisions with task decisions
         for (Map.Entry<Long, Set<Long>> entry : testIdsByTestGroupIds.entrySet()) {
             Long testGroupId = entry.getKey();
             Set<Long> tasks = entry.getValue();
-        
+
             DecisionPerTestGroupDto testGroupDecision = decisionPerTestGroupDtos
                     .stream().filter(decision -> decision.getTaskData().getId().equals(testGroupId)).findFirst().get();
-        
+
             List<DecisionPerTestDto> testGroupTestDecisions = decisionPerTestDtos
                     .stream().filter(decision -> tasks.contains(decision.getTaskData().getId())).collect(toList());
             testGroupDecision.setTestDecisions(testGroupTestDecisions);
         }
-        
+
         return decisionPerTestGroupDtos;
     }
 

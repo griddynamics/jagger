@@ -27,28 +27,30 @@ import org.slf4j.LoggerFactory;
  * @ingroup Main_Distributors_group */
 
 public abstract class PairSupplierFactoryLoadBalancer<Q, E> extends QueryPoolLoadBalancer<Q, E> {
-
-    private final static Logger logger = LoggerFactory.getLogger(PairSupplierFactoryLoadBalancer.class);
-    private PairSupplierFactory<Q, E> pairSupplierFactory;
-    private PairSupplier<Q, E> pairSupplier;
-
-    public void setPairSupplierFactory(PairSupplierFactory<Q, E> pairSupplierFactory) {
+    
+    private final static Logger log = LoggerFactory.getLogger(PairSupplierFactoryLoadBalancer.class);
+    private final PairSupplierFactory<Q, E> pairSupplierFactory;
+    private volatile PairSupplier<Q, E> pairSupplier;
+    
+    protected PairSupplierFactoryLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {
         this.pairSupplierFactory = pairSupplierFactory;
     }
-
-    protected PairSupplier<Q, E> getPairSupplier(){
-        if (endpointProvider == null){
-            throw new NullPointerException("Init endpoint provider!");
-        }
-        if (queryProvider == null) {
-            logger.debug("Query provider is null!");
-        }
-
-        if (pairSupplier == null){
-            pairSupplier = pairSupplierFactory.create(queryProvider, endpointProvider);
-        }
-
+    
+    protected PairSupplier<Q, E> getPairSupplier() {
         return pairSupplier;
     }
-
+    
+    @Override
+    public void init() {
+        synchronized (lock) {
+            if (initialized) {
+                log.debug("already initialized. returning...");
+                return;
+            }
+            super.init();
+            
+            pairSupplier = pairSupplierFactory.create(queryProvider, endpointProvider);
+            log.info("{} pairs in total to balance", pairSupplier.size());
+        }
+    }
 }

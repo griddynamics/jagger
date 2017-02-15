@@ -44,20 +44,28 @@ public class UserGroup {
     private final UserClock clock;
     final ArrayList<User> users;
     int activeUserCount = 0;
-    private final int startCount;
+    private int startCount;
     private final long startInTime;
     private long startByTime = -1;
     int startedUserCount = 0;
+    private double extraUser;
+    private double extraUserStep;
 
     public UserGroup(UserClock clock, int id, ProcessingConfig.Test.Task.User config, long time) {
-        this(   clock,
+        this(clock,
                 id,
                 Parser.parseInt(config.getCount(), clock.getRandom()),
-                Parser.parseInt(config.getStartCount(), clock.getRandom()),
+                (int) config.getStartCount(),
                 time + Parser.parseTime(config.getStartIn(), clock.getRandom()),
                 Parser.parseTime(config.getStartBy(), clock.getRandom()),
                 Parser.parseTime(config.getLife(), clock.getRandom())
         );
+        double floor = (Double.compare(config.getStartCount(), 1.0) < 0) ?
+                +0.0 :
+                +Math.floor(config.getStartCount());
+        double extraUserStep = config.getStartCount() - floor;
+        this.extraUserStep = extraUserStep;
+        this.extraUser = extraUserStep;
     }
 
     public UserGroup(UserClock clock, int id, int count, int startCount, long startInTime, long startBy, long life) {
@@ -103,6 +111,9 @@ public class UserGroup {
     }
 
     public void tick(long time, LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
+        // to allow user set floating value of users
+        extraUser += extraUserStep;
+
         for (User user : users) {
             user.tick(time, workloadConfigurations);
         }
@@ -110,22 +121,31 @@ public class UserGroup {
         if (users.size() < count) {
             if (users.isEmpty()) {
                 if (time >= startInTime) {
-                    spawnUsers(startCount, time, workloadConfigurations);
+                    spawnUsers(time, workloadConfigurations);
                     startByTime = time + startBy;
                 }
             } else {
                 while (time >= startByTime) {
-                    spawnUsers(startCount, time, workloadConfigurations);
+                    spawnUsers(time, workloadConfigurations);
                 }
             }
         }
     }
 
-    public void spawnUsers(int userCount, long time, LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
-        for (int i = 0; i < userCount; ++i) {
+    public void spawnUsers(long time, LinkedHashMap<NodeId, WorkloadConfiguration> workloadConfigurations) {
+        // if true at this tick should appear one additional user
+        if (extraUser >= 1.0) {
+            startCount++;
+        }
+        for (int i = 0; i < startCount; ++i) {
             if (users.size() < count) {
                 new User(clock, this, time, findNodeWithMinThreadCount(workloadConfigurations), workloadConfigurations);
             }
+        }
+        // decrement the number of additional users
+        if (extraUser >= 1.0) {
+            startCount--;
+            extraUser -= 1.0;
         }
         startByTime += startBy;
     }

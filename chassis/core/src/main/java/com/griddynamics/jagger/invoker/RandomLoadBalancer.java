@@ -20,10 +20,13 @@
 
 package com.griddynamics.jagger.invoker;
 
-import com.google.common.collect.AbstractIterator;
 import com.griddynamics.jagger.util.Pair;
+
+import com.google.common.collect.AbstractIterator;
+
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 /** Randomly selects pairs of Q and E.
  * @par Details:
@@ -37,14 +40,15 @@ import java.util.Random;
  * @ingroup Main_Distributors_group */
 public class RandomLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
 
-    private long randomSeed;
-
-    public void setRandomSeed(long randomSeed) {
-        this.randomSeed = randomSeed;
+    private final AtomicLong randomSeed;
+    
+    public RandomLoadBalancer(long randomSeed, PairSupplierFactory<Q, E> pairSupplierFactory) {
+        super(pairSupplierFactory);
+        this.randomSeed = new AtomicLong(randomSeed);
     }
 
     public long getRandomSeed() {
-        return randomSeed;
+        return randomSeed.get();
     }
 
     /** Returns an iterator over pairs
@@ -59,7 +63,7 @@ public class RandomLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q,
 
             private PairSupplier<Q, E> pairs = getPairSupplier();
             private int size = pairs.size();
-            private Random random = new Random(randomSeed++);
+            private Random random = new Random(randomSeed.getAndIncrement());
 
             @Override
             protected Pair<Q, E> computeNext() {

@@ -44,6 +44,7 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 @SuppressWarnings("unused")
 public class JHttpQuery<T> implements Serializable {
+    public static final JHttpQuery EMPTY_QUERY = null;
 
     private HttpMethod method;
     private HttpHeaders headers;

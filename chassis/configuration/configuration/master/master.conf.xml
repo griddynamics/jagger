@@ -30,7 +30,6 @@
 
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
 
-    <bean class="com.griddynamics.jagger.xml.ProviderBeanFactoryPostProcessor"/>
 
     <bean class="com.griddynamics.jagger.util.PropertiesResolver">
         <property name="registry" ref="propertiesResolverRegistry"/>
@@ -175,6 +174,9 @@
             </bean>
         </property>
         <property name="limitSetConfig" ref="limitSetConfig"/>
+        <property name="configurationProperties">
+            <bean class="com.griddynamics.jagger.util.generators.ConfigurationProperties"/>
+        </property>
     </bean>
 </beans>
 

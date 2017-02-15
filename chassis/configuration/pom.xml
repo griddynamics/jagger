@@ -51,22 +51,12 @@
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.invokers</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.util</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.spring.schema</artifactId>
         </dependency>
     </dependencies>
 

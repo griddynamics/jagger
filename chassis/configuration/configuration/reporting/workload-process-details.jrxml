@@ -28,9 +28,41 @@
     <property name="ireport.y" value="0"/>
     <template class="java.io.InputStream">
         <![CDATA[$P{context}.getResource("/reporting/styles/default-styles.xml")]]></template>
+
+    <style name="Compact_Header_Bold_Alternative" isDefault="false" fontName="sans-serif"
+           fontSize="6" isBold="true" isItalic="false" isUnderline="false"
+           isStrikeThrough="false" pdfFontName="Helvetica-Bold"
+           pdfEncoding="Cp1252" isPdfEmbedded="false">
+        <conditionalStyle>
+            <conditionExpression>
+                <![CDATA[new Boolean(String.valueOf($F{decision}).equals(com.griddynamics.jagger.util.Decision.OK.toString()))]]>
+            </conditionExpression>
+            <style forecolor="#008000" />
+        </conditionalStyle>
+        <conditionalStyle>
+            <conditionExpression>
+                <![CDATA[new Boolean(String.valueOf($F{decision}).equals(com.griddynamics.jagger.util.Decision.WARNING.toString()))]]>
+            </conditionExpression>
+            <style forecolor="#B8860B" />
+        </conditionalStyle>
+        <conditionalStyle>
+            <conditionExpression>
+                <![CDATA[new Boolean(String.valueOf($F{decision}).equals(com.griddynamics.jagger.util.Decision.ERROR.toString()))]]>
+            </conditionExpression>
+            <style forecolor="#FF0000" />
+        </conditionalStyle>
+        <conditionalStyle>
+            <conditionExpression>
+                <![CDATA[new Boolean(String.valueOf($F{decision}).equals(com.griddynamics.jagger.util.Decision.FATAL.toString()))]]>
+            </conditionExpression>
+            <style forecolor="#FF0000" />
+        </conditionalStyle>
+    </style>
+
     <parameter name="context" class="com.griddynamics.jagger.reporting.ReportingContext"/>
     <field name="key" class="java.lang.String"/>
     <field name="value" class="java.lang.String"/>
+    <field name="decision" class="java.lang.String"/>
     <detail>
         <band height="10" splitType="Stretch">
             <textField>
@@ -39,7 +71,7 @@
                 <textFieldExpression><![CDATA[$F{key}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement style="Compact_Header_Bold" x="51" y="0" width="300" height="10"/>
+                <reportElement style="Compact_Header_Bold_Alternative" x="51" y="0" width="300" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
             </textField>

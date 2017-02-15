@@ -15,7 +15,7 @@ public class JTerminationCriteriaIterations implements JTerminationCriteria {
     private final long iterationsNumber;
     private final long maxDurationInSeconds;
 
-    /** Create termination criteria: by number of itterations
+    /** Create termination criteria: by number of iterations
      * @n
      * @param iterationsNumber - The target number of requests to the system under test. After this number of the requests is reached, load test will be terminated
      * @param maxDurationInSeconds - The timeout for the test execution. If termination criteria was not reached, load test will be stopped by timeout
@@ -28,7 +28,7 @@ public class JTerminationCriteriaIterations implements JTerminationCriteria {
         this.maxDurationInSeconds = maxDurationInSeconds.value();
     }
 
-    /** Create termination criteria: by number of itterations
+    /** Create termination criteria: by number of iterations
      * @n
      * @param iterationsNumber - The target number of requests to the system under test. After this number of the requests is reached, load test will be terminated
      * @param maxDurationInSeconds - The timeout for the test execution. If termination criteria was not reached, load test will be stopped by timeout
