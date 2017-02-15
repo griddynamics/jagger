@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.invoker.scenario.example;
+package com.griddynamics.jagger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Example of user scenario provider
+ */
 public class ExampleUserScenarioProvider implements Iterable {
     public static final String SCENARIO_ID = "my-user-scenario";
     public static final String SCENARIO_DISPLAY_NAME = "My User Scenario";

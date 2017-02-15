@@ -1,12 +1,12 @@
 package com.griddynamics.jagger.invoker.v2;
 
-import static java.util.stream.Collectors.toMap;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * An object that represents HTTP-response. It consists of {@link JHttpResponse#status},
@@ -45,6 +45,12 @@ public class JHttpResponse<T> implements Serializable {
         return headers.get("Cookie").stream()
                 .map(cookieStr -> cookieStr.split("="))
                 .collect(toMap(cookieArr -> cookieArr[0], cookieArr -> cookieArr[1]));
+    }
+
+    public static JHttpResponse copyOf(JHttpResponse jHttpResponse) {
+        if (jHttpResponse == null)
+            return null;
+        return new JHttpResponse(jHttpResponse.getStatus(), jHttpResponse.getBody(), jHttpResponse.getHeaders());
     }
 
     @Override

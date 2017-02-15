@@ -8,6 +8,9 @@ import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+/**
+ * Global context for {@link JHttpUserScenario} which is used for storing global parameters.
+ */
 public class JHttpScenarioGlobalContext {
     private String userName;
     private String password;
@@ -17,7 +20,7 @@ public class JHttpScenarioGlobalContext {
     public JHttpScenarioGlobalContext copy() {
         JHttpScenarioGlobalContext copy = new JHttpScenarioGlobalContext();
         return copy.withBasicAuth(this.userName, this.password)
-                .withGlobalEndpoint(CopyUtil.copyOf(this.globalEndpoint))
+                .withGlobalEndpoint(JHttpEndpoint.copyOf(this.globalEndpoint))
                 .withGlobalHeaders(CopyUtil.copyOf(this.globalHeaders));
     }
 

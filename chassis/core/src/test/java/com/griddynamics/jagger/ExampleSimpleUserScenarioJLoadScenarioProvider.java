@@ -1,4 +1,4 @@
-package com.griddynamics.jagger.invoker.scenario.example;
+package com.griddynamics.jagger;
 
 import com.griddynamics.jagger.invoker.scenario.JHttpUserScenarioInvocationListener;
 import com.griddynamics.jagger.invoker.scenario.JHttpUserScenarioInvokerProvider;
@@ -27,7 +27,9 @@ import org.springframework.context.annotation.Configuration;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateMetricId;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepId;
 
-// begin: following section is used for docu generation - Load test scenario configuration
+/**
+ * Example of user scenario load scenario
+ */
 @Configuration
 public class ExampleSimpleUserScenarioJLoadScenarioProvider {
 
@@ -43,7 +45,7 @@ public class ExampleSimpleUserScenarioJLoadScenarioProvider {
 
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(500), MaxDurationInSeconds.of(50));
 
-        //??? will need to rework. too complex
+        //TODO: JFG-1123
         String stepId = generateScenarioStepId(ExampleUserScenarioProvider.SCENARIO_ID, ExampleUserScenarioProvider.STEP_1_ID, 1);
         String metricId = generateMetricId(stepId, StandardMetricsNamesUtil.LATENCY_ID);
         JLimit firstStepLimit = JLimitVsRefValue.builder(metricId + "-avg", RefValue.of(1.5))
@@ -56,10 +58,7 @@ public class ExampleSimpleUserScenarioJLoadScenarioProvider {
 
         JParallelTestsGroup jParallelTestsGroup = JParallelTestsGroup.builder(Id.of("ptg_example"), jLoadTest).build();
 
-        // To launch your load scenario, set 'jagger.load.scenario.id.to.execute' property's value equal to the load scenario id
-        // You can do it via system properties or in the 'environment.properties' file
         return JLoadScenario.builder(Id.of("ls_example_scenario"), jParallelTestsGroup).build();
     }
 }
-// end: following section is used for docu generation - Load test scenario configuration
 

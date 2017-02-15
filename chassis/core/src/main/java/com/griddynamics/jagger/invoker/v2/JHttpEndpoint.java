@@ -190,6 +190,12 @@ public class JHttpEndpoint implements Serializable {
         return fromUri(oldUri).queryParams(localQueryParams).build().toUri();
     }
 
+    public static JHttpEndpoint copyOf(JHttpEndpoint jHttpEndpoint) {
+        if (jHttpEndpoint == null)
+            return null;
+        return new JHttpEndpoint(jHttpEndpoint.getURI());
+    }
+
     @Override
     public String toString() {
         return "JHttpEndpoint{" +

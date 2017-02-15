@@ -13,6 +13,9 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+/**
+ * This invoker is able to execute user scenarios ({@link JHttpUserScenario}) as one invocation.
+ */
 public class JHttpUserScenarioInvoker implements Invoker<Void, JHttpUserScenarioInvocationResult, JHttpUserScenario> {
 
     private final SpringBasedHttpClient httpClient = new SpringBasedHttpClient();
@@ -68,10 +71,10 @@ public class JHttpUserScenarioInvoker implements Invoker<Void, JHttpUserScenario
             JHttpResponse response = httpClient.execute(userScenarioStep.getEndpoint(), userScenarioStep.getQuery());
             Double requestTimeInMilliseconds = (System.nanoTime() - requestStartTime) / 1_000_000.0;
 
-            //??? need to decide how to setup detailed output. Response can be very large
+            //TODO: JFG-1121
             log.info("Response: {}", response);
 
-            // Wait after execution if need
+            // Wait after execution if needed
             userScenarioStep.waitAfterExecution();
 
             // Post process step: executed after request. If returned false, scenario invocation stops.

@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+/**
+ * Represents a step in user scenario ({@link JHttpUserScenario}).
+ */
 public class JHttpUserScenarioStep {
     private int stepNumber;
     private final String stepId; // mandatory parameter. required for metrics saving
@@ -41,11 +44,12 @@ public class JHttpUserScenarioStep {
 
     /** Can work with response.
      * @param response result of execution of request
+     * @return result of responseFunction or true if responseFunction is null
      */
     public Boolean postProcess(JHttpResponse response) {
         this.response = response;
         if (responseFunction != null)
-            return responseFunction.apply(CopyUtil.copyOf(response));
+            return responseFunction.apply(JHttpResponse.copyOf(response));
         return true;
     }
 
@@ -158,7 +162,7 @@ public class JHttpUserScenarioStep {
     }
 
     public JHttpResponse getResponse() {
-        return CopyUtil.copyOf(response);
+        return JHttpResponse.copyOf(response);
     }
 
     public String getStepDisplayName() {

@@ -1,5 +1,8 @@
 package com.griddynamics.jagger.invoker.scenario;
 
+/**
+ *  Result of user scenario step invocation
+ */
 public class JHttpUserScenarioStepInvocationResult {
     private final String stepId;
     private final String stepDisplayName;

@@ -5,6 +5,14 @@ import java.util.List;
 
 import static java.lang.String.format;
 
+/**
+ * This class is a representation of user scenario which can be invoked by {@link JHttpUserScenarioInvoker}.
+ * User can create as many steps ({@link JHttpUserScenarioStep}) as needed and they will be invoked as one invocation.
+ * If any step fails whole invocation will be marked as failed.
+ *
+ * @see JHttpUserScenarioInvoker
+ * @see JHttpUserScenarioInvocationListener
+ */
 public class JHttpUserScenario {
     private Integer stepsCounter = 0;
     private final String scenarioId;

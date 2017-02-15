@@ -2,6 +2,9 @@ package com.griddynamics.jagger.invoker.scenario;
 
 import java.util.List;
 
+/**
+ * Result of user scenario invocation
+ */
 public class JHttpUserScenarioInvocationResult {
     private final List<JHttpUserScenarioStepInvocationResult> stepInvocationResults;
     private final String scenarioId;
