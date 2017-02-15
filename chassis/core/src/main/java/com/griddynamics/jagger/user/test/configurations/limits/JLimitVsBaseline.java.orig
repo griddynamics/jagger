@@ -17,11 +17,7 @@ public class JLimitVsBaseline extends JLimit {
     /**
      * Builder for {@link JLimit} to compare with baseline.
      *
-<<<<<<< 1d3585f2d47b4f10005f985ab21d2af8204a199f
      * @param metricId unique id of the metric.
-=======
-     * @param metricId metric name.
->>>>>>> [JFG-1116] Set Limits for the metrics in the step of scenario
      * @return builder for {@link JLimit}.
      */
     public static Builder builder(String metricId) {
@@ -30,8 +26,12 @@ public class JLimitVsBaseline extends JLimit {
     
     
     /**
+<<<<<<< 9c1257ed06a5ef5fb494501330ce3f2f500f577b
      * Builder for {@link JLimit} to compare metrics,
      * collected during {@link com.griddynamics.jagger.invoker.scenario.JHttpUserScenario} execution, with the baseline.
+=======
+     * Builder for {@link JLimit} to compare with current value.
+>>>>>>> [JFG-1116] JLimitVsBaseline new builders
      *
      * @param scenarioId unique id of a user scenario
      * @param stepId unique id of a user step
@@ -45,21 +45,20 @@ public class JLimitVsBaseline extends JLimit {
     /**
      * Builder for {@link JLimit} to compare with baseline.
      *
-<<<<<<< 1d3585f2d47b4f10005f985ab21d2af8204a199f
      * @param metricId unique id of the metric.
-=======
-     * @param metricId name of standard metric.
->>>>>>> [JFG-1116] Set Limits for the metrics in the step of scenario
      * @return builder for {@link JLimit}.
      */
     public static Builder builder(JMetricName metricId) {
         return new Builder(metricId.transformToString());
-<<<<<<< 1d3585f2d47b4f10005f985ab21d2af8204a199f
     }
     
     /**
+<<<<<<< 9c1257ed06a5ef5fb494501330ce3f2f500f577b
      * Builder for {@link JLimit} to compare metrics,
      * collected during {@link com.griddynamics.jagger.invoker.scenario.JHttpUserScenario} execution, with the baseline.
+=======
+     * Builder for {@link JLimit} to compare with current value.
+>>>>>>> [JFG-1116] JLimitVsBaseline new builders
      *
      * @param scenarioId unique id of a user scenario
      * @param stepId unique id of a user step
@@ -68,8 +67,6 @@ public class JLimitVsBaseline extends JLimit {
      */
     public static Builder builder(String scenarioId, String stepId, JMetricName metricId) {
         return new Builder(StandardMetricsNamesUtil.generateScenarioStepMetricRegexp(scenarioId, stepId, metricId.transformToString()));
-=======
->>>>>>> [JFG-1116] Set Limits for the metrics in the step of scenario
     }
 
     public static class Builder extends JLimit.Builder {
