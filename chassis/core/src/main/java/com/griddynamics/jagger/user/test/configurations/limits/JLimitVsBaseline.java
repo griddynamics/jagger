@@ -1,6 +1,7 @@
 package com.griddynamics.jagger.user.test.configurations.limits;
 
 import com.griddynamics.jagger.user.test.configurations.limits.auxiliary.JMetricName;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 
 import java.util.Objects;
 
@@ -22,7 +23,20 @@ public class JLimitVsBaseline extends JLimit {
     public static Builder builder(String metricId) {
         return new Builder(metricId);
     }
-
+    
+    
+    /**
+     * Builder for {@link JLimit} to compare with current value.
+     *
+     * @param scenarioId unique id of a user scenario
+     * @param stepId unique id of a user step
+     * @param metricId unique id of a metric
+     * @return a builder for {@link JLimit}
+     */
+    public static Builder builder(String scenarioId, String stepId, String metricId) {
+        return new Builder(StandardMetricsNamesUtil.generateScenarioStepMetricRegexp(scenarioId, stepId, metricId));
+    }
+    
     /**
      * Builder for {@link JLimit} to compare with baseline.
      *
@@ -31,6 +45,18 @@ public class JLimitVsBaseline extends JLimit {
      */
     public static Builder builder(JMetricName metricId) {
         return new Builder(metricId.transformToString());
+    }
+    
+    /**
+     * Builder for {@link JLimit} to compare with current value.
+     *
+     * @param scenarioId unique id of a user scenario
+     * @param stepId unique id of a user step
+     * @param metricId unique id of a metric
+     * @return a builder for {@link JLimit}
+     */
+    public static Builder builder(String scenarioId, String stepId, JMetricName metricId) {
+        return new Builder(StandardMetricsNamesUtil.generateScenarioStepMetricRegexp(scenarioId, stepId, metricId.transformToString()));
     }
 
     public static class Builder extends JLimit.Builder {
