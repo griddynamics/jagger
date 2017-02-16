@@ -42,7 +42,6 @@ public class ExampleSimpleUserScenarioJLoadScenarioProvider {
 
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(500), MaxDurationInSeconds.of(50));
 
-        //TODO: JFG-1123
         JLimit firstStepLimit = JLimitVsRefValue.builder(ExampleUserScenarioProvider.SCENARIO_ID,
                                                          ExampleUserScenarioProvider.STEP_1_ID,
                                                          StandardMetricsNamesUtil.LATENCY_ID,

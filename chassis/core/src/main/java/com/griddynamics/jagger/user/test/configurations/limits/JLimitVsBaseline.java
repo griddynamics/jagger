@@ -17,7 +17,7 @@ public class JLimitVsBaseline extends JLimit {
     /**
      * Builder for {@link JLimit} to compare with baseline.
      *
-     * @param metricId metric name.
+     * @param metricId unique id of the metric.
      * @return builder for {@link JLimit}.
      */
     public static Builder builder(String metricId) {
@@ -26,7 +26,8 @@ public class JLimitVsBaseline extends JLimit {
     
     
     /**
-     * Builder for {@link JLimit} to compare with current value.
+     * Builder for {@link JLimit} to compare metrics,
+     * collected during {@link com.griddynamics.jagger.invoker.scenario.JHttpUserScenario} execution, with the baseline.
      *
      * @param scenarioId unique id of a user scenario
      * @param stepId unique id of a user step
@@ -40,7 +41,7 @@ public class JLimitVsBaseline extends JLimit {
     /**
      * Builder for {@link JLimit} to compare with baseline.
      *
-     * @param metricId name of standard metric.
+     * @param metricId unique id of the metric.
      * @return builder for {@link JLimit}.
      */
     public static Builder builder(JMetricName metricId) {
@@ -48,7 +49,8 @@ public class JLimitVsBaseline extends JLimit {
     }
     
     /**
-     * Builder for {@link JLimit} to compare with current value.
+     * Builder for {@link JLimit} to compare metrics,
+     * collected during {@link com.griddynamics.jagger.invoker.scenario.JHttpUserScenario} execution, with the baseline.
      *
      * @param scenarioId unique id of a user scenario
      * @param stepId unique id of a user step

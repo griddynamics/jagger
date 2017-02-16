@@ -20,9 +20,9 @@ public class JLimitVsRefValue extends JLimit {
     }
 
     /**
-     * Builder for {@link JLimit} to compare with current value.
+     * Builder for {@link JLimit} to compare with the reference value.
      *
-     * @param metricId name of metric.
+     * @param metricId unique id of a metric
      * @param refValue   the for comparison.
      * @return builder for {@link JLimit}.
      */
@@ -31,7 +31,8 @@ public class JLimitVsRefValue extends JLimit {
     }
     
     /**
-     * Builder for {@link JLimit} to compare with current value.
+     * Builder for {@link JLimit} o compare metrics,
+     * collected during {@link com.griddynamics.jagger.invoker.scenario.JHttpUserScenario} execution, with the reference value.
      *
      * @param scenarioId unique id of a user scenario
      * @param stepId unique id of a user step
@@ -44,9 +45,9 @@ public class JLimitVsRefValue extends JLimit {
     }
 
     /**
-     * Builder for {@link JLimit} to compare with current value.
+     * Builder for {@link JLimit} to compare with the reference value.
      *
-     * @param metricId standard metric name.
+     * @param metricId unique id of a metric
      * @param refValue   the for comparison.
      * @return builder for {@link JLimit}.
      */
@@ -55,7 +56,8 @@ public class JLimitVsRefValue extends JLimit {
     }
     
     /**
-     * Builder for {@link JLimit} to compare with current value.
+     * Builder for {@link JLimit} o compare metrics,
+     * collected during {@link com.griddynamics.jagger.invoker.scenario.JHttpUserScenario} execution, with the reference value.
      *
      * @param scenarioId is a unique id of a user scenario
      * @param stepId is a unique id of a user step
