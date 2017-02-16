@@ -9,7 +9,6 @@ import java.util.List;
 
 /**
  * Simple example of endpoint provider
- *
  */
 // begin: following section is used for docu generation - Endpoint provider
 public class ExampleEndpointsProvider implements Iterable {

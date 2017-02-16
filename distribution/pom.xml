@@ -23,13 +23,13 @@
     <artifactId>jagger-distribution</artifactId>
     <packaging>pom</packaging>
 
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
     <url>http://maven.apache.org</url>
 
     <parent>
         <groupId>com.griddynamics.jagger</groupId>
         <artifactId>parent</artifactId>
-        <version>2.0-SNAPSHOT</version>
+        <version>2.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -80,10 +80,6 @@
             <artifactId>chassis.core</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.invoker.hessian</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
@@ -107,17 +103,7 @@
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.invokers</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>monitoring.agent</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.spring.schema</artifactId>
         </dependency>
 
         <dependency>
@@ -130,7 +116,7 @@
             <artifactId>monitoring.agent</artifactId>
             <type>zip</type>
             <classifier>native</classifier>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -138,7 +124,7 @@
             <artifactId>chassis.configuration</artifactId>
             <type>zip</type>
             <classifier>configuration</classifier>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -146,7 +132,7 @@
             <artifactId>chassis.configuration</artifactId>
             <type>zip</type>
             <classifier>profiles</classifier>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

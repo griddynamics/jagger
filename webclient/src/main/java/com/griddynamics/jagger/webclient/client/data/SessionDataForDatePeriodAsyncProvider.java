@@ -51,7 +51,7 @@ public class SessionDataForDatePeriodAsyncProvider extends ExtendedAsyncDataProv
         SessionDataService.Async.getInstance().getByDatePeriod(start, range.getLength(), from, to, new AsyncCallback<PagedSessionDataDto>() {
             @Override
             public void onFailure(Throwable caught) {
-                new ExceptionPanel("Error is occurred during server request processing (Session data fetching)" + caught.getMessage());
+                new ExceptionPanel("Error is occurred during server request processing (Session data fetching): \n" + caught.getMessage());
             }
 
             @Override

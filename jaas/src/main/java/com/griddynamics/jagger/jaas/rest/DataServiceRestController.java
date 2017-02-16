@@ -1,7 +1,6 @@
 package com.griddynamics.jagger.jaas.rest;
 
-import static com.griddynamics.jagger.jaas.service.DynamicDataService.DEFAULT_DB_CONFIG_ID;
-
+import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricPlotPointEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricSummaryValueEntity;
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.griddynamics.jagger.jaas.service.DynamicDataService.DEFAULT_DB_CONFIG_ID;
 
 /**
  * JaaS REST API controller based on Spring MVC which exposes DB backed resources
@@ -50,8 +51,13 @@ public class DataServiceRestController extends AbstractController {
     public ResponseEntity<SessionEntity> getSession(@PathVariable String sessionId) {
         return dynamicDataServiceRestController.getSession(DEFAULT_DB_CONFIG_ID, sessionId);
     }
-    
-    @GetMapping(value = "/sessions/{sessionId}/tests/{testName}", produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @GetMapping(value = "/sessions/{sessionId}/decision", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DecisionPerSessionDto> getSessionDecision(@PathVariable String sessionId) {
+        return dynamicDataServiceRestController.getSessionDecision(DEFAULT_DB_CONFIG_ID, sessionId);
+    }
+
+    @GetMapping(value = "/sessions/{sessionId}/tests/{testName:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TestEntity> getTest(@PathVariable String sessionId, @PathVariable String testName) {
         return dynamicDataServiceRestController.getTest(DEFAULT_DB_CONFIG_ID, sessionId, testName);
     }
@@ -66,12 +72,12 @@ public class DataServiceRestController extends AbstractController {
         return dynamicDataServiceRestController.getMetrics(DEFAULT_DB_CONFIG_ID, testId);
     }
     
-    @GetMapping(value = "/sessions/{sessionId}/tests/{testName}/metrics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/sessions/{sessionId}/tests/{testName:.+}/metrics", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Set<MetricEntity>> getMetrics(@PathVariable String sessionId, @PathVariable String testName) {
         return dynamicDataServiceRestController.getMetrics(DEFAULT_DB_CONFIG_ID, sessionId, testName);
     }
     
-    @GetMapping(value = "/sessions/{sessionId}/tests/{testName}/metrics/summary",
+    @GetMapping(value = "/sessions/{sessionId}/tests/{testName:.+}/metrics/summary",
                 produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<MetricEntity, MetricSummaryValueEntity>> getMetricsSummary(@PathVariable String sessionId,
                                                                                          @PathVariable String testName
@@ -79,7 +85,7 @@ public class DataServiceRestController extends AbstractController {
         return dynamicDataServiceRestController.getMetricsSummary(DEFAULT_DB_CONFIG_ID, sessionId, testName);
     }
     
-    @GetMapping(value = "/sessions/{sessionId}/tests/{testName}/metrics/plot-data",
+    @GetMapping(value = "/sessions/{sessionId}/tests/{testName:.+}/metrics/plot-data",
                 produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<MetricEntity, List<MetricPlotPointEntity>>> getMetricPlotData(
             @PathVariable String sessionId, @PathVariable String testName

@@ -28,6 +28,8 @@ import static org.springframework.web.util.UriComponentsBuilder.newInstance;
  *
  * @author Anton Antonenko
  * @since 2.0
+ *
+ * @ingroup Main_Http_group
  */
 public class JHttpEndpoint implements Serializable {
 
@@ -186,6 +188,12 @@ public class JHttpEndpoint implements Serializable {
         queryParams.entrySet().forEach(entry -> localQueryParams.add(entry.getKey(), entry.getValue()));
 
         return fromUri(oldUri).queryParams(localQueryParams).build().toUri();
+    }
+
+    public static JHttpEndpoint copyOf(JHttpEndpoint jHttpEndpoint) {
+        if (jHttpEndpoint == null)
+            return null;
+        return new JHttpEndpoint(jHttpEndpoint.getURI());
     }
 
     @Override

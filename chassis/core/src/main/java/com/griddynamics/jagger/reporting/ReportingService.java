@@ -75,10 +75,15 @@ public class ReportingService {
         try {
             JasperPrint jasperPrint = generateReport(removeFrame);
             log.info("BEGIN: Export report");
-            switch(reportType) {
-                case HTML : JasperExportManager.exportReportToHtmlFile(jasperPrint, outputReportLocation); break;
-                case PDF : JasperExportManager.exportReportToPdfStream(jasperPrint, Files.newOutputStream(Paths.get(outputReportLocation))); break;
-                default : throw new ConfigurationException("ReportType is not specified");
+            switch (reportType) {
+                case HTML:
+                    JasperExportManager.exportReportToHtmlFile(jasperPrint, outputReportLocation);
+                    break;
+                case PDF:
+                    JasperExportManager.exportReportToPdfStream(jasperPrint, Files.newOutputStream(Paths.get(outputReportLocation)));
+                    break;
+                default:
+                    throw new ConfigurationException("ReportType is not specified");
             }
             if (doGenerateXmlReport) {
                 XMLReporter.create(context, sessionId).generateReport();
@@ -107,15 +112,15 @@ public class ReportingService {
     public void setOutputReportLocation(String outputReportLocation) {
         this.outputReportLocation = outputReportLocation;
     }
-    
+
     public boolean isDoGenerateXmlReport() {
         return doGenerateXmlReport;
     }
-    
+
     public void setDoGenerateXmlReport(boolean doGenerateXmlReport) {
         this.doGenerateXmlReport = doGenerateXmlReport;
     }
-    
+
     public ReportingContext getContext() {
         return context;
     }
@@ -131,11 +136,11 @@ public class ReportingService {
     public String getOutputReportLocation() {
         return outputReportLocation;
     }
-    
+
     public String getSessionId() {
         return sessionId;
     }
-    
+
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }

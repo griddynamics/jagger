@@ -1,23 +1,24 @@
 package com.griddynamics.jagger.util.generators;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
+
 import com.griddynamics.jagger.engine.e1.collector.DurationCollector;
 import com.griddynamics.jagger.engine.e1.collector.InformationCollector;
 import com.griddynamics.jagger.engine.e1.collector.MetricDescription;
-import com.griddynamics.jagger.engine.e1.collector.ResponseValidator;
+import com.griddynamics.jagger.engine.e1.collector.ResponseValidatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateCollectorProvider;
 import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorProvider;
 import com.griddynamics.jagger.engine.e1.collector.ValidatorProvider;
 import com.griddynamics.jagger.engine.e1.scenario.ReflectionProvider;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
+import com.griddynamics.jagger.invoker.CircularExclusiveAccessLoadBalancer;
+import com.griddynamics.jagger.invoker.QueryPoolLoadBalancer;
 import com.griddynamics.jagger.invoker.QueryPoolScenarioFactory;
-import com.griddynamics.jagger.invoker.RoundRobinPairSupplierFactory;
-import com.griddynamics.jagger.invoker.SimpleCircularLoadBalancer;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import org.springframework.beans.factory.support.ManagedList;
 
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
 import java.util.List;
 
 /**
@@ -28,17 +29,22 @@ import java.util.List;
  */
 class TestDefinitionGenerator {
 
-    public static WorkloadTask generatePrototype(JTestDefinition jTestDefinition) {
+    public static WorkloadTask generatePrototype(JTestDefinition jTestDefinition,
+                                                 ConfigurationProperties configurationProperties) {
 
         WorkloadTask prototype = new WorkloadTask();
         prototype.setDescription(jTestDefinition.getDescription());
         QueryPoolScenarioFactory scenarioFactory = new QueryPoolScenarioFactory();
         scenarioFactory.setQueryProvider(jTestDefinition.getQueries());
         scenarioFactory.setEndpointProvider(jTestDefinition.getEndpoints());
-        scenarioFactory.setInvokerClazz(jTestDefinition.getInvoker());
-        scenarioFactory.setLoadBalancer(new SimpleCircularLoadBalancer() {{
-            setPairSupplierFactory(new RoundRobinPairSupplierFactory());
-        }});
+        
+        QueryPoolLoadBalancer loadBalancer = jTestDefinition.getLoadBalancer();
+        if (loadBalancer instanceof CircularExclusiveAccessLoadBalancer) {
+            ((CircularExclusiveAccessLoadBalancer) loadBalancer).setPollTimeout(configurationProperties.getLoadBalancerPollTimeout());
+        }
+        scenarioFactory.setLoadBalancer(loadBalancer);
+        
+        scenarioFactory.setInvokerProvider(jTestDefinition.getInvoker());
         prototype.setScenarioFactory(scenarioFactory);
 
         prototype.setName(jTestDefinition.getId());
@@ -50,9 +56,9 @@ class TestDefinitionGenerator {
         prototype.setCollectors(collectors);
 
         ManagedList validators = new ManagedList();
-        for (Class<? extends ResponseValidator> clazz: jTestDefinition.getValidators()) {
+        for (ResponseValidatorProvider responseValidatorProvider: jTestDefinition.getValidators()) {
             ValidatorProvider validatorProvider = new ValidatorProvider();
-            validatorProvider.setValidator(ReflectionProvider.ofClass(clazz));
+            validatorProvider.setValidator(responseValidatorProvider);
             validators.add(validatorProvider);
         }
         prototype.setValidators(validators);

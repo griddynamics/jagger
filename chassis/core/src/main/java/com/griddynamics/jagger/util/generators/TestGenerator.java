@@ -11,6 +11,7 @@ import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.engine.e1.scenario.WorkloadTask;
 import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvider;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.Lists;
 
@@ -24,9 +25,12 @@ import java.util.List;
 class TestGenerator {
     static WorkloadTask generateFromTest(JLoadTest jLoadTest,
                                          BaselineSessionProvider baselineSessionProvider,
-                                         LimitSetConfig limitSetConfig) {
-        WorkloadTask task = generatePrototype(jLoadTest.getTestDescription());
-        task.setName(jLoadTest.getId());
+                                         LimitSetConfig limitSetConfig,
+                                         String testGroupName,
+                                         ConfigurationProperties configurationProperties) {
+        WorkloadTask task = generatePrototype(jLoadTest.getTestDescription(), configurationProperties);
+        task.setName(getName(jLoadTest.getId(), testGroupName));
+        task.setParentTaskId(testGroupName);
         task.setVersion("0");
     
         List<Provider<TestListener>> testListeners = Lists.newArrayList(jLoadTest.getListeners());
@@ -40,5 +44,12 @@ class TestGenerator {
         task.setLimits(LimitGenerator.generate(jLoadTest.getLimits(), baselineSessionProvider, limitSetConfig));
 
         return task;
+    }
+
+    public static String getName(String id, String testGroupName) {
+        if (StringUtils.isBlank(id)){
+            return testGroupName;
+        }
+        return String.format("%s [%s]", testGroupName, id);
     }
 }

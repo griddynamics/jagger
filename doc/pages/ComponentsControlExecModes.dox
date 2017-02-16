@@ -1,0 +1,49 @@
+/// @page ComponentsControlExecModes Test execution control modes
+/// @brief Section describes different approaches to launch test execution
+/// @n
+/// @li @ref section_components_exec_control_right_away
+/// @li @ref section_components_exec_control_stand_by
+///
+/// @section section_components_exec_control_right_away Running in the Right away mode
+///
+/// We consider you are already familiar with different @ref ComponentsLoadGenExecutionModes "load generation" configurations.
+/// In all configurations we are launching `./start.sh` script to run test framework with one or another role.
+/// In all examples framework is running in the <b> Right away </b> mode. Start framework, execute tests, save results, terminate.
+/// That means during single framework launch you are able to execute single @ref section_writing_test_load_scenario "load scenario". @n
+/// @n
+/// Such setup can be useful during debugging or local running of your performance tests.
+/// Besides <b> Right away </b> mode, Jagger framework is able to run in the @ref section_components_exec_control_stand_by "Stand by" mode
+///
+/// @section section_components_exec_control_stand_by Running in the Stand by mode
+///
+/// What is the idea of the <b> Stand by </b> mode. In this mode load generating components
+/// will initialise on some environment and wait for the test project to execute. You can submit any new test project to the environment via REST API. Tests will be
+/// executed, results saved and load generating components will return to the <b> Stand by </b> mode, waiting for the next test project. @n
+/// @n
+/// Such setup can be useful in the CI environments. It allows to run large number of tests without restarting framework and even without access to the environment where
+/// framework is running. @n
+/// @n
+/// We are recommending to use @ref section_ci_jagger_jaas_plugin "Jenkins JaaS plugin" to launch tests on the environments, running in the <b> Stand by </b> mode @n
+/// @n
+/// Let's review <b> Stand by </b> mode working sequence in details with @ref section_components_exec_load_gen_default "default load generating configuration"
+/// @li Results storage and representation components are always running in the docker containers
+/// @li Start load generating components in @ref ComponentsLoadGenExecutionModes "single node or distributed mode" on some environment. To run in <b> Stand by </b> mode
+/// you will need to set additional properties:
+/// @code
+/// ./start.sh profiles/basic/environment.properties
+///             -Drealtime.enable.standby.mode=true
+///             -Drealtime.jaas.endpoint=http://{jaas host}:8088/jaas
+///             -Drealtime.environment.id=my_test_environment
+/// @endcode
+/// Information about mentioned properties you can find in the @ref section_jagger_properties "Jagger configuration" chapter @n
+/// @li After load generating components initialisation Master/Coordinator will start sending environment information to JaaS via @htmlonly <a href="./swagger/swagger_doc.html#_test-environment-rest-controller_resource" target="_blank">Environment REST API</a> @endhtmlonly.
+/// JaaS will return commands in the responses.
+/// @li Via @htmlonly <a href="./swagger/swagger_doc.html#_test-execution-rest-controller_resource" target="_blank">Execution REST API</a> @endhtmlonly you can submit new test project to selected environment.
+/// You will need to send URL to the .jar file with you test project, environment Id where it should be executed, id of the load scenario to execute, time to start the test
+/// @li JaaS will save your execution request to the execution queue. Execution will stay in the queue not more than time to start parameter. If during this time, there will be request
+/// from Master/Coordinator on the dedicated environment, JaaS will send a command to the environment to execute your test project. If there is no request from dedicated environment
+/// during time to start interval, execution will be marked as timeout and will be not submitted.
+/// @li Test project execution will start, results will be collected in the test results DB. Later you can access results via @ref WebUiMain "web interface" or @ref JaasMain "REST API".
+/// @li After test execution is over, environment will return to <b> Stand By </b> mode and will wait for the next command
+///
+/// @image html /doc/images/components_default.png "Default configuration of the test framework"

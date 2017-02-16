@@ -31,6 +31,14 @@ public class UnreliableService {
 
     private static final Random rnd = new Random();
 
+    /** Call to this endpoint will produce random number and throw exception if its value < failRate, otherwise return OK response.
+     *
+     * Example of request: /unreliable/100
+     *
+     * @param failRate length of produced text.
+     * @return OK response
+     * @throws InterruptedException if generated value < failRate
+     */
     @GET
     @Produces("text/plain")
     @Path("{fail}")

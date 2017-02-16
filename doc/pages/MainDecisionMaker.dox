@@ -1,0 +1,125 @@
+/// @page MainDecisionMaker
+/// @brief Section describes approach how to automatically make decision about results of the performance test @n
+/// @details
+/// @section section_dm_general General info
+/// Decision maker is required to provide result of the performance test execution. It decides if measured parameters
+/// meet acceptance criteria or not. Result provided by decision maker can be used by CI tool to rise alert when
+/// measured results don't meet expectations. @n
+///
+/// @section section_dm_intro Scope
+///
+/// This section describes how to compare collected metrics with predefined reference values or baseline session values
+/// and decide whether performance of your system meet acceptance criteria or not. As result of comparison you
+/// can make decision and mark this test session with status flag (OK, WARNING, FATAL, ERROR). Session status will be visible
+/// to Jagger Jenkins plugin. In WebUI and PDF report summary values will be highlighted according to results of the comparison
+/// @n
+/// @image html webUI_metrics_highlighting.png "Example of result highlighting in WebUI after comparison with limits"
+/// @n
+///
+///
+/// @section section_dm_overview Overview
+/// @n
+/// Steps to go: @n
+/// @li @ref section_dm_describe_limits
+/// @li @ref section_dm_display
+/// @li @ref section_dm_setup_properties
+///
+/// Code presented in detailed description below is available in Jagger @ref section_installation_local "archetype" @n
+/// @n
+///
+/// @section section_dm_describe_limits Describe limits for measured parameters
+///
+/// @par What metrics can be compared to limits
+/// You can apply limits to all @ref MetricsMain "collected metrics"
+/// @li performance metrics (throughput, latency, percentiles)
+/// @li monitoring metrics (resource utilization measured by Jagger agents)
+/// @li custom metrics
+/// @li validators
+///
+/// Summary values of these metrics will be compared to limits. @n
+/// @n
+/// @par How to describe limits
+/// You can compare you measured value either with the reference value or the measured value from the baseline session. @n
+/// @n
+/// <b> IMPORTANT </b> In all examples below, limits are relative values. Reference values or the value from baseline session
+/// is taken as a reference, thresholds to rise error and warning flags are calculated as: <b> RefValue * Limit </b> @n
+/// @n
+/// Example of the limits description: @n
+/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - example of the limits
+/// @until end: following section is used for docu generation - example of the limits
+/// @n
+/// @par How limits and measured values are matched
+/// They are matched by the metricName @n
+/// How limits will match to metrics: @n
+/// @li First exact match will be checked. Metric id from will be compared to the metricName attribute of the limit @n
+/// @li If first will not match, metric id will be compared to regular expression @b "^metricName.*" @n
+///
+/// This means limit with @e metricName 'mon_cpula_' will match metrics with ids: @n
+/// <i> mon_cpula_1|jagger_connect_57 [127.0.1.1]|-avg </i> @n
+/// <i> mon_cpula_5|jagger_connect_57 [127.0.1.1]|-avg </i> @n
+/// <i> mon_cpula_15|jagger_connect_57 [127.0.1.1]|-avg </i> @n
+/// @n
+/// If you have metrics with multiple aggregators, like in the @ref MetricsAggregation "example", you can assign
+/// limit to every combination of the metric-aggregator. In this case metricName for limits setup will be concatenation of the metric id
+/// and the aggregator name separated by the dash like: <i> metricId-aggregatorName </i> @n
+/// @n
+///
+/// @par How to enable summary calculation for monitoring metrics
+/// @b NOTE: Pay attention that summary is not calculated for monitoring parameters by default. You need to enable this calculation @n
+/// in property file. Like on example below: @n
+/// @dontinclude  environment.properties
+/// @skip  begin: following section is used for docu generation - How to enable summary calculation for monitoring metrics
+/// @until end: following section is used for docu generation - How to enable summary calculation for monitoring metrics
+///
+/// @par How limits based decision is made
+/// 1. Metrics for one test are compared with limits => decision per metric @n
+/// 2. Decision per test = worst decision for metrics belonging to this test @n
+/// 3. Decision per test group = worst decision for tests belonging to this test @n
+/// 4. Decision per session = worst decision for tests groups belonging to this test @n
+/// @n
+/// @b NOTE: Step #3 by default is executed by @ref com.griddynamics.jagger.engine.e1.BasicTGDecisionMakerListener "BasicTGDecisionMakerListener" class.
+/// You can override it with your own @ref com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener "TestGroupDecisionMakerListener" @n
+/// How to implement custom listeners you can read here: @ref ListenersMain @n
+/// @n
+///
+/// @section section_dm_display View results in WebUI and PDF report
+///
+/// Summary value for metrics compared to limits will be highlighted in PDF report and WebUi according to result of comparison @n
+/// @li OK - @b @htmlonly <font color="#008000">green</font>@endhtmlonly
+/// @li WARNING - @b @htmlonly <font color="#B8860B">yellow</font>@endhtmlonly
+/// @li FATAL or ERROR - @b @htmlonly <font color="#FF0000">red</font>@endhtmlonly
+///
+/// @b NOTE: Currently highlighting is supported only for:
+/// @li standard performance metrics
+/// @li monitoring metrics
+/// @li custom metrics
+///
+/// <i> Validators </i> can be compared to limits and will influence decision, but are not highlighted @n
+/// @n
+/// To switch off highlighting - set following property to false: @n
+/// Web client: @n
+/// @dontinclude  webclient.properties
+/// @skipline webui.enable.decisions.per.metric.highlighting
+///
+/// PDF report: @n
+/// @dontinclude  environment.properties
+/// @skipline report.enable.decisions.per.metric.highlighting
+/// @n
+///
+/// @section section_dm_setup_properties Configure baseline and auxiliary parameters
+///
+/// To provide comparison of your results to baseline values it is necessary to select baseline session Id @n
+/// Set following properties in you @e environment.properties file or via system properties:
+/// @dontinclude  ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties
+/// @skip  begin: following section is used for docu generation - Decision making by limits main
+/// @until end: following section is used for docu generation - Decision making by limits main
+///
+/// Optional: additional setting to define behavior in case of errors:
+/// @dontinclude  ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/profiles/basic/environment.properties
+/// @skip  begin: following section is used for docu generation - Decision making by limits aux
+/// @until end: following section is used for docu generation - Decision making by limits aux
+/// @n
+
+
+

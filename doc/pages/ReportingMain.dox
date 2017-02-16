@@ -1,0 +1,31 @@
+/// @page ReportingMain
+/// @brief Besides access to the test results via @ref WebUiMain "Web UI" you can generate pdf report for particular test execution
+/// @details
+///
+/// @li @ref section_report
+///
+/// @section section_report PDF report generation
+/// PDF report contains detailed information about @ref TestResultsMain "test results" for particular execution of the @ref section_writing_test_load_scenario "load scenario" @n
+/// In the report you can find:
+/// - general information about test session
+/// - summary values for all metrics and validators with decisions
+/// @image html ./doc/images/report_summary.png "Example of pdf report summary section"
+/// - detailed information for all metrics
+/// @image html ./doc/images/report_details.png "Example of pdf report details section"
+///
+/// Report is generated:
+/// @li every time when you are @ref section_getting_started_run "running load scenario" from the command line.@n
+/// You can find it the same folder where load scenario was executed
+/// @li via @htmlonly <a href="./swagger/swagger_doc.html#_reporting-rest-controller_resource" target="_blank">JaaS Reporting REST API</a> @endhtmlonly @n
+/// Example of the request:
+/// @code
+/// http://localhost:8088/jaas/report/?sessionId=1
+/// @endcode
+/// @li from the command line @n
+/// After @ref section_getting_started_run "building your test project", you can generate test report for any session in your results DB with
+/// the same `start.sh` script like you are using to start load scenario. Just pass different properties to this script and define test session id
+/// Example:
+/// @code
+/// ./start.sh ./profiles/reporter/environment-reporter.properties -Dreport.session.id=1
+/// @endcode
+///

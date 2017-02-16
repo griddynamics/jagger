@@ -3,7 +3,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.griddynamics.jagger</groupId>
-        <version>2.0-SNAPSHOT</version>
+        <version>2.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -47,6 +47,18 @@
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.util</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>RELEASE</version>
         </dependency>
     </dependencies>
 

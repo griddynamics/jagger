@@ -16,7 +16,7 @@ import java.util.List;
  * @author Dmitry Latnikov
  * @n
  * @par Details:
- * @details It is executed when decision making based on limits is used. Details: @ref DecisionMakerBasedOnLimits @n
+ * @details It is executed when decision making based on limits is used. Details: @ref MainDecisionMaker @n
  * It is used by default as soon as limit set is attached to test
  *
  */
@@ -55,16 +55,3 @@ public class BasicTGDecisionMakerListener extends ServicesAware implements Provi
     }
 
 }
-
-/* **************** Decision maker page ************************* */
-/// @defgroup Main_Decision_Maker_General_group Decision Maker main page
-///
-///
-/// @li Approach to make decision: @ref DecisionMakerBasedOnLimits
-/// @n
-/// @n
-/// @details
-/// @par General info
-/// Decision maker is required to provide result of performance test execution. It decides if measured parameters @n
-/// meet acceptance criteria or not. Result provided by decision maker can be used by CI tool to rise alert when @n
-/// measured results are below expectations. @n

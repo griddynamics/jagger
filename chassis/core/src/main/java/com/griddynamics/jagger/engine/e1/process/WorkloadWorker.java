@@ -34,6 +34,7 @@ import com.griddynamics.jagger.util.ExceptionLogger;
 import com.griddynamics.jagger.util.GeneralInfoCollector;
 import com.griddynamics.jagger.util.GeneralNodeInfo;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
+import com.griddynamics.jagger.util.UrlClassLoaderHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -41,14 +42,16 @@ import org.springframework.beans.factory.annotation.Required;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Adapts {@link PerThreadWorkloadProcess} and {@link PeriodWorkloadProcess} to coordination API.
  */
 public class WorkloadWorker extends ConfigurableWorker {
     private static final Logger log = LoggerFactory.getLogger(WorkloadWorker.class);
+    private static final int CORE_POOL_SIZE = 5;
     private TimeoutsConfiguration timeoutsConfiguration;
 
     private GeneralInfoCollector generalInfoCollector = new GeneralInfoCollector();
@@ -57,12 +60,18 @@ public class WorkloadWorker extends ConfigurableWorker {
     private Map<String, Integer> pools = Maps.newConcurrentMap();
 
     private LogWriter logWriter;
+    
+    private UrlClassLoaderHolder classLoaderHolder;
 
     @Override
     public Collection<CommandExecutor<?, ?>> getExecutors() {
         return super.getExecutors();
     }
-
+    
+    public void setClassLoaderHolder(UrlClassLoaderHolder classLoaderHolder) {
+        this.classLoaderHolder = classLoaderHolder;
+    }
+    
     @Required
     public void setTimeoutsConfiguration(TimeoutsConfiguration timeoutsConfiguration) {
         this.timeoutsConfiguration = timeoutsConfiguration;
@@ -191,7 +200,38 @@ public class WorkloadWorker extends ConfigurableWorker {
                         return generalNodeInfo;
                     }
                 });
-
+        
+        onCommandReceived(AddUrlClassLoader.class).execute(new WorkloadWorkerCommandExecutor<AddUrlClassLoader, Boolean>() {
+    
+            @Override
+            public Qualifier<AddUrlClassLoader> getQualifier() {
+                return Qualifier.of(AddUrlClassLoader.class);
+            }
+    
+            @Override
+            public Boolean doExecute(AddUrlClassLoader command, NodeContext nodeContext) {
+                if (classLoaderHolder != null) {
+                    return classLoaderHolder.createFor(command.getClassesUrl());
+                }
+                return null;
+            }
+        });
+        
+        onCommandReceived(RemoveUrlClassLoader.class).execute(new WorkloadWorkerCommandExecutor<RemoveUrlClassLoader, Boolean>() {
+    
+            @Override
+            public Qualifier<RemoveUrlClassLoader> getQualifier() {
+                return Qualifier.of(RemoveUrlClassLoader.class);
+            }
+    
+            @Override
+            public Boolean doExecute(RemoveUrlClassLoader command, NodeContext nodeContext) {
+                if (classLoaderHolder != null) {
+                    return classLoaderHolder.clear();
+                }
+                return null;
+            }
+        });
     }
 
     /**
@@ -199,12 +239,12 @@ public class WorkloadWorker extends ConfigurableWorker {
      * @return {@link ThreadPoolExecutor} instance with given pool size
      */
     private ThreadPoolExecutor getFixedThreadPoolExecutor(int poolSize) {
-        return (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize,
+        int corePoolSize = poolSize < CORE_POOL_SIZE ? poolSize : CORE_POOL_SIZE;
+        return new ThreadPoolExecutor(corePoolSize, poolSize, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(),
                 new ThreadFactoryBuilder()
                         .setNameFormat("workload-thread %d")
                         .setUncaughtExceptionHandler(ExceptionLogger.INSTANCE)
-                        .build()
-        );
+                        .build());
     }
 
     private String generateId() {

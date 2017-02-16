@@ -21,6 +21,7 @@
 package com.griddynamics.jagger.invoker;
 
 import com.griddynamics.jagger.coordinator.NodeContext;
+import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.util.JavaSystemClock;
 import com.griddynamics.jagger.util.SystemClock;
 
@@ -28,20 +29,48 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
     private Class<Invoker<Q, R, E>> invokerClazz;
     private QueryPoolLoadBalancer<Q, E> loadBalancer;
     private SystemClock systemClock = new JavaSystemClock();
-
+    
     private Iterable<Q> queryProvider;
     private Iterable<E> endpointProvider;
+    
+    private Provider<Invoker> invokerProvider;
 
     @Override
-    public Scenario<Q, R, E> get(NodeContext nodeContext) {
-        Invoker<Q, R, E> invoker = nodeContext.getService(invokerClazz);
-        if(invoker == null) {
-            throw new IllegalArgumentException("Service for class + '" + invokerClazz.getCanonicalName()
-            + "' not found!");
-        }
-        if (endpointProvider!=null) loadBalancer.setEndpointProvider(getEndpointProvider());
-        if (queryProvider!=null)    loadBalancer.setQueryProvider(getQueryProvider());
+    public Scenario<Q, R, E> get(NodeContext nodeContext, KernelInfo kernelInfo) {
+    
+        Invoker<Q, R, E> invoker = instantiateInvoker(nodeContext);
+        
+        initLoadBalancer(kernelInfo);
+        
         return new QueryPoolScenario<Q, R, E>(invoker, loadBalancer.provide(), systemClock);
+    }
+    
+    private Invoker<Q, R, E> instantiateInvoker(final NodeContext nodeContext) {
+        // TODO: to remove request to context after JFG-1090
+        Invoker<Q, R, E> invoker = nodeContext.getService(invokerClazz);
+        if (invokerProvider != null) {
+            invoker = invokerProvider.provide();
+        }
+    
+        if (invoker == null) {
+            throw new IllegalArgumentException("Service for class + '" + invokerClazz.getCanonicalName()
+                                               + "' not found!");
+        }
+        
+        return invoker;
+    }
+    
+    private void initLoadBalancer(KernelInfo kernelInfo) {
+        if (endpointProvider != null) {
+            loadBalancer.setEndpointProvider(getEndpointProvider());
+        }
+        if (queryProvider != null) {
+            loadBalancer.setQueryProvider(getQueryProvider());
+        }
+    
+        loadBalancer.setKernelInfo(kernelInfo);
+        
+        loadBalancer.init();
     }
 
     //@Required
@@ -72,5 +101,9 @@ public class QueryPoolScenarioFactory<Q, R, E> implements ScenarioFactory<Q, R, 
 
     public void setEndpointProvider(Iterable<E> endpointProvider) {
         this.endpointProvider = endpointProvider;
+    }
+    
+    public void setInvokerProvider(Provider<Invoker> invokerProvider) {
+        this.invokerProvider = invokerProvider;
     }
 }

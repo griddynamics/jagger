@@ -20,14 +20,8 @@
 
 package com.griddynamics.jagger.engine.e1.process;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.AbstractExecutionThreadService;
-import com.google.common.util.concurrent.AbstractFuture;
-import com.google.common.util.concurrent.JdkFutureAdapters;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.Service;
-import com.google.common.util.concurrent.Uninterruptibles;
+import static com.griddynamics.jagger.util.TimeUtils.sleepMillis;
+
 import com.griddynamics.jagger.engine.e1.collector.Validator;
 import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener;
 import com.griddynamics.jagger.engine.e1.scenario.Flushable;
@@ -38,6 +32,15 @@ import com.griddynamics.jagger.util.NewThreadExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import com.google.common.util.concurrent.AbstractFuture;
+import com.google.common.util.concurrent.JdkFutureAdapters;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Service;
+import com.google.common.util.concurrent.Uninterruptibles;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -46,9 +49,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static com.griddynamics.jagger.util.TimeUtils.sleepMillis;
 
 public abstract class AbstractWorkloadService extends AbstractExecutionThreadService implements WorkloadService {
     private static final Logger log = LoggerFactory.getLogger(AbstractWorkloadService.class);
@@ -60,6 +62,7 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
     private final AtomicInteger delay = new AtomicInteger(0);
     private final AtomicInteger startedSamples = new AtomicInteger(0);
     private final AtomicInteger finishedSamples = new AtomicInteger(0);
+    private final AtomicLong emptyTransactions = new AtomicLong(0);
 
     public static WorkloadServiceBuilder builder(Scenario<Object, Object, Object> scenario) {
         return new WorkloadServiceBuilder(scenario);
@@ -77,7 +80,10 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
             while (isRunning() && !terminationRequired()) {
                 log.debug("Scenario {} doTransaction called", scenario);
                 startedSamples.incrementAndGet();
-                scenario.doTransaction();
+                if (!scenario.doTransaction()) {
+                    emptyTransactions.incrementAndGet();
+                    log.debug("empty transaction occurred");
+                }
                 log.debug("Sleep between invocations for {}", delay);
                 sleepMillis(delay.get());
                 finishedSamples.incrementAndGet();
@@ -104,16 +110,22 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
     }
 
     protected abstract boolean terminationRequired();
-
-
+    
+    @Override
     public Integer getStartedSamples() {
         return startedSamples.get();
     }
-
+    
+    @Override
     public Integer getFinishedSamples() {
         return finishedSamples.get();
     }
-
+    
+    @Override
+    public long getEmptyTransactions() {
+        return emptyTransactions.get();
+    }
+    
     public void changeDelay(int delay) {
         this.delay.set(delay);
     }
@@ -254,6 +266,7 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
             private final AtomicInteger delay = new AtomicInteger(0);
             private final AtomicInteger startedSamples = new AtomicInteger(0);
             private final AtomicInteger finishedSamples = new AtomicInteger(0);
+            private final AtomicLong emptyTransactions = new AtomicLong(0);
 
             private final ReentrantLock lock = new ReentrantLock();
 
@@ -281,6 +294,7 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
                         if (delegate != null) {
                             startedSamples.addAndGet(delegate.getStartedSamples());
                             finishedSamples.addAndGet(delegate.getFinishedSamples());
+                            emptyTransactions.addAndGet(delegate.getEmptyTransactions());
                         }
 
                         delegate = new PredefinedSamplesWorkloadService(flushables, 1) {
@@ -414,7 +428,17 @@ public abstract class AbstractWorkloadService extends AbstractExecutionThreadSer
                     lock.unlock();
                 }
             }
-
+    
+            @Override
+            public long getEmptyTransactions() {
+                lock.lock();
+                try {
+                    return emptyTransactions.get() + delegate.getEmptyTransactions();
+                } finally {
+                    lock.unlock();
+                }
+            }
+    
             @Override
             public boolean isRunning() {
                 return delegate != null && delegate.isRunning();

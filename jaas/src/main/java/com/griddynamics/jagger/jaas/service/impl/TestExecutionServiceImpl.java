@@ -1,10 +1,10 @@
 package com.griddynamics.jagger.jaas.service.impl;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.jaas.service.TestExecutionService;
 import com.griddynamics.jagger.jaas.storage.TestExecutionDao;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionAuditEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
-import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,16 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.FINISHED;
 import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.PENDING;
-import static com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity.TestExecutionStatus.RUNNING;
 
 @Service
 public class TestExecutionServiceImpl implements TestExecutionService {
 
-    @Value("${test.execution.default.start.timeout.seconds}")
-    private Long testExecutionDefaultStartTimeoutInSeconds;
+    @Value("${test.execution.default.time.to.start.seconds}")
+    private Long testExecutionDefaultTimeToStartInSeconds;
 
     private TestExecutionDao testExecutionDao;
 
@@ -46,11 +43,20 @@ public class TestExecutionServiceImpl implements TestExecutionService {
     }
 
     @Override
-    public TestExecutionEntity create(TestExecutionEntity testExecution) {
-        if (testExecution.getExecutionStartTimeoutInSeconds() == null)
-            testExecution.setExecutionStartTimeoutInSeconds(testExecutionDefaultStartTimeoutInSeconds);
+    public List<TestExecutionEntity> readByEnv(String envId) {
+        return newArrayList(testExecutionDao.readByEnv(envId));
+    }
 
-        testExecution.setAuditEntities(newHashSet(new TestExecutionAuditEntity(testExecution, System.currentTimeMillis(), null, PENDING)));
+    @Override
+    public TestExecutionEntity create(TestExecutionEntity testExecution) {
+        if (testExecution.getExecutionTimeToStartInSeconds() == null || testExecution.getExecutionTimeToStartInSeconds() == 0) {
+            testExecution.setExecutionTimeToStartInSeconds(testExecutionDefaultTimeToStartInSeconds);
+        }
+    
+        testExecution.setAuditEntities(Lists.newArrayList(new TestExecutionAuditEntity(testExecution,
+                                                                          System.currentTimeMillis(),
+                                                                          null,
+                                                                          PENDING)));
         testExecution.setStatus(PENDING);
         testExecutionDao.create(testExecution);
         return testExecution;
@@ -60,26 +66,17 @@ public class TestExecutionServiceImpl implements TestExecutionService {
     public void delete(Long testExecutionId) {
         testExecutionDao.delete(testExecutionId);
     }
-
+    
     @Override
-    public void startExecution(String environmentId, String loadScenarioId) {
-        testExecutionDao.readByEnvAndLoadScenario(environmentId, loadScenarioId).stream()
-                .filter(exec -> exec.getStatus() == PENDING)
-                .findFirst()
-                .ifPresent(testExecutionEntity -> updateStatus(testExecutionEntity, RUNNING));
-    }
-
-    @Override
-    public void finishExecution(String environmentId, String loadScenarioId) {
-        testExecutionDao.readByEnvAndLoadScenario(environmentId, loadScenarioId).stream()
-                .filter(exec -> exec.getStatus() == RUNNING)
-                .findFirst()
-                .ifPresent(testExecutionEntity -> updateStatus(testExecutionEntity, FINISHED));
-    }
-
-    private void updateStatus(TestExecutionEntity testExec, TestExecutionStatus newStatus) {
-        testExec.addAuditEntity(new TestExecutionAuditEntity(testExec, System.currentTimeMillis(), testExec.getStatus(), newStatus));
-        testExec.setStatus(newStatus);
-        testExecutionDao.update(testExec);
+    public void update(TestExecutionEntity testExecution) {
+        TestExecutionEntity dbTestExecutionEntity = testExecutionDao.read(testExecution.getId());
+        if (dbTestExecutionEntity.getStatus() != testExecution.getStatus()) {
+            testExecution.addAuditEntity(new TestExecutionAuditEntity(testExecution,
+                                                                      System.currentTimeMillis(),
+                                                                      dbTestExecutionEntity.getStatus(),
+                                                                      testExecution.getStatus()));
+        }
+        testExecution.getAuditEntities().forEach(auditEntity -> auditEntity.setTestExecutionEntity(testExecution));
+        testExecutionDao.update(testExecution);
     }
 }

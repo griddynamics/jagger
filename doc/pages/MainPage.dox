@@ -3,7 +3,7 @@
 /// @dontinclude  JaggerVersion.txt
 /// @skipline  Version
 /// @n
-/// Back to <a href="https://github.com/griddynamics/jagger/wiki">GitHub</a> documentation @n
+/// Back to <a href="https://github.com/griddynamics/jagger/wiki">GitHub</a> @n
 /// @n
 /// @section section_main_introduction Introduction
 /// Jagger is performance test framework, suitable for local usage and for building continuous performance testing. @n
@@ -15,14 +15,15 @@
 /// @li @ref MetricsMain "Collect performance and custom metrics"
 /// @li @ref MetricsValidators "Validate responses from the system under test"
 /// @li @ref MonitoringMain "Collect system and JVM monitoring metrics"
-/// @li Store test results
-/// @li Report test results
+/// @li @ref TestResultsMain "Store test results"
+/// @li @ref ReportingMain "Report test results"
 /// @li @ref WebUiMain "Display, compare, share test results via WebUI"
 /// @li @ref JaasMain "Provide REST API for the test results access"
-/// @li Integrate to CI
-/// @li Rise pass/warning/fail alerts in the CI
-/// @li Work with custom components
-/// @li Run in single node or distributed mode
-/// @n
+/// @li @ref CIMain "Integrate to CI"
+/// @li @ref MainDecisionMaker "Rise pass/warning/fail alerts in the CI"
+/// @li @ref section_writing_custom_test_definition "Work with custom communication protocols and components"
+/// @li @ref ComponentsLoadGenExecutionModes "Run on the single node or in the distributed mode"
+/// @li @ref ComponentsControlExecModes "Run framework as a server and submit new tests via REST API"
+///
 /// @n
 /// Other documentation <a href='../archive/index.html'>versions</a>

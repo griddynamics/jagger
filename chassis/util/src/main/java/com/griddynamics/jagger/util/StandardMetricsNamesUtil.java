@@ -21,25 +21,27 @@
 package com.griddynamics.jagger.util;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringUtils.removePattern;
 
 /**
  * Class is used in chassis, web UI server and web UI client
  * to use it in web UI client - keep it simple (use only standard java libraries)
  */
 public class StandardMetricsNamesUtil {
+    private static final Logger log = LoggerFactory.getLogger(StandardMetricsNamesUtil.class);
+
     public static final String THROUGHPUT_TPS = "Throughput, tps";
     public static final String THROUGHPUT = "Throughput";
     public static final String LATENCY_SEC = "Latency, sec";
     public static final String LATENCY_STD_DEV_SEC = "Latency std dev, sec";
     public static final String LATENCY = "Latency";
-    public static final String LATENCY_PERCENTILE_REGEX = "Latency\\s\\S+\\s%(-old)?";
+    public static final String LATENCY_PERCENTILE_REGEX = "Latency\\s\\S+\\s%";
     public static final String ITERATIONS_SAMPLES = "Iterations, samples";
     public static final String SUCCESS_RATE = "Success rate";
     public static final String DURATION_SEC = "Duration, sec";
@@ -50,33 +52,71 @@ public class StandardMetricsNamesUtil {
     public static final String SUCCESS_RATE_AGGREGATOR_OK_ID = "Success rate";
     public static final String SUCCESS_RATE_AGGREGATOR_FAILED_ID = "Number of fails";
 
-    //begin: following section is used for docu generation - standard metrics ids
     public static final String THROUGHPUT_ID = "throughput";
     public static final String LATENCY_ID = "avgLatency";
     public static final String LATENCY_STD_DEV_ID = "stdDevLatency";
     public static final String SUCCESS_RATE_ID = "successRate";
-    public static final String SUCCESS_RATE_OK_ID = SUCCESS_RATE_ID + " [" + SUCCESS_RATE_AGGREGATOR_OK_ID + "]";
-    public static final String SUCCESS_RATE_FAILED_ID = SUCCESS_RATE_ID + " [" + SUCCESS_RATE_AGGREGATOR_FAILED_ID + "]";
+    public static final String SUCCESS_RATE_OK_ID = "successRate-Success rate";
+    public static final String SUCCESS_RATE_FAILED_ID = "successRate-Number of fails";
     public static final String DURATION_ID = "duration";
     public static final String ITERATION_SAMPLES_ID = "samples";
 
     public static final String VIRTUAL_USERS_ID = "Jagger.Threads";
 
-    //end: following section is used for docu generation - standard metrics ids
+    // standard monitoring metric names
+    public static final String MON_CPULA_1 = "mon_cpula_1";
+    public static final String MON_CPULA_5 = "mon_cpula_5";
+    public static final String MON_CPULA_15 = "mon_cpula_15";
 
-    // ids for standard metrics saved with old model (in WorkloadTaskData, TimeLatencyPercentile, etc)
-    public static final String THROUGHPUT_OLD_ID = "throughput-old";
-    public static final String LATENCY_OLD_ID = "avgLatency-old";
-    public static final String LATENCY_STD_DEV_OLD_ID = "stdDevLatency-old";
-    public static final String DURATION_OLD_ID = "duration-old";
-    public static final String ITERATION_SAMPLES_OLD_ID = "samples-old";
+    public static final String MON_GC_MINOR_TIME = "mon_gc_minor_time";
+    public static final String MON_GC_MAJOR_TIME = "mon_gc_major_time";
+    public static final String MON_GC_MINOR_UNIT = "mon_gc_minor_unit";
+    public static final String MON_GC_MAJOR_UNIT = "mon_gc_major_unit";
 
-    public static String getLatencyMetricName(double latencyKey, boolean isOldModel) {
-        if (isOldModel) {
-            return "Latency " + latencyKey + " %-old";
-        } else {
-            return "Latency " + latencyKey + " %";
-        }
+    public static final String MON_MEM_RAM = "mon_mem_ram";
+    public static final String MON_MEM_TOTAL = "mon_mem_total";
+    public static final String MON_MEM_USED = "mon_mem_used";
+    public static final String MON_MEM_ACTUAL_USED = "mon_mem_actual_used";
+    public static final String MON_MEM_FREE_PRCNT = "mon_mem_free_prcnt";
+    public static final String MON_MEM_ACTUAL_FREE = "mon_mem_actual_free";
+    public static final String MON_MEM_FREE = "mon_mem_free";
+
+    public static final String MON_TCP_EST = "mon_tcp_est";
+    public static final String MON_TCP_LISTEN = "mon_tcp_listen";
+    public static final String MON_SYNC_RECEIVED = "mon_sync_received";
+    public static final String MON_INBOUND_TOTAL = "mon_inbound_total";
+    public static final String MON_OUTBOUND_TOTAL = "mon_outbound_total";
+
+    public static final String MON_DISK_READ_BYTES = "mon_disk_read_bytes";
+    public static final String MON_DISK_WRITE_BYTES = "mon_disk_write_bytes";
+
+    public static final String MON_DISK_SERVICE_TIME = "mon_disk_service_time";
+    public static final String MON_DISK_QUEUE_SIZE_TOTAL = "mon_disk_queue_size_total";
+
+    public static final String MON_CPU_USER = "mon_cpu_user";
+    public static final String MON_CPU_SYS_PRCNT = "mon_cpu_sys_prcnt";
+    public static final String MON_CPU_IDLE_PRCNT = "mon_cpu_idle_prcnt";
+    public static final String MON_CPU_WAIT = "mon_cpu_wait";
+    public static final String MON_CPU_COMBINED = "mon_cpu_combined";
+
+    public static final String MON_HEAP_INIT = "mon_heap_init";
+    public static final String MON_HEAP_USED = "mon_heap_used";
+    public static final String MON_HEAP_COMMITTED = "mon_heap_committed";
+    public static final String MON_HEAP_MAX = "mon_heap_max";
+
+    public static final String MON_NONHEAP_INIT = "mon_nonheap_init";
+    public static final String MON_NONHEAP_USED = "mon_nonheap_used";
+    public static final String MON_NONHEAP_COMMITTED = "mon_nonheap_committed";
+    public static final String MON_NONHEAP_MAX = "mon_nonheap_max";
+
+    public static final String MON_THREAD_COUNT = "mon_thread_count";
+    public static final String MON_THREAD_PEAK_COUNT = "mon_thread_peak_count";
+
+    public static final String MON_FILE_DESCRIPTORS = "mon_file_descriptors";
+
+
+    public static String getLatencyMetricName(double latencyKey) {
+        return "Latency " + latencyKey + " %";
     }
 
     public static Double parseLatencyPercentileKey(String metricName) {
@@ -86,61 +126,88 @@ public class StandardMetricsNamesUtil {
         ));
     }
 
+    public static class IdContainer {
+        private final String scenarioId;
+        private final String stepId;
+        private final String metricId;
 
-    public static List<String> getSynonyms(String metricName) {
-        if (synonyms.isEmpty()) {
-            populateSynonyms();
+        public IdContainer(String scenarioId, String stepId, String metricId) {
+            this.scenarioId = scenarioId;
+            this.stepId = stepId;
+            this.metricId = metricId;
         }
 
-        // hard coded synonyms
-        if (synonyms.containsKey(metricName)) {
-            return new ArrayList<String>(synonyms.get(metricName));
+        public String getScenarioId() {
+            return scenarioId;
         }
 
-        // dynamic synonyms for latency percentiles
-        if (metricName.matches(LATENCY_PERCENTILE_REGEX)) {
-            Double value = parseLatencyPercentileKey(metricName);
-            String percentileNewModelMetricName = getLatencyMetricName(value, false);
-            if (metricName.equals(percentileNewModelMetricName)) {
-                return new ArrayList<String>(Arrays.asList(getLatencyMetricName(value, true), TIME_LATENCY_PERCENTILE));
-            } else {
-                return new ArrayList<String>(Arrays.asList(percentileNewModelMetricName));
-            }
-
+        public String getStepId() {
+            return stepId;
         }
 
+        public String getMetricId() {
+            return metricId;
+        }
+    }
+
+    private static final String USER_SCENARIO_ID = "US_";
+    private static final String US_STEP_ID = "_STNN";
+    private static final String US_METRIC_ID = "METR_";
+    private static final String USER_SCENARIO_REGEXP_WITH_GROUPS = "^.*" + USER_SCENARIO_ID + "(.*)" + US_STEP_ID + "\\d+_(.*)_" + US_METRIC_ID + "(.*)_(-.*)?$";
+    private static final String IS_SCENARIO_REGEXP = "^.*" + USER_SCENARIO_ID + ".*" + US_STEP_ID + "\\d+.*";
+    private static final String SCENARIO_STEP_REGEXP_TEMPLATE = "^.*" + USER_SCENARIO_ID + "%s" + US_STEP_ID + "\\d+_%s.*$";
+    private static final String SCENARIO_REGEXP_TEMPLATE = "(^.*" + USER_SCENARIO_ID + "%s" + US_STEP_ID + ".*$)|(^.*%s.*(-sum|-Success rate|-Number of fails).*$)";
+    private static final String DISPLAY_NAME_REGEXP = "^.*(" + ITERATIONS_SAMPLES + "|" + LATENCY_SEC + "|" + SUCCESS_RATE + ").*";
+
+    public static String generateScenarioStepId(String scenarioId, String stepId, Integer stepIndex) {
+        // both scenario and scenario steps will have same format of ids
+        // scenario: US_[scenarioId]_STNN0_[scenarioId]
+        // step:     US_[scenarioId]_STNN[1...N]_[stepId]
+        return USER_SCENARIO_ID + scenarioId + US_STEP_ID + stepIndex + "_" + stepId + "_";
+    }
+
+    public static String generateScenarioId(String scenarioId) {
+        return generateScenarioStepId(scenarioId, scenarioId, 0);
+    }
+
+    public static String generateMetricId(String id, String metricId) {
+        return id + US_METRIC_ID + metricId + "_";
+    }
+
+    public static String generateMetricDisplayName(String displayName, String metricDisplayName) {
+        return displayName + " " + metricDisplayName;
+    }
+
+    public static Boolean isBelongingToScenario(String metricNodeId) {
+        return metricNodeId.matches(IS_SCENARIO_REGEXP);
+    }
+
+    public static IdContainer extractIdsFromGeneratedIdForScenarioComponents(String generatedId) {
+        Pattern pattern = Pattern.compile(USER_SCENARIO_REGEXP_WITH_GROUPS);
+        Matcher matcher = pattern.matcher(generatedId);
+        if (matcher.matches()) {
+            String scenarioId = matcher.group(1);
+            String stepId = matcher.group(2);
+            String metricId = matcher.group(3);
+            return new IdContainer(scenarioId, stepId, metricId);
+        }
+        log.warn("Generated id '{}' doesn't match user scenario regexp '{}'. Will return null.", generatedId, USER_SCENARIO_REGEXP_WITH_GROUPS);
         return null;
     }
 
-    // Standard metrics can be stored in DB under different ids due to back compatibility
-    public static Set<String> getAllVariantsOfMetricName(String metricName) {
-        Set<String> result = new HashSet<String>();
-
-        result.add(metricName);
-
-        List<String> synonyms = getSynonyms(metricName);
-        if (synonyms != null) {
-            result.addAll(synonyms);
+    public static String extractDisplayNameFromGenerated(String generatedDisplayName) {
+        if (generatedDisplayName.matches(DISPLAY_NAME_REGEXP)) {
+            return removePattern(generatedDisplayName, " (" + LATENCY_SEC + "|" + ITERATIONS_SAMPLES + "|" + SUCCESS_RATE + ") \\[.*\\]");
         }
-
-        return result;
+        log.warn("Generated display name '{}' doesn't match regexp '{}'. Will return null.", generatedDisplayName, DISPLAY_NAME_REGEXP);
+        return null;
     }
 
-    private static Map<String, List<String>> synonyms = new HashMap<String, List<String>>();
+    public static String generateScenarioRegexp(String scenarioId) {
+        return String.format(SCENARIO_REGEXP_TEMPLATE, scenarioId, scenarioId);
+    }
 
-    private static void populateSynonyms() {
-        // old to very old and new
-        synonyms.put(THROUGHPUT_OLD_ID, Arrays.asList(THROUGHPUT_ID, THROUGHPUT));
-        synonyms.put(LATENCY_OLD_ID, Arrays.asList(LATENCY_ID, LATENCY));
-        synonyms.put(LATENCY_STD_DEV_OLD_ID, Arrays.asList(LATENCY_STD_DEV_ID));
-        synonyms.put(DURATION_OLD_ID, Arrays.asList(DURATION_ID, "Duration"));
-        synonyms.put(ITERATION_SAMPLES_OLD_ID, Arrays.asList(ITERATION_SAMPLES_ID, "Iterations"));
-
-        // new to old and very old :-)
-        synonyms.put(THROUGHPUT_ID, Arrays.asList(THROUGHPUT_OLD_ID, THROUGHPUT));
-        synonyms.put(LATENCY_ID, Arrays.asList(LATENCY_OLD_ID, LATENCY));
-        synonyms.put(LATENCY_STD_DEV_ID, Arrays.asList(LATENCY_STD_DEV_OLD_ID));
-        synonyms.put(DURATION_ID, Arrays.asList(DURATION_OLD_ID, "Duration"));
-        synonyms.put(ITERATION_SAMPLES_ID, Arrays.asList(ITERATION_SAMPLES_OLD_ID, "Iterations"));
+    public static String generateScenarioStepRegexp(String scenarioId, String stepId) {
+        return String.format(SCENARIO_STEP_REGEXP_TEMPLATE, scenarioId, stepId);
     }
 }

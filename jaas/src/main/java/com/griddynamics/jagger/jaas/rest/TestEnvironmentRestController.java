@@ -1,5 +1,10 @@
 package com.griddynamics.jagger.jaas.rest;
 
+import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
+
 import com.griddynamics.jagger.jaas.exceptions.ResourceAlreadyExistsException;
 import com.griddynamics.jagger.jaas.exceptions.ResourceNotFoundException;
 import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentInvalidIdException;
@@ -7,7 +12,6 @@ import com.griddynamics.jagger.jaas.exceptions.TestEnvironmentSessionNotFoundExc
 import com.griddynamics.jagger.jaas.exceptions.WrongTestEnvironmentStatusException;
 import com.griddynamics.jagger.jaas.service.TestEnvironmentService;
 import com.griddynamics.jagger.jaas.service.TestExecutionService;
-import com.griddynamics.jagger.jaas.storage.model.LoadScenarioEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvUtils;
 import com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity;
 import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
@@ -28,25 +32,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.PENDING;
-import static com.griddynamics.jagger.jaas.storage.model.TestEnvironmentEntity.TestEnvironmentStatus.RUNNING;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(value = "/envs")
-@Api(description = "This is the API for Jagger Test Environments. It provides endpoints for reading, creating and updating Test Environments. "
-        + "Deleting is performed automatically by cleaning job. Expiration time of environments is set by property 'environments.ttl.minutes'.")
+@Api(description = "Jagger Test Environments API. It provides endpoints for reading, creating and updating Test Environments. "
+        + "Deleting is performed automatically by cleaning job. Expiration time of environments is set by property 'environments.ttl.minutes'. "
+        + "This API is user by Jagger load generation components for communication with JaaS. It allows JaaS to monitor running test "
+        + "environments and send commands to these environments. "
+        + "Test Environments API is not intended for manual usage")
 public class TestEnvironmentRestController extends AbstractController {
 
     private static final String ENV_ID_PATTERN = "^[a-zA-Z0-9\\._\\-]{1,249}$";
@@ -96,27 +97,21 @@ public class TestEnvironmentRestController extends AbstractController {
     public ResponseEntity<?> updateTestEnvironment(@CookieValue(TestEnvUtils.SESSION_COOKIE) String sessionId,
                                                    @PathVariable String envId,
                                                    @RequestBody TestEnvironmentEntity testEnv,
-                                                   HttpServletResponse response) {
+                                                   final HttpServletResponse response) {
         if (!testEnvService.exists(envId))
             throw ResourceNotFoundException.getTestEnvResourceNfe();
-
         if (!testEnvService.existsWithSessionId(envId, sessionId))
             throw new TestEnvironmentSessionNotFoundException(envId, sessionId);
+        
         validateTestEnv(testEnv);
-        TestEnvironmentEntity oldEnv = testEnvService.read(envId);
 
         testEnv.setEnvironmentId(envId);
+        testEnv.setSessionId(sessionId);
         TestEnvironmentEntity updated = testEnvService.update(testEnv);
         if (updated.getStatus() == PENDING) {
-            getTestExecutionToExecute(updated).ifPresent(execution -> {
-                setNextConfigToExecuteHeader(response, execution.getLoadScenarioId());
-                setTestProjectURLHeader(response, execution.getTestProjectURL());
-            });
-            if (oldEnv.getStatus() == RUNNING)
-                testExecutionService.finishExecution(envId, oldEnv.getRunningLoadScenario().getLoadScenarioId());
-        }
-        if (oldEnv.getStatus() == PENDING && updated.getStatus() == RUNNING) {
-            testExecutionService.startExecution(envId, testEnv.getRunningLoadScenario().getLoadScenarioId());
+            getTestExecutionToExecute(updated).ifPresent(
+                    execution -> response.addHeader(TestEnvUtils.EXECUTION_ID_HEADER, execution.getId().toString())
+            );
         }
         response.addCookie(getSessionCookie(updated));
         return ResponseEntity.accepted().build();
@@ -141,11 +136,8 @@ public class TestEnvironmentRestController extends AbstractController {
     }
 
     private Optional<TestExecutionEntity> getTestExecutionToExecute(TestEnvironmentEntity testEnv) {
-        List<String> loadScenarioNames = testEnv.getLoadScenarios().stream().map(LoadScenarioEntity::getLoadScenarioId).collect(toList());
-
         return testExecutionService.readAllPending().stream()
                 .filter(testExec -> testExec.getEnvId().equals(testEnv.getEnvironmentId()))
-                .filter(testExec -> loadScenarioNames.contains(testExec.getLoadScenarioId()))
                 .findFirst();
     }
 
@@ -156,23 +148,14 @@ public class TestEnvironmentRestController extends AbstractController {
         if (!matcher.matches())
             throw new TestEnvironmentInvalidIdException(envId, envIdPattern);
 
-        if (testEnv.getRunningLoadScenario() == null && testEnv.getStatus() == RUNNING
-                || testEnv.getRunningLoadScenario() != null && testEnv.getStatus() == PENDING)
+        if (testEnv.getRunningLoadScenario() != null && testEnv.getStatus() == PENDING)
             throw new WrongTestEnvironmentStatusException(testEnv.getStatus(), testEnv.getRunningLoadScenario());
     }
 
     private void setExpiresHeader(HttpServletResponse response, TestEnvironmentEntity testEnv) {
         response.addHeader(TestEnvUtils.EXPIRES_HEADER, getFormattedExpirationDate(testEnv));
     }
-
-    private void setNextConfigToExecuteHeader(HttpServletResponse response, String loadScenarioName) {
-        response.addHeader(TestEnvUtils.CONFIG_NAME_HEADER, loadScenarioName);
-    }
-
-    private void setTestProjectURLHeader(HttpServletResponse response, String testProjectURL) {
-        response.addHeader(TestEnvUtils.TEST_PROJECT_URL_HEADER, testProjectURL);
-    }
-
+    
     private Cookie getSessionCookie(TestEnvironmentEntity testEnv) {
         Cookie cookie = new Cookie(TestEnvUtils.SESSION_COOKIE, testEnv.getSessionId());
         cookie.setMaxAge(environmentsTtlMinutes * 60);

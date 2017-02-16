@@ -1,5 +1,6 @@
 package com.griddynamics.jagger.engine.e1.services;
 
+import com.griddynamics.jagger.dbapi.dto.DecisionPerSessionDto;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricPlotPointEntity;
 import com.griddynamics.jagger.engine.e1.services.data.service.MetricSummaryValueEntity;
@@ -50,6 +51,13 @@ public interface DataService extends JaggerService {
      * @n
      */
     Set<SessionEntity> getSessions(Collection<String> sessionIds);
+
+    /**
+     * Returns decision for provided session
+     * @param sessionId session's id
+     * @return {@link DecisionPerSessionDto}
+     */
+    DecisionPerSessionDto getSessionDecisions(String sessionId);
 
     /**
      * Returns tests for specify session

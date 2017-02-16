@@ -51,7 +51,8 @@ public class ReportingContext implements ApplicationContextAware {
     private PlotsReporter plotsReporter;
     private BaselineSessionProvider baselineSessionProvider;
     
-    private ExtensionRegistry<ReportProvider> providerRegistry = new ExtensionRegistry<>(ReportProvider.class);
+    private
+    ExtensionRegistry<ReportProvider> providerRegistry = new ExtensionRegistry<>(ReportProvider.class);
     private ExtensionRegistry<MappedReportProvider> mappedProviderRegistry =
             new ExtensionRegistry<>(MappedReportProvider.class);
     

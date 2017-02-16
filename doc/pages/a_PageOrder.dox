@@ -4,9 +4,13 @@
 /// @page GettingStarted Getting started
 /// @page WritingTest Creating load test
 /// @page ListenersMain User actions during the load test
-/// @page MetricsMain Collecting performance metrics
-/// @page MonitoringMain Collecting system and JVM metrics
+/// @page MetricsMain Collecting metrics
+/// @page MainDecisionMaker Making decision
 /// @page JaggerProperties Jagger configuration
-/// @page FrameworkComponents Framework components
+/// @page FrameworkComponents Components and execution modes
+/// @page CIMain Continuous Integration
+/// @page TestResultsMain Test results
+/// @page ReportingMain Reporting
 /// @page Licence Licence
+/// @page AuxComponents Auxiliary Jagger components
 ///

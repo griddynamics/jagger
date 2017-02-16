@@ -1,0 +1,92 @@
+/// @page CIMain
+/// @brief This chapter describes approach for continuous performance testing with help of the Jagger framework @n
+/// @details
+/// @n
+/// @li @ref section_ci_cpt
+/// @li @ref section_ci_requirements
+/// @li @ref section_ci_jagger
+/// @li @ref section_ci_jagger_deploy_plugin
+/// @li @ref section_ci_jagger_jaas_plugin
+///
+/// @section section_ci_cpt Continuous performance testing
+/// @par Anti patterns of performance testing
+/// Unfortunately performance testing quite often:
+/// - is provided directly before release when code changes are already locked. As results issues can be found too late
+/// - is provided not regularly. As result it is difficult to identify when performance issues were introduced
+/// - is provided outside of development process (e.g. by regression team or external vendor). As a result team doesn't have access to all details
+///
+/// To resolve mentioned issues, we are recommending to make performance testing part of the Continuous Integration process
+///
+/// @par Continuous Performance Testing
+/// Continuous Performance Testing (CPT) helps to catch problems during development (not release) process. When performance tests
+/// are the part of CI we can split load testing to several types and execute them on the regular basis.@n
+/// As example @n
+/// @image html /doc/images/ci_cpt.jpg "Performance testing as a part of CI pipeline"
+///
+/// In this example we separate tests to following types:
+/// @li Performance smoke testing: Applied to an isolated service via an API, this test measures the response times of certain critical
+/// performance-sensitive operations. It is fast and cheap. It rises alerts when degradation is detected
+/// @li Performance regression testing: These tests measure simulated performance characteristics of typical user scenarios,
+/// such as placing item in a shopping bag, placing a product order, etc. We are focused on business scenarios performance. We collect
+/// performance metrics of the users steps and API calls. Test rises alerts when degradation is detected
+/// @li End-to-end (E2E) performance testing: Full user scenarios, including UI, backend, and all required external 3rd party services,
+/// configured in production-like environments with realistic data volumes
+///
+/// You can find more reading about CPT at @htmlonly <a href="http://blog.griddynamics.com/topic/test-automation" target="_blank">our blog</a> @endhtmlonly
+///
+/// @section section_ci_requirements Requirements to the framework to support CPT
+/// Framework should:
+/// - store test results
+/// - build trends for measured parameters
+/// - compare test results to baseline session (golden result) or reference values
+/// - take automatic decisions and rise flags
+/// - support CI integration
+///
+/// @section section_ci_jagger Jagger framework as a tool for CPT
+/// From the very start framework is designed to be a part of CI. It is small, has high performance and low resources consumption,
+/// as pure java it can be launched on any platform (on premises or in the cloud), it has small deployment time. @n
+/// @n
+/// Framework is storing all measured results and is able to build results trends in the @ref WebUiMain "Web UI" - deviation of the results from execution to execution @n
+/// @image html /doc/images/webUI_trends_new.png "Trend plots"
+/// @n
+/// Framework is supporting @ref MainDecisionMaker "decision making and alert rising" @n
+/// @image html /doc/images/webUI_metrics_highlighting.png "Decision per particular metrics"
+/// @n
+/// Framework can be part of the Jenkins CI pipelines
+///
+/// @section section_ci_jagger_deploy_plugin Jagger deployment plugin
+/// Deploys Jagger via ssh to specified environment. Allows to configure and deploy Jagger components (Master/Coordinator, Kernels, Agents)
+/// to the dedicated environment without scripting. Plugin allows to launch component in the @ref ComponentsLoadGenExecutionModes "single node and distributed modes" @n
+/// @n
+/// Latest version of the deployment plugin you can find @htmlonly <a href="https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/com/griddynamics/jagger/jagger-jenkins-plugin/" target="_blank">in the nexus</a> @endhtmlonly @n
+/// @n
+/// Plugin allows to:
+/// @li setup Master/Coordinator node and set additional system properties if necessary
+/// @image html /doc/images/ci_deploy_node.png "Master node setup"
+/// @li optional: setup Kernel node(s) and set additional system properties if necessary
+/// @li optional: setup Agent node(s) and set additional system properties if necessary
+/// @li specify where test results will be stores
+/// @image html /doc/images/ci_deploy_db.png "Results database setup"
+/// @li define what test scenario will be executed and provide additional setup via properties
+/// @image html /doc/images/ci_deploy_test_project.png "Test project setup"
+///
+/// @section section_ci_jagger_jaas_plugin Jagger JaaS plugin
+/// Controls test execution on the performance test environment(s) via JaaS REST API. It allows to submit test projects to the running test environment with Jagger load generating components.
+/// As you know from the @ref section_components_exec_control_stand_by chapter load generating components can run on some environment in the stand by mode waiting for test projects to execute.
+/// This plugin can submit test projects for execution @n
+/// @n
+/// Latest version of the deployment plugin you can find @htmlonly <a href="https://nexus.griddynamics.net/nexus/content/repositories/jagger-releases/com/griddynamics/jagger/jagger-jaas-jenkins-plugin/" target="_blank">in the nexus</a> @endhtmlonly @n
+/// @n
+/// Possible workflow
+/// @li you are configuring and starting performance test environment in your CI pipeline
+/// @li you are configuring and starting Jagger load generating components on this environment
+/// @li you submit one or multiple performance test projects to this environment with help of the Jenkins JaaS plugin without restarting load generating components
+///
+/// In this case Jagger framework is working as a test service and you can send new tests to this service via API @n
+/// @n
+/// Plugin allows to:
+/// @li send your test project to the test environment via API
+/// @li start particular load scenario from your project
+/// @image html /doc/images/ci_jaas.png "Test project start via API"
+
+

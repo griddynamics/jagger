@@ -8,7 +8,6 @@ import com.griddynamics.jagger.dbapi.parameter.GroupKey;
 import com.griddynamics.jagger.dbapi.util.CommonUtils;
 import com.griddynamics.jagger.dbapi.util.DataProcessingUtil;
 import com.griddynamics.jagger.dbapi.util.FetchUtil;
-import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,8 +89,6 @@ public class CustomMetricNameProvider implements MetricNameProvider {
                     if (td.getIds().contains((Long) mde[2])) {
                         String metricName = (String) mde[0];
                         MetricNameDto metricNameDto = new MetricNameDto(td, metricName, (String) mde[1], MetricNameDto.Origin.METRIC);
-                        // synonyms are required for new model of standard metrics for correct back compatibility
-                        metricNameDto.setMetricNameSynonyms(StandardMetricsNamesUtil.getSynonyms(metricName));
                         metrics.add(metricNameDto);
                         break;
                     }

@@ -1,6 +1,9 @@
 package com.griddynamics.jagger.jaas.storage.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,14 +16,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "test_execution_entity")
 public class TestExecutionEntity {
+    
+    private static final int ERROR_MESSAGE_MAX_LENGTH = 1000;
+    
     public enum TestExecutionStatus {
-        PENDING, RUNNING, FINISHED, TIMEOUT
+        PENDING, RUNNING, COMPLETED, FAILED, TIMEOUT
     }
 
     @Id
@@ -33,19 +38,24 @@ public class TestExecutionEntity {
     @Column(name = "`load_scenario_id`", nullable = false)
     private String loadScenarioId;
 
-    @Column(name = "`test_project_url`", nullable = false)
+    @Column(name = "`test_project_url`")
     private String testProjectURL;
+    
+    @Column(name = "`error_message`", length = ERROR_MESSAGE_MAX_LENGTH)
+    private String errorMessage;
+    
+    @Column(name = "`session_id`")
+    private String sessionId;
 
-    @Column(name = "`execution_start_timeout_in_seconds`")
-    private Long executionStartTimeoutInSeconds;
+    @Column(name = "`execution_time_to_start_in_seconds`")
+    private Long executionTimeToStartInSeconds;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TestExecutionStatus status;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "testExecutionEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TestExecutionAuditEntity> auditEntities;
+    private List<TestExecutionAuditEntity> auditEntities;
 
     public Long getId() {
         return id;
@@ -79,12 +89,12 @@ public class TestExecutionEntity {
         this.testProjectURL = testProjectURL;
     }
 
-    public Long getExecutionStartTimeoutInSeconds() {
-        return executionStartTimeoutInSeconds;
+    public Long getExecutionTimeToStartInSeconds() {
+        return executionTimeToStartInSeconds;
     }
 
-    public void setExecutionStartTimeoutInSeconds(Long executionStartTimeoutInSeconds) {
-        this.executionStartTimeoutInSeconds = executionStartTimeoutInSeconds;
+    public void setExecutionTimeToStartInSeconds(Long executionTimeToStartInSeconds) {
+        this.executionTimeToStartInSeconds = executionTimeToStartInSeconds;
     }
 
     public TestExecutionStatus getStatus() {
@@ -94,18 +104,38 @@ public class TestExecutionEntity {
     public void setStatus(TestExecutionStatus status) {
         this.status = status;
     }
-
-    public Set<TestExecutionAuditEntity> getAuditEntities() {
+    
+    public String getSessionId() {
+        return sessionId;
+    }
+    
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+    
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    
+    public void setErrorMessage(String errorMessage) {
+        if (errorMessage.length() > ERROR_MESSAGE_MAX_LENGTH) {
+            errorMessage = errorMessage.substring(0, ERROR_MESSAGE_MAX_LENGTH - 1);
+        }
+        this.errorMessage = errorMessage;
+    }
+    
+    public List<TestExecutionAuditEntity> getAuditEntities() {
         return auditEntities;
     }
 
-    public void setAuditEntities(Set<TestExecutionAuditEntity> auditEntities) {
+    public void setAuditEntities(List<TestExecutionAuditEntity> auditEntities) {
         this.auditEntities = auditEntities;
     }
 
     public void addAuditEntity(TestExecutionAuditEntity auditEntity) {
-        if (auditEntities == null)
-            auditEntities = new HashSet<>();
+        if (auditEntities == null) {
+            auditEntities = new ArrayList<>();
+        }
         auditEntities.add(auditEntity);
     }
 
@@ -118,11 +148,12 @@ public class TestExecutionEntity {
 
         if (envId != null ? !envId.equals(that.envId) : that.envId != null) return false;
         if (loadScenarioId != null ? !loadScenarioId.equals(that.loadScenarioId) : that.loadScenarioId != null) return false;
-        if (executionStartTimeoutInSeconds != null ? !executionStartTimeoutInSeconds.equals(that.executionStartTimeoutInSeconds) :
-                that.executionStartTimeoutInSeconds != null) return false;
+        if (executionTimeToStartInSeconds != null ? !executionTimeToStartInSeconds.equals(that.executionTimeToStartInSeconds) :
+                that.executionTimeToStartInSeconds != null) return false;
         if (testProjectURL != null ? !testProjectURL.equals(that.testProjectURL) : that.testProjectURL != null) return false;
+        if (sessionId != null ? !sessionId.equals(that.sessionId) : that.sessionId != null) return false;
+        if (errorMessage != null ? !errorMessage.equals(that.errorMessage) : that.errorMessage != null) return false;
         return status == that.status;
-
     }
 
     @Override
@@ -130,8 +161,10 @@ public class TestExecutionEntity {
         int result = envId != null ? envId.hashCode() : 0;
         result = 31 * result + (loadScenarioId != null ? loadScenarioId.hashCode() : 0);
         result = 31 * result + (testProjectURL != null ? testProjectURL.hashCode() : 0);
-        result = 31 * result + (executionStartTimeoutInSeconds != null ? executionStartTimeoutInSeconds.hashCode() : 0);
+        result = 31 * result + (executionTimeToStartInSeconds != null ? executionTimeToStartInSeconds.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (errorMessage != null ? errorMessage.hashCode() : 0);
+        result = 31 * result + (sessionId != null ? sessionId.hashCode() : 0);
         return result;
     }
 
@@ -142,7 +175,9 @@ public class TestExecutionEntity {
                 ", envId='" + envId + '\'' +
                 ", loadScenarioId='" + loadScenarioId + '\'' +
                 ", testProjectURL='" + testProjectURL + '\'' +
-                ", executionStartTimeoutInSeconds=" + executionStartTimeoutInSeconds +
+                ", executionTimeToStartInSeconds=" + executionTimeToStartInSeconds +
+                ", errorMessage=" + errorMessage +
+                ", sessionId=" + sessionId +
                 ", status=" + status +
                 ", auditEntities=" + auditEntities +
                 '}';

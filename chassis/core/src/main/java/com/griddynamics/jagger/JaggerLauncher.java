@@ -21,20 +21,25 @@
 package com.griddynamics.jagger;
 
 import com.griddynamics.jagger.coordinator.Coordinator;
+import com.griddynamics.jagger.engine.e1.scenario.WorkloadTaskDistributor;
 import com.griddynamics.jagger.exception.TechnicalException;
+import com.griddynamics.jagger.jaas.storage.model.TestExecutionEntity;
 import com.griddynamics.jagger.kernel.Kernel;
 import com.griddynamics.jagger.launch.LaunchManager;
 import com.griddynamics.jagger.launch.LaunchTask;
 import com.griddynamics.jagger.launch.Launches;
+import com.griddynamics.jagger.master.JaasEnvApiClient;
+import com.griddynamics.jagger.master.JaasExecApiClient;
 import com.griddynamics.jagger.master.Master;
-import com.griddynamics.jagger.master.MasterToJaasCoordinator;
 import com.griddynamics.jagger.master.TerminateException;
 import com.griddynamics.jagger.reporting.ReportingService;
 import com.griddynamics.jagger.storage.StorageServerLauncher;
 import com.griddynamics.jagger.storage.rdb.H2DatabaseServer;
+import com.griddynamics.jagger.util.JaggerUrlClassLoader;
 import com.griddynamics.jagger.util.JaggerXmlApplicationContext;
 import com.griddynamics.jagger.util.generators.ConfigurationGenerator;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +56,13 @@ import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -70,11 +77,12 @@ public final class JaggerLauncher {
     public static final String RDB_CONFIGURATION = "chassis.rdb.configuration";
     public static final String INCLUDE_SUFFIX = ".include";
     public static final String EXCLUDE_SUFFIX = ".exclude";
-    public static final String TEST_CONFIG_NAME_PROP = "jagger.load.scenario.id.to.execute";
+    public static final String LOAD_SCENARIO_ID_PROP = "jagger.load.scenario.id.to.execute";
     public static final String DEFAULT_ENVIRONMENT_PROPERTIES = "jagger.default.environment.properties";
     public static final String USER_ENVIRONMENT_PROPERTIES = "jagger.user.environment.properties";
     public static final String ENVIRONMENT_PROPERTIES = "jagger.environment.properties";
     public static final String USER_CONFIGS_PACKAGE = "chassis.master.package.to.scan";
+    public static final String LOAD_SCENARIO_CLASSES_URL ="realtime.load.scenario.classes.url";
     private static final Logger log = LoggerFactory.getLogger(JaggerLauncher.class);
     private static final String DEFAULT_ENVIRONMENT_PROPERTIES_LOCATION =
             "./configuration/basic/default.environment.properties";
@@ -171,17 +179,15 @@ public final class JaggerLauncher {
                 if (isStandByMode) {
                     log.info("Starting Master in stand by mode...");
         
-                    try (MasterToJaasCoordinator masterToJaasCoordinator = new MasterToJaasCoordinator(
+                    try (JaasEnvApiClient jaasEnvApiClient = new JaasEnvApiClient(
                             environmentProperties.getProperty("realtime.environment.id"),
                             environmentProperties.getProperty("realtime.jaas.endpoint"), Integer.parseInt(
                             environmentProperties.getProperty("realtime.status.report.interval.seconds")),
                             getAvailableConfigurations(directory)
                     )) {
-                        masterToJaasCoordinator.register();
-                        while (masterToJaasCoordinator.isStandBy()) {
-                            environmentProperties
-                                    .setProperty(TEST_CONFIG_NAME_PROP, masterToJaasCoordinator.awaitConfigToExecute());
-                            doLaunchMaster(directory);
+                        jaasEnvApiClient.register();
+                        while (jaasEnvApiClient.isStandBy()) {
+                            doLoadScenarioExecution(jaasEnvApiClient.awaitNextExecution(), directory);
                         }
                     } catch (TerminateException | InterruptedException e) {
                         log.error("Master has been terminated.");
@@ -195,6 +201,86 @@ public final class JaggerLauncher {
         builder.addMainTask(masterTask);
     }
     
+    private static void doLoadScenarioExecution(final JaasEnvApiClient.JaasResponse jaasResponse, final URL directory) {
+        JaasExecApiClient execApiClient = null;
+        try {
+            execApiClient = new JaasExecApiClient(jaasResponse.getExecutionId(),
+                                                  environmentProperties.getProperty("realtime.jaas.endpoint")
+            );
+        
+            Optional<TestExecutionEntity> optionalExecution = execApiClient.getExecution();
+            if (!optionalExecution.isPresent()) { // didn't manage to acquire an entity
+                return;
+            }
+            TestExecutionEntity execution = optionalExecution.get();
+            if (execution.getStatus() != TestExecutionEntity.TestExecutionStatus.PENDING) {
+                log.warn("Received execution with id '{}' is not in PENDING state. Going to proceed with next...",
+                         execution.getId());
+                return;
+            }
+            execApiClient.startExecution();
+            
+            String sessionId = null;
+            if (execution.getTestProjectURL() == null) { // then execute existing load scenario
+                environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, execution.getLoadScenarioId());
+                System.setProperty(USER_CONFIGS_PACKAGE, environmentProperties.getProperty(USER_CONFIGS_PACKAGE));
+                sessionId = doLaunchMaster(directory);
+            } else { // then execute a load scenario from provided artifact
+                sessionId = executeDynamicLoadScenario(execution.getLoadScenarioId(),
+                                           execution.getTestProjectURL(),
+                                           directory);
+            }
+            
+            execApiClient.completeExecution(sessionId);
+        } catch (Exception e) {
+            log.error("Error during a load scenario execution", e);
+            if (execApiClient != null) {
+                execApiClient.failExecution(ExceptionUtils.getMessage(e) + " With root cause message: " + ExceptionUtils
+                        .getRootCauseMessage(e));
+            }
+        }
+    }
+    
+    private static String executeDynamicLoadScenario(String loadScenarioId, String customClassesUrl, URL directory)
+            throws IOException {
+        
+        environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, loadScenarioId);
+    
+        try {
+            final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            final URL customClasses = new URL(customClassesUrl);
+            try (URLClassLoader urlClassLoader = new JaggerUrlClassLoader(new URL[]{customClasses})) {
+                Thread.currentThread().setContextClassLoader(urlClassLoader);
+            
+                Properties userProps = new Properties();
+                String userPropsPath = "profiles/basic/environment.properties";
+                URL userPropsUrl = urlClassLoader.findResource(userPropsPath);
+                if (userPropsUrl == null) {
+                    throw new IOException(String.format(
+                            "Provided artifact %s is not properly formatted. There is no %s file inside.",
+                            customClassesUrl, userPropsPath
+                    ));
+                }
+                userProps.load(userPropsUrl.openStream());
+                // pass this property value for Spring's context:component-scan
+                System.setProperty(USER_CONFIGS_PACKAGE, userProps.getProperty(USER_CONFIGS_PACKAGE));
+            
+                if (StringUtils.isEmpty(loadScenarioId)) {
+                    environmentProperties.setProperty(LOAD_SCENARIO_ID_PROP, userProps.getProperty(LOAD_SCENARIO_ID_PROP));
+                }
+    
+                environmentProperties.setProperty(LOAD_SCENARIO_CLASSES_URL, customClassesUrl);
+                return doLaunchMaster(directory, urlClassLoader);
+            } finally {
+                Thread.currentThread().setContextClassLoader(contextClassLoader);
+                environmentProperties.remove(LOAD_SCENARIO_CLASSES_URL);
+            }
+        } catch (IOException e) {
+            log.error("I/O Error during load scenario execution launching.", e);
+            throw e;
+        }
+    }
+    
     private static Set<String> getAvailableConfigurations(final URL directory) {
         AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
@@ -203,15 +289,28 @@ public final class JaggerLauncher {
         return availableConfigs;
     }
     
-    private static void doLaunchMaster(final URL directory) {
-        AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties);
+    private static String doLaunchMaster(final URL directory, final ClassLoader classLoader) {
+        
+        AbstractXmlApplicationContext context = loadContext(directory, MASTER_CONFIGURATION, environmentProperties, classLoader);
         initCoordinator(context);
         context.getBean(StorageServerLauncher.class); // to trigger lazy initialization
         ConfigurationGenerator configurationGenerator = context.getBean(ConfigurationGenerator.class);
-        configurationGenerator.setJLoadScenarioIdToExecute(environmentProperties.getProperty(TEST_CONFIG_NAME_PROP));
+        
+        log.info("Going to execute {} load scenario...", environmentProperties.getProperty(LOAD_SCENARIO_ID_PROP));
+        configurationGenerator.setJLoadScenarioIdToExecute(environmentProperties.getProperty(LOAD_SCENARIO_ID_PROP));
+        WorkloadTaskDistributor workloadTaskDistributor = context.getBean(WorkloadTaskDistributor.class);
+        workloadTaskDistributor.setClassesUrl(environmentProperties.getProperty(LOAD_SCENARIO_CLASSES_URL));
+        
         Master master = context.getBean(Master.class);
         master.run();
+        
+        String sessionId = master.getSessionIdProvider().getSessionId();
         context.destroy();
+        return sessionId;
+    }
+    
+    private static String doLaunchMaster(final URL directory) {
+        return doLaunchMaster(directory, JaggerLauncher.class.getClassLoader());
     }
     
     private static void launchReporter(final URL directory) {
@@ -327,7 +426,8 @@ public final class JaggerLauncher {
         builder.addMainTask(jettyRunner);
     }
     
-    public static AbstractXmlApplicationContext loadContext(URL directory, String role, Properties environmentProperties) {
+    public static AbstractXmlApplicationContext
+    loadContext(URL directory, String role, Properties environmentProperties, ClassLoader classLoader) {
         String[] includePatterns = StringUtils.split(environmentProperties.getProperty(role + INCLUDE_SUFFIX), ", ");
         String[] excludePatterns = StringUtils.split(environmentProperties.getProperty(role + EXCLUDE_SUFFIX), ", ");
         
@@ -338,7 +438,11 @@ public final class JaggerLauncher {
         }
         
         return new JaggerXmlApplicationContext(
-                directory, environmentProperties, descriptors.toArray(new String[descriptors.size()]));
+                directory, environmentProperties, descriptors.toArray(new String[descriptors.size()]), classLoader);
+    }
+    
+    public static AbstractXmlApplicationContext loadContext(URL directory, String role, Properties environmentProperties) {
+        return loadContext(directory, role, environmentProperties, JaggerLauncher.class.getClassLoader());
     }
     
     private static List<String> discoverResources(URL directory, String[] includePatterns, String[] excludePatterns) {

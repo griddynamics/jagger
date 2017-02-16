@@ -47,19 +47,7 @@
 
         <dependency>
             <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.spring.schema</artifactId>
-            <version>${jagger.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
             <artifactId>chassis.core</artifactId>
-            <version>${jagger.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.griddynamics.jagger</groupId>
-            <artifactId>chassis.invokers</artifactId>
             <version>${jagger.version}</version>
         </dependency>
 
@@ -84,7 +72,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.2</version>
+            <version>1.7.5</version>
         </dependency>
 
         <dependency>

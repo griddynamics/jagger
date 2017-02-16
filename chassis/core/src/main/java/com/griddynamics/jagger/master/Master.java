@@ -35,8 +35,8 @@ import com.griddynamics.jagger.dbapi.DatabaseService;
 import com.griddynamics.jagger.dbapi.entity.TaskData;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
 import com.griddynamics.jagger.engine.e1.aggregator.session.GeneralNodeInfoAggregator;
-import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo;
+import com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener;
 import com.griddynamics.jagger.engine.e1.process.Services;
 import com.griddynamics.jagger.engine.e1.services.JaggerPlace;
 import com.griddynamics.jagger.engine.e1.services.SessionMetaDataStorage;
@@ -115,7 +115,11 @@ public class Master implements Runnable {
             }
         }
     }, String.format("Shutdown hook for %s", getClass().toString()));
-
+    
+    public SessionIdProvider getSessionIdProvider() {
+        return sessionIdProvider;
+    }
+    
     @Required
     public void setReconnectPeriod(long reconnectPeriod) {
         this.reconnectPeriod = reconnectPeriod;
@@ -186,10 +190,6 @@ public class Master implements Runnable {
         }
 
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
-
-        if (configuration.getMonitoringConfiguration() != null) {
-            dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
-        }
     }
 
     @Override
@@ -235,13 +235,6 @@ public class Master implements Runnable {
             Runtime.getRuntime().addShutdownHook(shutdownHook);
             log.info("Configuration launched!!");
 
-            if (configuration.getMonitoringConfiguration() != null) {
-                Map<ManageAgent.ActionProp, Serializable> agentStartManagementProps = Maps.newHashMap();
-                agentStartManagementProps.put(
-                        ManageAgent.ActionProp.SET_JMX_METRICS, dynamicPlotGroups.getJmxMetrics()
-                );
-                processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
-            }
 
             LoadScenarioListener
                     loadScenarioListener = LoadScenarioListener.Composer.compose(ProviderUtil.provideElements(configuration.getLoadScenarioListeners(),

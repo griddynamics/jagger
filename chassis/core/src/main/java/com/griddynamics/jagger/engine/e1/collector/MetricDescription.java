@@ -10,10 +10,8 @@ import java.util.Map;
 /** Class to describe metric
  * @author Gribov Kirill
  * @details
- * Example of metric setup and creation with use of @ref com.griddynamics.jagger.engine.e1.services.MetricService "MetricService"
- * @dontinclude  ProviderOfTestListener.java
- * @skip  begin: following section is used for docu generation - example of metric creation
- * @until end: following section is used for docu generation - example of metric creation
+ * Example of metric setup and creation with use of @ref com.griddynamics.jagger.engine.e1.services.DefaultMetricService "metric service"
+ * @include  ExampleInvocationListener.java
  * @n
  */
 public class MetricDescription implements Serializable{

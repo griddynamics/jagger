@@ -58,8 +58,8 @@ public class DataProcessingUtil {
         String legend = metricDto.getMetricName().getMetricDisplayName();
 
         return new PlotSingleDto(list, legend,
-                getHexColorCode(metricDto.getMetricName().getMetricName(), metricDto.getMetricName().getMetricNameSynonyms(), "ss"),
-                generatePointShape(metricDto.getMetricName().getMetricName(), metricDto.getMetricName().getMetricNameSynonyms(), "ss"));
+                getHexColorCode(metricDto.getMetricName().getMetricName(), "ss"),
+                generatePointShape(metricDto.getMetricName().getMetricName(), "ss"));
     }
 }
 

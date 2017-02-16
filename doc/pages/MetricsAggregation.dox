@@ -1,0 +1,42 @@
+/// @page MetricsAggregation Metric raw data aggregation
+/// @details
+/// @par General info
+/// During test execution raw values for every metric are stores in the file system in the time series format. After the test is over, raw data is aggregated. Depending on the setup for every metric,
+/// framework can aggregate only summary value or, additionally, detailed results (metric vs time). You can setup how metric will be aggregated during metric creation.
+/// Every metric can be aggregated by single aggregator or multiple aggregators, running one after another. As example, from the raw data of the Success rate metric, with use of two different aggregators
+/// we are calculating two parameters: Success rate and Number of fails. @n
+/// @n
+/// Aggregators are processing raw data to get final measurement results that will be saved to database. @n
+/// Aggregators are executed after all measurements are finished. Main goal for them is to reduce number of data values available after measurement @n
+/// @n
+/// Simplest example: after measurement there are 100000 points, but you want to save only 200 points to database @n
+/// So you are applying averaging aggregator that takes average value for every 500 points from raw data and saves it to the DB as single value. @n
+///
+/// @par Java doc for aggregators and examples
+/// @ref Main_Aggregators_group
+///
+/// @par Example of custom metric with aggregator
+/// Example of the custom metric with multiple aggregators. Raw data, collected for this metric, will be aggregated by different aggregators to store different values to the
+/// results DB: min, max, average values and percentiles.
+/// @dontinclude  ExampleInvocationListener.java
+/// @skip  begin: following section is used for docu generation - example of the metric with multiple aggregators
+/// @until end: following section is used for docu generation - example of the metric with multiple aggregators
+///
+/// @par Aggregation interval
+/// Aggregation interval defines how many values will be saved to the database and displayed in the plots. @n
+/// In the @ref JaggerProperties "framework configuration", you can set either number of points on the plot or directly aggregation interval. @n
+/// @dontinclude  environment.properties
+/// @skip  begin: following section is used for docu generation - Aggregation interval
+/// @until end: following section is used for docu generation - Aggregation interval
+/// @n
+/// In the picture below you can see comparison of both settings:@n
+/// for session 26 - point count was set to 100 @n
+/// for session 29 - aggregation interval 50 sec was set @n
+/// @image html jagger_point_count_vs_time_interval.png "Aggregation interval setup"
+
+
+// *************************************
+// not a part of the documentation below
+
+/// @defgroup Main_Aggregators_group Aggregators implementations and examples
+/// @details @ref MetricsAggregation

@@ -11,11 +11,11 @@ public interface TestExecutionService {
 
     List<TestExecutionEntity> readAllPending();
 
+    List<TestExecutionEntity> readByEnv(String envId);
+
     TestExecutionEntity create(TestExecutionEntity testExecution);
 
     void delete(Long testExecutionId);
-
-    void finishExecution(String environmentId, String loadScenarioId);
-
-    void startExecution(String environmentId, String loadScenarioId);
+    
+    void update(TestExecutionEntity testExecution);
 }

@@ -55,12 +55,8 @@ public interface Invoker<Q,R,E> extends Serializable {
 
 /* Below is doxygen documentation for Jagger customization */
 
-/// @defgroup Main_Custom_Components_group Custom component
-///
-/// @li @ref Main_HowToCustomizeAggregators_group
 /// @li @ref Main_HowToCustomizeInvokers_group
 /// @li @ref Main_HowToCustomizeProviders_group
-/// @li @ref Main_HowToCustomizeDistributors_group
 
 /* **************** Invokers page *************************  */
 /// @defgroup Main_Invokers_General_group Invokers main page
@@ -94,13 +90,6 @@ public interface Invoker<Q,R,E> extends Serializable {
 /// @n
 ///
 /// 3. Create component @xlink{invoker} with type @xlink{invoker-class} and set attribute @xlink{invoker-class,class} with full class name of invoker
-/// @dontinclude  test.description.conf.xml
-/// @skip  begin: following section is used for docu generation - invoker usage
-/// @until end: following section is used for docu generation - invoker usage
-/// @n
-/// @b Note:
-/// @li full examples of the code are available in maven archetype-examples
-/// @li instead of ${package} write the name of your package
 
 
 
@@ -108,21 +97,8 @@ public interface Invoker<Q,R,E> extends Serializable {
 
 /* **************** Base components ************************* */
 /// @defgroup Main_Invokers_Base_group Invoker
-/// @defgroup Main_Distributors_Base_group Distributor
-/// @details @ref Main_Distributors_General_group
-/// @defgroup Main_Collectors_Base_group Collector
-
-/// @defgroup Main_Aggregators_Base_group Aggregator
-/// @details @ref Main_Aggregators_General_group
-
 
 /* **************** Implementations ************************* */
 /// @defgroup Main_Invokers_group Implementations of invokers
 /// @defgroup Main_Providers_group Implementations of providers
-/// @details @ref Main_Providers_General_group
-/// @defgroup Main_Distributors_group Implementations of distributors
-/// @details @ref Main_Distributors_General_group
-/// @defgroup Main_Collectors_group Implementations of collectors
-/// @defgroup Main_Aggregators_group Implementations of aggregators
-/// @details @ref Main_Aggregators_General_group
 /// @defgroup Main_Terminators_group Implementations of termination strategies

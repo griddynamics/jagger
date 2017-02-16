@@ -1,8 +1,9 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
-/**
- * Calculates minimum value on interval
- */
+/** Calculates min value on the interval
+ * @author Kirill Gribov
+ *
+ * @ingroup Main_Aggregators_group */
 public class MinMetricAggregatorProvider implements MetricAggregatorProvider {
 
     @Override

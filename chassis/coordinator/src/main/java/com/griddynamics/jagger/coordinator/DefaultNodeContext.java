@@ -20,9 +20,14 @@
 
 package com.griddynamics.jagger.coordinator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 
 public class DefaultNodeContext implements NodeContext {
+    
+    private static final Logger log = LoggerFactory.getLogger(DefaultNodeContext.class);
     private final NodeId id;
     private final Map<Class<?>, Object> services;
 
@@ -38,7 +43,10 @@ public class DefaultNodeContext implements NodeContext {
 
     @Override
     public <T> T getService(Class<T> clazz) {
-        return (T) services.get(clazz);
+        if (services.containsKey(clazz)) {
+            return (T) services.get(clazz);
+        }
+        return null;
     }
 
     @Override
