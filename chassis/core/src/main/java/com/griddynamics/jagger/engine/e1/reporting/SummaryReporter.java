@@ -20,6 +20,9 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractDisplayNameFromGenerated;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractIdsFromGeneratedIdForScenarioComponents;
+
 import com.griddynamics.jagger.dbapi.DatabaseService;
 import com.griddynamics.jagger.dbapi.dto.MetricNameDto;
 import com.griddynamics.jagger.engine.e1.services.DataService;
@@ -32,6 +35,7 @@ import com.griddynamics.jagger.util.Decision;
 import com.griddynamics.jagger.util.FormatCalculator;
 import com.griddynamics.jagger.util.MetricNamesRankingProvider;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
+import com.griddynamics.jagger.util.StandardMetricsNamesUtil.IdContainer;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.text.DateFormat;
@@ -45,6 +49,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SummaryReporter {
     private DatabaseService databaseService;
@@ -187,6 +192,7 @@ public class SummaryReporter {
 
             for (Map.Entry<TestEntity, Set<MetricEntity>> entry : metricsPerTest.entrySet()) {
                 List<SummaryDto> summaryList = new ArrayList<SummaryDto>();
+                Map<String, SummaryDto> summaries = new HashMap<>();
                 List<SummaryDto> latencyPercentilesList = new ArrayList<SummaryDto>();
                 List<SummaryDto> validatorsList = new ArrayList<SummaryDto>();
                 Map<MetricEntity, MetricSummaryValueEntity> standardMetricsPerTest = new HashMap<MetricEntity, MetricSummaryValueEntity>();
@@ -219,7 +225,7 @@ public class SummaryReporter {
                         value.setKey(metricEntity.getDisplayName().replace("Latency ", "").concat("  -  "));
                         latencyPercentilesList.add(value);
                     } else {
-                        summaryList.add(value);
+                        summaries.put(metricEntity.getMetricId(), value);
                     }
 
                     // Standard metrics
@@ -228,7 +234,13 @@ public class SummaryReporter {
                     }
                 }
 
-                localRankingProvider.sortSummaryDto(summaryList);
+                if (summaries.keySet().stream().anyMatch(StandardMetricsNamesUtil::isBelongingToScenario)) {
+                      summaryList.addAll(ScenarioSummaryExtractor.extractScenarioSummary(summaries));
+                    
+                } else {
+                    summaryList.addAll(summaries.values());
+                    localRankingProvider.sortSummaryDto(summaryList);
+                }
                 localRankingProvider.sortSummaryDto(validatorsList);
                 localRankingProvider.sortSummaryDto(latencyPercentilesList);
 

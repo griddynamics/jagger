@@ -150,14 +150,17 @@ public class StandardMetricsNamesUtil {
         }
     }
 
-    private static final String USER_SCENARIO_ID = "US_";
-    private static final String US_STEP_ID = "_STNN";
-    private static final String US_METRIC_ID = "METR_";
-    private static final String USER_SCENARIO_REGEXP_WITH_GROUPS = "^.*" + USER_SCENARIO_ID + "(.*)" + US_STEP_ID + "\\d+_(.*)_" + US_METRIC_ID + "(.*)_(-.*)?$";
-    private static final String IS_SCENARIO_REGEXP = "^.*" + USER_SCENARIO_ID + ".*" + US_STEP_ID + "\\d+.*";
+    public static final String USER_SCENARIO_ID = "US_";
+    public static final String US_STEP_ID = "_STNN";
+    public static final String US_METRIC_ID = "METR_";
+    public static final String USER_SCENARIO_REGEXP_WITH_GROUPS = "^.*" + USER_SCENARIO_ID + "(.*)" + US_STEP_ID + "\\d+_(.*)_" + US_METRIC_ID + "(.*)_(-.*)?$";
+    public static final Pattern USER_SCENARIO_PATTERN = Pattern.compile(USER_SCENARIO_REGEXP_WITH_GROUPS);
+    public static final String IS_SCENARIO_REGEXP = "^.*" + USER_SCENARIO_ID + ".*" + US_STEP_ID + "\\d+.*";
+    public static final Pattern IS_SCENARIO_PATTERN = Pattern.compile(IS_SCENARIO_REGEXP);
     private static final String SCENARIO_STEP_REGEXP_TEMPLATE = "^.*" + USER_SCENARIO_ID + "%s" + US_STEP_ID + "\\d+_%s.*$";
     private static final String SCENARIO_REGEXP_TEMPLATE = "(^.*" + USER_SCENARIO_ID + "%s" + US_STEP_ID + ".*$)|(^.*%s.*(-sum|-Success rate|-Number of fails).*$)";
-    private static final String DISPLAY_NAME_REGEXP = "^.*(" + ITERATIONS_SAMPLES + "|" + LATENCY_SEC + "|" + SUCCESS_RATE + ").*";
+    public static final String DISPLAY_NAME_REGEXP = "^.*(" + ITERATIONS_SAMPLES + "|" + LATENCY_SEC + "|" + SUCCESS_RATE + ").*";
+    public static final Pattern DISPLAY_NAME_PATTERN = Pattern.compile(DISPLAY_NAME_REGEXP);
     private static final String SCENARIO_STEP_METRIC_REGEXP_TEMPLATE = "^.*" + USER_SCENARIO_ID + "{scenario_id}" + US_STEP_ID + "\\d+_{step_id}_" + US_METRIC_ID + "{metric_id}_(-.*)?$";
 
     public static String generateScenarioStepId(String scenarioId, String stepId, Integer stepIndex) {
@@ -180,12 +183,11 @@ public class StandardMetricsNamesUtil {
     }
 
     public static Boolean isBelongingToScenario(String metricNodeId) {
-        return metricNodeId.matches(IS_SCENARIO_REGEXP);
+        return IS_SCENARIO_PATTERN.matcher(metricNodeId).matches();
     }
 
     public static IdContainer extractIdsFromGeneratedIdForScenarioComponents(String generatedId) {
-        Pattern pattern = Pattern.compile(USER_SCENARIO_REGEXP_WITH_GROUPS);
-        Matcher matcher = pattern.matcher(generatedId);
+        Matcher matcher = USER_SCENARIO_PATTERN.matcher(generatedId);
         if (matcher.matches()) {
             String scenarioId = matcher.group(1);
             String stepId = matcher.group(2);
@@ -197,7 +199,7 @@ public class StandardMetricsNamesUtil {
     }
 
     public static String extractDisplayNameFromGenerated(String generatedDisplayName) {
-        if (generatedDisplayName.matches(DISPLAY_NAME_REGEXP)) {
+        if (DISPLAY_NAME_PATTERN.matcher(generatedDisplayName).matches()) {
             return removePattern(generatedDisplayName, " (" + LATENCY_SEC + "|" + ITERATIONS_SAMPLES + "|" + SUCCESS_RATE + ") \\[.*\\]");
         }
         log.warn("Generated display name '{}' doesn't match regexp '{}'. Will return null.", generatedDisplayName, DISPLAY_NAME_REGEXP);
