@@ -24,9 +24,6 @@ import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateMetricId;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepId;
-
 /**
  * Example of user scenario load scenario
  */
@@ -45,13 +42,13 @@ public class ExampleSimpleUserScenarioJLoadScenarioProvider {
 
         JTerminationCriteria jTerminationCriteria = JTerminationCriteriaIterations.of(IterationsNumber.of(500), MaxDurationInSeconds.of(50));
 
-        //TODO: JFG-1123
-        String stepId = generateScenarioStepId(ExampleUserScenarioProvider.SCENARIO_ID, ExampleUserScenarioProvider.STEP_1_ID, 1);
-        String metricId = generateMetricId(stepId, StandardMetricsNamesUtil.LATENCY_ID);
-        JLimit firstStepLimit = JLimitVsRefValue.builder(metricId + "-avg", RefValue.of(1.5))
-                .withOnlyErrors(LowErrThresh.of(0.8), UpErrThresh.of(1.2))
-                .build();
-
+        JLimit firstStepLimit = JLimitVsRefValue.builder(ExampleUserScenarioProvider.SCENARIO_ID,
+                                                         ExampleUserScenarioProvider.STEP_1_ID,
+                                                         StandardMetricsNamesUtil.LATENCY_ID,
+                                                         RefValue.of(1.5))
+                                                .withOnlyErrors(LowErrThresh.of(0.8), UpErrThresh.of(1.2))
+                                                .build();
+    
         JLoadTest jLoadTest = JLoadTest.builder(Id.of("lt_example"), jTestDefinition, jLoadProfileInvocations, jTerminationCriteria)
                 .withLimits(firstStepLimit)
                 .build();
