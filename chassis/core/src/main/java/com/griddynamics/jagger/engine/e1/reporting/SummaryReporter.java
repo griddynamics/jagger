@@ -37,14 +37,7 @@ import org.springframework.beans.factory.annotation.Required;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SummaryReporter {
     private DatabaseService databaseService;
@@ -169,7 +162,7 @@ public class SummaryReporter {
             standardMetricsIds.add(StandardMetricsNamesUtil.THROUGHPUT_ID);
             standardMetricsIds.add(StandardMetricsNamesUtil.SUCCESS_RATE_ID);
             standardMetricsIds.add(StandardMetricsNamesUtil.LATENCY_ID);
-            standardMetricsIds.add(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID);
+            standardMetricsIds.add(StandardMetricsNamesUtil.LATENCY_STD_DEV_AGG_ID);
             standardMetricsIds.add(StandardMetricsNamesUtil.ITERATION_SAMPLES_ID);
             standardMetricsIds.add(StandardMetricsNamesUtil.VIRTUAL_USERS_ID);
 
@@ -214,9 +207,9 @@ public class SummaryReporter {
                     }
 
                     // Latency percentiles
-                    if (metricEntity.getMetricId().matches("^" + StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX)) {
+                    if (metricEntity.getMetricId().matches("^" + StandardMetricsNamesUtil.LATENCY_PERCENTILE_ID_REGEX)) {
                         // change key (name) for back compatibility
-                        value.setKey(metricEntity.getDisplayName().replace("Latency ", "").concat("  -  "));
+                        value.setKey(StandardMetricsNamesUtil.parseLatencyPercentileKey(metricEntity.getMetricId()) + "% - ");
                         latencyPercentilesList.add(value);
                     } else {
                         summaryList.add(value);

@@ -1,4 +1,4 @@
-package ${package};
+package ${package}.simple.examples;
 
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.invoker.InvocationException;
@@ -17,21 +17,21 @@ import org.slf4j.LoggerFactory;
  * Created by Andrey Badaev
  * Date: 06/12/16
  */
-public class ExampleCustomHttpInvokerProvider implements Provider<Invoker>  {
+public class CustomHttpInvokerProvider implements Provider<Invoker>  {
     
-    private static final Logger log = LoggerFactory.getLogger(ExampleCustomHttpInvokerProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(CustomHttpInvokerProvider.class);
     
     private final boolean verbose;
     
-    public ExampleCustomHttpInvokerProvider(final boolean verbose) {this.verbose = verbose;}
+    public CustomHttpInvokerProvider(final boolean verbose) {this.verbose = verbose;}
     
-    public static ExampleCustomHttpInvokerProvider verbose() {
-        return new ExampleCustomHttpInvokerProvider(true);
+    public static CustomHttpInvokerProvider verbose() {
+        return new CustomHttpInvokerProvider(true);
     }
     
     
-    public static ExampleCustomHttpInvokerProvider nonVerbose() {
-        return new ExampleCustomHttpInvokerProvider(false);
+    public static CustomHttpInvokerProvider nonVerbose() {
+        return new CustomHttpInvokerProvider(false);
     }
     
     @Override

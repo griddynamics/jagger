@@ -1,4 +1,4 @@
-package ${package};
+package ${package}.simple.examples;
 
 import com.griddynamics.jagger.invoker.v2.JHttpQuery;
 
@@ -11,7 +11,7 @@ import java.util.List;
  *
  */
 // begin: following section is used for docu generation - Query provider
-public class ExampleQueriesProvider  implements Iterable {
+public class QueriesProvider  implements Iterable {
     @Override
     public Iterator iterator() {
         List<JHttpQuery> queries = new ArrayList<>();

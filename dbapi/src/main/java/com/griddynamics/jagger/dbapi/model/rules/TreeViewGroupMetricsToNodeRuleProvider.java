@@ -12,24 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_SEC;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_TPS;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.*;
 
 @Component
 public class TreeViewGroupMetricsToNodeRuleProvider {
@@ -98,8 +81,8 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
         result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, LATENCY_ID, LATENCY_SEC, regex));
 
         // Latency, std dev
-        regex = "^(" + LATENCY_STD_DEV_ID + ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, LATENCY_STD_DEV_ID, LATENCY_STD_DEV_SEC, regex));
+        regex = "^(" + LATENCY_STD_DEV_AGG_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, LATENCY_STD_DEV_AGG_ID, LATENCY_STD_DEV_SEC, regex));
 
         // Duration
         regex = "^(" + DURATION_ID + ")$";
@@ -118,9 +101,10 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
 
         if ((percentiles != null) && (!percentiles.isEmpty())) {
             for (Double percentile : percentiles) {
-                String percentileName = StandardMetricsNamesUtil.getLatencyMetricName(percentile);
-                regex = "^" + percentileName + "$";
-                result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, percentileName, percentileName, regex));
+                String percentileId = StandardMetricsNamesUtil.getLatencyMetricId(percentile);
+                String percentileName = StandardMetricsNamesUtil.getLatencyMetricDisplayName(percentile);
+                regex = "^" + percentileId + "$";
+                result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, percentileId, percentileName, regex));
             }
         }
 
@@ -141,11 +125,11 @@ public class TreeViewGroupMetricsToNodeRuleProvider {
                 Rule.By.ID, VIRTUAL_USERS_ID, VIRTUAL_USERS, regex));
 
         // Latency
-        regex = "^(" + LATENCY_ID + "|" + LATENCY_STD_DEV_ID + ")$";
-        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, LATENCY_ID + LATENCY_STD_DEV_ID, LATENCY, regex));
+        regex = "^(" + LATENCY_ID + "|" + LATENCY_STD_DEV_AGG_ID + ")$";
+        result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, LATENCY_ID + LATENCY_STD_DEV_AGG_ID, LATENCY_SEC, regex));
 
         // Time Latency Percentile
-        regex = "^" + LATENCY_PERCENTILE_REGEX + "|" + TIME_LATENCY_PERCENTILE + "$";
+        regex = "^" + LATENCY_PERCENTILE_ID_REGEX + "|" + TIME_LATENCY_PERCENTILE + "$";
         result.add(new TreeViewGroupMetricsToNodeRule(Rule.By.ID, TIME_LATENCY_PERCENTILE + "_id", TIME_LATENCY_PERCENTILE, regex));
 
         return result;

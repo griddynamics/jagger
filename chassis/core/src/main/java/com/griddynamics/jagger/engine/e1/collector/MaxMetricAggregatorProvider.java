@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.MAX_AGGREGATOR_ID;
+
 /** Calculates max value on the interval
  * @author Kirill Gribov
  *
@@ -36,7 +38,7 @@ public class MaxMetricAggregatorProvider implements MetricAggregatorProvider {
 
         @Override
         public String getName() {
-            return "max";
+            return MAX_AGGREGATOR_ID;
         }
     }
 }

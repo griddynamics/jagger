@@ -8,32 +8,13 @@ import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 import com.griddynamics.jagger.invoker.InvocationException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.AVG_AGGREGATOR;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.FAILS_AGGREGATOR;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.MAX_AGGREGATOR;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.MIN_AGGREGATOR;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.PERCENTILE_AGGREGATOR;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.STD_DEV_AGGREGATOR;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.SUCCESS_AGGREGATOR;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.SUM_AGGREGATOR;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateMetricDisplayName;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateMetricId;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioId;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepId;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.*;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.*;
 
 /**
  * This invocation listener adds default metrics to invocations of {@link JHttpUserScenarioInvoker} such as
@@ -99,7 +80,7 @@ public class JHttpUserScenarioInvocationListener extends ServicesAware implement
                     getMetricService().saveValue(generateMetricId(scenarioId, ITERATION_SAMPLES_ID), 1);
                     getMetricService().saveValue(generateMetricId(scenarioId, LATENCY_ID),
                             invocationInfo.getDuration() / 1000.0); // ms -> s
-                    getMetricService().saveValue(generateMetricId(scenarioId, SUCCESS_RATE), invocationResult.getSucceeded() ? 1 : 0);
+                    getMetricService().saveValue(generateMetricId(scenarioId, SUCCESS_RATE_ID), invocationResult.getSucceeded() ? 1 : 0);
 
 
                     // Create & save step metrics
@@ -112,7 +93,7 @@ public class JHttpUserScenarioInvocationListener extends ServicesAware implement
                         }
                         getMetricService().saveValue(generateMetricId(scenarioStepId, LATENCY_ID),
                                 stepResult.getLatency().doubleValue() / 1000); // ms -> s
-                        getMetricService().saveValue(generateMetricId(scenarioStepId, SUCCESS_RATE), stepResult.getSucceeded() ? 1 : 0);
+                        getMetricService().saveValue(generateMetricId(scenarioStepId, SUCCESS_RATE_ID), stepResult.getSucceeded() ? 1 : 0);
                         getMetricService().saveValue(generateMetricId(scenarioStepId, ITERATION_SAMPLES_ID), 1);
 
                         stepIndex++;
@@ -132,7 +113,7 @@ public class JHttpUserScenarioInvocationListener extends ServicesAware implement
                                 addAggregator(AVG_AGGREGATOR));
 
                 getMetricService().createMetric(
-                        new MetricDescription(generateMetricId(scenarioId, SUCCESS_RATE)).
+                        new MetricDescription(generateMetricId(scenarioId, SUCCESS_RATE_ID)).
                                 displayName(generateMetricDisplayName(scenarioDisplayName, SUCCESS_RATE)).
                                 plotData(true).
                                 addAggregator(SUCCESS_AGGREGATOR).
@@ -155,7 +136,7 @@ public class JHttpUserScenarioInvocationListener extends ServicesAware implement
                                 addAggregator(SUM_AGGREGATOR));
 
                 getMetricService().createMetric(
-                        new MetricDescription(generateMetricId(scenarioStepId, SUCCESS_RATE)).
+                        new MetricDescription(generateMetricId(scenarioStepId, SUCCESS_RATE_ID)).
                                 displayName(generateMetricDisplayName(scenarioStepDisplayName, SUCCESS_RATE)).
                                 plotData(true).
                                 addAggregator(SUCCESS_AGGREGATOR).
