@@ -12,7 +12,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.*;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.DURATION_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_PERCENTILE_ID_REGEX;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_AGG_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_TPS;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.VIRTUAL_USERS_ID;
 
 @Component
 public class TreeViewGroupMetricsToNodeRuleProvider {

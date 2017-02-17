@@ -8,13 +8,33 @@ import com.griddynamics.jagger.engine.e1.collector.invocation.InvocationListener
 import com.griddynamics.jagger.engine.e1.services.ServicesAware;
 import com.griddynamics.jagger.invoker.InvocationException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.*;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.*;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.AVG_AGGREGATOR;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.FAILS_AGGREGATOR;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.MAX_AGGREGATOR;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.MIN_AGGREGATOR;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.PERCENTILE_AGGREGATOR;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.STD_DEV_AGGREGATOR;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.SUCCESS_AGGREGATOR;
+import static com.griddynamics.jagger.invoker.scenario.DefaultAggregatorsProvider.SUM_AGGREGATOR;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATIONS_SAMPLES;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.ITERATION_SAMPLES_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUCCESS_RATE_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateMetricDisplayName;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateMetricId;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioId;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepId;
 
 /**
  * This invocation listener adds default metrics to invocations of {@link JHttpUserScenarioInvoker} such as

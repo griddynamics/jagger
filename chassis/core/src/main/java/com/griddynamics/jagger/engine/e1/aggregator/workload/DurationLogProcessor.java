@@ -32,7 +32,11 @@ import com.griddynamics.jagger.master.SessionIdProvider;
 import com.griddynamics.jagger.master.configuration.Task;
 import com.griddynamics.jagger.reporting.interval.IntervalSizeProvider;
 import com.griddynamics.jagger.storage.KeyValueStorage;
-import com.griddynamics.jagger.storage.fs.logging.*;
+import com.griddynamics.jagger.storage.fs.logging.AggregationInfo;
+import com.griddynamics.jagger.storage.fs.logging.DurationLogEntry;
+import com.griddynamics.jagger.storage.fs.logging.LogAggregator;
+import com.griddynamics.jagger.storage.fs.logging.LogProcessor;
+import com.griddynamics.jagger.storage.fs.logging.LogReader;
 import com.griddynamics.jagger.util.StandardMetricsNamesUtil;
 import com.griddynamics.jagger.util.statistics.StatisticsCalculator;
 import org.hibernate.HibernateException;
@@ -45,9 +49,19 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.*;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_AGG_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_TPS;
 
 /**
  * @author Alexey Kiselyov
