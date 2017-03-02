@@ -1,7 +1,5 @@
 package com.griddynamics.jagger.invoker.scenario;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.v2.JHttpResponse;
@@ -14,8 +12,12 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
- * This invoker is able to execute user scenarios ({@link JHttpUserScenario}) as one invocation.
+ * This invoker is able to execute user scenarios ({@link JHttpUserScenario})
+ *
+ * @ingroup Main_Http_User_Scenario_group
  */
 public class JHttpUserScenarioInvoker implements Invoker<Void, JHttpUserScenarioInvocationResult, JHttpUserScenario> {
 

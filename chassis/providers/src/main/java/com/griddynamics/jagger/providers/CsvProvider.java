@@ -26,9 +26,14 @@ import com.griddynamics.jagger.exception.TechnicalException;
 import com.griddynamics.jagger.providers.creators.ObjectCreator;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVStrategy;
-import java.io.*;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /** Reads information from CSV files
  * @author Nikolay Musienko
@@ -36,7 +41,7 @@ import java.util.NoSuchElementException;
  * @par Details:
  * @details Reads data from CSV files and translates it to java objects.
  *
- * @ingroup Main_Providers_group */
+ */
 public class CsvProvider<T> implements Iterable<T>, Serializable  {
 
     private String path;
@@ -166,64 +171,3 @@ public class CsvProvider<T> implements Iterable<T>, Serializable  {
         };
     }
 }
-
-
-/* **************** Providers page *************************  */
-/// @defgroup Main_Providers_General_group Providers main page
-///
-/// @li Available implementations: @ref Main_Providers_group
-/// @li How to customize: @ref Main_HowToCustomizeProviders_group
-/// @n
-/// @n
-/// @details
-/// @par General info
-/// Provides are providing list of endpoints and queries to distributors. @n
-/// Endpoint - target for the test (address of System Under Test). @n
-/// Query - request for System Under Test. @n
-/// Providers are executed single time before start of the tests @n
-///
-/// @par Example of providers setup in XML:
-/// Below is example of XML @xlink{test-description} section @n
-/// In current example endpoints are hardcoded and list of queries is empty. @n
-/// In real life it is more complicated. Endpoints and queries are usually provided as CVS files, property files or as some SUT test service @n
-/// In this case you need to implement custom provider(s). How to do this you can read here: @ref Main_HowToCustomizeProviders_group
-/// @dontinclude  test.description.conf.xml
-/// @skip  begin: following section is used for docu generation - simple providers usage
-/// @until end: following section is used for docu generation - simple providers usage
-///
-/// @par Variants of proviers available in XML:
-/// @xlink{endpoint-provider} - documentation of endpoint provider element in XML schema @n
-/// @xlink{query-provider} - documentation of query provider element in XML schema @n
-/// @xlink_complex{endpointProviderAbstract} - types of endpoint providers available in XML schema. See <b> 'Sub Types' </b> section of man page @n
-/// @xlink_complex{queryProviderAbstract} - types of query providers available in XML schema. See <b> 'Sub Types' </b> section of man page @n
-/// How providers mentioned above are implemented you can see in section: @ref Main_Providers_group @n
-/// @n
-
-
-/* **************** How to customize provider ************************* */
-/// @defgroup Main_HowToCustomizeProviders_group Custom providers
-///
-/// @details
-/// @ref Main_Providers_General_group
-/// @n
-/// @n
-/// To add custom provider you need to do -
-/// 1. Create class which implements interface Iterable<Q>
-/// @dontinclude  FileReaderIterable.java
-/// @skipline  public class FileReaderIterable
-/// @n
-///
-/// 2. Create bean in XML file with some id
-/// @dontinclude  fileprovider.conf.xml
-/// @skip begin: following section is used for docu generation - provider usage
-/// @until end: following section is used for docu generation - provider usage
-/// @n
-///
-/// 3. Create component @xlink{query-provider}(or @xlink{endpoint-provider}) with type query-provider-ref and set id of provider to attribute ref.
-/// @dontinclude  test.description.conf.xml
-/// @skip  begin: following section is used for docu generation - provider custom
-/// @until end: following section is used for docu generation - provider custom
-/// @n
-/// @b Note:
-/// @li full examples of the code are available in maven archetype-examples
-/// @li instead of ${package} write the name of your package

@@ -14,7 +14,8 @@ import com.griddynamics.jagger.util.Pair;
  * @n
  * Created by Andrey Badaev
  * Date: 06/02/17
- */
+ *
+ * @ingroup Main_Distributors_group */
 public class NonCircularExclusiveAccessLoadBalancer<Q, E> extends ExclusiveAccessLoadBalancer<Q, E> {
     
     public NonCircularExclusiveAccessLoadBalancer(PairSupplierFactory<Q, E> pairSupplierFactory) {

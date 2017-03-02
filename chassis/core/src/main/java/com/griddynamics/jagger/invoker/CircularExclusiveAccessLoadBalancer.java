@@ -19,7 +19,8 @@ import java.util.concurrent.TimeUnit;
  * @n
  * Created by Andrey Badaev
  * Date: 07/02/17
- */
+ *
+ * @ingroup Main_Distributors_group */
 public class CircularExclusiveAccessLoadBalancer<Q, E> extends ExclusiveAccessLoadBalancer<Q, E> {
     
     private final static Logger log = LoggerFactory.getLogger(CircularExclusiveAccessLoadBalancer.class);

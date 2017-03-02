@@ -29,7 +29,6 @@
 /// @section section_webui_tags Marking sessions with tags from WebUI
 /// To have possibility to mark session with tags from Web client it is required to:
 ///    @li Create tags that can be applied. It is possible to create / update tags from source code with help of @ref com.griddynamics.jagger.engine.e1.services.SessionInfoService "SessionInfoService" @n
-///        Full example how to do it you can find in test suite listener example under link: @ref Main_CustomListenersExamples_group @n
 ///        Note that it is possible to create tags only from test program source code, but not from Web UI. It is done on purpose, because @n
 ///        only person responsible for test (= author of test program) can decide what tags can be used.
 ///    @li Run performance test with Jagger version 1.2.4 or later. Separate table will be created in database

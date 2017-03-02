@@ -6,12 +6,15 @@ import java.util.List;
 import static java.lang.String.format;
 
 /**
- * This class is a representation of user scenario which can be invoked by {@link JHttpUserScenarioInvoker}.
+ * This class is a representation of user scenario - sequence of the related http requests
+ * Can be invoked by {@link JHttpUserScenarioInvoker}.
  * User can create as many steps ({@link JHttpUserScenarioStep}) as needed and they will be invoked as one invocation.
- * If any step fails whole invocation will be marked as failed.
+ * If any step fails whole scenario invacation will be marked as failed.
  *
  * @see JHttpUserScenarioInvoker
  * @see JHttpUserScenarioInvocationListener
+ *
+ * @ingroup Main_Http_User_Scenario_group
  */
 public class JHttpUserScenario {
     private Integer stepsCounter = 0;

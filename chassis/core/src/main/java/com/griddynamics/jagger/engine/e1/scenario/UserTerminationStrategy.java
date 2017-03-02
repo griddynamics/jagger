@@ -33,8 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @n
  * @par Details:
  * @details Can work in two ways - terminate workload by time or terminate workload by number of samples. If duration doesn't equal -1, workload will terminate by time.
- *
- * @ingroup Main_Terminators_group */
+ */
 public class UserTerminationStrategy implements TerminationStrategy {
     private final long stopTime;
     private final int stopSampleCount;

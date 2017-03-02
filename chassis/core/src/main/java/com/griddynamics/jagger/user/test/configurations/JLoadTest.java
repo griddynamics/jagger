@@ -1,13 +1,12 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.test.TestListener;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
 import com.griddynamics.jagger.user.test.configurations.limits.JLimit;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfile;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
-
-import com.google.common.collect.Lists;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -27,7 +26,7 @@ import java.util.Objects;
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n
  * Code example:
- * @dontinclude  ExampleSimpleJLoadScenarioProvider.java
+ * @dontinclude  SimpleJLoadScenarioProvider.java
  * @skip  begin: following section is used for docu generation - Load test scenario configuration
  * @until end: following section is used for docu generation - Load test scenario configuration
  */

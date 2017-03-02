@@ -3,6 +3,7 @@
 /// @page Installation Installation
 /// @page GettingStarted Getting started
 /// @page WritingTest Creating load test
+/// @page HttpUserScenarioTest Http scenario load test
 /// @page ListenersMain User actions during the load test
 /// @page MetricsMain Collecting metrics
 /// @page MainDecisionMaker Making decision

@@ -57,7 +57,7 @@
 ///
 /// @section section_writing_test_example Load scenario configuration
 /// @par Create load scenario
-/// @dontinclude  ExampleSimpleJLoadScenarioProvider.java
+/// @dontinclude  SimpleJLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - Load test scenario configuration
 /// @until end: following section is used for docu generation - Load test scenario configuration
 /// @n
@@ -72,10 +72,15 @@
 /// @image html writing_test_test_definition.png "Test definition components"
 /// @n
 /// On the image above you can see relation of the different components of the test definition. Test data, provided @n
-/// by endpoint and query providers, is combined by the @ref Main_Distributors_group "distributor (aka load balancer)" to the set of the requests. During the load test @n
+/// by endpoint and query providers, is combined by the distributor (aka load balancer) to the set of the requests. During the load test @n
 /// this set of the requests is passed to the invoker. Invoker is providing communication with the SUT and returning responses. @n
 /// Responses are verified by validators to take pass/fail decision and processed by metrics to collect some measurements. @n
 /// During the run time every virtual user is working with it's own invoker, thus allowing to generate load. @n
+/// @n
+/// Below are the links to related information:
+/// @li @ref Main_Distributors_group
+/// @li @ref MetricsMain "Validators and metrics collection"
+///
 /// @n
 /// @section section_writing_http_test_definition Test definition for HTTP configuration
 /// @par Support of Http
@@ -90,11 +95,11 @@
 /// To create your first load test using http, you need to create an endpoint provider, like in the example below. @n
 /// Query provider is optional @n
 /// @par Examples of the endpoint provider for Test definition configuration
-/// @dontinclude  ExampleEndpointsProvider.java
+/// @dontinclude  EndpointsProvider.java
 /// @skip  begin: following section is used for docu generation - Endpoint provider
 /// @until end: following section is used for docu generation - Endpoint provider
 /// @par Examples of the query provider for Test definition configuration
-/// @dontinclude  ExampleQueriesProvider.java
+/// @dontinclude  QueriesProvider.java
 /// @skip  begin: following section is used for docu generation - Query provider
 /// @until end: following section is used for docu generation - Query provider
 ///
@@ -106,7 +111,7 @@
 /// @li create custom invoker. This component implements Invoker<Q,R,E> and can use some library to communicate with you SUT. E.g. jdbc to load database. You can use @ref com.griddynamics.jagger.invoker.v2.DefaultHttpInvoker "DefaultHttpInvoker" as example
 /// @li if necessary, add @ref MetricsMain "custom validators and metrics"
 ///
-/// @ref section_installation_local "Jagger archetype" contains example of the custom invoker provider @ref ExampleCustomHttpInvokerProvider.java and its usage in the @ref ExampleJLoadScenarioProvider.java
+/// @ref section_installation_local "Jagger archetype" contains example of the custom invoker provider @ref CustomHttpInvokerProvider.java and its usage in the @ref JLoadScenarioProvider.java
 ///
 /// @section section_writing_test_parametrization Parametrization via properties
 /// To make your test more flexible and avoid recompilation we are recommending to parametrize your test. You can define parameters
@@ -117,7 +122,7 @@
 /// @include ./archetype-java-builders/src/main/resources/archetype-resources/src/main/resources/test.properties
 ///
 /// Example of the test properties usage in the code:
-/// @dontinclude ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/ExampleJLoadScenarioProvider.java
+/// @dontinclude ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/simple.examples/JLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - Detailed load test scenario configuration
 /// @until end: following section is used for docu generation - Detailed load test scenario configuration
 
@@ -129,12 +134,37 @@
 /// @defgroup Main_Http_group Http test definition components
 /// @details @ref section_writing_http_test_definition
 
+/// @defgroup Main_Http_User_Scenario_group Http user scenario configuration components
+/// @details @ref HttpUserScenarioTest
+
 /// @defgroup Main_Distributors_group Load balancers (Distributors)
-/// 
-/// Distributors provide pairs of endpoints and queries for invokers @n
+///
+/// Distributor as the part of @ref section_writing_test_definition "test definition" provides pairs of endpoints and queries for invokers. @n
 /// Before start of the test distributor is combining all endpoints and queries according to user setup and stores these combination in internal list. @n
 /// \b Important: mentioned list is shared by all threads that produce load. it is not possible to have separate list per workload thread @n
 /// Before every invoke distributor is providing single pair of endpoint / query to invoker @n
+/// Endpoints and queries can be combined in following combinations: <b> Round Robin or One by one </b> @n
+/// @n
+/// <b> Round Robin algorithm </b> - for input endpoints [e1, e2] and queries [q1, q2, q3] creates following pairs: @n
+/// (e1, q1), (e2, q2), (e1, q3), (e2, q1), (e1, q2), (e2, q3). @n
+/// @n
+/// <b>One by one</b> algorithm - for input endpoints [e1, e2] and queries [q1, q2, q3] creates following pairs: @n
+/// (e1, q1), (e2, q1), (e1, q2), (e2, q2), (e1, q3), (e2, q3). @n
+/// @n
+/// Both Round Robin and One by one are supporting:
+/// - same order of the pairs for every virtual user
+/// - random order of the pair for every virtual user
+///
+/// It is also possible to enable:
+/// - exclusive access to every combination. Only one virtual user is using combination at the single point of time
+/// - unique access. Only one virtual user is using combination at the single point of time. One combination is used only single time during test execution
+///
+/// It is recommended to use @ref com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoadBalancer "JLoadBalancer" to setup build-in distributers like in the example below @n
+/// Or you can implement your own balancer by extending QueryPoolLoadBalancer @n
+/// Example of the load balancer setup:
+/// @dontinclude ./archetype-java-builders/src/main/resources/archetype-resources/src/main/java/user.scenario.example/UserScenarioJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - Load balancer setup
+/// @until end: following section is used for docu generation - Load balancer setup
 /// @n
 /// @section section_distributors_random Access SUT with random order of endpoint / query pairs
 /// Pairs of endpoint / query are collected into list single time during Jagger start up. By default all threads are accessing elements

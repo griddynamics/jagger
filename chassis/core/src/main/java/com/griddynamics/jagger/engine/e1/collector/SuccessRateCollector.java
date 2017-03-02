@@ -25,7 +25,6 @@ import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.storage.fs.logging.LogWriter;
 import com.griddynamics.jagger.storage.fs.logging.MetricLogEntry;
 
-
 import java.io.File;
 
 /** Collects number of pass and fail invokes
@@ -38,12 +37,6 @@ import java.io.File;
  * @li @ref SuccessRateAggregatorProvider @n
  * @li @ref SuccessRateFailsAggregatorProvider @n
  *
- * @par Usage example in XML:
- * To use this collector add @xlink{metric-success-rate} collector to @xlink{test-description,info-collectors} block.
- * @n
- * @dontinclude  tasks-new.conf.xml
- * @skip  begin: following section is used for docu generation - metric-success-rate
- * @until end: following section is used for docu generation - metric-success-rate
  * @n
  * @par Result example:
  * @image html jagger_success_rate_default_agg.png "Success rate data with default accumulative aggregators"

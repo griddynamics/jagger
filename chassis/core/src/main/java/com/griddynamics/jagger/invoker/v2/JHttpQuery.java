@@ -20,7 +20,7 @@ import static com.google.common.collect.Lists.newArrayList;
  *
  * @param <T> type of the query {@link JHttpQuery#body}
  * @author Anton Antonenko
- * @apiNote Example of query construction:
+ * Example of query construction:
  * <pre>{@code
  * HashMap<String, String> cookies = new HashMap<>();
  * cookies.put("JSESSIONID", "0123456789");
@@ -58,7 +58,7 @@ public class JHttpQuery<T> implements Serializable {
      *
      * @param method {@link HttpMethod} to be used in request
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().method(HttpMethod.GET); }
      */
     public JHttpQuery<T> method(HttpMethod method) {
@@ -71,7 +71,7 @@ public class JHttpQuery<T> implements Serializable {
      * The same as {@code this.method(HttpMethod.GET); }
      *
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().get(); }
      */
     public JHttpQuery<T> get() {
@@ -83,7 +83,7 @@ public class JHttpQuery<T> implements Serializable {
      * The same as {@code this.method(HttpMethod.POST); }
      *
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().post(); }
      */
     public JHttpQuery<T> post() {
@@ -95,7 +95,7 @@ public class JHttpQuery<T> implements Serializable {
      * The same as {@code this.method(HttpMethod.PUT); }
      *
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().put(); }
      */
     public JHttpQuery<T> put() {
@@ -107,7 +107,7 @@ public class JHttpQuery<T> implements Serializable {
      * The same as {@code this.method(HttpMethod.PATCH); }
      *
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().patch(); }
      */
     public JHttpQuery<T> patch() {
@@ -119,7 +119,7 @@ public class JHttpQuery<T> implements Serializable {
      * The same as {@code this.method(HttpMethod.DELETE); }
      *
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().delete(); }
      */
     public JHttpQuery<T> delete() {
@@ -131,7 +131,7 @@ public class JHttpQuery<T> implements Serializable {
      * The same as {@code this.method(HttpMethod.TRACE); }
      *
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().trace(); }
      */
     public JHttpQuery<T> trace() {
@@ -143,7 +143,7 @@ public class JHttpQuery<T> implements Serializable {
      * The same as {@code this.method(HttpMethod.HEAD); }
      *
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().head(); }
      */
     public JHttpQuery<T> head() {
@@ -155,7 +155,7 @@ public class JHttpQuery<T> implements Serializable {
      * The same as {@code this.method(HttpMethod.OPTIONS); }
      *
      * @return this
-     * @apiNote Usage: <p>
+     * Usage: <p>
      * {@code JHttpQuery httpQuery = new JHttpQuery().options(); }
      */
     public JHttpQuery<T> options() {
@@ -167,7 +167,7 @@ public class JHttpQuery<T> implements Serializable {
      *
      * @param headers headers to be added to query
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * HttpHeaders headers = new HttpHeaders();
      * headers.add("header", "value")
@@ -185,7 +185,7 @@ public class JHttpQuery<T> implements Serializable {
      *
      * @param headers headers to be added to query
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * Map<String, List<String>> headers = new HashMap<>();
      * headers.put("header", newArrayList("value1", "value2"));
@@ -205,7 +205,7 @@ public class JHttpQuery<T> implements Serializable {
      * @param key    name of header
      * @param values values of header
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().header("header", newArrayList("value1", "value2"));
      * }</pre>
@@ -222,7 +222,7 @@ public class JHttpQuery<T> implements Serializable {
      * @param key   name of header
      * @param value value of header
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().header("header", "value");
      * }</pre>
@@ -238,7 +238,7 @@ public class JHttpQuery<T> implements Serializable {
      *
      * @param cookies cookies to be added to query
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * HashMap<String, String> cookies = new HashMap<>();
      * cookies.put("JSESSIONID", "0123456789");
@@ -258,7 +258,7 @@ public class JHttpQuery<T> implements Serializable {
      * @param name  name of cookie
      * @param value value of cookie
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().cookie("name", "value");
      * }</pre>
@@ -274,7 +274,7 @@ public class JHttpQuery<T> implements Serializable {
      *
      * @param body {@link T body} of the query
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery<Integer> httpQuery = new JHttpQuery<Integer>().body(42);
      * // or
@@ -293,7 +293,7 @@ public class JHttpQuery<T> implements Serializable {
      *
      * @param responseBodyType expected body type of response
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().responseBodyType(Integer.class);
      * }</pre>
@@ -308,7 +308,7 @@ public class JHttpQuery<T> implements Serializable {
      *
      * @param queryParams {@link Map} with query parameters to be added to query
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * Map<String, String> queryParams = new HashMap<>();
      * queryParams.put("page", "1");
@@ -326,7 +326,7 @@ public class JHttpQuery<T> implements Serializable {
      * Adds query parameter "paramName=paramValue" to {@link JHttpQuery#queryParams} field.
      *
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().queryParam("parameter","value");
      * }</pre>
@@ -342,7 +342,7 @@ public class JHttpQuery<T> implements Serializable {
      * Sets path to {@link JHttpQuery#path} field.
      *
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().path("/products");
      * }</pre>
@@ -356,7 +356,7 @@ public class JHttpQuery<T> implements Serializable {
      * Concatenates paths values and sets to {@link JHttpQuery#path} field.
      *
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().path("categories", "clothes", "jeans", "42");
      * }</pre>
@@ -370,7 +370,7 @@ public class JHttpQuery<T> implements Serializable {
      * Sets path of query to {@link JHttpQuery#path} field. Works the same as {@link String#format(String, Object...)}}.
      *
      * @return this
-     * @apiNote Usage:
+     * Usage:
      * <pre>{@code
      * JHttpQuery httpQuery = new JHttpQuery().path("/products/%s/%s", "categories", 42);
      * }</pre>

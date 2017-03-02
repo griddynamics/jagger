@@ -1,0 +1,67 @@
+/// @page HttpUserScenarioTest
+///
+/// We consider that at this point, you have already @ref WritingTest "learned how to create simple load tests" @n
+///
+/// @li @ref section_http_scenario_overview
+/// @li @ref section_http_scenario_components
+/// @li @ref section_http_scenario_execution
+/// @li @ref section_http_scenario_creation
+///
+/// @section section_http_scenario_overview Overview
+/// @par Terms
+/// @li <b> Http user scenario </b> - sequence of the related http requests provided by virtual user
+/// @li <b> Scenario step </b> - single http requests in the scenario
+///
+/// @par Main features
+/// @li Ability to provide Http user scenario tests with different @ref Main_Load_profiles_group "load profiles"
+/// @li Global context per scenario execution to set endpoint, headers, execute all steps within single authentication session
+/// @li Ability to change global context on the run
+/// @li Ability to change next step in the scenario based on the results of the previous step
+/// @li Step execution validation. Stop scenario execution on fail
+/// @li Configurable metrics collection per step / scenario: response time, success rate, number of iterations
+/// @li Support of the Basic authentication
+/// @li Ability to execute every scenario @ref Main_Distributors_group "exclusively". Only one virtual user is running scenario at a time
+/// @li Ability to execute every scenario @ref Main_Distributors_group "only single time"
+///
+/// @section section_http_scenario_components Http user scenario components
+/// @ref Main_Http_User_Scenario_group
+///
+/// @section section_http_scenario_execution Http user scenario load configuration
+/// @par Execute http user load scenario
+/// @dontinclude  UserScenarioJLoadScenarioProvider.java
+/// @skip  begin: following section is used for docu generation - User scenario execution
+/// @until end: following section is used for docu generation - User scenario execution
+///
+/// Provider example code is available in @ref section_installation_local "the archetype"
+///
+/// User scenario load has the same configuration like simple examples from the previous chapter: @ref section_writing_test_example @n
+/// Important points in the example above:
+/// @li Provider of the endpoints for @ref section_writing_test_definition "the test definition" returns list of
+/// @ref com.griddynamics.jagger.invoker.scenario.JHttpUserScenario "User scenarios". User scenarios contains
+/// full description of the test: endpoints, queries, headers, etc. In such case we don't need query provider
+/// @li We are using @ref com.griddynamics.jagger.invoker.scenario.JHttpUserScenarioInvoker "dedicated invoker" to run user scenario test
+/// @li We are using @ref Main_Distributors_group "load balancer with exclusive setup". That means at any time, every scenario will be executed only by single virtual user.
+/// Other virtual users will execute different scenarios.
+/// @li We are setting additional configurable @ref com.griddynamics.jagger.invoker.scenario.JHttpUserScenarioInvocationListener "user scenario invocation listener" to collect metrics per step and scenario. Without this listener metrics will be not collected
+/// @li There is an ability to set acceptance criteria per different metric in the steps of the scenario
+/// @n
+///
+/// @section section_http_scenario_creation Creating scenario
+/// @par Example of the user load scenario creation
+/// @dontinclude  UserScenarioEndpointsProvider.java
+/// @skip  begin: following section is used for docu generation - User scenario provider
+/// @until end: following section is used for docu generation - User scenario provider
+///
+/// Provider example code is available in @ref section_installation_local "the archetype"
+///
+/// Important points in the example above:
+/// @li There is an option to setup @ref com.griddynamics.jagger.invoker.scenario.JHttpScenarioGlobalContext "global context" per scenario.
+/// This context will be available for every step in the scenario,
+/// can be modified on the run. Context will be reset to default state at the beginning of the scenario execution
+/// @li It is recommended to set delays after every step in the scenario. That will simulate real user behaviour
+/// @li There is an option to validate response of the step and stop scenario execution if validation fails
+/// @li There is an option to change next step in the scenario based on the results of the previous one
+/// @li You can see an example of the Basic Authentication setup. User name and password from the global context
+/// will be used to generate basic authentication header for every step in the scenario
+
+

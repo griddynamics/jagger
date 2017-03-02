@@ -91,7 +91,7 @@ public abstract class ResponseValidator<Q, E, R> extends KernelSideObject {
 /// return true.
 /// @include  ExampleResponseValidatorProvider.java
 /// We will add created validator to a particular test. You can add multiple validators to the same test. htey will be executed in the same sequence like they are added
-/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @dontinclude  JLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - example of the invocation listener
 /// @until end: following section is used for docu generation - example of the invocation listener
 

@@ -23,7 +23,6 @@ package com.griddynamics.jagger.invoker;
 import com.griddynamics.jagger.util.Pair;
 
 import java.util.Iterator;
-import java.util.List;
 
 /** Schedules queries across endpoints one by one
  * @author Mairbek Khadikov
@@ -33,7 +32,6 @@ import java.util.List;
  * executes actions in following order: @n
  * (e1, q1), (e2, q1), (e1, q2), (e2, q2), (e1, q3), (e2, q3). @n
  *  @n
- * To use this distributor add @xlink{query-distributor} element with type @xlink_complex{query-distributor-one-by-one} in @xlink{scenario} block.
  *
  * @param <Q> Query type
  * @param <E> Endpoint type

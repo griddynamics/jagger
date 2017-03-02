@@ -21,6 +21,8 @@ import java.util.Random;
 
 /**
  * Provides load balancer aka distributor (how to pair endpoints and queries) (subtypes of {@link QueryPoolLoadBalancer}).
+ *
+ * @ingroup Main_Distributors_group
  */
 public class JLoadBalancer implements Serializable {
 
@@ -63,7 +65,7 @@ public class JLoadBalancer implements Serializable {
         /**
          * Optional: Calling this setter will produce a load balancer
          * which randomly picks an endpoint & query pair to provide
-         * with random seed specified by parameter <b>seed<b/>.
+         * with random seed specified by parameter <b>seed</b>.
          *
          * @param seed the initial seed of {@link Random} (look at {@link Random#Random(long)})
          * @return {@link Builder} this

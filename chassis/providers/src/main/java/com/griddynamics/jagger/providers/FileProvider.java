@@ -26,7 +26,9 @@ import com.google.common.collect.AbstractIterator;
 import com.griddynamics.jagger.providers.creators.ObjectCreator;
 import com.griddynamics.jagger.providers.creators.StringCreator;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -57,8 +59,7 @@ import java.util.Scanner;
  *     ....
  * }
  * @endcode
- *
- * @ingroup Main_Providers_group */
+ */
 public class FileProvider<T> implements Iterable<T>, Serializable {
 
     private String path;

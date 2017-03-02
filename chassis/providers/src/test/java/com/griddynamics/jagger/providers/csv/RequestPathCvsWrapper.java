@@ -25,8 +25,7 @@ import com.griddynamics.jagger.providers.creators.ObjectCreator;
 /** Creates urls(host+path) from row data
  * @author Nikolay Musienko
  * @n
- *
- * @ingroup Main_Providers_group */
+ */
 public class RequestPathCvsWrapper implements ObjectCreator<RequestPath> {
 
     String[] header;

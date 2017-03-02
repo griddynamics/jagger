@@ -42,11 +42,11 @@ public class JHttpResponseStatusValidatorProvider implements ResponseValidatorPr
     /**
      * @param codes valid codes
      * @return new JHttpResponseStatusValidatorProvider with valid codes provided in codes
-     * @apiNote Usage: <pre>
+     * Usage: <pre>
      * {@code
      * JHttpResponseStatusValidatorProvider validator = JHttpResponseStatusValidatorProvider.of(200, 201, 202);
      * }
-     * <pre/>
+     * </pre>
      */
     public static JHttpResponseStatusValidatorProvider of(Integer... codes) {
         return new JHttpResponseStatusValidatorProvider(Arrays.asList(codes));
@@ -55,11 +55,11 @@ public class JHttpResponseStatusValidatorProvider implements ResponseValidatorPr
     /**
      * @param codes valid codes
      * @return new JHttpResponseStatusValidatorProvider with valid codes provided in codes
-     * @apiNote Usage: <pre>
+     * Usage: <pre>
      * {@code
      * JHttpResponseStatusValidatorProvider validator = JHttpResponseStatusValidatorProvider.of(newArrayList(200, 201, 202));
      * }
-     * <pre/>
+     * </pre>
      */
     public static JHttpResponseStatusValidatorProvider of(List<Integer> codes) {
         return new JHttpResponseStatusValidatorProvider(codes);
@@ -68,13 +68,13 @@ public class JHttpResponseStatusValidatorProvider implements ResponseValidatorPr
     /**
      * @param range IntStream of valid codes
      * @return new JHttpResponseStatusValidatorProvider with valid codes provided in range
-     * @apiNote Usage: <pre>
+     * Usage: <pre>
      * {@code
      * JHttpResponseStatusValidatorProvider validator = JHttpResponseStatusValidatorProvider.of(IntStream.range(200, 399)); // from 200 inclusive to 399 exclusive
      * // or
      * JHttpResponseStatusValidatorProvider validator = JHttpResponseStatusValidatorProvider.of(IntStream.rangeClosed(200, 399)); // from 200 inclusive to 399 inclusive
      * }
-     * <pre/>
+     * </pre>
      */
     public static JHttpResponseStatusValidatorProvider of(IntStream range) {
         return new JHttpResponseStatusValidatorProvider(range.boxed().collect(toSet()));
@@ -85,11 +85,11 @@ public class JHttpResponseStatusValidatorProvider implements ResponseValidatorPr
      * @return new JHttpResponseStatusValidatorProvider with valid codes regExp provided in stringRegExp
      * @throws PatternSyntaxException If the expression's syntax is invalid
      *
-     * @apiNote Usage: <pre>
+     * Usage: <pre>
      * {@code
      * JHttpResponseStatusValidatorProvider validator = JHttpResponseStatusValidatorProvider.of("(200|201|202)");
      * }
-     * <pre/>
+     * </pre>
      */
     public static JHttpResponseStatusValidatorProvider of(String stringRegExp) {
         return new JHttpResponseStatusValidatorProvider(Pattern.compile(stringRegExp));

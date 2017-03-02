@@ -1,10 +1,9 @@
 package com.griddynamics.jagger.invoker;
 
+import com.google.common.collect.AbstractIterator;
 import com.griddynamics.jagger.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.AbstractIterator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +22,8 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @n
  * Created by Andrey Badaev
  * Date: 01/02/17
- */
+ *
+ * @ingroup Main_Distributors_group */
 public abstract class ExclusiveAccessLoadBalancer<Q, E> extends PairSupplierFactoryLoadBalancer<Q, E> {
     
     private final static Logger log = LoggerFactory.getLogger(ExclusiveAccessLoadBalancer.class);

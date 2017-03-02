@@ -31,6 +31,8 @@ import static ${package}.user.scenario.example.UserScenarioEndpointsProvider.SCE
 import static ${package}.user.scenario.example.UserScenarioEndpointsProvider.STEP_1_ID;
 import static ${package}.user.scenario.example.UserScenarioEndpointsProvider.STEP_2_ID;
 
+//begin: following section is used for docu generation - User scenario execution
+
 /**
  * Example of user scenario load scenario
  * We are creating load test (load scenario) with the multiple user scnearios (sequence of actions) to execute
@@ -40,6 +42,8 @@ public class UserScenarioJLoadScenarioProvider {
 
     @Bean
     public JLoadScenario exampleSimpleJaggerLoadScenarioUS() {
+
+        //begin: following section is used for docu generation - Load balancer setup
 
         JTestDefinition jTestDefinition =
                 JTestDefinition.builder(Id.of("td_user_scenario_example"), new UserScenarioEndpointsProvider())
@@ -56,6 +60,8 @@ public class UserScenarioJLoadScenarioProvider {
                                 .withLatencyPercentileAggregators(50D, 95D, 99D)
                                 .build())
                         .build();
+
+        //end: following section is used for docu generation - Load balancer setup
 
         JLoadProfile jLoadProfileInvocations =
                 JLoadProfileInvocation.builder(InvocationCount.of(100), ThreadCount.of(2))
@@ -109,4 +115,7 @@ public class UserScenarioJLoadScenarioProvider {
                 .build();
     }
 }
+
+//end: following section is used for docu generation - User scenario execution
+
 

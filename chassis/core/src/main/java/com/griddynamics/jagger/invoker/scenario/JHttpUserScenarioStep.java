@@ -9,7 +9,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * Represents a step in user scenario ({@link JHttpUserScenario}).
+ * Represents a single step (http request) in the user scenario ({@link JHttpUserScenario})
+ *
+ * @ingroup Main_Http_User_Scenario_group
  */
 public class JHttpUserScenarioStep {
     private int stepNumber;

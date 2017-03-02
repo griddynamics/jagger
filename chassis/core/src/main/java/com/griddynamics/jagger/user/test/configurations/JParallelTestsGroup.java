@@ -1,11 +1,10 @@
 package com.griddynamics.jagger.user.test.configurations;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupDecisionMakerListener;
 import com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-
-import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n
  * Code example:
- * @dontinclude  ExampleSimpleJLoadScenarioProvider.java
+ * @dontinclude  SimpleJLoadScenarioProvider.java
  * @skip  begin: following section is used for docu generation - Load test scenario configuration
  * @until end: following section is used for docu generation - Load test scenario configuration
  */

@@ -45,7 +45,7 @@
 /// is taken as a reference, thresholds to rise error and warning flags are calculated as: <b> RefValue * Limit </b> @n
 /// @n
 /// Example of the limits description: @n
-/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @dontinclude  JLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - example of the limits
 /// @until end: following section is used for docu generation - example of the limits
 /// @n

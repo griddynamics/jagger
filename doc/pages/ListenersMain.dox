@@ -30,25 +30,25 @@
 /// @skip  begin: following section is used for docu generation - example of the test group listener
 /// @until end: following section is used for docu generation - example of the test group listener
 /// @par Attach test group listener to the parallel test group in your load scenario
-/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @dontinclude  JLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - example of the test group listener
 /// @until end: following section is used for docu generation - example of the test group listener
 /// @par Another example. Invocation listeners
 /// You can attach as many listeners as necessary to particular step in the test flow. They will be executed in the same order like they are added@n
 /// Below is an example of the test definition with two invocation listeners
-/// @dontinclude  ExampleJLoadScenarioProvider.java
+/// @dontinclude  JLoadScenarioProvider.java
 /// @skip  begin: following section is used for docu generation - example of the invocation listener
 /// @until end: following section is used for docu generation - example of the invocation listener
 ///
 /// @section section_listeners_list Listeners
 ///
-/// @par You can implement following listeners: @n
+/// @par You can implement following listeners:
 /// @ref com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioListener "LoadScenarioListener" - Load scenario listener. Is triggered on start and stop of the load scenario @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupListener "TestGroupListener" - Parallel test group listener. Is triggered on start and stop of the test group @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.test.TestListener "TestListener" - Load test listener. Is triggered on start, stop and during load test execution @n
 /// @ref Workaround_InvocationListener_group "InvocationListener" - Invocation listener. Is triggered on invocation start, success, error and failure @n
 /// @n
-/// @par Framework is providing additional information in the listeners: @n
+/// @par Framework is providing additional information in the listeners:
 /// @ref com.griddynamics.jagger.engine.e1.collector.loadscenario.LoadScenarioInfo "LoadScenarioInfo" - Load scenario listener. Is triggered on start and stop of the load scenario @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.testgroup.TestGroupInfo "TestGroupInfo" - Parallel test group listener. Is triggered on start and stop of the test group @n
 /// @ref com.griddynamics.jagger.engine.e1.collector.test.TestInfo "TestInfo" - Load test listener. Is triggered on start, stop and during load test execution @n
@@ -61,7 +61,7 @@
 ///
 /// In all listeners framework is providing access to the Jagger internals via services. Main goal of the services - simplify development of the custom code.
 ///  With the help of services you can store custom metrics, access test results, store additional information about your test in the Jagger test results database @n
-/// @par You can use following services: @n
+/// @par You can use following services:
 /// @ref com.griddynamics.jagger.engine.e1.services.DefaultSessionInfoService "DefaultSessionInfoService" - Allows to add comments to the test results, mark results with tags @n
 /// @ref com.griddynamics.jagger.engine.e1.services.DefaultMetricService "DefaultMetricService" - Allows to crete and save custom metrics @n
 /// @ref com.griddynamics.jagger.engine.e1.services.DefaultDataService "DefaultDataService" - Provides access to the test results, stored in the results DB @n
@@ -80,7 +80,7 @@
 ///
 /// @section section_listeners_services_example Service usage example
 ///
-/// @par Example of metric service usage in the invocation listener @n
+/// @par Example of metric service usage in the invocation listener
 /// Example code creates custom metric and stores test results to the Jagger database after every successful request to SUT
 /// @dontinclude  NotNullInvocationListener.java
 /// @skip  begin: following section is used for docu generation - example of the invocation listener with metric service

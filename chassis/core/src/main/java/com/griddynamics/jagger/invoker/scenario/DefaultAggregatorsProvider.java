@@ -11,8 +11,9 @@ import com.griddynamics.jagger.engine.e1.collector.SuccessRateFailsAggregatorPro
 import com.griddynamics.jagger.engine.e1.collector.SumMetricAggregatorProvider;
 
 /**
- * Default metric aggregators provider
- */
+ * Util for default metric aggregators providers access
+ *
+ * @ingroup Main_Aggregators_group */
 public class DefaultAggregatorsProvider {
     public static final AvgMetricAggregatorProvider AVG_AGGREGATOR = new AvgMetricAggregatorProvider();
     public static final MinMetricAggregatorProvider MIN_AGGREGATOR = new MinMetricAggregatorProvider();

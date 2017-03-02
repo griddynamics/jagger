@@ -9,7 +9,9 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
- * Global context for {@link JHttpUserScenario} which is used for storing global parameters.
+ * Global context for {@link JHttpUserScenario} which is used for storing global parameters: endpoints, headers, etc.
+ *
+ * @ingroup Main_Http_User_Scenario_group
  */
 public class JHttpScenarioGlobalContext {
     private String userName;

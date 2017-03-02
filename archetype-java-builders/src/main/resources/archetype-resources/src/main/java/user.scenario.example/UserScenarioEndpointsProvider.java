@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+// begin: following section is used for docu generation - User scenario provider
+
 /**
  * Example of user scenario provider
  * User scenario - sequence of the test steps executed by virtual user. (E.g. sequence of http requests for singned-in user)
@@ -122,3 +124,4 @@ public class UserScenarioEndpointsProvider implements Iterable {
         return userScenarios.iterator();
     }
 }
+// end: following section is used for docu generation - User scenario provider

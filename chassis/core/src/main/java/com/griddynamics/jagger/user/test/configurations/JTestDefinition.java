@@ -31,7 +31,7 @@ import static com.griddynamics.jagger.user.test.configurations.loadbalancer.JLoa
  *
  * More information on the parameter of the test definition, you can find in the Builder documentation @n
  * @n Code example:
- * @dontinclude ExampleSimpleJLoadScenarioProvider.java
+ * @dontinclude SimpleJLoadScenarioProvider.java
  * @skip begin: following section is used for docu generation - Load test scenario configuration
  * @until end: following section is used for docu generation - Load test scenario configuration
  */
@@ -114,7 +114,7 @@ public class JTestDefinition {
          * Optional: Sets load balancer aka distributor (how to pair endpoints and queries) (subtypes of {@link QueryPoolLoadBalancer}).
          * Default is {@link RandomLoadBalancer} with {@link RoundRobinPairSupplierFactory}
          *
-         * Available implementations: @ref Main_Distributors_group
+         * Available implementations and usage example: @ref Main_Distributors_group
          *
          * @param loadBalancer load balancer.
          */

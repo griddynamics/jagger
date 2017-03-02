@@ -21,12 +21,6 @@ import java.util.Set;
  * @par Details:
  * @details Where this service is available you can find in chapter: @ref section_listeners_services @n
  * @n
- * @par Example - get results from Jagger database:
- * @dontinclude ProviderOfLoadScenarioListener.java
- * @skip begin: following section is used for docu generation - access to Jagger results in database
- * @until end: following section is used for docu generation - access to Jagger results in database
- * @n Full example code you can find in chapter @ref TODO JFG-993 add correct link @n
- * @n
  * @ingroup Main_Services_group
  */
 public interface DataService extends JaggerService {

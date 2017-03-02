@@ -37,8 +37,10 @@ import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScen
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepId;
 
 /**
- * This invocation listener adds default metrics to invocations of {@link JHttpUserScenarioInvoker} such as
+ * Collects metrics during invocations of {@link JHttpUserScenarioInvoker} such as
  * Success rate, Iteration samples and Latency.
+ *
+ * @ingroup Main_Http_User_Scenario_group
  */
 public class JHttpUserScenarioInvocationListener extends ServicesAware implements Provider<InvocationListener> {
     private final Set<String> createdMetrics = new ConcurrentSkipListSet<>();

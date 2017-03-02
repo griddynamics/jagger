@@ -28,8 +28,7 @@ import java.net.URISyntaxException;
 /** Creates GET request from row data
  * @author Nikolay Musienko
  * @n
- *
- * @ingroup Main_Providers_group */
+ */
 public class SimpleHttpQueryCreator implements ObjectCreator<HttpGet> {
 
     private String paramName;
