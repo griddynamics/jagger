@@ -20,13 +20,14 @@
 
 package com.griddynamics.jagger.invoker;
 
-import com.google.common.collect.ImmutableList;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.griddynamics.jagger.util.Pair;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import static com.google.common.base.Preconditions.checkState;
 
 public class OneByOnePairSupplierFactory<Q, E> implements PairSupplierFactory<Q, E> {
 

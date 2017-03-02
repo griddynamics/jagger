@@ -23,6 +23,8 @@ package com.griddynamics.jagger.engine.e1.collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.CUMULATIVE_AGGREGATOR_ID;
+
 /** Calculates increment of the value on interval
  * @author amikryukov
  * @n
@@ -107,7 +109,7 @@ public class CumulativeMetricAggregatorProvider implements MetricAggregatorProvi
 
         @Override
         public String getName() {
-            return "cumulative";
+            return CUMULATIVE_AGGREGATOR_ID;
         }
 
         @Override

@@ -75,7 +75,7 @@ public class JLimitTest {
 
     @Test
     public void correctMetricName() throws Exception {
-        assertEquals(limitsForBaseLine.getMetricName(), metricName);
+        assertEquals(limitsForBaseLine.getMetricId(), metricName);
     }
 
     @Test

@@ -26,7 +26,7 @@
     <version>2.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -54,12 +54,9 @@
         <module>chassis/</module>
         <module>distribution</module>
         <module>webclient</module>
-        <module>archetype</module>
-        <module>test/jagger-test</module>
         <module>test/test-target</module>
         <module>test/java-builder-tests</module>
         <module>test/jaas-test</module>
-        <module>archetype-examples</module>
         <module>jaas</module>
         <module>rawdata</module>
         <module>jaas-client</module>
@@ -90,6 +87,17 @@
             <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
         </repository>
     </repositories>
+
+    <!--<pluginRepositories>-->
+        <!--<pluginRepository>-->
+            <!--<id>doodleproject-repo</id>-->
+            <!--<name>DoodleProject Maven 2 Repository</name>-->
+            <!--<url>http://doodleproject.sourceforge.net/maven2/release</url>-->
+            <!--<releases>-->
+                <!--<enabled>true</enabled>-->
+            <!--</releases>-->
+        <!--</pluginRepository>-->
+    <!--</pluginRepositories>-->
 
     <distributionManagement>
         <snapshotRepository>
@@ -161,31 +169,13 @@
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
-                <artifactId>chassis.invokers</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>chassis.providers</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.griddynamics.jagger</groupId>
-                <artifactId>chassis.invoker.hessian</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.griddynamics.jagger</groupId>
                 <artifactId>monitoring.agent</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.griddynamics.jagger</groupId>
-                <artifactId>chassis.spring.schema</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -707,10 +697,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
+		<version>2.19.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
+		<version>2.5</version>
                 <configuration>
                     <aggregate>false</aggregate>
                 </configuration>

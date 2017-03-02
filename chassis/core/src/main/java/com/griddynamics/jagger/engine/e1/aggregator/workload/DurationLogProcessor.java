@@ -58,7 +58,7 @@ import java.util.Map;
 
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_SEC;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_ID;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_AGG_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_ID;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.THROUGHPUT_TPS;
@@ -202,7 +202,7 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
             StatisticsCalculator globalStatisticsCalc = new StatisticsCalculator();
             MetricDescriptionEntity throughputDesc = persistMetricDescription(THROUGHPUT_ID, THROUGHPUT_TPS, taskData);
             MetricDescriptionEntity latencyDesc = persistMetricDescription(LATENCY_ID, LATENCY_SEC, taskData);
-            MetricDescriptionEntity latencyStdDevDesc = persistMetricDescription(LATENCY_STD_DEV_ID, LATENCY_STD_DEV_SEC, taskData);
+            MetricDescriptionEntity latencyStdDevDesc = persistMetricDescription(LATENCY_STD_DEV_AGG_ID, LATENCY_STD_DEV_SEC, taskData);
             Map<Double, MetricDescriptionEntity> percentiles = initPercentileMap();
 
             // starting point is aggregationInfo.getMinTime()
@@ -266,8 +266,9 @@ public class DurationLogProcessor extends LogProcessor implements DistributionLi
         private Map<Double, MetricDescriptionEntity> initPercentileMap() {
             Map<Double, MetricDescriptionEntity> percentileMap = new HashMap<>(getTimeWindowPercentilesKeys().size());
             for (Double percentileKey : getTimeWindowPercentilesKeys()) {
-                String metricStr = StandardMetricsNamesUtil.getLatencyMetricName(percentileKey);
-                percentileMap.put(percentileKey, persistMetricDescription(metricStr, metricStr, taskData));
+                String metricId = StandardMetricsNamesUtil.getLatencyMetricId(percentileKey);
+                String metricDisplayName = StandardMetricsNamesUtil.getLatencyMetricDisplayName(percentileKey);
+                percentileMap.put(percentileKey, persistMetricDescription(metricId, metricDisplayName, taskData));
             }
             return percentileMap;
         }

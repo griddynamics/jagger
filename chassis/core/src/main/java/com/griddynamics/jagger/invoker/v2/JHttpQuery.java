@@ -44,6 +44,7 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 @SuppressWarnings("unused")
 public class JHttpQuery<T> implements Serializable {
+    public static final JHttpQuery EMPTY_QUERY = null;
 
     private HttpMethod method;
     private HttpHeaders headers;
@@ -407,6 +408,30 @@ public class JHttpQuery<T> implements Serializable {
     private void initHeadersIfNull() {
         if (this.headers == null)
             this.headers = new HttpHeaders();
+    }
+
+    public static JHttpQuery copyOf(JHttpQuery jHttpQuery) {
+        if (jHttpQuery == null)
+            return null;
+
+        JHttpQuery copy = new JHttpQuery()
+                .body(jHttpQuery.getBody())
+                .queryParams(jHttpQuery.getQueryParams())
+                .path(jHttpQuery.getPath())
+                .responseBodyType(jHttpQuery.getResponseBodyType())
+                .headers(jHttpQuery.getHeaders());
+
+        switch (jHttpQuery.getMethod()) {
+            case DELETE: copy.delete(); break;
+            case GET: copy.get(); break;
+            case HEAD: copy.head(); break;
+            case OPTIONS: copy.options(); break;
+            case PATCH: copy.patch(); break;
+            case POST: copy.post(); break;
+            case PUT: copy.put(); break;
+            case TRACE: copy.trace(); break;
+        }
+        return copy;
     }
 
     @Override

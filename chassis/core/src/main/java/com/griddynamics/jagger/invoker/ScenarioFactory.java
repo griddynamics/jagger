@@ -26,6 +26,6 @@ import java.io.Serializable;
 
 public interface ScenarioFactory<Q, R, E> extends Serializable {
 
-    Scenario<Q, R, E> get(NodeContext context);
+    Scenario<Q, R, E> get(NodeContext context, KernelInfo kernelInfo);
 
 }

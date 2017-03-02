@@ -34,7 +34,7 @@ public class SessionsListResponseContentValidator extends BaseHttpResponseValida
         List<SessionEntity> actualSessions = Arrays.asList(result.getBody());
         int actlSize = actualSessions.size();
         int expctdSize = TestContext.getSessions().size();
-        Assert.assertTrue("Several session records are expected. Check returned list's size", 1 < actlSize);
+        Assert.assertTrue("Several session records are expected. Check returned list's size", 0 < actlSize);
         List<SessionEntity> noDuplicatesActualList = actualSessions.stream().distinct().collect(Collectors.toList());
         Assert.assertEquals("Response contains duplicate session records", actlSize, noDuplicatesActualList.size());
         Assert.assertTrue(String.format("Actual list(%d) is longer than expected one(%d).", actlSize, expctdSize), actlSize <= expctdSize);

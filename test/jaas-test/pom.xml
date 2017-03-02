@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>jaas-test</artifactId>
-    <name>${groupId}.${artifactId}</name>
+    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>jar</packaging>
 
     <repositories>
@@ -41,7 +41,7 @@
             <artifactId>jagger-distribution</artifactId>
             <type>zip</type>
             <classifier>full</classifier>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>

@@ -45,15 +45,19 @@ public class QueryPoolScenario<Q, R, E> extends Scenario<Q, R, E> {
         this.chunks = chunks;
         this.systemClock = systemClock;
     }
-
+    
     @Override
-    public void doTransaction() {
+    public boolean doTransaction() {
         Pair<Q, E> chunk = chunks.next();
+        if (chunk == null) { // load balancer logic considers there are no more available combinations
+            return false;
+        }
+        
         Q query = chunk.getFirst();
         E endpoint = chunk.getSecond();
-
+        
         invoker().invoke(query, endpoint);
-
+        return true;
     }
 
     private Invoker<Q, Nothing, E> invoker() {

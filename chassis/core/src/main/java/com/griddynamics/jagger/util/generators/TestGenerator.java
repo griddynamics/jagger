@@ -1,6 +1,9 @@
 package com.griddynamics.jagger.util.generators;
 
-import com.google.common.collect.Lists;
+import static com.griddynamics.jagger.util.generators.TerminationGenerator.generateTermination;
+import static com.griddynamics.jagger.util.generators.TestDefinitionGenerator.generatePrototype;
+import static com.griddynamics.jagger.util.generators.WorkloadGenerator.generateLoad;
+
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.collector.CollectThreadsTestListener;
 import com.griddynamics.jagger.engine.e1.collector.limits.LimitSetConfig;
@@ -10,11 +13,9 @@ import com.griddynamics.jagger.engine.e1.sessioncomparation.BaselineSessionProvi
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.List;
+import com.google.common.collect.Lists;
 
-import static com.griddynamics.jagger.util.generators.TerminationGenerator.generateTermination;
-import static com.griddynamics.jagger.util.generators.TestDefinitionGenerator.generatePrototype;
-import static com.griddynamics.jagger.util.generators.WorkloadGenerator.generateLoad;
+import java.util.List;
 
 /**
  * @author asokol
@@ -24,8 +25,10 @@ import static com.griddynamics.jagger.util.generators.WorkloadGenerator.generate
 class TestGenerator {
     static WorkloadTask generateFromTest(JLoadTest jLoadTest,
                                          BaselineSessionProvider baselineSessionProvider,
-                                         LimitSetConfig limitSetConfig, String testGroupName) {
-        WorkloadTask task = generatePrototype(jLoadTest.getTestDescription());
+                                         LimitSetConfig limitSetConfig,
+                                         String testGroupName,
+                                         ConfigurationProperties configurationProperties) {
+        WorkloadTask task = generatePrototype(jLoadTest.getTestDescription(), configurationProperties);
         task.setName(getName(jLoadTest.getId(), testGroupName));
         task.setParentTaskId(testGroupName);
         task.setVersion("0");

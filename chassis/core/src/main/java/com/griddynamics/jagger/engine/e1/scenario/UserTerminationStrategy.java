@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.engine.e1.scenario;
 
+import com.griddynamics.jagger.coordinator.NodeId;
 import com.griddynamics.jagger.user.ProcessingConfig;
 import com.griddynamics.jagger.util.Parser;
 import org.slf4j.Logger;
@@ -86,6 +87,19 @@ public class UserTerminationStrategy implements TerminationStrategy {
                 return true;
             }
         }
+    
+        boolean everyNodeHasEmptyTransactions = true;
+        for (NodeId nodeId : status.getNodes()) {
+            if (status.getEmptyTransactions(nodeId) == 0) {
+                everyNodeHasEmptyTransactions = false;
+                break;
+            }
+        }
+        if (everyNodeHasEmptyTransactions) {
+            log.info("Request to terminate work. All planned invocations are finished");
+            return true;
+        }
+    
         return shutdown.get();
     }
 }

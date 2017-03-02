@@ -20,6 +20,11 @@
 
 package com.griddynamics.jagger.master;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.agent.model.ManageAgent;
 import com.griddynamics.jagger.coordinator.Coordination;
 import com.griddynamics.jagger.coordinator.Coordinator;
@@ -51,12 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.Service;
-
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,8 +65,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Main thread of Master
@@ -192,10 +190,6 @@ public class Master implements Runnable {
         }
 
         metaDataStorage.setComment(sessionIdProvider.getSessionComment());
-
-        if (configuration.getMonitoringConfiguration() != null) {
-            dynamicPlotGroups.setJmxMetricGroups(configuration.getMonitoringConfiguration().getMonitoringSutConfiguration().getJmxMetricGroups());
-        }
     }
 
     @Override
@@ -241,13 +235,6 @@ public class Master implements Runnable {
             Runtime.getRuntime().addShutdownHook(shutdownHook);
             log.info("Configuration launched!!");
 
-            if (configuration.getMonitoringConfiguration() != null) {
-                Map<ManageAgent.ActionProp, Serializable> agentStartManagementProps = Maps.newHashMap();
-                agentStartManagementProps.put(
-                        ManageAgent.ActionProp.SET_JMX_METRICS, dynamicPlotGroups.getJmxMetrics()
-                );
-                processAgentManagement(sessionIdProvider.getSessionId(), agentStartManagementProps);
-            }
 
             LoadScenarioListener
                     loadScenarioListener = LoadScenarioListener.Composer.compose(ProviderUtil.provideElements(configuration.getLoadScenarioListeners(),

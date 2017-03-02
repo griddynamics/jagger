@@ -42,7 +42,6 @@ public class Configuration {
 
     private List<Provider<LoadScenarioListener>> loadScenarioListeners = Lists.newLinkedList();
 
-    private MonitoringConfiguration monitoringConfiguration = null;
     private ReportingService report;
 
     public void setReport(ReportingService report){
@@ -53,13 +52,7 @@ public class Configuration {
         return report;
     }
 
-    public MonitoringConfiguration getMonitoringConfiguration() {
-        return monitoringConfiguration;
-    }
 
-    public void setMonitoringConfiguration(MonitoringConfiguration monitoringConfiguration) {
-        this.monitoringConfiguration = monitoringConfiguration;
-    }
 
     public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;

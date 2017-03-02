@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.engine.e1.collector;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.MIN_AGGREGATOR_ID;
+
 /** Calculates min value on the interval
  * @author Kirill Gribov
  *
@@ -36,7 +38,7 @@ public class MinMetricAggregatorProvider implements MetricAggregatorProvider {
 
         @Override
         public String getName() {
-            return "min";
+            return MIN_AGGREGATOR_ID;
         }
     }
 }

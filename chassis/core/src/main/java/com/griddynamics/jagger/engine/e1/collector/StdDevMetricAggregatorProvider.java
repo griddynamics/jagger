@@ -23,6 +23,8 @@ import com.google.common.collect.Lists;
 
 import java.util.List;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.STANDARD_DEVIATION_AGGREGATOR_ID;
+
 /** Calculates standard deviation on the interval
  * @author Nikolay Musienko
  *
@@ -80,7 +82,7 @@ public class StdDevMetricAggregatorProvider implements MetricAggregatorProvider 
 
         @Override
         public String getName() {
-            return "std_dev";
+            return STANDARD_DEVIATION_AGGREGATOR_ID;
         }
 
         @Override

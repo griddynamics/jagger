@@ -20,6 +20,8 @@
 
 package com.griddynamics.jagger.engine.e1.collector;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.AVERAGE_AGGREGATOR_ID;
+
 /** Calculates average value on the interval
  * @author Nikolay Musienko
  *
@@ -68,7 +70,7 @@ public class AvgMetricAggregatorProvider  implements MetricAggregatorProvider {
 
         @Override
         public String getName() {
-            return "avg";
+            return AVERAGE_AGGREGATOR_ID;
         }
 
         @Override

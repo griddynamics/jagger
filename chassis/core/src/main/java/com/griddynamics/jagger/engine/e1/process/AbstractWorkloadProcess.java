@@ -1,8 +1,5 @@
 package com.griddynamics.jagger.engine.e1.process;
 
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.Service;
 import com.griddynamics.jagger.coordinator.NodeContext;
 import com.griddynamics.jagger.engine.e1.Provider;
 import com.griddynamics.jagger.engine.e1.ProviderUtil;
@@ -18,6 +15,10 @@ import com.griddynamics.jagger.util.Futures;
 import com.griddynamics.jagger.util.TimeoutsConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Service;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,8 +40,9 @@ public abstract class AbstractWorkloadProcess implements WorkloadProcess {
     protected final NodeContext context;
     protected final TimeoutsConfiguration timeoutsConfiguration;
 
-    protected int samplesCountStartedFromTerminatedThreads = 0;
-    protected int samplesCountFinishedFromTerminatedThreads = 0;
+    protected volatile int samplesCountStartedFromTerminatedThreads = 0;
+    protected volatile int samplesCountFinishedFromTerminatedThreads = 0;
+    protected volatile long emptyTransactionsFromTerminatedThreads = 0;
 
     private static final Logger log = LoggerFactory.getLogger(AbstractWorkloadProcess.class);
 
@@ -107,15 +109,18 @@ public abstract class AbstractWorkloadProcess implements WorkloadProcess {
     public WorkloadStatus getStatus() {
         int started = samplesCountStartedFromTerminatedThreads;
         int finished = samplesCountFinishedFromTerminatedThreads;
+        long emptyTrn = emptyTransactionsFromTerminatedThreads;
         int runningThreads = 0;
+        
         for (WorkloadService thread : threads) {
             started += thread.getStartedSamples();
             finished += thread.getFinishedSamples();
+            emptyTrn += thread.getEmptyTransactions();
             if (thread.isRunning()) {
                 runningThreads ++;
             }
         }
-        return new WorkloadStatus(started, finished, runningThreads);
+        return new WorkloadStatus(started, finished, runningThreads, emptyTrn);
     }
 
     /**
@@ -126,7 +131,7 @@ public abstract class AbstractWorkloadProcess implements WorkloadProcess {
     protected void startNewThread(int delay) {
 
         log.debug("Adding new workload thread");
-        Scenario<Object, Object, Object> scenario = command.getScenarioFactory().get(context);
+        Scenario<Object, Object, Object> scenario = command.getScenarioFactory().get(context, command.getKernelInfo());
 
         List<InvocationListener<?, ?, ?>> listeners = Lists.newArrayList();
         for (Provider<InvocationListener<Object, Object, Object>> listener : command.getListeners()){

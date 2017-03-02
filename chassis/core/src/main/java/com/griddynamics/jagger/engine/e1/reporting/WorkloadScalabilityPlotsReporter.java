@@ -20,6 +20,7 @@
 
 package com.griddynamics.jagger.engine.e1.reporting;
 
+import com.google.common.collect.Lists;
 import com.griddynamics.jagger.engine.e1.services.data.service.TestEntity;
 import com.griddynamics.jagger.reporting.AbstractReportProvider;
 import com.griddynamics.jagger.reporting.chart.ChartHelper;
@@ -31,8 +32,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-
-import com.google.common.collect.Lists;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -137,7 +136,7 @@ public class WorkloadScalabilityPlotsReporter extends AbstractReportProvider {
         stdDevLatency.add(0, 0);
         for (Map.Entry<TestEntity,Map<String,Double>> mapEntry : resultData.entrySet()) {
             meanLatency.add(mapEntry.getKey().getClockValue().doubleValue(), mapEntry.getValue().get(StandardMetricsNamesUtil.LATENCY_ID).doubleValue());
-            stdDevLatency.add(mapEntry.getKey().getClockValue().doubleValue(), mapEntry.getValue().get(StandardMetricsNamesUtil.LATENCY_STD_DEV_ID).doubleValue());
+            stdDevLatency.add(mapEntry.getKey().getClockValue().doubleValue(), mapEntry.getValue().get(StandardMetricsNamesUtil.LATENCY_STD_DEV_AGG_ID).doubleValue());
         }
         XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(meanLatency);

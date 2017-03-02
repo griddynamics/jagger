@@ -102,7 +102,7 @@ public class QueryProvider {
 
     public Iterable GET_ExList() {
         return () -> Collections.singletonList(new JHttpQuery<String>()
-                .get().responseBodyType(ExecutionEntity[].class).path(executions_uri))
+                .get().responseBodyType(ExecutionEntity[].class).queryParam("envId", "envId").path(executions_uri))
                 .iterator();
     }
 
