@@ -23,6 +23,8 @@ package com.griddynamics.jagger.engine.e1.collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.SUM_AGGREGATOR_ID;
+
 /** Calculates summary of all values on interval
  * @author Nikolay Musienko
  *
@@ -66,7 +68,7 @@ public class SumMetricAggregatorProvider implements MetricAggregatorProvider {
 
         @Override
         public String getName() {
-            return "sum";
+            return SUM_AGGREGATOR_ID;
         }
 
         @Override

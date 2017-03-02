@@ -954,7 +954,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         Set<Double> percentiles = new HashSet<>();
         for (MetricNode mn : nodeList) {
             mn.getMetricNameDtoList().stream()
-                    .filter(mnd -> mnd.getMetricName().matches(StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX))
+                    .filter(mnd -> mnd.getMetricName().matches(StandardMetricsNamesUtil.LATENCY_PERCENTILE_ID_REGEX))
                     .forEach(mnd -> {
                         Double percentileKey = StandardMetricsNamesUtil.parseLatencyPercentileKey(mnd.getMetricName());
                         percentiles.add(percentileKey);

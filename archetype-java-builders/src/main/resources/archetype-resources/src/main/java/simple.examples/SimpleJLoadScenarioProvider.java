@@ -1,4 +1,4 @@
-package ${package};
+package ${package}.simple.examples;
 
 import com.griddynamics.jagger.user.test.configurations.JLoadScenario;
 import com.griddynamics.jagger.user.test.configurations.JLoadTest;
@@ -17,12 +17,12 @@ import org.springframework.context.annotation.Configuration;
 
 // begin: following section is used for docu generation - Load test scenario configuration
 @Configuration
-public class ExampleSimpleJLoadScenarioProvider {
+public class SimpleJLoadScenarioProvider {
 
     @Bean
     public JLoadScenario exampleSimpleJaggerLoadScenario() {
 
-        JTestDefinition jTestDefinition = JTestDefinition.builder(Id.of("td_example"), new ExampleEndpointsProvider()).build();
+        JTestDefinition jTestDefinition = JTestDefinition.builder(Id.of("td_example"), new EndpointsProvider()).build();
 
         JLoadProfile jLoadProfileRps = JLoadProfileRps.builder(RequestsPerSecond.of(10)).withMaxLoadThreads(10).withWarmUpTimeInMilliseconds(10000).build();
         

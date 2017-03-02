@@ -14,9 +14,9 @@ import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractDisplayNameFromGenerated;
+import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractIdsFromGeneratedIdForScenarioComponents;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioRegexp;
 import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.generateScenarioStepRegexp;
-import static com.griddynamics.jagger.util.StandardMetricsNamesUtil.extractIdsFromGeneratedIdForScenarioComponents;
 
 @SuppressWarnings("Duplicates")
 @Component
@@ -35,10 +35,8 @@ public class TreeViewGroupRuleProvider {
         String filterRegex = "(" +
                 "^" + StandardMetricsNamesUtil.THROUGHPUT_TPS + "$|" +
                 "^" + StandardMetricsNamesUtil.THROUGHPUT + "$|" +
-                "^" + StandardMetricsNamesUtil.LATENCY_SEC + "$|" +
+                "^" + StandardMetricsNamesUtil.LATENCY_SEC + ".*"  + "$|" +
                 "^" + StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC + "$|" +
-                "^" + StandardMetricsNamesUtil.LATENCY + "$|" +
-                "^" + StandardMetricsNamesUtil.LATENCY_PERCENTILE_REGEX + "$|" +
                 "^" + StandardMetricsNamesUtil.ITERATIONS_SAMPLES + "$|" +
                 "^" + StandardMetricsNamesUtil.SUCCESS_RATE + ".*" + "$|" +
                 "^" + StandardMetricsNamesUtil.DURATION_SEC + "$|" +

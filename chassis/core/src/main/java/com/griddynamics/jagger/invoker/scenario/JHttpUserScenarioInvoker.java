@@ -1,5 +1,7 @@
 package com.griddynamics.jagger.invoker.scenario;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.Invoker;
 import com.griddynamics.jagger.invoker.v2.JHttpResponse;
@@ -10,8 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This invoker is able to execute user scenarios ({@link JHttpUserScenario}) as one invocation.
@@ -55,7 +56,8 @@ public class JHttpUserScenarioInvoker implements Invoker<Void, JHttpUserScenario
                     if (userScenarioStep.getQuery().getHeaders() != null && userScenarioStep.getQuery().getHeaders().containsKey(header)) {
                         List<String> newValues = newArrayList(userScenarioStep.getQuery().getHeaders().get(header));
                         newValues.addAll(values);
-                        userScenarioStep.getQuery().getHeaders().put(header, newValues);
+                        userScenarioStep.getQuery().getHeaders().put(header, newValues.stream().distinct().collect(
+                                Collectors.toList()));
                     } else {
                         userScenarioStep.getQuery().header(header, values);
                     }

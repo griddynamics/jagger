@@ -8,7 +8,8 @@ public class MetricNamesRankingProvider {
             "^" + StandardMetricsNamesUtil.ITERATIONS_SAMPLES + ".*",
             "^" + StandardMetricsNamesUtil.DURATION_SEC + ".*",
             "^" + StandardMetricsNamesUtil.THROUGHPUT + ".*",
-            "^" + StandardMetricsNamesUtil.LATENCY + ".*",
+            "^" + StandardMetricsNamesUtil.LATENCY_SEC + ".*",
+            "^" + StandardMetricsNamesUtil.LATENCY_STD_DEV_SEC + ".*",
             "^" + StandardMetricsNamesUtil.TIME_LATENCY_PERCENTILE + ".*",
             "^" + StandardMetricsNamesUtil.SUCCESS_RATE + ".*"
     );

@@ -712,18 +712,6 @@
                 <artifactId>maven-overview-plugin</artifactId>
                 <version>1.6</version>
             </plugin>
-
-            <!--???-->
-            <!--<plugin>-->
-                <!--<groupId>net.sf.doodleproject</groupId>-->
-                <!--<artifactId>doxygen-maven-plugin</artifactId>-->
-                <!--<version>2.2</version>-->
-                <!--<configuration>-->
-                    <!--<configurationFile>./doc/setup/Doxyfile</configurationFile>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-
-
         </plugins>
     </reporting>
     <profiles>

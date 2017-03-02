@@ -1,4 +1,4 @@
-package ${package};
+package ${package}.simple.examples;
 
 import static java.util.Collections.singletonList;
 
@@ -52,7 +52,7 @@ import java.util.Arrays;
  * Properties in test.properties do not override properties from environment.properties.
  */
 @Configuration
-public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
+public class JLoadScenarioProvider extends JaggerPropertiesProvider {
 
     @Bean
     public JLoadScenario exampleJaggerLoadScenario() {
@@ -61,11 +61,11 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
         String testDefinitionComment = getTestPropertyValue("example.jagger.test.definition.comment");
 
         JTestDefinition jTestDefinition = JTestDefinition
-                .builder(Id.of("exampleJaggerTestDefinition"), new ExampleEndpointsProvider())
+                .builder(Id.of("exampleJaggerTestDefinition"), new EndpointsProvider())
                 // optional
                 .withComment(testDefinitionComment)
-                .withInvoker(ExampleCustomHttpInvokerProvider.nonVerbose())
-                .withQueryProvider(new ExampleQueriesProvider())
+                .withInvoker(CustomHttpInvokerProvider.nonVerbose())
+                .withQueryProvider(new QueriesProvider())
                 .withLoadBalancer(JLoadBalancer.builder(ROUND_ROBIN).withRandomSeed(42).build())
                 .addValidator(new ExampleResponseValidatorProvider("we are always good"))
                 .addValidator(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class))
@@ -129,10 +129,10 @@ public class ExampleJLoadScenarioProvider extends JaggerPropertiesProvider {
     @Bean
     public JLoadScenario myFirstJaggerLoadScenario() {
         JTestDefinition description = JTestDefinition
-                .builder(Id.of("myFirstJaggerTestDefinition"), new ExampleEndpointsProvider())
+                .builder(Id.of("myFirstJaggerTestDefinition"), new EndpointsProvider())
                 // optional
                 .withComment("no comments")
-                .withQueryProvider(new ExampleQueriesProvider())
+                .withQueryProvider(new QueriesProvider())
                 .addValidators(singletonList(DefaultResponseValidatorProvider.of(NotNullResponseValidator.class)))
                 .build();
 
