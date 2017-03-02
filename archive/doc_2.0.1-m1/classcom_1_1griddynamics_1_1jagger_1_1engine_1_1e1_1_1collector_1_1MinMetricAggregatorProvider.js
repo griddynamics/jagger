@@ -1,0 +1,4 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MinMetricAggregatorProvider =
+[
+    [ "provide", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MinMetricAggregatorProvider_a7d87d43cd46a0afd155d24e8611ddacf.html#a7d87d43cd46a0afd155d24e8611ddacf", null ]
+];

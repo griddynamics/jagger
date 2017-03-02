@@ -1,0 +1,61 @@
+/* The custom CSS for doxygen 1.8.4 */
+/* v3.1 */
+
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+body, table, div, p, dl {font-family: 'Source Sans Pro', sans-serif!important;}
+a {color:#fa660d;}
+body {margin:0px auto;text-align:left;}
+html {text-align:center;}
+#MSearchBox {position:relative;float:right;}
+#nav-tree {height:auto!important;overflow-x:hidden;}
+.contents a, .contents a:visited {color:#fa660d;}
+.headertitle {clear:both;}
+#titlearea {padding:10px 0px;background:url('https://daks2k3a4ib2z.cloudfront.net/56b395b2fe3bcb98688b716e/56d1eaa8033166a1488aa1fc_logo.png') 15px center no-repeat #000000;text-align:right;border-bottom:0px;}
+#titlearea table {width:100%;}
+#titlearea table td {padding-right:20px;}
+#projectname {color:#fff;}
+#navrow1 {background:#fa660d;color:#fff;}
+#navrow2 {display:none;}
+.tablist {width:100%;}
+.tablist, .tablist li, .tablist li a {background:none;color:#fff;text-shadow:none;font-size:20px;font-weight:300;text-align:center;float:none;}
+.tablist li {padding:20px 0px;display:inline-block;}
+.tablist li.current a, .tablist a:hover {background:none;text-shadow:none;}
+.tablist li:hover {background:#C8551A;}
+.tablist li a {border-right:1px solid #fff;}
+.tablist li:nth-child(6) a {border-right:0px!important;}
+.tablist li:last-of-type {float:right;}
+.tablist li:last-of-type:hover {background:none;}
+#nav-path {display:none;}
+div.fragment {background: #eee;padding: 12px;font-family: 'Courier';display: block;margin-bottom: 0px;border:0px;}
+div.fragment .line {font-family:monospace,fixed!important;font-size:13px;line-height:22px;color: #436ab3;}
+.contents p, .contents li, .contents dt, .contents dd {font-size:18px;line-height:24px;}
+.contents b, .contents li b, .contents strong {font-weight:700;}
+.contents dt {margin-bottom:1em;}
+a.el {font-weight:300;}
+#nav-sync {display:none;}
+#doc-content {height:auto!important;padding-bottom:30px;}
+div.header {background:0px;border-bottom:0px;}
+h1, h2, h3, h4, h5, h6 {transition:none;-webkit-transition:none;}
+.title {font-size:2em;}
+#nav-tree {background:none;overflow-x:scroll;}
+#nav-tree .label a {color:#fa660d;}
+#nav-tree .label a:hover {text-decoration:underline;}
+#nav-tree .selected {background:none;text-shadow:none;text-decoration:underline;}
+#nav-tree img {filter: gray;-webkit-filter: grayscale(100%);}
+@media (min-width: 1280px) {
+#top {width:1280px;margin:0px auto;}
+body {width:1280px;margin:0px auto;}
+#side-nav {height:auto!important;position:static;display:inline-block;vertical-align:top;float:left;padding:0px;border:0px;top:0px!important;}
+}
+@media (max-width: 991px) {
+.tablist li:last-of-type {display:none;}
+}
+@media (max-width: 699px) {
+.tablist li {display:block;padding:0px;}
+#side-nav {top:auto!important;width:100%;position:static;float:none;height:100%!important;}
+#doc-content {width:100%;float:none;position:static;margin:0px!important;}
+.tablist, .tablist li, .tablist li a {font-size:14px}
+}
+@media (max-width: 409px) {
+#titlearea {background:url('http://cdn2.hubspot.net/hubfs/1994023/blog-template/gd_logo_small.png') 10px center no-repeat #000000;}
+}

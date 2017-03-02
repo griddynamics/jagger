@@ -1,0 +1,4 @@
+<map id="com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener.provide" name="com.griddynamics.jagger.engine.e1.collector.testgroup.ExampleTestGroupListener.provide">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1testgroup_1_1TestGroupInfo_af6c275fbdfef16114af7b33f47d89a69.html#af6c275fbdfef16114af7b33f47d89a69" title="Returns test&#45;group execution duration. " alt="" coords="400,5,747,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1testgroup_1_1TestGroupInfo_a34bdb07da0c1b985dd2cce74b7507eee.html#a34bdb07da0c1b985dd2cce74b7507eee" title="Returns full information about current test&#45;group. " alt="" coords="400,68,747,107"/>
+</map>

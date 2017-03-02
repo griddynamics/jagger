@@ -1,0 +1,5 @@
+<map id="com.griddynamics.jagger.invoker.v2.JHttpEndpoint.JHttpEndpoint" name="com.griddynamics.jagger.invoker.v2.JHttpEndpoint.JHttpEndpoint">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1JHttpEndpoint_afbfc18b4735c18266162292866e63f38.html#afbfc18b4735c18266162292866e63f38" title="com.griddynamics.jagger.invoker.v2.\lJHttpEndpoint.copyOf" alt="" coords="290,5,526,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpScenarioGlobalContext_ad4b85332c027f9c54f7fe265f2e5a306.html#ad4b85332c027f9c54f7fe265f2e5a306" title="com.griddynamics.jagger.invoker.scenario.\lJHttpScenarioGlobalContext.copy" alt="" coords="574,5,846,44"/>
+<area shape="rect" id="node4" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvoker_a92401272377e4238da2db33edc4c0bd4.html#a92401272377e4238da2db33edc4c0bd4" title="com.griddynamics.jagger.invoker.scenario.\lJHttpUserScenarioInvoker.invoke" alt="" coords="894,5,1167,44"/>
+</map>

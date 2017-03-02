@@ -1,0 +1,4 @@
+<map id="com.griddynamics.jagger.engine.e1.services.DefaultSessionInfoService" name="com.griddynamics.jagger.engine.e1.services.DefaultSessionInfoService">
+<area shape="rect" id="node2" href="$interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1SessionInfoService.html" title="Service gives ability to create and modify session metadata(such as session comment) ..." alt="" coords="5,92,293,131"/>
+<area shape="rect" id="node3" href="$interfacecom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1JaggerService.html" title="Internal Jagger service that can be used in custom components. " alt="" coords="5,5,293,44"/>
+</map>

@@ -1,0 +1,7 @@
+var classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1AbstractHttpInvoker_3_01HTTP__CLIENT_01extends_01JHttpClient_01_4 =
+[
+    [ "AbstractHttpInvoker", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1AbstractHttpInvoker_3_01HTTP__CLIENT_01extends_01JHttpClient_01_4_aee17341caa023f6b5bfa3ec7922ff5e5.html#aee17341caa023f6b5bfa3ec7922ff5e5", null ],
+    [ "getHttpClient", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1AbstractHttpInvoker_3_01HTTP__CLIENT_01extends_01JHttpClient_01_4_ad512f89f02bfeed7181b86c2e78bc792.html#ad512f89f02bfeed7181b86c2e78bc792", null ],
+    [ "invoke", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1AbstractHttpInvoker_3_01HTTP__CLIENT_01extends_01JHttpClient_01_4_ae29d40daf7dad2d04e75b8637553bc85.html#ae29d40daf7dad2d04e75b8637553bc85", null ],
+    [ "httpClient", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1AbstractHttpInvoker_3_01HTTP__CLIENT_01extends_01JHttpClient_01_4_ae32612bd4cd79062ed32590b786a8023.html#ae32612bd4cd79062ed32590b786a8023", null ]
+];

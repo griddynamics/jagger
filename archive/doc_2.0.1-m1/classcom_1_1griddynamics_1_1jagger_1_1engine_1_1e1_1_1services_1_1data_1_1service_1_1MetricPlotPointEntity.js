@@ -1,0 +1,8 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1MetricPlotPointEntity =
+[
+    [ "getTime", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1MetricPlotPointEntity_ae148243ab20961d6280558e1c1800c83.html#ae148243ab20961d6280558e1c1800c83", null ],
+    [ "getValue", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1MetricPlotPointEntity_a253df083ad3976f539ce6c4b26061329.html#a253df083ad3976f539ce6c4b26061329", null ],
+    [ "setTime", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1MetricPlotPointEntity_a8b4812f8959c7150dcf23023f645e118.html#a8b4812f8959c7150dcf23023f645e118", null ],
+    [ "setValue", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1MetricPlotPointEntity_ac24e8c69ca3809ec2336849f75aef10e.html#ac24e8c69ca3809ec2336849f75aef10e", null ],
+    [ "toString", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1data_1_1service_1_1MetricPlotPointEntity_ae9790559b51e4a44b5eb757ba9a3773a.html#ae9790559b51e4a44b5eb757ba9a3773a", null ]
+];

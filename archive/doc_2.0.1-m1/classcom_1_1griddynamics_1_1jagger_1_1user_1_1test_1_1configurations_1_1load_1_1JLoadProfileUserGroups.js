@@ -1,0 +1,9 @@
+var classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups =
+[
+    [ "Builder", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups_1_1Builder.html", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups_1_1Builder" ],
+    [ "builder", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups_a3580b7e9519047ac9f2244bfc3dd21b9.html#a3580b7e9519047ac9f2244bfc3dd21b9", null ],
+    [ "builder", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups_abc11af4e27e2f3c6a92c7f0980512127.html#abc11af4e27e2f3c6a92c7f0980512127", null ],
+    [ "getDelayBetweenInvocationsInMilliseconds", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups_a6161c2ef88309ad4dde76d2dd66fcee7.html#a6161c2ef88309ad4dde76d2dd66fcee7", null ],
+    [ "getTickInterval", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups_a632aa6f7951a63127045bb1a60196ff2.html#a632aa6f7951a63127045bb1a60196ff2", null ],
+    [ "getUserGroups", "classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups_aa2d0dc6b05f02bebfda883f71d9a001d.html#aa2d0dc6b05f02bebfda883f71d9a001d", null ]
+];

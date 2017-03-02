@@ -1,0 +1,12 @@
+var classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider =
+[
+    [ "PERCENTILE_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_ab89a5622d706aa03a70a8c42274a5a45.html#ab89a5622d706aa03a70a8c42274a5a45", null ],
+    [ "AVG_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_a28b77eea7179426ad1d01a59217d0e8e.html#a28b77eea7179426ad1d01a59217d0e8e", null ],
+    [ "CUMULATIVE_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_a26c5fe83509e059e1f44629e813b15ce.html#a26c5fe83509e059e1f44629e813b15ce", null ],
+    [ "FAILS_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_a971d374a5d217b6bcba35b31f35a6a1b.html#a971d374a5d217b6bcba35b31f35a6a1b", null ],
+    [ "MAX_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_a2406f7dde170cd7d452610dbec022343.html#a2406f7dde170cd7d452610dbec022343", null ],
+    [ "MIN_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_ae7a73d9f150389baec8c1e7d77807250.html#ae7a73d9f150389baec8c1e7d77807250", null ],
+    [ "STD_DEV_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_a082f9229644cbcc6e748f40c9d8431cd.html#a082f9229644cbcc6e748f40c9d8431cd", null ],
+    [ "SUCCESS_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_aa19e66ced4789778874d9fec98d3b255.html#aa19e66ced4789778874d9fec98d3b255", null ],
+    [ "SUM_AGGREGATOR", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1DefaultAggregatorsProvider_ada51b0381909431cf8e3844d5ccb7db9.html#ada51b0381909431cf8e3844d5ccb7db9", null ]
+];

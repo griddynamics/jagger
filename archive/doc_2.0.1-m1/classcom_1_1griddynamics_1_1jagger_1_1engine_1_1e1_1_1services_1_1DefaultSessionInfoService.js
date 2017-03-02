@@ -1,0 +1,11 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService =
+[
+    [ "DefaultSessionInfoService", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService_a38b174a539b30caae7749067018af7bc.html#a38b174a539b30caae7749067018af7bc", null ],
+    [ "appendToComment", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService_a4b13e2cc5bef64d1ba8e4e699edd3ce8.html#a4b13e2cc5bef64d1ba8e4e699edd3ce8", null ],
+    [ "getComment", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService_a95813b23313469444b12178ae2aabf05.html#a95813b23313469444b12178ae2aabf05", null ],
+    [ "getSessionTags", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService_af237109be7b43a9ffba5329fed810825.html#af237109be7b43a9ffba5329fed810825", null ],
+    [ "isAvailable", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService_a058f433fd6e3ff4d12e36d1f7291d6a0.html#a058f433fd6e3ff4d12e36d1f7291d6a0", null ],
+    [ "markSessionWithTag", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService_a95acf6ffb9411eb56e443bae83c4e385.html#a95acf6ffb9411eb56e443bae83c4e385", null ],
+    [ "saveOrUpdateTag", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService_a07ece5732221839555e11c45e6045044.html#a07ece5732221839555e11c45e6045044", null ],
+    [ "setComment", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1services_1_1DefaultSessionInfoService_ad3840cf7298796b0e9ab893627e9bedf.html#ad3840cf7298796b0e9ab893627e9bedf", null ]
+];

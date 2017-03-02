@@ -1,0 +1,4 @@
+<map id="com.griddynamics.jagger.user.test.configurations.limits.JLimit.Builder.withOnlyLowerThresholds" name="com.griddynamics.jagger.user.test.configurations.limits.JLimit.Builder.withOnlyLowerThresholds">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1auxiliary_1_1UpErrThresh_ac143c2041b4f66afcf9aa33a3f4b7fbc.html#ac143c2041b4f66afcf9aa33a3f4b7fbc" title="com.griddynamics.jagger.user.test.configurations.limits.auxiliary.\lUpErrThresh.of" alt="" coords="401,5,800,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1auxiliary_1_1UpWarnThresh_abffa38fc24817529bbb4712602c2d1f0.html#abffa38fc24817529bbb4712602c2d1f0" title="com.griddynamics.jagger.user.test.configurations.limits.auxiliary.\lUpWarnThresh.of" alt="" coords="401,68,800,107"/>
+</map>

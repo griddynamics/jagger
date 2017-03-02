@@ -1,0 +1,4 @@
+<map id="com.griddynamics.jagger.user.test.configurations.limits.JLimit" name="com.griddynamics.jagger.user.test.configurations.limits.JLimit">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsBaseline.html" title="Allow to compare a performance test with some baseline (another performance test, which was saved in ..." alt="" coords="401,5,748,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1limits_1_1JLimitVsRefValue.html" title="Allow to compare a performance test with some reference value. " alt="" coords="401,68,748,107"/>
+</map>

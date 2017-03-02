@@ -1,0 +1,4 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MaxMetricAggregatorProvider =
+[
+    [ "provide", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1MaxMetricAggregatorProvider_a0d52f77a6b666ff6045344852eed0943.html#a0d52f77a6b666ff6045344852eed0943", null ]
+];

@@ -1,8 +1,2 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1invocation_1_1ExampleInvocationListener.html" title="Example of the invocation listener. " alt="" coords="171,5,522,44"/>
-<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1invocation_1_1NotNullInvocationListener.html" title="Example of the invocation listener. " alt="" coords="171,68,522,107"/>
-<area shape="rect" id="node4" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1loadscenario_1_1ExampleLoadScenarioListener.html" title="Example of the load scenario listener. " alt="" coords="163,131,530,169"/>
-<area shape="rect" id="node5" href="$classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1testgroup_1_1ExampleTestGroupListener.html" title="Example of the test group listener. " alt="" coords="173,193,520,232"/>
-<area shape="rect" id="node6" href="$classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1v2_1_1DefaultInvokerProvider.html" title="Implementation of Provider&lt;Invoker&gt; which uses a default no&#45;arguments constructor of provided subclass ..." alt="" coords="229,256,465,295"/>
-<area shape="rect" id="node7" href="$classExampleCustomHttpInvokerProvider.html" title="An example of Provider&lt;Invoker&gt; implementation through which custom data can be passed to new instanc..." alt="" coords="253,319,440,357"/>
 </map>

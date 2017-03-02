@@ -1,0 +1,7 @@
+var classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationListener_1_1Builder =
+[
+    [ "build", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationListener_1_1Builder_a3948afd2c24ed6e2f67f99370a610149.html#a3948afd2c24ed6e2f67f99370a610149", null ],
+    [ "withLatencyAvgStddevAggregators", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationListener_1_1Builder_ae5efecd12694da0944fbe6cb7efe2e12.html#ae5efecd12694da0944fbe6cb7efe2e12", null ],
+    [ "withLatencyMinMaxAggregators", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationListener_1_1Builder_a3f46358b7e7e7ba85bef14ab0fa3f597.html#a3f46358b7e7e7ba85bef14ab0fa3f597", null ],
+    [ "withLatencyPercentileAggregators", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationListener_1_1Builder_aa00029048716924229ac4e8ab657ac42.html#aa00029048716924229ac4e8ab657ac42", null ]
+];

@@ -1,0 +1,8 @@
+var classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationResult =
+[
+    [ "JHttpUserScenarioInvocationResult", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationResult_a7fd55a806cf65680dab40c098045e8d0.html#a7fd55a806cf65680dab40c098045e8d0", null ],
+    [ "getScenarioDisplayName", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationResult_a4e21fb662ffa84c699b6f9756a4d4b45.html#a4e21fb662ffa84c699b6f9756a4d4b45", null ],
+    [ "getScenarioId", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationResult_a5938dfdd37b812c9bdc34255d3e76071.html#a5938dfdd37b812c9bdc34255d3e76071", null ],
+    [ "getStepInvocationResults", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationResult_a4b1963364a160ba070d8a7997cd9530d.html#a4b1963364a160ba070d8a7997cd9530d", null ],
+    [ "getSucceeded", "classcom_1_1griddynamics_1_1jagger_1_1invoker_1_1scenario_1_1JHttpUserScenarioInvocationResult_a8d4d497f2a4e04808af4225a8f92b3ac.html#a8d4d497f2a4e04808af4225a8f92b3ac", null ]
+];

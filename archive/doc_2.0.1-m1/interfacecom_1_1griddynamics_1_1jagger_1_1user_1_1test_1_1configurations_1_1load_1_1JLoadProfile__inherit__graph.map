@@ -1,0 +1,6 @@
+<map id="com.griddynamics.jagger.user.test.configurations.load.JLoadProfile" name="com.griddynamics.jagger.user.test.configurations.load.JLoadProfile">
+<area shape="rect" id="node2" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileInvocation.html" title="This type of load implements an exact number of invocation, performed by exact number of threads..." alt="" coords="396,5,738,44"/>
+<area shape="rect" id="node3" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileRps.html" title="This type of load implements an exact number of requests per second performed by Jagger. " alt="" coords="396,68,738,107"/>
+<area shape="rect" id="node4" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileTps.html" title="This type of load implements an exact number of transactions per second performed by Jagger..." alt="" coords="396,131,738,169"/>
+<area shape="rect" id="node5" href="$classcom_1_1griddynamics_1_1jagger_1_1user_1_1test_1_1configurations_1_1load_1_1JLoadProfileUserGroups.html" title="This load is a list of user groups JLoadProfileUsers running in parallel. " alt="" coords="396,193,738,232"/>
+</map>

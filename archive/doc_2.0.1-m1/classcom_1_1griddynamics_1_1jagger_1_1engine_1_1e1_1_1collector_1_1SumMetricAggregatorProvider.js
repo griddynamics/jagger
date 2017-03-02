@@ -1,0 +1,4 @@
+var classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1SumMetricAggregatorProvider =
+[
+    [ "provide", "classcom_1_1griddynamics_1_1jagger_1_1engine_1_1e1_1_1collector_1_1SumMetricAggregatorProvider_a86c6be67bc3961f650c2a74e47192213.html#a86c6be67bc3961f650c2a74e47192213", null ]
+];
