@@ -166,8 +166,3 @@
 /// @skip  begin: following section is used for docu generation - Load balancer setup
 /// @until end: following section is used for docu generation - Load balancer setup
 /// @n
-/// @section section_distributors_random Access SUT with random order of endpoint / query pairs
-/// Pairs of endpoint / query are collected into list single time during Jagger start up. By default all threads are accessing elements
-/// of the mentioned list in the same order: from first element to the last, doing this in cycle. If it is necessary to execute endpoint / query pairs in random order,
-/// TODO Java based configuration requires better setup of the load balancers (build in and custom) JFG-1063
-/// @image html jagger_random_query_distribution.png "Access SUT with random order of endpoint / query pairs"

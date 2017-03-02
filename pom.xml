@@ -88,17 +88,6 @@
         </repository>
     </repositories>
 
-    <!--<pluginRepositories>-->
-        <!--<pluginRepository>-->
-            <!--<id>doodleproject-repo</id>-->
-            <!--<name>DoodleProject Maven 2 Repository</name>-->
-            <!--<url>http://doodleproject.sourceforge.net/maven2/release</url>-->
-            <!--<releases>-->
-                <!--<enabled>true</enabled>-->
-            <!--</releases>-->
-        <!--</pluginRepository>-->
-    <!--</pluginRepositories>-->
-
     <distributionManagement>
         <snapshotRepository>
             <id>gd-jagger-nexus-snapshots</id>
