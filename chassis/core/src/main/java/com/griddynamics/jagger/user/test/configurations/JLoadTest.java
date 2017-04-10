@@ -132,6 +132,28 @@ public class JLoadTest {
         }
 
         /**
+         * Optional: Add limits for a test.
+         *
+         * @param limits array of {@link JLimit}.
+         */
+        public Builder addLimits(JLimit... limits){
+            Objects.requireNonNull(limits);
+            this.limits.addAll(Arrays.asList(limits));
+            return this;
+        }
+
+        /**
+         * Optional: Add limits for a test.
+         *
+         * @param limits list of {@link JLimit}.
+         */
+        public Builder addLimits(List<JLimit> limits){
+            Objects.requireNonNull(limits);
+            this.limits.addAll(limits);
+            return this;
+        }
+
+        /**
          * Create the object of JLoadTest with custom parameters.
          *
          * @return JLoadTest object.
