@@ -20,12 +20,13 @@
 
 package com.griddynamics.jagger.storage.fs;
 
-import com.griddynamics.jagger.AttendantServer;
-import com.griddynamics.jagger.storage.FileStorage;
-import org.springframework.beans.factory.annotation.Required;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.griddynamics.jagger.AttendantServer;
+import com.griddynamics.jagger.storage.FileStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,6 +47,8 @@ import java.util.Set;
  */
 public class LocalFileStorage implements FileStorage {
 
+    private static final Logger log = LoggerFactory.getLogger(LocalFileStorage.class);
+
     private static final String CONTEXT = ".context";
     private String workspace;
 
@@ -59,11 +62,13 @@ public class LocalFileStorage implements FileStorage {
 
     @Override
     public boolean exists(String path) {
+        log.debug("getFileNameList [{}]", path);
         return (new File(this.workspace, path)).exists();
     }
 
     @Override
     public Set<String> getFileNameList(String path) {
+        log.debug("getFileNameList [{}]", path);
         final String root = new File(this.workspace).getPath();
         File[] files = (new File(this.workspace, path)).listFiles();
         if (files == null)
@@ -81,21 +86,25 @@ public class LocalFileStorage implements FileStorage {
 
     @Override
     public OutputStream append(String path) throws IOException {
+        log.debug("append [{}]", path);
         return updateFile(path, true);
     }
 
     @Override
     public OutputStream create(String path) throws FileNotFoundException {
+        log.debug("create [{}]", path);
         return updateFile(path, false);
     }
 
     @Override
     public InputStream open(String fileName) throws FileNotFoundException {
+        log.debug("open [{}]", fileName);
         return new FileInputStream(new File(new File(this.workspace, fileName), CONTEXT));
     }
 
     @Override
     public boolean delete(String path, boolean recursive) throws IOException {
+        log.debug("delete [{}]", path);
         File file = new File(this.workspace, path);
         if (recursive) {
             return deleteRecursive(file);
