@@ -187,7 +187,7 @@ public class JHttpEndpoint implements Serializable {
         MultiValueMap<String, String> localQueryParams = new LinkedMultiValueMap<>();
         queryParams.entrySet().forEach(entry -> localQueryParams.add(entry.getKey(), entry.getValue()));
 
-        return fromUri(oldUri).queryParams(localQueryParams).build().toUri();
+        return fromUri(oldUri).queryParams(localQueryParams).build().encode().toUri();
     }
 
     public static JHttpEndpoint copyOf(JHttpEndpoint jHttpEndpoint) {
