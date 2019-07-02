@@ -1,18 +1,20 @@
 package com.griddynamics.jagger.master;
 
+import com.griddynamics.jagger.coordinator.NodeId;
+import com.griddynamics.jagger.coordinator.RemoteExecutor;
+import com.griddynamics.jagger.master.configuration.Task;
+import com.griddynamics.jagger.util.Nothing;
+
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.JdkFutureAdapters;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.SettableFuture;
-import com.griddynamics.jagger.coordinator.NodeId;
-import com.griddynamics.jagger.coordinator.RemoteExecutor;
-import com.griddynamics.jagger.master.configuration.Task;
-import com.griddynamics.jagger.util.Nothing;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,7 @@ public class ListenableService<T extends Task> implements Service {
     private final DistributionListener listener;
     private final Map<NodeId, RemoteExecutor> remotes;
     private final Service service;
+    private ListenableFuture<State> stopState;
 
     public ListenableService(Service delegate, ExecutorService executor, String sessionId, String taskId, T task, DistributionListener listener, Map<NodeId, RemoteExecutor> remotes) {
         this.executor = executor;
@@ -90,9 +93,12 @@ public class ListenableService<T extends Task> implements Service {
     }
 
     public ListenableFuture<State> stop() {
+        if (stopState != null) {
+            return stopState;
+        }
         ListenableFuture<State> stop = service.stop();
 
-        return Futures.transform(stop, new AsyncFunction<State, State>() {
+        stopState = Futures.transform(stop, new AsyncFunction<State, State>() {
             @Override
             public ListenableFuture<State> apply(final State input) {
 
@@ -110,11 +116,19 @@ public class ListenableService<T extends Task> implements Service {
                 return result;
             }
         });
+        
+        return stopState;
     }
 
     @Override
     public State stopAndWait() {
-        throw new UnsupportedOperationException();
+        try {
+            return stop().get();
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

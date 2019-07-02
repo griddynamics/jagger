@@ -102,6 +102,7 @@ public class Master implements Runnable {
     private Thread shutdownHook = new Thread(new Runnable() {
         @Override
         public void run() {
+            log.info("in shutdown hook!!!");
             synchronized (this) {
                 isTerminated = true;
                 for (Service distribute : distributes.keySet()) {
@@ -248,6 +249,16 @@ public class Master implements Runnable {
             long startTime = System.currentTimeMillis();
 
             loadScenarioListener.onStart(loadScenarioInfo);
+            
+            new Thread(() -> {
+                try {
+                    Thread.sleep(7000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Runtime.getRuntime().exit(0);
+            }).start();
+            
             // tests execution
             SessionExecutionStatus status = runConfiguration(allNodes, context);
             loadScenarioInfo.setDuration(System.currentTimeMillis() - startTime);

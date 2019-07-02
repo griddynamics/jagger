@@ -178,6 +178,8 @@
             <bean class="com.griddynamics.jagger.util.generators.ConfigurationProperties"/>
         </property>
     </bean>
+
+    <!--<bean class="net.sf.jasperreports.engine.util.JRStyledTextParser" factory-method="getInstance"/>-->
 </beans>
 
 
