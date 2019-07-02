@@ -83,9 +83,16 @@ public class SleepService{
     @Produces("text/plain")
     @Path("pulse/{period}/{delayMax}")
     public String delayPulse(@PathParam("period") int period, @PathParam("delayMax") int delayMax) throws InterruptedException {
+        return delayPulse(period, 0, delayMax);
+    }
+
+    @GET
+    @Produces("text/plain")
+    @Path("pulse/{period}/{delayMax}/{delayMin}")
+    public String delayPulse(@PathParam("period") int period, @PathParam("delayMin") int delayMin, @PathParam("delayMax") int delayMax) throws InterruptedException {
         long startTime = System.currentTimeMillis();
         double arg = 2 * Math.PI * (startTime % (period)) / ((double)(period));
-        int delay = (int)( delayMax * (Math.sin( arg ) + 1)/2 );
+        int delay = (int)( (delayMax - delayMin) * (Math.sin( arg ) + 1)/2 + delayMin);
         Thread.sleep(delay);
         return "OK: targetDelay=[" + delay + "], actualDelay=[" + (System.currentTimeMillis() - startTime) + "], arg=[" + arg + "]";
     }
