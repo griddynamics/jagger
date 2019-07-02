@@ -32,8 +32,8 @@
     <field name="sessionId" class="java.lang.String"/>
     <field name="sessionName" class="java.lang.String"/>
     <field name="comment" class="java.lang.String"/>
-    <field name="startTime" class="java.util.Date"/>
-    <field name="endTime" class="java.util.Date"/>
+    <field name="startTime" class="java.lang.Long"/>
+    <field name="endTime" class="java.lang.Long"/>
     <field name="taskExecuted" class="java.lang.Integer"/>
     <field name="taskFailed" class="java.lang.Integer"/>
     <field name="activeKernels" class="java.lang.Integer"/>
@@ -84,10 +84,10 @@
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
                 <text><![CDATA[Session start time]]></text>
             </staticText>
-            <textField pattern="HH:mm:ss.SSS, dd MMMMM yyyy (EEEEE)">
+            <textField pattern="HH:mm:ss.SSS z, dd MMMMM yyyy (EEEEE)">
                 <reportElement style="Header_Bold" positionType="Float" x="300" y="20" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
-                <textFieldExpression class="java.util.Date"><![CDATA[$F{startTime}]]></textFieldExpression>
+                <textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date($F{startTime})]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Header_Bold" positionType="Float" x="0" y="30" width="300" height="10"
@@ -95,10 +95,10 @@
                 <textElement textAlignment="Left" verticalAlignment="Middle"/>
                 <text><![CDATA[Session end time]]></text>
             </staticText>
-            <textField pattern="HH:mm:ss.SSS, dd MMMMM yyyy (EEEEE)">
+            <textField pattern="HH:mm:ss.SSS z, dd MMMMM yyyy (EEEEE)">
                 <reportElement style="Header_Bold" positionType="Float" x="300" y="30" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
-                <textFieldExpression class="java.util.Date"><![CDATA[$F{endTime}]]></textFieldExpression>
+                <textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date($F{endTime})]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Header_Bold" positionType="Float" x="0" y="40" width="300" height="10"
@@ -110,7 +110,7 @@
                 <reportElement style="Header_Bold" positionType="Float" x="300" y="40" width="200" height="10"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression>
-                    <![CDATA[com.griddynamics.jagger.util.TimeUtils.formatDuration( $F{endTime}.getTime() - $F{startTime}.getTime() )]]></textFieldExpression>
+                    <![CDATA[com.griddynamics.jagger.util.TimeUtils.formatDuration( $F{endTime} - $F{startTime} )]]></textFieldExpression>
             </textField>
             <staticText>
                 <reportElement style="Header_Bold" positionType="Float" x="0" y="50" width="300" height="10"

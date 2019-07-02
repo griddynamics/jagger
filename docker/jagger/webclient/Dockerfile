@@ -12,7 +12,7 @@ ENV MYSQL_HOST mysql
 ENV MYSQL_PORT 3306
 
 # Set default timezone
-ENV TZ=Europe/Moscow
+ENV TZ=UTC
 
 # Get latest jagger-webclient
 ADD ["http://nexus.vm.griddynamics.net:8081/nexus/service/local/artifact/maven/content?r=jagger-snapshots&g=com.griddynamics.jagger&a=webclient&c=war-exec&v=${project.version}", "/com/griddynamics/jagger/jagger-webclient.jar"]

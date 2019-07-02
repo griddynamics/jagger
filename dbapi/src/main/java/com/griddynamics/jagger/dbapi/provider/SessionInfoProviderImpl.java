@@ -104,8 +104,8 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
 
     public Long getTotalSizeByDate(Date from, Date to) {
         return (Long) entityManager.createQuery("select count(sd.id) from SessionData as sd where sd.startTime between :from and :to")
-                .setParameter("from", from)
-                .setParameter("to", to)
+                .setParameter("from", from.getTime())
+                .setParameter("to", to.getTime())
                 .getSingleResult();
     }
 
@@ -131,7 +131,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             return 0L;
         }
 
-        List<Date> startTimeList = (List<Date>) entityManager.createQuery("select ses.startTime from SessionData ses where ses.sessionId in " +
+        List<Long> startTimeList = (List<Long>) entityManager.createQuery("select ses.startTime from SessionData ses where ses.sessionId in " +
                 "(:sessionIds) order by ses.startTime asc")
                 .setMaxResults(1)
                 .setParameter("sessionIds", selectedIds).getResultList();
@@ -140,7 +140,7 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
             return 0L;
         }
 
-        Date startTime = startTimeList.iterator().next();
+        Date startTime = new Date(startTimeList.iterator().next());
 
         Long lastPosition = (Long) entityManager.createQuery("select count(ses.id) from SessionData ses where startTime<=:startTime")
                 .setParameter("startTime", startTime).getSingleResult();
@@ -239,8 +239,8 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         try {
             List<SessionData> sessionDataList = (List<SessionData>)
                     entityManager.createQuery("select sd from SessionData as sd where sd.startTime between :from and :to order by sd.startTime asc")
-                            .setParameter("from", from)
-                            .setParameter("to", to)
+                            .setParameter("from", from.getTime())
+                            .setParameter("to", to.getTime())
                             .setFirstResult(start)
                             .setMaxResults(length)
                             .getResultList();
@@ -467,8 +467,8 @@ public class SessionInfoProviderImpl implements SessionInfoProvider {
         return new SessionDataDto(
                 sessionData.getId(),
                 sessionData.getSessionId(),
-                sessionData.getStartTime(),
-                sessionData.getEndTime(),
+                new Date(sessionData.getStartTime()),
+                new Date(sessionData.getEndTime()),
                 sessionData.getActiveKernels(),
                 sessionData.getTaskExecuted(),
                 sessionData.getTaskFailed(),

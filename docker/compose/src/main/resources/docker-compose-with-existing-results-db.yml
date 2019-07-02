@@ -22,7 +22,7 @@ services:
     ports:
       - 8087:80
     environment:
-      TZ: Europe/Moscow
+      TZ: UTC
       JWC_HTTP_PORT: 80
       JWC_JDBC_DRIVER: com.mysql.jdbc.Driver
       # Specify here the existing results database
